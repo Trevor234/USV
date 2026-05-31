@@ -1,0 +1,60 @@
+# USV physical parameters — single source of truth.
+#
+# Used by:
+#   - mpc_node.py (declares params under `vehicle.*` and `dynamic.*` namespaces)
+#   - usv_simulation/models/usv_2m/model.sdf (xacro substitutes geometry)
+#   - usv_mpc_dynamic.m (kept in sync manually)
+#
+# References: implementation_plan.md §九 (initial estimates),
+#             usv_mpc/usv_mpc/usv_model_dynamic.py defaults.
+#
+# IMPORTANT: parameter names must match `_declare_parameter` calls in mpc_node.py
+# (flat dotted names in code, nested in YAML). Keep aligned with mpc_params.yaml style.
+
+/**:
+  ros__parameters:
+    # ----- Hull (used by Gazebo SDF + MPC dynamic model) -----
+    vehicle:
+      mass: 30.0          # kg, total including payload
+      Iz: 8.0             # kg·m², yaw moment of inertia
+      xg: 0.0             # m, CG longitudinal offset (+ forward)
+      d_thruster: 0.3     # m, half of thruster spacing 2d
+
+      # ----- Hull geometry (Gazebo only — informational for MPC) -----
+      length: 2.0         # m, length overall
+      beam: 0.6           # m, beam
+      draft: 0.15         # m, waterline depth
+      height: 0.30        # m, freeboard above water
+
+      # ----- Added mass (negative by Fossen convention) -----
+      Xu_dot: -3.0
+      Yv_dot: -20.0
+      Yr_dot: -0.5
+      Nv_dot: -0.5
+      Nr_dot: -2.0
+
+      # ----- Linear damping -----
+      Xu: -8.0
+      Yv: -30.0
+      Yr: -1.0
+      Nv: -1.0
+      Nr: -5.0
+
+      # ----- Quadratic damping -----
+      Xuu: -15.0
+      Yvv: -60.0
+      Yrr: -1.0
+      Nvv: -1.0
+      Nrr: -3.0
+
+    # ----- Thruster -----
+    # NOTE: T_max / T_min / dT_max are also declared in mpc_params.yaml under
+    # `dynamic.*` and take precedence there for MPC. Repeated here so the
+    # Gazebo thrust plugin and parameter-identification scripts can read a
+    # single file. Keep in sync with mpc_params.yaml.
+    thruster:
+      pwm_min: 1000
+      pwm_center: 1500
+      pwm_max: 2000
+      T_max_forward: 40.0   # N per thruster
+      T_max_reverse: 20.0   # N per thruster

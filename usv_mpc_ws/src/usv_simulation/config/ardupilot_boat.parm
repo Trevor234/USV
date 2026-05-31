@@ -1,0 +1,66 @@
+# ArduRover Boat-mode parameters for SITL + Gazebo
+# Source: implementation_plan.md §7.1 (with SITL-specific tweaks)
+# Apply via:  sim_vehicle.py -v Rover -f JSON --add-param-file=$(this)
+
+# ---------- Frame ----------
+FRAME_CLASS,2                # Boat
+FRAME_TYPE,0                 # Undefined (skid steering auto-detect)
+
+# ---------- Differential thrust mapping ----------
+SERVO1_FUNCTION,73           # ThrottleLeft  → PWM1 → left thruster
+SERVO2_FUNCTION,74           # ThrottleRight → PWM2 → right thruster
+SERVO1_MIN,1000
+SERVO1_MAX,2000
+SERVO1_TRIM,1500
+SERVO2_MIN,1000
+SERVO2_MAX,2000
+SERVO2_TRIM,1500
+
+# ---------- Navigation ----------
+CRUISE_SPEED,1.0             # m/s
+CRUISE_THROTTLE,50           # %
+WP_SPEED,1.5
+WP_RADIUS,2.0
+NAVL1_PERIOD,10              # smoother turning
+
+# ---------- EKF / AHRS ----------
+EK2_ENABLE,0
+EK3_ENABLE,1
+AHRS_EKF_TYPE,3
+EK3_SRC1_POSXY,3             # GPS
+EK3_SRC1_VELXY,3
+EK3_SRC1_POSZ,1              # Baro
+EK3_SRC1_YAW,1               # Compass (in real boat we'd use 2 for GPS yaw, but SIM has no dual-antenna)
+
+# ---------- SITL hooks (Gazebo bridge) ----------
+SIM_GPS_TYPE,1               # SITL stub GPS
+SIM_GPS_DISABLE,0
+SIM_RC_FAIL,0
+SIM_BARO_DISABLE,0
+SIM_BARO_COUNT,1
+SIM_MAG_RND,0.05
+
+# ---------- MAVLink control from MAVROS ----------
+# ArduPilot accepts RC override only from MAVLink source IDs treated as GCS.
+# MAVROS is configured to use system_id=1 in SITL, so accept system ID 1.
+MAV_GCS_SYSID,1
+MAV_GCS_SYSID_HI,255
+RC_OVERRIDE_TIME,5
+
+# ---------- Streams (so MAVROS sees enough data) ----------
+SR0_POSITION,10
+SR0_EXTRA1,10                # ATTITUDE
+SR0_EXTRA2,10                # VFR_HUD
+SR0_EXTRA3,2                 # AHRS, etc.
+SR0_RAW_SENS,10              # IMU
+SR0_RC_CHAN,5
+
+# ---------- Safety relaxations for SITL only ----------
+ARMING_CHECK,0               # do not block arming on SITL — UNSAFE on real boat
+FS_THR_ENABLE,0
+FS_GCS_ENABLE,0
+FENCE_ENABLE,0
+
+# ---------- Logging ----------
+LOG_BACKEND_TYPE,1
+LOG_DISARMED,0

@@ -1,0 +1,52 @@
+# ROS/colcon generated artifacts
+build/
+install/
+log/
+**/build/
+**/install/
+**/log/
+
+# Runtime logs and telemetry
+logs/
+*.log
+*.tlog
+*.tlog.raw
+*.BIN
+*.bin
+*.ulg
+
+# Downloaded packages and local scratch files
+*.deb
+usv_mpc_ws/test_write.txt
+usv_mpc_ws/test_x.txt
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# C/C++ build artifacts
+*.o
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+
+# Editors and local tooling
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Claude/local agent configuration
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db

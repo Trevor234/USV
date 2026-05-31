@@ -1,0 +1,495 @@
+<?xml version="1.0" ?>
+<!--
+  USV 2m dual-thruster Gazebo Classic 11 model.
+
+  Coordinate convention: ENU world (Gazebo default), body x = forward,
+  y = port (left), z = up.
+
+  Plugins required at runtime (build & install separately):
+    - libArduPilotPlugin.so      → khancyr/ardupilot_gazebo
+    - libusv_gazebo_dynamics_plugin.so → osrf/vrx (Fossen-style hydrodynamics)
+    - libusv_gazebo_thrust_plugin.so   → osrf/vrx
+    - libgazebo_ros_imu_sensor.so / libgazebo_ros_gps_sensor.so /
+      libgazebo_ros_camera.so / libgazebo_ros_ray_sensor.so → gazebo_ros_pkgs
+
+  Parameters mirror usv_bringup/config/usv_params.yaml and
+  usv_mpc/usv_mpc/usv_model_dynamic.py — keep all three in sync.
+-->
+<sdf version="1.6">
+  <model name="usv_2m">
+
+    <!-- Pose: spawned just above the water (z = 0 is water surface) -->
+    <pose>0 0 0.05 0 0 0</pose>
+
+    <!-- ============================== -->
+    <!-- HULL (base_link)               -->
+    <!-- ============================== -->
+    <link name="base_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <!--
+        Velocity decay simulates water drag for the simple BuoyancyPlugin
+        path (which doesn't include hydrodynamics).
+
+        ODE applies these continuously: F_damp = m * decay * v.  With
+        decay = 0.3/s and m = 30 kg the effective drag is 9 N·s/m, so
+        a steady 30 N surge force settles at v ≈ 30/(30·0.3) ≈ 3.3 m/s,
+        while a 5 N nudge gives v ≈ 0.55 m/s.  Reasonable for a 2 m boat.
+
+        Tune in this range:
+          0.1 — long coast, easy to overshoot
+          0.3 — current value, balanced
+          1.0 — heavily damped, slow response
+
+        VRX's usv_gazebo_dynamics_plugin replaces this with proper Fossen
+        damping; if you switch to VRX, set both to 0.
+      -->
+      <velocity_decay>
+        <linear>0.3</linear>
+        <angular>0.3</angular>
+      </velocity_decay>
+
+      <inertial>
+        <mass>30.0</mass>
+        <pose>0 0 -0.05 0 0 0</pose>
+        <inertia>
+          <!-- Hull treated as a 2.0 x 0.6 x 0.3 m box with corrected Izz=8 -->
+          <ixx>1.5</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>10.0</iyy>
+          <iyz>0</iyz>
+          <izz>8.0</izz>
+        </inertia>
+      </inertial>
+
+      <!-- Visual: stylised hull (low-poly box; can be swapped for a mesh) -->
+      <visual name="hull_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box><size>2.0 0.6 0.3</size></box>
+        </geometry>
+        <material>
+          <ambient>0.9 0.9 0.9 1</ambient>
+          <diffuse>0.95 0.95 0.95 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+        </material>
+      </visual>
+
+      <!-- Cabin: small box on top so heading is visible in GUI -->
+      <visual name="cabin_visual">
+        <pose>0.2 0 0.2 0 0 0</pose>
+        <geometry>
+          <box><size>0.6 0.4 0.15</size></box>
+        </geometry>
+        <material>
+          <ambient>0.1 0.3 0.7 1</ambient>
+          <diffuse>0.1 0.4 0.8 1</diffuse>
+        </material>
+      </visual>
+
+      <!-- Collision: simple box matching visual -->
+      <collision name="hull_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box><size>2.0 0.6 0.3</size></box>
+        </geometry>
+      </collision>
+
+      <!-- ============================== -->
+      <!-- IMU sensor                     -->
+      <!-- ============================== -->
+      <sensor name="imu_sensor" type="imu">
+        <always_on>1</always_on>
+        <update_rate>50</update_rate>
+        <imu>
+          <angular_velocity>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>2e-4</stddev></noise></z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>1.7e-2</stddev></noise></z>
+          </linear_acceleration>
+        </imu>
+        <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+          <ros>
+            <namespace>/usv</namespace>
+            <remapping>~/out:=imu/data</remapping>
+          </ros>
+          <frame_name>base_link</frame_name>
+          <initial_orientation_as_reference>false</initial_orientation_as_reference>
+        </plugin>
+      </sensor>
+
+      <!-- ============================== -->
+      <!-- GPS sensor                     -->
+      <!-- ============================== -->
+      <sensor name="gps_sensor" type="gps">
+        <always_on>1</always_on>
+        <update_rate>5</update_rate>
+        <gps>
+          <position_sensing>
+            <horizontal><noise type="gaussian"><mean>0.0</mean><stddev>0.05</stddev></noise></horizontal>
+            <vertical><noise type="gaussian"><mean>0.0</mean><stddev>0.10</stddev></noise></vertical>
+          </position_sensing>
+          <velocity_sensing>
+            <horizontal><noise type="gaussian"><mean>0.0</mean><stddev>0.02</stddev></noise></horizontal>
+            <vertical><noise type="gaussian"><mean>0.0</mean><stddev>0.05</stddev></noise></vertical>
+          </velocity_sensing>
+        </gps>
+        <plugin name="gps_plugin" filename="libgazebo_ros_gps_sensor.so">
+          <ros>
+            <namespace>/usv</namespace>
+            <remapping>~/out:=gps/fix</remapping>
+            <remapping>~/vel:=gps/vel</remapping>
+          </ros>
+          <frame_name>base_link</frame_name>
+        </plugin>
+      </sensor>
+
+      <!-- ============================== -->
+      <!-- Forward camera (DISABLED FOR HEADLESS) -->
+      <!-- ============================== -->
+      <!--
+      <sensor name="forward_camera" type="camera">
+        <pose>0.5 0 0.35 0 0 0</pose>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <camera>
+          <horizontal_fov>1.396</horizontal_fov>
+          <image>
+            <width>640</width>
+            <height>480</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip><near>0.1</near><far>100</far></clip>
+        </camera>
+        <plugin name="camera_plugin" filename="libgazebo_ros_camera.so">
+          <ros>
+            <namespace>/usv</namespace>
+            <remapping>image_raw:=camera/image_raw</remapping>
+            <remapping>camera_info:=camera/camera_info</remapping>
+          </ros>
+          <frame_name>camera_link</frame_name>
+        </plugin>
+      </sensor>
+      -->
+
+      <!-- ============================== -->
+      <!-- 2D lidar (DISABLED FOR HEADLESS) -->
+      <!-- ============================== -->
+      <!--
+      <sensor name="lidar2d" type="ray">
+        <pose>0.7 0 0.45 0 0 0</pose>
+        <always_on>1</always_on>
+        <update_rate>10</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>720</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.14159</min_angle>
+              <max_angle>3.14159</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.2</min>
+            <max>30.0</max>
+            <resolution>0.02</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        <plugin name="lidar_plugin" filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <namespace>/usv</namespace>
+            <remapping>~/out:=scan</remapping>
+          </ros>
+          <output_type>sensor_msgs/LaserScan</output_type>
+          <frame_name>lidar_link</frame_name>
+        </plugin>
+      </sensor>
+      -->
+    </link>
+
+    <!-- ============================== -->
+    <!-- LEFT thruster (port side)      -->
+    <!-- ============================== -->
+    <link name="left_thruster_link">
+      <pose>-0.9 0.3 -0.05 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.005</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.005</iyy><iyz>0</iyz>
+          <izz>0.005</izz>
+        </inertia>
+      </inertial>
+      <visual name="left_thruster_visual">
+        <geometry><cylinder><radius>0.04</radius><length>0.15</length></cylinder></geometry>
+        <pose>0 0 0 0 1.5708 0</pose>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <collision name="left_thruster_collision">
+        <geometry><cylinder><radius>0.04</radius><length>0.15</length></cylinder></geometry>
+        <pose>0 0 0 0 1.5708 0</pose>
+      </collision>
+    </link>
+
+    <!--
+      Revolute joint about the propeller spin axis (body x-forward).
+      ArduPilotPlugin drives this joint with EFFORT (torque) so the propeller
+      visually spins when SITL sends throttle.  The actual forward thrust
+      force is applied by usv_gazebo_thrust_plugin reading ROS topics fed
+      by the usv_thrust_bridge node (see launch/gazebo_sitl_full.launch.py).
+    -->
+    <joint name="left_thruster_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>left_thruster_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- ============================== -->
+    <!-- RIGHT thruster (starboard)     -->
+    <!-- ============================== -->
+    <link name="right_thruster_link">
+      <pose>-0.9 -0.3 -0.05 0 0 0</pose>
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.005</ixx><ixy>0</ixy><ixz>0</ixz>
+          <iyy>0.005</iyy><iyz>0</iyz>
+          <izz>0.005</izz>
+        </inertia>
+      </inertial>
+      <visual name="right_thruster_visual">
+        <geometry><cylinder><radius>0.04</radius><length>0.15</length></cylinder></geometry>
+        <pose>0 0 0 0 1.5708 0</pose>
+        <material>
+          <ambient>0.2 0.2 0.2 1</ambient>
+          <diffuse>0.3 0.3 0.3 1</diffuse>
+        </material>
+      </visual>
+      <collision name="right_thruster_collision">
+        <geometry><cylinder><radius>0.04</radius><length>0.15</length></cylinder></geometry>
+        <pose>0 0 0 0 1.5708 0</pose>
+      </collision>
+    </link>
+
+    <joint name="right_thruster_joint" type="revolute">
+      <parent>base_link</parent>
+      <child>right_thruster_link</child>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e16</lower>
+          <upper>1e16</upper>
+        </limit>
+        <dynamics>
+          <damping>0.01</damping>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <!-- =================================================== -->
+    <!-- Buoyancy — fallback (Gazebo built-in)                -->
+    <!--                                                      -->
+    <!-- libBuoyancyPlugin.so ships with gazebo11-plugins so  -->
+    <!-- this works without VRX. It applies a CONSTANT force  -->
+    <!-- F = density * volume * g at center_of_volume,        -->
+    <!-- regardless of how much hull is submerged. With       -->
+    <!-- volume = 0.0307 m³ the upward force exactly cancels  -->
+    <!-- gravity on a 30 kg boat → neutral buoyancy at the    -->
+    <!-- spawn depth.                                         -->
+    <!--                                                      -->
+    <!-- For volume-fraction buoyancy + Fossen damping +      -->
+    <!-- waves, install osrf/vrx and switch to the            -->
+    <!-- usv_gazebo_dynamics_plugin block below (commented).  -->
+    <!-- =================================================== -->
+    <plugin name="buoyancy_plugin" filename="libBuoyancyPlugin.so">
+      <fluid_density>997.8</fluid_density>
+      <link name="base_link">
+        <!--
+          Volume = total system mass / fluid density:
+            (30 + 2*0.5) / 997.8 = 0.03106 m³
+          covers hull + both thrusters (the plugin does not add buoyancy
+          to links it isn't told about, so the hull alone has to lift the
+          thrusters' weight too).
+        -->
+        <volume>0.03106</volume>
+        <!--
+          COB matched to the combined-system COM in x to cancel the
+          static pitching moment from the rear-mounted thrusters:
+            COM_x = (30*0 + 0.5*(-0.9) + 0.5*(-0.9)) / 31 = -0.029 m
+          Then z = 0 keeps COB 5 cm above COM_z=-0.05 so the metacentric
+          height is positive and the hull self-rights when rolled/pitched.
+        -->
+        <center_of_volume>-0.029 0 0.0</center_of_volume>
+      </link>
+    </plugin>
+
+    <!-- =================================================== -->
+    <!-- VRX hydrodynamics (Fossen 3-DOF, diagonal damping)   -->
+    <!--                                                      -->
+    <!-- Uncomment after installing osrf/vrx (gazebo classic  -->
+    <!-- branch v2.3.2) so libusv_gazebo_dynamics_plugin.so   -->
+    <!-- is on GAZEBO_PLUGIN_PATH. Then comment out the       -->
+    <!-- libBuoyancyPlugin block above to avoid duplicate     -->
+    <!-- buoyancy forces.                                     -->
+    <!-- =================================================== -->
+    <!--
+    <plugin name="usv_dynamics_plugin" filename="libusv_gazebo_dynamics_plugin.so">
+      <bodyName>base_link</bodyName>
+      <waterLevel>0.0</waterLevel>
+      <waterDensity>997.8</waterDensity>
+      <xDotU>3.0</xDotU>
+      <yDotV>20.0</yDotV>
+      <nDotR>2.0</nDotR>
+      <xU>8.0</xU>
+      <yV>30.0</yV>
+      <nR>5.0</nR>
+      <xUU>15.0</xUU>
+      <yVV>60.0</yVV>
+      <nRR>3.0</nRR>
+      <hullRadius>0.30</hullRadius>
+      <boatWidth>0.6</boatWidth>
+      <boatLength>2.0</boatLength>
+      <length_n>4</length_n>
+      <wave_model>ocean_waves</wave_model>
+    </plugin>
+    -->
+
+    <!-- =================================================== -->
+    <!-- Manual force input — works without VRX               -->
+    <!--                                                      -->
+    <!-- libgazebo_ros_force.so subscribes to a Wrench topic  -->
+    <!-- and applies the (force, torque) pair to a named link -->
+    <!-- every step.  Useful for hand-driving the boat in     -->
+    <!-- gazebo_only.launch.py before VRX/ArduPilot are up.   -->
+    <!--                                                      -->
+    <!-- Usage from a second terminal:                        -->
+    <!--   ros2 topic pub -r 20 /usv/cmd_force \              -->
+    <!--     geometry_msgs/msg/Wrench \                       -->
+    <!--     '{force: {x: 30.0}, torque: {z: 0.0}}'          -->
+    <!--                                                      -->
+    <!--   force.x  = surge force  (N, body-x forward)        -->
+    <!--   torque.z = yaw moment   (N·m, body-z up)           -->
+    <!-- =================================================== -->
+    <plugin name="manual_force_plugin" filename="libgazebo_ros_force.so">
+      <ros>
+        <namespace>/usv</namespace>
+        <remapping>gazebo_ros_force:=cmd_force</remapping>
+      </ros>
+      <link_name>base_link</link_name>
+      <force_frame>link</force_frame>
+    </plugin>
+
+    <!-- =================================================== -->
+    <!-- Thrust plugin (VRX — requires osrf/vrx installed)    -->
+    <!-- =================================================== -->
+    <!-- VRX thrust plugin DISABLED: osrf/vrx not installed.
+         Fallback: libgazebo_ros_force.so (manual_force_plugin above)
+         is driven by usv_thrust_bridge via /usv/cmd_force (Wrench).
+    <plugin name="usv_thrust_plugin" filename="libusv_gazebo_thrust_plugin.so">
+      <robotNamespace>usv</robotNamespace>
+      <cmdTimeout>1.0</cmdTimeout>
+      <thruster>
+        <linkName>left_thruster_link</linkName>
+        <propJointName>left_thruster_joint</propJointName>
+        <engineJointName>left_thruster_joint</engineJointName>
+        <cmdTopic>left_thrust_cmd</cmdTopic>
+        <angleTopic>left_thrust_angle</angleTopic>
+        <mappingType>1</mappingType>
+        <maxCmd>1.0</maxCmd>
+        <maxForceFwd>40.0</maxForceFwd>
+        <maxForceRev>20.0</maxForceRev>
+        <maxAngle>0.0</maxAngle>
+      </thruster>
+      <thruster>
+        <linkName>right_thruster_link</linkName>
+        <propJointName>right_thruster_joint</propJointName>
+        <engineJointName>right_thruster_joint</engineJointName>
+        <cmdTopic>right_thrust_cmd</cmdTopic>
+        <angleTopic>right_thrust_angle</angleTopic>
+        <mappingType>1</mappingType>
+        <maxCmd>1.0</maxCmd>
+        <maxForceFwd>40.0</maxForceFwd>
+        <maxForceRev>20.0</maxForceRev>
+        <maxAngle>0.0</maxAngle>
+      </thruster>
+    </plugin>
+    -->
+
+    <!-- =================================================== -->
+    <!-- ArduPilot bridge: JSON FDM over UDP                  -->
+    <!-- ArduPilot SITL is launched separately (run_sitl.sh)  -->
+    <!-- and exchanges FDM (sensors) + servo PWM with this    -->
+    <!-- plugin via UDP ports 9002/9003.                      -->
+    <!--                                                      -->
+    <!-- The <control> blocks below drive the (revolute)      -->
+    <!-- thruster joints with EFFORT — this is purely visual  -->
+    <!-- (the props spin when SITL sends throttle).  Real     -->
+    <!-- thrust force comes from usv_gazebo_thrust_plugin     -->
+    <!-- above, fed by usv_thrust_bridge.py which converts    -->
+    <!-- /mavros/rc/out PWM into /usv/*_thrust_cmd topics.    -->
+    <!--                                                      -->
+    <!-- Channel mapping matches ArduRover Boat-mode parm:    -->
+    <!--   SERVO1_FUNCTION=73 (ThrottleLeft)  → channel 0     -->
+    <!--   SERVO2_FUNCTION=74 (ThrottleRight) → channel 1     -->
+    <!-- =================================================== -->
+    <plugin name="ardupilot_plugin" filename="libArduPilotPlugin.so">
+      <fdm_addr>127.0.0.1</fdm_addr>
+      <fdm_port_in>9002</fdm_port_in>
+      <fdm_port_out>9003</fdm_port_out>
+      <connectionTimeoutMaxCount>30</connectionTimeoutMaxCount>
+      <lock_step>1</lock_step>
+      <have_32_channels>0</have_32_channels>
+      <modelXYZToAirplaneXForwardZDown>0 0 0 3.141593 0 0</modelXYZToAirplaneXForwardZDown>
+      <gazeboXYZToNED>0 0 0 3.141593 0 1.570796</gazeboXYZToNED>
+      <imuName>imu_sensor</imuName>
+
+      <!-- Channel 0 → left propeller spin (visual only) -->
+      <control channel="0">
+        <jointName>left_thruster_joint</jointName>
+        <useForce>1</useForce>
+        <multiplier>50</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>EFFORT</type>
+        <p_gain>0.1</p_gain>
+      </control>
+
+      <!-- Channel 1 → right propeller spin (visual only) -->
+      <control channel="1">
+        <jointName>right_thruster_joint</jointName>
+        <useForce>1</useForce>
+        <multiplier>50</multiplier>
+        <offset>-0.5</offset>
+        <servo_min>1100</servo_min>
+        <servo_max>1900</servo_max>
+        <type>EFFORT</type>
+        <p_gain>0.1</p_gain>
+      </control>
+    </plugin>
+
+  </model>
+</sdf>

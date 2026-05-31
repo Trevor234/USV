@@ -1,0 +1,45 @@
+/**:
+  ros__parameters:
+    # --- General MPC Settings (Flat) ---
+    scheme: "A"                 # "A" = kinematic, "B" = dynamic, "both"
+    control_mode: "kinematic"    # "kinematic", "dynamic", "idle"
+    mpc_dt: 0.2                 # MPC time step (s) — 5 Hz for kinematic
+    horizon: 20                  # Prediction horizon steps
+    publish_predicted: true      # Publish MPC predicted trajectory
+    max_solve_time_ms: 200.0    # Maximum acceptable solve time (ms)
+    odom_timeout_s: 3.0         # MAVROS local odom can pause briefly during SITL EKF/GPS updates
+    state_timeout_s: 5.0        # Allow brief MAVLink heartbeat jitter without dropping to STANDBY
+    reference_start_offset: 8   # Start MPC reference several path points ahead of the nearest point
+
+    # --- Scheme A: Kinematic MPC ---
+    kinematic:
+      Q: [10.0, 10.0, 50.0]       # State weights [x, y, psi]
+      R: [1.0, 1.0]                # Control weights [u_surge, r_yaw]
+      Qf_scale: 10.0               # Terminal cost multiplier (Qf = scale * Q)
+      u_max: 2.0                   # Maximum surge speed (m/s)
+      u_min: 0.0                   # Minimum surge speed (m/s)
+      r_max: 0.5                   # Maximum yaw rate (rad/s)
+      du_max: 0.8                  # Max surge acceleration (m/s²)
+      dr_max: 0.5                  # Max yaw acceleration (rad/s²)
+
+    # --- Scheme B: Dynamic NMPC ---
+    dynamic:
+      Q: [10.0, 10.0, 50.0, 5.0, 1.0, 5.0]  # State weights [x,y,psi,u,v,r]
+      R: [0.02, 0.02]              # Control weights [TL, TR]
+      Rd: [0.2, 0.2]               # Control rate weights
+      Qf_scale: 10.0               # Terminal cost multiplier
+      dt: 0.1                      # Dynamic MPC time step (s)
+      T_max: 100.0                 # Max thrust per thruster (N)
+      T_min: -50.0                 # Max reverse thrust (N)
+      dT_max: 40.0                 # Max thrust rate (N/s)
+
+    # --- Scheme B RC override mapping (ArduRover input channels) ---
+    rc_steering_channel: 0         # CH1 steering input
+    rc_throttle_channel: 2         # CH3 throttle input
+    rc_pwm_min: 1100
+    rc_pwm_center: 1500
+    rc_pwm_max: 1900
+    steering_sign: -1.0            # Flip steering: ArduRover RC1 yaw sign is opposite NMPC TR-TL sign
+    throttle_sign: 1.0             # Positive MPC throttle maps to high RC3 / forward in rover-skid
+    steering_gain: 0.4             # Moderate yaw authority after steering sign correction
+    throttle_gain: 0.75            # Faster SITL tracking after basic direction tuning

@@ -1,0 +1,48 @@
+# Gazebo world disturbance parameters
+# Loaded by gazebo_sitl_full.launch.py and forwarded to the wave/wind plugins
+# in lake.world via env-var substitution.
+#
+# These provide a single source of truth for §7.4 robustness sweeps.
+
+# Top-level switch. When true, the launch files select lake_vrx.world +
+# model_vrx.sdf (which activate VRX dynamics + wavefield plugins). The
+# launch arg `vrx_enabled` overrides this; this YAML value is informational
+# and consumed by scenario scripts that don't go through launch arguments.
+vrx_enabled: false
+
+wind:
+  # Mean wind in world frame (NED-ish, but Gazebo uses ENU; +X = east)
+  mean_velocity: [0.0, 0.0, 0.0]   # m/s — start calm
+  gust_amplitude: 0.0              # m/s
+  gust_period: 5.0                 # s
+  enable: false
+
+current:
+  # Surface current (applied as drag-frame offset on the hull)
+  velocity: [0.0, 0.0, 0.0]        # m/s in world frame
+  enable: false
+
+waves:
+  # VRX Wavefield plugin parameters (Pierson-Moskowitz spectrum)
+  enable: false                    # set true for §7.4
+  amplitude: 0.10                  # significant wave height ÷ 2 (m)
+  period: 4.0                      # peak period (s)
+  direction: [1.0, 0.0]            # unit vector, world frame
+  number: 3                        # number of wave components
+  scale: 1.5
+  gain: 0.3
+
+# Scenario presets — pick via launch arg `world_preset`
+presets:
+  calm:
+    wind: { mean_velocity: [0.0, 0.0, 0.0], enable: false }
+    waves: { enable: false }
+    current: { enable: false }
+  light_breeze:
+    wind: { mean_velocity: [3.0, 0.0, 0.0], enable: true, gust_amplitude: 1.0 }
+    waves: { enable: true, amplitude: 0.05, period: 3.0 }
+    current: { enable: false }
+  moderate:
+    wind: { mean_velocity: [5.0, 1.5, 0.0], enable: true, gust_amplitude: 2.0 }
+    waves: { enable: true, amplitude: 0.15, period: 4.0 }
+    current: { velocity: [0.2, 0.0, 0.0], enable: true }

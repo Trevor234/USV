@@ -1,0 +1,15 @@
+# Path Configuration
+#
+# Defines Mission Planner waypoint input, path parameters, and planning behavior.
+
+# --- Mission Planner waypoints converted to local map coordinates ---
+/**:
+  ros__parameters:
+    path_resolution: 0.5             # 插值路径点间距 (m)
+    lookahead_distance: 50.0    # 向前发布的路径长度 (m)
+    turn_radius: 5.0            # Dubins 最小转弯半径 (m)
+    cruise_speed: 1.0           # 默认巡航速度 (m/s)
+    update_rate: 1.0            # 路径更新频率 (Hz)
+    waypoints_file: ""          # 默认不加载本地 YAML 航点，等待 Mission Planner 航点
+    dynamic_waypoints_topic: "/usv/mission/waypoints_local"  # 来自 mission_bridge_node 的动态航点
+    default_waypoint_radius: 2.0     # 动态航点的到达判定半径 (m)

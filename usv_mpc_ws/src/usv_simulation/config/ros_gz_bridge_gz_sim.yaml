@@ -1,0 +1,24 @@
+- topic_name: /clock
+  ros_type_name: rosgraph_msgs/msg/Clock
+  gz_type_name: gz.msgs.Clock
+  direction: GZ_TO_ROS
+
+- topic_name: /model/usv_2m/odometry
+  ros_type_name: nav_msgs/msg/Odometry
+  gz_type_name: gz.msgs.Odometry
+  direction: GZ_TO_ROS
+
+- topic_name: /usv/imu/data
+  ros_type_name: sensor_msgs/msg/Imu
+  gz_type_name: gz.msgs.IMU
+  direction: GZ_TO_ROS
+
+- topic_name: /usv/gps/fix
+  ros_type_name: sensor_msgs/msg/NavSatFix
+  gz_type_name: gz.msgs.NavSat
+  direction: GZ_TO_ROS
+
+- topic_name: /world/lake_gz/wrench
+  ros_type_name: ros_gz_interfaces/msg/EntityWrench
+  gz_type_name: gz.msgs.EntityWrench
+  direction: ROS_TO_GZ
