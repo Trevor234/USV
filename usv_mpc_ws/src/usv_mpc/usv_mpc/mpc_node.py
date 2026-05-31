@@ -21,13 +21,14 @@ from enum import Enum
 
 import numpy as np
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Quaternion, TwistStamped, Vector3
 from mavros_msgs.msg import OverrideRCIn, State as MavrosState
 from nav_msgs.msg import Odometry, Path as NavPath
 from rclpy.node import Node
 from sensor_msgs.msg import Imu
-from std_msgs.msg import String
+from std_msgs.msg import Float64, String
 
 from .mpc_kinematic import KinematicMPC
 from .mpc_dynamic import DynamicMPC
@@ -72,6 +73,12 @@ class MpcControllerNode(Node):
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("velocity_topic", "/mavros/setpoint_velocity/cmd_vel")
         self.declare_parameter("rc_override_topic", "/mavros/rc/override")
+        self.declare_parameter("output_mode", "rc_override")
+        self.declare_parameter("require_fcu_state", True)
+        self.declare_parameter("vrx_left_thrust_topic", "/wamv/thrusters/left/thrust")
+        self.declare_parameter("vrx_right_thrust_topic", "/wamv/thrusters/right/thrust")
+        self.declare_parameter("vrx_thrust_scale", 25.0)
+        self.declare_parameter("vrx_thrust_cmd_max", 1000.0)
         self.declare_parameter("publish_predicted", True)
         self.declare_parameter("max_solve_time_ms", 200.0)
         # 进入 HOLD（挂起）模式前允许的连续求解失败次数：停止发送过时的控制指令，
@@ -149,6 +156,10 @@ class MpcControllerNode(Node):
         self.mpc_dt = self.get_parameter("mpc_dt").value
         self.horizon = self.get_parameter("horizon").value
         self.max_solve_time_ms = self.get_parameter("max_solve_time_ms").value
+        self.output_mode = str(self.get_parameter("output_mode").value)
+        self.require_fcu_state = bool(self.get_parameter("require_fcu_state").value)
+        self.vrx_thrust_scale = float(self.get_parameter("vrx_thrust_scale").value)
+        self.vrx_thrust_cmd_max = float(self.get_parameter("vrx_thrust_cmd_max").value)
         self.publish_predicted = self.get_parameter("publish_predicted").value
         self.solver_hold_threshold = int(self.get_parameter("solver_hold_threshold").value)
         allowed_modes = self.get_parameter("allowed_fcu_modes").value
@@ -188,9 +199,16 @@ class MpcControllerNode(Node):
                 dr_max=self.get_parameter("kinematic.dr_max").value,
             )
 
+        self._dynamic_dt = 0.0
+        self._dynamic_N = 0
+        self._dynamic_prediction_time = 0.0
         if self.scheme in ("B", "both"):
-            dyn_dt = self.get_parameter("dynamic.dt").value
-            dyn_N = int(self.horizon * dyn_dt / self.mpc_dt) + 1
+            dyn_dt = float(self.get_parameter("dynamic.dt").value)
+            prediction_time = float(self.horizon) * float(self.mpc_dt)
+            dyn_N = max(1, int(round(prediction_time / dyn_dt)))
+            self._dynamic_dt = dyn_dt
+            self._dynamic_N = dyn_N
+            self._dynamic_prediction_time = prediction_time
             model_params = {
                 "mass": self.get_parameter("vehicle.mass").value,
                 "Iz": self.get_parameter("vehicle.Iz").value,
@@ -246,6 +264,15 @@ class MpcControllerNode(Node):
         # _prev_state: "" (启动)、"ACTIVE"、"STANDBY";用于检测状态切换沿
         self._prev_state = ""
         self._last_standby_reason = ""
+        self._last_ref_debug = {}
+        self._last_rc_debug = {
+            "tl_n": 0.0,
+            "tr_n": 0.0,
+            "steering_pwm": self.rc_pwm_center,
+            "throttle_pwm": self.rc_pwm_center,
+            "steering_norm": 0.0,
+            "throttle_norm": 0.0,
+        }
 
     def _init_pubsub(self):
         # 订阅者
@@ -273,6 +300,13 @@ class MpcControllerNode(Node):
 
         rc_topic = self.get_parameter("rc_override_topic").value
         self._rc_pub = self.create_publisher(OverrideRCIn, rc_topic, 10)
+
+        self._vrx_left_pub = self.create_publisher(
+            Float64, self.get_parameter("vrx_left_thrust_topic").value, 10
+        )
+        self._vrx_right_pub = self.create_publisher(
+            Float64, self.get_parameter("vrx_right_thrust_topic").value, 10
+        )
 
         self._traj_pub = self.create_publisher(NavPath, "/mpc/predicted_trajectory", 10)
         self._status_pub = self.create_publisher(String, "/mpc/status", 10)
@@ -325,14 +359,15 @@ class MpcControllerNode(Node):
             return False, "odom_timeout"
         if not self._path_received or len(self._reference_path) < 2:
             return False, "no_path"
-        if self._last_state_time == 0.0:
-            return False, "no_state"
-        if self.state_timeout_s > 0.0 and (now - self._last_state_time) > self.state_timeout_s:
-            return False, "state_timeout"
-        if not self._armed:
-            return False, "disarmed"
-        if self.allowed_fcu_modes and self._mode not in self.allowed_fcu_modes:
-            return False, f"wrong_mode({self._mode})"
+        if self.require_fcu_state:
+            if self._last_state_time == 0.0:
+                return False, "no_state"
+            if self.state_timeout_s > 0.0 and (now - self._last_state_time) > self.state_timeout_s:
+                return False, "state_timeout"
+            if not self._armed:
+                return False, "disarmed"
+            if self.allowed_fcu_modes and self._mode not in self.allowed_fcu_modes:
+                return False, f"wrong_mode({self._mode})"
         return True, ""
 
     def _enter_standby(self, reason: str):
@@ -352,11 +387,11 @@ class MpcControllerNode(Node):
                 self._mpc_kin.reset_warmstart()
             if self._mpc_dyn is not None:
                 self._mpc_dyn.reset_warmstart()
-            # 发布"停止"指令一次,清除 MAVROS/FCU 中可能残留的旧设定
+            # 发布"停止"指令一次,清除执行端可能残留的旧设定
             if self.scheme == "A":
                 self._publish_velocity_cmd(np.zeros(2))
             elif self.scheme == "B":
-                self._release_rc_override()
+                self._publish_zero_dynamic_output()
             self.get_logger().info(f"MPC → STANDBY: {reason}")
 
         self._prev_state = "STANDBY"
@@ -395,7 +430,7 @@ class MpcControllerNode(Node):
         if self.scheme == "A":
             self._publish_velocity_cmd(np.zeros(2))
         elif self.scheme == "B":
-            self._release_rc_override()
+            self._publish_zero_dynamic_output()
         self._publish_standby_status("node_shutdown")
         self.get_logger().info("MPC 节点退出: 已发送安全停车指令")
 
@@ -474,7 +509,7 @@ class MpcControllerNode(Node):
 
         if info["success"]:
             self._solver_fail_count = 0
-            self._publish_rc_override(u_opt)
+            self._publish_dynamic_output(u_opt)
 
             if self._control_count % 5 == 0:
                 self._publish_predicted_trajectory(info.get("X_pred"))
@@ -488,7 +523,7 @@ class MpcControllerNode(Node):
             if self._solver_fail_count >= self.solver_hold_threshold:
                 in_hold = True
                 u_opt = np.zeros(2)  # 零推力 → 中位 throttle/steering RC 输入
-                self._publish_rc_override(u_opt)
+                self._publish_dynamic_output(u_opt)
                 self._mpc_dyn.reset_warmstart()
                 if self._solver_fail_count == self.solver_hold_threshold:
                     self.get_logger().error(
@@ -496,16 +531,29 @@ class MpcControllerNode(Node):
                         "正在发布零推力并重置热启动"
                     )
             else:
-                self._publish_rc_override(u_opt)
+                self._publish_dynamic_output(u_opt)
 
+        info["u_opt"] = [float(u_opt[0]), float(u_opt[1])]
+        info["psi_ref"] = float(reference[2, 0])
+        info["e_psi"] = float(normalize_angle(current_state[2] - reference[2, 0]))
         self._publish_status(info, in_hold=in_hold)
 
         self._control_count += 1
         if self._control_count % 10 == 0:
+            steering_pwm = self._last_rc_debug.get("steering_pwm", 0)
+            throttle_pwm = self._last_rc_debug.get("throttle_pwm", 0)
+            output_desc = (
+                f"VRX cmd L={self._last_rc_debug.get('vrx_left_cmd', 0.0):.0f} "
+                f"R={self._last_rc_debug.get('vrx_right_cmd', 0.0):.0f}"
+                if self.output_mode == "vrx_thrust"
+                else f"RC(steer={steering_pwm}, throttle={throttle_pwm})"
+            )
             self.get_logger().info(
                 f"t={self._control_count * self.mpc_dt:.1f}s  "
                 f"位置=({self._x:.1f},{self._y:.1f})  "
+                f"航向误差={math.degrees(info['e_psi']):.1f}°  "
                 f"左推力={u_opt[0]:.1f}N  右推力={u_opt[1]:.1f}N  "
+                f"{output_desc}  "
                 f"求解时间={info['solve_time_ms']:.0f}ms"
             )
 
@@ -536,7 +584,17 @@ class MpcControllerNode(Node):
                 pwm = self.rc_pwm_center + value * (self.rc_pwm_center - self.rc_pwm_min)
             return int(np.clip(round(pwm), self.rc_pwm_min, self.rc_pwm_max))
 
-        return to_pwm(steering_n), to_pwm(throttle_n)
+        steering_pwm = to_pwm(steering_n)
+        throttle_pwm = to_pwm(throttle_n)
+        self._last_rc_debug = {
+            "tl_n": left,
+            "tr_n": right,
+            "steering_pwm": steering_pwm,
+            "throttle_pwm": throttle_pwm,
+            "steering_norm": float(steering_n),
+            "throttle_norm": float(throttle_n),
+        }
+        return steering_pwm, throttle_pwm
 
     def _publish_rc_override(self, thrust: np.ndarray):
         """通过 OverrideRCIn 发布 throttle/steering 遥控输入（方案 B）。"""
@@ -547,6 +605,41 @@ class MpcControllerNode(Node):
         if 0 <= self.rc_throttle_channel < len(rc_msg.channels):
             rc_msg.channels[self.rc_throttle_channel] = throttle_pwm
         self._rc_pub.publish(rc_msg)
+
+    def _publish_vrx_thrust(self, thrust: np.ndarray):
+        """将方案 B 的左右推力直接发布到 VRX WAM-V thruster topic。"""
+        tl_n = float(thrust[0])
+        tr_n = float(thrust[1])
+        left_cmd = float(np.clip(tl_n * self.vrx_thrust_scale, -self.vrx_thrust_cmd_max, self.vrx_thrust_cmd_max))
+        right_cmd = float(np.clip(tr_n * self.vrx_thrust_scale, -self.vrx_thrust_cmd_max, self.vrx_thrust_cmd_max))
+        left = Float64()
+        right = Float64()
+        left.data = left_cmd
+        right.data = right_cmd
+        self._vrx_left_pub.publish(left)
+        self._vrx_right_pub.publish(right)
+        self._last_rc_debug.update({
+            "tl_n": tl_n,
+            "tr_n": tr_n,
+            "vrx_left_cmd": left_cmd,
+            "vrx_right_cmd": right_cmd,
+            "vrx_thrust_scale": float(self.vrx_thrust_scale),
+            "output_mode": self.output_mode,
+        })
+
+    def _publish_dynamic_output(self, thrust: np.ndarray):
+        """按输出后端发布方案 B 控制量。"""
+        if self.output_mode == "vrx_thrust":
+            self._publish_vrx_thrust(thrust)
+        else:
+            self._publish_rc_override(thrust)
+
+    def _publish_zero_dynamic_output(self):
+        """方案 B 安全零输出。"""
+        if self.output_mode == "vrx_thrust":
+            self._publish_vrx_thrust(np.zeros(2))
+        else:
+            self._release_rc_override()
 
     def _publish_status(self, info: dict, in_hold: bool):
         """在 /mpc/status 话题上发布结构化的求解器诊断信息。
@@ -567,7 +660,36 @@ class MpcControllerNode(Node):
             "solve_time_ms": float(info.get("solve_time_ms", 0.0)),
             "hold": bool(in_hold),
             "scheme": self.scheme,
+            "control_mode": self.control_mode.value,
+            "output_mode": self.output_mode,
+            "require_fcu_state": bool(self.require_fcu_state),
+            "fcu_mode": self._mode,
+            "allowed_fcu_modes": self.allowed_fcu_modes,
+            "armed": bool(self._armed),
+            "path_received": bool(self._path_received),
+            "path_len": len(self._reference_path),
+            "x": float(self._x),
+            "y": float(self._y),
+            "psi": float(normalize_angle(self._psi)),
+            "u": float(self._u),
+            "v": float(self._v),
+            "r": float(self._r),
         }
+        payload.update(self._last_ref_debug)
+        if self.scheme in ("B", "both"):
+            payload.update({
+                "dynamic_dt": float(self._dynamic_dt),
+                "dynamic_N": int(self._dynamic_N),
+                "prediction_time_s": float(self._dynamic_prediction_time),
+            })
+            payload.update(self._last_rc_debug)
+            if "u_opt" in info:
+                payload["tl_n"] = float(info["u_opt"][0])
+                payload["tr_n"] = float(info["u_opt"][1])
+            if "psi_ref" in info:
+                payload["psi_ref"] = float(info["psi_ref"])
+            if "e_psi" in info:
+                payload["e_psi"] = float(info["e_psi"])
         if not payload["success"]:
             payload["error"] = str(info.get("error", "未知错误"))
         msg = String()
@@ -660,7 +782,13 @@ class MpcControllerNode(Node):
         # 寻找最近点索引，并向前跳若干路径点以保持前视拉力。
         # 只跳 1 个点在有横向误差时容易追逐最近点，导致大弧线偏离路径。
         dists = [math.hypot(p[0] - current_state[0], p[1] - current_state[1]) for p in path]
-        idx = min(int(np.argmin(dists)) + max(1, self.reference_start_offset), len(path) - 1)
+        nearest_idx = int(np.argmin(dists))
+        idx = min(nearest_idx + max(1, self.reference_start_offset), len(path) - 1)
+        self._last_ref_debug = {
+            "nearest_idx": nearest_idx,
+            "ref_start_idx": idx,
+            "nearest_dist": float(dists[nearest_idx]),
+        }
 
         # 从 idx 开始的累计弧长
         arc = [0.0]
@@ -732,12 +860,14 @@ def main(args=None):
     node = MpcControllerNode()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
-        node.safe_shutdown()
+        if rclpy.ok():
+            node.safe_shutdown()
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == "__main__":

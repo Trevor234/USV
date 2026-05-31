@@ -111,11 +111,36 @@ def generate_launch_description():
     )
     auto_arm_arg = DeclareLaunchArgument(
         "auto_arm", default_value="false",
-        description="Have mode_manager auto-arm and switch to GUIDED on boot",
+        description="Have mode_manager auto-arm on boot",
+    )
+    auto_mode_switch_arg = DeclareLaunchArgument(
+        "auto_mode_switch", default_value="false",
+        description="Automatically switch the FCU mode. Keep false for Scheme B RC override tests.",
     )
     visualize_arg = DeclareLaunchArgument(
         "visualize", default_value="true",
         description="Start the matplotlib runtime visualizer",
+    )
+    waypoints_file_arg = DeclareLaunchArgument(
+        "waypoints_file", default_value="",
+        description="Optional deterministic waypoint YAML passed to path_planner_node",
+    )
+    mpc_overlay_arg = DeclareLaunchArgument(
+        "mpc_overlay",
+        default_value=os.path.join(bringup_share, "config", "mpc_params_vrx_scheme_b.yaml"),
+        description="Optional MPC parameter overlay for VRX Scheme B validation",
+    )
+    record_bag_arg = DeclareLaunchArgument(
+        "record_bag", default_value="false",
+        description="Record key MPC/MAVROS/Gazebo topics with rosbag2",
+    )
+    bag_dir_arg = DeclareLaunchArgument(
+        "bag_dir", default_value="/home/trevor/USV/usv_vrx_logs",
+        description="Directory where rosbag2 validation runs are written",
+    )
+    run_id_arg = DeclareLaunchArgument(
+        "run_id", default_value="scheme_b_vrx_run",
+        description="Subdirectory name for this validation bag",
     )
 
     mavros_odom_topic_arg = DeclareLaunchArgument(
@@ -154,7 +179,13 @@ def generate_launch_description():
     verbose = LaunchConfiguration("verbose")
     world = LaunchConfiguration("world")
     model = LaunchConfiguration("model")
+    auto_mode_switch = LaunchConfiguration("auto_mode_switch")
     visualize = LaunchConfiguration("visualize")
+    waypoints_file = LaunchConfiguration("waypoints_file")
+    mpc_overlay = LaunchConfiguration("mpc_overlay")
+    record_bag = LaunchConfiguration("record_bag")
+    bag_dir = LaunchConfiguration("bag_dir")
+    run_id = LaunchConfiguration("run_id")
     mavros_odom_topic = LaunchConfiguration("mavros_odom_topic")
     mavros_state_topic = LaunchConfiguration("mavros_state_topic")
     mavros_imu_topic = LaunchConfiguration("mavros_imu_topic")
@@ -324,8 +355,10 @@ def generate_launch_description():
             executable="mpc_node",
             name="mpc_controller_node",
             output="screen",
-            parameters=[mpc_params, usv_params, {
+            parameters=[mpc_params, usv_params, mpc_overlay, {
                 "scheme": scheme,
+                "control_mode": PythonExpression(["'dynamic' if '", scheme, "' == 'B' else 'kinematic'"]),
+                "allowed_fcu_modes": PythonExpression(["['MANUAL'] if '", scheme, "' == 'B' else ['GUIDED']"]),
                 "odom_topic": mavros_odom_topic,
                 "imu_topic": mavros_imu_topic,
                 "path_topic": "/path/reference",
@@ -346,6 +379,7 @@ def generate_launch_description():
             parameters=[path_params, {
                 "odom_topic": mavros_odom_topic,
                 "path_topic": "/path/reference",
+                "waypoints_file": waypoints_file,
             }],
         )],
     )
@@ -359,7 +393,7 @@ def generate_launch_description():
             output="screen",
             parameters=[{
                 "auto_arm": LaunchConfiguration("auto_arm"),
-                "auto_mode_switch": True,
+                "auto_mode_switch": auto_mode_switch,
                 "state_topic": mavros_state_topic,
                 "set_mode_service": "/mavros/set_mode",
                 "arming_service": "/mavros/cmd/arming",
@@ -384,10 +418,30 @@ def generate_launch_description():
         )],
     )
 
+    bag_record = ExecuteProcess(
+        cmd=[
+            "ros2", "bag", "record",
+            "-o", PathJoinSubstitution([bag_dir, run_id]),
+            "/mavros/state",
+            mavros_odom_topic,
+            mavros_imu_topic,
+            mavros_rc_override_topic,
+            mavros_rc_out_topic,
+            force_topic,
+            "/path/reference",
+            "/mpc/status",
+            "/mpc/predicted_trajectory",
+        ],
+        output="screen",
+        condition=IfCondition(record_bag),
+    )
+
     return LaunchDescription([
         # args
         scheme_arg, gui_arg, paused_arg, verbose_arg, vrx_enabled_arg,
-        world_arg, model_arg, fcu_url_arg, gcs_url_arg, auto_arm_arg, visualize_arg,
+        world_arg, model_arg, fcu_url_arg, gcs_url_arg, auto_arm_arg,
+        auto_mode_switch_arg, visualize_arg, waypoints_file_arg, mpc_overlay_arg,
+        record_bag_arg, bag_dir_arg, run_id_arg,
         mavros_odom_topic_arg, mavros_state_topic_arg, mavros_imu_topic_arg,
         mavros_velocity_topic_arg, mavros_rc_override_topic_arg,
         mavros_rc_out_topic_arg, force_topic_arg,
@@ -400,4 +454,5 @@ def generate_launch_description():
         sitl_proc,
         # ROS 2 nodes
         mavros_node, thrust_bridge, mpc_node, planner_node, safety_node, visualizer_node,
+        bag_record,
     ])

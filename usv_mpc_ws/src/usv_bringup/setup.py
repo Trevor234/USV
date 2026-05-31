@@ -1,3 +1,4 @@
+from glob import glob
 from setuptools import setup
 
 package_name = "usv_bringup"
@@ -14,13 +15,10 @@ setup(
             "launch/sim.launch.py",
             "launch/sitl.launch.py",
             "launch/real.launch.py",
+            "launch/vrx.launch.py",
         ]),
-        (f"share/{package_name}/config", [
-            "config/mavros_config.yaml",
-            "config/usv_params.yaml",
-            "config/mpc_params.yaml",
-            "config/path_config.yaml",
-        ]),
+        (f"share/{package_name}/config", glob("config/*.yaml")),
+        (f"share/{package_name}/config/waypoints", glob("config/waypoints/*.yaml")),
     ],
     install_requires=["setuptools"],
     zip_safe=True,

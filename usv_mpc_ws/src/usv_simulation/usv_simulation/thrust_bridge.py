@@ -61,6 +61,8 @@ class UsvThrustBridge(Node):
         self.declare_parameter("pwm_center", 1500)
         self.declare_parameter("pwm_max", 1900)
         self.declare_parameter("deadband_us", 25)
+        self.declare_parameter("max_force", 40.0)
+        self.declare_parameter("arm_y", 0.3)
 
         self._left_ch = int(self.get_parameter("left_channel").value)
         self._right_ch = int(self.get_parameter("right_channel").value)
@@ -68,6 +70,8 @@ class UsvThrustBridge(Node):
         self._pwm_center = int(self.get_parameter("pwm_center").value)
         self._pwm_max = int(self.get_parameter("pwm_max").value)
         self._deadband = int(self.get_parameter("deadband_us").value)
+        self._max_force = float(self.get_parameter("max_force").value)
+        self._arm_y = float(self.get_parameter("arm_y").value)
 
         if RCOut is None:
             self.get_logger().error(
@@ -88,7 +92,8 @@ class UsvThrustBridge(Node):
         self._frames_seen = 0
         self.get_logger().info(
             f"usv_thrust_bridge ready (Fallback Mode): rc_out={self.get_parameter('rc_out_topic').value} "
-            f"→ Wrench on {self.get_parameter('force_topic').value}"
+            f"→ Wrench on {self.get_parameter('force_topic').value} "
+            f"| max_force={self._max_force:.1f}N arm_y={self._arm_y:.2f}m"
         )
 
     def _rc_callback(self, msg) -> None:
@@ -107,12 +112,8 @@ class UsvThrustBridge(Node):
             right_pwm, self._pwm_min, self._pwm_center, self._pwm_max, self._deadband
         )
 
-        # Calculate force and torque (max force 40 N per thruster, arm 0.3 m)
-        max_force = 40.0
-        arm_y = 0.3
-        
-        force_x = (left + right) * max_force
-        torque_z = (right - left) * max_force * arm_y
+        force_x = (left + right) * self._max_force
+        torque_z = (right - left) * self._max_force * self._arm_y
 
         msg_wrench = Wrench()
         msg_wrench.force.x = float(force_x)
@@ -122,7 +123,8 @@ class UsvThrustBridge(Node):
         self._frames_seen += 1
         if self._frames_seen % 100 == 0:
             self.get_logger().info(
-                f"PWM L={left_pwm} R={right_pwm}  →  cmd L={left:+.3f} R={right:+.3f}"
+                f"PWM L={left_pwm} R={right_pwm}  →  cmd L={left:+.3f} R={right:+.3f}  "
+                f"force_x={force_x:+.1f}N torque_z={torque_z:+.1f}Nm"
             )
 
 

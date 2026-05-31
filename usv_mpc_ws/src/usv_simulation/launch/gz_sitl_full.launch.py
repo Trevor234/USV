@@ -12,7 +12,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription, TimerAction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -26,8 +26,17 @@ def generate_launch_description():
     fcu_url_arg = DeclareLaunchArgument("fcu_url", default_value="tcp://127.0.0.1:5760")
     gcs_url_arg = DeclareLaunchArgument("gcs_url", default_value="udp://@127.0.0.1:14550")
     auto_arm_arg = DeclareLaunchArgument("auto_arm", default_value="false")
+    auto_mode_switch_arg = DeclareLaunchArgument("auto_mode_switch", default_value="false")
     visualize_arg = DeclareLaunchArgument("visualize", default_value="true")
     headless_arg = DeclareLaunchArgument("headless", default_value="false")
+    waypoints_file_arg = DeclareLaunchArgument("waypoints_file", default_value="")
+    mpc_overlay_arg = DeclareLaunchArgument(
+        "mpc_overlay",
+        default_value=os.path.join(bringup_share, "config", "mpc_params_vrx_scheme_b.yaml"),
+    )
+    record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
+    bag_dir_arg = DeclareLaunchArgument("bag_dir", default_value="/home/trevor/USV/usv_vrx_logs")
+    run_id_arg = DeclareLaunchArgument("run_id", default_value="scheme_b_gz_run")
     mavros_delay_arg = DeclareLaunchArgument("mavros_delay", default_value="8.0")
     nodes_delay_arg = DeclareLaunchArgument("nodes_delay", default_value="10.0")
 
@@ -44,7 +53,13 @@ def generate_launch_description():
     scheme = LaunchConfiguration("scheme")
     fcu_url = LaunchConfiguration("fcu_url")
     gcs_url = LaunchConfiguration("gcs_url")
+    auto_mode_switch = LaunchConfiguration("auto_mode_switch")
     visualize = LaunchConfiguration("visualize")
+    waypoints_file = LaunchConfiguration("waypoints_file")
+    mpc_overlay = LaunchConfiguration("mpc_overlay")
+    record_bag = LaunchConfiguration("record_bag")
+    bag_dir = LaunchConfiguration("bag_dir")
+    run_id = LaunchConfiguration("run_id")
     mavros_delay = LaunchConfiguration("mavros_delay")
     nodes_delay = LaunchConfiguration("nodes_delay")
     mavros_odom_topic = LaunchConfiguration("mavros_odom_topic")
@@ -129,8 +144,10 @@ def generate_launch_description():
             executable="mpc_node",
             name="mpc_controller_node",
             output="screen",
-            parameters=[mpc_params, usv_params, {
+            parameters=[mpc_params, usv_params, mpc_overlay, {
                 "scheme": scheme,
+                "control_mode": PythonExpression(["'dynamic' if '", scheme, "' == 'B' else 'kinematic'"]),
+                "allowed_fcu_modes": PythonExpression(["['MANUAL'] if '", scheme, "' == 'B' else ['GUIDED']"]),
                 "odom_topic": mavros_odom_topic,
                 "imu_topic": mavros_imu_topic,
                 "path_topic": "/path/reference",
@@ -148,7 +165,11 @@ def generate_launch_description():
             executable="path_planner_node",
             name="path_planner_node",
             output="screen",
-            parameters=[path_params, {"odom_topic": mavros_odom_topic, "path_topic": "/path/reference"}],
+            parameters=[path_params, {
+                "odom_topic": mavros_odom_topic,
+                "path_topic": "/path/reference",
+                "waypoints_file": waypoints_file,
+            }],
         )],
     )
 
@@ -161,7 +182,7 @@ def generate_launch_description():
             output="screen",
             parameters=[{
                 "auto_arm": LaunchConfiguration("auto_arm"),
-                "auto_mode_switch": True,
+                "auto_mode_switch": auto_mode_switch,
                 "state_topic": mavros_state_topic,
                 "set_mode_service": "/mavros/set_mode",
                 "arming_service": "/mavros/cmd/arming",
@@ -186,8 +207,30 @@ def generate_launch_description():
         )],
     )
 
+    bag_record = ExecuteProcess(
+        cmd=[
+            "ros2", "bag", "record",
+            "-o", PathJoinSubstitution([bag_dir, run_id]),
+            "/mavros/state",
+            mavros_odom_topic,
+            mavros_imu_topic,
+            mavros_rc_override_topic,
+            mavros_rc_out_topic,
+            force_topic,
+            entity_wrench_topic,
+            gz_odom_topic,
+            "/path/reference",
+            "/mpc/status",
+            "/mpc/predicted_trajectory",
+        ],
+        output="screen",
+        condition=IfCondition(record_bag),
+    )
+
     return LaunchDescription([
-        scheme_arg, fcu_url_arg, gcs_url_arg, auto_arm_arg, visualize_arg, headless_arg,
+        scheme_arg, fcu_url_arg, gcs_url_arg, auto_arm_arg, auto_mode_switch_arg,
+        visualize_arg, headless_arg, waypoints_file_arg, mpc_overlay_arg,
+        record_bag_arg, bag_dir_arg, run_id_arg,
         mavros_delay_arg, nodes_delay_arg,
         mavros_odom_topic_arg, mavros_state_topic_arg, mavros_imu_topic_arg,
         mavros_velocity_topic_arg, mavros_rc_override_topic_arg, mavros_rc_out_topic_arg,
@@ -201,4 +244,5 @@ def generate_launch_description():
         planner_node,
         safety_node,
         visualizer_node,
+        bag_record,
     ])

@@ -1,0 +1,36 @@
+/**:
+  ros__parameters:
+    # Conservative Scheme B overlay for real VRX Gazebo Sim / WAM-V validation.
+    scheme: "B"
+    control_mode: "dynamic"
+    output_mode: "vrx_thrust"
+    require_fcu_state: false
+    # Keep the VRX NMPC small enough for a 5 Hz control loop.
+    # With mpc_dt=0.2 and dynamic.dt=0.2, mpc_node builds dynamic_N=12 below
+    # instead of 40, which was causing 500 ms solves.
+    mpc_dt: 0.2
+    horizon: 12
+    max_solve_time_ms: 200.0
+    odom_timeout_s: 2.0
+    state_timeout_s: 0.0
+    vrx_left_thrust_topic: "/wamv/thrusters/left/thrust"
+    vrx_right_thrust_topic: "/wamv/thrusters/right/thrust"
+    # VRX WAM-V Thruster system expects a command scale similar to its joystick
+    # teleop config (±1000), not small physical-newton values from the USV MPC.
+    vrx_thrust_scale: 25.0
+    vrx_thrust_cmd_max: 1000.0
+
+    reference_start_offset: 1
+
+    dynamic:
+      Q: [15.0, 15.0, 10.0, 3.0, 1.0, 2.0]
+      R: [0.10, 0.10]
+      Rd: [1.00, 1.00]
+      Qf_scale: 5.0
+      dt: 0.2
+      T_max: 40.0
+      T_min: -20.0
+      dT_max: 30.0
+
+    steering_gain: 0.3
+    throttle_gain: 1.0
