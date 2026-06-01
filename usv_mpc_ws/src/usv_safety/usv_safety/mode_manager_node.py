@@ -52,8 +52,9 @@ class ModeManagerNode(Node):
         self._state_sub = self.create_subscription(
             MavrosState, state_topic, self._state_callback, 10
         )
+        mpc_status_topic = self.get_parameter("mpc_status_topic").value
         self._mpc_status_sub = self.create_subscription(
-            String, "/mpc/status", self._mpc_status_callback, 10
+            String, mpc_status_topic, self._mpc_status_callback, 10
         )
 
         # Service clients
@@ -77,6 +78,8 @@ class ModeManagerNode(Node):
         self.declare_parameter("max_solver_failures", 5)
         self.declare_parameter("odom_timeout_s", 1.0)
         self.declare_parameter("state_topic", "/mavros/state")
+        self.declare_parameter("mpc_status_topic", "/mpc/status")
+        self.declare_parameter("path_topic", "/path/reference")
         self.declare_parameter("set_mode_service", "/mavros/set_mode")
         self.declare_parameter("arming_service", "/mavros/cmd/arming")
 

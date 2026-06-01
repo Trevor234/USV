@@ -49,6 +49,7 @@ from launch.actions import (
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
     Command,
+    EnvironmentVariable,
     FindExecutable,
     LaunchConfiguration,
     PathJoinSubstitution,
@@ -135,7 +136,8 @@ def generate_launch_description():
         description="Record key MPC/MAVROS/Gazebo topics with rosbag2",
     )
     bag_dir_arg = DeclareLaunchArgument(
-        "bag_dir", default_value="/home/trevor/USV/usv_vrx_logs",
+        "bag_dir",
+        default_value=PathJoinSubstitution([EnvironmentVariable("HOME"), "usv_vrx_logs"]),
         description="Directory where rosbag2 validation runs are written",
     )
     run_id_arg = DeclareLaunchArgument(

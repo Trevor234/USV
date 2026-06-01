@@ -1,0 +1,35 @@
+profiles:
+  common:
+    path_topic: /path/reference
+    mpc_status_topic: /mpc/status
+    predicted_trajectory_topic: /mpc/predicted_trajectory
+    dynamic_waypoints_topic: /usv/mission/waypoints_local
+    map_frame: map
+    body_frame: base_link
+
+  vrx:
+    odom_topic: /wamv/sensors/position/ground_truth_odometry
+    imu_topic: /wamv/sensors/imu/imu/data
+    left_thrust_topic: /wamv/thrusters/left/thrust
+    right_thrust_topic: /wamv/thrusters/right/thrust
+
+  sitl_mavros:
+    odom_topic: /mavros/local_position/odom
+    imu_topic: /mavros/imu/data
+    state_topic: /mavros/state
+    velocity_topic: /mavros/setpoint_velocity/cmd_vel
+    rc_override_topic: /mavros/rc/override
+    rc_out_topic: /mavros/rc/out
+
+  real_mavros:
+    odom_topic: /mavros/local_position/odom
+    imu_topic: /mavros/imu/data
+    state_topic: /mavros/state
+    velocity_topic: /mavros/setpoint_velocity/cmd_vel
+    rc_override_topic: /mavros/rc/override
+    rc_out_topic: /mavros/rc/out
+
+  fallback_gz:
+    odom_topic: /model/usv_2m/odometry
+    force_topic: /usv/cmd_force
+    entity_wrench_topic: /world/lake_gz/wrench

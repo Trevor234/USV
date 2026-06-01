@@ -7,7 +7,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription, TimerAction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -21,7 +21,11 @@ def generate_launch_description():
     paused_arg = DeclareLaunchArgument("paused", default_value="False")
     waypoints_file_arg = DeclareLaunchArgument("waypoints_file", default_value="")
     record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
-    bag_dir_arg = DeclareLaunchArgument("bag_dir", default_value="/home/trevor/USV/usv_vrx_logs")
+    bag_dir_arg = DeclareLaunchArgument(
+        "bag_dir",
+        default_value=PathJoinSubstitution([EnvironmentVariable("HOME"), "usv_vrx_logs"]),
+        description="Directory for optional VRX rosbag recordings",
+    )
     run_id_arg = DeclareLaunchArgument("run_id", default_value="vrx_scheme_b_run")
 
     odom_topic_arg = DeclareLaunchArgument(
@@ -36,6 +40,16 @@ def generate_launch_description():
     right_thrust_topic_arg = DeclareLaunchArgument(
         "right_thrust_topic", default_value="/wamv/thrusters/right/thrust"
     )
+    path_topic_arg = DeclareLaunchArgument("path_topic", default_value="/path/reference")
+    mpc_status_topic_arg = DeclareLaunchArgument("mpc_status_topic", default_value="/mpc/status")
+    predicted_trajectory_topic_arg = DeclareLaunchArgument(
+        "predicted_trajectory_topic", default_value="/mpc/predicted_trajectory"
+    )
+    dynamic_waypoints_topic_arg = DeclareLaunchArgument(
+        "dynamic_waypoints_topic", default_value="/usv/mission/waypoints_local"
+    )
+    path_frame_arg = DeclareLaunchArgument("path_frame", default_value="map")
+    body_frame_arg = DeclareLaunchArgument("body_frame", default_value="base_link")
 
     world = LaunchConfiguration("world")
     headless = LaunchConfiguration("headless")
@@ -48,6 +62,12 @@ def generate_launch_description():
     imu_topic = LaunchConfiguration("imu_topic")
     left_thrust_topic = LaunchConfiguration("left_thrust_topic")
     right_thrust_topic = LaunchConfiguration("right_thrust_topic")
+    path_topic = LaunchConfiguration("path_topic")
+    mpc_status_topic = LaunchConfiguration("mpc_status_topic")
+    predicted_trajectory_topic = LaunchConfiguration("predicted_trajectory_topic")
+    dynamic_waypoints_topic = LaunchConfiguration("dynamic_waypoints_topic")
+    path_frame = LaunchConfiguration("path_frame")
+    body_frame = LaunchConfiguration("body_frame")
 
     wamv_urdf = os.path.join(vrx_urdf_share, "urdf", "wamv_gazebo.urdf.xacro")
 
@@ -81,7 +101,8 @@ def generate_launch_description():
             output="screen",
             parameters=[path_params, {
                 "odom_topic": odom_topic,
-                "path_topic": "/path/reference",
+                "path_topic": path_topic,
+                "dynamic_waypoints_topic": dynamic_waypoints_topic,
                 "waypoints_file": waypoints_file,
             }],
         )],
@@ -101,7 +122,11 @@ def generate_launch_description():
                 "require_fcu_state": False,
                 "odom_topic": odom_topic,
                 "imu_topic": imu_topic,
-                "path_topic": "/path/reference",
+                "path_topic": path_topic,
+                "status_topic": mpc_status_topic,
+                "predicted_trajectory_topic": predicted_trajectory_topic,
+                "path_frame": path_frame,
+                "body_frame": body_frame,
                 "vrx_left_thrust_topic": left_thrust_topic,
                 "vrx_right_thrust_topic": right_thrust_topic,
             }],
@@ -116,9 +141,9 @@ def generate_launch_description():
             imu_topic,
             left_thrust_topic,
             right_thrust_topic,
-            "/path/reference",
-            "/mpc/status",
-            "/mpc/predicted_trajectory",
+            path_topic,
+            mpc_status_topic,
+            predicted_trajectory_topic,
         ],
         output="screen",
         condition=IfCondition(record_bag),
@@ -136,6 +161,12 @@ def generate_launch_description():
         imu_topic_arg,
         left_thrust_topic_arg,
         right_thrust_topic_arg,
+        path_topic_arg,
+        mpc_status_topic_arg,
+        predicted_trajectory_topic_arg,
+        dynamic_waypoints_topic_arg,
+        path_frame_arg,
+        body_frame_arg,
         vrx,
         planner_node,
         mpc_node,

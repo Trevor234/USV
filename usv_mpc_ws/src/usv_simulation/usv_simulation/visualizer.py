@@ -56,21 +56,23 @@ class USVVisualizer(Node):
         )
 
     def _declare_parameters(self):
-        self.declare_parameter("odom_topic", "/mavros/mavros/odom")
+        self.declare_parameter("odom_topic", "/mavros/local_position/odom")
         self.declare_parameter("reference_path_topic", "/path/reference")
+        self.declare_parameter("path_topic", "/path/reference")
         self.declare_parameter("mpc_trajectory_topic", "/mpc/predicted_trajectory")
+        self.declare_parameter("predicted_trajectory_topic", "/mpc/predicted_trajectory")
         self.declare_parameter("mission_waypoints_topic", "/usv/mission/waypoints_local")
         self.declare_parameter("mpc_status_topic", "/mpc/status")
         self.declare_parameter("mavros_state_topic", "/mavros/state")
-        self.declare_parameter("cmd_vel_topic", "/mavros/mavros/cmd_vel")
-        self.declare_parameter("rc_override_topic", "/mavros/mavros/override")
+        self.declare_parameter("cmd_vel_topic", "/mavros/setpoint_velocity/cmd_vel")
+        self.declare_parameter("rc_override_topic", "/mavros/rc/override")
         self.declare_parameter("history_length", 10000)
         self.declare_parameter("plot_interval_ms", 200)
 
     def _load_parameters(self):
         self._odom_topic = self.get_parameter("odom_topic").value
-        self._reference_path_topic = self.get_parameter("reference_path_topic").value
-        self._mpc_trajectory_topic = self.get_parameter("mpc_trajectory_topic").value
+        self._reference_path_topic = self.get_parameter("path_topic").value
+        self._mpc_trajectory_topic = self.get_parameter("predicted_trajectory_topic").value
         self._mission_waypoints_topic = self.get_parameter("mission_waypoints_topic").value
         self._mpc_status_topic = self.get_parameter("mpc_status_topic").value
         self._mavros_state_topic = self.get_parameter("mavros_state_topic").value

@@ -39,7 +39,7 @@ def generate_launch_description():
         description="Optional MAVLink GCS forwarding URL"
     )
     mavros_odom_topic_arg = DeclareLaunchArgument(
-        "mavros_odom_topic", default_value="/mavros/mavros/odom",
+        "mavros_odom_topic", default_value="/mavros/local_position/odom",
         description="MAVROS odometry topic for planner and MPC"
     )
     mavros_state_topic_arg = DeclareLaunchArgument(
@@ -47,15 +47,15 @@ def generate_launch_description():
         description="MAVROS state topic for mode manager and MPC"
     )
     mavros_imu_topic_arg = DeclareLaunchArgument(
-        "mavros_imu_topic", default_value="/mavros/mavros/data",
+        "mavros_imu_topic", default_value="/mavros/imu/data",
         description="MAVROS IMU topic used by the MPC node"
     )
     mavros_velocity_topic_arg = DeclareLaunchArgument(
-        "mavros_velocity_topic", default_value="/mavros/mavros/cmd_vel",
+        "mavros_velocity_topic", default_value="/mavros/setpoint_velocity/cmd_vel",
         description="MAVROS velocity command topic used by Scheme A"
     )
     mavros_rc_override_topic_arg = DeclareLaunchArgument(
-        "mavros_rc_override_topic", default_value="/mavros/mavros/override",
+        "mavros_rc_override_topic", default_value="/mavros/rc/override",
         description="MAVROS RC override topic used by Scheme B"
     )
     visualize_arg = DeclareLaunchArgument(

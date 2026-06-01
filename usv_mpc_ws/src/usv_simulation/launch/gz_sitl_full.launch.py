@@ -12,7 +12,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription, TimerAction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
+from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -35,7 +35,11 @@ def generate_launch_description():
         default_value=os.path.join(bringup_share, "config", "mpc_params_vrx_scheme_b.yaml"),
     )
     record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
-    bag_dir_arg = DeclareLaunchArgument("bag_dir", default_value="/home/trevor/USV/usv_vrx_logs")
+    bag_dir_arg = DeclareLaunchArgument(
+        "bag_dir",
+        default_value=PathJoinSubstitution([EnvironmentVariable("HOME"), "usv_vrx_logs"]),
+        description="Directory where rosbag2 validation runs are written",
+    )
     run_id_arg = DeclareLaunchArgument("run_id", default_value="scheme_b_gz_run")
     mavros_delay_arg = DeclareLaunchArgument("mavros_delay", default_value="8.0")
     nodes_delay_arg = DeclareLaunchArgument("nodes_delay", default_value="10.0")

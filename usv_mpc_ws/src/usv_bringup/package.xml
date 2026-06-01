@@ -14,6 +14,9 @@
   <depend>usv_safety</depend>
   <depend>usv_simulation</depend>
 
+  <exec_depend>vrx_gz</exec_depend>
+  <exec_depend>wamv_gazebo</exec_depend>
+
   <export>
     <build_type>ament_python</build_type>
   </export>

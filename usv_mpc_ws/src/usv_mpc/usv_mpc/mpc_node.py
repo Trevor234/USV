@@ -73,6 +73,10 @@ class MpcControllerNode(Node):
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("velocity_topic", "/mavros/setpoint_velocity/cmd_vel")
         self.declare_parameter("rc_override_topic", "/mavros/rc/override")
+        self.declare_parameter("status_topic", "/mpc/status")
+        self.declare_parameter("predicted_trajectory_topic", "/mpc/predicted_trajectory")
+        self.declare_parameter("path_frame", "map")
+        self.declare_parameter("body_frame", "base_link")
         self.declare_parameter("output_mode", "rc_override")
         self.declare_parameter("require_fcu_state", True)
         self.declare_parameter("vrx_left_thrust_topic", "/wamv/thrusters/left/thrust")
@@ -160,6 +164,8 @@ class MpcControllerNode(Node):
         self.require_fcu_state = bool(self.get_parameter("require_fcu_state").value)
         self.vrx_thrust_scale = float(self.get_parameter("vrx_thrust_scale").value)
         self.vrx_thrust_cmd_max = float(self.get_parameter("vrx_thrust_cmd_max").value)
+        self.path_frame = str(self.get_parameter("path_frame").value)
+        self.body_frame = str(self.get_parameter("body_frame").value)
         self.publish_predicted = self.get_parameter("publish_predicted").value
         self.solver_hold_threshold = int(self.get_parameter("solver_hold_threshold").value)
         allowed_modes = self.get_parameter("allowed_fcu_modes").value
@@ -308,8 +314,12 @@ class MpcControllerNode(Node):
             Float64, self.get_parameter("vrx_right_thrust_topic").value, 10
         )
 
-        self._traj_pub = self.create_publisher(NavPath, "/mpc/predicted_trajectory", 10)
-        self._status_pub = self.create_publisher(String, "/mpc/status", 10)
+        self._traj_pub = self.create_publisher(
+            NavPath, self.get_parameter("predicted_trajectory_topic").value, 10
+        )
+        self._status_pub = self.create_publisher(
+            String, self.get_parameter("status_topic").value, 10
+        )
 
     # ---------- 回调函数 ----------
 
@@ -490,7 +500,7 @@ class MpcControllerNode(Node):
         """发布 TwistStamped 速度指令（方案 A）。"""
         twist = TwistStamped()
         twist.header.stamp = self.get_clock().now().to_msg()
-        twist.header.frame_id = "base_link"
+        twist.header.frame_id = self.body_frame
         twist.twist.linear.x = float(u_opt[0])
         twist.twist.linear.y = 0.0
         twist.twist.angular.z = float(u_opt[1])
@@ -836,7 +846,7 @@ class MpcControllerNode(Node):
 
         msg = NavPath()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "map"
+        msg.header.frame_id = self.path_frame
 
         from geometry_msgs.msg import PoseStamped
 

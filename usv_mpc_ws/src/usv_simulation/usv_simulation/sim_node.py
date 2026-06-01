@@ -2,13 +2,13 @@
 
 Simulates the 6-DOF dynamics of the USV in real time.
 Publishes:
-  /mavros/mavros/odom   — simulated odometry (with noise)
-  /mavros/mavros/data              — simulated IMU
-  /mavros/state                 — simulated MAVROS state
+  /mavros/local_position/odom     — simulated odometry (with noise)
+  /mavros/imu/data                — simulated IMU
+  /mavros/state                   — simulated MAVROS state
 
 Subscribes to:
-  /mavros/mavros/cmd_vel  — velocity commands (Scheme A)
-  /mavros/mavros/override               — RC override (Scheme B)
+  /mavros/setpoint_velocity/cmd_vel  — velocity commands (Scheme A)
+  /mavros/rc/override                — RC override (Scheme B)
 
 Use this for testing MPC without hardware or SITL.
 """
@@ -56,6 +56,15 @@ class USVSimulator(Node):
         self.declare_parameter("u_init", 0.0)
         self.declare_parameter("v_init", 0.0)
         self.declare_parameter("r_init", 0.0)
+
+        # Topic contract
+        self.declare_parameter("odom_topic", "/mavros/local_position/odom")
+        self.declare_parameter("imu_topic", "/mavros/imu/data")
+        self.declare_parameter("state_topic", "/mavros/state")
+        self.declare_parameter("velocity_topic", "/mavros/setpoint_velocity/cmd_vel")
+        self.declare_parameter("rc_override_topic", "/mavros/rc/override")
+        self.declare_parameter("map_frame", "map")
+        self.declare_parameter("body_frame", "base_link")
 
         # Hull parameters (same as dynamic model)
         self.declare_parameter("mass", 30.0)
@@ -118,21 +127,29 @@ class USVSimulator(Node):
         self._Nvv = self.get_parameter("Nvv").value
         self._Nrr = self.get_parameter("Nrr").value
 
+        self._odom_topic = self.get_parameter("odom_topic").value
+        self._imu_topic = self.get_parameter("imu_topic").value
+        self._state_topic = self.get_parameter("state_topic").value
+        self._velocity_topic = self.get_parameter("velocity_topic").value
+        self._rc_override_topic = self.get_parameter("rc_override_topic").value
+        self._map_frame = self.get_parameter("map_frame").value
+        self._body_frame = self.get_parameter("body_frame").value
+
         self._sim_time = 0.0
 
     def _init_pubsub(self):
         # Subscribers for commands
         self._vel_sub = self.create_subscription(
-            TwistStamped, "/mavros/mavros/cmd_vel", self._vel_callback, 10
+            TwistStamped, self._velocity_topic, self._vel_callback, 10
         )
         self._rc_sub = self.create_subscription(
-            OverrideRCIn, "/mavros/mavros/override", self._rc_callback, 10
+            OverrideRCIn, self._rc_override_topic, self._rc_callback, 10
         )
 
         # Publishers for simulated sensor data
-        self._odom_pub = self.create_publisher(Odometry, "/mavros/mavros/odom", 10)
-        self._imu_pub = self.create_publisher(Imu, "/mavros/mavros/data", 10)
-        self._state_pub = self.create_publisher(MavrosState, "/mavros/state", 10)
+        self._odom_pub = self.create_publisher(Odometry, self._odom_topic, 10)
+        self._imu_pub = self.create_publisher(Imu, self._imu_topic, 10)
+        self._state_pub = self.create_publisher(MavrosState, self._state_topic, 10)
 
     def _vel_callback(self, msg: TwistStamped):
         self._cmd_u = msg.twist.linear.x
@@ -240,8 +257,8 @@ class USVSimulator(Node):
     def _publish_odom(self):
         msg = Odometry()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "map"
-        msg.child_frame_id = "base_link"
+        msg.header.frame_id = self._map_frame
+        msg.child_frame_id = self._body_frame
 
         # Position with optional noise
         noise_pos = np.random.randn(3) * self._noise_pos if self._add_noise else np.zeros(3)
@@ -270,7 +287,7 @@ class USVSimulator(Node):
     def _publish_imu(self):
         msg = Imu()
         msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "base_link"
+        msg.header.frame_id = self._body_frame
 
         noise = np.random.randn(3) * 0.001 if self._add_noise else np.zeros(3)
         msg.angular_velocity.z = self._r + noise[2]

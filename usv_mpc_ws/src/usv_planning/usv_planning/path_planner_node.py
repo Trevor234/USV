@@ -64,7 +64,7 @@ class PathPlannerNode(Node):
         self.declare_parameter("lookahead_distance", 50.0)  # 向前发布的路径长度，单位 m
         self.declare_parameter("turn_radius", 5.0)  # Dubins 最小转弯半径
         self.declare_parameter("cruise_speed", 1.0)
-        self.declare_parameter("odom_topic", "/mavros/mavros/odom")
+        self.declare_parameter("odom_topic", "/mavros/local_position/odom")
         self.declare_parameter("path_topic", "/path/reference")
         self.declare_parameter("dynamic_waypoints_topic", "/usv/mission/waypoints_local")
         self.declare_parameter("default_waypoint_radius", 2.0)
