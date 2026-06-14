@@ -43,7 +43,13 @@ class SafetyState:
 
 
 class SafetyMonitor:
-    """Monitors system health and triggers failsafe when needed."""
+    """Monitors system health and triggers failsafe when needed.
+
+    Each update method owns one monitoring domain (odom/geofence/battery,
+    solver, path, or odometry watchdog). Updating one domain must not clear
+    active flags from another domain; otherwise a new odom sample could mask a
+    solver/path failsafe. `_replace_flags` enforces that separation.
+    """
 
     def __init__(self, config: Optional[SafetyConfig] = None):
         self.config = config or SafetyConfig()
@@ -53,43 +59,98 @@ class SafetyMonitor:
         self._last_solve_time_ms: float = 0.0
         self._current_state: SafetyState = SafetyState()
 
-    def update_odom(self, x: float, y: float, psi: float, speed: float,
-                    voltage: float = 12.0, timestamp: Optional[float] = None):
-        """Update with latest odometry."""
-        ts = timestamp or time.time()
-        self._last_odom_time = ts
-
-        flags = []
-        level = SafetyLevel.NOMINAL
-
-        # Geofence check
-        dist = math.hypot(x - self.config.geofence_center[0],
-                          y - self.config.geofence_center[1])
-        if dist > self.config.geofence_radius_m * 0.9:
-            flags.append(f"Approaching geofence boundary: {dist:.1f}m")
-            level = SafetyLevel.WARNING
-        if dist > self.config.geofence_radius_m:
-            flags.append(f"GEOFENCE VIOLATION: {dist:.1f}m")
-            level = SafetyLevel.FAILSAFE
-
-        # Speed limit
-        if speed > self.config.max_speed_mps:
-            flags.append(f"Speed limit exceeded: {speed:.2f} m/s")
-            level = max(level, SafetyLevel.WARNING)
-
-        # Battery check
-        if voltage < self.config.critical_battery_v:
-            flags.append(f"CRITICAL battery: {voltage:.1f}V")
-            level = SafetyLevel.FAILSAFE
-        elif voltage < self.config.low_battery_v:
-            flags.append(f"Low battery: {voltage:.1f}V")
-            level = max(level, SafetyLevel.WARNING)
-
+    def _replace_flags(self, prefixes: tuple, new_flags: list, timestamp: float):
+        """Replace one monitoring domain's flags without clearing others."""
+        flags = [
+            flag for flag in self._current_state.active_flags
+            if not any(flag.startswith(prefix) for prefix in prefixes)
+        ]
+        flags.extend(new_flags)
+        level = self._level_from_flags(flags)
         self._current_state = SafetyState(
             level=level,
             active_flags=flags,
             recommended_action=self._get_action(level),
-            timestamp=ts,
+            timestamp=timestamp,
+        )
+
+    @staticmethod
+    def _level_from_flags(flags: list) -> SafetyLevel:
+        """Derive aggregate severity from active flag messages."""
+        level = SafetyLevel.NOMINAL
+        for flag in flags:
+            if flag.startswith((
+                "GEOFENCE VIOLATION",
+                "CRITICAL battery",
+                "Solver failed",
+                "No path update",
+                "No odometry received",
+                "Odometry timeout",
+            )):
+                return SafetyLevel.FAILSAFE
+            if flag.startswith((
+                "Approaching geofence boundary",
+                "Speed limit exceeded",
+                "Low battery",
+                "Solver failures",
+                "Slow solve",
+            )):
+                level = max(level, SafetyLevel.WARNING)
+        return level
+
+    def set_odom_watchdog(self, flag: Optional[str], timestamp: Optional[float] = None):
+        """Set or clear the odometry watchdog flag."""
+        self._replace_flags(
+            ("No odometry received", "Odometry timeout"),
+            [flag] if flag else [],
+            timestamp or time.time(),
+        )
+
+    def set_solver_fail_count(self, fail_count: int):
+        """Synchronize solver failure counter without adding a new failure."""
+        self._solver_fail_count = max(0, int(fail_count))
+
+    def clear_solver_flags(self, timestamp: Optional[float] = None):
+        """Clear stale solver warning/failsafe flags."""
+        self._replace_flags(
+            ("Solver failed", "Solver failures", "Slow solve"),
+            [],
+            timestamp or time.time(),
+        )
+
+    def update_odom(self, x: float, y: float, psi: float, speed: float,
+                    voltage: float = 12.0, timestamp: Optional[float] = None):
+        """Update geofence, speed and battery checks from latest odometry."""
+        ts = timestamp or time.time()
+        self._last_odom_time = ts
+
+        flags = []
+
+        dist = math.hypot(x - self.config.geofence_center[0],
+                          y - self.config.geofence_center[1])
+        if dist > self.config.geofence_radius_m:
+            flags.append(f"GEOFENCE VIOLATION: {dist:.1f}m")
+        elif dist > self.config.geofence_radius_m * 0.9:
+            flags.append(f"Approaching geofence boundary: {dist:.1f}m")
+
+        if speed > self.config.max_speed_mps:
+            flags.append(f"Speed limit exceeded: {speed:.2f} m/s")
+
+        if voltage < self.config.critical_battery_v:
+            flags.append(f"CRITICAL battery: {voltage:.1f}V")
+        elif voltage < self.config.low_battery_v:
+            flags.append(f"Low battery: {voltage:.1f}V")
+
+        self._replace_flags(
+            (
+                "Approaching geofence boundary",
+                "GEOFENCE VIOLATION",
+                "Speed limit exceeded",
+                "Low battery",
+                "CRITICAL battery",
+            ),
+            flags,
+            ts,
         )
 
     def update_solver(self, success: bool, solve_time_ms: float,
@@ -103,47 +164,34 @@ class SafetyMonitor:
         else:
             self._solver_fail_count += 1
 
-        flags = list(self._current_state.active_flags)
-        level = self._current_state.level
-
+        flags = []
         if self._solver_fail_count >= self.config.max_solver_failures:
             flags.append(f"Solver failed {self._solver_fail_count} consecutive times")
-            level = max(level, SafetyLevel.FAILSAFE)
         elif self._solver_fail_count >= 3:
             flags.append(f"Solver failures: {self._solver_fail_count}")
-            level = max(level, SafetyLevel.WARNING)
 
         if solve_time_ms > self.config.max_solve_time_ms:
             flags.append(f"Slow solve: {solve_time_ms:.0f}ms")
-            level = max(level, SafetyLevel.WARNING)
 
-        self._current_state = SafetyState(
-            level=level,
-            active_flags=flags,
-            recommended_action=self._get_action(level),
-            timestamp=ts,
+        self._replace_flags(
+            ("Solver failed", "Solver failures", "Slow solve"),
+            flags,
+            ts,
         )
 
     def update_path(self, received: bool, timestamp: Optional[float] = None):
         """Update with path planner status."""
         ts = timestamp or time.time()
-        flags = list(self._current_state.active_flags)
-        level = self._current_state.level
 
         if received:
             self._last_path_time = ts
-        else:
+            self._replace_flags(("No path update",), [], ts)
+        elif self._last_path_time > 0.0:
+            # Only watch for timeouts once a path has actually been received;
+            # pre-mission absence of a path must not trip a failsafe.
             dt = ts - self._last_path_time
-            if dt > self.config.max_path_timeout_s:
-                flags.append(f"No path update for {dt:.1f}s")
-                level = max(level, SafetyLevel.FAILSAFE)
-
-        self._current_state = SafetyState(
-            level=level,
-            active_flags=flags,
-            recommended_action=self._get_action(level),
-            timestamp=ts,
-        )
+            flag = f"No path update for {dt:.1f}s" if dt > self.config.max_path_timeout_s else None
+            self._replace_flags(("No path update",), [flag] if flag else [], ts)
 
     def check_odom_timeout(self, timestamp: Optional[float] = None) -> bool:
         """Returns True if odometry has timed out."""
@@ -152,7 +200,29 @@ class SafetyMonitor:
 
     @property
     def state(self) -> SafetyState:
-        return self._current_state
+        """Return a defensive snapshot of the current safety state."""
+        return SafetyState(
+            level=self._current_state.level,
+            active_flags=list(self._current_state.active_flags),
+            recommended_action=self._current_state.recommended_action,
+            timestamp=self._current_state.timestamp,
+        )
+
+    @property
+    def level(self) -> SafetyLevel:
+        return self._current_state.level
+
+    @property
+    def active_flags(self) -> tuple[str, ...]:
+        return tuple(self._current_state.active_flags)
+
+    @property
+    def recommended_action(self) -> str:
+        return self._current_state.recommended_action
+
+    @property
+    def solver_fail_count(self) -> int:
+        return self._solver_fail_count
 
     @property
     def ok(self) -> bool:

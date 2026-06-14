@@ -135,7 +135,7 @@ class DynamicMPC:
         """求解 NMPC 优化问题。
 
         参数：
-            current_state: NED/船体坐标系下的 [x, y, psi, u, v, r]
+            current_state: ROS local map / base_link 坐标系下的 [x, y, psi, u, v, r]
             reference_traj: 形状为 [6, N+1] 的参考状态数组
 
         返回：
@@ -176,21 +176,6 @@ class DynamicMPC:
                 "solve_time_ms": (time.time() - t_start) * 1000,
                 "error": str(e),
             }
-
-    def thrust_to_pwm(self, thrust: np.ndarray) -> np.ndarray:
-        """使用线性插值将推力映射为 PWM。
-
-        PWM 范围：1000（停止/反转）到 2000（全速前进）
-        中位值：1500 表示零推力。
-        """
-        pwm = np.zeros(2)
-        for i in range(2):
-            if thrust[i] >= 0:
-                pwm[i] = 1500.0 + (thrust[i] / self.T_max) * 500.0
-            else:
-                pwm[i] = 1500.0 + (thrust[i] / abs(self.T_min)) * 500.0
-            pwm[i] = np.clip(pwm[i], 1000.0, 2000.0)
-        return pwm
 
     def get_predicted_trajectory(self) -> Optional[np.ndarray]:
         return self._X_warm

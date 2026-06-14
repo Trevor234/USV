@@ -1,0 +1,12 @@
+/**:
+  ros__parameters:
+    # Shared safety defaults for MAVROS-backed real/SITL launches.
+    geofence_radius: 200.0
+    geofence_center_x: 0.0
+    geofence_center_y: 0.0
+    low_battery_v: 10.5
+    critical_battery_v: 10.0
+    max_solver_failures: 5
+    odom_timeout_s: 1.0
+    max_path_timeout_s: 5.0
+    max_speed_mps: 3.0

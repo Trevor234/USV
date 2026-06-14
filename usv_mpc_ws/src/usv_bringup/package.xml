@@ -8,6 +8,9 @@
   <license>MIT</license>
 
   <depend>rclpy</depend>
+  <depend>launch</depend>
+  <depend>launch_ros</depend>
+  <depend>ament_index_python</depend>
   <depend>mavros</depend>
   <depend>usv_mpc</depend>
   <depend>usv_planning</depend>
@@ -16,6 +19,10 @@
 
   <exec_depend>vrx_gz</exec_depend>
   <exec_depend>wamv_gazebo</exec_depend>
+
+  <test_depend>ament_pytest</test_depend>
+  <test_depend>python3-pytest</test_depend>
+  <test_depend>python3-yaml</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

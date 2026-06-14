@@ -62,6 +62,10 @@ def generate_launch_description():
         "visualize", default_value="false",
         description="Start the matplotlib runtime visualizer",
     )
+    profile_topic_arg = DeclareLaunchArgument(
+        "profile_topic", default_value="/path/reference_profile",
+        description="Reference speed/curvature/time profile topic used by MPC",
+    )
 
     scheme = LaunchConfiguration("scheme")
     fcu_url = LaunchConfiguration("fcu_url")
@@ -72,6 +76,7 @@ def generate_launch_description():
     mavros_velocity_topic = LaunchConfiguration("mavros_velocity_topic")
     mavros_rc_override_topic = LaunchConfiguration("mavros_rc_override_topic")
     visualize = LaunchConfiguration("visualize")
+    profile_topic = LaunchConfiguration("profile_topic")
 
     # Nodes
     mavros_node = Node(
@@ -91,18 +96,19 @@ def generate_launch_description():
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",
-        parameters=[{
-            "auto_arm": False,
-            "auto_mode_switch": False,
-            "geofence_radius": 200.0,
-            "geofence_center_x": 0.0,
-            "geofence_center_y": 0.0,
-            "max_solver_failures": 5,
-            "odom_timeout_s": 1.0,
-            "state_topic": mavros_state_topic,
-            "set_mode_service": "/mavros/set_mode",
-            "arming_service": "/mavros/cmd/arming",
-        }],
+        parameters=[
+            os.path.join(bringup_dir, "config", "safety_params.yaml"),
+            {
+                "auto_arm": False,
+                "auto_mode_switch": False,
+                "state_topic": mavros_state_topic,
+                "odom_topic": mavros_odom_topic,
+                "battery_topic": "/mavros/battery",
+                "path_topic": "/path/reference",
+                "set_mode_service": "/mavros/set_mode",
+                "arming_service": "/mavros/cmd/arming",
+            },
+        ],
     )
 
     planner_node = Node(
@@ -115,6 +121,7 @@ def generate_launch_description():
             {
                 "odom_topic": mavros_odom_topic,
                 "path_topic": "/path/reference",
+                "profile_topic": profile_topic,
             },
         ],
     )
@@ -148,6 +155,7 @@ def generate_launch_description():
                 "odom_topic": mavros_odom_topic,
                 "imu_topic": mavros_imu_topic,
                 "path_topic": "/path/reference",
+                "profile_topic": profile_topic,
                 "state_topic": mavros_state_topic,
                 "velocity_topic": mavros_velocity_topic,
                 "rc_override_topic": mavros_rc_override_topic,
@@ -163,9 +171,9 @@ def generate_launch_description():
         condition=IfCondition(visualize),
         parameters=[{
             "odom_topic": mavros_odom_topic,
-            "mavros_state_topic": mavros_state_topic,
             "cmd_vel_topic": mavros_velocity_topic,
-            "rc_override_topic": mavros_rc_override_topic,
+            "left_thrust_topic": "",
+            "right_thrust_topic": "",
         }],
     )
 
@@ -185,6 +193,7 @@ def generate_launch_description():
         mavros_velocity_topic_arg,
         mavros_rc_override_topic_arg,
         visualize_arg,
+        profile_topic_arg,
         mavros_node,
         safety_node,
         planner_node,

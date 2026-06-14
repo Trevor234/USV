@@ -1,19 +1,13 @@
-"""SITL (Software In The Loop) launch — ArduRover SITL + MAVROS + MPC.
+"""External ArduRover SITL launch — MAVROS + MPC without Gazebo bring-up.
 
-By default this assumes ArduRover SITL is **already running** and just connects
-to it via TCP (the original behaviour). Set `use_gazebo:=true` to instead
-delegate the SITL + Gazebo bring-up to usv_simulation/gazebo_sitl_full.launch.py
-so a single command starts everything (Gazebo + sim_vehicle.py + MAVROS + MPC).
+Gazebo-based project simulation has been retired in favor of VRX/WAM-V. Use
+`ros2 launch usv_bringup sim.launch.py` or `vrx.launch.py` for simulation.
 
-Prerequisites (when use_gazebo:=false):
-  ros2 launch usv_simulation ardupilot_sitl.launch.py use_gazebo:=false mavros:=false
-  # The project wrapper starts sim_vehicle.py with --no-mavproxy, so MAVROS
-  # connects directly to tcp://127.0.0.1:5760. If you instead start a manual
-  # sim_vehicle.py session with MAVProxy, override fcu_url:=tcp://127.0.0.1:5762.
+Prerequisites:
+  Start ArduRover SITL externally and expose a MAVLink TCP endpoint.
 
 Usage:
-  ros2 launch usv_bringup sitl.launch.py                     # external SITL
-  ros2 launch usv_bringup sitl.launch.py use_gazebo:=true    # full Gazebo stack
+  ros2 launch usv_bringup sitl.launch.py
   ros2 launch usv_bringup sitl.launch.py scheme:=B
 """
 
@@ -21,12 +15,10 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.conditions import IfCondition, UnlessCondition
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
@@ -34,22 +26,16 @@ def generate_launch_description():
 
     scheme_arg = DeclareLaunchArgument(
         "scheme", default_value="A",
-        description="Control scheme: A (kinematic) or B (dynamic)"
+        description="Control scheme: A (kinematic) or B (dynamic)",
     )
     fcu_url_arg = DeclareLaunchArgument(
-        "fcu_url", default_value="tcp://127.0.0.1:5760",
-        description="SITL MAVLink endpoint. The project run_sitl.sh uses "
-                    "--no-mavproxy, so MAVROS connects directly to 5760. "
-                    "Use tcp://127.0.0.1:5762 only for an external MAVProxy setup."
+        "fcu_url",
+        default_value="tcp://127.0.0.1:5760",
+        description="External SITL MAVLink endpoint for MAVROS",
     )
     gcs_url_arg = DeclareLaunchArgument(
         "gcs_url", default_value="udp://@127.0.0.1:14550",
-        description="Optional local GCS forwarding URL for SITL"
-    )
-    use_gazebo_arg = DeclareLaunchArgument(
-        "use_gazebo", default_value="false",
-        description="If true, also launch Gazebo + sim_vehicle.py via "
-                    "usv_simulation/gazebo_sitl_full.launch.py",
+        description="Optional local GCS forwarding URL for SITL",
     )
     visualize_arg = DeclareLaunchArgument(
         "visualize", default_value="true",
@@ -80,15 +66,14 @@ def generate_launch_description():
         "mavros_rc_override_topic", default_value="/mavros/rc/override",
         description="MAVROS RC override topic used by Scheme B",
     )
-    mavros_rc_out_topic_arg = DeclareLaunchArgument(
-        "mavros_rc_out_topic", default_value="/mavros/rc/out",
-        description="MAVROS RC output topic used by thrust bridge and visualizer",
+    profile_topic_arg = DeclareLaunchArgument(
+        "profile_topic", default_value="/path/reference_profile",
+        description="Reference speed/curvature/time profile topic used by MPC",
     )
 
     scheme = LaunchConfiguration("scheme")
     fcu_url = LaunchConfiguration("fcu_url")
     gcs_url = LaunchConfiguration("gcs_url")
-    use_gazebo = LaunchConfiguration("use_gazebo")
     visualize = LaunchConfiguration("visualize")
     auto_mode_switch = LaunchConfiguration("auto_mode_switch")
     mavros_odom_topic = LaunchConfiguration("mavros_odom_topic")
@@ -96,14 +81,12 @@ def generate_launch_description():
     mavros_imu_topic = LaunchConfiguration("mavros_imu_topic")
     mavros_velocity_topic = LaunchConfiguration("mavros_velocity_topic")
     mavros_rc_override_topic = LaunchConfiguration("mavros_rc_override_topic")
-    mavros_rc_out_topic = LaunchConfiguration("mavros_rc_out_topic")
+    profile_topic = LaunchConfiguration("profile_topic")
 
-    # ===== Path A: external SITL — start MAVROS + nodes only =====
     mavros_node = Node(
         package="mavros",
         executable="mavros_node",
         output="screen",
-        condition=UnlessCondition(use_gazebo),
         parameters=[
             os.path.join(bringup_dir, "config", "mavros_config.yaml"),
             {"fcu_url": fcu_url},
@@ -116,7 +99,6 @@ def generate_launch_description():
         executable="mpc_node",
         name="mpc_controller_node",
         output="screen",
-        condition=UnlessCondition(use_gazebo),
         parameters=[
             os.path.join(bringup_dir, "config", "mpc_params.yaml"),
             os.path.join(bringup_dir, "config", "usv_params.yaml"),
@@ -127,6 +109,7 @@ def generate_launch_description():
                 "odom_topic": mavros_odom_topic,
                 "imu_topic": mavros_imu_topic,
                 "path_topic": "/path/reference",
+                "profile_topic": profile_topic,
                 "state_topic": mavros_state_topic,
                 "velocity_topic": mavros_velocity_topic,
                 "rc_override_topic": mavros_rc_override_topic,
@@ -139,12 +122,12 @@ def generate_launch_description():
         executable="path_planner_node",
         name="path_planner_node",
         output="screen",
-        condition=UnlessCondition(use_gazebo),
         parameters=[
             os.path.join(bringup_dir, "config", "path_config.yaml"),
             {
                 "odom_topic": mavros_odom_topic,
                 "path_topic": "/path/reference",
+                "profile_topic": profile_topic,
             },
         ],
     )
@@ -154,14 +137,19 @@ def generate_launch_description():
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",
-        condition=UnlessCondition(use_gazebo),
-        parameters=[{
-            "auto_arm": False,
-            "auto_mode_switch": auto_mode_switch,
-            "state_topic": mavros_state_topic,
-            "set_mode_service": "/mavros/set_mode",
-            "arming_service": "/mavros/cmd/arming",
-        }],
+        parameters=[
+            os.path.join(bringup_dir, "config", "safety_params.yaml"),
+            {
+                "auto_arm": False,
+                "auto_mode_switch": auto_mode_switch,
+                "state_topic": mavros_state_topic,
+                "odom_topic": mavros_odom_topic,
+                "battery_topic": "/mavros/battery",
+                "path_topic": "/path/reference",
+                "set_mode_service": "/mavros/set_mode",
+                "arming_service": "/mavros/cmd/arming",
+            },
+        ],
     )
 
     visualizer_node = Node(
@@ -169,46 +157,19 @@ def generate_launch_description():
         executable="visualizer",
         name="usv_visualizer",
         output="screen",
-        condition=IfCondition(PythonExpression([
-            "'", visualize, "' == 'true' and '", use_gazebo, "' == 'false'"
-        ])),
+        condition=IfCondition(visualize),
         parameters=[{
             "odom_topic": mavros_odom_topic,
-            "mavros_state_topic": mavros_state_topic,
             "cmd_vel_topic": mavros_velocity_topic,
-            "rc_override_topic": mavros_rc_override_topic,
+            "left_thrust_topic": "",
+            "right_thrust_topic": "",
         }],
-    )
-
-    # ===== Path B: full Gazebo stack — delegate to usv_simulation =====
-    gazebo_full = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("usv_simulation"),
-                "launch",
-                "gazebo_sitl_full.launch.py",
-            ])
-        ),
-        launch_arguments={
-            "scheme": scheme,
-            "fcu_url": fcu_url,
-            "gcs_url": gcs_url,
-            "visualize": visualize,
-            "mavros_odom_topic": mavros_odom_topic,
-            "mavros_state_topic": mavros_state_topic,
-            "mavros_imu_topic": mavros_imu_topic,
-            "mavros_velocity_topic": mavros_velocity_topic,
-            "mavros_rc_override_topic": mavros_rc_override_topic,
-            "mavros_rc_out_topic": mavros_rc_out_topic,
-        }.items(),
-        condition=IfCondition(use_gazebo),
     )
 
     return LaunchDescription([
         scheme_arg,
         fcu_url_arg,
         gcs_url_arg,
-        use_gazebo_arg,
         visualize_arg,
         auto_mode_switch_arg,
         mavros_odom_topic_arg,
@@ -216,13 +177,10 @@ def generate_launch_description():
         mavros_imu_topic_arg,
         mavros_velocity_topic_arg,
         mavros_rc_override_topic_arg,
-        mavros_rc_out_topic_arg,
-        # Path A (external SITL)
+        profile_topic_arg,
         mavros_node,
         mpc_node,
         planner_node,
         safety_node,
         visualizer_node,
-        # Path B (Gazebo full stack)
-        gazebo_full,
     ])

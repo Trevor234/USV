@@ -3,7 +3,8 @@
 订阅话题（可通过 launch 参数覆盖）：
   /mavros/local_position/odom     — EKF 融合的位置与速度
   /mavros/imu/data                — IMU 数据（用于动力学模式）
-  /path/reference                 — 规划器给出的参考路径
+  /path/reference                 — 规划器给出的参考路径（x, y, psi）
+  /path/reference_profile         — 规划器给出的速度剖面（v, kappa, r, t）
 
 发布话题（可通过 launch 参数覆盖）：
   /mavros/setpoint_velocity/cmd_vel  — 速度设定值（方案 A）
@@ -16,23 +17,31 @@
 
 import json
 import math
+import threading
 import time
 from enum import Enum
 
 import numpy as np
 import rclpy
-from rclpy.executors import ExternalShutdownException
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
+from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from rclpy.qos import qos_profile_sensor_data
 from geometry_msgs.msg import Quaternion, TwistStamped, Vector3
 from mavros_msgs.msg import OverrideRCIn, State as MavrosState
 from nav_msgs.msg import Odometry, Path as NavPath
 from rclpy.node import Node
 from sensor_msgs.msg import Imu
-from std_msgs.msg import Float64, String
+from std_msgs.msg import Float64, Float64MultiArray, String
 
 from .mpc_kinematic import KinematicMPC
 from .mpc_dynamic import DynamicMPC
-from .utils import normalize_angle, quaternion_to_yaw
+from .utils import (
+    normalize_angle,
+    parse_profile_stamp,
+    profile_sync_state,
+    quaternion_to_yaw,
+    sample_path_profile_at_time,
+)
 
 
 class ControlMode(Enum):
@@ -50,6 +59,13 @@ class MpcControllerNode(Node):
         self._declare_parameters()
         self._load_config()
 
+        # The MPC solve can take tens/hundreds of ms. With a MultiThreadedExecutor
+        # this lock lets sensor callbacks keep running while the control callback
+        # takes short, consistent state/reference snapshots before each solve.
+        self._state_lock = threading.RLock()
+        self._io_cb_group = ReentrantCallbackGroup()
+        self._control_cb_group = MutuallyExclusiveCallbackGroup()
+
         self._init_mpc_solvers()
         self._init_state()
         self._init_pubsub()
@@ -60,7 +76,11 @@ class MpcControllerNode(Node):
             f"方案={'A (运动学)' if self.scheme == 'A' else 'B (动力学)'}"
         )
 
-        self._timer = self.create_timer(self.mpc_dt, self._control_loop)
+        self._timer = self.create_timer(
+            self.mpc_dt,
+            self._control_loop,
+            callback_group=self._control_cb_group,
+        )
 
     def _declare_parameters(self):
         self.declare_parameter("scheme", "A")
@@ -70,6 +90,7 @@ class MpcControllerNode(Node):
         self.declare_parameter("odom_topic", "/mavros/local_position/odom")
         self.declare_parameter("imu_topic", "/mavros/imu/data")
         self.declare_parameter("path_topic", "/path/reference")
+        self.declare_parameter("profile_topic", "/path/reference_profile")
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("velocity_topic", "/mavros/setpoint_velocity/cmd_vel")
         self.declare_parameter("rc_override_topic", "/mavros/rc/override")
@@ -98,6 +119,8 @@ class MpcControllerNode(Node):
         # 里程计超时(秒);0 关闭检查
         self.declare_parameter("odom_timeout_s", 1.0)
         self.declare_parameter("reference_start_offset", 3)
+        # 当 profile 缺失/不同步时，参考构建退化为匀速弧长采样所用的巡航速度
+        self.declare_parameter("cruise_speed", 1.0)
 
         # 方案 A 参数
         self.declare_parameter("kinematic.Q", [10.0, 10.0, 50.0])
@@ -177,6 +200,7 @@ class MpcControllerNode(Node):
         self.state_timeout_s = float(self.get_parameter("state_timeout_s").value)
         self.odom_timeout_s = float(self.get_parameter("odom_timeout_s").value)
         self.reference_start_offset = int(self.get_parameter("reference_start_offset").value)
+        self.cruise_speed = float(self.get_parameter("cruise_speed").value)
         self.rc_steering_channel = int(self.get_parameter("rc_steering_channel").value)
         self.rc_throttle_channel = int(self.get_parameter("rc_throttle_channel").value)
         self.rc_pwm_min = int(self.get_parameter("rc_pwm_min").value)
@@ -259,7 +283,12 @@ class MpcControllerNode(Node):
         self._odom_received = False
         self._imu_received = False
         self._path_received = False
-        self._reference_path = []  # 格式为 [x, y, psi, u_ref, v_ref, r_ref] 的列表
+        self._reference_path = []  # 每点 [x, y, psi]（位姿；速度/转艏角速度来自 profile）
+        self._reference_path_stamp = None  # (sec, nanosec), 来自 NavPath.header.stamp
+        self._ref_profile = None   # 每点 [v, kappa, r, t]，来自 /path/reference_profile
+        self._ref_profile_stamp = None  # (sec, nanosec), 来自 Float64MultiArray.layout 元数据
+        self._profile_synced = False
+        self._profile_sync_reason = "no_profile"
         self._armed = False
         self._mode = "MANUAL"
         self._solver_fail_count = 0
@@ -285,19 +314,28 @@ class MpcControllerNode(Node):
         odom_topic = self.get_parameter("odom_topic").value
         imu_topic = self.get_parameter("imu_topic").value
         path_topic = self.get_parameter("path_topic").value
+        profile_topic = self.get_parameter("profile_topic").value
         state_topic = self.get_parameter("state_topic").value
 
         self._odom_sub = self.create_subscription(
-            Odometry, odom_topic, self._odom_callback, qos_profile_sensor_data
+            Odometry, odom_topic, self._odom_callback, qos_profile_sensor_data,
+            callback_group=self._io_cb_group,
         )
         self._imu_sub = self.create_subscription(
-            Imu, imu_topic, self._imu_callback, qos_profile_sensor_data
+            Imu, imu_topic, self._imu_callback, qos_profile_sensor_data,
+            callback_group=self._io_cb_group,
         )
         self._path_sub = self.create_subscription(
-            NavPath, path_topic, self._path_callback, 10
+            NavPath, path_topic, self._path_callback, 10,
+            callback_group=self._io_cb_group,
+        )
+        self._profile_sub = self.create_subscription(
+            Float64MultiArray, profile_topic, self._profile_callback, 10,
+            callback_group=self._io_cb_group,
         )
         self._state_sub = self.create_subscription(
-            MavrosState, state_topic, self._state_callback, 10
+            MavrosState, state_topic, self._state_callback, 10,
+            callback_group=self._io_cb_group,
         )
 
         # 发布者
@@ -323,36 +361,79 @@ class MpcControllerNode(Node):
 
     # ---------- 回调函数 ----------
 
+    @staticmethod
+    def _stamp_tuple(stamp) -> tuple[int, int]:
+        return int(stamp.sec), int(stamp.nanosec)
+
+    @staticmethod
+    def _parse_profile_stamp(layout) -> tuple[int, int] | None:
+        return parse_profile_stamp(layout)
+
+    @staticmethod
+    def _profile_sync_state(path_len: int, profile_len: int | None,
+                            path_stamp, profile_stamp) -> tuple[bool, str]:
+        return profile_sync_state(path_len, profile_len, path_stamp, profile_stamp)
+
     def _odom_callback(self, msg: Odometry):
-        self._x = msg.pose.pose.position.x
-        self._y = msg.pose.pose.position.y
-        q = msg.pose.pose.orientation
-        self._psi = quaternion_to_yaw(q.x, q.y, q.z, q.w)
-        self._u = msg.twist.twist.linear.x
-        self._v = msg.twist.twist.linear.y
-        self._r = msg.twist.twist.angular.z
-        self._odom_received = True
-        self._last_odom_time = time.time()
+        with self._state_lock:
+            self._x = msg.pose.pose.position.x
+            self._y = msg.pose.pose.position.y
+            q = msg.pose.pose.orientation
+            self._psi = quaternion_to_yaw(q.x, q.y, q.z, q.w)
+            self._u = msg.twist.twist.linear.x
+            self._v = msg.twist.twist.linear.y
+            self._r = msg.twist.twist.angular.z
+            self._odom_received = True
+            self._last_odom_time = time.time()
 
     def _imu_callback(self, msg: Imu):
         # 使用直接陀螺仪角速度以获得更灵敏的 r 测量值
-        self._r = msg.angular_velocity.z
-        self._imu_received = True
+        with self._state_lock:
+            self._r = msg.angular_velocity.z
+            self._imu_received = True
 
     def _path_callback(self, msg: NavPath):
-        self._reference_path = []
+        reference_path = []
         for pose in msg.poses:
             x = pose.pose.position.x
             y = pose.pose.position.y
             q = pose.pose.orientation
             psi = quaternion_to_yaw(q.x, q.y, q.z, q.w)
-            self._reference_path.append([x, y, psi, 1.0, 0.0, 0.0])
-        self._path_received = len(self._reference_path) > 0
+            reference_path.append([x, y, psi])
+        path_stamp = self._stamp_tuple(msg.header.stamp)
+        with self._state_lock:
+            self._reference_path = reference_path
+            self._reference_path_stamp = path_stamp
+            self._path_received = len(self._reference_path) > 0
+
+    def _profile_callback(self, msg: Float64MultiArray):
+        """接收逐点速度剖面 [M,4]=(v, kappa, r, t)，与 /path/reference 逐点对应。
+
+        构建参考时按长度与 path 对齐（同周期同长度），不一致则回退匀速弧长采样
+        （见 _build_reference）。空数组表示规划器清空了路径。
+        """
+        data = msg.data
+        profile_stamp = self._parse_profile_stamp(msg.layout)
+        if len(data) < 4 or (len(data) % 4) != 0:
+            with self._state_lock:
+                self._ref_profile = None
+                self._ref_profile_stamp = profile_stamp
+                self._profile_sync_reason = "empty_or_malformed_profile"
+            return
+        m = len(data) // 4
+        ref_profile = [
+            [data[4 * i], data[4 * i + 1], data[4 * i + 2], data[4 * i + 3]]
+            for i in range(m)
+        ]
+        with self._state_lock:
+            self._ref_profile = ref_profile
+            self._ref_profile_stamp = profile_stamp
 
     def _state_callback(self, msg: MavrosState):
-        self._armed = msg.armed
-        self._mode = msg.mode
-        self._last_state_time = time.time()
+        with self._state_lock:
+            self._armed = msg.armed
+            self._mode = msg.mode
+            self._last_state_time = time.time()
 
     # ---------- 控制循环 ----------
 
@@ -417,7 +498,10 @@ class MpcControllerNode(Node):
         if self.control_mode == ControlMode.IDLE:
             return
 
-        ok, reason = self._can_solve()
+        with self._state_lock:
+            ok, reason = self._can_solve()
+            armed = self._armed
+            mode = self._mode
         if not ok:
             self._enter_standby(reason)
             return
@@ -425,7 +509,7 @@ class MpcControllerNode(Node):
         # STANDBY → ACTIVE 切换沿:清失败计数,日志说明
         if self._prev_state != "ACTIVE":
             self.get_logger().info(
-                f"MPC → ACTIVE: armed={self._armed}, mode={self._mode}"
+                f"MPC → ACTIVE: armed={armed}, mode={mode}"
             )
             self._solver_fail_count = 0
         self._prev_state = "ACTIVE"
@@ -434,6 +518,26 @@ class MpcControllerNode(Node):
             self._run_kinematic_mpc()
         elif self.scheme == "B":
             self._run_dynamic_mpc()
+
+    def _enforce_solve_deadline(self, info: dict) -> dict:
+        """Turn an over-budget solve into a controlled failure.
+
+        IPOPT/CasADi is synchronous here, so we cannot preempt a solve once it is
+        running. We can still prevent late results from being treated as healthy:
+        a deadline miss increments the normal failure counter and is exposed in
+        /mpc/status so mode_manager/GCS can react.
+        """
+        solve_time_ms = float(info.get("solve_time_ms", 0.0))
+        deadline_miss = self.max_solve_time_ms > 0.0 and solve_time_ms > self.max_solve_time_ms
+        info["max_solve_time_ms"] = float(self.max_solve_time_ms)
+        info["deadline_miss"] = bool(deadline_miss)
+        if deadline_miss:
+            info["success"] = False
+            info["error"] = (
+                f"solve_timeout: {solve_time_ms:.1f}ms > "
+                f"{self.max_solve_time_ms:.1f}ms"
+            )
+        return info
 
     def safe_shutdown(self):
         """节点退出前显式发送安全停车指令。"""
@@ -452,10 +556,14 @@ class MpcControllerNode(Node):
 
     def _run_kinematic_mpc(self):
         """方案 A：运动学 MPC → 速度指令。"""
-        current_state = np.array([self._x, self._y, normalize_angle(self._psi)])
-        reference = self._build_kinematic_reference(current_state)
+        with self._state_lock:
+            current_state = np.array([self._x, self._y, normalize_angle(self._psi)])
+            reference = self._build_kinematic_reference(current_state)
 
         u_opt, info = self._mpc_kin.solve(current_state, reference)
+        info = self._enforce_solve_deadline(info)
+        if info.get("deadline_miss"):
+            u_opt = np.zeros(2)
         in_hold = False
 
         if info["success"]:
@@ -508,13 +616,17 @@ class MpcControllerNode(Node):
 
     def _run_dynamic_mpc(self):
         """方案 B：动力学 NMPC → 推力 → RC 覆写。"""
-        current_state = np.array([
-            self._x, self._y, normalize_angle(self._psi),
-            self._u, self._v, self._r,
-        ])
-        reference = self._build_dynamic_reference(current_state)
+        with self._state_lock:
+            current_state = np.array([
+                self._x, self._y, normalize_angle(self._psi),
+                self._u, self._v, self._r,
+            ])
+            reference = self._build_dynamic_reference(current_state)
 
         u_opt, info = self._mpc_dyn.solve(current_state, reference)
+        info = self._enforce_solve_deadline(info)
+        if info.get("deadline_miss"):
+            u_opt = np.zeros(2)
         in_hold = False
 
         if info["success"]:
@@ -663,29 +775,34 @@ class MpcControllerNode(Node):
         接收方（如 usv_safety/mode_manager_node）应当解析 JSON，
         而不是进行子字符串匹配。
         """
-        payload = {
-            "state": "HOLD" if in_hold else "ACTIVE",
-            "success": bool(info.get("success", False)),
-            "fail_count": int(self._solver_fail_count),
-            "solve_time_ms": float(info.get("solve_time_ms", 0.0)),
-            "hold": bool(in_hold),
-            "scheme": self.scheme,
-            "control_mode": self.control_mode.value,
-            "output_mode": self.output_mode,
-            "require_fcu_state": bool(self.require_fcu_state),
-            "fcu_mode": self._mode,
-            "allowed_fcu_modes": self.allowed_fcu_modes,
-            "armed": bool(self._armed),
-            "path_received": bool(self._path_received),
-            "path_len": len(self._reference_path),
-            "x": float(self._x),
-            "y": float(self._y),
-            "psi": float(normalize_angle(self._psi)),
-            "u": float(self._u),
-            "v": float(self._v),
-            "r": float(self._r),
-        }
-        payload.update(self._last_ref_debug)
+        with self._state_lock:
+            payload = {
+                "state": "HOLD" if in_hold else "ACTIVE",
+                "success": bool(info.get("success", False)),
+                "fail_count": int(self._solver_fail_count),
+                "solve_time_ms": float(info.get("solve_time_ms", 0.0)),
+                "max_solve_time_ms": float(info.get("max_solve_time_ms", self.max_solve_time_ms)),
+                "deadline_miss": bool(info.get("deadline_miss", False)),
+                "hold": bool(in_hold),
+                "scheme": self.scheme,
+                "control_mode": self.control_mode.value,
+                "output_mode": self.output_mode,
+                "require_fcu_state": bool(self.require_fcu_state),
+                "fcu_mode": self._mode,
+                "allowed_fcu_modes": self.allowed_fcu_modes,
+                "armed": bool(self._armed),
+                "path_received": bool(self._path_received),
+                "path_len": len(self._reference_path),
+                "profile_synced": bool(self._profile_synced),
+                "profile_sync_reason": self._profile_sync_reason,
+                "x": float(self._x),
+                "y": float(self._y),
+                "psi": float(normalize_angle(self._psi)),
+                "u": float(self._u),
+                "v": float(self._v),
+                "r": float(self._r),
+            }
+            payload.update(self._last_ref_debug)
         if self.scheme in ("B", "both"):
             payload.update({
                 "dynamic_dt": float(self._dynamic_dt),
@@ -708,36 +825,98 @@ class MpcControllerNode(Node):
 
     def _publish_standby_status(self, reason: str):
         """待机期间发布最小诊断载荷,供 mode_manager / 地面站显示。"""
-        payload = {
-            "state": "STANDBY",
-            "success": False,
-            "fail_count": 0,
-            "solve_time_ms": 0.0,
-            "hold": False,
-            "scheme": self.scheme,
-            "standby_reason": reason,
-        }
+        with self._state_lock:
+            payload = {
+                "state": "STANDBY",
+                "success": False,
+                "fail_count": 0,
+                "solve_time_ms": 0.0,
+                "max_solve_time_ms": float(self.max_solve_time_ms),
+                "deadline_miss": False,
+                "hold": False,
+                "scheme": self.scheme,
+                "path_received": bool(self._path_received),
+                "path_len": len(self._reference_path),
+                "profile_synced": bool(self._profile_synced),
+                "profile_sync_reason": self._profile_sync_reason,
+                "standby_reason": reason,
+            }
         msg = String()
         msg.data = json.dumps(payload, separators=(",", ":"))
         self._status_pub.publish(msg)
 
     def _build_kinematic_reference(self, current_state: np.ndarray) -> np.ndarray:
-        """从路径点构建用于运动学 MPC 的 N+1 步参考轨迹。
+        """运动学 MPC 的 [3, N+1] 参考（仅 x, y, psi）。"""
+        # profile 缺失时用 u_max 做前瞻速度，给弯道足够预览距离
+        fallback_speed = self.get_parameter("kinematic.u_max").value
+        # 保持原行为：运动学起点向前跳 1 个点
+        return self._build_reference(current_state, 3, self.horizon, self.mpc_dt,
+                                     fallback_speed, start_offset=1)
 
-        使用弧长参数化方法，使得参考轨迹在每个 MPC 时间步长内正好以巡航速度（cruise_speed）
-        前进，而与参考路径点的实际间距无关。
+    def _build_dynamic_reference(self, current_state: np.ndarray) -> np.ndarray:
+        """动力学 NMPC 的 [6, N+1] 参考（x, y, psi, u, v, r）。"""
+        return self._build_reference(current_state, 6, self._mpc_dyn.N, self._mpc_dyn.dt,
+                                     self.cruise_speed, start_offset=self.reference_start_offset)
+
+    def _build_reference(self, current_state, n_state, N, dt, fallback_speed, start_offset):
+        """构建 N+1 步参考轨迹。
+
+        优先用规划器给出的速度剖面按 **时间** 重采样（弯道/减速区参考自动放慢，
+        动力学参考的 u_ref/r_ref 取自 profile）；profile 缺失或与 path 不同步时，
+        退化为旧的 **匀速弧长** 采样（r_ref=0），并通过 _last_ref_debug 暴露
+        profile_synced=False 供观测。
         """
-        N = self.horizon
-        ref = np.zeros((3, N + 1))
+        ref = np.zeros((n_state, N + 1))
         path = self._reference_path
-        # 使用最大速度 u_max 进行前瞻，为 MPC 在弯道处提供足够的预览距离
-        lookahead_speed = self.get_parameter("kinematic.u_max").value
+        if len(path) == 0:
+            return ref
 
-        # 寻找最近的路径点索引，然后向前跳 1 步以始终产生向前的吸引力
         dists = [math.hypot(p[0] - current_state[0], p[1] - current_state[1]) for p in path]
-        idx = min(int(np.argmin(dists)) + 1, len(path) - 1)
+        nearest_idx = int(np.argmin(dists))
+        idx = min(nearest_idx + max(1, start_offset), len(path) - 1)
 
-        # 预先计算从 idx 开始的累计弧长
+        prof = self._ref_profile
+        path_stamp = self._reference_path_stamp
+        profile_stamp = self._ref_profile_stamp
+        synced, sync_reason = self._profile_sync_state(
+            len(path), len(prof) if prof is not None else None, path_stamp, profile_stamp
+        )
+
+        if synced:
+            times = [prof[i][3] for i in range(len(prof))]
+            vs = [prof[i][0] for i in range(len(prof))]
+            rs = [prof[i][2] for i in range(len(prof))]
+            t0 = times[idx]
+            j = idx
+            for k in range(N + 1):
+                tk = t0 + k * dt
+                x, y, psi, v, r, j = self._sample_at_time(path, times, vs, rs, tk, j)
+                ref[0, k] = x
+                ref[1, k] = y
+                ref[2, k] = psi
+                if n_state == 6:
+                    ref[3, k] = v
+                    ref[4, k] = 0.0
+                    ref[5, k] = r
+            self._profile_synced = True
+            self._profile_sync_reason = sync_reason
+            self._last_ref_debug = {
+                "profile_synced": True,
+                "profile_sync_reason": sync_reason,
+                "path_stamp_sec": path_stamp[0] if path_stamp else None,
+                "path_stamp_nanosec": path_stamp[1] if path_stamp else None,
+                "profile_stamp_sec": profile_stamp[0] if profile_stamp else None,
+                "profile_stamp_nanosec": profile_stamp[1] if profile_stamp else None,
+                "nearest_idx": nearest_idx,
+                "ref_start_idx": idx,
+                "nearest_dist": float(dists[nearest_idx]),
+                "u_ref": float(vs[idx]),
+                "r_ref": float(rs[idx]),
+            }
+            return ref
+
+        # ---- 回退：匀速弧长采样（r_ref=0），profile 缺失/不同步 ----
+        self._profile_synced = False
         arc = [0.0]
         for i in range(idx, len(path) - 1):
             seg = math.hypot(path[i + 1][0] - path[i][0],
@@ -745,25 +924,17 @@ class MpcControllerNode(Node):
             arc.append(arc[-1] + seg)
 
         for k in range(N + 1):
-            # 距离最近路径点沿路径的期望距离
-            s_desired = lookahead_speed * self.mpc_dt * k
-
-            # 寻找包围 s_desired 的两个路径点
+            s_desired = fallback_speed * dt * k
             j = 0
             while j < len(arc) - 1 and arc[j + 1] < s_desired:
                 j += 1
-
             ii = min(idx + j, len(path) - 1)
-
-            # 在 path[ii] 和 path[ii+1] 之间进行线性插值
             if ii < len(path) - 1 and j < len(arc) - 1:
                 seg_len = arc[j + 1] - arc[j]
                 if seg_len > 1e-6:
-                    t = (s_desired - arc[j]) / seg_len
-                    t = max(0.0, min(1.0, t))
+                    t = max(0.0, min(1.0, (s_desired - arc[j]) / seg_len))
                     ref[0, k] = path[ii][0] + t * (path[ii + 1][0] - path[ii][0])
                     ref[1, k] = path[ii][1] + t * (path[ii + 1][1] - path[ii][1])
-                    # 通过角度混合插值航向角
                     dpsi = normalize_angle(path[ii + 1][2] - path[ii][2])
                     ref[2, k] = normalize_angle(path[ii][2] + t * dpsi)
                 else:
@@ -774,70 +945,35 @@ class MpcControllerNode(Node):
                 ref[0, k] = path[ii][0]
                 ref[1, k] = path[ii][1]
                 ref[2, k] = normalize_angle(path[ii][2])
+            if n_state == 6:
+                ref[3, k] = fallback_speed
+                ref[4, k] = 0.0
+                ref[5, k] = 0.0
 
-        return ref
-
-    def _build_dynamic_reference(self, current_state: np.ndarray) -> np.ndarray:
-        """从路径点构建用于动力学 NMPC 的 N+1 步参考轨迹。
-
-        使用弧长采样（与运动学相同的方案），使参考轨迹每步前进 cruise_speed * dt，
-        而与路径的分辨率无关。
-        """
-        N = self._mpc_dyn.N
-        dt = self._mpc_dyn.dt
-        ref = np.zeros((6, N + 1))
-        path = self._reference_path
-        cruise_speed = 1.0
-
-        # 寻找最近点索引，并向前跳若干路径点以保持前视拉力。
-        # 只跳 1 个点在有横向误差时容易追逐最近点，导致大弧线偏离路径。
-        dists = [math.hypot(p[0] - current_state[0], p[1] - current_state[1]) for p in path]
-        nearest_idx = int(np.argmin(dists))
-        idx = min(nearest_idx + max(1, self.reference_start_offset), len(path) - 1)
+        self._profile_sync_reason = sync_reason
         self._last_ref_debug = {
+            "profile_synced": False,
+            "profile_sync_reason": sync_reason,
+            "path_stamp_sec": path_stamp[0] if path_stamp else None,
+            "path_stamp_nanosec": path_stamp[1] if path_stamp else None,
+            "profile_stamp_sec": profile_stamp[0] if profile_stamp else None,
+            "profile_stamp_nanosec": profile_stamp[1] if profile_stamp else None,
             "nearest_idx": nearest_idx,
             "ref_start_idx": idx,
             "nearest_dist": float(dists[nearest_idx]),
+            "u_ref": float(fallback_speed),
+            "r_ref": 0.0,
         }
-
-        # 从 idx 开始的累计弧长
-        arc = [0.0]
-        for i in range(idx, len(path) - 1):
-            seg = math.hypot(path[i + 1][0] - path[i][0],
-                             path[i + 1][1] - path[i][1])
-            arc.append(arc[-1] + seg)
-
-        for k in range(N + 1):
-            s_desired = cruise_speed * dt * k
-
-            j = 0
-            while j < len(arc) - 1 and arc[j + 1] < s_desired:
-                j += 1
-
-            ii = min(idx + j, len(path) - 1)
-
-            if ii < len(path) - 1 and j < len(arc) - 1:
-                seg_len = arc[j + 1] - arc[j]
-                if seg_len > 1e-6:
-                    t = (s_desired - arc[j]) / seg_len
-                    t = max(0.0, min(1.0, t))
-                    ref[0, k] = path[ii][0] + t * (path[ii + 1][0] - path[ii][0])
-                    ref[1, k] = path[ii][1] + t * (path[ii + 1][1] - path[ii][1])
-                    dpsi = normalize_angle(path[ii + 1][2] - path[ii][2])
-                    ref[2, k] = normalize_angle(path[ii][2] + t * dpsi)
-                else:
-                    ref[0, k] = path[ii][0]
-                    ref[1, k] = path[ii][1]
-                    ref[2, k] = normalize_angle(path[ii][2])
-            else:
-                ref[0, k] = path[ii][0]
-                ref[1, k] = path[ii][1]
-                ref[2, k] = normalize_angle(path[ii][2])
-
-            ref[3, k] = cruise_speed
-            ref[4, k] = 0.0
-            ref[5, k] = 0.0
         return ref
+
+    @staticmethod
+    def _sample_at_time(path, times, vs, rs, tk, j_hint):
+        """在时间 tk 处对 (path, profile) 插值，返回 (x, y, psi, v, r, j)。
+
+        times 单调递增；j_hint 为搜索起点（参考逐步前进，避免每步从头扫）。
+        tk 超出末点时夹取到末点（末端速度趋缓，配合任务完成 HOLD 停车）。
+        """
+        return sample_path_profile_at_time(path, times, vs, rs, tk, j_hint)
 
     def _publish_predicted_trajectory(self, X_pred):
         """发布 MPC 预测轨迹（作为 NavPath），用于可视化。"""
@@ -868,11 +1004,14 @@ class MpcControllerNode(Node):
 def main(args=None):
     rclpy.init(args=args)
     node = MpcControllerNode()
+    executor = MultiThreadedExecutor(num_threads=3)
+    executor.add_node(node)
     try:
-        rclpy.spin(node)
+        executor.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
+        executor.shutdown()
         if rclpy.ok():
             node.safe_shutdown()
         node.destroy_node()

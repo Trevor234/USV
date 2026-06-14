@@ -20,6 +20,11 @@ def generate_launch_description():
     headless_arg = DeclareLaunchArgument("headless", default_value="False")
     paused_arg = DeclareLaunchArgument("paused", default_value="False")
     waypoints_file_arg = DeclareLaunchArgument("waypoints_file", default_value="")
+    visualize_arg = DeclareLaunchArgument(
+        "visualize",
+        default_value="false",
+        description="Start the matplotlib runtime visualizer",
+    )
     record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
     bag_dir_arg = DeclareLaunchArgument(
         "bag_dir",
@@ -41,6 +46,9 @@ def generate_launch_description():
         "right_thrust_topic", default_value="/wamv/thrusters/right/thrust"
     )
     path_topic_arg = DeclareLaunchArgument("path_topic", default_value="/path/reference")
+    profile_topic_arg = DeclareLaunchArgument(
+        "profile_topic", default_value="/path/reference_profile"
+    )
     mpc_status_topic_arg = DeclareLaunchArgument("mpc_status_topic", default_value="/mpc/status")
     predicted_trajectory_topic_arg = DeclareLaunchArgument(
         "predicted_trajectory_topic", default_value="/mpc/predicted_trajectory"
@@ -55,6 +63,7 @@ def generate_launch_description():
     headless = LaunchConfiguration("headless")
     paused = LaunchConfiguration("paused")
     waypoints_file = LaunchConfiguration("waypoints_file")
+    visualize = LaunchConfiguration("visualize")
     record_bag = LaunchConfiguration("record_bag")
     bag_dir = LaunchConfiguration("bag_dir")
     run_id = LaunchConfiguration("run_id")
@@ -63,6 +72,7 @@ def generate_launch_description():
     left_thrust_topic = LaunchConfiguration("left_thrust_topic")
     right_thrust_topic = LaunchConfiguration("right_thrust_topic")
     path_topic = LaunchConfiguration("path_topic")
+    profile_topic = LaunchConfiguration("profile_topic")
     mpc_status_topic = LaunchConfiguration("mpc_status_topic")
     predicted_trajectory_topic = LaunchConfiguration("predicted_trajectory_topic")
     dynamic_waypoints_topic = LaunchConfiguration("dynamic_waypoints_topic")
@@ -102,6 +112,7 @@ def generate_launch_description():
             parameters=[path_params, {
                 "odom_topic": odom_topic,
                 "path_topic": path_topic,
+                "profile_topic": profile_topic,
                 "dynamic_waypoints_topic": dynamic_waypoints_topic,
                 "waypoints_file": waypoints_file,
             }],
@@ -123,12 +134,33 @@ def generate_launch_description():
                 "odom_topic": odom_topic,
                 "imu_topic": imu_topic,
                 "path_topic": path_topic,
+                "profile_topic": profile_topic,
                 "status_topic": mpc_status_topic,
                 "predicted_trajectory_topic": predicted_trajectory_topic,
                 "path_frame": path_frame,
                 "body_frame": body_frame,
                 "vrx_left_thrust_topic": left_thrust_topic,
                 "vrx_right_thrust_topic": right_thrust_topic,
+            }],
+        )],
+    )
+
+    visualizer_node = TimerAction(
+        period=10.0,
+        actions=[Node(
+            package="usv_simulation",
+            executable="visualizer",
+            name="usv_visualizer",
+            output="screen",
+            condition=IfCondition(visualize),
+            parameters=[{
+                "odom_topic": odom_topic,
+                "path_topic": path_topic,
+                "predicted_trajectory_topic": predicted_trajectory_topic,
+                "mission_waypoints_topic": dynamic_waypoints_topic,
+                "mpc_status_topic": mpc_status_topic,
+                "left_thrust_topic": left_thrust_topic,
+                "right_thrust_topic": right_thrust_topic,
             }],
         )],
     )
@@ -142,6 +174,7 @@ def generate_launch_description():
             left_thrust_topic,
             right_thrust_topic,
             path_topic,
+            profile_topic,
             mpc_status_topic,
             predicted_trajectory_topic,
         ],
@@ -154,6 +187,7 @@ def generate_launch_description():
         headless_arg,
         paused_arg,
         waypoints_file_arg,
+        visualize_arg,
         record_bag_arg,
         bag_dir_arg,
         run_id_arg,
@@ -162,6 +196,7 @@ def generate_launch_description():
         left_thrust_topic_arg,
         right_thrust_topic_arg,
         path_topic_arg,
+        profile_topic_arg,
         mpc_status_topic_arg,
         predicted_trajectory_topic_arg,
         dynamic_waypoints_topic_arg,
@@ -170,5 +205,6 @@ def generate_launch_description():
         vrx,
         planner_node,
         mpc_node,
+        visualizer_node,
         bag_record,
     ])

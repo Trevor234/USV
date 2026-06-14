@@ -1,4 +1,10 @@
 waypoints:
-  - {x: 0.0, y: 0.0, radius: 2.0, heading_deg: 0.0, stay_time: 0.0}
-  - {x: 25.0, y: 0.0, radius: 2.0, heading_deg: 0.0, stay_time: 0.0}
-  - {x: 25.0, y: 20.0, radius: 2.0, heading_deg: 0.0, stay_time: 0.0}
+  # VRX default WAM-V spawn is near (-532, 162). This S-turn route starts with a
+  # short straight segment so the WAM-V can settle, then alternates left/right
+  # bends with enough spacing for the 15 m fillet radius in path_config.yaml.
+  - {x: -532.0, y: 162.0, radius: 5.0, heading_deg: 0.0, stay_time: 0.0}
+  - {x: -512.0, y: 162.0, radius: 5.0, heading_deg: 0.0, stay_time: 0.0}
+  - {x: -492.0, y: 182.0, radius: 5.0, heading_deg: 0.0, stay_time: 0.0}
+  - {x: -472.0, y: 182.0, radius: 5.0, heading_deg: 0.0, stay_time: 0.0}
+  - {x: -452.0, y: 162.0, radius: 5.0, heading_deg: 0.0, stay_time: 0.0}
+  - {x: -432.0, y: 162.0, radius: 5.0, heading_deg: 0.0, stay_time: 0.0}

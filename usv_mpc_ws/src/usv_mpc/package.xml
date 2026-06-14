@@ -14,6 +14,14 @@
   <depend>mavros_msgs</depend>
   <depend>std_msgs</depend>
   <exec_depend>python3-numpy</exec_depend>
+  <!-- casadi: NMPC/QP solver backend (mpc_kinematic/mpc_dynamic/usv_model_*).
+       pip-only — no apt/rosdep key exists. Declared in setup.py install_requires
+       and usv_mpc_ws/requirements.txt. Install with:
+         pip install -r usv_mpc_ws/requirements.txt   (or: pip install casadi)
+       Intentionally NOT a rosdep key so `rosdep install` will not fail to resolve it. -->
+
+  <test_depend>ament_pytest</test_depend>
+  <test_depend>python3-pytest</test_depend>
 
   <export>
     <build_type>ament_python</build_type>

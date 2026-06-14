@@ -4,7 +4,6 @@
 """
 
 import math
-import time
 from typing import List, Tuple
 
 import numpy as np
@@ -15,8 +14,9 @@ import yaml
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry, Path as NavPath
 from rclpy.node import Node
+from std_msgs.msg import Float64MultiArray, MultiArrayDimension
 
-from .dubins_path import plan_dubins, DubinsPath
+from . import trajectory_optimizer, speed_profile
 from .waypoint_manager import WaypointManager, Waypoint
 
 
@@ -36,6 +36,7 @@ class PathPlannerNode(Node):
         self._x = 0.0
         self._y = 0.0
         self._psi = 0.0
+        self._u = 0.0  # 当前纵向速度（用作 TOPP 起点速度 v_start）
 
         # 订阅者
         self._odom_sub = self.create_subscription(
@@ -47,11 +48,12 @@ class PathPlannerNode(Node):
 
         # 发布者
         self._path_pub = self.create_publisher(NavPath, self._path_topic, 10)
+        # 速度/曲率/时间剖面，与 /path/reference 逐点对应，供 MPC 构建动力学一致参考
+        self._profile_pub = self.create_publisher(Float64MultiArray, self._profile_topic, 10)
 
         # 定时器用于周期性更新路径
         self._timer = self.create_timer(self._update_rate, self._publish_path)
 
-        self._last_update = 0.0
         self.get_logger().info(
             f"Path Planner started | {len(self._wp_manager.waypoints)} waypoints | "
             f"update_rate={self._update_rate}s"
@@ -61,24 +63,49 @@ class PathPlannerNode(Node):
         self.declare_parameter("update_rate", 1.0)
         self.declare_parameter("waypoints_file", "")
         self.declare_parameter("path_resolution", 0.5)  # 路径点间距，单位 m
-        self.declare_parameter("lookahead_distance", 50.0)  # 向前发布的路径长度，单位 m
-        self.declare_parameter("turn_radius", 5.0)  # Dubins 最小转弯半径
-        self.declare_parameter("cruise_speed", 1.0)
+        self.declare_parameter("turn_radius", 5.0)  # 最小转弯半径（圆弧倒角半径）
         self.declare_parameter("odom_topic", "/mavros/local_position/odom")
         self.declare_parameter("path_topic", "/path/reference")
+        self.declare_parameter("profile_topic", "/path/reference_profile")
         self.declare_parameter("dynamic_waypoints_topic", "/usv/mission/waypoints_local")
         self.declare_parameter("default_waypoint_radius", 2.0)
+
+        # --- 速度剖面 (TOPP) 约束 ---
+        # 注意：u_max / r_max 必须 <= MPC 的 kinematic.u_max / kinematic.r_max
+        # （规划可行域 ⊆ 控制可行域），否则参考会超出控制器能跟踪的范围。
+        self.declare_parameter("u_max", 2.0)         # 最大巡航速度 (m/s)
+        self.declare_parameter("r_max", 0.5)         # 最大转艏角速度 (rad/s)
+        self.declare_parameter("lat_accel_max", 1.0)  # 最大侧向加速度 (m/s^2)
+        self.declare_parameter("accel_max", 0.5)     # 最大纵向加速 (m/s^2)
+        self.declare_parameter("decel_max", 0.5)     # 最大纵向减速 (m/s^2)
+        self.declare_parameter("v_end", 0.0)         # 末端目标速度 (m/s)
+        self.declare_parameter("v_min", 0.2)         # 最小速度下限，保证时间推进 (m/s)
+
+        # --- 可选：最小曲率精修 NLP（默认关闭，保 1Hz 实时性）---
+        self.declare_parameter("enable_curvature_opt", False)
+        self.declare_parameter("curvature_opt_max_iter", 40)
+        self.declare_parameter("curvature_opt_corridor", 1.0)  # 走廊半宽 (m)
 
     def _load_config(self):
         self._update_rate = self.get_parameter("update_rate").value
         self._path_resolution = self.get_parameter("path_resolution").value
-        self._lookahead = self.get_parameter("lookahead_distance").value
         self._turn_radius = self.get_parameter("turn_radius").value
-        self._cruise_speed = self.get_parameter("cruise_speed").value
         self._odom_topic = self.get_parameter("odom_topic").value
         self._path_topic = self.get_parameter("path_topic").value
+        self._profile_topic = self.get_parameter("profile_topic").value
         self._dynamic_wp_topic = self.get_parameter("dynamic_waypoints_topic").value
         self._default_wp_radius = self.get_parameter("default_waypoint_radius").value
+
+        self._u_max = self.get_parameter("u_max").value
+        self._r_max = self.get_parameter("r_max").value
+        self._lat_accel_max = self.get_parameter("lat_accel_max").value
+        self._accel_max = self.get_parameter("accel_max").value
+        self._decel_max = self.get_parameter("decel_max").value
+        self._v_end = self.get_parameter("v_end").value
+        self._v_min = self.get_parameter("v_min").value
+        self._enable_curv_opt = bool(self.get_parameter("enable_curvature_opt").value)
+        self._curv_opt_max_iter = int(self.get_parameter("curvature_opt_max_iter").value)
+        self._curv_opt_corridor = float(self.get_parameter("curvature_opt_corridor").value)
 
     def _load_waypoints(self):
         wp_file = self.get_parameter("waypoints_file").value
@@ -102,18 +129,22 @@ class PathPlannerNode(Node):
         siny = 2.0 * (q.w * q.z + q.x * q.y)
         cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
         self._psi = math.atan2(siny, cosy)
+        self._u = msg.twist.twist.linear.x  # 机体纵向速度，供 TOPP 作 v_start
 
     def _publish_empty_path(self):
+        stamp = self.get_clock().now().to_msg()
         msg = NavPath()
-        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.stamp = stamp
         msg.header.frame_id = "map"
         self._path_pub.publish(msg)
+        # 同步发空剖面，避免 MPC 端残留过期 profile
+        self._profile_pub.publish(Float64MultiArray())
 
     def _dynamic_waypoints_callback(self, msg: NavPath):
         """使用动态 Path 消息替换 WaypointManager 中的航点。
 
-        动态航点只表达位置，不强制每个航点处的航向角；这样首轮仿真
-        使用线性插值路径，避免 Dubins 曲线在短航段/急转角处生成绕圈。
+        动态航点只表达位置。航向由 fillet 圆弧倒角从相邻航段方向自动推导，
+        因此不再需要像旧版那样强制 heading=0 来规避 Dubins 短航段绕圈。
         空 Path 会清空航点管理器。
         """
         self._wp_manager.clear()
@@ -152,10 +183,9 @@ class PathPlannerNode(Node):
             )
             return
 
-        # 生成平滑路径
-        path_points = self._generate_smooth_path()
-
-        if not path_points:
+        # 生成平滑轨迹（几何 + 速度剖面）
+        result = self._generate_smooth_path()
+        if result is None:
             self._publish_empty_path()
             self.get_logger().warning(
                 "未能生成有效参考路径，已发布空参考路径",
@@ -163,66 +193,92 @@ class PathPlannerNode(Node):
             )
             return
 
-        # 构建 NavPath 消息
-        msg = NavPath()
-        msg.header.stamp = self.get_clock().now().to_msg()
-        msg.header.frame_id = "map"
+        xs, ys, psis, kappas, vs, rs, ts = result
+        stamp = self.get_clock().now().to_msg()
 
-        for pt in path_points:
+        # 1) NavPath：位置 + 航向（航向 normalize 后写入四元数；MPC 代价对包角免疫）
+        path_msg = NavPath()
+        path_msg.header.stamp = stamp
+        path_msg.header.frame_id = "map"
+        for i in range(len(xs)):
             pose = PoseStamped()
-            pose.header = msg.header
-            pose.pose.position.x = pt[0]
-            pose.pose.position.y = pt[1]
+            pose.header = path_msg.header
+            pose.pose.position.x = float(xs[i])
+            pose.pose.position.y = float(ys[i])
             pose.pose.position.z = 0.0
-            psi = pt[2]
-            pose.pose.orientation.z = math.sin(psi / 2)
-            pose.pose.orientation.w = math.cos(psi / 2)
-            msg.poses.append(pose)
+            psi = float(psis[i])
+            pose.pose.orientation.z = math.sin(psi / 2.0)
+            pose.pose.orientation.w = math.cos(psi / 2.0)
+            path_msg.poses.append(pose)
+        self._path_pub.publish(path_msg)
 
-        self._path_pub.publish(msg)
+        # 2) Profile：[M,4] = (v, kappa, r, t)，逐点与 NavPath 对应（同周期发布）
+        self._profile_pub.publish(self._build_profile_msg(vs, kappas, rs, ts, stamp))
 
-    def _generate_smooth_path(self) -> List[Tuple[float, float, float]]:
-        """通过所有活动航点生成平滑路径。
+    def _build_profile_msg(self, vs, kappas, rs, ts, stamp) -> Float64MultiArray:
+        """构建逐点速度/曲率/转艏角速度/时间剖面消息（行主序 [M,4]）。
 
-        默认使用带航向角平滑的线性插值；相邻线段急转弯时使用 Dubins 曲线。
+        Float64MultiArray 没有 header；为了把 profile 与同周期 NavPath
+        可靠配对，在 layout.dim 末尾写入 path.header.stamp 的元数据。
+        """
+        m = len(vs)
+        msg = Float64MultiArray()
+        msg.layout.dim = [
+            MultiArrayDimension(label="points", size=m, stride=m * 4),
+            MultiArrayDimension(label="v_kappa_r_t", size=4, stride=4),
+            MultiArrayDimension(label=f"stamp_sec:{stamp.sec}", size=0, stride=0),
+            MultiArrayDimension(label=f"stamp_nanosec:{stamp.nanosec}", size=0, stride=0),
+        ]
+        data: List[float] = []
+        for i in range(m):
+            data.extend([float(vs[i]), float(kappas[i]), float(rs[i]), float(ts[i])])
+        msg.data = data
+        return msg
+
+    def _generate_smooth_path(self):
+        """生成通过所有航点的曲率可行平滑轨迹 + 时间最优速度剖面。
+
+        Returns:
+            (xs, ys, psis, kappas, vs, rs, ts) 七元组 numpy 数组；无效时返回 None。
         """
         wps = self._wp_manager.waypoints
         if len(wps) < 2:
-            return []
+            return None
 
-        all_points: List[Tuple[float, float, float]] = []
+        waypoints_xy = [(w.x, w.y) for w in wps]
 
-        for i in range(len(wps) - 1):
-            start = (wps[i].x, wps[i].y, wps[i].heading)
-            end = (wps[i + 1].x, wps[i + 1].y, wps[i + 1].heading)
+        # 几何层：圆弧倒角，解析输出航向与曲率
+        xs, ys, psis, kappas, s, warnings = trajectory_optimizer.fillet_path(
+            waypoints_xy, self._turn_radius, self._path_resolution
+        )
+        for w in warnings:
+            self.get_logger().warning(w, throttle_duration_sec=5.0)
+        if len(xs) < 2:
+            return None
 
-            # 若存在航向角约束，则优先使用 Dubins 曲线
-            if wps[i].heading != 0.0 or wps[i + 1].heading != 0.0:
-                dubins_path = plan_dubins(start, end, self._turn_radius)
-                if dubins_path is not None and dubins_path.total_length < 500:
-                    sampled = dubins_path.sample(
-                        start[0], start[1], start[2],
-                        self._turn_radius, self._path_resolution
-                    )
-                    if i > 0:
-                        sampled = sampled[1:]  # 避免重复点
-                    all_points.extend(sampled)
-                    continue
+        # 可选：最小曲率精修（默认关闭，失败/不可用回退 fillet）
+        if self._enable_curv_opt:
+            refined = trajectory_optimizer.refine_min_curvature(
+                xs, ys, self._curv_opt_corridor, self._turn_radius,
+                max_iter=self._curv_opt_max_iter,
+            )
+            if refined is not None:
+                xs, ys = refined
+                psis, kappas, s = trajectory_optimizer.recompute_geometry(xs, ys)
+            else:
+                self.get_logger().warning(
+                    "最小曲率精修失败/不可用，回退 fillet 结果",
+                    throttle_duration_sec=5.0,
+                )
 
-            # 退化方案：线性插值
-            dx = end[0] - start[0]
-            dy = end[1] - start[1]
-            seg_len = math.hypot(dx, dy)
-            n_pts = max(2, int(seg_len / self._path_resolution))
-            heading = math.atan2(dy, dx)
-            for j in range(n_pts):
-                if i == 0 or j > 0:
-                    t = j / (n_pts - 1) if n_pts > 1 else 0
-                    x = start[0] + t * dx
-                    y = start[1] + t * dy
-                    all_points.append((x, y, heading))
-
-        return all_points
+        # 速度层：TOPP 时间最优速度剖面。起点速度取当前实测纵向速度。
+        vs, rs, ts = speed_profile.compute_profile(
+            kappas, s,
+            u_max=self._u_max, r_max=self._r_max, a_lat_max=self._lat_accel_max,
+            a_acc=self._accel_max, a_dec=self._decel_max,
+            v_start=max(0.0, self._u), v_end=self._v_end, v_min=self._v_min,
+        )
+        return xs, ys, psis, kappas, vs, rs, ts
 
 
 def main(args=None):

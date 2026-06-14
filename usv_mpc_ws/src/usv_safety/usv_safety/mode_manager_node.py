@@ -1,17 +1,22 @@
-"""Mode Manager ROS 2 Node.
+"""
+Mode Manager ROS 2 Node.
 
 Manages flight mode transitions (MANUAL ↔ GUIDED ↔ HOLD ↔ RTL),
 arming/disarming, and safety monitoring integration.
 """
 
 import json
+import math
 import time
 from enum import Enum
 
 import rclpy
 from mavros_msgs.msg import State as MavrosState
 from mavros_msgs.srv import CommandBool, SetMode
+from nav_msgs.msg import Odometry, Path as NavPath
 from rclpy.node import Node
+from rclpy.qos import qos_profile_sensor_data
+from sensor_msgs.msg import BatteryState
 from std_msgs.msg import String
 
 from .safety_monitor import SafetyMonitor, SafetyConfig, SafetyLevel
@@ -46,6 +51,14 @@ class ModeManagerNode(Node):
         self._last_mpc_status_time: float = 0.0
         self._x: float = 0.0
         self._y: float = 0.0
+        self._speed: float = 0.0
+        # Safe sentinel: missing battery telemetry must NOT trip the low/critical
+        # battery failsafe (a surprise RTL mid-mission is itself a hazard).
+        self._voltage: float = 99.0
+        self._battery_received: bool = False
+        self._odom_received: bool = False
+        self._last_odom_rx: float = 0.0
+        self._path_ever_received: bool = False
 
         # Subscribers
         state_topic = self.get_parameter("state_topic").value
@@ -56,6 +69,23 @@ class ModeManagerNode(Node):
         self._mpc_status_sub = self.create_subscription(
             String, mpc_status_topic, self._mpc_status_callback, 10
         )
+        # Live telemetry feeds for the safety monitor (geofence / speed / battery
+        # / path watchdog). These were previously hard-coded, leaving every check
+        # inert; now they are driven by real data.
+        odom_topic = self.get_parameter("odom_topic").value
+        self._odom_sub = self.create_subscription(
+            Odometry, odom_topic, self._odom_callback, qos_profile_sensor_data
+        )
+        path_topic = self.get_parameter("path_topic").value
+        self._path_sub = self.create_subscription(
+            NavPath, path_topic, self._path_callback, 10
+        )
+        battery_topic = self.get_parameter("battery_topic").value
+        self._battery_sub = None
+        if battery_topic:
+            self._battery_sub = self.create_subscription(
+                BatteryState, battery_topic, self._battery_callback, qos_profile_sensor_data
+            )
 
         # Service clients
         set_mode_service = self.get_parameter("set_mode_service").value
@@ -75,11 +105,16 @@ class ModeManagerNode(Node):
         self.declare_parameter("geofence_center_x", 0.0)
         self.declare_parameter("geofence_center_y", 0.0)
         self.declare_parameter("low_battery_v", 10.5)
+        self.declare_parameter("critical_battery_v", 10.0)
         self.declare_parameter("max_solver_failures", 5)
         self.declare_parameter("odom_timeout_s", 1.0)
+        self.declare_parameter("max_path_timeout_s", 5.0)
+        self.declare_parameter("max_speed_mps", 3.0)
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("mpc_status_topic", "/mpc/status")
         self.declare_parameter("path_topic", "/path/reference")
+        self.declare_parameter("odom_topic", "/mavros/local_position/odom")
+        self.declare_parameter("battery_topic", "/mavros/battery")
         self.declare_parameter("set_mode_service", "/mavros/set_mode")
         self.declare_parameter("arming_service", "/mavros/cmd/arming")
 
@@ -91,8 +126,11 @@ class ModeManagerNode(Node):
                 self.get_parameter("geofence_center_y").value,
             ),
             low_battery_v=self.get_parameter("low_battery_v").value,
+            critical_battery_v=self.get_parameter("critical_battery_v").value,
             max_solver_failures=self.get_parameter("max_solver_failures").value,
             max_odom_timeout_s=self.get_parameter("odom_timeout_s").value,
+            max_path_timeout_s=self.get_parameter("max_path_timeout_s").value,
+            max_speed_mps=self.get_parameter("max_speed_mps").value,
         )
 
     def _state_callback(self, msg: MavrosState):
@@ -124,14 +162,52 @@ class ModeManagerNode(Node):
             self._mpc_standby_reason = ""
         self._last_mpc_status_time = time.time()
 
+    def _odom_callback(self, msg: Odometry):
+        """Feed live pose/speed into geofence and speed-limit checks."""
+        self._x = msg.pose.pose.position.x
+        self._y = msg.pose.pose.position.y
+        self._speed = math.hypot(msg.twist.twist.linear.x, msg.twist.twist.linear.y)
+        self._odom_received = True
+        self._last_odom_rx = time.time()
+        self._safety.update_odom(
+            self._x, self._y, 0.0, self._speed, self._voltage, self._last_odom_rx
+        )
+
+    def _battery_callback(self, msg: BatteryState):
+        """Cache battery voltage; ignore NaN / invalid readings."""
+        v = msg.voltage
+        if not math.isnan(v) and v > 0.0:
+            self._voltage = float(v)
+            self._battery_received = True
+            if self._odom_received:
+                self._safety.update_odom(
+                    self._x, self._y, 0.0, self._speed, self._voltage, time.time()
+                )
+
+    def _path_callback(self, msg: NavPath):
+        """Mark a fresh reference path so the path watchdog can detect stalls."""
+        self._path_ever_received = True
+        self._safety.update_path(received=True, timestamp=time.time())
+
     def _monitor_loop(self):
         """Periodic safety monitoring and mode management."""
         now = time.time()
 
-        # Update safety monitor
-        self._safety.update_odom(
-            self._x, self._y, 0.0, 0.0, 12.0, now
-        )
+        # Odometry watchdog: update_odom() is called ONLY from the real odom
+        # callback so check_odom_timeout() reflects sensor freshness. Do not
+        # refresh it here, or this watchdog would be self-resetting.
+        if not self._armed:
+            # Before arming, MAVROS/EKF may still be starting up. Do not switch
+            # modes just because odometry is not available yet; start enforcing
+            # the watchdog once the vehicle is armed.
+            self._safety.set_odom_watchdog(None, now)
+        elif not self._odom_received:
+            self._safety.set_odom_watchdog("No odometry received", now)
+        elif self._safety.check_odom_timeout(now):
+            dt = now - self._last_odom_rx
+            self._safety.set_odom_watchdog(f"Odometry timeout: {dt:.1f}s", now)
+        else:
+            self._safety.set_odom_watchdog(None, now)
 
         # MPC solver health is only meaningful when MPC is ACTIVE or HOLD.
         # STANDBY/UNKNOWN means MPC isn't even trying to solve (e.g. wrong
@@ -140,29 +216,28 @@ class ModeManagerNode(Node):
         # MPC's reported fail_count (always 0 in STANDBY) and skip the
         # incremental update.
         if self._mpc_state in ("ACTIVE", "HOLD"):
-            if self._mpc_fail_count > self._safety._solver_fail_count:
-                self._safety._solver_fail_count = self._mpc_fail_count
+            if self._mpc_fail_count > self._safety.solver_fail_count:
+                self._safety.set_solver_fail_count(self._mpc_fail_count)
             self._safety.update_solver(
                 self._mpc_ok, self._mpc_solve_time_ms, now
             )
         else:
             # STANDBY / UNKNOWN: keep safety in sync but do not accumulate
-            self._safety._solver_fail_count = self._mpc_fail_count
-            # Clear any stale solver-failure flags from the safety state so a
-            # past failsafe can recover once MPC returns to STANDBY/idle.
-            self._safety._current_state.active_flags = [
-                f for f in self._safety._current_state.active_flags
-                if "Solver" not in f
-            ]
-            # Recompute level from remaining flags (simple: NOMINAL if empty)
-            if not self._safety._current_state.active_flags:
-                self._safety._current_state.level = SafetyLevel.NOMINAL
+            # solver failures while MPC is intentionally not solving.
+            self._safety.set_solver_fail_count(self._mpc_fail_count)
+            self._safety.clear_solver_flags(now)
+
+        # Path-update watchdog. Armed only after the first path has been seen so
+        # that pre-mission absence of a path does not trip a failsafe.
+        if self._path_ever_received:
+            self._safety.update_path(received=False, timestamp=now)
 
         # Check for failsafe trigger
         if self._safety.failsafe_active:
             if self._current_mavros_mode != "RTL":
+                flags = self._safety.active_flags
                 self.get_logger().error(
-                    f"FAILSAFE triggered! Flags: {self._safety.state.active_flags}"
+                    f"FAILSAFE triggered! Flags: {flags}"
                 )
                 self._switch_mode("RTL")
             return
@@ -183,8 +258,9 @@ class ModeManagerNode(Node):
                 self._switch_mode("GUIDED")
 
         # Log warnings
-        if self._safety.warning_active and self._safety.state.active_flags:
-            for flag in self._safety.state.active_flags:
+        flags = self._safety.active_flags
+        if self._safety.warning_active and flags:
+            for flag in flags:
                 self.get_logger().warn(f"Safety: {flag}")
 
     def request_arm(self, arm: bool = True) -> bool:
@@ -225,10 +301,6 @@ class ModeManagerNode(Node):
 
     def switch_to_hold(self) -> bool:
         return self._switch_mode("HOLD")
-
-    def update_position(self, x: float, y: float):
-        self._x = x
-        self._y = y
 
 
 def main(args=None):

@@ -1,9 +1,9 @@
-"""3-DOF Fossen dynamic model for USV (Scheme B).
+"""USV 三自由度 Fossen 动力学模型（方案 B）。
 
-State:  [x, y, psi, u, v, r]  (6-DOF in NED + body)
-Control: [T_L, T_R]           (left and right thruster forces, N)
+状态量:  [x, y, psi, u, v, r]  （ROS local map 坐标系位置 + base_link/船体坐标系速度，共 6 维）
+控制量: [T_L, T_R]             （左右推进器推力，单位 N）
 
-M * dot_nu + C(nu)*nu + D(nu)*nu = tau
+动力学方程: M * dot_nu + C(nu)*nu + D(nu)*nu = tau
 """
 
 import math
@@ -14,30 +14,30 @@ import numpy as np
 
 
 class USVDynamicModel:
-    """Fossen 3-DOF USV dynamic model with dual thrusters."""
+    """基于 Fossen 理论的 USV 三自由度动力学模型，双推进器配置。"""
 
     def __init__(
         self,
         dt: float = 0.1,
         rk4_substeps: int = 4,
-        # Hull parameters
+        # 船体参数
         mass: float = 30.0,
         Iz: float = 8.0,
         xg: float = 0.0,
         d_thruster: float = 0.3,
-        # Added mass
+        # 附加质量
         Xu_dot: float = -3.0,
         Yv_dot: float = -20.0,
         Yr_dot: float = -0.5,
         Nv_dot: float = -0.5,
         Nr_dot: float = -2.0,
-        # Linear damping
+        # 线性阻尼
         Xu: float = -8.0,
         Yv: float = -30.0,
         Yr: float = -1.0,
         Nv: float = -1.0,
         Nr: float = -5.0,
-        # Quadratic damping
+        # 二次阻尼
         Xuu: float = -15.0,
         Yvv: float = -60.0,
         Yrr: float = -1.0,
@@ -47,7 +47,7 @@ class USVDynamicModel:
         self.dt = dt
         self.rk4_substeps = rk4_substeps
 
-        # Store parameters for inspection
+        # 保存参数以供外部检查
         self.mass = mass
         self.Iz = Iz
         self.xg = xg
@@ -71,8 +71,8 @@ class USVDynamicModel:
         self._setup_casadi()
 
     def _setup_casadi(self):
-        """Build CasADi symbolic functions for the dynamic model."""
-        # State: [x, y, psi, u, v, r]
+        """构建动力学模型的 CasADi 符号函数。"""
+        # 状态量: [x, y, psi, u, v, r]
         x_s = ca.SX.sym("x")
         y_s = ca.SX.sym("y")
         psi_s = ca.SX.sym("psi")
@@ -81,12 +81,12 @@ class USVDynamicModel:
         r_s = ca.SX.sym("r")
         states = ca.vertcat(x_s, y_s, psi_s, u_s, v_s, r_s)
 
-        # Control: [T_L, T_R]
+        # 控制量: [T_L, T_R]
         TL = ca.SX.sym("TL")
         TR = ca.SX.sym("TR")
         controls = ca.vertcat(TL, TR)
 
-        # Inertia matrix M (with added mass)
+        # 惯性矩阵 M（含附加质量）
         m11 = self.mass - self.Xu_dot
         m22 = self.mass - self.Yv_dot
         m23 = self.mass * self.xg - self.Yr_dot
@@ -102,7 +102,7 @@ class USVDynamicModel:
 
         M_inv = ca.inv(M)
 
-        # Coriolis matrix C(nu)
+        # 科里奥利矩阵 C(nu)
         c13 = -m22 * v_s - m23 * r_s
         c23 = m11 * u_s
         C = ca.SX(3, 3)
@@ -111,7 +111,7 @@ class USVDynamicModel:
         C[2, 0] = -c13
         C[2, 1] = -c23
 
-        # Damping matrix D(nu) — linear + quadratic
+        # 阻尼矩阵 D(nu) — 线性阻尼 + 二次阻尼
         D = ca.SX(3, 3)
         D[0, 0] = -self.Xu - self.Xuu * ca.fabs(u_s)
         D[1, 1] = -self.Yv - self.Yvv * ca.fabs(v_s)
@@ -119,15 +119,15 @@ class USVDynamicModel:
         D[2, 1] = -self.Nv - self.Nvv * ca.fabs(v_s)
         D[2, 2] = -self.Nr - self.Nrr * ca.fabs(r_s)
 
-        # Thrust mapping: tau = B(theta) * [TL, TR]^T
-        # tau_X = TL + TR, tau_Y = 0 (underactuated), tau_N = d*(TR - TL)
+        # 推力映射: tau = B(theta) * [TL, TR]^T
+        # tau_X = TL + TR（纵向合力），tau_Y = 0（欠驱动），tau_N = d*(TR - TL)（艏摇力矩）
         tau = ca.vertcat(
             TL + TR,
             0,
             self.d_thruster * (TR - TL),
         )
 
-        # Kinematics: dot_eta = J(psi) * nu
+        # 运动学方程: dot_eta = J(psi) * nu（从船体坐标系转换到 ROS local map 坐标系）
         nu = ca.vertcat(u_s, v_s, r_s)
         cos_psi = ca.cos(psi_s)
         sin_psi = ca.sin(psi_s)
@@ -139,7 +139,7 @@ class USVDynamicModel:
         J[2, 2] = 1
         eta_dot = ca.mtimes(J, nu)
 
-        # Dynamics: dot_nu = M^{-1} * (tau - C*nu - D*nu)
+        # 动力学方程: dot_nu = M^{-1} * (tau - C*nu - D*nu)
         Cnu = ca.mtimes(C, nu)
         Dnu = ca.mtimes(D, nu)
         nu_dot = ca.mtimes(M_inv, tau - Cnu - Dnu)
@@ -147,7 +147,7 @@ class USVDynamicModel:
         rhs = ca.vertcat(eta_dot, nu_dot)
         self._f_continuous = ca.Function("f_dyn", [states, controls], [rhs])
 
-        # RK4 discrete-time dynamics
+        # RK4 离散化动力学
         X0 = ca.SX.sym("X0", 6)
         U = ca.SX.sym("U", 2)
         X = X0
@@ -161,13 +161,14 @@ class USVDynamicModel:
         self._f_rk4 = ca.Function("f_rk4_dyn", [X0, U], [X])
 
     def forward(self, state: np.ndarray, control: np.ndarray) -> np.ndarray:
-        """Evolve 6-DOF state forward by dt."""
+        """将 6 维状态向前推进 dt 时间步。"""
         result = self._f_rk4(state, control)
         x_next = np.array(result).flatten()
         x_next[2] = math.atan2(math.sin(x_next[2]), math.cos(x_next[2]))
         return x_next
 
     def casadi_function(self) -> ca.Function:
+        """返回 CasADi 离散动力学函数。"""
         return self._f_rk4
 
     @property

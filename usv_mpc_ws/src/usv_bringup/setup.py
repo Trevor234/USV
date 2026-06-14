@@ -26,4 +26,5 @@ setup(
     maintainer_email="user@example.com",
     description="Launch files and configuration for USV MPC system",
     license="MIT",
+    tests_require=["pytest"],
 )

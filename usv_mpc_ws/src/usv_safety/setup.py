@@ -16,6 +16,7 @@ setup(
     maintainer_email="user@example.com",
     description="Safety monitoring and mode management for USV",
     license="MIT",
+    tests_require=["pytest"],
     entry_points={
         "console_scripts": [
             "mode_manager_node = usv_safety.mode_manager_node:main",

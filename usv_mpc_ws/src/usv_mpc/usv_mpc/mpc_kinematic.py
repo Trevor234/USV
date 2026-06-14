@@ -135,7 +135,7 @@ class KinematicMPC:
         """求解 MPC 优化问题。
 
         参数：
-            current_state: NED 坐标系下的 [x, y, psi]
+            current_state: ROS local map 坐标系下的 [x, y, psi]
             reference_traj: 形状为 [3, N+1] 的参考状态数组
 
         返回：

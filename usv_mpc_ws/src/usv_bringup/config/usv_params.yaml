@@ -2,7 +2,6 @@
 #
 # Used by:
 #   - mpc_node.py (declares params under `vehicle.*` and `dynamic.*` namespaces)
-#   - usv_simulation/models/usv_2m/model.sdf (xacro substitutes geometry)
 #   - usv_mpc_dynamic.m (kept in sync manually)
 #
 # References: implementation_plan.md §九 (initial estimates),
@@ -20,7 +19,7 @@
       xg: 0.0             # m, CG longitudinal offset (+ forward)
       d_thruster: 0.3     # m, half of thruster spacing 2d
 
-      # ----- Hull geometry (Gazebo only — informational for MPC) -----
+      # ----- Hull geometry (informational for MPC) -----
       length: 2.0         # m, length overall
       beam: 0.6           # m, beam
       draft: 0.15         # m, waterline depth
@@ -50,8 +49,8 @@
     # ----- Thruster -----
     # NOTE: T_max / T_min / dT_max are also declared in mpc_params.yaml under
     # `dynamic.*` and take precedence there for MPC. Repeated here so the
-    # Gazebo thrust plugin and parameter-identification scripts can read a
-    # single file. Keep in sync with mpc_params.yaml.
+    # parameter-identification scripts can read a single file.
+    # Keep in sync with mpc_params.yaml.
     thruster:
       pwm_min: 1000
       pwm_center: 1500

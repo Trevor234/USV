@@ -10,11 +10,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import rclpy
 from geometry_msgs.msg import TwistStamped
-from mavros_msgs.msg import OverrideRCIn, State
 from nav_msgs.msg import Odometry, Path as NavPath
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, qos_profile_sensor_data
-from std_msgs.msg import String
+from std_msgs.msg import Float64, String
 
 
 class USVVisualizer(Node):
@@ -38,12 +37,10 @@ class USVVisualizer(Node):
         self._v = 0.0
         self._r = 0.0
 
-        self._mavros_connected: Optional[bool] = None
-        self._mavros_armed: Optional[bool] = None
-        self._mavros_mode = "-"
         self._mpc_status: Dict[str, Any] = {}
         self._cmd_vel: Optional[Tuple[float, float]] = None
-        self._rc_channels: List[int] = []
+        self._left_thrust: Optional[float] = None
+        self._right_thrust: Optional[float] = None
 
         self._topic_stats: Dict[str, Dict[str, Any]] = {}
         self._init_topic_stats()
@@ -52,20 +49,21 @@ class USVVisualizer(Node):
         self.get_logger().info(
             "USV visualizer started | "
             f"odom={self._odom_topic} | ref={self._reference_path_topic} | "
-            f"mpc={self._mpc_trajectory_topic} | mission={self._mission_waypoints_topic}"
+            f"mpc={self._mpc_trajectory_topic} | mission={self._mission_waypoints_topic} | "
+            f"thrust=({self._left_thrust_topic}, {self._right_thrust_topic})"
         )
 
     def _declare_parameters(self):
-        self.declare_parameter("odom_topic", "/mavros/local_position/odom")
+        self.declare_parameter("odom_topic", "/wamv/sensors/position/ground_truth_odometry")
         self.declare_parameter("reference_path_topic", "/path/reference")
         self.declare_parameter("path_topic", "/path/reference")
         self.declare_parameter("mpc_trajectory_topic", "/mpc/predicted_trajectory")
         self.declare_parameter("predicted_trajectory_topic", "/mpc/predicted_trajectory")
         self.declare_parameter("mission_waypoints_topic", "/usv/mission/waypoints_local")
         self.declare_parameter("mpc_status_topic", "/mpc/status")
-        self.declare_parameter("mavros_state_topic", "/mavros/state")
-        self.declare_parameter("cmd_vel_topic", "/mavros/setpoint_velocity/cmd_vel")
-        self.declare_parameter("rc_override_topic", "/mavros/rc/override")
+        self.declare_parameter("cmd_vel_topic", "")
+        self.declare_parameter("left_thrust_topic", "/wamv/thrusters/left/thrust")
+        self.declare_parameter("right_thrust_topic", "/wamv/thrusters/right/thrust")
         self.declare_parameter("history_length", 10000)
         self.declare_parameter("plot_interval_ms", 200)
 
@@ -75,9 +73,9 @@ class USVVisualizer(Node):
         self._mpc_trajectory_topic = self.get_parameter("predicted_trajectory_topic").value
         self._mission_waypoints_topic = self.get_parameter("mission_waypoints_topic").value
         self._mpc_status_topic = self.get_parameter("mpc_status_topic").value
-        self._mavros_state_topic = self.get_parameter("mavros_state_topic").value
         self._cmd_vel_topic = self.get_parameter("cmd_vel_topic").value
-        self._rc_override_topic = self.get_parameter("rc_override_topic").value
+        self._left_thrust_topic = self.get_parameter("left_thrust_topic").value
+        self._right_thrust_topic = self.get_parameter("right_thrust_topic").value
         self._history_length = max(1, int(self.get_parameter("history_length").value))
         self._plot_interval_ms = max(50, int(self.get_parameter("plot_interval_ms").value))
 
@@ -88,10 +86,14 @@ class USVVisualizer(Node):
             ("traj", "mpc_traj", self._mpc_trajectory_topic, 2.0),
             ("mission", "mission_wp", self._mission_waypoints_topic, 60.0),
             ("mpc_status", "mpc_status", self._mpc_status_topic, 2.0),
-            ("mavros_state", "mav_state", self._mavros_state_topic, 2.0),
-            ("cmd_vel", "cmd_vel", self._cmd_vel_topic, 2.0),
-            ("rc_override", "rc_override", self._rc_override_topic, 2.0),
         ]
+        if self._left_thrust_topic:
+            topics.append(("left_thrust", "left_thrust", self._left_thrust_topic, 2.0))
+        if self._right_thrust_topic:
+            topics.append(("right_thrust", "right_thrust", self._right_thrust_topic, 2.0))
+        if self._cmd_vel_topic:
+            topics.append(("cmd_vel", "cmd_vel", self._cmd_vel_topic, 2.0))
+
         for key, label, topic, stale_after in topics:
             self._topic_stats[key] = {
                 "label": label,
@@ -108,9 +110,12 @@ class USVVisualizer(Node):
         self.create_subscription(NavPath, self._mpc_trajectory_topic, self._traj_callback, reliable_qos)
         self.create_subscription(NavPath, self._mission_waypoints_topic, self._mission_callback, reliable_qos)
         self.create_subscription(String, self._mpc_status_topic, self._mpc_status_callback, reliable_qos)
-        self.create_subscription(State, self._mavros_state_topic, self._mavros_state_callback, reliable_qos)
-        self.create_subscription(TwistStamped, self._cmd_vel_topic, self._cmd_vel_callback, reliable_qos)
-        self.create_subscription(OverrideRCIn, self._rc_override_topic, self._rc_override_callback, reliable_qos)
+        if self._left_thrust_topic:
+            self.create_subscription(Float64, self._left_thrust_topic, self._left_thrust_callback, reliable_qos)
+        if self._right_thrust_topic:
+            self.create_subscription(Float64, self._right_thrust_topic, self._right_thrust_callback, reliable_qos)
+        if self._cmd_vel_topic:
+            self.create_subscription(TwistStamped, self._cmd_vel_topic, self._cmd_vel_callback, reliable_qos)
 
     def _mark_topic(self, key: str):
         stat = self._topic_stats[key]
@@ -150,19 +155,17 @@ class USVVisualizer(Node):
         except json.JSONDecodeError:
             self._mpc_status = {"raw": msg.data}
 
-    def _mavros_state_callback(self, msg: State):
-        self._mark_topic("mavros_state")
-        self._mavros_connected = msg.connected
-        self._mavros_armed = msg.armed
-        self._mavros_mode = msg.mode or "-"
-
     def _cmd_vel_callback(self, msg: TwistStamped):
         self._mark_topic("cmd_vel")
         self._cmd_vel = (msg.twist.linear.x, msg.twist.angular.z)
 
-    def _rc_override_callback(self, msg: OverrideRCIn):
-        self._mark_topic("rc_override")
-        self._rc_channels = list(msg.channels)
+    def _left_thrust_callback(self, msg: Float64):
+        self._mark_topic("left_thrust")
+        self._left_thrust = msg.data
+
+    def _right_thrust_callback(self, msg: Float64):
+        self._mark_topic("right_thrust")
+        self._right_thrust = msg.data
 
     @property
     def history(self) -> List[Tuple[float, float, float]]:
@@ -183,11 +186,6 @@ class USVVisualizer(Node):
     @property
     def plot_interval_ms(self) -> int:
         return self._plot_interval_ms
-
-    def _format_bool(self, value: Optional[bool]) -> str:
-        if value is None:
-            return "-"
-        return "yes" if value else "no"
 
     def _format_topic_line(self, key: str, now: float) -> str:
         stat = self._topic_stats[key]
@@ -220,12 +218,12 @@ class USVVisualizer(Node):
             solve_time_text = str(solve_time)
 
         if self._cmd_vel is None:
-            cmd_text = "u=-, r=-"
+            cmd_text = "disabled"
         else:
             cmd_text = f"u={self._cmd_vel[0]:.2f}, r={self._cmd_vel[1]:.2f}"
 
-        ch1 = self._rc_channels[0] if len(self._rc_channels) > 0 else "-"
-        ch3 = self._rc_channels[2] if len(self._rc_channels) > 2 else "-"
+        left_text = "-" if self._left_thrust is None else f"{self._left_thrust:.2f}"
+        right_text = "-" if self._right_thrust is None else f"{self._right_thrust:.2f}"
         now = time.monotonic()
         topic_lines = [self._format_topic_line(key, now) for key in self._topic_stats]
 
@@ -240,11 +238,6 @@ class USVVisualizer(Node):
             f"  mpc preview pts  : {len(self._mpc_traj)}",
             f"  mission waypoints: {len(self._mission_waypoints)}",
             "",
-            "MAVROS",
-            f"  connected: {self._format_bool(self._mavros_connected)}",
-            f"  armed    : {self._format_bool(self._mavros_armed)}",
-            f"  mode     : {self._mavros_mode}",
-            "",
             "MPC",
             f"  state    : {mpc_state}",
             f"  scheme   : {mpc_scheme}",
@@ -253,8 +246,8 @@ class USVVisualizer(Node):
             f"  reason   : {self._short_text(reason)}",
             "",
             "CONTROL OUTPUT",
-            f"  cmd_vel  : {cmd_text}",
-            f"  RC CH1/3 : {ch1} / {ch3}",
+            f"  thrust L/R: {left_text} / {right_text}",
+            f"  cmd_vel   : {cmd_text}",
         ]
         if raw_status:
             lines.extend(["", f"RAW MPC: {self._short_text(raw_status)}"])

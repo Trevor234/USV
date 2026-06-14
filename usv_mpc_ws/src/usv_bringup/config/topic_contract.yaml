@@ -1,11 +1,23 @@
 profiles:
   common:
     path_topic: /path/reference
+    reference_profile_topic: /path/reference_profile
     mpc_status_topic: /mpc/status
     predicted_trajectory_topic: /mpc/predicted_trajectory
     dynamic_waypoints_topic: /usv/mission/waypoints_local
     map_frame: map
     body_frame: base_link
+
+    # Reference contract:
+    #   /path/reference: nav_msgs/Path in `map`; header.stamp is the planning-cycle id.
+    #   /path/reference_profile: std_msgs/Float64MultiArray with rows [v,kappa,r,t]
+    #     matching the Path poses one-to-one. layout.dim contains:
+    #       - points (size=M, stride=M*4)
+    #       - v_kappa_r_t (size=4, stride=4)
+    #       - stamp_sec:<path.header.stamp.sec>
+    #       - stamp_nanosec:<path.header.stamp.nanosec>
+    # MPC treats profile/path as synchronized only when length and stamp match
+    # (legacy unstamped profiles are accepted with an explicit status reason).
 
   vrx:
     odom_topic: /wamv/sensors/position/ground_truth_odometry
@@ -17,6 +29,7 @@ profiles:
     odom_topic: /mavros/local_position/odom
     imu_topic: /mavros/imu/data
     state_topic: /mavros/state
+    battery_topic: /mavros/battery
     velocity_topic: /mavros/setpoint_velocity/cmd_vel
     rc_override_topic: /mavros/rc/override
     rc_out_topic: /mavros/rc/out
@@ -25,11 +38,7 @@ profiles:
     odom_topic: /mavros/local_position/odom
     imu_topic: /mavros/imu/data
     state_topic: /mavros/state
+    battery_topic: /mavros/battery
     velocity_topic: /mavros/setpoint_velocity/cmd_vel
     rc_override_topic: /mavros/rc/override
     rc_out_topic: /mavros/rc/out
-
-  fallback_gz:
-    odom_topic: /model/usv_2m/odometry
-    force_topic: /usv/cmd_force
-    entity_wrench_topic: /world/lake_gz/wrench
