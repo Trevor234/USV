@@ -79,7 +79,13 @@ def generate_launch_description():
     path_frame = LaunchConfiguration("path_frame")
     body_frame = LaunchConfiguration("body_frame")
 
-    wamv_urdf = os.path.join(vrx_urdf_share, "urdf", "wamv_gazebo.urdf.xacro")
+    # Single-hull USV model. It reuses the WAM-V thruster/sensor/buoyancy
+    # plugins via xacro includes (so /wamv/... topics are unchanged) but spawns
+    # one hull instead of the catamaran. vrx_urdf_share is kept above so the
+    # wamv_gazebo macros it includes are guaranteed on the package path.
+    wamv_urdf = os.path.join(
+        get_package_share_directory("usv_simulation"), "urdf", "usv_mono.urdf.xacro"
+    )
 
     vrx = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(

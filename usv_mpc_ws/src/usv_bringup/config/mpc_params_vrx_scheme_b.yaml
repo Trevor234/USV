@@ -1,13 +1,16 @@
 /**:
   ros__parameters:
-    # Conservative Scheme B overlay for real VRX Gazebo Sim / WAM-V validation.
+    # Scheme B overlay for the SINGLE-HULL VRX model (usv_simulation/urdf/usv_mono.urdf.xacro).
+    # Dynamics match the real 2 m / 30 kg dual-thruster USV (usv_params.yaml),
+    # NOT the 180 kg WAM-V catamaran. Keep this file in sync with both the sim
+    # hydrodynamics (usv_mono_dynamics.xacro) and usv_params.yaml.
     scheme: "B"
     control_mode: "dynamic"
     output_mode: "vrx_thrust"
     require_fcu_state: false
     # Keep the VRX NMPC small enough for a 5 Hz control loop.
     # With mpc_dt=0.2, horizon=18, and dynamic.dt=0.3, mpc_node builds
-    # dynamic_N=round((18*0.2)/0.3)=12 instead of the older 40-step setup.
+    # dynamic_N=round((18*0.2)/0.3)=12.
     mpc_dt: 0.2
     horizon: 18
     max_solve_time_ms: 200.0
@@ -15,67 +18,56 @@
     state_timeout_s: 0.0
     vrx_left_thrust_topic: "/wamv/thrusters/left/thrust"
     vrx_right_thrust_topic: "/wamv/thrusters/right/thrust"
-    # VRX 的 gz-sim Thruster system 直接接受【牛顿】推力指令
-    # (max_thrust_cmd ≈ 2353 N / 桨, 见 model.urdf)。下方 vehicle.* 已标定到
-    # 真实 WAM-V, 因此 NMPC 输出的 [T_L, T_R] 本身就是牛顿 —— 1:1 直发即可,
-    # 不再需要旧的 35x "创可贴" (它原本是用来掩盖 30kg 模型的推力不足)。
+    # gz Thruster takes [N]. NMPC [T_L,T_R] are already Newtons -> publish 1:1.
+    # cmd_max well above the 40 N single-thruster limit so it never clips T_max.
     vrx_thrust_scale: 1.0
-    vrx_thrust_cmd_max: 2353.5
+    vrx_thrust_cmd_max: 100.0
 
-    # Preview several path samples ahead (0.5 m resolution -> ~2.5 m) so the
-    # controller starts turning before reaching the fillet, instead of chasing
-    # the closest point and drawing a large outside arc.
     reference_start_offset: 8
     cruise_speed: 0.8
 
-    # ===================== WAM-V (VRX) 动力学模型 =====================
-    # 覆盖 usv_params.yaml 里的 2m 小艇(30kg)参数,仅用于 VRX 验证。数值来源:
-    #   质量/惯量  wamv_description/urdf/wamv_base.urdf.xacro
-    #              mass=180 kg, izz=446 kg·m²
-    #   推进器横臂 wamv_description/urdf/thrusters (左右桨 y=±1.027 m)
-    #   水动力     wamv_gazebo/.../wamv_gazebo_dynamics_plugin.xacro
-    #              (SimpleHydrodynamics) 线性 xU=100 yV=100 nR=800;
-    #              二次 xUU=150 yVV=100 nRR=800; 附加质量 xDotU=yDotV=nDotR=0
-    # 说明: 模型内部按 Fossen 约定取 D = -Xu - Xuu|u| 等,所以这里阻尼系数填【负值】,
-    #       还原后即正阻尼;附加质量 VRX 为 0,这里同样置 0。
+    # ===================== 2 m monohull dynamics (real boat) =====================
+    # Source: usv_bringup/config/usv_params.yaml (single source of truth).
+    # The sim plant (usv_mono_dynamics.xacro) uses the same surge/sway/yaw
+    # magnitudes, so MPC model and Gazebo plant stay consistent.
     vehicle:
-      mass: 180.0
-      Iz: 446.0
+      mass: 30.0
+      Iz: 8.0
       xg: 0.0
-      d_thruster: 1.027
-      # 附加质量 (VRX SimpleHydrodynamics 全为 0)
-      Xu_dot: 0.0
-      Yv_dot: 0.0
-      Yr_dot: 0.0
-      Nv_dot: 0.0
-      Nr_dot: 0.0
-      # 线性阻尼
-      Xu: -100.0
-      Yv: -100.0
-      Yr: 0.0
-      Nv: 0.0
-      Nr: -800.0
-      # 二次阻尼
-      Xuu: -150.0
-      Yvv: -100.0
-      Yrr: 0.0
-      Nvv: 0.0
-      Nrr: -800.0
+      d_thruster: 0.3
+      # Added mass (Fossen-negative)
+      Xu_dot: -3.0
+      Yv_dot: -20.0
+      Yr_dot: -0.5
+      Nv_dot: -0.5
+      Nr_dot: -2.0
+      # Linear damping
+      Xu: -8.0
+      Yv: -30.0
+      Yr: -1.0
+      Nv: -1.0
+      Nr: -5.0
+      # Quadratic damping
+      Xuu: -15.0
+      Yvv: -60.0
+      Yrr: -1.0
+      Nvv: -1.0
+      Nrr: -3.0
 
     dynamic:
-      # [T_L, T_R] 现在是 WAM-V 真实推力(N)。巡航 0.8 m/s 总阻力 ~176 N(单桨~88 N),
-      # 单桨上限设 250 N 留足加/转艏余量,仍远低于 VRX 物理上限 2353 N。
-      # 权重已按真实推力量级重平衡: R 调小(推力数值变大),Q 略增以压住超调,
-      # 转艏权重 psi/r 提高以促使及时、果断地转弯(WAM-V 转艏惯量/阻尼都很大)。
+      # Per-thruster limit 40 N (usv_params thruster.T_max_forward), reverse 20 N.
+      # R/Rd re-scaled up vs the WAM-V overlay because thrust magnitudes shrank
+      # ~6x (250 N -> 40 N); these are starting points — tune against tracking.
       Q: [50.0, 50.0, 70.0, 6.0, 1.0, 25.0]
-      R: [0.002, 0.002]
-      Rd: [0.01, 0.01]
+      R: [0.05, 0.05]
+      Rd: [0.2, 0.2]
       Qf_scale: 12.0
       dt: 0.3
-      T_max: 250.0
-      T_min: -120.0
-      dT_max: 400.0
+      T_max: 40.0
+      T_min: -20.0
+      dT_max: 80.0
 
-    # steering_gain/throttle_gain 仅 RC override 后端用;vrx_thrust 直推不经过它们。
+    # steering_gain/throttle_gain only used by the RC-override backend; vrx_thrust
+    # publishes thrust directly and does not pass through them.
     steering_gain: 0.3
     throttle_gain: 1.0
