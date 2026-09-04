@@ -9,9 +9,9 @@
     output_mode: "vrx_thrust"      # C++ mpc_node: 推力直发 Gazebo thruster topic
     require_fcu_state: false       # 仿真无 mavros state 流
     mpc_dt: 0.2                    # 5 Hz 控制回路
-    horizon: 18
-    max_solve_time_ms: 200.0
-    odom_timeout_s: 2.0
+    horizon: 20                    # 必须保持 dyn_N = round(20*0.2/dt) = 20:
+    max_solve_time_ms: 200.0       # vendored acados codegen (usv_dyn_nmpc) 的 N=20
+    odom_timeout_s: 2.0            # 是编译期固定维度, 改 horizon/dt 组合会求解失败
     state_timeout_s: 0.0
     reference_start_offset: 8
     cruise_speed: 0.8
@@ -27,7 +27,7 @@
       R: [0.05, 0.05]              # Control weights [TL, TR]
       Rd: [0.2, 0.2]
       Qf_scale: 12.0
-      dt: 0.3                      # dyn_N = round(18*0.2/0.3) = 12, 保 5 Hz 实时性
+      dt: 0.2                      # 必须与 horizon 组合出 dyn_N=20 (codegen 固定), 不可改 0.3
       T_max: 40.0                  # Max thrust per thruster (N)
       T_min: -20.0                 # Max reverse thrust (N)
       dT_max: 80.0                 # Max thrust rate (N/s)

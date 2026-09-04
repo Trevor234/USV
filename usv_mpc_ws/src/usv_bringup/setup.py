@@ -12,6 +12,7 @@ setup(
         ("share/" + package_name, ["package.xml"]),
         (f"share/{package_name}/launch", glob("launch/*.launch.py")),
         (f"share/{package_name}/config", glob("config/*.yaml")),
+        (f"share/{package_name}/config/waypoints", glob("config/waypoints/*.yaml")),
         # env-hook: 让 ros2 source 时自动导出 acados 环境变量
         (f"share/{package_name}/environment", ["env-hooks/usv_mpc.sh"]),
     ],

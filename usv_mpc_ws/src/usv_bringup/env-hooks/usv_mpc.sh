@@ -4,9 +4,9 @@
 # 行为不一,建议同时在 ~/.bashrc 中写入以下两行以保证可靠:
 #
 #   export ACADOS_SOURCE_DIR=$HOME/acados
-#   export LD_LIBRARY_PATH=$HOME/acados_install/lib:$LD_LIBRARY_PATH
+#   export LD_LIBRARY_PATH=$HOME/acados/lib:$LD_LIBRARY_PATH
 #
 # 详见 docs/pi5_deploy.md。
 
 export ACADOS_SOURCE_DIR="${ACADOS_SOURCE_DIR:=$HOME/acados}"
-export LD_LIBRARY_PATH="$HOME/acados_install/lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="$HOME/acados/lib:${LD_LIBRARY_PATH}"
