@@ -13,7 +13,7 @@
 /**:
   ros__parameters:
     fcu_url: "/dev/ttyAMA10:921600"
-    gcs_url: "udp://@10.210.191.110:14550"
+    gcs_url: "tcp-l://:14550"
     tgt_system: 1
     tgt_component: 1
     system_id: 255

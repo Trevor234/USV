@@ -71,8 +71,9 @@ class PathPlannerNode(Node):
         self.declare_parameter("default_waypoint_radius", 2.0)
 
         # --- 速度剖面 (TOPP) 约束 ---
-        # 注意：u_max / r_max 必须 <= MPC 的 kinematic.u_max / kinematic.r_max
-        # （规划可行域 ⊆ 控制可行域），否则参考会超出控制器能跟踪的范围。
+        # 注意：规划可行域 ⊆ 控制可行域。本工作目录 MPC 为动力学 NMPC (推力域约束
+        # dynamic.T_max)，规划侧 u_max 是 TOPP 巡航速度上限，需保证该速度下所需
+        # 推力不超过 T_max，否则参考会超出控制器能跟踪的范围。
         self.declare_parameter("u_max", 2.0)         # 最大巡航速度 (m/s)
         self.declare_parameter("r_max", 0.5)         # 最大转艏角速度 (rad/s)
         self.declare_parameter("lat_accel_max", 1.0)  # 最大侧向加速度 (m/s^2)

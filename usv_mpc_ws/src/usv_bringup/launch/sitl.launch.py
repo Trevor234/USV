@@ -7,8 +7,8 @@ Prerequisites:
   Start ArduRover SITL externally and expose a MAVLink TCP endpoint.
 
 Usage:
-  ros2 launch usv_bringup sitl.launch.py
-  ros2 launch usv_bringup sitl.launch.py scheme:=B
+  ros2 launch usv_bringup sitl.launch.py                # scheme A (运动学, Python)
+  ros2 launch usv_bringup sitl.launch.py scheme:=B      # scheme B (C++ NMPC, RC override)
 """
 
 import os
@@ -94,24 +94,49 @@ def generate_launch_description():
         ],
     )
 
-    mpc_node = Node(
+    # 方案 A: Python 运动学 MPC (usv_mpc, mpc_params_A.yaml);
+    # 方案 B: C++ 动力学 NMPC (usv_mpc_cpp, mpc_params_B.yaml + 仿真船参数)。
+    # 与 real.launch.py 的 scheme 映射保持一致, 便于 SITL 预演实机行为。
+    mpc_node_a = Node(
         package="usv_mpc",
         executable="mpc_node",
         name="mpc_controller_node",
         output="screen",
+        condition=IfCondition(PythonExpression(["'", scheme, "' == 'A'"])),
         parameters=[
-            os.path.join(bringup_dir, "config", "mpc_params.yaml"),
-            os.path.join(bringup_dir, "config", "usv_params.yaml"),
+            os.path.join(bringup_dir, "config", "mpc_params_A.yaml"),
             {
-                "scheme": scheme,
-                "control_mode": PythonExpression(["'dynamic' if '", scheme, "' == 'B' else 'kinematic'"]),
-                "allowed_fcu_modes": PythonExpression(["['MANUAL'] if '", scheme, "' == 'B' else ['GUIDED']"]),
+                "scheme": "A",
+                "control_mode": "kinematic",
+                "allowed_fcu_modes": ["GUIDED"],
                 "odom_topic": mavros_odom_topic,
                 "imu_topic": mavros_imu_topic,
                 "path_topic": "/path/reference",
                 "profile_topic": profile_topic,
                 "state_topic": mavros_state_topic,
                 "velocity_topic": mavros_velocity_topic,
+                "rc_override_topic": mavros_rc_override_topic,
+            },
+        ],
+    )
+
+    mpc_node_b = Node(
+        package="usv_mpc_cpp",
+        executable="mpc_node",
+        name="mpc_controller_node",
+        output="screen",
+        condition=IfCondition(PythonExpression(["'", scheme, "' == 'B'"])),
+        parameters=[
+            os.path.join(bringup_dir, "config", "mpc_params_B.yaml"),
+            os.path.join(bringup_dir, "config", "usv_params_sim.yaml"),
+            {
+                "control_mode": "dynamic",
+                "allowed_fcu_modes": ["MANUAL"],
+                "odom_topic": mavros_odom_topic,
+                "imu_topic": mavros_imu_topic,
+                "path_topic": "/path/reference",
+                "profile_topic": profile_topic,
+                "state_topic": mavros_state_topic,
                 "rc_override_topic": mavros_rc_override_topic,
             },
         ],
@@ -179,7 +204,8 @@ def generate_launch_description():
         mavros_rc_override_topic_arg,
         profile_topic_arg,
         mavros_node,
-        mpc_node,
+        mpc_node_a,
+        mpc_node_b,
         planner_node,
         safety_node,
         visualizer_node,

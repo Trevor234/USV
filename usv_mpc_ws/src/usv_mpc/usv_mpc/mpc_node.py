@@ -1,18 +1,18 @@
-"""适用于无人船 (USV) 的 MPC 控制器 ROS 2 节点。
+"""适用于无人船 (USV) 的运动学 MPC 控制器 ROS 2 节点（方案 A）。
 
 订阅话题（可通过 launch 参数覆盖）：
   /mavros/local_position/odom     — EKF 融合的位置与速度
-  /mavros/imu/data                — IMU 数据（用于动力学模式）
+  /mavros/imu/data                — IMU 数据（提供更灵敏的艏摇角速度 r）
   /path/reference                 — 规划器给出的参考路径（x, y, psi）
   /path/reference_profile         — 规划器给出的速度剖面（v, kappa, r, t）
 
 发布话题（可通过 launch 参数覆盖）：
-  /mavros/setpoint_velocity/cmd_vel  — 速度设定值（方案 A）
-  /mavros/rc/override                — RC 通道覆写控制（方案 B）
+  /mavros/setpoint_velocity/cmd_vel  — 速度设定值
   /mpc/predicted_trajectory          — 用于可视化的 MPC 预测轨迹
   /mpc/status                        — 求解器诊断信息
 
-支持方案 A（运动学 MPC）与方案 B（动力学 NMPC）。
+实机精简版：仅保留方案 A（运动学 MPC），单线程执行。参考构建优先按规划器
+速度剖面（profile）做时间重采样，profile 缺失/不同步时退化为匀速弧长采样。
 """
 
 import json
@@ -26,15 +26,14 @@ import rclpy
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup, ReentrantCallbackGroup
 from rclpy.executors import ExternalShutdownException, MultiThreadedExecutor
 from rclpy.qos import qos_profile_sensor_data
-from geometry_msgs.msg import Quaternion, TwistStamped, Vector3
-from mavros_msgs.msg import OverrideRCIn, State as MavrosState
+from geometry_msgs.msg import TwistStamped
+from mavros_msgs.msg import State as MavrosState
 from nav_msgs.msg import Odometry, Path as NavPath
 from rclpy.node import Node
 from sensor_msgs.msg import Imu
-from std_msgs.msg import Float64, Float64MultiArray, String
+from std_msgs.msg import Float64MultiArray, String
 
 from .mpc_kinematic import KinematicMPC
-from .mpc_dynamic import DynamicMPC
 from .utils import (
     normalize_angle,
     parse_profile_stamp,
@@ -47,11 +46,10 @@ from .utils import (
 class ControlMode(Enum):
     IDLE = "idle"
     KINEMATIC = "kinematic"
-    DYNAMIC = "dynamic"
 
 
 class MpcControllerNode(Node):
-    """适用于双推进器无人船 (USV) 的 ROS 2 MPC 控制器节点。"""
+    """适用于双推进器无人船 (USV) 的 ROS 2 MPC 控制器节点（方案 A）。"""
 
     def __init__(self):
         super().__init__("mpc_controller_node")
@@ -59,9 +57,8 @@ class MpcControllerNode(Node):
         self._declare_parameters()
         self._load_config()
 
-        # The MPC solve can take tens/hundreds of ms. With a MultiThreadedExecutor
-        # this lock lets sensor callbacks keep running while the control callback
-        # takes short, consistent state/reference snapshots before each solve.
+        # MPC 求解可能耗时数十~数百毫秒。MultiThreadedExecutor 配合此锁,让传感器
+        # 回调在控制回调求解期间继续运行(只取短的状态/参考快照),避免 IMU/odom 堵塞。
         self._state_lock = threading.RLock()
         self._io_cb_group = ReentrantCallbackGroup()
         self._control_cb_group = MutuallyExclusiveCallbackGroup()
@@ -71,9 +68,9 @@ class MpcControllerNode(Node):
         self._init_pubsub()
 
         self.get_logger().info(
-            f"MPC 控制器已启动 | 模式={self.control_mode.value} "
+            f"运动学 MPC 控制器已启动 | 方案={self.scheme} | 模式={self.control_mode.value} "
             f"| dt={self.mpc_dt}s | N={self.horizon} | "
-            f"方案={'A (运动学)' if self.scheme == 'A' else 'B (动力学)'}"
+            f"后端={self.backend} (运动学)"
         )
 
         self._timer = self.create_timer(
@@ -83,6 +80,7 @@ class MpcControllerNode(Node):
         )
 
     def _declare_parameters(self):
+        # 实机精简版固定方案 A；保留 scheme 参数仅用于状态上报与配置兼容。
         self.declare_parameter("scheme", "A")
         self.declare_parameter("control_mode", "kinematic")
         self.declare_parameter("mpc_dt", 0.2)
@@ -93,17 +91,9 @@ class MpcControllerNode(Node):
         self.declare_parameter("profile_topic", "/path/reference_profile")
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("velocity_topic", "/mavros/setpoint_velocity/cmd_vel")
-        self.declare_parameter("rc_override_topic", "/mavros/rc/override")
-        self.declare_parameter("status_topic", "/mpc/status")
-        self.declare_parameter("predicted_trajectory_topic", "/mpc/predicted_trajectory")
         self.declare_parameter("path_frame", "map")
         self.declare_parameter("body_frame", "base_link")
-        self.declare_parameter("output_mode", "rc_override")
         self.declare_parameter("require_fcu_state", True)
-        self.declare_parameter("vrx_left_thrust_topic", "/wamv/thrusters/left/thrust")
-        self.declare_parameter("vrx_right_thrust_topic", "/wamv/thrusters/right/thrust")
-        self.declare_parameter("vrx_thrust_scale", 25.0)
-        self.declare_parameter("vrx_thrust_cmd_max", 1000.0)
         self.declare_parameter("publish_predicted", True)
         self.declare_parameter("max_solve_time_ms", 200.0)
         # 进入 HOLD（挂起）模式前允许的连续求解失败次数：停止发送过时的控制指令，
@@ -111,18 +101,14 @@ class MpcControllerNode(Node):
         # usv_safety/mode_manager_node.max_solver_failures 一致。
         self.declare_parameter("solver_hold_threshold", 5)
         # 飞控就绪判据：允许 MPC 输出指令的 FCU 模式白名单。
-        # 方案 A 使用 cmd_vel,只在 GUIDED 下被 ArduPilot 接受;
-        # 方案 B 使用 RC override,可改为 ["MANUAL"] 或留空允许所有模式。
+        # 运动学 MPC 通过 cmd_vel 控制,只在 GUIDED 下被 ArduPilot 接受。
         self.declare_parameter("allowed_fcu_modes", ["GUIDED"])
         # MAVROS 状态心跳超时(秒);超过则视为飞控失联,进入 STANDBY
         self.declare_parameter("state_timeout_s", 2.0)
         # 里程计超时(秒);0 关闭检查
         self.declare_parameter("odom_timeout_s", 1.0)
-        self.declare_parameter("reference_start_offset", 3)
-        # 当 profile 缺失/不同步时，参考构建退化为匀速弧长采样所用的巡航速度
-        self.declare_parameter("cruise_speed", 1.0)
 
-        # 方案 A 参数
+        # 运动学 MPC 参数
         self.declare_parameter("kinematic.Q", [10.0, 10.0, 50.0])
         self.declare_parameter("kinematic.R", [1.0, 1.0])
         self.declare_parameter("kinematic.Qf_scale", 10.0)
@@ -131,49 +117,19 @@ class MpcControllerNode(Node):
         self.declare_parameter("kinematic.r_max", 0.5)
         self.declare_parameter("kinematic.du_max", 0.8)
         self.declare_parameter("kinematic.dr_max", 0.5)
-
-        # 方案 B 参数
-        self.declare_parameter("dynamic.Q", [10.0, 10.0, 50.0, 5.0, 1.0, 5.0])
-        self.declare_parameter("dynamic.R", [0.01, 0.01])
-        self.declare_parameter("dynamic.Rd", [0.1, 0.1])
-        self.declare_parameter("dynamic.Qf_scale", 10.0)
-        self.declare_parameter("dynamic.T_max", 40.0)
-        self.declare_parameter("dynamic.T_min", -20.0)
-        self.declare_parameter("dynamic.dT_max", 30.0)
-        self.declare_parameter("dynamic.dt", 0.1)
-        self.declare_parameter("rc_steering_channel", 0)
-        self.declare_parameter("rc_throttle_channel", 2)
-        self.declare_parameter("rc_pwm_min", 1100)
-        self.declare_parameter("rc_pwm_center", 1500)
-        self.declare_parameter("rc_pwm_max", 1900)
-        self.declare_parameter("steering_sign", 1.0)
-        self.declare_parameter("throttle_sign", 1.0)
-        self.declare_parameter("steering_gain", 0.25)
-        self.declare_parameter("throttle_gain", 0.5)
-
-        # 船体参数（用于动力学模式）
-        self.declare_parameter("vehicle.mass", 30.0)
-        self.declare_parameter("vehicle.Iz", 8.0)
-        self.declare_parameter("vehicle.xg", 0.0)
-        self.declare_parameter("vehicle.d_thruster", 0.3)
-        self.declare_parameter("vehicle.Xu_dot", -3.0)
-        self.declare_parameter("vehicle.Yv_dot", -20.0)
-        self.declare_parameter("vehicle.Yr_dot", -0.5)
-        self.declare_parameter("vehicle.Nv_dot", -0.5)
-        self.declare_parameter("vehicle.Nr_dot", -2.0)
-        self.declare_parameter("vehicle.Xu", -8.0)
-        self.declare_parameter("vehicle.Yv", -30.0)
-        self.declare_parameter("vehicle.Yr", -1.0)
-        self.declare_parameter("vehicle.Nv", -1.0)
-        self.declare_parameter("vehicle.Nr", -5.0)
-        self.declare_parameter("vehicle.Xuu", -15.0)
-        self.declare_parameter("vehicle.Yvv", -60.0)
-        self.declare_parameter("vehicle.Yrr", -1.0)
-        self.declare_parameter("vehicle.Nvv", -1.0)
-        self.declare_parameter("vehicle.Nrr", -3.0)
+        # 求解后端："ipopt"（CasADi/IPOPT，默认）或 "acados"（SQP_RTI，需先装 acados）。
+        # 两后端共用同一 KinematicMPC 调用契约；见 docs/acados_migration.md。
+        self.declare_parameter("kinematic.backend", "ipopt")
 
     def _load_config(self):
         self.scheme = self.get_parameter("scheme").value
+        if self.scheme not in ("A",):
+            # 精简版仅实现方案 A；忽略其它取值并按方案 A 运行。
+            self.get_logger().warning(
+                f"实机精简版仅支持方案 A，已忽略 scheme='{self.scheme}'，按方案 A 运行。"
+            )
+            self.scheme = "A"
+
         mode_str = self.get_parameter("control_mode").value
         try:
             self.control_mode = ControlMode(mode_str)
@@ -183,10 +139,7 @@ class MpcControllerNode(Node):
         self.mpc_dt = self.get_parameter("mpc_dt").value
         self.horizon = self.get_parameter("horizon").value
         self.max_solve_time_ms = self.get_parameter("max_solve_time_ms").value
-        self.output_mode = str(self.get_parameter("output_mode").value)
         self.require_fcu_state = bool(self.get_parameter("require_fcu_state").value)
-        self.vrx_thrust_scale = float(self.get_parameter("vrx_thrust_scale").value)
-        self.vrx_thrust_cmd_max = float(self.get_parameter("vrx_thrust_cmd_max").value)
         self.path_frame = str(self.get_parameter("path_frame").value)
         self.body_frame = str(self.get_parameter("body_frame").value)
         self.publish_predicted = self.get_parameter("publish_predicted").value
@@ -199,79 +152,39 @@ class MpcControllerNode(Node):
             self.allowed_fcu_modes = list(allowed_modes)
         self.state_timeout_s = float(self.get_parameter("state_timeout_s").value)
         self.odom_timeout_s = float(self.get_parameter("odom_timeout_s").value)
-        self.reference_start_offset = int(self.get_parameter("reference_start_offset").value)
-        self.cruise_speed = float(self.get_parameter("cruise_speed").value)
-        self.rc_steering_channel = int(self.get_parameter("rc_steering_channel").value)
-        self.rc_throttle_channel = int(self.get_parameter("rc_throttle_channel").value)
-        self.rc_pwm_min = int(self.get_parameter("rc_pwm_min").value)
-        self.rc_pwm_center = int(self.get_parameter("rc_pwm_center").value)
-        self.rc_pwm_max = int(self.get_parameter("rc_pwm_max").value)
-        self.steering_sign = float(self.get_parameter("steering_sign").value)
-        self.throttle_sign = float(self.get_parameter("throttle_sign").value)
-        self.steering_gain = float(self.get_parameter("steering_gain").value)
-        self.throttle_gain = float(self.get_parameter("throttle_gain").value)
 
     def _init_mpc_solvers(self):
-        self._mpc_kin = None
-        self._mpc_dyn = None
+        backend = str(self.get_parameter("kinematic.backend").value).lower()
+        mpc_kwargs = dict(
+            dt=self.mpc_dt,
+            N=self.horizon,
+            Q_diag=tuple(self.get_parameter("kinematic.Q").value),
+            R_diag=tuple(self.get_parameter("kinematic.R").value),
+            Qf_scale=self.get_parameter("kinematic.Qf_scale").value,
+            u_max=self.get_parameter("kinematic.u_max").value,
+            u_min=self.get_parameter("kinematic.u_min").value,
+            r_max=self.get_parameter("kinematic.r_max").value,
+            du_max=self.get_parameter("kinematic.du_max").value,
+            dr_max=self.get_parameter("kinematic.dr_max").value,
+        )
 
-        if self.scheme in ("A", "both"):
-            self._mpc_kin = KinematicMPC(
-                dt=self.mpc_dt,
-                N=self.horizon,
-                Q_diag=tuple(self.get_parameter("kinematic.Q").value),
-                R_diag=tuple(self.get_parameter("kinematic.R").value),
-                Qf_scale=self.get_parameter("kinematic.Qf_scale").value,
-                u_max=self.get_parameter("kinematic.u_max").value,
-                u_min=self.get_parameter("kinematic.u_min").value,
-                r_max=self.get_parameter("kinematic.r_max").value,
-                du_max=self.get_parameter("kinematic.du_max").value,
-                dr_max=self.get_parameter("kinematic.dr_max").value,
-            )
+        # backend 字段记录实际生效的求解后端,供启动日志与 /mpc/status 上报。
+        # acados 不可用(import/codegen 失败)时自动回退 ipopt,与 B 的 fallback 语义一致。
+        if backend == "acados":
+            try:
+                from .mpc_kinematic_acados import AcadosKinematicMPC
+                self._mpc_kin = AcadosKinematicMPC(**mpc_kwargs)
+                self.backend = "acados"
+                self.get_logger().info("MPC 后端: acados (SQP_RTI)")
+                return
+            except Exception as exc:
+                self.get_logger().error(
+                    f"acados 后端初始化失败，回退到 IPOPT: {exc}"
+                )
 
-        self._dynamic_dt = 0.0
-        self._dynamic_N = 0
-        self._dynamic_prediction_time = 0.0
-        if self.scheme in ("B", "both"):
-            dyn_dt = float(self.get_parameter("dynamic.dt").value)
-            prediction_time = float(self.horizon) * float(self.mpc_dt)
-            dyn_N = max(1, int(round(prediction_time / dyn_dt)))
-            self._dynamic_dt = dyn_dt
-            self._dynamic_N = dyn_N
-            self._dynamic_prediction_time = prediction_time
-            model_params = {
-                "mass": self.get_parameter("vehicle.mass").value,
-                "Iz": self.get_parameter("vehicle.Iz").value,
-                "xg": self.get_parameter("vehicle.xg").value,
-                "d_thruster": self.get_parameter("vehicle.d_thruster").value,
-                "Xu_dot": self.get_parameter("vehicle.Xu_dot").value,
-                "Yv_dot": self.get_parameter("vehicle.Yv_dot").value,
-                "Yr_dot": self.get_parameter("vehicle.Yr_dot").value,
-                "Nv_dot": self.get_parameter("vehicle.Nv_dot").value,
-                "Nr_dot": self.get_parameter("vehicle.Nr_dot").value,
-                "Xu": self.get_parameter("vehicle.Xu").value,
-                "Yv": self.get_parameter("vehicle.Yv").value,
-                "Yr": self.get_parameter("vehicle.Yr").value,
-                "Nv": self.get_parameter("vehicle.Nv").value,
-                "Nr": self.get_parameter("vehicle.Nr").value,
-                "Xuu": self.get_parameter("vehicle.Xuu").value,
-                "Yvv": self.get_parameter("vehicle.Yvv").value,
-                "Yrr": self.get_parameter("vehicle.Yrr").value,
-                "Nvv": self.get_parameter("vehicle.Nvv").value,
-                "Nrr": self.get_parameter("vehicle.Nrr").value,
-            }
-            self._mpc_dyn = DynamicMPC(
-                dt=dyn_dt,
-                N=dyn_N,
-                Q_diag=tuple(self.get_parameter("dynamic.Q").value),
-                R_diag=tuple(self.get_parameter("dynamic.R").value),
-                Rd_diag=tuple(self.get_parameter("dynamic.Rd").value),
-                Qf_scale=self.get_parameter("dynamic.Qf_scale").value,
-                T_max=self.get_parameter("dynamic.T_max").value,
-                T_min=self.get_parameter("dynamic.T_min").value,
-                dT_max=self.get_parameter("dynamic.dT_max").value,
-                model_params=model_params,
-            )
+        self._mpc_kin = KinematicMPC(**mpc_kwargs)
+        self.backend = "ipopt"
+        self.get_logger().info("MPC 后端: CasADi/IPOPT")
 
     def _init_state(self):
         self._x = 0.0
@@ -300,14 +213,6 @@ class MpcControllerNode(Node):
         self._prev_state = ""
         self._last_standby_reason = ""
         self._last_ref_debug = {}
-        self._last_rc_debug = {
-            "tl_n": 0.0,
-            "tr_n": 0.0,
-            "steering_pwm": self.rc_pwm_center,
-            "throttle_pwm": self.rc_pwm_center,
-            "steering_norm": 0.0,
-            "throttle_norm": 0.0,
-        }
 
     def _init_pubsub(self):
         # 订阅者
@@ -342,22 +247,8 @@ class MpcControllerNode(Node):
         vel_topic = self.get_parameter("velocity_topic").value
         self._vel_pub = self.create_publisher(TwistStamped, vel_topic, 10)
 
-        rc_topic = self.get_parameter("rc_override_topic").value
-        self._rc_pub = self.create_publisher(OverrideRCIn, rc_topic, 10)
-
-        self._vrx_left_pub = self.create_publisher(
-            Float64, self.get_parameter("vrx_left_thrust_topic").value, 10
-        )
-        self._vrx_right_pub = self.create_publisher(
-            Float64, self.get_parameter("vrx_right_thrust_topic").value, 10
-        )
-
-        self._traj_pub = self.create_publisher(
-            NavPath, self.get_parameter("predicted_trajectory_topic").value, 10
-        )
-        self._status_pub = self.create_publisher(
-            String, self.get_parameter("status_topic").value, 10
-        )
+        self._traj_pub = self.create_publisher(NavPath, "/mpc/predicted_trajectory", 10)
+        self._status_pub = self.create_publisher(String, "/mpc/status", 10)
 
     # ---------- 回调函数 ----------
 
@@ -370,8 +261,7 @@ class MpcControllerNode(Node):
         return parse_profile_stamp(layout)
 
     @staticmethod
-    def _profile_sync_state(path_len: int, profile_len: int | None,
-                            path_stamp, profile_stamp) -> tuple[bool, str]:
+    def _profile_sync_state(path_len: int, profile_len, path_stamp, profile_stamp) -> tuple[bool, str]:
         return profile_sync_state(path_len, profile_len, path_stamp, profile_stamp)
 
     def _odom_callback(self, msg: Odometry):
@@ -467,22 +357,16 @@ class MpcControllerNode(Node):
         切换沿(ACTIVE → STANDBY 或首次进入)时:
           - 清零 _solver_fail_count
           - 重置 MPC 热启动,防止下次激活时使用过期解
-          - 发布一次"停止"指令(方案 A: 零速度;方案 B: 释放 RC override)
+          - 发布一次零速度"停止"指令,清除 MAVROS/FCU 中可能残留的旧设定
           - INFO 日志记录原因
         STANDBY 期间每 5 s 通过节流 WARN 日志重复原因。
         """
         transition = self._prev_state != "STANDBY"
         if transition:
             self._solver_fail_count = 0
-            if self._mpc_kin is not None:
-                self._mpc_kin.reset_warmstart()
-            if self._mpc_dyn is not None:
-                self._mpc_dyn.reset_warmstart()
-            # 发布"停止"指令一次,清除执行端可能残留的旧设定
-            if self.scheme == "A":
-                self._publish_velocity_cmd(np.zeros(2))
-            elif self.scheme == "B":
-                self._publish_zero_dynamic_output()
+            self._mpc_kin.reset_warmstart()
+            # 发布零速度"停止"指令一次,清除 MAVROS/FCU 中可能残留的旧设定
+            self._publish_velocity_cmd(np.zeros(2))
             self.get_logger().info(f"MPC → STANDBY: {reason}")
 
         self._prev_state = "STANDBY"
@@ -514,18 +398,14 @@ class MpcControllerNode(Node):
             self._solver_fail_count = 0
         self._prev_state = "ACTIVE"
 
-        if self.scheme == "A":
-            self._run_kinematic_mpc()
-        elif self.scheme == "B":
-            self._run_dynamic_mpc()
+        self._run_kinematic_mpc()
 
     def _enforce_solve_deadline(self, info: dict) -> dict:
-        """Turn an over-budget solve into a controlled failure.
+        """把超时求解转化为受控失败。
 
-        IPOPT/CasADi is synchronous here, so we cannot preempt a solve once it is
-        running. We can still prevent late results from being treated as healthy:
-        a deadline miss increments the normal failure counter and is exposed in
-        /mpc/status so mode_manager/GCS can react.
+        IPOPT/CasADi 在此处是同步求解，开始后无法抢占。但仍可避免迟到的结果
+        被当作健康解：一次超时会累加正常失败计数，并在 /mpc/status 暴露，
+        供 mode_manager / GCS 反应。
         """
         solve_time_ms = float(info.get("solve_time_ms", 0.0))
         deadline_miss = self.max_solve_time_ms > 0.0 and solve_time_ms > self.max_solve_time_ms
@@ -541,21 +421,12 @@ class MpcControllerNode(Node):
 
     def safe_shutdown(self):
         """节点退出前显式发送安全停车指令。"""
-        if self.scheme == "A":
-            self._publish_velocity_cmd(np.zeros(2))
-        elif self.scheme == "B":
-            self._publish_zero_dynamic_output()
+        self._publish_velocity_cmd(np.zeros(2))
         self._publish_standby_status("node_shutdown")
         self.get_logger().info("MPC 节点退出: 已发送安全停车指令")
 
-    def _release_rc_override(self):
-        """发布全零 OverrideRCIn 以释放所有通道,让 FCU 回到正常 RC 输入。"""
-        rc_msg = OverrideRCIn()
-        # OverrideRCIn 默认 18 通道全 0;在 MAVROS 中 0 表示释放通道(不覆写)
-        self._rc_pub.publish(rc_msg)
-
     def _run_kinematic_mpc(self):
-        """方案 A：运动学 MPC → 速度指令。"""
+        """运动学 MPC → 速度指令。"""
         with self._state_lock:
             current_state = np.array([self._x, self._y, normalize_angle(self._psi)])
             reference = self._build_kinematic_reference(current_state)
@@ -593,6 +464,9 @@ class MpcControllerNode(Node):
             else:
                 self._publish_velocity_cmd(u_opt)
 
+        info["u_opt"] = [float(u_opt[0]), float(u_opt[1])]
+        info["psi_ref"] = float(reference[2, 0])
+        info["e_psi"] = float(normalize_angle(current_state[2] - reference[2, 0]))
         self._publish_status(info, in_hold=in_hold)
 
         self._control_count += 1
@@ -605,7 +479,7 @@ class MpcControllerNode(Node):
             )
 
     def _publish_velocity_cmd(self, u_opt: np.ndarray):
-        """发布 TwistStamped 速度指令（方案 A）。"""
+        """发布 TwistStamped 速度指令。"""
         twist = TwistStamped()
         twist.header.stamp = self.get_clock().now().to_msg()
         twist.header.frame_id = self.body_frame
@@ -614,166 +488,13 @@ class MpcControllerNode(Node):
         twist.twist.angular.z = float(u_opt[1])
         self._vel_pub.publish(twist)
 
-    def _run_dynamic_mpc(self):
-        """方案 B：动力学 NMPC → 推力 → RC 覆写。"""
-        with self._state_lock:
-            current_state = np.array([
-                self._x, self._y, normalize_angle(self._psi),
-                self._u, self._v, self._r,
-            ])
-            reference = self._build_dynamic_reference(current_state)
-
-        u_opt, info = self._mpc_dyn.solve(current_state, reference)
-        info = self._enforce_solve_deadline(info)
-        if info.get("deadline_miss"):
-            u_opt = np.zeros(2)
-        in_hold = False
-
-        if info["success"]:
-            self._solver_fail_count = 0
-            self._publish_dynamic_output(u_opt)
-
-            if self._control_count % 5 == 0:
-                self._publish_predicted_trajectory(info.get("X_pred"))
-        else:
-            self._solver_fail_count += 1
-            if self._solver_fail_count <= 3:
-                self.get_logger().warn(
-                    f"NMPC 求解失败: {info.get('error', '未知错误')}  "
-                    f"失败计数={self._solver_fail_count}"
-                )
-            if self._solver_fail_count >= self.solver_hold_threshold:
-                in_hold = True
-                u_opt = np.zeros(2)  # 零推力 → 中位 throttle/steering RC 输入
-                self._publish_dynamic_output(u_opt)
-                self._mpc_dyn.reset_warmstart()
-                if self._solver_fail_count == self.solver_hold_threshold:
-                    self.get_logger().error(
-                        f"NMPC HOLD 挂起：连续失败 {self._solver_fail_count} 次，"
-                        "正在发布零推力并重置热启动"
-                    )
-            else:
-                self._publish_dynamic_output(u_opt)
-
-        info["u_opt"] = [float(u_opt[0]), float(u_opt[1])]
-        info["psi_ref"] = float(reference[2, 0])
-        info["e_psi"] = float(normalize_angle(current_state[2] - reference[2, 0]))
-        self._publish_status(info, in_hold=in_hold)
-
-        self._control_count += 1
-        if self._control_count % 10 == 0:
-            steering_pwm = self._last_rc_debug.get("steering_pwm", 0)
-            throttle_pwm = self._last_rc_debug.get("throttle_pwm", 0)
-            output_desc = (
-                f"VRX cmd L={self._last_rc_debug.get('vrx_left_cmd', 0.0):.0f} "
-                f"R={self._last_rc_debug.get('vrx_right_cmd', 0.0):.0f}"
-                if self.output_mode == "vrx_thrust"
-                else f"RC(steer={steering_pwm}, throttle={throttle_pwm})"
-            )
-            self.get_logger().info(
-                f"t={self._control_count * self.mpc_dt:.1f}s  "
-                f"位置=({self._x:.1f},{self._y:.1f})  "
-                f"航向误差={math.degrees(info['e_psi']):.1f}°  "
-                f"左推力={u_opt[0]:.1f}N  右推力={u_opt[1]:.1f}N  "
-                f"{output_desc}  "
-                f"求解时间={info['solve_time_ms']:.0f}ms"
-            )
-
-    def _thrust_to_rc_pwm(self, thrust: np.ndarray) -> tuple:
-        """将左右推力转换为 ArduRover throttle/steering RC 输入 PWM。
-
-        OverrideRCIn 是遥控输入而不是 SERVO 输出。这里先把 NMPC 的
-        [T_L, T_R] 转成 throttle/steering，再交给 ArduRover mixer 生成
-        /mavros/rc/out 上的左右推进器输出。
-        """
-        t_max = max(float(self.get_parameter("dynamic.T_max").value), 1.0)
-        t_min = abs(min(float(self.get_parameter("dynamic.T_min").value), -1.0))
-        left = float(thrust[0])
-        right = float(thrust[1])
-
-        throttle_n = 0.5 * (left + right)
-        throttle_scale = t_max if throttle_n >= 0.0 else t_min
-        throttle_n = self.throttle_sign * self.throttle_gain * np.clip(throttle_n / throttle_scale, -1.0, 1.0)
-
-        steering_span = max(t_max, t_min)
-        steering_n = self.steering_sign * self.steering_gain * np.clip((right - left) / (2.0 * steering_span), -1.0, 1.0)
-
-        def to_pwm(value: float) -> int:
-            value = float(np.clip(value, -1.0, 1.0))
-            if value >= 0.0:
-                pwm = self.rc_pwm_center + value * (self.rc_pwm_max - self.rc_pwm_center)
-            else:
-                pwm = self.rc_pwm_center + value * (self.rc_pwm_center - self.rc_pwm_min)
-            return int(np.clip(round(pwm), self.rc_pwm_min, self.rc_pwm_max))
-
-        steering_pwm = to_pwm(steering_n)
-        throttle_pwm = to_pwm(throttle_n)
-        self._last_rc_debug = {
-            "tl_n": left,
-            "tr_n": right,
-            "steering_pwm": steering_pwm,
-            "throttle_pwm": throttle_pwm,
-            "steering_norm": float(steering_n),
-            "throttle_norm": float(throttle_n),
-        }
-        return steering_pwm, throttle_pwm
-
-    def _publish_rc_override(self, thrust: np.ndarray):
-        """通过 OverrideRCIn 发布 throttle/steering 遥控输入（方案 B）。"""
-        steering_pwm, throttle_pwm = self._thrust_to_rc_pwm(thrust)
-        rc_msg = OverrideRCIn()
-        if 0 <= self.rc_steering_channel < len(rc_msg.channels):
-            rc_msg.channels[self.rc_steering_channel] = steering_pwm
-        if 0 <= self.rc_throttle_channel < len(rc_msg.channels):
-            rc_msg.channels[self.rc_throttle_channel] = throttle_pwm
-        self._rc_pub.publish(rc_msg)
-
-    def _publish_vrx_thrust(self, thrust: np.ndarray):
-        """将方案 B 的左右推力直接发布到 VRX WAM-V thruster topic。"""
-        tl_n = float(thrust[0])
-        tr_n = float(thrust[1])
-        left_cmd = float(np.clip(tl_n * self.vrx_thrust_scale, -self.vrx_thrust_cmd_max, self.vrx_thrust_cmd_max))
-        right_cmd = float(np.clip(tr_n * self.vrx_thrust_scale, -self.vrx_thrust_cmd_max, self.vrx_thrust_cmd_max))
-        left = Float64()
-        right = Float64()
-        left.data = left_cmd
-        right.data = right_cmd
-        self._vrx_left_pub.publish(left)
-        self._vrx_right_pub.publish(right)
-        self._last_rc_debug.update({
-            "tl_n": tl_n,
-            "tr_n": tr_n,
-            "vrx_left_cmd": left_cmd,
-            "vrx_right_cmd": right_cmd,
-            "vrx_thrust_scale": float(self.vrx_thrust_scale),
-            "output_mode": self.output_mode,
-        })
-
-    def _publish_dynamic_output(self, thrust: np.ndarray):
-        """按输出后端发布方案 B 控制量。"""
-        if self.output_mode == "vrx_thrust":
-            self._publish_vrx_thrust(thrust)
-        else:
-            self._publish_rc_override(thrust)
-
-    def _publish_zero_dynamic_output(self):
-        """方案 B 安全零输出。"""
-        if self.output_mode == "vrx_thrust":
-            self._publish_vrx_thrust(np.zeros(2))
-        else:
-            self._release_rc_override()
-
     def _publish_status(self, info: dict, in_hold: bool):
         """在 /mpc/status 话题上发布结构化的求解器诊断信息。
 
-        格式：JSON 编码的字符串，包含以下字段：
-          状态 state："ACTIVE"、"HOLD" 或 "STANDBY"；
-          是否成功 success、失败计数 fail_count、求解时间 solve_time_ms；
-          是否挂起 hold、控制方案 scheme；
-          失败时包含错误信息 error，待机时包含待机原因 standby_reason。
-
-        接收方（如 usv_safety/mode_manager_node）应当解析 JSON，
-        而不是进行子字符串匹配。
+        格式：JSON 编码的字符串。接收方（如 usv_safety/mode_manager_node）
+        应当解析 JSON，而不是进行子字符串匹配。字段结构与方案 B 对齐
+        (control_mode/backend/prediction_time_s 等),仅不含动力学特有的
+        推力/RC 诊断字段 (tl_n/tr_n/steering_pwm/...)。
         """
         with self._state_lock:
             payload = {
@@ -786,7 +507,6 @@ class MpcControllerNode(Node):
                 "hold": bool(in_hold),
                 "scheme": self.scheme,
                 "control_mode": self.control_mode.value,
-                "output_mode": self.output_mode,
                 "require_fcu_state": bool(self.require_fcu_state),
                 "fcu_mode": self._mode,
                 "allowed_fcu_modes": self.allowed_fcu_modes,
@@ -803,20 +523,19 @@ class MpcControllerNode(Node):
                 "r": float(self._r),
             }
             payload.update(self._last_ref_debug)
-        if self.scheme in ("B", "both"):
-            payload.update({
-                "dynamic_dt": float(self._dynamic_dt),
-                "dynamic_N": int(self._dynamic_N),
-                "prediction_time_s": float(self._dynamic_prediction_time),
-            })
-            payload.update(self._last_rc_debug)
-            if "u_opt" in info:
-                payload["tl_n"] = float(info["u_opt"][0])
-                payload["tr_n"] = float(info["u_opt"][1])
-            if "psi_ref" in info:
-                payload["psi_ref"] = float(info["psi_ref"])
-            if "e_psi" in info:
-                payload["e_psi"] = float(info["e_psi"])
+        # 框架诊断字段 (与方案 B status 对齐): 后端 + 预测时域 + 运动学控制量。
+        payload.update({
+            "prediction_time_s": float(self.horizon) * float(self.mpc_dt),
+            # 求解器后端: "acados" 或 "ipopt"。便于实机诊断与 A/B 对比。
+            "backend": str(self.backend),
+        })
+        if "u_opt" in info:
+            payload["u_cmd"] = float(info["u_opt"][0])
+            payload["r_cmd"] = float(info["u_opt"][1])
+        if "psi_ref" in info:
+            payload["psi_ref"] = float(info["psi_ref"])
+        if "e_psi" in info:
+            payload["e_psi"] = float(info["e_psi"])
         if not payload["success"]:
             payload["error"] = str(info.get("error", "未知错误"))
         msg = String()
@@ -853,18 +572,12 @@ class MpcControllerNode(Node):
         return self._build_reference(current_state, 3, self.horizon, self.mpc_dt,
                                      fallback_speed, start_offset=1)
 
-    def _build_dynamic_reference(self, current_state: np.ndarray) -> np.ndarray:
-        """动力学 NMPC 的 [6, N+1] 参考（x, y, psi, u, v, r）。"""
-        return self._build_reference(current_state, 6, self._mpc_dyn.N, self._mpc_dyn.dt,
-                                     self.cruise_speed, start_offset=self.reference_start_offset)
-
     def _build_reference(self, current_state, n_state, N, dt, fallback_speed, start_offset):
         """构建 N+1 步参考轨迹。
 
-        优先用规划器给出的速度剖面按 **时间** 重采样（弯道/减速区参考自动放慢，
-        动力学参考的 u_ref/r_ref 取自 profile）；profile 缺失或与 path 不同步时，
-        退化为旧的 **匀速弧长** 采样（r_ref=0），并通过 _last_ref_debug 暴露
-        profile_synced=False 供观测。
+        优先用规划器给出的速度剖面按 **时间** 重采样（弯道/减速区参考自动放慢）；
+        profile 缺失或与 path 不同步时，退化为旧的 **匀速弧长** 采样（r_ref=0），
+        并通过 _last_ref_debug 暴露 profile_synced=False 供观测。
         """
         ref = np.zeros((n_state, N + 1))
         path = self._reference_path
@@ -903,10 +616,6 @@ class MpcControllerNode(Node):
             self._last_ref_debug = {
                 "profile_synced": True,
                 "profile_sync_reason": sync_reason,
-                "path_stamp_sec": path_stamp[0] if path_stamp else None,
-                "path_stamp_nanosec": path_stamp[1] if path_stamp else None,
-                "profile_stamp_sec": profile_stamp[0] if profile_stamp else None,
-                "profile_stamp_nanosec": profile_stamp[1] if profile_stamp else None,
                 "nearest_idx": nearest_idx,
                 "ref_start_idx": idx,
                 "nearest_dist": float(dists[nearest_idx]),
@@ -954,10 +663,6 @@ class MpcControllerNode(Node):
         self._last_ref_debug = {
             "profile_synced": False,
             "profile_sync_reason": sync_reason,
-            "path_stamp_sec": path_stamp[0] if path_stamp else None,
-            "path_stamp_nanosec": path_stamp[1] if path_stamp else None,
-            "profile_stamp_sec": profile_stamp[0] if profile_stamp else None,
-            "profile_stamp_nanosec": profile_stamp[1] if profile_stamp else None,
             "nearest_idx": nearest_idx,
             "ref_start_idx": idx,
             "nearest_dist": float(dists[nearest_idx]),

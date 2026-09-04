@@ -1,0 +1,38 @@
+/**:
+  ros__parameters:
+    # --- General MPC Settings (Flat) ---
+    # 此工作目录仅 NMPC (动力学)
+    control_mode: "dynamic"     # "dynamic" (跑 NMPC) 或 "idle" (在线不解算);此工作目录仅支持这两值
+    mpc_dt: 0.2                 # MPC time step (s) — 5 Hz control loop
+    horizon: 20                  # Prediction horizon steps
+    publish_predicted: true      # Publish MPC predicted trajectory
+    max_solve_time_ms: 200.0    # Maximum acceptable solve time (ms)
+    odom_timeout_s: 3.0         # MAVROS local odom can pause briefly during SITL EKF/GPS updates
+    state_timeout_s: 5.0        # Allow brief MAVLink heartbeat jitter without dropping to STANDBY
+    reference_start_offset: 8   # Start MPC reference several path points ahead of the nearest point
+
+    # --- Dynamic NMPC (retuned for real 14.2 kg / 25 N boat) ---
+    # Q/R chosen so critical thrust sqrt(Q_x/R)≈20 N = 80% of T_max=25, i.e. the
+    # controller is willing to use near-full thrust to correct 1 m of error.
+    # dt=0.2 (was 0.1) keeps dyn_N=round(horizon*mpc_dt/dt)=20 so solve time
+    # stays within the 200 ms budget on the MicoAir743 embedded target.
+    dynamic:
+      Q: [20.0, 20.0, 50.0, 8.0, 1.0, 8.0]  # State weights [x,y,psi,u,v,r]
+      R: [0.05, 0.05]              # Control weights [TL, TR]
+      Rd: [0.2, 0.2]               # Control rate weights (Rd/R=4 kept)
+      Qf_scale: 8.0                # Terminal cost multiplier (lowered for N=20)
+      dt: 0.2                      # Dynamic MPC time step (s) — keeps N=20
+      T_max: 25.0                  # Max thrust per thruster (N) — K_T
+      T_min: -25.0                 # Max reverse thrust (N) — equal reverse
+      dT_max: 80.0                 # Max thrust rate (N/s) — 0→25 N in ~0.3 s
+
+    # --- NMPC RC override mapping (ArduRover input channels) ---
+    rc_steering_channel: 0         # CH1 steering input
+    rc_throttle_channel: 2         # CH3 throttle input
+    rc_pwm_min: 1100
+    rc_pwm_center: 1500
+    rc_pwm_max: 1900
+    steering_sign: -1.0            # Flip steering: ArduRover RC1 yaw sign is opposite NMPC TR-TL sign
+    throttle_sign: 1.0             # Positive MPC throttle maps to high RC3 / forward in rover-skid
+    steering_gain: 0.4             # Moderate yaw authority after steering sign correction
+    throttle_gain: 0.75            # Faster SITL tracking after basic direction tuning

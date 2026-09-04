@@ -15,9 +15,10 @@
     default_waypoint_radius: 2.0     # 动态航点的到达判定半径 (m)
 
     # --- 速度剖面 (TOPP) 约束 ---
-    # 重要：u_max / r_max 必须 <= MPC 的 kinematic.u_max / kinematic.r_max
-    # （规划可行域 ⊆ 控制可行域），见 mpc_params.yaml。
-    u_max: 0.8              # TOPP 巡航速度上限 (m/s)，VRX WAM-V 跟踪保守限速
+    # 重要：规划可行域应 ⊆ 控制可行域。本工作目录 MPC 为动力学 NMPC (推力域约束
+    # dynamic.T_max=25N)，规划侧 u_max 是 TOPP 自身巡航速度上限，需保证该速度下
+    # 所需推力不超过 T_max（直航阻力 + 过弯侧向加速度均在推力包络内）。
+    u_max: 0.8              # TOPP 巡航速度上限 (m/s)，实船保守限速
     r_max: 0.18             # 最大转艏角速度 (rad/s)，避免命令过急转弯
     lat_accel_max: 0.12     # 最大侧向加速度 (m/s^2)，限制过弯速度
     accel_max: 0.18         # 最大纵向加速 (m/s^2)

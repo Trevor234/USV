@@ -1,4 +1,9 @@
-"""Real VRX Gazebo Sim + WAM-V + MPC Scheme B validation launch."""
+"""VRX Gazebo Sim + MPC Scheme B (C++ 动力学 NMPC) validation launch.
+
+MPC 节点为 usv_mpc_cpp (C++ NMPC, output_mode=vrx_thrust 直接发布推力),
+参数 = mpc_params.yaml (基础) + usv_params_sim.yaml (30 kg 仿真船) +
+mpc_params_vrx.yaml (VRX overlay)。实机参数 (usv_params.yaml) 不用于仿真。
+"""
 
 import os
 
@@ -57,7 +62,6 @@ def generate_launch_description():
         "dynamic_waypoints_topic", default_value="/usv/mission/waypoints_local"
     )
     path_frame_arg = DeclareLaunchArgument("path_frame", default_value="map")
-    body_frame_arg = DeclareLaunchArgument("body_frame", default_value="base_link")
 
     world = LaunchConfiguration("world")
     headless = LaunchConfiguration("headless")
@@ -77,7 +81,6 @@ def generate_launch_description():
     predicted_trajectory_topic = LaunchConfiguration("predicted_trajectory_topic")
     dynamic_waypoints_topic = LaunchConfiguration("dynamic_waypoints_topic")
     path_frame = LaunchConfiguration("path_frame")
-    body_frame = LaunchConfiguration("body_frame")
 
     # Single-hull USV model. It reuses the WAM-V thruster/sensor/buoyancy
     # plugins via xacro includes (so /wamv/... topics are unchanged) but spawns
@@ -104,8 +107,8 @@ def generate_launch_description():
     )
 
     mpc_params = os.path.join(bringup_share, "config", "mpc_params.yaml")
-    mpc_overlay = os.path.join(bringup_share, "config", "mpc_params_vrx_scheme_b.yaml")
-    usv_params = os.path.join(bringup_share, "config", "usv_params.yaml")
+    usv_params_sim = os.path.join(bringup_share, "config", "usv_params_sim.yaml")
+    mpc_overlay = os.path.join(bringup_share, "config", "mpc_params_vrx.yaml")
     path_params = os.path.join(bringup_share, "config", "path_config.yaml")
 
     planner_node = TimerAction(
@@ -128,15 +131,11 @@ def generate_launch_description():
     mpc_node = TimerAction(
         period=9.0,
         actions=[Node(
-            package="usv_mpc",
+            package="usv_mpc_cpp",
             executable="mpc_node",
             name="mpc_controller_node",
             output="screen",
-            parameters=[mpc_params, usv_params, mpc_overlay, {
-                "scheme": "B",
-                "control_mode": "dynamic",
-                "output_mode": "vrx_thrust",
-                "require_fcu_state": False,
+            parameters=[mpc_params, usv_params_sim, mpc_overlay, {
                 "odom_topic": odom_topic,
                 "imu_topic": imu_topic,
                 "path_topic": path_topic,
@@ -144,7 +143,6 @@ def generate_launch_description():
                 "status_topic": mpc_status_topic,
                 "predicted_trajectory_topic": predicted_trajectory_topic,
                 "path_frame": path_frame,
-                "body_frame": body_frame,
                 "vrx_left_thrust_topic": left_thrust_topic,
                 "vrx_right_thrust_topic": right_thrust_topic,
             }],
@@ -207,7 +205,6 @@ def generate_launch_description():
         predicted_trajectory_topic_arg,
         dynamic_waypoints_topic_arg,
         path_frame_arg,
-        body_frame_arg,
         vrx,
         planner_node,
         mpc_node,

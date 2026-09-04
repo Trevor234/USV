@@ -1,150 +1,145 @@
-# USV MPC Control System
+# USV MPC 控制系统 — 开发工作区 (usv_mpc_ws)
 
-ROS 2 Humble workspace for autonomous 2-meter dual-thruster USV using Model Predictive Control (MPC).
+面向 1.2 m / 14.2 kg 双推进器(差速)无人水面艇(USV)的 **ROS 2 Jazzy** 工作区。
 
-## Architecture
+**算法栈与部署工作区 `usv_mpc_ws_B`(Pi5 实机)完全同源**(2026-09-04 以 B 为准同步):
+运动学 MPC(方案 A,Python,CasADi/acados 双后端)+ 动力学 NMPC(方案 B,C++,acados SQP_RTI,
+CasADi fallback)。本工作区在 B 的基础上额外保留并维护**开发专用能力**:VRX Gazebo 仿真、
+ArduPilot SITL 联调、参数辨识工具链。
 
-```
-usv_mpc_ws/
-├── src/
-│   ├── usv_bringup/       # Launch files and configuration
-│   ├── usv_mpc/            # MPC controller (core)
-│   ├── usv_planning/      # Path planning and waypoints
-│   ├── usv_safety/        # Mode management and safety monitoring
-│   └── usv_simulation/    # Simulator (no hardware needed)
-├── install/
-├── build/
-└── log/
-```
+## 与 usv_mpc_ws_B(Pi5 部署)的关系
 
-## Packages
+| 项 | 本工作区(开发) | usv_mpc_ws_B(Pi5 部署) |
+|---|---|---|
+| 算法(控制器/规划/安全) | **同源,以 B 为准** | 上游(source of truth) |
+| VRX/Gazebo 仿真 | ✅ `sim/sitl/vrx.launch.py` | ❌(仅 matplotlib 可视化) |
+| 仿真船参数 | `usv_params_sim.yaml`(30 kg 单体船) | — |
+| 真船参数 | `usv_params*.yaml`(14.2 kg,2026-07-23 辨识) | 同左 |
+| 参数辨识工具链 | ✅ `参数识别/` | ❌ |
+| acados | x86 源码编译(`~/acados`) | aarch64 源码编译 |
+| 部署文档 | 参考 B 的 `docs/pi5_deploy.md` | ✅ |
 
-| Package | Description | Key Files |
+> 修改算法后若要部署实机,请把改动**回移**到 `usv_mpc_ws_B` 并在那边验证;本工作区只做开发与仿真验证。
+
+## 包结构
+
+| 包 | 语言 | 说明 |
 |:---|:---|:---|
-| `usv_mpc` | MPC solvers (kinematic + dynamic), ROS 2 node | `mpc_node.py`, `mpc_kinematic.py`, `mpc_dynamic.py` |
-| `usv_planning` | Waypoint management, Dubins paths, path smoothing | `path_planner_node.py`, `dubins_path.py` |
-| `usv_safety` | Mode switching, geofence, failsafe monitoring | `mode_manager_node.py`, `safety_monitor.py` |
-| `usv_simulation` | 6-DOF dynamics simulator, matplotlib visualizer | `sim_node.py`, `visualizer.py` |
-| `usv_bringup` | Launch files (sim/SITL/real), YAML configs | `launch/*.py`, `config/*.yaml` |
+| `usv_mpc` | Python | 运动学 MPC(方案 A):CasADi/IPOPT + acados 双后端,`mpc_node.py` 固定方案 A |
+| `usv_mpc_cpp` | C++ | **动力学 NMPC(方案 B)**:Fossen 3-DOF + acados SQP_RTI(vendored codegen)+ CasADi fallback;输出后端 `rc_override`(实机)/`vrx_thrust`(VRX 仿真) |
+| `usv_mpc_kinematic_cpp` | C++ | 运动学 MPC 的 C++ 版(方案 A 实机用) |
+| `usv_planning` / `usv_planning_cpp` | Py/C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
+| `usv_safety` / `usv_safety_cpp` | Py/C++ | 模式管理 + 安全监控(围栏/电池/求解器/看门狗 failsafe → RTL) |
+| `usv_simulation` | Python | matplotlib 实时可视化 + telemetry bridge(无 Gazebo 依赖) |
+| `usv_bringup` | — | launch(`real/mavros/ntrip/record/sim/sitl/vrx`)+ 全部 YAML 配置 |
 
-## Two Control Schemes
+## 两个控制方案
 
-| | Scheme A (Kinematic) | Scheme B (Dynamic) |
+| | 方案 A(运动学) | 方案 B(动力学 NMPC) |
 |:---|:---|:---|
-| MPC state | [x, y, psi] | [x, y, psi, u, v, r] |
-| MPC control | [u_surge, r_yaw] | [T_L, T_R] |
-| MAVLink cmd | `SET_POSITION_TARGET_LOCAL_NED` | `RC_CHANNELS_OVERRIDE` |
-| Complexity | Low | High |
-| Status | Ready | Experimental |
+| 状态 | `[x, y, ψ]` | `[x, y, ψ, u, v, r]` |
+| 控制量 | `[u_surge, r_yaw]` | `[T_L, T_R]`(推力) |
+| 实现 | Python `usv_mpc`(开发/回退)、C++ `usv_mpc_kinematic_cpp`(实机) | **C++ `usv_mpc_cpp`**(Python 动力学实现已删除) |
+| 输出 | `cmd_vel`(GUIDED) | RC override(MANUAL)/ vrx_thrust(仿真) |
+| 参数 | `mpc_params_A.yaml` | `mpc_params_B.yaml` + `usv_params.yaml`(真船) |
 
-## Prerequisites
-
-- Ubuntu 24.04 + ROS 2 Humble
-- CasADi (`pip install casadi`)
-- NumPy, matplotlib, pyyaml
-- MAVROS (`sudo apt install ros-humble-mavros ros-humble-mavros-extras`)
-- acados (optional, for embedded performance)
-
-## Quick Start
-
-### 1. Build the workspace
+## 构建
 
 ```bash
-cd ros/usv_mpc_ws
+cd ~/USV/usv_mpc_ws
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-### 2. Simulation test (no hardware)
+C++ 包(`usv_mpc_cpp` 等)依赖:
+- `sudo apt install libeigen3-dev nlohmann-json3-dev`
+- **acados(x86)**:源码编译到 `~/acados`(与 Pi5 同为 v0.5.4)。国内网络可走代理:
+  ```bash
+  git clone -b v0.5.4 --depth 1 https://ghfast.top/https://github.com/acados/acados.git ~/acados
+  cd ~/acados && git config url."https://ghfast.top/https://github.com/".insteadOf "https://github.com/"
+  git submodule update --init --recursive external/blasfeo external/hpipm external/jsonlab interfaces/acados_template/tera_renderer
+  cmake -S . -B build -DACADOS_WITH_OPENMP=OFF -DACADOS_EXAMPLES=OFF -DACADOS_UNIT_TESTS=OFF
+  cmake --build build -j $(nproc) && (cd build && make install)
+  ```
+- CasADi C++ fallback 后端自动从 `pip install casadi` 的 wheel 中定位(`casadi/include/casadi.hpp`)。
+
+## 仿真
+
+### VRX Gazebo(方案 B,动力学 NMPC 直接推力)
 
 ```bash
-ros2 launch usv_bringup sim.launch.py
+ros2 launch usv_bringup sim.launch.py                      # 默认 sydney_regatta 世界
+ros2 launch usv_bringup vrx.launch.py headless:=True       # 无头
+ros2 launch usv_bringup vrx.launch.py record_bag:=True     # 顺带录 bag
 ```
 
-This starts the dynamics simulator, MPC controller, path planner, and visualizer.
+- MPC 参数:`mpc_params.yaml` + `usv_params_sim.yaml`(30 kg 仿真船)+ `mpc_params_vrx.yaml`(overlay,
+  `output_mode=vrx_thrust` 直接发布 `/wamv/thrusters/{left,right}/thrust`)。
+- 需要本机装好 VRX(`vrx_gz`、`wamv_gazebo`)与 Gazebo;仿真船模型在 `src/usv_simulation/urdf/`。
 
-### 3. Run MPC test scripts (no ROS)
+### ArduPilot SITL(无 Gazebo)
 
 ```bash
-cd src/usv_mpc/test
-python test_mpc_straight.py   # Straight line tracking
-python test_mpc_circle.py     # Circular path tracking
-python test_mpc_benchmark.py  # Solver performance benchmarks
-```
-
-### 4. SITL (with ArduRover simulator)
-
-Terminal 1:
-```bash
+# 先外部启动 SITL:
 sim_vehicle.py -v Rover --map --console --out=tcpin:0.0.0.0:5760
-```
-
-Terminal 2:
-```bash
+# 方案 A(Python 运动学,GUIDED + cmd_vel):
 ros2 launch usv_bringup sitl.launch.py
+# 方案 B(C++ NMPC,MANUAL + RC override;需已编译 acados):
+ros2 launch usv_bringup sitl.launch.py scheme:=B
 ```
 
-### 5. Real hardware
+## 实机运行
+
+与 `usv_mpc_ws_B` 一致(MicoAir743 / ArduRover,UART `/dev/ttyAMA10` @ 921600):
 
 ```bash
-ros2 launch usv_bringup real.launch.py
+ros2 launch usv_bringup real.launch.py                # scheme:=B 默认(动力学 NMPC)
+ros2 launch usv_bringup real.launch.py scheme:=A      # 运动学 MPC
 ```
 
-Verify communication:
-```bash
-ros2 topic echo /mavros/state
-ros2 topic echo /mavros/mavros/odom
-```
+完整部署/录包/RTK 注入说明见 `docs/pi5_deploy.md`、`docs/bag_recording.md`(上游 B 维护)。
 
-### 6. Ground station via Raspberry Pi network
-
-For a single Mission Planner instance on the same LAN as the Raspberry Pi,
-launch MAVROS with a GCS forwarding endpoint:
+## 测试
 
 ```bash
-ros2 launch usv_bringup mavros.launch.py gcs_url:=udp://@<gcs-ip>:14550
+colcon build --symlink-install && source install/setup.bash
+colcon test && colcon test-result --verbose           # pytest + gtest(C++ 包需构建成功)
+
+# 独立 CasADi 脚本(不依赖 ROS):
+cd src/usv_mpc/test
+python3 test_mpc_straight.py     # 直线跟踪
+python3 test_mpc_circle.py       # 圆周跟踪
+python3 test_mpc_benchmark.py    # 求解耗时基准
 ```
 
-Or forward telemetry while running the full real-hardware stack:
+## 配置
 
-```bash
-ros2 launch usv_bringup real.launch.py gcs_url:=udp://@<gcs-ip>:14550
-```
+| 文件 | 内容 |
+|:---|:---|
+| `mpc_params.yaml` | NMPC 基础参数(真船 25 N 整定,方案 B) |
+| `mpc_params_A.yaml` / `mpc_params_B.yaml` | 方案 A/B 实机参数(`scheme` 切换时由 `real.launch.py` 选择) |
+| `mpc_params_vrx.yaml` | VRX 仿真 overlay(40 N 仿真船 + `vrx_thrust` 输出) |
+| `usv_params.yaml` | **真船**水动力学(14.2 kg / 1.2 m,2026-07-23 辨识,sway-yaw 耦合项置零保证开环稳定) |
+| `usv_params_A.yaml` / `usv_params_B.yaml` | 方案变体(真船) |
+| `usv_params_sim.yaml` | **仿真船**水动力学(30 kg 单体,与 `usv_mono_dynamics.xacro` 一致) |
+| `path_config.yaml` | 圆弧倒角半径、TOPP 限制(规划可行域 ⊆ 控制可行域) |
+| `safety_params.yaml` | 围栏/电池/求解器/看门狗阈值 |
+| `ntrip_params.yaml` | CORS 差分数据源(RTK) |
+| `topic_contract.yaml` | 跨语言话题契约(C++/Python 节点混搭的 JSON/stamp 约定) |
 
-This keeps MAVROS as the only serial client to the flight controller and
-forwards MAVLink to one ground-station endpoint. For future 5G / internet,
-multi-GCS, or multi-consumer routing, prefer a dedicated routing layer such as
-`mavlink-router` plus stable addressing or VPN.
+> ⚠️ `waypoints/` 目录保留本工作区原有任务航点;`mpc_params_vrx_scheme_b.yaml`(Python 动力学时代的
+> overlay)已被 `mpc_params_vrx.yaml` 取代并移除。
 
-## Configuration
+## 开发工具链(本工作区特有)
 
-All tunable parameters are in `src/usv_bringup/config/`:
+- `参数识别/` —— 2026-07-23 真船参数辨识脚本与结果(`usv_params.yaml` 数值的来源)
+- `scripts/smoke_check_topics.sh` —— 实机/仿真话题冒烟检查
+- `docs/runbook.md` —— 运维手册;`docs/topic_contract.md` —— 话题契约说明(以 `topic_contract.yaml` 为准)
 
-- `mpc_params.yaml` — MPC weights, horizon, constraints
-- `usv_params.yaml` — Hull mass, damping, thruster properties
-- `path_config.yaml` — Waypoints, path generation settings
-- `mavros_config.yaml` — MAVROS FCU and optional GCS forwarding config
+## 仓库文档
 
-## Topics
-
-| Topic | Type | Direction | Rate |
-|:---|:---|:---|:---|
-| `/mavros/mavros/odom` | `Odometry` | FCU → RPi | 10-50 Hz |
-| `/mavros/mavros/data` | `Imu` | FCU → RPi | 50 Hz |
-| `/mavros/mavros/cmd_vel` | `TwistStamped` | RPi → FCU | 5 Hz |
-| `/mavros/mavros/override` | `OverrideRCIn` | RPi → FCU | 10 Hz |
-| `/path/reference` | `Path` | Internal | 1 Hz |
-| `/mpc/predicted_trajectory` | `Path` | Internal | 5 Hz |
-
-## Safety
-
-The `usv_safety` package provides:
-- Geofence boundary enforcement → RTL on violation
-- Solver failure detection → fallback to HOLD/RTL
-- Communication timeout monitoring
-- Battery voltage monitoring
-
-## Related Documents
-
-- [Implementation Plan](../implementation_plan.md)
-- [Parameter Identification Plan](../usv_parameter_identification_plan.md)
+- [docs/pi5_deploy.md](docs/pi5_deploy.md) —— Pi5 实机部署(acados 源码编译、依赖、构建)
+- [docs/bag_recording.md](docs/bag_recording.md) —— 实机 MCAP 录包(SSD 挂载、话题、回放)
+- [docs/runbook.md](docs/runbook.md) —— 运维手册
+- [docs/topic_contract.md](docs/topic_contract.md) —— 话题契约说明
+- [docs/usv_planning_cpp_tutorial.html](docs/usv_planning_cpp_tutorial.html) —— planning C++ 移植讲解

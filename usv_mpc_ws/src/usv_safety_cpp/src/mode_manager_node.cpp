@@ -1,0 +1,321 @@
+// Copyright 2026 USV Developer
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+
+/**
+ * @file mode_manager_node.cpp
+ * @brief 模式管理 ROS 2 节点实现（C++ 版本）。
+ *
+ * 对应 Python 版本: usv_safety/mode_manager_node.py
+ */
+
+#include "usv_safety_cpp/mode_manager_node.hpp"
+
+#include <chrono>
+#include <cmath>
+#include <functional>
+#include <iomanip>
+#include <sstream>
+
+#include <nlohmann/json.hpp>
+#include <rclcpp/qos.hpp>
+
+using namespace std::chrono_literals;
+
+namespace usv_safety {
+
+namespace {
+double steady_now() {
+  auto now = std::chrono::steady_clock::now();
+  return std::chrono::duration<double>(now.time_since_epoch()).count();
+}
+}  // namespace
+
+// ── 构造函数 ─────────────────────────────────────────────
+ModeManagerNode::ModeManagerNode()
+    : Node("mode_manager_node") {
+  declare_parameters_();
+  load_config_();
+
+  safety_ = SafetyMonitor(safety_config_);
+
+  // ── 订阅者 ──────────────────────────────────────────
+
+  // 飞控状态
+  auto state_topic = this->get_parameter("state_topic").as_string();
+  state_sub_ = this->create_subscription<mavros_msgs::msg::State>(
+      state_topic, 10,
+      std::bind(&ModeManagerNode::state_callback_, this, std::placeholders::_1));
+
+  // MPC 状态（JSON）
+  auto mpc_status_topic = this->get_parameter("mpc_status_topic").as_string();
+  mpc_status_sub_ = this->create_subscription<std_msgs::msg::String>(
+      mpc_status_topic, 10,
+      std::bind(&ModeManagerNode::mpc_status_callback_, this, std::placeholders::_1));
+
+  // 位姿+速度（传感器数据 QoS）
+  auto odom_topic = this->get_parameter("odom_topic").as_string();
+  odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
+      odom_topic, rclcpp::SensorDataQoS(),
+      std::bind(&ModeManagerNode::odom_callback_, this, std::placeholders::_1));
+
+  // 参考路径
+  auto path_topic = this->get_parameter("path_topic").as_string();
+  path_sub_ = this->create_subscription<nav_msgs::msg::Path>(
+      path_topic, 10,
+      std::bind(&ModeManagerNode::path_callback_, this, std::placeholders::_1));
+
+  // 电池状态（可选）
+  auto battery_topic = this->get_parameter("battery_topic").as_string();
+  if (!battery_topic.empty()) {
+    battery_sub_ = this->create_subscription<sensor_msgs::msg::BatteryState>(
+        battery_topic, rclcpp::SensorDataQoS(),
+        std::bind(&ModeManagerNode::battery_callback_, this, std::placeholders::_1));
+  }
+
+  // ── 服务客户端 ──────────────────────────────────────
+  auto set_mode_service = this->get_parameter("set_mode_service").as_string();
+  auto arming_service = this->get_parameter("arming_service").as_string();
+  set_mode_cli_ = this->create_client<mavros_msgs::srv::SetMode>(set_mode_service);
+  cmd_arming_cli_ = this->create_client<mavros_msgs::srv::CommandBool>(arming_service);
+
+  // ── 定时器（0.5 秒周期） ───────────────────────────
+  timer_ = this->create_wall_timer(
+      500ms, std::bind(&ModeManagerNode::monitor_loop_, this));
+
+  RCLCPP_INFO(this->get_logger(), "Mode Manager started | safety monitoring active");
+}
+
+// ── 声明参数 ─────────────────────────────────────────────
+void ModeManagerNode::declare_parameters_() {
+  this->declare_parameter("auto_arm", false);
+  this->declare_parameter("auto_mode_switch", true);
+  this->declare_parameter("geofence_radius", 200.0);
+  this->declare_parameter("geofence_center_x", 0.0);
+  this->declare_parameter("geofence_center_y", 0.0);
+  this->declare_parameter("low_battery_v", 10.5);
+  this->declare_parameter("critical_battery_v", 10.0);
+  this->declare_parameter("max_solver_failures", 5);
+  this->declare_parameter("odom_timeout_s", 1.0);
+  this->declare_parameter("max_path_timeout_s", 5.0);
+  this->declare_parameter("max_speed_mps", 3.0);
+  this->declare_parameter("state_topic", std::string("/mavros/state"));
+  this->declare_parameter("mpc_status_topic", std::string("/mpc/status"));
+  this->declare_parameter("path_topic", std::string("/path/reference"));
+  this->declare_parameter("odom_topic", std::string("/mavros/local_position/odom"));
+  this->declare_parameter("battery_topic", std::string("/mavros/battery"));
+  this->declare_parameter("set_mode_service", std::string("/mavros/set_mode"));
+  this->declare_parameter("arming_service", std::string("/mavros/cmd/arming"));
+}
+
+// ── 加载配置 ─────────────────────────────────────────────
+void ModeManagerNode::load_config_() {
+  safety_config_.geofence_radius_m    = this->get_parameter("geofence_radius").as_double();
+  safety_config_.geofence_center_x    = this->get_parameter("geofence_center_x").as_double();
+  safety_config_.geofence_center_y    = this->get_parameter("geofence_center_y").as_double();
+  safety_config_.low_battery_v        = this->get_parameter("low_battery_v").as_double();
+  safety_config_.critical_battery_v   = this->get_parameter("critical_battery_v").as_double();
+  safety_config_.max_solver_failures  = this->get_parameter("max_solver_failures").as_int();
+  safety_config_.max_odom_timeout_s   = this->get_parameter("odom_timeout_s").as_double();
+  safety_config_.max_path_timeout_s   = this->get_parameter("max_path_timeout_s").as_double();
+  safety_config_.max_speed_mps        = this->get_parameter("max_speed_mps").as_double();
+}
+
+// ── 飞控状态回调 ─────────────────────────────────────────
+void ModeManagerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr msg) {
+  current_mavros_mode_ = msg->mode;
+  armed_ = msg->armed;
+}
+
+// ── MPC 状态回调（JSON 解析） ────────────────────────────
+// 期望 JSON 载荷: {"state": str, "success": bool, "fail_count": int,
+//                  "solve_time_ms": float, "hold": bool,
+//                  "error": str (可选), "standby_reason": str (可选)}。
+// JSON 解析失败时回退到子串匹配(向后兼容)。
+void ModeManagerNode::mpc_status_callback_(const std_msgs::msg::String::SharedPtr msg) {
+  try {
+    auto payload = nlohmann::json::parse(msg->data);
+    mpc_ok_             = payload.value("success", false);
+    mpc_fail_count_     = payload.value("fail_count", 0);
+    mpc_solve_time_ms_  = payload.value("solve_time_ms", 0.0);
+    mpc_hold_           = payload.value("hold", false);
+    mpc_state_          = payload.value("state", "UNKNOWN");
+    mpc_standby_reason_ = payload.value("standby_reason", "");
+  } catch (const nlohmann::json::exception& e) {
+    // Legacy: 任何 "error" 子串标记为失败
+    std::string lower = msg->data;
+    std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
+    mpc_ok_ = lower.find("error") == std::string::npos;
+    mpc_hold_ = false;
+    mpc_state_ = "UNKNOWN";
+    mpc_standby_reason_.clear();
+  }
+  last_mpc_status_time_ = steady_now();
+}
+
+// ── 里程计回调 ───────────────────────────────────────────
+void ModeManagerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg) {
+  x_ = msg->pose.pose.position.x;
+  y_ = msg->pose.pose.position.y;
+  speed_ = std::hypot(msg->twist.twist.linear.x, msg->twist.twist.linear.y);
+  odom_received_ = true;
+  last_odom_rx_ = steady_now();
+  safety_.update_odom(x_, y_, 0.0, speed_, voltage_, last_odom_rx_);
+}
+
+// ── 电池回调 ─────────────────────────────────────────────
+void ModeManagerNode::battery_callback_(const sensor_msgs::msg::BatteryState::SharedPtr msg) {
+  double v = msg->voltage;
+  if (!std::isnan(v) && v > 0.0) {
+    voltage_ = v;
+    battery_received_ = true;
+    if (odom_received_) {
+      safety_.update_odom(x_, y_, 0.0, speed_, voltage_, steady_now());
+    }
+  }
+}
+
+// ── 路径回调 ─────────────────────────────────────────────
+void ModeManagerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr /*msg*/) {
+  path_ever_received_ = true;
+  safety_.update_path(true, steady_now());
+}
+
+// ── 周期性安全监控与模式管理 ─────────────────────────────
+void ModeManagerNode::monitor_loop_() {
+  double now = steady_now();
+
+  // ── 里程计看门狗 ──
+  // update_odom() 仅从真实 odom 回调调用,故 check_odom_timeout() 反映传感器新鲜度。
+  // 不要在此处刷新它,否则该看门狗会自复位。
+  if (!armed_) {
+    // 解锁前 MAVROS/EKF 可能仍在启动。不要因尚无里程计就切换模式;
+    // 车辆解锁后才开始执行看门狗。
+    safety_.set_odom_watchdog("", now);
+  } else if (!odom_received_) {
+    safety_.set_odom_watchdog("No odometry received", now);
+  } else if (safety_.check_odom_timeout(now)) {
+    double dt = now - last_odom_rx_;
+    std::ostringstream oss;
+    oss << "Odometry timeout: " << std::fixed << std::setprecision(1) << dt << "s";
+    safety_.set_odom_watchdog(oss.str(), now);
+  } else {
+    safety_.set_odom_watchdog("", now);
+  }
+
+  // ── MPC 求解器健康状况 ──
+  // 仅在 MPC 处于 ACTIVE 或 HOLD 时才有意义。
+  // STANDBY/UNKNOWN 表示 MPC 根本没在尝试解算(如错误 FCU 模式、未解锁、无路径)
+  // ——把这些计为"求解失败"会在约 2Hz 误触 failsafe。这些状态下镜像 MPC 上报的
+  // fail_count(STANDBY 时恒为 0)并跳过增量更新。
+  if (mpc_state_ == "ACTIVE" || mpc_state_ == "HOLD") {
+    if (mpc_fail_count_ > safety_.solver_fail_count()) {
+      safety_.set_solver_fail_count(mpc_fail_count_);
+    }
+    safety_.update_solver(mpc_ok_, mpc_solve_time_ms_, now);
+  } else {
+    // STANDBY / UNKNOWN: 保持同步但不累积求解失败
+    safety_.set_solver_fail_count(mpc_fail_count_);
+    safety_.clear_solver_flags(now);
+  }
+
+  // ── 路径更新看门狗 ──
+  // 仅在首次收到路径后且已解锁时监视,任务开始前路径缺失不触发 failsafe。
+  if (path_ever_received_) {
+    safety_.update_path(false, now);
+  }
+
+  // ── 故障保护检查 ──
+  if (safety_.failsafe_active()) {
+    if (current_mavros_mode_ != "RTL") {
+      auto flags = safety_.active_flags();
+      std::string flag_str;
+      for (size_t i = 0; i < flags.size(); ++i) {
+        if (i > 0) flag_str += ", ";
+        flag_str += flags[i];
+      }
+      RCLCPP_ERROR(this->get_logger(), "FAILSAFE triggered! Flags: [%s]",
+                   flag_str.c_str());
+      switch_mode_("RTL");
+    }
+    return;
+  }
+
+  // ── 自动模式切换 ──
+  // 触发条件: armed 且不在 GUIDED,且 MPC 有意愿解算 ——
+  //   (1) 当前正在成功解算(legacy 行为),或
+  //   (2) MPC 因 wrong_mode 进入 STANDBY(没切到 GUIDED 之前永远不会
+  //       success,需要由 mode_manager 主动切过去打破死锁)
+  bool auto_switch = this->get_parameter("auto_mode_switch").as_bool();
+  if (auto_switch && armed_ && current_mavros_mode_ != "GUIDED") {
+    bool needs_guided =
+        mpc_ok_ ||
+        (mpc_state_ == "STANDBY" &&
+         mpc_standby_reason_.rfind("wrong_mode", 0) == 0);
+    if (needs_guided) {
+      switch_mode_("GUIDED");
+    }
+  }
+
+  // ── 记录警告日志 ──
+  auto flags = safety_.active_flags();
+  if (safety_.warning_active() && !flags.empty()) {
+    for (const auto& flag : flags) {
+      RCLCPP_WARN(this->get_logger(), "Safety: %s", flag.c_str());
+    }
+  }
+}
+
+// ── 模式切换 ─────────────────────────────────────────────
+bool ModeManagerNode::switch_mode_(const std::string& mode) {
+  if (current_mavros_mode_ == mode) return true;
+
+  if (!set_mode_cli_->service_is_ready()) {
+    RCLCPP_ERROR(this->get_logger(), "SetMode service not ready");
+    return false;
+  }
+
+  auto req = std::make_shared<mavros_msgs::srv::SetMode::Request>();
+  req->custom_mode = mode;
+  set_mode_cli_->async_send_request(req);
+  RCLCPP_INFO(this->get_logger(), "Switching mode: %s → %s",
+              current_mavros_mode_.c_str(), mode.c_str());
+  return true;
+}
+
+// ── 解锁/上锁 ───────────────────────────────────────────
+bool ModeManagerNode::request_arm(bool arm) {
+  if (!cmd_arming_cli_->service_is_ready()) {
+    RCLCPP_ERROR(this->get_logger(), "Arming service not ready");
+    return false;
+  }
+  auto req = std::make_shared<mavros_msgs::srv::CommandBool::Request>();
+  req->value = arm;
+  cmd_arming_cli_->async_send_request(req);
+  return true;
+}
+
+// ── 便捷模式切换方法 ─────────────────────────────────────
+bool ModeManagerNode::switch_to_guided() { return switch_mode_("GUIDED"); }
+bool ModeManagerNode::switch_to_manual() { return switch_mode_("MANUAL"); }
+bool ModeManagerNode::switch_to_rtl()    { return switch_mode_("RTL"); }
+bool ModeManagerNode::switch_to_hold()   { return switch_mode_("HOLD"); }
+
+}  // namespace usv_safety

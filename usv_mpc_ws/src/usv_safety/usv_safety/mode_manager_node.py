@@ -141,7 +141,7 @@ class ModeManagerNode(Node):
         """Parse structured status from mpc_node.
 
         Expected JSON payload: {"state": str, "success": bool, "fail_count": int,
-        "solve_time_ms": float, "hold": bool, "scheme": str,
+        "solve_time_ms": float, "hold": bool,
         "error": str (optional), "standby_reason": str (optional)}.
         Falls back to substring match for backwards compatibility if JSON
         parsing fails.

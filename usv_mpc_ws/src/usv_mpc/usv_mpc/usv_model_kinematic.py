@@ -1,6 +1,6 @@
 """USV 三自由度运动学模型（方案 A）。
 
-状态量: [x, y, psi] — ROS local map 坐标系下的位置和航向角
+状态量: [x, y, psi] — NED 坐标系下的位置和航向角
 控制量: [u_surge, r_yaw] — 纵向速度和艏摇角速度
 
 使用 CasADi 进行符号微分和 RK4 数值积分。

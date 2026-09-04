@@ -1,0 +1,57 @@
+# USV physical parameters — VRX 仿真船 (30 kg 单体船) overlay。
+#
+# 用途:
+#   - vrx.launch.py / sitl.launch.py (scheme B) 的 MPC `vehicle.*` 参数,
+#     与仿真植物 (usv_simulation/urdf/usv_mono_dynamics.xacro) 保持一致。
+#   - 实机参数见 usv_params.yaml (14.2 kg 真船, 2026-07-23 辨识), 勿混用。
+#
+# IMPORTANT: parameter names must match declare_parameter calls in
+# usv_mpc_cpp/src/mpc_node.cpp (flat dotted names in code, nested in YAML).
+
+/**:
+  ros__parameters:
+    # ----- Hull (used by Gazebo SDF + MPC dynamic model) -----
+    vehicle:
+      mass: 30.0          # kg, total including payload
+      Iz: 8.0             # kg·m², yaw moment of inertia
+      xg: 0.0             # m, CG longitudinal offset (+ forward)
+      d_thruster: 0.3     # m, half of thruster spacing 2d
+
+      # ----- Hull geometry (informational for MPC) -----
+      length: 2.0         # m, length overall
+      beam: 0.6           # m, beam
+      draft: 0.15         # m, waterline depth
+      height: 0.30        # m, freeboard above water
+
+      # ----- Added mass (negative by Fossen convention) -----
+      Xu_dot: -3.0
+      Yv_dot: -20.0
+      Yr_dot: -0.5
+      Nv_dot: -0.5
+      Nr_dot: -2.0
+
+      # ----- Linear damping -----
+      Xu: -8.0
+      Yv: -30.0
+      Yr: -1.0
+      Nv: -1.0
+      Nr: -5.0
+
+      # ----- Quadratic damping -----
+      Xuu: -15.0
+      Yvv: -60.0
+      Yrr: -1.0
+      Nvv: -1.0
+      Nrr: -3.0
+
+    # ----- Thruster -----
+    # NOTE: T_max / T_min / dT_max are declared in mpc_params.yaml under
+    # `dynamic.*` and take precedence there for MPC. Repeated here so the
+    # parameter-identification scripts can read a single file.
+    # Keep in sync with mpc_params_vrx.yaml.
+    thruster:
+      pwm_min: 1000
+      pwm_center: 1500
+      pwm_max: 2000
+      T_max_forward: 40.0   # N per thruster
+      T_max_reverse: 20.0   # N per thruster

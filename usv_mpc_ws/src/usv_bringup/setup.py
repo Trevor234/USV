@@ -10,21 +10,16 @@ setup(
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
-        (f"share/{package_name}/launch", [
-            "launch/mavros.launch.py",
-            "launch/sim.launch.py",
-            "launch/sitl.launch.py",
-            "launch/real.launch.py",
-            "launch/vrx.launch.py",
-        ]),
+        (f"share/{package_name}/launch", glob("launch/*.launch.py")),
         (f"share/{package_name}/config", glob("config/*.yaml")),
-        (f"share/{package_name}/config/waypoints", glob("config/waypoints/*.yaml")),
+        # env-hook: 让 ros2 source 时自动导出 acados 环境变量
+        (f"share/{package_name}/environment", ["env-hooks/usv_mpc.sh"]),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
     maintainer="USV Developer",
     maintainer_email="user@example.com",
-    description="Launch files and configuration for USV MPC system",
+    description="Launch + config for USV MPC (Pi5 / NMPC real boat)",
     license="MIT",
     tests_require=["pytest"],
 )

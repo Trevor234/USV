@@ -22,7 +22,7 @@ def generate_launch_description():
         description="FCU serial connection URL"
     )
     gcs_url_arg = DeclareLaunchArgument(
-        "gcs_url", default_value="udp://@10.210.191.110:14550",
+        "gcs_url", default_value="tcp-l://:14550",
         description="Optional MAVLink GCS forwarding URL"
     )
 

@@ -1,0 +1,74 @@
+// Copyright 2026 USV Developer
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+
+/**
+ * @file usv_model_kinematic.hpp
+ * @brief USV 三自由度运动学模型 (方案 A, C++ 版本)。
+ *
+ * 对应 Python 版本: usv_mpc/usv_model_kinematic.py
+ *
+ * 状态量:  [x, y, psi]   (ROS local map 位置 + 航向, 共 3 维)
+ * 控制量: [u_surge, r_yaw] (纵向速度 + 艏摇角速度)
+ *
+ * 动力学方程 (纯运动学, 无水动力参数):
+ *   dx/dt   = u * cos(psi)
+ *   dy/dt   = u * sin(psi)
+ *   dpsi/dt = r
+ *
+ * 本模型用于 CasADi fallback 后端的 RK4 数值积分,以及 gtest sanity 验证。
+ * 与方案 B 的 USVDynamicModel 对齐接口风格,但无 HydroParams (运动学是纯函数)。
+ */
+
+#pragma once
+
+#include <Eigen/Dense>
+
+namespace usv_mpc {
+
+/// USV 三自由度运动学模型 (双推进器, 运动学抽象)。
+class USVKinematicModel {
+ public:
+  /// 构造。dt: 离散步长; rk4_substeps: RK4 子步数 (默认 4, 对齐 Python)。
+  USVKinematicModel(double dt = 0.2, int rk4_substeps = 4);
+
+  /// 连续运动学 ODE 右端 rhs = [u*cos(psi), u*sin(psi), r] (3 维)。
+  /// 纯函数 (无物理参数), 可被 backend 的符号构建与 gtest 共用数值版本。
+  /// 对应 Python: usv_model_kinematic.py 的 rhs (continuous_ode_expr 等价)。
+  static Eigen::Vector3d continuous_ode(const Eigen::Vector3d& state,
+                                        const Eigen::Vector2d& control);
+
+  /// 将 3 维状态向前推进 dt 时间步 (RK4, rk4_substeps 子步)。
+  /// 航向归一化到 [-pi, pi] (对齐 Python forward: atan2(sin, cos))。
+  /// 对应 Python: forward
+  Eigen::Vector3d forward(const Eigen::Vector3d& state,
+                          const Eigen::Vector2d& control) const;
+
+  // ── 维度访问器 (对齐 B 的 USVDynamicModel 接口风格) ──
+  int n_states() const { return 3; }
+  int n_controls() const { return 2; }
+  double dt() const { return dt_; }
+
+ private:
+  double dt_;
+  int rk4_substeps_;
+};
+
+}  // namespace usv_mpc

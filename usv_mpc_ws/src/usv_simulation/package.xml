@@ -3,7 +3,7 @@
 <package format="3">
   <name>usv_simulation</name>
   <version>0.1.0</version>
-  <description>VRX/WAM-V runtime visualization utilities for USV MPC validation.</description>
+  <description>Matplotlib runtime visualization for USV MPC (real boat / SITL, Scheme A).</description>
   <maintainer email="user@example.com">USV Developer</maintainer>
   <license>MIT</license>
 
@@ -11,15 +11,14 @@
 
   <exec_depend>rclpy</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>mavros_msgs</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>python3-matplotlib</exec_depend>
   <exec_depend>python3-tk</exec_depend>
 
   <test_depend>ament_pytest</test_depend>
-  <test_depend>ament_copyright</test_depend>
-  <test_depend>ament_flake8</test_depend>
-  <test_depend>ament_pep257</test_depend>
   <test_depend>python3-pytest</test_depend>
 
   <export>

@@ -10,6 +10,9 @@ setup(
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
     ],
+    # casadi/numpy: IPOPT 后端必需。acados 后端(可选, kinematic.backend:=acados)
+    # 需源码安装 acados 并 `pip install -e interfaces/acados_template`，无 PyPI 包，
+    # 故不列入此处；见 docs/acados_migration.md。
     install_requires=["setuptools", "casadi", "numpy"],
     zip_safe=True,
     maintainer="Trevor",

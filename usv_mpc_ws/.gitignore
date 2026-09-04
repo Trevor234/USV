@@ -1,0 +1,40 @@
+# Colcon build artifacts
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# ArduPilot SITL artifacts
+eeprom.bin
+*.parm
+mav.tlog*
+*.BIN
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS
+.DS_Store
+
+# acados generated C code / solver json (default export dir is /tmp; these are
+# a safety net in case code_export_directory ever points into the repo)
+c_generated_code/
+acados_ocp*.json
+acados_sim*.json
+
+# Rosbag2 recordings (runtime target is /mnt/usv_bags; ignore local tests too)
+/bags/
+/rosbag2_*/
+/usv_run_*/
+*.mcap
+*.db3
+*.db3-wal
+*.db3-shm
