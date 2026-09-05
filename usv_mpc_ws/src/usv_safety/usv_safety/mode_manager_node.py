@@ -14,6 +14,7 @@ import rclpy
 from mavros_msgs.msg import State as MavrosState
 from mavros_msgs.srv import CommandBool, SetMode
 from nav_msgs.msg import Odometry, Path as NavPath
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import BatteryState
@@ -72,6 +73,9 @@ class ModeManagerNode(Node):
             self.get_parameter("battery_timeout_s").value)
         self._takeover_cooldown_s: float = float(
             self.get_parameter("manual_takeover_cooldown_s").value)
+        self._max_rtl_retries: int = int(
+            self.get_parameter("max_rtl_retries").value)
+        self._rtl_attempts: int = 0
 
         # Subscribers
         state_topic = self.get_parameter("state_topic").value
@@ -130,6 +134,9 @@ class ModeManagerNode(Node):
         # 人工接管冷却: 检测到 FCU 模式被外部改变后, 该时长内 auto_mode_switch
         # 不拉回 GUIDED。failsafe RTL 不受此限制。
         self.declare_parameter("manual_takeover_cooldown_s", 10.0)
+        # FAILSAFE RTL 重发上限: 达到后停止指令洪水 (链路断/飞控拒绝时无限
+        # 重发毫无意义), 保持 failsafe 状态并节流告警, 等待人工介入。
+        self.declare_parameter("max_rtl_retries", 10)
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("mpc_status_topic", "/mpc/status")
         self.declare_parameter("path_topic", "/path/reference")
@@ -285,9 +292,11 @@ class ModeManagerNode(Node):
         else:
             self._safety.set_mpc_status_watchdog(None, now)
 
-        # Path-update watchdog. Armed only after the first path has been seen so
-        # that pre-mission absence of a path does not trip a failsafe.
-        if self._path_ever_received:
+        # Path-update watchdog. Enforced only while armed (aligned with the
+        # odom watchdog): 2026-09-03 实测中 mavros 未连接、armed=False, 但空路径
+        # 流让看门狗武装, 规划器一次停发即 FAILSAFE → RTL 0.5s 无限重发。
+        # 未解锁时规划器停发不应拉响 failsafe。
+        if self._armed and self._path_ever_received:
             self._safety.update_path(received=False, timestamp=now)
 
         # 电池遥测看门狗 (WARNING 级): 曾收到过电池话题但已断流, 意味着低电量
@@ -305,12 +314,25 @@ class ModeManagerNode(Node):
         # Check for failsafe trigger
         if self._safety.failsafe_active:
             if self._current_mavros_mode != "RTL":
-                flags = self._safety.active_flags
-                self.get_logger().error(
-                    f"FAILSAFE triggered! Flags: {flags}"
-                )
-                self._switch_mode("RTL")
+                if self._rtl_attempts < self._max_rtl_retries:
+                    flags = self._safety.active_flags
+                    self.get_logger().error(
+                        f"FAILSAFE triggered! Flags: {flags}"
+                    )
+                    self._switch_mode("RTL")
+                    self._rtl_attempts += 1
+                else:
+                    # 2026-09-03 实测教训: FCU 链路断时 set_mode 永远无效、
+                    # mode 永远变不成 RTL, 无限重发只是指令洪水。达到上限后
+                    # 停止重发, 保持 failsafe 状态并节流告警, 等待人工介入。
+                    self.get_logger().error(
+                        f"FAILSAFE 持续, 但 RTL 已连发 {self._rtl_attempts} 次"
+                        "仍未生效 — 检查 FCU 链路与 home 设置, 已停止重发",
+                        throttle_duration_sec=5.0,
+                    )
             return
+        # failsafe 解除后重置重试计数, 下次 failsafe 仍能正常发起 RTL
+        self._rtl_attempts = 0
 
         # Auto mode switching
         # 触发条件:armed 且不在 GUIDED,且 MPC 有意愿解算——
@@ -413,11 +435,12 @@ def main(args=None):
     node = ModeManagerNode()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 
 if __name__ == "__main__":

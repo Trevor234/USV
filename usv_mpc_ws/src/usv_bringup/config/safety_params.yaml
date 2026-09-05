@@ -14,3 +14,6 @@
     # 时长即触发 failsafe RTL (MPC 节点死亡时 FCU 会锁存最后一条速度指令)。
     # mpc_node 以 5Hz 发布 status, 1.0s ≈ 容忍丢 4 帧。
     mpc_status_timeout_s: 1.0
+    # FAILSAFE RTL 重发上限: 超过该次数仍未能进入 RTL 则停止重发并保持
+    # 告警 (FCU 链路断/home 未设时无限重发毫无意义)。0.5s 一次, 10 次=5s。
+    max_rtl_retries: 10

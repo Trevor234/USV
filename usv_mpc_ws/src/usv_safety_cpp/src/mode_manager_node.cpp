@@ -123,6 +123,9 @@ void ModeManagerNode::declare_parameters_() {
   // 人工接管冷却: 检测到 FCU 模式被外部改变后, 该时长内 auto_mode_switch
   // 不拉回 GUIDED。failsafe RTL 不受此限制。
   this->declare_parameter("manual_takeover_cooldown_s", 10.0);
+  // FAILSAFE RTL 重发上限: 达到后停止指令洪水 (链路断/飞控拒绝时无限
+  // 重发毫无意义), 保持 failsafe 状态并节流告警, 等待人工介入。
+  this->declare_parameter("max_rtl_retries", 10);
   this->declare_parameter("state_topic", std::string("/mavros/state"));
   this->declare_parameter("mpc_status_topic", std::string("/mpc/status"));
   this->declare_parameter("path_topic", std::string("/path/reference"));
@@ -146,6 +149,7 @@ void ModeManagerNode::load_config_() {
   safety_config_.mpc_status_timeout_s = this->get_parameter("mpc_status_timeout_s").as_double();
   battery_timeout_s_   = this->get_parameter("battery_timeout_s").as_double();
   takeover_cooldown_s_ = this->get_parameter("manual_takeover_cooldown_s").as_double();
+  max_rtl_retries_     = static_cast<int>(this->get_parameter("max_rtl_retries").as_int());
 }
 
 // ── 飞控状态回调 ─────────────────────────────────────────
@@ -279,8 +283,10 @@ void ModeManagerNode::monitor_loop_() {
   }
 
   // ── 路径更新看门狗 ──
-  // 仅在首次收到路径后且已解锁时监视,任务开始前路径缺失不触发 failsafe。
-  if (path_ever_received_) {
+  // 仅在已解锁时监视 (与 odom 看门狗同一策略): 2026-09-03 实测中 mavros 未
+  // 连接、armed=false, 但空路径流让看门狗武装, 规划器一次停发即 FAILSAFE
+  // → RTL 0.5s 无限重发。未解锁时规划器停发不应拉响 failsafe。
+  if (armed_ && path_ever_received_) {
     safety_.update_path(false, now);
   }
 
@@ -298,18 +304,30 @@ void ModeManagerNode::monitor_loop_() {
   // ── 故障保护检查 ──
   if (safety_.failsafe_active()) {
     if (current_mavros_mode_ != "RTL") {
-      auto flags = safety_.active_flags();
-      std::string flag_str;
-      for (size_t i = 0; i < flags.size(); ++i) {
-        if (i > 0) flag_str += ", ";
-        flag_str += flags[i];
+      if (rtl_attempts_ < max_rtl_retries_) {
+        auto flags = safety_.active_flags();
+        std::string flag_str;
+        for (size_t i = 0; i < flags.size(); ++i) {
+          if (i > 0) flag_str += ", ";
+          flag_str += flags[i];
+        }
+        RCLCPP_ERROR(this->get_logger(), "FAILSAFE triggered! Flags: [%s]",
+                     flag_str.c_str());
+        switch_mode_("RTL");
+        ++rtl_attempts_;
+      } else {
+        // 2026-09-03 实测教训: FCU 链路断时 set_mode 永远无效、mode 永远
+        // 变不成 RTL, 无限重发只是指令洪水。达到上限后停止重发。
+        RCLCPP_ERROR_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                              "FAILSAFE 持续, 但 RTL 已连发 %d 次仍未生效 — "
+                              "检查 FCU 链路与 home 设置, 已停止重发",
+                              rtl_attempts_);
       }
-      RCLCPP_ERROR(this->get_logger(), "FAILSAFE triggered! Flags: [%s]",
-                   flag_str.c_str());
-      switch_mode_("RTL");
     }
     return;
   }
+  // failsafe 解除后重置重试计数, 下次 failsafe 仍能正常发起 RTL
+  rtl_attempts_ = 0;
 
   // ── 自动模式切换 ──
   // 触发条件: armed 且不在 GUIDED,且 MPC 有意愿解算 ——
