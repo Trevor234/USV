@@ -149,18 +149,31 @@ void PathPlannerNode::dynamic_waypoints_callback_(
     return;
   }
 
+  // NaN/Inf 门禁: 一个污染点会让 fillet/采样产生垃圾路径或 UB
+  size_t added = 0, skipped = 0;
   for (const auto& pose : msg->poses) {
+    const double x = pose.pose.position.x;
+    const double y = pose.pose.position.y;
+    if (!std::isfinite(x) || !std::isfinite(y)) {
+      skipped++;
+      continue;
+    }
     Waypoint wp;
-    wp.x = pose.pose.position.x;
-    wp.y = pose.pose.position.y;
+    wp.x = x;
+    wp.y = y;
     wp.radius = default_wp_radius_;
     wp.heading = 0.0;
     wp_manager_.add_waypoint(wp);
+    added++;
+  }
+  if (skipped > 0) {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "动态航点含 %zu 个 NaN/Inf 点，已丢弃", skipped);
   }
 
   RCLCPP_INFO(this->get_logger(),
               "Loaded %zu waypoints from mission bridge",
-              msg->poses.size());
+              added);
 }
 
 // ── 发布空路径 ───────────────────────────────────────────

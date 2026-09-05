@@ -79,6 +79,33 @@ AcadosBackend::AcadosBackend(const MpcParams& params)
   nlp_in_     = usv_dyn_nmpc_acados_get_nlp_in(capsule_);
   nlp_out_    = usv_dyn_nmpc_acados_get_nlp_out(capsule_);
 
+  // codegen 烘焙值校验: 运行时 N/dt 与 vendored 生成码不一致时,
+  // update_params / ocp_nlp_out_set 会按错误的 stage 数越界写 (内存破坏),
+  // 且生成码对这些调用无边界检查。启动即失败优于运行段错误;
+  // 改 horizon/mpc_dt/dynamic.dt 后必须重新生成 codegen
+  // (scripts/regenerate_acados_codegen.py, --horizon/--dt 与 yaml 一致)。
+  const int baked_N = nlp_dims_->N;
+  if (baked_N != params_.N) {
+    usv_dyn_nmpc_acados_free(capsule_);
+    usv_dyn_nmpc_acados_free_capsule(capsule_);
+    capsule_ = nullptr;
+    throw std::runtime_error(
+        "acados codegen N=" + std::to_string(baked_N) + " 与配置 N=" +
+        std::to_string(params_.N) +
+        " 不一致: 请用 scripts/regenerate_acados_codegen.py 重新生成 codegen");
+  }
+  const double baked_dt = (nlp_in_->Ts != nullptr) ? nlp_in_->Ts[0] : 0.0;
+  if (!(std::isfinite(baked_dt) &&
+        std::fabs(baked_dt - params_.dt) < 1e-9)) {
+    usv_dyn_nmpc_acados_free(capsule_);
+    usv_dyn_nmpc_acados_free_capsule(capsule_);
+    capsule_ = nullptr;
+    throw std::runtime_error(
+        "acados codegen dt=" + std::to_string(baked_dt) + " 与配置 dynamic.dt=" +
+        std::to_string(params_.dt) +
+        " 不一致: 请用 scripts/regenerate_acados_codegen.py 重新生成 codegen");
+  }
+
   // 初始化 p_global 运行时值 (30 维)
   auto pg = build_p_global_();
   usv_dyn_nmpc_acados_set_p_global_and_precompute_dependencies(
@@ -205,6 +232,15 @@ AcadosBackend::solve(const Vector6d& current_state,
       double uk[2];
       ocp_nlp_out_get(nlp_config_, nlp_dims_, nlp_out_, k, "u", uk);
       U_sol.col(k) = Eigen::Map<Eigen::Vector2d>(uk);
+    }
+
+    // NaN/Inf 门禁: acados status=0 不保证解有限(参考/状态被污染时可能返回
+    // NaN)。必须在写入热启动缓存之前拦截,否则 NaN 会经 u_prev_/X_warm_ 扩散。
+    if (!u_opt.allFinite() || !X_aug.allFinite() || !U_sol.allFinite()) {
+      ++fail_count_;
+      info.success = false;
+      info.error = "non_finite_solution";
+      return {safe_fallback_(info.error), info};
     }
 
     // X_sol = X_aug 前 6 维 (切回给调用方)

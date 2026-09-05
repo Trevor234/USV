@@ -2,7 +2,7 @@
 
 订阅话题（可通过 launch 参数覆盖）：
   /mavros/local_position/odom     — EKF 融合的位置与速度
-  /mavros/imu/data                — IMU 数据（提供更灵敏的艏摇角速度 r）
+  /mavros/imu/data                — IMU 角速度 r 仅用于 /mpc/status 遥测 (方案 A 状态为 [x,y,psi], 不进控制)
   /path/reference                 — 规划器给出的参考路径（x, y, psi）
   /path/reference_profile         — 规划器给出的速度剖面（v, kappa, r, t）
 
@@ -113,6 +113,9 @@ class MpcControllerNode(Node):
         self.declare_parameter("kinematic.R", [1.0, 1.0])
         self.declare_parameter("kinematic.Qf_scale", 10.0)
         self.declare_parameter("kinematic.u_max", 2.0)
+        # profile 缺失/失同步时降级参考的前瞻速度 (m/s)。默认跟随 u_max
+        # (历史行为); 弯道多的场景建议调低, 降级时参考推进更保守。
+        self.declare_parameter("kinematic.fallback_speed", -1.0)
         self.declare_parameter("kinematic.u_min", 0.0)
         self.declare_parameter("kinematic.r_max", 0.5)
         self.declare_parameter("kinematic.du_max", 0.8)
@@ -277,7 +280,7 @@ class MpcControllerNode(Node):
             self._last_odom_time = time.time()
 
     def _imu_callback(self, msg: Imu):
-        # 使用直接陀螺仪角速度以获得更灵敏的 r 测量值
+        # 直接陀螺仪角速度; 仅用于 status 遥测 (运动学 MPC 状态不含 r)
         with self._state_lock:
             self._r = msg.angular_velocity.z
             self._imu_received = True
@@ -566,8 +569,10 @@ class MpcControllerNode(Node):
 
     def _build_kinematic_reference(self, current_state: np.ndarray) -> np.ndarray:
         """运动学 MPC 的 [3, N+1] 参考（仅 x, y, psi）。"""
-        # profile 缺失时用 u_max 做前瞻速度，给弯道足够预览距离
-        fallback_speed = self.get_parameter("kinematic.u_max").value
+        # profile 缺失时用 fallback_speed 做前瞻速度 (默认跟随 u_max)
+        fallback_speed = float(self.get_parameter("kinematic.fallback_speed").value)
+        if fallback_speed <= 0.0:
+            fallback_speed = float(self.get_parameter("kinematic.u_max").value)
         # 保持原行为：运动学起点向前跳 1 个点
         return self._build_reference(current_state, 3, self.horizon, self.mpc_dt,
                                      fallback_speed, start_offset=1)

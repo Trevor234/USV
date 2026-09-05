@@ -211,6 +211,15 @@ CasadiKinematicBackend::solve(const Eigen::Vector3d& current_state,
     for (int c = 0; c < N; ++c)
       for (int r = 0; r < NU; ++r) info.U_pred(r, c) = u_all[c * NU + r];
 
+    // NaN/Inf 门禁: IPOPT 收敛判据不保证有限值,在写入热启动前拦截,
+    // 避免 NaN 经 u_prev_/X_warm_/U_warm_ 扩散到后续拍。
+    if (!u_opt.allFinite() || !info.X_pred.allFinite() ||
+        !info.U_pred.allFinite()) {
+      info.success = false;
+      info.error = "non_finite_solution";
+      return {u_prev_, info};
+    }
+
     // 热启动滚动 (平移: 丢弃首列, 末列复制; 与 B 完全相同逻辑)
     X_warm_.leftCols(N) = info.X_pred.rightCols(N);
     X_warm_.col(N) = info.X_pred.col(N);

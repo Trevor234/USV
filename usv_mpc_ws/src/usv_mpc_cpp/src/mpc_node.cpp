@@ -114,7 +114,9 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("rc_pwm_min", 1100);
   this->declare_parameter("rc_pwm_center", 1500);
   this->declare_parameter("rc_pwm_max", 1900);
-  this->declare_parameter("steering_sign", 1.0);
+  // ArduRover RC1 舵向符号与 NMPC (TR-TL) 相反 (2026-07 实船标定,
+  // 与 mpc_params_B.yaml 一致)。默认必须为 -1, 避免配置缺失时闭环正反馈画圈。
+  this->declare_parameter("steering_sign", -1.0);
   this->declare_parameter("throttle_sign", 1.0);
   this->declare_parameter("steering_gain", 0.25);
   this->declare_parameter("throttle_gain", 0.5);
@@ -172,6 +174,32 @@ void MpcControllerNode::load_config_() {
   vrx_thrust_scale_ = this->get_parameter("vrx_thrust_scale").as_double();
   vrx_thrust_cmd_max_ = this->get_parameter("vrx_thrust_cmd_max").as_double();
 
+  // 输出后端 × FCU 模式契约自检: rc_override 组合 (ArduRover GUIDED 接受
+  // RC override, 2026-07 实船验证) 依赖 allowed_fcu_modes 与部署的模式切换
+  // 逻辑一致。若列表不含 GUIDED, MPC 将永远 wrong_mode STANDBY —— 启动时
+  // 显式告警, 避免配置漂移静默生效。
+  if (output_mode_ == "rc_override" && !allowed_fcu_modes_.empty()) {
+    bool has_guided = false;
+    for (const auto& m : allowed_fcu_modes_) {
+      if (m == "GUIDED") { has_guided = true; break; }
+    }
+    if (!has_guided) {
+      std::string modes;
+      for (const auto& m : allowed_fcu_modes_) {
+        modes += (modes.empty() ? "" : ",") + m;
+      }
+      RCLCPP_WARN(this->get_logger(),
+                  "output_mode=rc_override 但 allowed_fcu_modes=[%s] 不含 "
+                  "GUIDED: 确认该组合与模式管理器的切换逻辑一致",
+                  modes.c_str());
+    }
+  }
+  if (!require_fcu_state_) {
+    RCLCPP_WARN(this->get_logger(),
+                "require_fcu_state=false: armed/mode 检查全部跳过, MPC 会在"
+                "任意 FCU 模式下抢占 RC 控制权, 仅限台架调试使用");
+  }
+
   rc_steering_channel_ = this->get_parameter("rc_steering_channel").as_int();
   rc_throttle_channel_ = this->get_parameter("rc_throttle_channel").as_int();
   rc_pwm_min_ = this->get_parameter("rc_pwm_min").as_int();
@@ -193,10 +221,17 @@ void MpcControllerNode::init_mpc_solver_() {
   dyn_prediction_time_ = prediction_time;
 
   auto Qv = this->get_parameter("dynamic.Q").as_double_array();
-  for (int i = 0; i < 6; ++i) p.Q_diag(i) = Qv[i];
   auto Rv = this->get_parameter("dynamic.R").as_double_array();
-  p.R_diag << Rv[0], Rv[1];
   auto Rdv = this->get_parameter("dynamic.Rd").as_double_array();
+  // 长度校验: 短数组会让 operator[] 越界 (UB), 启动即失败优于运行段错误
+  if (Qv.size() < 6 || Rv.size() < 2 || Rdv.size() < 2) {
+    throw std::runtime_error(
+        "dynamic.Q/R/Rd 数组长度不足 (需要 >=6/>=2/>=2, 实际 " +
+        std::to_string(Qv.size()) + "/" + std::to_string(Rv.size()) + "/" +
+        std::to_string(Rdv.size()) + "), 请检查 mpc_params yaml");
+  }
+  for (int i = 0; i < 6; ++i) p.Q_diag(i) = Qv[i];
+  p.R_diag << Rv[0], Rv[1];
   p.Rd_diag << Rdv[0], Rdv[1];
   p.Qf_scale = this->get_parameter("dynamic.Qf_scale").as_double();
   p.T_max = this->get_parameter("dynamic.T_max").as_double();
@@ -280,21 +315,46 @@ void MpcControllerNode::init_pubsub_() {
 
 // ── 回调 ─────────────────────────────────────────────────
 void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg) {
+  const auto& p = msg->pose.pose.position;
+  const auto& q = msg->pose.pose.orientation;
+  const auto& t = msg->twist.twist;
+  // NaN/Inf 门禁: 一个污染样本 (GPS 重定位/EKF 发散) 若进入状态,求解器可能
+  // 仍返回 status=0 的"成功"解,经 clamp/cast 变成任意 PWM 下发。直接丢弃。
+  if (!std::isfinite(p.x) || !std::isfinite(p.y) ||
+      !std::isfinite(q.x) || !std::isfinite(q.y) ||
+      !std::isfinite(q.z) || !std::isfinite(q.w) ||
+      !std::isfinite(t.linear.x) || !std::isfinite(t.linear.y) ||
+      !std::isfinite(t.angular.z)) {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "odom 含 NaN/Inf, 丢弃该样本");
+    return;
+  }
+  double psi = quaternion_to_yaw(q.x, q.y, q.z, q.w);
+  if (!std::isfinite(psi)) {  // 全零四元数等退化输入
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "odom 四元数退化, 丢弃该样本");
+    return;
+  }
   std::lock_guard<std::mutex> lk(state_lock_);
-  x_ = msg->pose.pose.position.x;
-  y_ = msg->pose.pose.position.y;
-  auto& q = msg->pose.pose.orientation;
-  psi_ = quaternion_to_yaw(q.x, q.y, q.z, q.w);
-  u_ = msg->twist.twist.linear.x;
-  v_ = msg->twist.twist.linear.y;
-  r_ = msg->twist.twist.angular.z;
+  x_ = p.x;
+  y_ = p.y;
+  psi_ = psi;
+  u_ = t.linear.x;
+  v_ = t.linear.y;
+  r_ = t.angular.z;
   odom_received_ = true;
   last_odom_time_ = steady_now();
 }
 
 void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg) {
+  double r = msg->angular_velocity.z;  // 直接陀螺仪角速度, 更灵敏
+  if (!std::isfinite(r)) {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "IMU 角速度含 NaN/Inf, 丢弃该样本");
+    return;
+  }
   std::lock_guard<std::mutex> lk(state_lock_);
-  r_ = msg->angular_velocity.z;  // 直接陀螺仪角速度, 更灵敏
+  r_ = r;
   imu_received_ = true;
 }
 
@@ -606,10 +666,14 @@ void MpcControllerNode::publish_standby_status_(const std::string& reason) {
   j["max_solve_time_ms"] = max_solve_time_ms_;
   j["deadline_miss"] = false;
   j["hold"] = false;
-  j["path_received"] = path_received_;
-  j["path_len"] = reference_path_.size();
-  j["profile_synced"] = profile_synced_;
-  j["profile_sync_reason"] = profile_sync_reason_;
+  // 与 path/profile 回调 (Reentrant 组) 并发, 共享状态须持锁读取
+  {
+    std::lock_guard<std::mutex> lk(state_lock_);
+    j["path_received"] = path_received_;
+    j["path_len"] = reference_path_.size();
+    j["profile_synced"] = profile_synced_;
+    j["profile_sync_reason"] = profile_sync_reason_;
+  }
   j["standby_reason"] = reason;
   std_msgs::msg::String msg;
   msg.data = j.dump();

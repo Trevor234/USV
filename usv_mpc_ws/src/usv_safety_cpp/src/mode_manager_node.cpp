@@ -116,6 +116,13 @@ void ModeManagerNode::declare_parameters_() {
   this->declare_parameter("odom_timeout_s", 1.0);
   this->declare_parameter("max_path_timeout_s", 5.0);
   this->declare_parameter("max_speed_mps", 3.0);
+  this->declare_parameter("mpc_status_timeout_s", 1.0);
+  // 电池遥测看门狗: 话题断流仅 WARNING (低电量检测失效需人工知晓),
+  // 不触发 RTL —— 缺失遥测导致的意外 RTL 本身就是危险。
+  this->declare_parameter("battery_timeout_s", 10.0);
+  // 人工接管冷却: 检测到 FCU 模式被外部改变后, 该时长内 auto_mode_switch
+  // 不拉回 GUIDED。failsafe RTL 不受此限制。
+  this->declare_parameter("manual_takeover_cooldown_s", 10.0);
   this->declare_parameter("state_topic", std::string("/mavros/state"));
   this->declare_parameter("mpc_status_topic", std::string("/mpc/status"));
   this->declare_parameter("path_topic", std::string("/path/reference"));
@@ -136,10 +143,17 @@ void ModeManagerNode::load_config_() {
   safety_config_.max_odom_timeout_s   = this->get_parameter("odom_timeout_s").as_double();
   safety_config_.max_path_timeout_s   = this->get_parameter("max_path_timeout_s").as_double();
   safety_config_.max_speed_mps        = this->get_parameter("max_speed_mps").as_double();
+  safety_config_.mpc_status_timeout_s = this->get_parameter("mpc_status_timeout_s").as_double();
+  battery_timeout_s_   = this->get_parameter("battery_timeout_s").as_double();
+  takeover_cooldown_s_ = this->get_parameter("manual_takeover_cooldown_s").as_double();
 }
 
 // ── 飞控状态回调 ─────────────────────────────────────────
 void ModeManagerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr msg) {
+  if (msg->mode != current_mavros_mode_) {
+    // 记录外部/我方模式切换时刻 (人工接管冷却的起点)
+    last_mode_change_ = steady_now();
+  }
   current_mavros_mode_ = msg->mode;
   armed_ = msg->armed;
 }
@@ -168,6 +182,8 @@ void ModeManagerNode::mpc_status_callback_(const std_msgs::msg::String::SharedPt
     mpc_standby_reason_.clear();
   }
   last_mpc_status_time_ = steady_now();
+  safety_.mark_mpc_status(last_mpc_status_time_);
+  ++mpc_status_seq_;
 }
 
 // ── 里程计回调 ───────────────────────────────────────────
@@ -177,18 +193,19 @@ void ModeManagerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr ms
   speed_ = std::hypot(msg->twist.twist.linear.x, msg->twist.twist.linear.y);
   odom_received_ = true;
   last_odom_rx_ = steady_now();
-  safety_.update_odom(x_, y_, 0.0, speed_, voltage_, last_odom_rx_);
+  safety_.update_odom(x_, y_, 0.0, speed_, last_odom_rx_);
 }
 
 // ── 电池回调 ─────────────────────────────────────────────
+// 电压走 update_battery() 独立域,而非 update_odom():用电池话题刷新
+// odom 看门狗会让 GPS/EKF 断流后 odom failsafe 永远不触发 (P0)。
 void ModeManagerNode::battery_callback_(const sensor_msgs::msg::BatteryState::SharedPtr msg) {
   double v = msg->voltage;
   if (!std::isnan(v) && v > 0.0) {
     voltage_ = v;
     battery_received_ = true;
-    if (odom_received_) {
-      safety_.update_odom(x_, y_, 0.0, speed_, voltage_, steady_now());
-    }
+    last_battery_rx_ = steady_now();
+    safety_.update_battery(voltage_, last_battery_rx_);
   }
 }
 
@@ -226,20 +243,56 @@ void ModeManagerNode::monitor_loop_() {
   // ——把这些计为"求解失败"会在约 2Hz 误触 failsafe。这些状态下镜像 MPC 上报的
   // fail_count(STANDBY 时恒为 0)并跳过增量更新。
   if (mpc_state_ == "ACTIVE" || mpc_state_ == "HOLD") {
-    if (mpc_fail_count_ > safety_.solver_fail_count()) {
-      safety_.set_solver_fail_count(mpc_fail_count_);
+    // 仅当自上轮监控以来收到过新 status 才喂 update_solver: 用 2Hz 监控节拍
+    // 重复消费同一份陈旧失败会把 fail_count 膨胀, 提前触发 RTL,
+    // MPC 自身 HOLD 缓冲形同虚设。
+    if (mpc_status_seq_ != last_status_seq_used_) {
+      last_status_seq_used_ = mpc_status_seq_;
+      if (mpc_fail_count_ > safety_.solver_fail_count()) {
+        safety_.set_solver_fail_count(mpc_fail_count_);
+      }
+      safety_.update_solver(mpc_ok_, mpc_solve_time_ms_, now);
     }
-    safety_.update_solver(mpc_ok_, mpc_solve_time_ms_, now);
   } else {
     // STANDBY / UNKNOWN: 保持同步但不累积求解失败
+    last_status_seq_used_ = mpc_status_seq_;
     safety_.set_solver_fail_count(mpc_fail_count_);
     safety_.clear_solver_flags(now);
+  }
+
+  // ── /mpc/status 新鲜度看门狗 ──
+  // MPC 节点在 ACTIVE/HOLD 期间死亡时,mpc_state_ 冻结在最后值,而 FCU 会
+  // 锁存最后一条速度指令(GUIDED 无 setpoint 超时)——这正是必须触发
+  // failsafe 的场景。未解锁时不武装(码头调试),与 odom 看门狗同一策略。
+  if (armed_ && (mpc_state_ == "ACTIVE" || mpc_state_ == "HOLD")) {
+    if (safety_.check_mpc_status_timeout(now)) {
+      double dt = now - last_mpc_status_time_;
+      std::ostringstream oss;
+      oss << "MPC status timeout: " << std::fixed << std::setprecision(1)
+          << dt << "s";
+      safety_.set_mpc_status_watchdog(oss.str(), now);
+    } else {
+      safety_.set_mpc_status_watchdog("", now);
+    }
+  } else {
+    safety_.set_mpc_status_watchdog("", now);
   }
 
   // ── 路径更新看门狗 ──
   // 仅在首次收到路径后且已解锁时监视,任务开始前路径缺失不触发 failsafe。
   if (path_ever_received_) {
     safety_.update_path(false, now);
+  }
+
+  // ── 电池遥测看门狗 (WARNING 级) ──
+  // 曾收到过电池话题但已断流, 低电量 failsafe 变盲; 只提醒不 RTL。
+  if (battery_received_ && (now - last_battery_rx_) > battery_timeout_s_) {
+    std::ostringstream oss;
+    oss << "No battery telemetry for " << std::fixed << std::setprecision(1)
+        << (now - last_battery_rx_) << "s";
+    safety_.set_battery_watchdog(oss.str(), now);
+  } else {
+    safety_.set_battery_watchdog("", now);
   }
 
   // ── 故障保护检查 ──
@@ -263,8 +316,17 @@ void ModeManagerNode::monitor_loop_() {
   //   (1) 当前正在成功解算(legacy 行为),或
   //   (2) MPC 因 wrong_mode 进入 STANDBY(没切到 GUIDED 之前永远不会
   //       success,需要由 mode_manager 主动切过去打破死锁)
+  // 人工接管冷却: 模式刚被改变(如操作手切 MANUAL)后的冷却期内不拉回;
+  // failsafe RTL 在上方已 return, 不受冷却影响。
   bool auto_switch = this->get_parameter("auto_mode_switch").as_bool();
-  if (auto_switch && armed_ && current_mavros_mode_ != "GUIDED") {
+  bool in_takeover_cooldown =
+      (now - last_mode_change_) < takeover_cooldown_s_;
+  if (in_takeover_cooldown && current_mavros_mode_ != "GUIDED") {
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "人工接管冷却期内, 暂停自动切回 GUIDED");
+  }
+  if (!in_takeover_cooldown && auto_switch && armed_ &&
+      current_mavros_mode_ != "GUIDED") {
     bool needs_guided =
         mpc_ok_ ||
         (mpc_state_ == "STANDBY" &&
@@ -278,7 +340,8 @@ void ModeManagerNode::monitor_loop_() {
   auto flags = safety_.active_flags();
   if (safety_.warning_active() && !flags.empty()) {
     for (const auto& flag : flags) {
-      RCLCPP_WARN(this->get_logger(), "Safety: %s", flag.c_str());
+      RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                           "Safety: %s", flag.c_str());
     }
   }
 }
@@ -294,7 +357,20 @@ bool ModeManagerNode::switch_mode_(const std::string& mode) {
 
   auto req = std::make_shared<mavros_msgs::srv::SetMode::Request>();
   req->custom_mode = mode;
-  set_mode_cli_->async_send_request(req);
+  // 结果确认: 发后不管会让 failsafe 静默失效, 这里至少把拒绝暴露到日志
+  set_mode_cli_->async_send_request(
+      req, [this](rclcpp::Client<mavros_msgs::srv::SetMode>::SharedFuture f) {
+        try {
+          auto resp = f.get();
+          if (!resp->mode_sent) {
+            RCLCPP_ERROR(this->get_logger(),
+                         "SetMode 请求被拒绝 (mode_sent=false): failsafe 重试"
+                         "由监控循环继续发起, 请检查 FCU 模式表");
+          }
+        } catch (const std::exception& e) {
+          RCLCPP_ERROR(this->get_logger(), "SetMode 结果获取失败: %s", e.what());
+        }
+      });
   RCLCPP_INFO(this->get_logger(), "Switching mode: %s → %s",
               current_mavros_mode_.c_str(), mode.c_str());
   return true;
@@ -308,7 +384,17 @@ bool ModeManagerNode::request_arm(bool arm) {
   }
   auto req = std::make_shared<mavros_msgs::srv::CommandBool::Request>();
   req->value = arm;
-  cmd_arming_cli_->async_send_request(req);
+  cmd_arming_cli_->async_send_request(
+      req, [this](rclcpp::Client<mavros_msgs::srv::CommandBool>::SharedFuture f) {
+        try {
+          auto resp = f.get();
+          if (!resp->success) {
+            RCLCPP_ERROR(this->get_logger(), "Arming 请求被飞控拒绝");
+          }
+        } catch (const std::exception& e) {
+          RCLCPP_ERROR(this->get_logger(), "Arming 结果获取失败: %s", e.what());
+        }
+      });
   return true;
 }
 

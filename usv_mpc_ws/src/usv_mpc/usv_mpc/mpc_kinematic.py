@@ -1,7 +1,9 @@
 """适用于无人船 (USV) 的运动学 MPC 求解器（方案 A）。
 
 求解如下最优控制问题：
-  min  sum_k ||x_k - x_k^ref||_Q^2 + ||u_k - u_k^ref||_R^2  +  ||x_N - x_N^ref||_Qf^2
+  min  sum_k ||x_k - x_k^ref||_Q^2 + ||u_k||_R^2  +  ||x_N - x_N^ref||_Qf^2
+  (注意: R 项是控制量正则化到 0, 参考速度剖面不直接进入代价;
+   稳态跟踪偏差由位置项间接驱动)
   s.t. x_{k+1} = f(x_k, u_k),  x_0 = 当前状态
        u_min <= u <= u_max,  delta_u_min <= delta_u <= delta_u_max
 
@@ -157,6 +159,10 @@ class KinematicMPC:
         try:
             sol = self._opti.solve()
             u_opt = sol.value(self._U[:, 0]).flatten()
+            # 显式钳位: IPOPT 只以求解器精度满足约束, 与 acados 后端
+            # (发布前 clip) 对称, 避免后端间输出保证不一致
+            u_opt = np.clip(u_opt, [self.u_min, -self.r_max],
+                            [self.u_max, self.r_max])
 
             # 保存平移后的热启动解
             X_sol = sol.value(self._X)

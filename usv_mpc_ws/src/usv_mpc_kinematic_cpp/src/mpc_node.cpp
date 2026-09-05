@@ -156,8 +156,15 @@ void MpcControllerNode::init_mpc_solver_() {
   kin_prediction_time_ = prediction_time;
 
   auto Qv = this->get_parameter("kinematic.Q").as_double_array();  // 3 维
-  for (int i = 0; i < 3; ++i) p.Q_diag(i) = Qv[i];
   auto Rv = this->get_parameter("kinematic.R").as_double_array();  // 2 维
+  // 长度校验: 短数组会让 operator[] 越界 (UB), 启动即失败优于运行段错误
+  if (Qv.size() < 3 || Rv.size() < 2) {
+    throw std::runtime_error(
+        "kinematic.Q/R 数组长度不足 (需要 >=3/>=2, 实际 " +
+        std::to_string(Qv.size()) + "/" + std::to_string(Rv.size()) +
+        "), 请检查 mpc_params yaml");
+  }
+  for (int i = 0; i < 3; ++i) p.Q_diag(i) = Qv[i];
   p.R_diag << Rv[0], Rv[1];
   p.Qf_scale = this->get_parameter("kinematic.Qf_scale").as_double();
   p.u_max = this->get_parameter("kinematic.u_max").as_double();
@@ -217,21 +224,46 @@ void MpcControllerNode::init_pubsub_() {
 
 // ── 回调 (与 B 几乎逐行相同, 仅 reference_path_ 类型对齐 utils) ──
 void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg) {
+  const auto& p = msg->pose.pose.position;
+  const auto& q = msg->pose.pose.orientation;
+  const auto& t = msg->twist.twist;
+  // NaN/Inf 门禁: 一个污染样本 (GPS 重定位/EKF 发散) 若进入状态,求解器可能
+  // 仍返回"成功"解并把 NaN 速度指令发给 GUIDED。直接丢弃。
+  if (!std::isfinite(p.x) || !std::isfinite(p.y) ||
+      !std::isfinite(q.x) || !std::isfinite(q.y) ||
+      !std::isfinite(q.z) || !std::isfinite(q.w) ||
+      !std::isfinite(t.linear.x) || !std::isfinite(t.linear.y) ||
+      !std::isfinite(t.angular.z)) {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "odom 含 NaN/Inf, 丢弃该样本");
+    return;
+  }
+  double psi = quaternion_to_yaw(q.x, q.y, q.z, q.w);
+  if (!std::isfinite(psi)) {  // 全零四元数等退化输入
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "odom 四元数退化, 丢弃该样本");
+    return;
+  }
   std::lock_guard<std::mutex> lk(state_lock_);
-  x_ = msg->pose.pose.position.x;
-  y_ = msg->pose.pose.position.y;
-  auto& q = msg->pose.pose.orientation;
-  psi_ = quaternion_to_yaw(q.x, q.y, q.z, q.w);
-  u_ = msg->twist.twist.linear.x;
-  v_ = msg->twist.twist.linear.y;
-  r_ = msg->twist.twist.angular.z;
+  x_ = p.x;
+  y_ = p.y;
+  psi_ = psi;
+  u_ = t.linear.x;
+  v_ = t.linear.y;
+  r_ = t.angular.z;
   odom_received_ = true;
   last_odom_time_ = steady_now();
 }
 
 void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg) {
+  double r = msg->angular_velocity.z;  // 直接陀螺仪角速度, 更灵敏
+  if (!std::isfinite(r)) {
+    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "IMU 角速度含 NaN/Inf, 丢弃该样本");
+    return;
+  }
   std::lock_guard<std::mutex> lk(state_lock_);
-  r_ = msg->angular_velocity.z;  // 直接陀螺仪角速度, 更灵敏
+  r_ = r;
   imu_received_ = true;
 }
 

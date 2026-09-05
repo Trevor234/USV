@@ -64,6 +64,7 @@ struct SafetyConfig {
   double low_battery_v          = 10.5;
   double critical_battery_v     = 10.0;
   double max_speed_mps          = 3.0;
+  double mpc_status_timeout_s   = 1.0;
 };
 
 // ── 当前的安全评估状态 ───────────────────────────────────
@@ -87,10 +88,16 @@ class SafetyMonitor {
 
   // ── 域更新方法 ──────────────────────────────────────
 
-  /// 根据最新的里程计数据更新地理围栏、速度限制和电池检查。
+  /// 根据最新的里程计数据更新地理围栏和速度限制检查。
+  /// 只能从真实 odom 回调调用:timestamp 是 odom 看门狗的时间种子。
+  /// 电池电压走独立的 update_battery() 域;若从这里喂电压,电池话题会
+  /// 持续刷新 odom 看门狗,导致 odom 断流 failsafe 永不触发。
   /// timestamp 为 0 时自动取系统单调时钟。
   void update_odom(double x, double y, double psi, double speed,
-                   double voltage = 12.0, double timestamp = 0.0);
+                   double timestamp = 0.0);
+
+  /// 更新电池检查。独立拥有 Low/CRITICAL battery 标志域。
+  void update_battery(double voltage, double timestamp = 0.0);
 
   /// 根据求解器状态更新。
   void update_solver(bool success, double solve_time_ms,
@@ -102,6 +109,15 @@ class SafetyMonitor {
   /// 设置或清除里程计看门狗标志。flag 为空字符串时表示清除。
   void set_odom_watchdog(const std::string& flag, double timestamp = 0.0);
 
+  /// 记录 /mpc/status 到达时间(新鲜度看门狗的时间种子)。
+  void mark_mpc_status(double timestamp = 0.0);
+
+  /// 设置或清除 /mpc/status 新鲜度看门狗标志。flag 为空字符串时表示清除。
+  void set_mpc_status_watchdog(const std::string& flag, double timestamp = 0.0);
+
+  /// 设置或清除电池遥测看门狗标志 (WARNING 级: 断流仅提醒, 不触发 RTL)。
+  void set_battery_watchdog(const std::string& flag, double timestamp = 0.0);
+
   /// 同步求解器失败计数器，且不增加新的失败次数。
   void set_solver_fail_count(int fail_count);
 
@@ -110,6 +126,9 @@ class SafetyMonitor {
 
   /// 如果里程计数据已超时，则返回 true。
   bool check_odom_timeout(double timestamp = 0.0) const;
+
+  /// 如果 /mpc/status 已过期，则返回 true。
+  bool check_mpc_status_timeout(double timestamp = 0.0) const;
 
   /// 重置所有状态。
   void reset();
@@ -163,10 +182,11 @@ class SafetyMonitor {
 
   // ── 内部状态 ──────────────────────────────────────────
   SafetyConfig config_;
-  double       last_odom_time_     = 0.0;
-  double       last_path_time_     = 0.0;
-  int          solver_fail_count_  = 0;
-  double       last_solve_time_ms_ = 0.0;
+  double       last_odom_time_        = 0.0;
+  double       last_path_time_        = 0.0;
+  double       last_mpc_status_time_  = 0.0;
+  int          solver_fail_count_     = 0;
+  double       last_solve_time_ms_    = 0.0;
   SafetyState  current_state_;
 };
 

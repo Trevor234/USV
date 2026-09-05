@@ -5,12 +5,13 @@ Run: python test/test_mpc_circle.py
 """
 
 import math
+import os
 import sys
 import time
 
 import numpy as np
 
-sys.path.insert(0, "..")
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 from usv_mpc.usv_model_kinematic import USVKinematicModel
 from usv_mpc.mpc_kinematic import KinematicMPC
 from usv_mpc.utils import normalize_angle

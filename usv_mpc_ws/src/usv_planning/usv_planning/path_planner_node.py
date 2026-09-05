@@ -150,7 +150,20 @@ class PathPlannerNode(Node):
         """
         self._wp_manager.clear()
 
-        pts = [(p.pose.position.x, p.pose.position.y) for p in msg.poses]
+        # NaN/Inf 门禁: 一个污染点会让 fillet/TOPP 产生垃圾路径或抛异常
+        pts = []
+        skipped = 0
+        for p in msg.poses:
+            x, y = p.pose.position.x, p.pose.position.y
+            if math.isfinite(x) and math.isfinite(y):
+                pts.append((x, y))
+            else:
+                skipped += 1
+        if skipped:
+            self.get_logger().warning(
+                f"动态航点含 {skipped} 个 NaN/Inf 点，已丢弃",
+                throttle_duration_sec=5.0,
+            )
         if not pts:
             self._publish_empty_path()
             self.get_logger().info("收到空航点列表，已发布空参考路径以触发 HOLD")
@@ -166,6 +179,26 @@ class PathPlannerNode(Node):
         )
 
     def _publish_path(self):
+        """周期性发布参考路径。
+
+        本回调在 rclpy 定时器里运行, 任何未捕获异常都会传播出 spin() 杀死
+        节点——规划器死亡意味着 /path/reference 停发, 只剩安全包的 path
+        watchdog 兜底。这里统一兜底: 记日志并发布空路径 (MPC 侧触发 HOLD),
+        节点存活等待下一拍恢复。
+        """
+        try:
+            self._publish_path_impl()
+        except Exception as e:  # noqa: BLE001 - 兜底防止节点死亡
+            self.get_logger().error(
+                f"路径生成异常, 已发布空参考路径: {e}",
+                throttle_duration_sec=5.0,
+            )
+            try:
+                self._publish_empty_path()
+            except Exception:
+                pass
+
+    def _publish_path_impl(self):
         wps = self._wp_manager.waypoints
 
         # 更新航点进度

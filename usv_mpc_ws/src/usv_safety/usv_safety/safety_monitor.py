@@ -31,6 +31,7 @@ class SafetyConfig:
     low_battery_v: float = 10.5
     critical_battery_v: float = 10.0
     max_speed_mps: float = 3.0
+    mpc_status_timeout_s: float = 1.0
 
 
 @dataclass
@@ -55,6 +56,7 @@ class SafetyMonitor:
         self.config = config or SafetyConfig()
         self._last_odom_time: float = 0.0
         self._last_path_time: float = 0.0
+        self._last_mpc_status_time: float = 0.0
         self._solver_fail_count: int = 0
         self._last_solve_time_ms: float = 0.0
         self._current_state: SafetyState = SafetyState()
@@ -86,6 +88,8 @@ class SafetyMonitor:
                 "No path update",
                 "No odometry received",
                 "Odometry timeout",
+                "No MPC status",
+                "MPC status timeout",
             )):
                 return SafetyLevel.FAILSAFE
             if flag.startswith((
@@ -94,6 +98,7 @@ class SafetyMonitor:
                 "Low battery",
                 "Solver failures",
                 "Slow solve",
+                "No battery telemetry",
             )):
                 level = max(level, SafetyLevel.WARNING)
         return level
@@ -103,8 +108,39 @@ class SafetyMonitor:
         self._replace_flags(
             ("No odometry received", "Odometry timeout"),
             [flag] if flag else [],
-            timestamp or time.time(),
+            timestamp or time.monotonic(),
         )
+
+    def mark_mpc_status(self, timestamp: Optional[float] = None):
+        """Record arrival time of /mpc/status (freshness watchdog seed)."""
+        self._last_mpc_status_time = timestamp or time.monotonic()
+
+    def set_mpc_status_watchdog(self, flag: Optional[str],
+                                timestamp: Optional[float] = None):
+        """Set or clear the /mpc/status freshness watchdog flag."""
+        self._replace_flags(
+            ("No MPC status", "MPC status timeout"),
+            [flag] if flag else [],
+            timestamp or time.monotonic(),
+        )
+
+    def set_battery_watchdog(self, flag: Optional[str],
+                             timestamp: Optional[float] = None):
+        """Set or clear the battery-telemetry watchdog flag (WARNING level).
+
+        电池遥测断流意味着低电量 failsafe 变盲, 但缺失遥测不应触发 RTL
+        (意外 RTL 本身是危险), 因此该域固定为 WARNING。
+        """
+        self._replace_flags(
+            ("No battery telemetry",),
+            [flag] if flag else [],
+            timestamp or time.monotonic(),
+        )
+
+    def check_mpc_status_timeout(self, timestamp: Optional[float] = None) -> bool:
+        """Returns True if /mpc/status has gone stale."""
+        ts = timestamp or time.monotonic()
+        return (ts - self._last_mpc_status_time) > self.config.mpc_status_timeout_s
 
     def set_solver_fail_count(self, fail_count: int):
         """Synchronize solver failure counter without adding a new failure."""
@@ -115,13 +151,19 @@ class SafetyMonitor:
         self._replace_flags(
             ("Solver failed", "Solver failures", "Slow solve"),
             [],
-            timestamp or time.time(),
+            timestamp or time.monotonic(),
         )
 
     def update_odom(self, x: float, y: float, psi: float, speed: float,
-                    voltage: float = 12.0, timestamp: Optional[float] = None):
-        """Update geofence, speed and battery checks from latest odometry."""
-        ts = timestamp or time.time()
+                    timestamp: Optional[float] = None):
+        """Update geofence and speed checks from latest odometry.
+
+        MUST only be called from the real odom callback: the timestamp seeds
+        the odom watchdog. Battery voltage has its own domain in
+        update_battery(); feeding it through here would refresh the odom
+        watchdog from the battery topic and blind the odom failsafe.
+        """
+        ts = timestamp or time.monotonic()
         self._last_odom_time = ts
 
         flags = []
@@ -136,27 +178,33 @@ class SafetyMonitor:
         if speed > self.config.max_speed_mps:
             flags.append(f"Speed limit exceeded: {speed:.2f} m/s")
 
-        if voltage < self.config.critical_battery_v:
-            flags.append(f"CRITICAL battery: {voltage:.1f}V")
-        elif voltage < self.config.low_battery_v:
-            flags.append(f"Low battery: {voltage:.1f}V")
-
         self._replace_flags(
             (
                 "Approaching geofence boundary",
                 "GEOFENCE VIOLATION",
                 "Speed limit exceeded",
-                "Low battery",
-                "CRITICAL battery",
             ),
             flags,
             ts,
         )
 
+    def update_battery(self, voltage: float,
+                       timestamp: Optional[float] = None):
+        """Update battery checks. Owns the Low/CRITICAL battery flag domain."""
+        ts = timestamp or time.monotonic()
+
+        flags = []
+        if voltage < self.config.critical_battery_v:
+            flags.append(f"CRITICAL battery: {voltage:.1f}V")
+        elif voltage < self.config.low_battery_v:
+            flags.append(f"Low battery: {voltage:.1f}V")
+
+        self._replace_flags(("Low battery", "CRITICAL battery"), flags, ts)
+
     def update_solver(self, success: bool, solve_time_ms: float,
                       timestamp: Optional[float] = None):
         """Update with solver status."""
-        ts = timestamp or time.time()
+        ts = timestamp or time.monotonic()
         self._last_solve_time_ms = solve_time_ms
 
         if success:
@@ -181,7 +229,7 @@ class SafetyMonitor:
 
     def update_path(self, received: bool, timestamp: Optional[float] = None):
         """Update with path planner status."""
-        ts = timestamp or time.time()
+        ts = timestamp or time.monotonic()
 
         if received:
             self._last_path_time = ts
@@ -195,7 +243,7 @@ class SafetyMonitor:
 
     def check_odom_timeout(self, timestamp: Optional[float] = None) -> bool:
         """Returns True if odometry has timed out."""
-        ts = timestamp or time.time()
+        ts = timestamp or time.monotonic()
         return (ts - self._last_odom_time) > self.config.max_odom_timeout_s
 
     @property

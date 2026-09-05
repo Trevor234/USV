@@ -4,7 +4,7 @@
   <name>usv_mpc</name>
   <version>0.1.0</version>
   <description>MPC controller for dual-thruster USV (kinematic)</description>
-  <maintainer email="user@example.com">USV Developer</maintainer>
+  <maintainer email="1572652994@qq.com">Trevor</maintainer>
   <license>MIT</license>
 
   <depend>rclpy</depend>

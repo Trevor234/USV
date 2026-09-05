@@ -41,8 +41,7 @@ SafetyMonitor::SafetyMonitor(const SafetyConfig& config)
 // ── 域更新 ───────────────────────────────────────────────
 
 void SafetyMonitor::update_odom(double x, double y, double /*psi*/,
-                                double speed, double voltage,
-                                double timestamp) {
+                                double speed, double timestamp) {
   double ts = now_or_(timestamp);
   last_odom_time_ = ts;
 
@@ -66,7 +65,19 @@ void SafetyMonitor::update_odom(double x, double y, double /*psi*/,
                     std::to_string(speed).substr(0, 4) + " m/s");
   }
 
-  // 电池
+  replace_flags_(
+      {
+          "Approaching geofence boundary",
+          "GEOFENCE VIOLATION",
+          "Speed limit exceeded",
+      },
+      flags, ts);
+}
+
+void SafetyMonitor::update_battery(double voltage, double timestamp) {
+  double ts = now_or_(timestamp);
+
+  std::vector<std::string> flags;
   if (voltage < config_.critical_battery_v) {
     flags.push_back("CRITICAL battery: " + std::to_string(voltage).substr(0, 4) +
                     "V");
@@ -75,15 +86,7 @@ void SafetyMonitor::update_odom(double x, double y, double /*psi*/,
                     "V");
   }
 
-  replace_flags_(
-      {
-          "Approaching geofence boundary",
-          "GEOFENCE VIOLATION",
-          "Speed limit exceeded",
-          "Low battery",
-          "CRITICAL battery",
-      },
-      flags, ts);
+  replace_flags_({"Low battery", "CRITICAL battery"}, flags, ts);
 }
 
 void SafetyMonitor::update_solver(bool success, double solve_time_ms,
@@ -144,6 +147,30 @@ void SafetyMonitor::set_odom_watchdog(const std::string& flag,
   replace_flags_({"No odometry received", "Odometry timeout"}, new_flags, ts);
 }
 
+void SafetyMonitor::mark_mpc_status(double timestamp) {
+  last_mpc_status_time_ = now_or_(timestamp);
+}
+
+void SafetyMonitor::set_mpc_status_watchdog(const std::string& flag,
+                                            double timestamp) {
+  double ts = now_or_(timestamp);
+  std::vector<std::string> new_flags;
+  if (!flag.empty()) {
+    new_flags.push_back(flag);
+  }
+  replace_flags_({"No MPC status", "MPC status timeout"}, new_flags, ts);
+}
+
+void SafetyMonitor::set_battery_watchdog(const std::string& flag,
+                                         double timestamp) {
+  double ts = now_or_(timestamp);
+  std::vector<std::string> new_flags;
+  if (!flag.empty()) {
+    new_flags.push_back(flag);
+  }
+  replace_flags_({"No battery telemetry"}, new_flags, ts);
+}
+
 void SafetyMonitor::set_solver_fail_count(int fail_count) {
   solver_fail_count_ = std::max(0, fail_count);
 }
@@ -156,6 +183,11 @@ void SafetyMonitor::clear_solver_flags(double timestamp) {
 bool SafetyMonitor::check_odom_timeout(double timestamp) const {
   double ts = now_or_(timestamp);
   return (ts - last_odom_time_) > config_.max_odom_timeout_s;
+}
+
+bool SafetyMonitor::check_mpc_status_timeout(double timestamp) const {
+  double ts = now_or_(timestamp);
+  return (ts - last_mpc_status_time_) > config_.mpc_status_timeout_s;
 }
 
 void SafetyMonitor::reset() {
@@ -234,10 +266,12 @@ SafetyLevel SafetyMonitor::level_from_flags_(
   static const std::vector<std::string> kFailsafePrefixes = {
       "GEOFENCE VIOLATION", "CRITICAL battery", "Solver failed",
       "No path update", "No odometry received", "Odometry timeout",
+      "No MPC status", "MPC status timeout",
   };
   static const std::vector<std::string> kWarningPrefixes = {
       "Approaching geofence boundary", "Speed limit exceeded",
       "Low battery", "Solver failures", "Slow solve",
+      "No battery telemetry",
   };
 
   SafetyLevel level = SafetyLevel::NOMINAL;

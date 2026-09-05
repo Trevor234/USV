@@ -231,6 +231,17 @@ void MissionBridgeNode::republish_() {
       continue;
     }
 
+    // 经纬度有效性门禁: NaN/Inf 或未初始化的 (0,0) 航点会被转换成
+    // ~10^7 m 外的 ENU 点, MPC 就近投影后参考指向错误方向、全速开船。
+    if (!std::isfinite(wp.x_lat) || !std::isfinite(wp.y_long) ||
+        (std::fabs(wp.x_lat) < 1e-6 && std::fabs(wp.y_long) < 1e-6)) {
+      skipped++;
+      RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                           "航点 #%zu 经纬度无效 (lat=%f, lon=%f)，已跳过",
+                           i, wp.x_lat, wp.y_long);
+      continue;
+    }
+
     // 经纬度 -> ENU 平面坐标 (m)
     double dE = (wp.y_long - lon0) * (M_PI / 180.0) * EARTH_RADIUS_M * cos_lat0;
     double dN = (wp.x_lat - lat0)  * (M_PI / 180.0) * EARTH_RADIUS_M;

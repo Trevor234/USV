@@ -208,8 +208,21 @@ class MissionBridgeNode(Node):
                 skipped += 1
                 continue
 
-            dE = math.radians(wp.y_long - lon0) * EARTH_RADIUS_M * cos_lat0
-            dN = math.radians(wp.x_lat - lat0) * EARTH_RADIUS_M
+            # 经纬度有效性门禁: NaN/Inf 或未初始化的 (0,0) 航点会被转换成
+            # ~10^7 m 外的 ENU 点, MPC 就近投影后参考指向错误方向、全速开船。
+            lat, lon = wp.x_lat, wp.y_long
+            if not (math.isfinite(lat) and math.isfinite(lon)) or (
+                abs(lat) < 1e-6 and abs(lon) < 1e-6
+            ):
+                skipped += 1
+                self.get_logger().warning(
+                    f"航点 #{i} 经纬度无效 (lat={lat}, lon={lon})，已跳过",
+                    throttle_duration_sec=5.0,
+                )
+                continue
+
+            dE = math.radians(lon - lon0) * EARTH_RADIUS_M * cos_lat0
+            dN = math.radians(lat - lat0) * EARTH_RADIUS_M
 
             pose = PoseStamped()
             pose.header = path.header

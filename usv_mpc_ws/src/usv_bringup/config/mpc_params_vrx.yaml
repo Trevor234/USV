@@ -4,6 +4,9 @@
     # 由原 mpc_params_vrx_scheme_b.yaml (Python 动力学 MPC 时代) 迁移而来,
     # 数值整定保持不变: 单推进器 40 N / 反推 20 N 的 30 kg 单体仿真船。
     # MPC 为 C++ usv_mpc_cpp 动力学 NMPC, output_mode=vrx_thrust 直接发布推力。
+    # 注意: vrx_thrust_scale=25 把 NMPC 推力 (N) 线性放大后发给 VRX, NMPC 内部
+    # 30kg 模型与 Gazebo 船动力学并未真正耦合, 极易饱和 —— 本文件的仿真调参
+    # 结论不可直接迁移到 rc_override 实机路径。
 
     control_mode: "dynamic"
     output_mode: "vrx_thrust"      # C++ mpc_node: 推力直发 Gazebo thruster topic

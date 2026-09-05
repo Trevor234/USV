@@ -285,7 +285,10 @@ def main():
                     help=f"生成目录 (默认 {default_out})")
     ap.add_argument("--horizon", type=int, default=20,
                     help="预测步数 N_horizon (默认 20; 改动须同步 C++ 侧配置)")
-    ap.add_argument("--dt", type=float, default=0.1, help="步长 dt 秒 (默认 0.1)")
+    ap.add_argument("--dt", type=float, default=0.2,
+                    help="步长 dt 秒 (默认 0.2, 与 vendored codegen 及 "
+                         "mpc_params_*.yaml 的 dynamic.dt 一致; 改动须重新 "
+                         "codegen 并同步 yaml, 否则节点启动自检会拒绝运行)")
     ap.add_argument("--t-max", type=float, default=40.0)
     ap.add_argument("--t-min", type=float, default=-20.0)
     ap.add_argument("--dt-max", type=float, default=30.0, help="推力变化率上限 N/s")

@@ -150,8 +150,10 @@ class AcadosKinematicMPC:
             setattr(ocp.solver_options, k, v)
 
         # 生成代码写到可写目录（install/share 可能只读）
+        # 目录名带 N/dt: 同机多实例 (不同 N/dt 配置) 不再互相覆盖 codegen
         export_dir = os.path.join(
-            tempfile.gettempdir(), "usv_acados", model.name
+            tempfile.gettempdir(), "usv_acados",
+            f"{model.name}_N{self.N}_dt{self.dt}",
         )
         os.makedirs(export_dir, exist_ok=True)
         json_path = os.path.join(export_dir, "acados_ocp.json")

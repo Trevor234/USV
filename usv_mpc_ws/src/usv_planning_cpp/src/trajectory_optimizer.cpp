@@ -119,6 +119,14 @@ FilletResult fillet_path(
   const int n = static_cast<int>(waypoints.size());
   if (n < 2) return result;
 
+  // 有限性门禁: NaN/Inf 航点会让 round(seg_len/res) 变成 UB、后续几何全部
+  // 污染。返回空结果, 由调用方按"路径过短"发布空路径。
+  for (const auto& wp : waypoints) {
+    if (!std::isfinite(wp.first) || !std::isfinite(wp.second)) {
+      return result;
+    }
+  }
+
   double res = std::max(1e-3, resolution);
   double R   = std::max(1e-3, turn_radius);
 

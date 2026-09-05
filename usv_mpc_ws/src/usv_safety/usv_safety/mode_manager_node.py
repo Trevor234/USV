@@ -49,6 +49,9 @@ class ModeManagerNode(Node):
         self._mpc_state: str = "UNKNOWN"  # ACTIVE / HOLD / STANDBY / UNKNOWN
         self._mpc_standby_reason: str = ""
         self._last_mpc_status_time: float = 0.0
+        # 每条 /mpc/status 递增; 监控循环据此只消费"新"状态
+        self._mpc_status_seq: int = 0
+        self._last_status_seq_used: int = -1
         self._x: float = 0.0
         self._y: float = 0.0
         self._speed: float = 0.0
@@ -59,6 +62,16 @@ class ModeManagerNode(Node):
         self._odom_received: bool = False
         self._last_odom_rx: float = 0.0
         self._path_ever_received: bool = False
+        self._last_battery_rx: float = 0.0
+        # 人工接管检测: FCU 模式发生变化的时刻; 冷却期内 auto_mode_switch
+        # 不自动拉回, 给操作手留出控制窗口
+        self._prev_mavros_mode: str = ""
+        self._last_mode_change: float = 0.0
+
+        self._battery_timeout_s: float = float(
+            self.get_parameter("battery_timeout_s").value)
+        self._takeover_cooldown_s: float = float(
+            self.get_parameter("manual_takeover_cooldown_s").value)
 
         # Subscribers
         state_topic = self.get_parameter("state_topic").value
@@ -110,6 +123,13 @@ class ModeManagerNode(Node):
         self.declare_parameter("odom_timeout_s", 1.0)
         self.declare_parameter("max_path_timeout_s", 5.0)
         self.declare_parameter("max_speed_mps", 3.0)
+        self.declare_parameter("mpc_status_timeout_s", 1.0)
+        # 电池遥测看门狗: 话题断流仅 WARNING (低电量检测失效需人工知晓),
+        # 不触发 RTL —— 缺失遥测导致的意外 RTL 本身就是危险。
+        self.declare_parameter("battery_timeout_s", 10.0)
+        # 人工接管冷却: 检测到 FCU 模式被外部改变后, 该时长内 auto_mode_switch
+        # 不拉回 GUIDED。failsafe RTL 不受此限制。
+        self.declare_parameter("manual_takeover_cooldown_s", 10.0)
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("mpc_status_topic", "/mpc/status")
         self.declare_parameter("path_topic", "/path/reference")
@@ -131,9 +151,13 @@ class ModeManagerNode(Node):
             max_odom_timeout_s=self.get_parameter("odom_timeout_s").value,
             max_path_timeout_s=self.get_parameter("max_path_timeout_s").value,
             max_speed_mps=self.get_parameter("max_speed_mps").value,
+            mpc_status_timeout_s=self.get_parameter("mpc_status_timeout_s").value,
         )
 
     def _state_callback(self, msg: MavrosState):
+        if msg.mode != self._current_mavros_mode:
+            # 记录外部/我方模式切换时刻 (人工接管冷却的起点)
+            self._last_mode_change = time.monotonic()
         self._current_mavros_mode = msg.mode
         self._armed = msg.armed
 
@@ -148,6 +172,11 @@ class ModeManagerNode(Node):
         """
         try:
             payload = json.loads(msg.data)
+            if not isinstance(payload, dict):
+                # e.g. "null" / "123" / "[...]" parses fine but has no fields —
+                # treat like any other malformed payload (legacy fallback below)
+                # instead of crashing this node with AttributeError.
+                raise ValueError("mpc status payload is not a JSON object")
             self._mpc_ok = bool(payload.get("success", False))
             self._mpc_fail_count = int(payload.get("fail_count", 0))
             self._mpc_solve_time_ms = float(payload.get("solve_time_ms", 0.0))
@@ -160,7 +189,9 @@ class ModeManagerNode(Node):
             self._mpc_hold = False
             self._mpc_state = "UNKNOWN"
             self._mpc_standby_reason = ""
-        self._last_mpc_status_time = time.time()
+        self._last_mpc_status_time = time.monotonic()
+        self._safety.mark_mpc_status(self._last_mpc_status_time)
+        self._mpc_status_seq += 1
 
     def _odom_callback(self, msg: Odometry):
         """Feed live pose/speed into geofence and speed-limit checks."""
@@ -168,30 +199,33 @@ class ModeManagerNode(Node):
         self._y = msg.pose.pose.position.y
         self._speed = math.hypot(msg.twist.twist.linear.x, msg.twist.twist.linear.y)
         self._odom_received = True
-        self._last_odom_rx = time.time()
+        self._last_odom_rx = time.monotonic()
         self._safety.update_odom(
-            self._x, self._y, 0.0, self._speed, self._voltage, self._last_odom_rx
+            self._x, self._y, 0.0, self._speed, self._last_odom_rx
         )
 
     def _battery_callback(self, msg: BatteryState):
-        """Cache battery voltage; ignore NaN / invalid readings."""
+        """Cache battery voltage; ignore NaN / invalid readings.
+
+        Voltage goes through update_battery(), NOT update_odom(): refreshing
+        the odom watchdog from the battery topic would keep the odom failsafe
+        alive after GPS/EKF loss.
+        """
         v = msg.voltage
         if not math.isnan(v) and v > 0.0:
             self._voltage = float(v)
             self._battery_received = True
-            if self._odom_received:
-                self._safety.update_odom(
-                    self._x, self._y, 0.0, self._speed, self._voltage, time.time()
-                )
+            self._last_battery_rx = time.monotonic()
+            self._safety.update_battery(self._voltage, self._last_battery_rx)
 
     def _path_callback(self, msg: NavPath):
         """Mark a fresh reference path so the path watchdog can detect stalls."""
         self._path_ever_received = True
-        self._safety.update_path(received=True, timestamp=time.time())
+        self._safety.update_path(received=True, timestamp=time.monotonic())
 
     def _monitor_loop(self):
         """Periodic safety monitoring and mode management."""
-        now = time.time()
+        now = time.monotonic()
 
         # Odometry watchdog: update_odom() is called ONLY from the real odom
         # callback so check_odom_timeout() reflects sensor freshness. Do not
@@ -215,22 +249,58 @@ class ModeManagerNode(Node):
         # would falsely trip failsafe at ~2 Hz. In those states, mirror the
         # MPC's reported fail_count (always 0 in STANDBY) and skip the
         # incremental update.
+        #
+        # Feed update_solver() ONLY when a fresh /mpc/status arrived since the
+        # last tick: re-feeding the same stale failure at the 2 Hz monitor
+        # rate inflates the fail count (real 2 consecutive failures can hit
+        # max_solver_failures before the MPC's own HOLD buffer engages).
         if self._mpc_state in ("ACTIVE", "HOLD"):
-            if self._mpc_fail_count > self._safety.solver_fail_count:
-                self._safety.set_solver_fail_count(self._mpc_fail_count)
-            self._safety.update_solver(
-                self._mpc_ok, self._mpc_solve_time_ms, now
-            )
+            if self._mpc_status_seq != self._last_status_seq_used:
+                self._last_status_seq_used = self._mpc_status_seq
+                if self._mpc_fail_count > self._safety.solver_fail_count:
+                    self._safety.set_solver_fail_count(self._mpc_fail_count)
+                self._safety.update_solver(
+                    self._mpc_ok, self._mpc_solve_time_ms, now
+                )
         else:
             # STANDBY / UNKNOWN: keep safety in sync but do not accumulate
             # solver failures while MPC is intentionally not solving.
+            self._last_status_seq_used = self._mpc_status_seq
             self._safety.set_solver_fail_count(self._mpc_fail_count)
             self._safety.clear_solver_flags(now)
+
+        # /mpc/status freshness watchdog. If the MPC node dies while ACTIVE or
+        # HOLD, _mpc_state freezes at its last value and the FCU keeps latching
+        # the last velocity command (GUIDED has no setpoint timeout) — that is
+        # exactly when this failsafe must fire. Disarmed: not armed yet (dock
+        # testing) — do not enforce, same policy as the odom watchdog.
+        if self._armed and self._mpc_state in ("ACTIVE", "HOLD"):
+            if self._safety.check_mpc_status_timeout(now):
+                dt = now - self._last_mpc_status_time
+                self._safety.set_mpc_status_watchdog(
+                    f"MPC status timeout: {dt:.1f}s", now
+                )
+            else:
+                self._safety.set_mpc_status_watchdog(None, now)
+        else:
+            self._safety.set_mpc_status_watchdog(None, now)
 
         # Path-update watchdog. Armed only after the first path has been seen so
         # that pre-mission absence of a path does not trip a failsafe.
         if self._path_ever_received:
             self._safety.update_path(received=False, timestamp=now)
+
+        # 电池遥测看门狗 (WARNING 级): 曾收到过电池话题但已断流, 意味着低电量
+        # failsafe 变盲。只提醒不 RTL —— 意外 RTL 本身就是一种危险。
+        if self._battery_received and (
+            now - self._last_battery_rx
+        ) > self._battery_timeout_s:
+            self._safety.set_battery_watchdog(
+                f"No battery telemetry for {now - self._last_battery_rx:.1f}s",
+                now,
+            )
+        else:
+            self._safety.set_battery_watchdog(None, now)
 
         # Check for failsafe trigger
         if self._safety.failsafe_active:
@@ -247,8 +317,19 @@ class ModeManagerNode(Node):
         #   (1) 当前正在成功解算(legacy 行为),或
         #   (2) MPC 因 wrong_mode 进入 STANDBY(没切到 GUIDED 之前永远不会
         #       success,需要由 mode_manager 主动切过去打破死锁)
+        # 人工接管冷却: 模式刚被改变(如操作手切 MANUAL)后的冷却期内不拉回,
+        # 给操作手留控制窗口; failsafe RTL 在上方已 return, 不受冷却影响。
         auto_switch = self.get_parameter("auto_mode_switch").value
-        if auto_switch and self._armed and self._current_mavros_mode != "GUIDED":
+        in_takeover_cooldown = (
+            now - self._last_mode_change
+        ) < self._takeover_cooldown_s
+        if in_takeover_cooldown and self._current_mavros_mode != "GUIDED":
+            self.get_logger().info(
+                "人工接管冷却期内, 暂停自动切回 GUIDED",
+                throttle_duration_sec=5.0,
+            )
+        if not in_takeover_cooldown and auto_switch and self._armed \
+                and self._current_mavros_mode != "GUIDED":
             needs_guided = (
                 self._mpc_ok
                 or (self._mpc_state == "STANDBY"
@@ -261,7 +342,9 @@ class ModeManagerNode(Node):
         flags = self._safety.active_flags
         if self._safety.warning_active and flags:
             for flag in flags:
-                self.get_logger().warn(f"Safety: {flag}")
+                self.get_logger().warn(
+                    f"Safety: {flag}", throttle_duration_sec=5.0
+                )
 
     def request_arm(self, arm: bool = True) -> bool:
         """Request arming/disarming."""
@@ -272,8 +355,18 @@ class ModeManagerNode(Node):
         req = CommandBool.Request()
         req.value = arm
         future = self._cmd_arming_cli.call_async(req)
-        # Spin until complete (with timeout handled by the caller)
+        future.add_done_callback(self._on_arm_result)
         return True
+
+    def _on_arm_result(self, future):
+        try:
+            resp = future.result()
+        except Exception:
+            return
+        if resp is not None and not getattr(resp, "success", False):
+            self.get_logger().error(
+                f"Arming 请求被飞控拒绝 (result={getattr(resp, 'result', 'n/a')})"
+            )
 
     def _switch_mode(self, mode: str) -> bool:
         """Switch to a flight mode."""
@@ -287,8 +380,20 @@ class ModeManagerNode(Node):
         req = SetMode.Request()
         req.custom_mode = mode
         future = self._set_mode_cli.call_async(req)
+        future.add_done_callback(self._on_set_mode_result)
         self.get_logger().info(f"Switching mode: {self._current_mavros_mode} → {mode}")
         return True
+
+    def _on_set_mode_result(self, future):
+        try:
+            resp = future.result()
+        except Exception:
+            return
+        if resp is not None and not getattr(resp, "mode_sent", True):
+            self.get_logger().error(
+                "SetMode 请求被拒绝 (mode_sent=False): "
+                "failsafe 重试由监控循环继续发起, 请检查 FCU 模式表"
+            )
 
     def switch_to_guided(self) -> bool:
         return self._switch_mode("GUIDED")

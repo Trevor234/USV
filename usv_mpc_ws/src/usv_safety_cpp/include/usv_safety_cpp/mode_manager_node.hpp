@@ -31,6 +31,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -95,6 +96,10 @@ class ModeManagerNode : public rclcpp::Node {
   std::string mpc_state_             = "UNKNOWN";  // ACTIVE/HOLD/STANDBY/UNKNOWN
   std::string mpc_standby_reason_;
   double      last_mpc_status_time_  = 0.0;
+  // 每条 /mpc/status 递增; 监控循环据此只消费"新"状态 (避免按 2Hz 监控
+  // 节拍重复喂同一份失败, 把失败计数膨胀)
+  uint64_t    mpc_status_seq_        = 0;
+  uint64_t    last_status_seq_used_  = 0;
   double      x_                     = 0.0;
   double      y_                     = 0.0;
   double      speed_                 = 0.0;
@@ -105,6 +110,11 @@ class ModeManagerNode : public rclcpp::Node {
   bool        odom_received_         = false;
   double      last_odom_rx_          = 0.0;
   bool        path_ever_received_    = false;
+  double      last_battery_rx_       = 0.0;
+  // 人工接管冷却: FCU 模式变化时刻起, 该时长内 auto_mode_switch 不拉回
+  double      last_mode_change_      = 0.0;
+  double      battery_timeout_s_     = 10.0;
+  double      takeover_cooldown_s_   = 10.0;
 
   // ── ROS 通信接口 ────────────────────────────────────
   // 订阅者
