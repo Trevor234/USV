@@ -96,8 +96,18 @@ class CmdvelToThrust(Node):
         self._last_cmd_time = self.get_clock().now()
 
     def _odom_callback(self, msg: Odometry):
-        self._u_meas = msg.twist.twist.linear.x
-        self._r_meas = msg.twist.twist.angular.z
+        # gz 真值里程计的 twist 是世界系 (ENU)! 必须按航向旋转到体轴:
+        #   u_meas (前向) =  vx·cosψ + vy·sinψ
+        # 直接拿 linear.x 当前进速度会让纵向 P 反馈随航向振荡
+        # (绕圈时 = 锯齿轨迹, 2026-09-07 实测定位)。
+        q = msg.pose.pose.orientation
+        yaw = math.atan2(2.0 * (q.w * q.z + q.x * q.y),
+                         1.0 - 2.0 * (q.y * q.y + q.z * q.z))
+        c, s = math.cos(yaw), math.sin(yaw)
+        vx = msg.twist.twist.linear.x
+        vy = msg.twist.twist.linear.y
+        self._u_meas = vx * c + vy * s
+        self._r_meas = msg.twist.twist.angular.z  # 平面运动: 世界系=体轴系
 
     def _tick(self):
         now = self.get_clock().now()

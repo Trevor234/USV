@@ -218,6 +218,8 @@ def generate_launch_description():
                 "mpc_status_topic": mpc_status_topic,
                 "left_thrust_topic": left_thrust_topic,
                 "right_thrust_topic": right_thrust_topic,
+                # 方案 A 的 u/r 指令显示 (方案 B 不发布 cmd_vel, 显示 NO DATA)
+                "cmd_vel_topic": "/usv/cmd_vel",
             }],
         )],
     )
