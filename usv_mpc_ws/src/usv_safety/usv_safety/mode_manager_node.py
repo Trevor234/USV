@@ -75,6 +75,13 @@ class ModeManagerNode(Node):
             self.get_parameter("manual_takeover_cooldown_s").value)
         self._max_rtl_retries: int = int(
             self.get_parameter("max_rtl_retries").value)
+        self._failsafe_mode: str = str(
+            self.get_parameter("failsafe_mode").value)
+        if self._failsafe_mode not in ("report", "HOLD", "RTL"):
+            self.get_logger().error(
+                f"failsafe_mode='{self._failsafe_mode}' 无效 "
+                "(可选 report/HOLD/RTL), 回退 report")
+            self._failsafe_mode = "report"
         self._rtl_attempts: int = 0
 
         # Subscribers
@@ -134,9 +141,14 @@ class ModeManagerNode(Node):
         # 人工接管冷却: 检测到 FCU 模式被外部改变后, 该时长内 auto_mode_switch
         # 不拉回 GUIDED。failsafe RTL 不受此限制。
         self.declare_parameter("manual_takeover_cooldown_s", 10.0)
-        # FAILSAFE RTL 重发上限: 达到后停止指令洪水 (链路断/飞控拒绝时无限
-        # 重发毫无意义), 保持 failsafe 状态并节流告警, 等待人工介入。
+        # FAILSAFE 模式切换重发上限: 达到后停止指令洪水 (链路断/飞控拒绝时
+        # 无限重发毫无意义), 保持 failsafe 状态并节流告警, 等待人工介入。
         self.declare_parameter("max_rtl_retries", 10)
+        # FAILSAFE 触发时的动作:
+        #   "report" — 只报错不切模式, 控制权完全留给人工 (测试期默认)
+        #   "HOLD"   — 切 HOLD 原地保持 (正式任务推荐)
+        #   "RTL"    — 切 RTL 返航 (需要 home 已设 + 传感器健康)
+        self.declare_parameter("failsafe_mode", "report")
         self.declare_parameter("state_topic", "/mavros/state")
         self.declare_parameter("mpc_status_topic", "/mpc/status")
         self.declare_parameter("path_topic", "/path/reference")
@@ -313,25 +325,35 @@ class ModeManagerNode(Node):
 
         # Check for failsafe trigger
         if self._safety.failsafe_active:
-            if self._current_mavros_mode != "RTL":
+            flags = self._safety.active_flags
+            if self._failsafe_mode == "report":
+                # 测试期模式: 只报错不切模式, 控制权完全留给人工。
+                # 自动恢复 (auto_switch) 也被下方 return 抑制。
+                self.get_logger().error(
+                    f"FAILSAFE 持续! Flags: {flags}"
+                    " (report 模式: 不切换模式, 请人工接管)",
+                    throttle_duration_sec=5.0,
+                )
+            elif self._current_mavros_mode != self._failsafe_mode:
                 if self._rtl_attempts < self._max_rtl_retries:
-                    flags = self._safety.active_flags
                     self.get_logger().error(
-                        f"FAILSAFE triggered! Flags: {flags}"
+                        f"FAILSAFE triggered! Flags: {flags}",
+                        throttle_duration_sec=5.0,
                     )
-                    self._switch_mode("RTL")
+                    self._switch_mode(self._failsafe_mode)
                     self._rtl_attempts += 1
                 else:
                     # 2026-09-03 实测教训: FCU 链路断时 set_mode 永远无效、
-                    # mode 永远变不成 RTL, 无限重发只是指令洪水。达到上限后
-                    # 停止重发, 保持 failsafe 状态并节流告警, 等待人工介入。
+                    # mode 永远变不成目标模式, 无限重发只是指令洪水。达到
+                    # 上限后停止重发, 保持 failsafe 状态, 等待人工介入。
                     self.get_logger().error(
-                        f"FAILSAFE 持续, 但 RTL 已连发 {self._rtl_attempts} 次"
-                        "仍未生效 — 检查 FCU 链路与 home 设置, 已停止重发",
+                        f"FAILSAFE 持续, 但 {self._failsafe_mode} 已连发 "
+                        f"{self._rtl_attempts} 次仍未生效 — 检查 FCU 链路, "
+                        "已停止重发",
                         throttle_duration_sec=5.0,
                     )
             return
-        # failsafe 解除后重置重试计数, 下次 failsafe 仍能正常发起 RTL
+        # failsafe 解除后重置重试计数, 下次 failsafe 仍能正常发起
         self._rtl_attempts = 0
 
         # Auto mode switching

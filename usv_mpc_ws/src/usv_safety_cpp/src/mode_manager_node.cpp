@@ -125,6 +125,9 @@ void ModeManagerNode::declare_parameters_() {
   this->declare_parameter("manual_takeover_cooldown_s", 10.0);
   // FAILSAFE RTL 重发上限: 达到后停止指令洪水 (链路断/飞控拒绝时无限
   // 重发毫无意义), 保持 failsafe 状态并节流告警, 等待人工介入。
+  // FAILSAFE 触发时的动作: "report"(只报错不切模式, 测试期默认) /
+  // "HOLD"(原地保持) / "RTL"(返航)
+  this->declare_parameter("failsafe_mode", "report");
   this->declare_parameter("max_rtl_retries", 10);
   this->declare_parameter("state_topic", std::string("/mavros/state"));
   this->declare_parameter("mpc_status_topic", std::string("/mpc/status"));
@@ -150,6 +153,13 @@ void ModeManagerNode::load_config_() {
   battery_timeout_s_   = this->get_parameter("battery_timeout_s").as_double();
   takeover_cooldown_s_ = this->get_parameter("manual_takeover_cooldown_s").as_double();
   max_rtl_retries_     = static_cast<int>(this->get_parameter("max_rtl_retries").as_int());
+  failsafe_mode_       = this->get_parameter("failsafe_mode").as_string();
+  if (failsafe_mode_ != "report" && failsafe_mode_ != "HOLD" && failsafe_mode_ != "RTL") {
+    RCLCPP_ERROR(this->get_logger(),
+                 "failsafe_mode='%s' 无效 (可选 report/HOLD/RTL), 回退 report",
+                 failsafe_mode_.c_str());
+    failsafe_mode_ = "report";
+  }
 }
 
 // ── 飞控状态回调 ─────────────────────────────────────────
@@ -303,30 +313,37 @@ void ModeManagerNode::monitor_loop_() {
 
   // ── 故障保护检查 ──
   if (safety_.failsafe_active()) {
-    if (current_mavros_mode_ != "RTL") {
+    auto flags = safety_.active_flags();
+    std::string flag_str;
+    for (size_t i = 0; i < flags.size(); ++i) {
+      if (i > 0) flag_str += ", ";
+      flag_str += flags[i];
+    }
+    if (failsafe_mode_ == "report") {
+      // 测试期模式: 只报错不切模式, 控制权完全留给人工。
+      // 自动恢复 (auto_switch) 也被下方 return 抑制。
+      RCLCPP_ERROR_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                            "FAILSAFE 持续! Flags: [%s] "
+                            "(report 模式: 不切换模式, 请人工接管)",
+                            flag_str.c_str());
+    } else if (current_mavros_mode_ != failsafe_mode_) {
       if (rtl_attempts_ < max_rtl_retries_) {
-        auto flags = safety_.active_flags();
-        std::string flag_str;
-        for (size_t i = 0; i < flags.size(); ++i) {
-          if (i > 0) flag_str += ", ";
-          flag_str += flags[i];
-        }
         RCLCPP_ERROR(this->get_logger(), "FAILSAFE triggered! Flags: [%s]",
                      flag_str.c_str());
-        switch_mode_("RTL");
+        switch_mode_(failsafe_mode_);
         ++rtl_attempts_;
       } else {
         // 2026-09-03 实测教训: FCU 链路断时 set_mode 永远无效、mode 永远
-        // 变不成 RTL, 无限重发只是指令洪水。达到上限后停止重发。
+        // 变不成目标模式, 无限重发只是指令洪水。达到上限后停止重发。
         RCLCPP_ERROR_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
-                              "FAILSAFE 持续, 但 RTL 已连发 %d 次仍未生效 — "
-                              "检查 FCU 链路与 home 设置, 已停止重发",
-                              rtl_attempts_);
+                              "FAILSAFE 持续, 但 %s 已连发 %d 次仍未生效 — "
+                              "检查 FCU 链路, 已停止重发",
+                              failsafe_mode_.c_str(), rtl_attempts_);
       }
     }
     return;
   }
-  // failsafe 解除后重置重试计数, 下次 failsafe 仍能正常发起 RTL
+  // failsafe 解除后重置重试计数, 下次 failsafe 仍能正常发起
   rtl_attempts_ = 0;
 
   // ── 自动模式切换 ──

@@ -115,9 +115,11 @@ class ModeManagerNode : public rclcpp::Node {
   double      last_mode_change_      = 0.0;
   double      battery_timeout_s_     = 10.0;
   double      takeover_cooldown_s_   = 10.0;
-  // FAILSAFE RTL 重发上限 (达到后停止指令洪水, 保持 failsafe 等待人工介入)
+  // FAILSAFE 模式切换重发上限 (达到后停止指令洪水, 保持 failsafe 等待人工介入)
   int         max_rtl_retries_       = 10;
   int         rtl_attempts_          = 0;
+  // FAILSAFE 触发时的动作: "report"(只报错) / "HOLD" / "RTL"
+  std::string failsafe_mode_        = "report";
 
   // ── ROS 通信接口 ────────────────────────────────────
   // 订阅者
