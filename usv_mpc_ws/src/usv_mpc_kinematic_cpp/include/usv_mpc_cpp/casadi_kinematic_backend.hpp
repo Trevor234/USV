@@ -59,7 +59,7 @@ class CasadiKinematicBackend : public KinematicMpc {
 
   int    N() const override { return params_.N; }
   double dt() const override { return params_.dt; }
-  std::string backend() const override { return "casadi"; }
+  const char* backend() const override { return "casadi"; }
 
  private:
   KinematicMpcParams params_;

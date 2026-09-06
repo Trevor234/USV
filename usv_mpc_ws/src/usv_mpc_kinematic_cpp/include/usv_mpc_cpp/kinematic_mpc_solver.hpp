@@ -55,8 +55,10 @@ namespace usv_mpc {
 struct SolveInfo {
   bool        success       = false;
   double      solve_time_ms = 0.0;
-  std::string backend;       // "casadi" (A 的 C++ 版只有 CasADi)
-  std::string error;
+  // 字符串用定长数组: SolveInfo 按值跨 old/new ABI 边界返回 (casadi wheel
+  // 为旧 ABI 构建时), std::string 的析构归属不安全 — POD 可安全跨界。
+  char        backend[16]  = "casadi";   // A 的 C++ 版只有 CasADi
+  char        error[256]   = "";
   // 预测轨迹 (3 x N+1), 列存; 失败时为空。
   Eigen::MatrixXd X_pred;
   // 控制序列 (2 x N), 列存; 失败时为空。
@@ -106,7 +108,7 @@ class KinematicMpc {
 
   virtual int    N() const = 0;
   virtual double dt() const = 0;
-  virtual std::string backend() const = 0;
+  virtual const char* backend() const = 0;  // 跨 ABI 边界, 返回字面量
 };
 
 /// 工厂: 构造 CasADi 后端 (A 的 C++ 版唯一后端)。

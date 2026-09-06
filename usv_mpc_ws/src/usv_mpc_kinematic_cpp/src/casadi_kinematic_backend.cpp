@@ -32,6 +32,7 @@
 #include "usv_mpc_cpp/casadi_kinematic_backend.hpp"
 
 #include <chrono>
+#include <cstdio>
 #include <cmath>
 #include <vector>
 
@@ -161,7 +162,7 @@ std::pair<Eigen::Vector2d, SolveInfo>
 CasadiKinematicBackend::solve(const Eigen::Vector3d& current_state,
                               const Eigen::MatrixXd& reference) {
   SolveInfo info;
-  info.backend = "casadi";
+  snprintf(info.backend, sizeof(info.backend), "casadi");
   const int N = params_.N;
   constexpr int NX = 3;
   constexpr int NU = 2;
@@ -216,7 +217,7 @@ CasadiKinematicBackend::solve(const Eigen::Vector3d& current_state,
     if (!u_opt.allFinite() || !info.X_pred.allFinite() ||
         !info.U_pred.allFinite()) {
       info.success = false;
-      info.error = "non_finite_solution";
+      snprintf(info.error, sizeof(info.error), "non_finite_solution");
       return {u_prev_, info};
     }
 
@@ -235,7 +236,7 @@ CasadiKinematicBackend::solve(const Eigen::Vector3d& current_state,
     auto t1 = std::chrono::steady_clock::now();
     info.solve_time_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
     info.success = false;
-    info.error = e.what();
+    snprintf(info.error, sizeof(info.error), "%s", e.what());
     return {u_prev_, info};
   }
 }

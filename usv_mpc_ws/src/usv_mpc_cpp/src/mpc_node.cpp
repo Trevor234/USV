@@ -31,6 +31,7 @@
 #include <chrono>
 #include <cmath>
 #include <functional>
+#include <cstring>
 #include <nlohmann/json.hpp>
 
 using namespace std::chrono_literals;//引用所有字面量“10s” “10ms”等
@@ -54,7 +55,7 @@ MpcControllerNode::MpcControllerNode()
 
   RCLCPP_INFO(this->get_logger(),
               "MPC 控制器已启动 | 模式=dynamic | dt=%.1fs | N=%d | 类型=NMPC (动力学) | backend=%s | output=%s",
-              mpc_dt_, horizon_, mpc_ ? mpc_->backend().c_str() : "none",
+              mpc_dt_, horizon_, mpc_ ? mpc_->backend() : "none",
               output_mode_.c_str());
 
   timer_ = this->create_wall_timer(
@@ -460,8 +461,8 @@ bool MpcControllerNode::enforce_solve_deadline_(SolveInfo& info) {
   bool deadline_miss = max_solve_time_ms_ > 0.0 && info.solve_time_ms > max_solve_time_ms_;
   if (deadline_miss) {
     info.success = false;
-    info.error = "solve_timeout: " + std::to_string(info.solve_time_ms) + "ms > " +
-                 std::to_string(max_solve_time_ms_) + "ms";
+    snprintf(info.error, sizeof(info.error), "solve_timeout: %.1fms > %.1fms",
+             info.solve_time_ms, max_solve_time_ms_);
   }
   return deadline_miss;
 }
@@ -499,7 +500,7 @@ void MpcControllerNode::run_dynamic_mpc_() {
     solver_fail_count_++;
     if (solver_fail_count_ <= 3) {
       RCLCPP_WARN(this->get_logger(), "NMPC 求解失败: %s  失败计数=%d",
-                  info.error.c_str(), solver_fail_count_);
+                  info.error, solver_fail_count_);
     }
     if (solver_fail_count_ >= solver_hold_threshold_) {
       in_hold = true;
@@ -620,7 +621,7 @@ void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
   j["fail_count"] = solver_fail_count_;
   j["solve_time_ms"] = info.solve_time_ms;
   j["max_solve_time_ms"] = max_solve_time_ms_;
-  j["deadline_miss"] = (info.error.rfind("solve_timeout", 0) == 0);
+  j["deadline_miss"] = (std::strncmp(info.error, "solve_timeout", 13) == 0);
   j["hold"] = in_hold;
   j["control_mode"] = "dynamic";
   j["backend"] = info.backend;

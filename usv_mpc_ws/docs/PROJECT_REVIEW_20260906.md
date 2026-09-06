@@ -138,10 +138,10 @@ Python 方案 A 行为不一致。决策：**方案 A 恒为 C++**，删除 Pyth
 | `config/mpc_params_A.yaml` | backend "acados" → "ipopt"（C++ 节点仅实现 CasADi/IPOPT）|
 | `README.md` / `requirements.txt` | 包表、方案 A 实现行、测试指引、casadi 用途注释同步 |
 
-**运行影响**：本机（旧 ABI casadi wheel）ABI 探针失败 → kinematic_cpp 无后端、
-节点启动即抛异常 → **本机 SITL 的 scheme A 暂不可运行**（方案 B 不受影响）；
-Pi5 上需确认 casadi C++ ABI 探针通过，否则方案 A 实机同样需要 Python 环境
-或补 acados 运动学 codegen（TODO 已在 kinematic_mpc_solver.cpp 记录）。
+**运行影响（09-06 晚已解决，见 §4.8）**：casadi pip wheel 为旧 C++ ABI
+（`_GLIBCXX_USE_CXX11_ABI=0`），曾致探针失败 → C++ kinematic 无后端。
+§4.8 的探针升级 + SolveInfo POD 化后，本机 kinematic_cpp 已以
+`backend=casadi` 正常运行（9/9 测试含 ABI 跨界回归）。
 
 ### 4.6 `3fe3c38` — 控制器对齐实机 + 参考整定
 
@@ -155,6 +155,24 @@ Pi5 上需确认 casadi C++ ABI 探针通过，否则方案 A 实机同样需要
 
 三轮对照（见 §5）。
 **回退**：`git revert 3fe3c38` 后重新 `colcon build --packages-select usv_bringup`。
+
+### 4.8 casadi pip wheel 旧 ABI 兼容（探针升级 + SolveInfo POD 化）
+
+用户指出本机有 casadi —— 事实核查: casadi 3.7.2 wheel 存在且 `libcasadi.so`
+在 wheel 根目录, 但其 C++ 接口以旧 ABI (`_GLIBCXX_USE_CXX11_ABI=0`) 构建。
+修复分三层:
+
+| 文件 | 改动 |
+|---|---|
+| 两个 C++ 包的 `CMakeLists.txt` | ABI 探针升级三级: 新 ABI → 旧 ABI(`-D_GLIBCXX_USE_CXX11_ABI=0`) → 禁用; 旧 ABI 通过时把标志应用到包含 casadi 头的源文件 |
+| 两包 `SolveInfo` | `std::string backend/error` → 定长 `char backend[16] / char error[256]`（POD 按值跨 ABI 边界安全; std::string 跨界曾致 `free(): invalid pointer`, ASAN 定位到 mpc_node.cpp:60 的 `backend().c_str()` 临时串析构）|
+| 两包 `backend()` 接口 | `std::string` → `const char*`（返回字面量, 无跨界析构）|
+| `test_mpc_core.cpp` (kinematic) | 新增 `SolveCrossesAbiBoundary` 回归测试: 新 ABI 测试单元调用 old-ABI 后端连续 3 次求解 |
+
+验证: 9/9 测试过（含 ABI 跨界）; usv_mpc_cpp 的 casadi fallback 同步恢复;
+**方案 A 的 C++ 实现在本机完全可用**（此前"暂不可运行"的结论作废）。
+Pi5 上如果 casadi 为新 ABI 或未装, 探针会自适应; 若未装 casadi, 方案 A C++
+仍无后端（届时 Python 环境或源码编译 casadi 二选一）。
 
 ## 5. 仿真验证数据全景（6 个 bag, 域 42 隔离）
 

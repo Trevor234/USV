@@ -93,6 +93,28 @@ if(CASADI_PKG_RC EQUAL 0 AND EXISTS "${CASADI_PKG_DIR}/include/casadi/casadi.hpp
             "-o" "${CASADI_PROBE_DIR}/probe"
     RESULT_VARIABLE CASADI_PROBE_RC OUTPUT_QUIET ERROR_QUIET
     TIMEOUT 120)
+  # pip wheel 历史上以旧 C++ ABI 构建: 新 ABI 链接失败时, 再用
+  # -D_GLIBCXX_USE_CXX11_ABI=0 重试探针 (2026-09-06, 实测 wheel 可用)
+  set(CASADI_ABI_FLAG "")
+  if(NOT CASADI_PROBE_RC EQUAL 0)
+    execute_process(
+      COMMAND "${CMAKE_CXX_COMPILER}" "-D_GLIBCXX_USE_CXX11_ABI=0"
+              "${CASADI_PROBE_DIR}/probe.cpp"
+              "-I${CASADI_INC_DIR}" "-L${CASADI_LIB_DIR}"
+              "-Wl,-rpath,${CASADI_LIB_DIR}" "-lcasadi"
+              "-o" "${CASADI_PROBE_DIR}/probe_oldabi"
+      RESULT_VARIABLE CASADI_PROBE_RC OUTPUT_QUIET ERROR_QUIET
+      TIMEOUT 120)
+    if(CASADI_PROBE_RC EQUAL 0)
+      set(CASADI_ABI_FLAG "-D_GLIBCXX_USE_CXX11_ABI=0")
+      message(STATUS "CasADi C++ found (旧 ABI wheel, 编译匹配旧 ABI): ${CASADI_PKG_DIR}")
+    endif()
+  endif()
+  if(CASADI_ABI_FLAG)
+    # 旧 ABI 标志只作用于包含 casadi 头的翻译单元
+    set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/src/casadi_backend.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/mpc_solver.cpp"      PROPERTIES COMPILE_OPTIONS "${CASADI_ABI_FLAG}")
+  endif()
+
   if(CASADI_PROBE_RC EQUAL 0)
     set(CASADI_FOUND TRUE)
     message(STATUS "CasADi C++ found (ABI probe OK): ${CASADI_PKG_DIR}")

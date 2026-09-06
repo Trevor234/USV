@@ -32,6 +32,7 @@
 #include "usv_mpc_cpp/casadi_backend.hpp"
 
 #include <chrono>
+#include <cstdio>
 #include <cmath>
 
 namespace usv_mpc {
@@ -193,7 +194,7 @@ CasadiBackend::CasadiBackend(const MpcParams& params) : params_(params) {
 std::pair<Eigen::Vector2d, SolveInfo>
 CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& reference) {
   SolveInfo info;
-  info.backend = "casadi";
+  snprintf(info.backend, sizeof(info.backend), "casadi");
   const int N = params_.N;
 
   // 参数赋值 (列主序 vector -> DM, 用 Sparsity::dense 指定形状)
@@ -245,7 +246,7 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
     if (!u_opt.allFinite() || !info.X_pred.allFinite() ||
         !info.U_pred.allFinite()) {
       info.success = false;
-      info.error = "non_finite_solution";
+      snprintf(info.error, sizeof(info.error), "non_finite_solution");
       return {u_prev_, info};
     }
 
@@ -262,7 +263,7 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
     auto t1 = std::chrono::steady_clock::now();
     info.solve_time_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
     info.success = false;
-    info.error = e.what();
+    snprintf(info.error, sizeof(info.error), "%s", e.what());
     return {u_prev_, info};
   }
 }

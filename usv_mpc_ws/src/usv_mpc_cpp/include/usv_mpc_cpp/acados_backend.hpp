@@ -74,7 +74,7 @@ class AcadosBackend : public DynamicMpc {
 
   int    N() const override { return params_.N; }
   double dt() const override { return params_.dt; }
-  std::string backend() const override { return "acados"; }
+  const char* backend() const override { return "acados"; }
 
  private:
   /// 组装 30 维 p_global (19 水动力学 + 6 Q + 2 R + 2 Rd + 1 Qf)。

@@ -31,6 +31,7 @@
 
 #include <chrono>
 #include <cmath>
+#include <cstdio>
 #include <stdexcept>
 
 #include <acados_c/ocp_nlp_interface.h>
@@ -137,7 +138,7 @@ std::pair<Eigen::Vector2d, SolveInfo>
 AcadosBackend::solve(const Vector6d& current_state,
                      const Eigen::MatrixXd& reference) {
   SolveInfo info;
-  info.backend = "acados";
+  snprintf(info.backend, sizeof(info.backend), "acados");
   const int N = params_.N;
 
   try {
@@ -211,8 +212,10 @@ AcadosBackend::solve(const Vector6d& current_state,
       // K4: 分级安全回退,不再简单保持上一步推力
       ++fail_count_;
       info.success = false;
-      info.error = "acados_status=" + std::to_string(status);
-      return {safe_fallback_(info.error), info};
+      std::string note = "acados_status=" + std::to_string(status);
+      Eigen::Vector2d fb = safe_fallback_(note);
+      snprintf(info.error, sizeof(info.error), "%s", note.c_str());
+      return {fb, info};
     }
 
     // 6. 提取解
@@ -239,8 +242,10 @@ AcadosBackend::solve(const Vector6d& current_state,
     if (!u_opt.allFinite() || !X_aug.allFinite() || !U_sol.allFinite()) {
       ++fail_count_;
       info.success = false;
-      info.error = "non_finite_solution";
-      return {safe_fallback_(info.error), info};
+      std::string note = "non_finite_solution";
+      Eigen::Vector2d fb = safe_fallback_(note);
+      snprintf(info.error, sizeof(info.error), "%s", note.c_str());
+      return {fb, info};
     }
 
     // X_sol = X_aug 前 6 维 (切回给调用方)
@@ -261,9 +266,11 @@ AcadosBackend::solve(const Vector6d& current_state,
   } catch (const std::exception& e) {
     ++fail_count_;
     info.success = false;
-    info.error = std::string("acados_exception: ") + e.what();
+    std::string note = std::string("acados_exception: ") + e.what();
+    Eigen::Vector2d fb = safe_fallback_(note);
+    snprintf(info.error, sizeof(info.error), "%s", note.c_str());
     info.solve_time_ms = 0.0;
-    return {safe_fallback_(info.error), info};
+    return {fb, info};
   }
 }
 
