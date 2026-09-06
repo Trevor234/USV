@@ -37,6 +37,10 @@ class CmdvelToThrust(Node):
         self._declare_parameters()
 
         self._d = float(self.get_parameter("d_thruster").value)
+        self._kff_u = float(self.get_parameter("kff_u").value)
+        self._kff_r = float(self.get_parameter("kff_r").value)
+        self._mass = float(self.get_parameter("mass").value)
+        self._iz_eff = float(self.get_parameter("iz_eff").value)
         self._xu = abs(float(self.get_parameter("xu").value))
         self._xuu = abs(float(self.get_parameter("xuu").value))
         self._nr = abs(float(self.get_parameter("nr").value))
@@ -48,6 +52,8 @@ class CmdvelToThrust(Node):
 
         self._u_cmd = 0.0
         self._r_cmd = 0.0
+        self._u_cmd_prev = 0.0
+        self._r_cmd_prev = 0.0
         self._u_meas = 0.0
         self._r_meas = 0.0
         self._last_cmd_time = None
@@ -80,6 +86,12 @@ class CmdvelToThrust(Node):
                                "/wamv/thrusters/right/thrust")
         # 植物模型 (与 usv_params_sim.yaml 一致; 取绝对值做前馈)
         self.declare_parameter("d_thruster", 0.25)
+        # 惯性前馈增益 (默认 0 = 关): 实测 MPC 指令本身振荡时, 惯性项会
+        # 放大振荡注入植物 (003_inertia 跑 CTE 变差)。指令平滑后再开。
+        self.declare_parameter("kff_u", 0.0)      # 纵向惯性前馈增益 (1.0=全质量)
+        self.declare_parameter("kff_r", 0.0)      # 艏摇惯性前馈增益 (1.0=全 Iz_eff)
+        self.declare_parameter("mass", 14.2)      # kg (总质量)
+        self.declare_parameter("iz_eff", 5.537)   # kg·m² (有效艏摇惯量, 阶段 3)
         self.declare_parameter("xu", 2.272)       # |Xu|
         self.declare_parameter("xuu", 11.572)     # |Xuu|
         self.declare_parameter("nr", 3.105)       # |Nr| (阶段 3)
@@ -87,7 +99,7 @@ class CmdvelToThrust(Node):
         self.declare_parameter("t_max", 25.0)
         # 反馈增益
         self.declare_parameter("kp_u", 8.0)
-        self.declare_parameter("kp_r", 2.0)
+        self.declare_parameter("kp_r", 4.0)
         self.declare_parameter("cmd_timeout_s", 0.3)
 
     def _cmd_callback(self, msg: TwistStamped):
@@ -119,13 +131,21 @@ class CmdvelToThrust(Node):
             u_cmd = clamp(self._u_cmd, 0.0, 5.0)
             r_cmd = clamp(self._r_cmd, -1.5, 1.5)
 
-        # 纵向: 阻力前馈 + 速度误差 P
-        f_total = (self._xu * u_cmd + self._xuu * u_cmd * abs(u_cmd)
+        # 指令变化率 (MPC 5Hz; 限幅防噪声毛刺)
+        du_cmd = clamp(u_cmd - self._u_cmd_prev, -1.5, 1.5)   # m/s²
+        dr_cmd = clamp(r_cmd - self._r_cmd_prev, -2.0, 2.0)   # rad/s²
+
+        # 纵向: 完整动力学逆模型
+        #   F = m·du/dt + 阻力(u_cmd) + kp_u·(u_cmd − u_meas)
+        f_total = (self._kff_u * self._mass * du_cmd / 0.2
+                   + self._xu * u_cmd + self._xuu * u_cmd * abs(u_cmd)
                    + self._kp_u * (u_cmd - self._u_meas))
         f_total = clamp(f_total, 0.0, 2.0 * self._t_max)
 
-        # 艏摇: 阻尼前馈 + 角速度误差 P
-        tau = (self._nr * r_cmd + self._nrr * r_cmd * abs(r_cmd)
+        # 艏摇: 完整动力学逆模型
+        #   τ = Iz_eff·dr/dt + 阻尼(r_cmd) + kp_r·(r_cmd − r_meas)
+        tau = (self._kff_r * self._iz_eff * dr_cmd / 0.2
+               + self._nr * r_cmd + self._nrr * r_cmd * abs(r_cmd)
                + self._kp_r * (r_cmd - self._r_meas))
         tau = clamp(tau, -self._d * self._t_max, self._d * self._t_max)
 
@@ -138,6 +158,7 @@ class CmdvelToThrust(Node):
             f"u_cmd={u_cmd:.3f} r_cmd={r_cmd:.3f} u_meas={self._u_meas:.3f} "
             f"r_meas={self._r_meas:.3f} -> F={f_total:.2f} tau={tau:.2f} "
             f"TL={tl:.2f} TR={tr:.2f}", throttle_duration_sec=2.0)
+        self._u_cmd_prev, self._r_cmd_prev = u_cmd, r_cmd
         self._tl_pub.publish(Float64(data=tl))
         self._tr_pub.publish(Float64(data=tr))
 
