@@ -12,7 +12,7 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, ExecuteProcess, IncludeLaunchDescription, TimerAction
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -30,6 +30,9 @@ def generate_launch_description():
         default_value="false",
         description="Start the matplotlib runtime visualizer",
     )
+    scheme_arg = DeclareLaunchArgument(
+        "scheme", default_value="B", choices=["A", "B"],
+        description="A=运动学 MPC(cmd_vel→推力转换) B=动力学 NMPC(直接推力)")
     record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
     bag_dir_arg = DeclareLaunchArgument(
         "bag_dir",
@@ -71,6 +74,7 @@ def generate_launch_description():
     record_bag = LaunchConfiguration("record_bag")
     bag_dir = LaunchConfiguration("bag_dir")
     run_id = LaunchConfiguration("run_id")
+    scheme = LaunchConfiguration("scheme")
     odom_topic = LaunchConfiguration("odom_topic")
     imu_topic = LaunchConfiguration("imu_topic")
     left_thrust_topic = LaunchConfiguration("left_thrust_topic")
@@ -107,6 +111,7 @@ def generate_launch_description():
     )
 
     mpc_params = os.path.join(bringup_share, "config", "mpc_params.yaml")
+    mpc_params_a = os.path.join(bringup_share, "config", "mpc_params_A.yaml")
     usv_params_sim = os.path.join(bringup_share, "config", "usv_params_sim.yaml")
     mpc_overlay = os.path.join(bringup_share, "config", "mpc_params_vrx.yaml")
     path_params = os.path.join(bringup_share, "config", "path_config.yaml")
@@ -128,13 +133,18 @@ def generate_launch_description():
         )],
     )
 
-    mpc_node = TimerAction(
+    is_scheme_a = PythonExpression(["'", scheme, "' == 'A'"])
+    is_scheme_b = PythonExpression(["'", scheme, "' == 'B'"])
+
+    # 方案 B: 动力学 NMPC, 推力 1:1 直发 (现有路径)
+    mpc_node_b = TimerAction(
         period=9.0,
         actions=[Node(
             package="usv_mpc_cpp",
             executable="mpc_node",
             name="mpc_controller_node",
             output="screen",
+            condition=IfCondition(is_scheme_b),
             parameters=[mpc_params, usv_params_sim, mpc_overlay, {
                 "odom_topic": odom_topic,
                 "imu_topic": imu_topic,
@@ -145,6 +155,49 @@ def generate_launch_description():
                 "path_frame": path_frame,
                 "vrx_left_thrust_topic": left_thrust_topic,
                 "vrx_right_thrust_topic": right_thrust_topic,
+            }],
+        )],
+    )
+
+    # 方案 A: 运动学 MPC (cmd_vel) + cmdvel→推力转换内环
+    # (转换节点用辨识参数做逆模型: drag/yaw 前馈 + 速率反馈, 50Hz)
+    kin_node = TimerAction(
+        period=9.0,
+        actions=[Node(
+            package="usv_mpc_kinematic_cpp",
+            executable="mpc_node",
+            name="mpc_controller_node",
+            output="screen",
+            condition=IfCondition(is_scheme_a),
+            parameters=[mpc_params_a, {
+                "scheme": "A",
+                "control_mode": "kinematic",
+                "require_fcu_state": False,
+                "odom_topic": odom_topic,
+                "imu_topic": imu_topic,
+                "path_topic": path_topic,
+                "profile_topic": profile_topic,
+                "status_topic": mpc_status_topic,
+                "predicted_trajectory_topic": predicted_trajectory_topic,
+                "path_frame": path_frame,
+                "velocity_topic": "/usv/cmd_vel",
+            }],
+        ),
+        Node(
+            package="usv_simulation",
+            executable="cmdvel_to_thrust",
+            name="cmdvel_to_thrust",
+            output="screen",
+            condition=IfCondition(is_scheme_a),
+            parameters=[{
+                "cmd_vel_topic": "/usv/cmd_vel",
+                "odom_topic": odom_topic,
+                "left_thrust_topic": left_thrust_topic,
+                "right_thrust_topic": right_thrust_topic,
+                "d_thruster": 0.25,
+                "xu": 2.272, "xuu": 11.572,
+                "nr": 3.105, "nrr": 0.71,
+                "t_max": 25.0,
             }],
         )],
     )
@@ -206,8 +259,10 @@ def generate_launch_description():
         dynamic_waypoints_topic_arg,
         path_frame_arg,
         vrx,
+        scheme_arg,
         planner_node,
-        mpc_node,
+        mpc_node_b,
+        kin_node,
         visualizer_node,
         bag_record,
     ])

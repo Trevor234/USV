@@ -25,6 +25,7 @@ setup(
     entry_points={
         "console_scripts": [
             "visualizer = usv_simulation.visualizer:main",
+        "cmdvel_to_thrust = usv_simulation.cmdvel_to_thrust:main",
             "telemetry_bridge = usv_simulation.telemetry_bridge:main",
         ],
     },
