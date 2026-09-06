@@ -1,12 +1,9 @@
 /**:
   ros__parameters:
     # --- VRX 仿真 overlay (配合 usv_params_sim.yaml 使用) ---
-    # 由原 mpc_params_vrx_scheme_b.yaml (Python 动力学 MPC 时代) 迁移而来,
-    # 数值整定保持不变: 单推进器 40 N / 反推 20 N 的 30 kg 单体仿真船。
-    # MPC 为 C++ usv_mpc_cpp 动力学 NMPC, output_mode=vrx_thrust 直接发布推力。
-    # 注意: vrx_thrust_scale=25 把 NMPC 推力 (N) 线性放大后发给 VRX, NMPC 内部
-    # 30kg 模型与 Gazebo 船动力学并未真正耦合, 极易饱和 —— 本文件的仿真调参
-    # 结论不可直接迁移到 rc_override 实机路径。
+    # 2026-09-06 起仿真船为实船数字孪生 (14.2 kg / 25 N, USVANSIS 09-03 辨识),
+    # MPC 模型与 Gazebo 植物一致 (usv_mono_*.xacro), 推力 1:1 直发
+    # (vrx_thrust_scale=1.0) —— 仿真调参结论可直接迁移 rc_override 实机路径。
 
     control_mode: "dynamic"
     output_mode: "vrx_thrust"      # C++ mpc_node: 推力直发 Gazebo thruster topic
@@ -25,15 +22,16 @@
     vrx_thrust_cmd_max: 100.0
 
     dynamic:
-      # 40 N 推力量级下的权重 (相对真船 25 N 版重新缩放的起点, 按跟踪效果微调)
+      # 权重为 40N 时代的起点值, 植物已换成 14.2kg/25N 实船孪生,
+      # 若跟踪品质不佳按此基线重调。
       Q: [50.0, 50.0, 70.0, 6.0, 1.0, 25.0]  # State weights [x,y,psi,u,v,r]
       R: [0.05, 0.05]              # Control weights [TL, TR]
       Rd: [0.2, 0.2]
       Qf_scale: 12.0
       dt: 0.2                      # 必须与 horizon 组合出 dyn_N=20 (codegen 固定), 不可改 0.3
-      T_max: 40.0                  # Max thrust per thruster (N)
-      T_min: -20.0                 # Max reverse thrust (N)
-      dT_max: 80.0                 # Max thrust rate (N/s)
+      T_max: 25.0                  # Max thrust per thruster (N) — 实船辨识 K=1.64e-6 N/RPM² @ 3900RPM
+      T_min: -25.0                 # Max reverse thrust (N) — 正反等推力 (7-23)
+      dT_max: 80.0                 # Max thrust rate (N/s) — 7-23 实船值
 
     # 注: steering_gain/throttle_gain 只被 rc_override 后端使用;
     # vrx_thrust 直接发布推力, 不经过它们。

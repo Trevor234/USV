@@ -206,7 +206,9 @@ class PathPlannerNode(Node):
 
         if self._wp_manager.mission_complete:
             self._publish_empty_path()
-            self.get_logger().info_once("任务完成，已发布空参考路径")
+            self.get_logger().info(
+                "任务完成，已发布空参考路径", throttle_duration_sec=60.0
+            )
             return
 
         if len(wps) < 2:
