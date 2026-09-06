@@ -94,11 +94,12 @@ def generate_launch_description():
         ],
     )
 
-    # 方案 A: Python 运动学 MPC (usv_mpc, mpc_params_A.yaml);
+    # 方案 A: C++ 运动学 MPC (usv_mpc_kinematic_cpp, mpc_params_A.yaml);
     # 方案 B: C++ 动力学 NMPC (usv_mpc_cpp, mpc_params_B.yaml + 仿真船参数)。
     # 与 real.launch.py 的 scheme 映射保持一致, 便于 SITL 预演实机行为。
+    # (Python 方案 A 包 usv_mpc 已于 2026-09-06 删除, 方案 A 恒为 C++。)
     mpc_node_a = Node(
-        package="usv_mpc",
+        package="usv_mpc_kinematic_cpp",
         executable="mpc_node",
         name="mpc_controller_node",
         output="screen",
@@ -115,7 +116,6 @@ def generate_launch_description():
                 "profile_topic": profile_topic,
                 "state_topic": mavros_state_topic,
                 "velocity_topic": mavros_velocity_topic,
-                "rc_override_topic": mavros_rc_override_topic,
             },
         ],
     )

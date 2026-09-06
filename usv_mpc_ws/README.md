@@ -25,7 +25,6 @@ ArduPilot SITL 联调、参数辨识工具链。
 
 | 包 | 语言 | 说明 |
 |:---|:---|:---|
-| `usv_mpc` | Python | 运动学 MPC(方案 A):CasADi/IPOPT + acados 双后端,`mpc_node.py` 固定方案 A |
 | `usv_mpc_cpp` | C++ | **动力学 NMPC(方案 B)**:Fossen 3-DOF + acados SQP_RTI(vendored codegen)+ CasADi fallback;输出后端 `rc_override`(实机)/`vrx_thrust`(VRX 仿真) |
 | `usv_mpc_kinematic_cpp` | C++ | 运动学 MPC 的 C++ 版(方案 A 实机用) |
 | `usv_planning` / `usv_planning_cpp` | Py/C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
@@ -39,7 +38,7 @@ ArduPilot SITL 联调、参数辨识工具链。
 |:---|:---|:---|
 | 状态 | `[x, y, ψ]` | `[x, y, ψ, u, v, r]` |
 | 控制量 | `[u_surge, r_yaw]` | `[T_L, T_R]`(推力) |
-| 实现 | Python `usv_mpc`(开发/回退)、C++ `usv_mpc_kinematic_cpp`(实机) | **C++ `usv_mpc_cpp`**(Python 动力学实现已删除) |
+| 实现 | C++ `usv_mpc_kinematic_cpp`(CasADi/IPOPT;2026-09-06 起 Python 版已删除, 方案 A 恒为 C++) | **C++ `usv_mpc_cpp`**(Python 动力学实现已删除) |
 | 输出 | `cmd_vel`(GUIDED) | RC override(MANUAL)/ vrx_thrust(仿真) |
 | 参数 | `mpc_params_A.yaml` | `mpc_params_B.yaml` + `usv_params.yaml`(真船) |
 
@@ -105,12 +104,10 @@ ros2 launch usv_bringup real.launch.py scheme:=A      # 运动学 MPC
 colcon build --symlink-install && source install/setup.bash
 colcon test && colcon test-result --verbose           # pytest + gtest(C++ 包需构建成功)
 
-# 独立 CasADi 脚本(不依赖 ROS):
-cd src/usv_mpc/test
-python3 test_mpc_straight.py     # 直线跟踪
-python3 test_mpc_circle.py       # 圆周跟踪
-python3 test_mpc_benchmark.py    # 求解耗时基准
 ```
+
+> 注: Python 方案 A 包 `usv_mpc` 已删除(2026-09-06), 其独立 CasADi 脚本随之移除;
+> C++ 运动学测试见 `src/usv_mpc_kinematic_cpp/test/`。
 
 ## 配置
 
@@ -118,7 +115,7 @@ python3 test_mpc_benchmark.py    # 求解耗时基准
 |:---|:---|
 | `mpc_params.yaml` | NMPC 基础参数(真船 25 N 整定,方案 B) |
 | `mpc_params_A.yaml` / `mpc_params_B.yaml` | 方案 A/B 实机参数(`scheme` 切换时由 `real.launch.py` 选择) |
-| `mpc_params_vrx.yaml` | VRX 仿真 overlay(40 N 仿真船 + `vrx_thrust` 输出) |
+| `mpc_params_vrx.yaml` | VRX 仿真 overlay(实船孪生 25 N + `vrx_thrust` 输出) |
 | `usv_params.yaml` | **真船**水动力学(14.2 kg / 1.2 m,2026-07-23 辨识,sway-yaw 耦合项置零保证开环稳定) |
 | `usv_params_A.yaml` / `usv_params_B.yaml` | 方案变体(真船) |
 | `usv_params_sim.yaml` | **仿真船**水动力学(30 kg 单体,与 `usv_mono_dynamics.xacro` 一致) |

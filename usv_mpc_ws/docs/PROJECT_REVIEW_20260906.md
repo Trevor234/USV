@@ -19,7 +19,6 @@
 ├── usv_mpc_ws/                       ← 开发工作区（本 review 的主体, 9 个自研包）
 │   ├── src/
 │   │   ├── usv_bringup/              launch(7个) + config(13个YAML) — 全栈装配
-│   │   ├── usv_mpc/                  运动学 MPC (Python, 方案 A, 开发/回退)
 │   │   ├── usv_mpc_cpp/              动力学 NMPC (C++, 方案 B, acados SQP_RTI)
 │   │   ├── usv_mpc_kinematic_cpp/    运动学 MPC C++ 版（实机方案 A 用）
 │   │   ├── usv_planning(_cpp)/       航点→fillet 圆弧倒角→TOPP 速度剖面
@@ -31,6 +30,8 @@
 ├── vrx_ws/src/vrx_gz, wamv_gazebo... ← VRX 上游（第三方, 未改动*)
 ├── ardupilot/                        SITL (submodule)
 ├── install/                          ardupilot_sitl/ardupilot_msgs
+│   └── (usv_mpc/ Python 方案 A 包已于 09-06 删除 — 方案 A 恒为 C++,
+│       见 §4.7)
 └── data/                             (你 09-06 新建)
 ~/usv_vrx_logs/vrx_twin_circle_001~006 ← 本轮 6 个仿真 rosbag
 ~/acados/                             acados v0.5.4 (x86, 与 Pi5 同版本)
@@ -122,6 +123,25 @@ mode 永不变 RTL → **0.5 s 一次无限重发**。
 `scripts/analyze_usv_bag.py`：仿真（wamv 话题）与实机（mavros 话题）包通用，
 自动识别 odom 来源，输出轨迹/CTE/速度/推力四联图 + 文本报告。
 **回退**：删除文件即可（纯新增）。
+
+### 4.7 `未提交→本次` — 删除 Python 方案 A 包（决策：方案 A 恒为 C++）
+
+动机：kinematic_cpp 专项 review 发现 real.launch scheme A 接线与注释不符、
+C++ 节点忽略 `backend: acados` 配置（静默降级 IPOPT）、与 sitl.launch 的
+Python 方案 A 行为不一致。决策：**方案 A 恒为 C++**，删除 Python 版。
+
+| 文件 | 改动 |
+|---|---|
+| `src/usv_mpc/`（整包删除） | Python 运动学 MPC 及其测试/独立脚本 |
+| `launch/sitl.launch.py` | scheme A 节点 usv_mpc → usv_mpc_kinematic_cpp（参数字典去掉 rc_override_topic）|
+| `launch/real.launch.py` | 注释修正（删除 Python 回退说法）|
+| `config/mpc_params_A.yaml` | backend "acados" → "ipopt"（C++ 节点仅实现 CasADi/IPOPT）|
+| `README.md` / `requirements.txt` | 包表、方案 A 实现行、测试指引、casadi 用途注释同步 |
+
+**运行影响**：本机（旧 ABI casadi wheel）ABI 探针失败 → kinematic_cpp 无后端、
+节点启动即抛异常 → **本机 SITL 的 scheme A 暂不可运行**（方案 B 不受影响）；
+Pi5 上需确认 casadi C++ ABI 探针通过，否则方案 A 实机同样需要 Python 环境
+或补 acados 运动学 codegen（TODO 已在 kinematic_mpc_solver.cpp 记录）。
 
 ### 4.6 `3fe3c38` — 控制器对齐实机 + 参考整定
 

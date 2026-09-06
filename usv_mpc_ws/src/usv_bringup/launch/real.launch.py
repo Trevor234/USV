@@ -262,7 +262,8 @@ def generate_launch_description():
     # MPC 控制器: 根据 scheme 切换包和配置文件。
     #   scheme=A: usv_mpc_kinematic_cpp (运动学, CasADi) + mpc_params_A.yaml + usv_params_A.yaml
     #   scheme=B: usv_mpc_cpp (动力学 NMPC, acados+CasADi) + mpc_params_B.yaml + usv_params_B.yaml
-    # use_cpp=false 时 scheme=A 用 Python 包 usv_mpc; scheme=B 无 Python 回退, 恒用 C++。
+    # 2026-09-06: Python 方案 A 包 (usv_mpc) 已删除, 方案 A 恒为 C++
+    # (usv_mpc_kinematic_cpp, CasADi/IPOPT); scheme=B 为 usv_mpc_cpp (acados)。
 
     # acados/CasADi 运行时库路径: 非交互式启动(如 SSH、systemd)不 source .bashrc,
     # 故在此显式设置 LD_LIBRARY_PATH, 确保 scheme=B 的 mpc_node 能找到 libhpipm.so 等。

@@ -10,7 +10,8 @@
 
     # --- Kinematic MPC ---
     kinematic:
-      backend: "acados"             # 求解后端: "ipopt"(默认) 或 "acados"(需先装 acados，见 docs/acados_migration.md)
+      backend: "ipopt"              # C++ 运动学节点仅实现 CasADi/IPOPT 后端;
+                                    # (Python 版的 acados 后端随 usv_mpc 包删除, 2026-09-06)
       Q: [10.0, 10.0, 50.0]       # State weights [x, y, psi]
       R: [1.0, 1.0]                # Control weights [u_surge, r_yaw]
       Qf_scale: 10.0               # Terminal cost multiplier (Qf = scale * Q)
