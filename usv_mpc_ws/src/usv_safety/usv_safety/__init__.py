@@ -1,1 +1,0 @@
-"""USV Safety package init."""

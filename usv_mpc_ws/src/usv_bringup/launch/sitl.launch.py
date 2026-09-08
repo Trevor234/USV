@@ -158,7 +158,7 @@ def generate_launch_description():
     )
 
     safety_node = Node(
-        package="usv_safety",
+        package="usv_safety_cpp",
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",

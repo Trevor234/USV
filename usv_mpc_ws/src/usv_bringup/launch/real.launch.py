@@ -200,12 +200,10 @@ def generate_launch_description():
 
     
 
-    # use_cpp=true 时用 C++ 实现 (usv_safety_cpp),否则用原 Python (usv_safety)。
-    safety_pkg = PythonExpression(
-        expression=["'usv_safety_cpp' if '", use_cpp, "' == 'true' else 'usv_safety'"]
-    )
+    # 安全节点恒为 C++ (usv_safety_cpp)。Python usv_safety 包已删除;
+    # use_cpp 现仅控制 planning 的实现选择。
     safety_node = Node(
-        package=safety_pkg,
+        package="usv_safety_cpp",
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",
