@@ -166,7 +166,11 @@ FilletResult fillet_path(
     double len_in = std::hypot(bx - cx, by - cy);
     double tan_half = std::tan(std::abs(delta) / 2.0);
     double t_desired = R * tan_half;
-    double t_max_geom = 0.5 * std::min(len_in, len_out);
+    // len_in 是从游标(上一圆弧出口切点)到当前角点的剩余直段, 上一圆弧已
+    // 占用其份额, 不应再折半; len_out 折半为下一圆弧预留。
+    // (此前 0.5*min(len_in,len_out) 在密集航点下把半径压到 1e-6 以下被跳过,
+    //  留下 G0 尖角 → TOPP 近零速 → 加减速震荡; 2026-09-08 review 定位)
+    double t_max_geom = std::min(len_in, 0.5 * len_out);
     double T = std::min(t_desired, t_max_geom);
     if (T < 1e-6) continue;
 

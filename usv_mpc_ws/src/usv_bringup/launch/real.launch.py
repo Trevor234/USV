@@ -222,12 +222,10 @@ def generate_launch_description():
         ],
     )
 
-    # use_cpp=true 时用 C++ 实现 (usv_planning_cpp),否则用原 Python (usv_planning)。
-    planning_pkg = PythonExpression(
-        expression=["'usv_planning_cpp' if '", use_cpp, "' == 'true' else 'usv_planning'"]
-    )
+    # 规划节点恒为 C++ (usv_planning_cpp)。Python usv_planning 包已删除;
+    # use_cpp 现仅控制 MPC 后端选择 (如有)。
     planner_node = Node(
-        package=planning_pkg,
+        package="usv_planning_cpp",
         executable="path_planner_node",
         name="path_planner_node",
         output="screen",

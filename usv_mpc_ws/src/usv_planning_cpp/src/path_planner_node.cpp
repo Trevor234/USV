@@ -128,14 +128,22 @@ void PathPlannerNode::load_config_() {
 // ── 里程计回调 ───────────────────────────────────────────
 void PathPlannerNode::odom_callback_(
     const nav_msgs::msg::Odometry::SharedPtr msg) {
-  x_ = msg->pose.pose.position.x;
-  y_ = msg->pose.pose.position.y;
+  // NaN/Inf 门禁: GPS 未收敛/EKF 发散时里程计携带 NaN, 会卡死
+  // update_progress (hypot(NaN,NaN)<radius 恒 false) 并污染路径
+  const auto& p = msg->pose.pose.position;
+  const auto& t = msg->twist.twist;
+  if (!std::isfinite(p.x) || !std::isfinite(p.y) ||
+      !std::isfinite(t.linear.x)) {
+    return;
+  }
+  x_ = p.x;
+  y_ = p.y;
   // 四元数 -> 偏航角
   auto& q = msg->pose.pose.orientation;
   double siny = 2.0 * (q.w * q.z + q.x * q.y);
   double cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z);
   psi_ = std::atan2(siny, cosy);
-  u_ = msg->twist.twist.linear.x;
+  u_ = t.linear.x;
 }
 
 // ── 动态航点回调 ─────────────────────────────────────────

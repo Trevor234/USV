@@ -13,7 +13,6 @@
   <depend>ament_index_python</depend>
   <depend>mavros</depend>
   <depend>usv_mpc_cpp</depend>
-  <depend>usv_planning</depend>
   <depend>usv_planning_cpp</depend>
   <depend>usv_safety_cpp</depend>
 

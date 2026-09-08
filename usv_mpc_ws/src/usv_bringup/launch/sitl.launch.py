@@ -143,7 +143,7 @@ def generate_launch_description():
     )
 
     planner_node = Node(
-        package="usv_planning",
+        package="usv_planning_cpp",
         executable="path_planner_node",
         name="path_planner_node",
         output="screen",
