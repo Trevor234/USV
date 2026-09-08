@@ -31,7 +31,7 @@ def generate_launch_description():
     )
     bag_dir_arg = DeclareLaunchArgument(
         "bag_dir",
-        default_value=PathJoinSubstitution([EnvironmentVariable("HOME"), "usv_vrx_logs"]),
+        default_value=PathJoinSubstitution([EnvironmentVariable("HOME"), "USV", "usv_vrx_logs"]),
         description="Directory for optional VRX rosbag recordings",
     )
     run_id_arg = DeclareLaunchArgument("run_id", default_value="vrx_scheme_b_run")
