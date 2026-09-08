@@ -25,9 +25,10 @@
  *
  * 对应 Python 版本: usv_mpc/mpc_kinematic.py (KinematicMPC)
  *
- * 用 CasADi C++ MX 符号构建运动学 ODE (dx=u*cos(psi) 等, 3 维),
- * RK4 离散化, Opti+IPOPT 求解运动学 MPC。与方案 B 的 CasadiBackend
- * 结构同构, 仅维度 (3 vs 6) 与约束/代价形式不同。
+ * 用 CasADi C++ MX 符号构建运动学 ODE (5 状态: x,y,psi + 一阶滞后
+ * u,r; 控制 = 速度目标 u_cmd,r_cmd), RK4 离散化, Opti+IPOPT 求解。
+ * 滞后让 MPC 预测执行器响应 (tau_r = Iz_eff/Nr ≈ 1.78s), 消除级联
+ * 内外环时间尺度失配导致的锯齿。
  *
  * 代价: 位置误差二次 + 航向 2*Q_psi*(1-cos(dψ)) + 控制能量 ||u||_R^2
  *       (无 Rd 控制率代价, 对齐 Python mpc_kinematic.py)
@@ -51,7 +52,7 @@ class CasadiKinematicBackend : public KinematicMpc {
   explicit CasadiKinematicBackend(const KinematicMpcParams& params);
 
   std::pair<Eigen::Vector2d, SolveInfo>
-  solve(const Eigen::Vector3d& current_state,
+  solve(const Eigen::Matrix<double, 5, 1>& current_state,
         const Eigen::MatrixXd& reference) override;
 
   void reset_warmstart() override;
@@ -64,16 +65,16 @@ class CasadiKinematicBackend : public KinematicMpc {
  private:
   KinematicMpcParams params_;
   casadi::Opti opti_;
-  casadi::MX X_;          // 3 x (N+1)
+  casadi::MX X_;          // 5 x (N+1)
   casadi::MX U_;          // 2 x N
-  casadi::MX p_x0_;       // 3 x 1
-  casadi::MX p_ref_;      // 3 x (N+1)
+  casadi::MX p_x0_;       // 5 x 1
+  casadi::MX p_ref_;      // 3 x (N+1)  (代价只引用 x,y,psi)
   casadi::MX p_u_prev_;   // 2 x 1
   // RK4 离散动力学 CasADi 函数 (符号构建, 运动学 ODE 无参数)
   casadi::Function f_rk4_;
 
   bool has_warm_ = false;
-  Eigen::MatrixXd X_warm_;  // 3 x (N+1)
+  Eigen::MatrixXd X_warm_;  // 5 x (N+1)
   Eigen::MatrixXd U_warm_;  // 2 x N
   Eigen::Vector2d u_prev_ = Eigen::Vector2d::Zero();
 };

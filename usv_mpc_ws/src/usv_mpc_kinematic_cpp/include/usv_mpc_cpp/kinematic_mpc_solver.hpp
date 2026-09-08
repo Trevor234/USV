@@ -50,6 +50,9 @@
 
 namespace usv_mpc {
 
+/// 5 状态向量 [x, y, psi, u, r] (含一阶速度滞后)
+using Vector5d = Eigen::Matrix<double, 5, 1>;
+
 /// 求解结果信息 (对应 Python KinematicMPC.solve 返回的 info dict)。
 /// 字段与方案 B 的 SolveInfo 对齐, 便于 mpc_node 统一处理。
 struct SolveInfo {
@@ -59,7 +62,7 @@ struct SolveInfo {
   // 为旧 ABI 构建时), std::string 的析构归属不安全 — POD 可安全跨界。
   char        backend[16]  = "casadi";   // A 的 C++ 版只有 CasADi
   char        error[256]   = "";
-  // 预测轨迹 (3 x N+1), 列存; 失败时为空。
+  // 预测轨迹 (5 x N+1), 列存 (前 3 行 x,y,psi); 失败时为空。
   Eigen::MatrixXd X_pred;
   // 控制序列 (2 x N), 列存; 失败时为空。
   Eigen::MatrixXd U_pred;
@@ -84,7 +87,9 @@ struct KinematicMpcParams {
   // 速率约束 (单位: 每秒变化率; 实际每步约束 = *dt)
   double du_max = 0.8;    // u 的每秒变化率上限
   double dr_max = 0.5;    // r 的每秒变化率上限
-  // 无 HydroParams (运动学无水动力参数)
+  // 执行器一阶滞后时间常数 (2026-09-03/07 辨识): 5 状态模型的滞后动力学
+  double tau_u = 0.8;     // s, 纵向速度环 (m/drag'(u_cruise) ≈ 0.7-0.9)
+  double tau_r = 1.78;    // s, 艏摇环 (Iz_eff/Nr = 5.537/3.105)
 };
 
 /// 运动学 MPC 求解器抽象接口 (对齐 B 的 DynamicMpc)。
@@ -93,17 +98,17 @@ class KinematicMpc {
   virtual ~KinematicMpc() = default;
 
   /// 求解运动学 MPC。
-  /// current_state: [x, y, psi]
-  /// reference: [3, N+1] 参考状态轨迹
-  /// 返回 (u_opt[2]=[u_surge, r_yaw], info)
+  /// current_state: [x, y, psi, u, r] (u/r 为测量值, 滞后状态初值)
+  /// reference: [3, N+1] 参考轨迹 (x, y, psi)
+  /// 返回 (u_opt[2]=[u_cmd_surge, r_cmd_yaw], info)
   virtual std::pair<Eigen::Vector2d, SolveInfo>
-  solve(const Eigen::Vector3d& current_state,
+  solve(const Eigen::Matrix<double, 5, 1>& current_state,
         const Eigen::MatrixXd& reference) = 0;
 
   /// 清空热启动。
   virtual void reset_warmstart() = 0;
 
-  /// 返回预测轨迹 (3 x N+1) 或空矩阵。
+  /// 返回预测轨迹 (5 x N+1, 前 3 行 x,y,psi) 或空矩阵。
   virtual Eigen::MatrixXd get_predicted_trajectory() const = 0;
 
   virtual int    N() const = 0;

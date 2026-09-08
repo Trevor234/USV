@@ -28,6 +28,7 @@
  */
 
 #include "usv_mpc_cpp/acados_backend.hpp"
+#include "usv_mpc_cpp/utils.hpp"
 
 #include <chrono>
 #include <cmath>
@@ -146,6 +147,14 @@ AcadosBackend::solve(const Vector6d& current_state,
     Eigen::Matrix<double, 8, 1> x0_aug;
     x0_aug << current_state, u_prev_;
 
+    // 1b. 热启动航向角解卷绕：消除 ±pi 边界处的 2pi 相位阶跃撕裂
+    if (has_warm_) {
+      double shift = std::round((current_state(2) - X_warm_(2, 0)) / (2.0 * M_PI)) * (2.0 * M_PI);
+      if (std::abs(shift) > 1e-3) {
+        X_warm_.row(2).array() += shift;
+      }
+    }
+
     // 2. 钉住初始状态 (lbx/ubx at stage 0)
     ocp_nlp_constraints_model_set(nlp_config_, nlp_dims_, nlp_in_, nlp_out_,
                                   0, "lbx", x0_aug.data());
@@ -170,10 +179,13 @@ AcadosBackend::solve(const Vector6d& current_state,
                                     k, "uh", uh_v);
     }
 
-    // 3. 每阶段参考 p = x_ref (6 维)
+    // 3. 每阶段参考 p = x_ref (6 维), 逐阶段解包使航向角连续展开
+    double ref_psi_prev = current_state(2);
     for (int k = 0; k <= N; ++k) {
       double ref_k[6];
       for (int i = 0; i < 6; ++i) ref_k[i] = reference(i, k);
+      ref_k[2] = ref_psi_prev + normalize_angle(ref_k[2] - ref_psi_prev);
+      ref_psi_prev = ref_k[2];
       usv_dyn_nmpc_acados_update_params(capsule_, k, ref_k, 6);
     }
 

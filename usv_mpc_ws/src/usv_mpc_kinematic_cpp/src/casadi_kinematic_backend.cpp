@@ -42,17 +42,22 @@ namespace {
 
 using namespace casadi;
 
-/// 符号运动学 ODE 右端 rhs = [u*cos(psi), u*sin(psi), r] (3 维)。
-/// 纯函数 (无物理参数), 对应 Python usv_model_kinematic.py 的 rhs。
-/// 对照 B 的 fossen_ode: 无 M/C/D 矩阵, 无 HydroParams 入参, 仅 3 行。
-MX kinematic_ode(const MX& s, const MX& u_in) {
+/// 符号运动学 ODE (5 状态, 含执行器一阶滞后):
+///   s = [x, y, psi, u, r],  u_in = [u_cmd, r_cmd]
+///   dx = u*cos(psi); dy = u*sin(psi); dpsi = r
+///   du = (u_cmd - u)/tau_u;  dr = (r_cmd - r)/tau_r
+MX kinematic_ode(const MX& s, const MX& u_in, double tau_u, double tau_r) {
   MX psi = s(2);
-  MX u = u_in(0);   // surge
-  MX r = u_in(1);   // yaw rate
+  MX u   = s(3);
+  MX r   = s(4);
+  MX uc  = u_in(0);
+  MX rc  = u_in(1);
   return MX::vertcat({
     u * cos(psi),
     u * sin(psi),
-    r
+    r,
+    (uc - u) / tau_u,
+    (rc - r) / tau_r
   });
 }
 
@@ -61,15 +66,15 @@ MX kinematic_ode(const MX& s, const MX& u_in) {
 CasadiKinematicBackend::CasadiKinematicBackend(const KinematicMpcParams& params)
     : params_(params) {
   const int N = params_.N;
-  // 维度常量 (便于核对, 避免魔法数字; 对照 B 的 6 维, 此处全 3 维)
-  constexpr int NX = 3;  // [x, y, psi]
-  constexpr int NU = 2;  // [u, r]
+  // 维度常量 (便于核对, 避免魔法数字)
+  constexpr int NX = 5;  // [x, y, psi, u, r]
+  constexpr int NU = 2;  // [u_cmd, r_cmd]
 
-  // ── RK4 离散动力学函数 f_rk4(state[3], control[2]) -> next[3] ──
-  // 对照 B: fossen_ode -> kinematic_ode; MX::sym("state",6) -> (state,3)
+  // ── RK4 离散动力学函数 f_rk4(state[5], control[2]) -> next[5] ──
   MX state_sym = MX::sym("state", NX);
   MX control_sym = MX::sym("control", NU);
-  MX rhs = kinematic_ode(state_sym, control_sym);
+  MX rhs = kinematic_ode(state_sym, control_sym,
+                         params_.tau_u, params_.tau_r);
   Function f_cont("f_kin", {state_sym, control_sym}, {rhs});
 
   MX X0 = MX::sym("X0", NX);
@@ -89,8 +94,8 @@ CasadiKinematicBackend::CasadiKinematicBackend(const KinematicMpcParams& params)
   // 对照 B: variable(6,N+1) -> variable(3,N+1); parameter(6,*) -> parameter(3,*)
   X_ = opti_.variable(NX, N + 1);
   U_ = opti_.variable(NU, N);
-  p_x0_ = opti_.parameter(NX, 1);
-  p_ref_ = opti_.parameter(NX, N + 1);
+  p_x0_ = opti_.parameter(NX, 1);      // [x, y, psi, u, r]
+  p_ref_ = opti_.parameter(3, N + 1);  // 参考只含 x,y,psi (代价引用)
   p_u_prev_ = opti_.parameter(NU, 1);
 
   // ── 代价函数 (对照 Python mpc_kinematic.py) ──
@@ -118,7 +123,7 @@ CasadiKinematicBackend::CasadiKinematicBackend(const KinematicMpcParams& params)
   cost += 2.0 * qf * q_psi * (1.0 - cos(e_psi_f));
   opti_.minimize(cost);
 
-  // ── 动力学约束 (对照 B: Slice(0,6) -> Slice(0,3)) ──
+  // ── 动力学约束 (5 状态) ──
   opti_.subject_to(X_(Slice(0, NX), 0) == p_x0_);
   for (int k = 0; k < N; ++k) {
     MX x_next = f_rk4_(std::vector<MX>{X_(Slice(0, NX), k), U_(Slice(0, NU), k)}).at(0);
@@ -159,23 +164,23 @@ CasadiKinematicBackend::CasadiKinematicBackend(const KinematicMpcParams& params)
 }
 
 std::pair<Eigen::Vector2d, SolveInfo>
-CasadiKinematicBackend::solve(const Eigen::Vector3d& current_state,
+CasadiKinematicBackend::solve(const Eigen::Matrix<double, 5, 1>& current_state,
                               const Eigen::MatrixXd& reference) {
   SolveInfo info;
   snprintf(info.backend, sizeof(info.backend), "casadi");
   const int N = params_.N;
-  constexpr int NX = 3;
+  constexpr int NX = 5;
   constexpr int NU = 2;
+  constexpr int NREF = 3;
 
   // 参数赋值 (列主序 vector -> DM, 用 Sparsity::dense 指定形状)
-  // 对照 B: +6 -> +3; dense(6,1) -> dense(3,1)
   std::vector<double> x0v(current_state.data(), current_state.data() + NX);
   opti_.set_value(p_x0_, DM(Sparsity::dense(NX, 1), x0v));
 
-  std::vector<double> refv(NX * (N + 1));
+  std::vector<double> refv(NREF * (N + 1));
   for (int c = 0; c <= N; ++c)
-    for (int r = 0; r < NX; ++r) refv[c * NX + r] = reference(r, c);
-  opti_.set_value(p_ref_, DM(Sparsity::dense(NX, N + 1), refv));
+    for (int r = 0; r < NREF; ++r) refv[c * NREF + r] = reference(r, c);
+  opti_.set_value(p_ref_, DM(Sparsity::dense(NREF, N + 1), refv));
 
   std::vector<double> upv(u_prev_.data(), u_prev_.data() + NU);
   opti_.set_value(p_u_prev_, DM(Sparsity::dense(NU, 1), upv));

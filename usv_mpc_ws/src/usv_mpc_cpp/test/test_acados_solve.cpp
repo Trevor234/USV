@@ -35,6 +35,7 @@
 #include <gtest/gtest.h>
 
 #include "usv_mpc_cpp/acados_backend.hpp"
+#include "usv_mpc_cpp/utils.hpp"
 
 namespace {
 
@@ -125,4 +126,38 @@ TEST(AcadosSolve, RuntimeRateBoundTakesEffect) {  // K2
         (info.U_pred.col(k) - info.U_pred.col(k - 1)).cwiseAbs().maxCoeff();
     EXPECT_LE(du, dT_step + 1e-6) << "stage " << k << " 变化率越界";
   }
+}
+
+TEST(AcadosSolve, YawWrapAroundPiIsSmooth) {
+  const usv_mpc::MpcParams p = RealBoatParams();
+  usv_mpc::AcadosBackend backend(p);
+
+  // Step 1: USV heading near +pi (+3.12 rad, u=0.8, r=0.05)
+  usv_mpc::Vector6d x1;
+  x1 << 0.0, 0.0, 3.12, 0.8, 0.0, 0.05;
+  Eigen::MatrixXd ref1 = Eigen::MatrixXd::Zero(6, p.N + 1);
+  for (int k = 0; k <= p.N; ++k) {
+    ref1(0, k) = 0.8 * p.dt * k;
+    ref1(2, k) = usv_mpc::normalize_angle(3.12 + 0.05 * p.dt * k);
+    ref1(3, k) = 0.8;
+  }
+  const auto [u1, info1] = backend.solve(x1, ref1);
+  ASSERT_TRUE(info1.success) << info1.error;
+
+  // Step 2: USV heading crosses +pi, wrapped to -3.14 rad
+  usv_mpc::Vector6d x2;
+  x2 << 0.8 * p.dt, 0.0, -3.14, 0.8, 0.0, 0.05;
+  Eigen::MatrixXd ref2 = Eigen::MatrixXd::Zero(6, p.N + 1);
+  for (int k = 0; k <= p.N; ++k) {
+    ref2(0, k) = 0.8 * p.dt * (k + 1);
+    ref2(2, k) = usv_mpc::normalize_angle(-3.14 + 0.05 * p.dt * k);
+    ref2(3, k) = 0.8;
+  }
+  const auto [u2, info2] = backend.solve(x2, ref2);
+  ASSERT_TRUE(info2.success) << info2.error;
+
+  // 验证: 跨越 ±pi 边界时不应发生暴力差动推力饱和 (修复前差动跳变 26.5N, 左推打满 -25N)
+  EXPECT_LT(std::abs(u2(0) - u1(0)), 10.0) << "u2(0)=" << u2(0) << " u1(0)=" << u1(0);
+  EXPECT_LT(std::abs(u2(1) - u1(1)), 10.0) << "u2(1)=" << u2(1) << " u1(1)=" << u1(1);
+  EXPECT_LT(std::abs(u2(1) - u2(0)), 10.0) << "diff=" << u2(1) - u2(0);
 }

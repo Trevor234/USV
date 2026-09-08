@@ -20,3 +20,5 @@
       r_max: 1.25                  # Max yaw rate (rad/s) — 实测 P99=1.22 (STER TurnRate)
       du_max: 1.3                  # Max surge accel (m/s²) — 实测 P99=1.23
       dr_max: 1.25                 # Max yaw accel (rad/s²) — 实测 P99=1.22
+      tau_u: 0.8                   # 纵向速度一阶滞后时间常数 (s)
+      tau_r: 1.78                  # 艏摇角速度一阶滞后时间常数 (s, Iz_eff/Nr)

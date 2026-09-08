@@ -474,6 +474,11 @@ void MpcControllerNode::run_dynamic_mpc_() {
     std::lock_guard<std::mutex> lk(state_lock_);
     current_state << x_, y_, normalize_angle(psi_), u_, v_, r_;
     reference = build_reference_(current_state);
+    // 航向偏差若超过 135 度 (例如遭遇强扰动反向): 重置热启动初值, 破坏倒车局部解记忆
+    if (reference.cols() > 0 &&
+        std::abs(normalize_angle(current_state(2) - reference(2, 0))) > (M_PI * 0.75)) {
+      mpc_->reset_warmstart();
+    }
   }
 
   /*u_opt 是当前这一拍要执行的最优控制量,类型是 Eigen::Vector2d。
@@ -770,6 +775,15 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Vector6d& current_stat
       ref(3, k) = cruise_speed_; ref(4, k) = 0.0; ref(5, k) = 0.0;
     }
   }
+
+  // 航向角连续化展开 (Phase Unwrapping):
+  // 保证 ref(2, 0) 与 current_state(2) 无 ±2pi 阶跃,
+  // 且 ref(2, k) 在时域内连续, 消除 ±pi 边界处的 360° 虚假跳跃
+  ref(2, 0) = current_state(2) + normalize_angle(ref(2, 0) - current_state(2));
+  for (int k = 1; k <= N; ++k) {
+    ref(2, k) = ref(2, k - 1) + normalize_angle(ref(2, k) - ref(2, k - 1));
+  }
+
   return ref;
 }
 

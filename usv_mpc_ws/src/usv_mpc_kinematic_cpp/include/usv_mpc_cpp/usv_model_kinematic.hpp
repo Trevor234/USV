@@ -49,6 +49,8 @@ class USVKinematicModel {
   /// 构造。dt: 离散步长; rk4_substeps: RK4 子步数 (默认 4, 对齐 Python)。
   USVKinematicModel(double dt = 0.2, int rk4_substeps = 4);
 
+  using Vector5d = Eigen::Matrix<double, 5, 1>;
+
   /// 连续运动学 ODE 右端 rhs = [u*cos(psi), u*sin(psi), r] (3 维)。
   /// 纯函数 (无物理参数), 可被 backend 的符号构建与 gtest 共用数值版本。
   /// 对应 Python: usv_model_kinematic.py 的 rhs (continuous_ode_expr 等价)。
@@ -60,6 +62,19 @@ class USVKinematicModel {
   /// 对应 Python: forward
   Eigen::Vector3d forward(const Eigen::Vector3d& state,
                           const Eigen::Vector2d& control) const;
+
+  /// 5 状态连续运动学 ODE 右端 (含一阶速度滞后):
+  ///   state = [x, y, psi, u, r], control = [u_cmd, r_cmd]
+  ///   dx = u*cos(psi); dy = u*sin(psi); dpsi = r
+  ///   du = (u_cmd - u)/tau_u; dr = (r_cmd - r)/tau_r
+  static Vector5d continuous_ode(const Vector5d& state,
+                                 const Eigen::Vector2d& control,
+                                 double tau_u, double tau_r);
+
+  /// 5 状态向前推进 dt (RK4, rk4_substeps 子步)。
+  Vector5d forward(const Vector5d& state,
+                   const Eigen::Vector2d& control,
+                   double tau_u, double tau_r) const;
 
   // ── 维度访问器 (对齐 B 的 USVDynamicModel 接口风格) ──
   int n_states() const { return 3; }

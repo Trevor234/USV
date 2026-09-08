@@ -61,4 +61,38 @@ Eigen::Vector3d USVKinematicModel::forward(
   return X;
 }
 
+USVKinematicModel::Vector5d USVKinematicModel::continuous_ode(
+    const Vector5d& state, const Eigen::Vector2d& control,
+    double tau_u, double tau_r) {
+  const double psi = state(2);
+  const double u   = state(3);
+  const double r   = state(4);
+  const double uc  = control(0);
+  const double rc  = control(1);
+  Vector5d rhs;
+  rhs << u * std::cos(psi),
+         u * std::sin(psi),
+         r,
+         (uc - u) / tau_u,
+         (rc - r) / tau_r;
+  return rhs;
+}
+
+USVKinematicModel::Vector5d USVKinematicModel::forward(
+    const Vector5d& state, const Eigen::Vector2d& control,
+    double tau_u, double tau_r) const {
+  Vector5d X = state;
+  const double h = dt_ / static_cast<double>(rk4_substeps_);
+  for (int i = 0; i < rk4_substeps_; ++i) {
+    Vector5d k1 = continuous_ode(X, control, tau_u, tau_r);
+    Vector5d k2 = continuous_ode(X + 0.5 * h * k1, control, tau_u, tau_r);
+    Vector5d k3 = continuous_ode(X + 0.5 * h * k2, control, tau_u, tau_r);
+    Vector5d k4 = continuous_ode(X + h * k3, control, tau_u, tau_r);
+    X = X + h / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
+  }
+  // 航向归一化
+  X(2) = std::atan2(std::sin(X(2)), std::cos(X(2)));
+  return X;
+}
+
 }  // namespace usv_mpc

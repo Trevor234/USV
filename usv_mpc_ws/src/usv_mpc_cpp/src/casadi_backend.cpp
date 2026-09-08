@@ -30,6 +30,7 @@
  */
 
 #include "usv_mpc_cpp/casadi_backend.hpp"
+#include "usv_mpc_cpp/utils.hpp"
 
 #include <chrono>
 #include <cstdio>
@@ -201,13 +202,28 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
   std::vector<double> x0v(current_state.data(), current_state.data() + 6);
   opti_.set_value(p_x0_, DM(Sparsity::dense(6, 1), x0v));
 
+  // 参考轨迹逐阶段解包使航向角连续展开
   std::vector<double> refv(6 * (N + 1));
-  for (int c = 0; c <= N; ++c)
-    for (int r = 0; r < 6; ++r) refv[c * 6 + r] = reference(r, c);
+  double ref_psi_prev = current_state(2);
+  for (int c = 0; c <= N; ++c) {
+    double r_psi = ref_psi_prev + normalize_angle(reference(2, c) - ref_psi_prev);
+    ref_psi_prev = r_psi;
+    for (int r = 0; r < 6; ++r) {
+      refv[c * 6 + r] = (r == 2) ? r_psi : reference(r, c);
+    }
+  }
   opti_.set_value(p_ref_, DM(Sparsity::dense(6, N + 1), refv));
 
   std::vector<double> upv(u_prev_.data(), u_prev_.data() + 2);
   opti_.set_value(p_u_prev_, DM(Sparsity::dense(2, 1), upv));
+
+  // 热启动航向角解卷绕：消除 ±pi 边界处的 2pi 相位阶跃撕裂
+  if (has_warm_) {
+    double shift = std::round((current_state(2) - X_warm_(2, 0)) / (2.0 * M_PI)) * (2.0 * M_PI);
+    if (std::abs(shift) > 1e-3) {
+      X_warm_.row(2).array() += shift;
+    }
+  }
 
   // 热启动初值
   std::vector<double> xw(6 * (N + 1));

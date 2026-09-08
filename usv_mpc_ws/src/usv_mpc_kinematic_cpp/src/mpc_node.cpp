@@ -108,6 +108,8 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("kinematic.du_max", 0.8);
   this->declare_parameter("kinematic.dr_max", 0.5);
   this->declare_parameter("kinematic.dt", 0.2);
+  this->declare_parameter("kinematic.tau_u", 0.8);
+  this->declare_parameter("kinematic.tau_r", 1.78);
   // backend 参数 (C++ 只实现 casadi; 保留参数对齐 Python, 非 ipopt 时 WARN)
   this->declare_parameter("kinematic.backend", std::string("ipopt"));
 }
@@ -173,6 +175,8 @@ void MpcControllerNode::init_mpc_solver_() {
   p.r_max = this->get_parameter("kinematic.r_max").as_double();
   p.du_max = this->get_parameter("kinematic.du_max").as_double();
   p.dr_max = this->get_parameter("kinematic.dr_max").as_double();
+  p.tau_u = this->get_parameter("kinematic.tau_u").as_double();
+  p.tau_r = this->get_parameter("kinematic.tau_r").as_double();
   // ★ 无 HydroParams 加载
   // ★ 无 acados cache_dir
   mpc_ = make_kinematic_mpc(p);  // 直接 CasadiKinematicBackend
@@ -381,15 +385,17 @@ bool MpcControllerNode::enforce_solve_deadline_(SolveInfo& info) {
 }
 
 void MpcControllerNode::run_kinematic_mpc_() {
-  Eigen::Vector3d current_state;  // ★ 3 维 (B 是 6 维 Vector6d)
+  Eigen::Matrix<double, 5, 1> current_state_5d;
+  Eigen::Vector3d current_pose;
   Eigen::MatrixXd reference;
   {
     std::lock_guard<std::mutex> lk(state_lock_);
-    current_state << x_, y_, normalize_angle(psi_);
-    reference = build_reference_(current_state);
+    current_pose << x_, y_, normalize_angle(psi_);
+    current_state_5d << x_, y_, normalize_angle(psi_), u_, r_;
+    reference = build_reference_(current_pose);
   }
 
-  auto [u_opt, info] = mpc_->solve(current_state, reference);
+  auto [u_opt, info] = mpc_->solve(current_state_5d, reference);
   bool deadline_miss = enforce_solve_deadline_(info);
   if (deadline_miss) u_opt.setZero();
 
@@ -420,7 +426,7 @@ void MpcControllerNode::run_kinematic_mpc_() {
   }
 
   // 暴露 u_opt / 航向参考给 status (对齐 Python A 的 status 字段)
-  publish_status_(info, in_hold, u_opt, current_state, reference);
+  publish_status_(info, in_hold, u_opt, current_pose, reference);
 
   control_count_++;
   if (control_count_ % 25 == 0) {  // 约每 5 秒 (对齐 Python A)

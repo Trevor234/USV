@@ -102,10 +102,9 @@ def main():
             data4 = m.data
             if len(data4) >= 4 and len(data4) % 4 == 0:
                 n = len(data4) // 4
-                t0 = t * 1e-9
-                for i in range(n):
-                    ref_t.append(t0 + data4[4 * i + 3])
-                    ref_v.append(data4[4 * i])
+                t0_p = t * 1e-9
+                ref_t = [t0_p + data4[4 * i + 3] for i in range(n)]
+                ref_v = [data4[4 * i] for i in range(n)]
         elif topic in THRUST and tt.endswith("Float64"):
             m = deserialize_message(data, get_message(tt))
             ts = t * 1e-9
