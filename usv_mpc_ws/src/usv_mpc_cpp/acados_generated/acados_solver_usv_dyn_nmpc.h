@@ -61,9 +61,9 @@
 #define USV_DYN_NMPC_NG     0
 #define USV_DYN_NMPC_NBXN   0
 #define USV_DYN_NMPC_NGN    0
-#define USV_DYN_NMPC_NY0    0
-#define USV_DYN_NMPC_NY     0
-#define USV_DYN_NMPC_NYN    0
+#define USV_DYN_NMPC_NY0    11
+#define USV_DYN_NMPC_NY     11
+#define USV_DYN_NMPC_NYN    7
 #define USV_DYN_NMPC_N      20
 #define USV_DYN_NMPC_NH     2
 #define USV_DYN_NMPC_NHN    0
@@ -107,25 +107,18 @@ typedef struct usv_dyn_nmpc_solver_capsule
 
     // cost
 
-    external_function_external_param_casadi *ext_cost_fun;
-    external_function_external_param_casadi *ext_cost_fun_jac;
-    external_function_external_param_casadi *ext_cost_fun_jac_hess;
+    external_function_external_param_casadi *cost_y_fun;
+    external_function_external_param_casadi *cost_y_fun_jac_ut_xt;
 
 
 
-
-
-    external_function_external_param_casadi ext_cost_0_fun;
-    external_function_external_param_casadi ext_cost_0_fun_jac;
-    external_function_external_param_casadi ext_cost_0_fun_jac_hess;
+    external_function_external_param_casadi cost_y_0_fun;
+    external_function_external_param_casadi cost_y_0_fun_jac_ut_xt;
 
 
 
-
-    external_function_external_param_casadi ext_cost_e_fun;
-    external_function_external_param_casadi ext_cost_e_fun_jac;
-    external_function_external_param_casadi ext_cost_e_fun_jac_hess;
-
+    external_function_external_param_casadi cost_y_e_fun;
+    external_function_external_param_casadi cost_y_e_fun_jac_ut_xt;
 
 
     // constraints

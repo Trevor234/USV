@@ -28,12 +28,13 @@ OCP 设计 (与历史 codegen 完全一致,勿随意改动,否则破坏 C++ 侧�
   - 全局参数 p_global (30) = 19 水动力学 + 6 Q + 2 R + 2 Rd + 1 Qf_scale
   - 变化率非线性约束 h = u - u_prev, |h| <= dT_max*dt (nh=2, 阶段 0..N-1;
     con_h_expr_0 显式补齐首步, 见 build_ocp 注释)
-  - EXTERNAL 代价 (含 2*(1-cos(Δψ)) 航向项)
+  - NONLINEAR_LS 代价；航向使用单位圆残差，Gauss-Newton Hessian 半正定
   - SQP_RTI, DISCRETE 动力学 (内嵌 RK4 4子步; 增广状态 T̄<-u 精确赋值),
     FULL_CONDENSING_HPIPM, GAUSS_NEWTON
 """
 
 import argparse
+import json
 import os
 import shutil
 import sys
@@ -175,24 +176,42 @@ def build_ocp(N, dt, T_max, T_min, dT_max):
     idx_xy_uvr = [0, 1, 3, 4, 5]
     x_ref = p
 
-    def stage_cost(xk, uk, uprev_k):
+    # acados NONLINEAR_LS 使用 0.5 * y.T * W * y。把 sqrt(2*w)
+    # 吸收到残差并令 W=I，可保持原 Q/R/Rd 代价值完全不变。航向的两个
+    # 单位圆残差平方和等于 2*(1-cos(delta_psi))，因此对应原来的
+    # 2*Q_psi*(1-cos(delta_psi))，同时得到半正定 Gauss-Newton Hessian。
+    def stage_residual(xk, uk, uprev_k):
         e = xk[idx_xy_uvr] - x_ref[idx_xy_uvr]
-        e_psi = xk[2] - x_ref[2]
-        Q_e = ca.diag(ca.vertcat(Q[0], Q[1], Q[3], Q[4], Q[5]))
-        cost = ca.mtimes([e.T, Q_e, e])
-        cost += 2 * Q[2] * (1 - ca.cos(e_psi))
-        cost += ca.mtimes([uk.T, ca.diag(R), uk])
+        state_res = ca.vertcat(*[
+            ca.sqrt(2 * Q[idx]) * e[row]
+            for row, idx in enumerate(idx_xy_uvr)
+        ])
+        heading_res = ca.sqrt(2 * Q[2]) * ca.vertcat(
+            ca.sin(xk[2]) - ca.sin(x_ref[2]),
+            ca.cos(xk[2]) - ca.cos(x_ref[2]),
+        )
+        control_res = ca.vertcat(
+            ca.sqrt(2 * R[0]) * uk[0],
+            ca.sqrt(2 * R[1]) * uk[1],
+        )
         du = uk - uprev_k
-        cost += ca.mtimes([du.T, ca.diag(Rd), du])
-        return cost
+        increment_res = ca.vertcat(
+            ca.sqrt(2 * Rd[0]) * du[0],
+            ca.sqrt(2 * Rd[1]) * du[1],
+        )
+        return ca.vertcat(state_res, heading_res, control_res, increment_res)
 
-    def term_cost(xk):
+    def terminal_residual(xk):
         e = xk[idx_xy_uvr] - x_ref[idx_xy_uvr]
-        e_psi = xk[2] - x_ref[2]
-        Qf_e = Qf_scale * ca.diag(ca.vertcat(Q[0], Q[1], Q[3], Q[4], Q[5]))
-        cost = ca.mtimes([e.T, Qf_e, e])
-        cost += 2 * Qf_scale * Q[2] * (1 - ca.cos(e_psi))
-        return cost
+        state_res = ca.vertcat(*[
+            ca.sqrt(2 * Qf_scale * Q[idx]) * e[row]
+            for row, idx in enumerate(idx_xy_uvr)
+        ])
+        heading_res = ca.sqrt(2 * Qf_scale * Q[2]) * ca.vertcat(
+            ca.sin(xk[2]) - ca.sin(x_ref[2]),
+            ca.cos(xk[2]) - ca.cos(x_ref[2]),
+        )
+        return ca.vertcat(state_res, heading_res)
 
     con_h = u - u_prev
 
@@ -203,8 +222,8 @@ def build_ocp(N, dt, T_max, T_min, dT_max):
     model.p = p
     model.p_global = p_global
     model.disc_dyn_expr = disc_phi
-    model.cost_expr_ext_cost = stage_cost(x, u, u_prev)
-    model.cost_expr_ext_cost_e = term_cost(x)
+    model.cost_y_expr = stage_residual(x, u, u_prev)
+    model.cost_y_expr_e = terminal_residual(x)
     model.con_h_expr = con_h
     # K2 修复 (2026-08-11): con_h_expr 仅作用于阶段 1..N-1,首步 u_0 相对
     # 实测 u_prev 的变化率此前完全不受硬约束(真正执行的恰恰是 u_0!)。
@@ -221,8 +240,13 @@ def build_ocp(N, dt, T_max, T_min, dT_max):
     ocp.dims.nh = nu
     ocp.solver_options.tf = N * dt
 
-    ocp.cost.cost_type = "EXTERNAL"
-    ocp.cost.cost_type_e = "EXTERNAL"
+    ny, ny_e = 11, 7
+    ocp.cost.cost_type = "NONLINEAR_LS"
+    ocp.cost.cost_type_e = "NONLINEAR_LS"
+    ocp.cost.W = np.eye(ny)
+    ocp.cost.W_e = np.eye(ny_e)
+    ocp.cost.yref = np.zeros(ny)
+    ocp.cost.yref_e = np.zeros(ny_e)
 
     ocp.parameter_values = np.zeros(np_)
     pg = np.zeros(npg)
@@ -260,15 +284,26 @@ def build_ocp(N, dt, T_max, T_min, dT_max):
 
 def prune(out_dir):
     """裁剪成 usv_mpc_cpp CMake 需要的最小文件集。"""
+    json_path = os.path.join(out_dir, "usv_dyn_ocp.json")
+    with open(json_path, "r", encoding="utf-8") as f:
+        ocp_description = json.load(f)
+    generated_sources = {
+        path.removeprefix("./")
+        for key in ("external_function_files_model", "external_function_files_ocp")
+        for path in ocp_description[key]
+    }
+
     for entry in os.listdir(out_dir):
         path = os.path.join(out_dir, entry)
         if os.path.isdir(path):
             if entry not in KEEP_SUBDIRS:
                 shutil.rmtree(path)
             else:
-                # 子目录内仅保留 .c/.h
+                # 保留当前 JSON 实际引用的 C 源码和对应汇总头；旧 OCP 留下的
+                # 同名目录文件必须删除，否则 CMake GLOB 会继续把它们编入库。
                 for f in os.listdir(path):
-                    if not f.endswith((".c", ".h")):
+                    relative_path = os.path.relpath(os.path.join(path, f), out_dir)
+                    if not (f.endswith(".h") or relative_path in generated_sources):
                         os.remove(os.path.join(path, f))
         else:
             if entry not in KEEP_TOP_FILES:
@@ -309,7 +344,7 @@ def main():
     print(f"[codegen] 生成到 {out_dir} (N={args.horizon}, dt={args.dt})")
 
     ocp = build_ocp(args.horizon, args.dt, args.t_max, args.t_min, args.dt_max)
-    ocp.code_export_directory = out_dir
+    ocp.code_gen_opts.code_export_directory = out_dir
     json_file = os.path.join(out_dir, "usv_dyn_ocp.json")
 
     # generate=True 写 C 源码; build=False 不编译 .so (由 usv_mpc_cpp CMake 编译)

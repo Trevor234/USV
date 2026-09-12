@@ -32,9 +32,9 @@
  *     usv_dyn_nmpc_* 不同, 需单独 codegen, 工作量大, 暂留 TODO。
  *
  * 接口契约 (与 Python KinematicMPC 一致, mpc_node 无感知后端切换):
- *   solve(current_state[3], reference[3,N+1]) -> (u_opt[2], info)
- *   reset_warmstart()
- *   get_predicted_trajectory() -> [3, N+1] 或空
+ *   solve(current_state[5], reference[3,N+1]) -> (u_opt[2], info)
+ *   reset_warmstart() / set_applied_command(applied)
+ *   get_predicted_trajectory() -> [5, N+1] 或空
  *   N(), dt(), backend()
  */
 
@@ -58,6 +58,11 @@ using Vector5d = Eigen::Matrix<double, 5, 1>;
 struct SolveInfo {
   bool        success       = false;
   double      solve_time_ms = 0.0;
+  // 候选轨迹可行性诊断。成功解和 IPOPT 早停回收解使用同一套门禁。
+  double initial_state_residual = 0.0;
+  double max_dynamics_residual = 0.0;
+  double max_control_bound_violation = 0.0;
+  double max_control_rate_violation = 0.0;
   // 字符串用定长数组: SolveInfo 按值跨 old/new ABI 边界返回 (casadi wheel
   // 为旧 ABI 构建时), std::string 的析构归属不安全 — POD 可安全跨界。
   char        backend[16]  = "casadi";   // A 的 C++ 版只有 CasADi
@@ -90,6 +95,11 @@ struct KinematicMpcParams {
   // 执行器一阶滞后时间常数 (2026-09-03/07 辨识): 5 状态模型的滞后动力学
   double tau_u = 0.8;     // s, 纵向速度环 (m/drag'(u_cruise) ≈ 0.7-0.9)
   double tau_r = 1.78;    // s, 艏摇环 (Iz_eff/Nr = 5.537/3.105)
+  // IPOPT 求解器 (对齐 mpc_node 的 kinematic.ipopt_* 参数)
+  int    ipopt_max_iter = 50;
+  double ipopt_max_cpu_time_s = 0.12;  // s, 须小于节点 max_solve_time_ms
+  // 成功解和早停候选解允许的最大初值/动力学/边界/变化率残差。
+  double solution_constraint_tol = 5e-3;
 };
 
 /// 运动学 MPC 求解器抽象接口 (对齐 B 的 DynamicMpc)。
@@ -105,8 +115,13 @@ class KinematicMpc {
   solve(const Eigen::Matrix<double, 5, 1>& current_state,
         const Eigen::MatrixXd& reference) = 0;
 
-  /// 清空热启动。
+  /// 清空热启动 (含对偶乘子; 速率约束锚点 u_prev_ 归零)。
   virtual void reset_warmstart() = 0;
+
+  /// 写回"实际下发的指令"作为下一拍速率约束锚点 (U(0,0)-u_prev 约束)。
+  /// 节点在每次发布 cmd 后调用, 使锚点语义与真实执行一致; 实现方须
+  /// clamp 到 [u_min,u_max]x[-r_max,r_max], 防异常值导致首步约束不可行。
+  virtual void set_applied_command(const Eigen::Vector2d& applied) = 0;
 
   /// 返回预测轨迹 (5 x N+1, 前 3 行 x,y,psi) 或空矩阵。
   virtual Eigen::MatrixXd get_predicted_trajectory() const = 0;

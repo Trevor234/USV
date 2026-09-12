@@ -37,8 +37,8 @@
  *   - 每阶段参数 p = x_ref (np=6)
  *   - 全局参数 p_global (30维) = 19 水动力学 + 6 Q + 2 R + 2 Rd + 1 Qf_scale
  *   - 变化率非线性约束 h = u - u_prev, |h| <= dT_max*dt (nh=2)
- *   - EXTERNAL 代价 (含 1-cos(psi) 航向项)
- *   - SQP_RTI, ERK 4阶4子步
+ *   - NONLINEAR_LS 代价，航向采用单位圆残差并使用 Gauss-Newton Hessian
+ *   - SQP_RTI, DISCRETE 动力学 (内嵌 RK4 4 子步)
  *
  * 2026-08-11 起:推力边界 (lbu/ubu) 与变化率边界 (lh/uh) 在 solve() 中
  * 由 params (yaml) 逐阶段运行时下发 (K1/K2),codegen 烘焙值仅为默认值;
@@ -67,6 +67,8 @@ class AcadosBackend : public DynamicMpc {
 
   std::pair<Eigen::Vector2d, SolveInfo>
   solve(const Vector6d& current_state, const Eigen::MatrixXd& reference) override;
+
+  void set_applied_control(const Eigen::Vector2d& applied_control) override;
 
   void reset_warmstart() override;
 

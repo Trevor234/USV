@@ -1,0 +1,50 @@
+name: USV MPC ROS 2 CI
+
+on:
+  push:
+    paths:
+      - 'usv_mpc_ws/**'
+      - '.github/workflows/usv_mpc_ci.yml'
+  pull_request:
+    paths:
+      - 'usv_mpc_ws/**'
+      - '.github/workflows/usv_mpc_ci.yml'
+
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: usv_mpc_ws
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up ROS 2 Jazzy
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: jazzy
+
+      - name: Install workspace tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-colcon-common-extensions python3-pip
+
+      - name: Install pip-only Python dependencies
+        run: python3 -m pip install --user -r requirements.txt
+
+      - name: Install ROS dependencies
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          rosdep install --from-paths src --ignore-src -r -y --skip-keys "vrx_gz wamv_gazebo"
+
+      - name: Build
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          colcon build --symlink-install
+
+      - name: Test
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          source install/setup.bash
+          colcon test --event-handlers console_direct+
+          colcon test-result --verbose

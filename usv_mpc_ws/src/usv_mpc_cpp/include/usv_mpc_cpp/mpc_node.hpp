@@ -87,16 +87,17 @@ class MpcControllerNode : public rclcpp::Node {
   bool enforce_solve_deadline_(SolveInfo& info);
 
   // ── 输出 ────────────────────────────────────────────
-  void thrust_to_rc_pwm_(const Eigen::Vector2d& thrust, int& steering_pwm,
-                         int& throttle_pwm);
-  void publish_rc_override_(const Eigen::Vector2d& thrust);
-  void publish_vrx_thrust_(const Eigen::Vector2d& thrust);
+  Eigen::Vector2d thrust_to_rc_pwm_(const Eigen::Vector2d& thrust,
+                                    int& steering_pwm, int& throttle_pwm);
+  Eigen::Vector2d publish_rc_override_(const Eigen::Vector2d& thrust);
+  Eigen::Vector2d publish_vrx_thrust_(const Eigen::Vector2d& thrust);
   void release_vrx_thrust_();
-  void publish_dynamic_output_(const Eigen::Vector2d& thrust);
+  Eigen::Vector2d publish_dynamic_output_(const Eigen::Vector2d& thrust);
   void publish_zero_dynamic_output_();
   void release_rc_override_();
   void publish_status_(const SolveInfo& info, bool in_hold,
-                       const Eigen::Vector2d& thrust);
+                       const Eigen::Vector2d& commanded_thrust,
+                       const Eigen::Vector2d& applied_thrust);
   void publish_standby_status_(const std::string& reason);
   void publish_predicted_trajectory_(const Eigen::MatrixXd& X_pred);
 

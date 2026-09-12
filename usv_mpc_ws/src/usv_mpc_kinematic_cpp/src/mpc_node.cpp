@@ -110,6 +110,10 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("kinematic.dt", 0.2);
   this->declare_parameter("kinematic.tau_u", 0.8);
   this->declare_parameter("kinematic.tau_r", 1.78);
+  // IPOPT 早停策略: 早停迭代点通过完整约束门禁后才允许降级执行。
+  this->declare_parameter("kinematic.ipopt_max_iter", 50);
+  this->declare_parameter("kinematic.ipopt_max_cpu_time_ms", 120.0);
+  this->declare_parameter("kinematic.solution_constraint_tol", 5e-3);
   // backend 参数 (C++ 只实现 casadi; 保留参数对齐 Python, 非 ipopt 时 WARN)
   this->declare_parameter("kinematic.backend", std::string("ipopt"));
 }
@@ -177,6 +181,11 @@ void MpcControllerNode::init_mpc_solver_() {
   p.dr_max = this->get_parameter("kinematic.dr_max").as_double();
   p.tau_u = this->get_parameter("kinematic.tau_u").as_double();
   p.tau_r = this->get_parameter("kinematic.tau_r").as_double();
+  p.ipopt_max_iter = static_cast<int>(this->get_parameter("kinematic.ipopt_max_iter").as_int());
+  p.ipopt_max_cpu_time_s =
+      this->get_parameter("kinematic.ipopt_max_cpu_time_ms").as_double() / 1000.0;
+  p.solution_constraint_tol =
+      this->get_parameter("kinematic.solution_constraint_tol").as_double();
   // ★ 无 HydroParams 加载
   // ★ 无 acados cache_dir
   mpc_ = make_kinematic_mpc(p);  // 直接 CasadiKinematicBackend
@@ -369,6 +378,15 @@ void MpcControllerNode::control_loop_() {
   if (prev_state_ != "ACTIVE") {
     RCLCPP_INFO(this->get_logger(), "MPC → ACTIVE: armed=%d, mode=%s", armed, mode.c_str());
     solver_fail_count_ = 0;
+    // STANDBY→ACTIVE: 速率约束锚点对齐船当前实测速度。reset_warmstart 已把
+    // 锚点归零, 若船仍在动, 首步 du/dr 约束会强制指令从 0 出发 (首拍突变);
+    // 以测量值重锚后, 首拍指令可在测量值 ±du_step 内平滑衔接。
+    Eigen::Vector2d measured;
+    {
+      std::lock_guard<std::mutex> lk(state_lock_);
+      measured << u_, r_;
+    }
+    mpc_->set_applied_command(measured);
   }
   prev_state_ = "ACTIVE";
   run_kinematic_mpc_();
@@ -402,6 +420,11 @@ void MpcControllerNode::run_kinematic_mpc_() {
   bool in_hold = false;
   if (info.success) {
     solver_fail_count_ = 0;
+    if (info.error[0] != '\0') {
+      // 早停回收解已通过后端完整约束门禁，但尚未达到正常收敛条件。
+      RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                           "IPOPT 早停回收 (%s), 已发布当前迭代点", info.error);
+    }
     publish_velocity_cmd_(u_opt);  // ★ Twist (B 是 publish_dynamic_output_)
     if (control_count_ % 5 == 0) publish_predicted_trajectory_(info.X_pred);
   } else {
@@ -438,6 +461,8 @@ void MpcControllerNode::run_kinematic_mpc_() {
 }
 
 // ── 输出: TwistStamped (★ 与 B 的 thrust→RC PWM 完全不同, 无映射) ──
+// 发布后把实际下发值写回求解器作为速率约束锚点, 使锚点与真实执行一致
+// (覆盖成功/失败重放/deadline 置零/HOLD 置零全部分支, 不会与发布逻辑漂移)。
 void MpcControllerNode::publish_velocity_cmd_(const Eigen::Vector2d& u_opt) {
   geometry_msgs::msg::TwistStamped msg;
   msg.header.stamp = this->get_clock()->now();
@@ -446,6 +471,7 @@ void MpcControllerNode::publish_velocity_cmd_(const Eigen::Vector2d& u_opt) {
   msg.twist.linear.y = 0.0;
   msg.twist.angular.z = u_opt(1);  // r_yaw
   vel_pub_->publish(msg);
+  if (mpc_) mpc_->set_applied_command(u_opt);
 }
 
 void MpcControllerNode::publish_zero_velocity_() {
@@ -488,6 +514,10 @@ void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
   j["kinematic_dt"] = kin_dt_;
   j["kinematic_N"] = kin_N_;
   j["prediction_time_s"] = kin_prediction_time_;
+  j["initial_state_residual"] = info.initial_state_residual;
+  j["max_dynamics_residual"] = info.max_dynamics_residual;
+  j["max_control_bound_violation"] = info.max_control_bound_violation;
+  j["max_control_rate_violation"] = info.max_control_rate_violation;
   j["u_cmd"] = u_opt(0);
   j["r_cmd"] = u_opt(1);
   if (reference.cols() > 0) {

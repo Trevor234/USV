@@ -63,9 +63,9 @@ casadi_real casadi_fabs(casadi_real x) {
 static const casadi_int casadi_s0[3] = {8, 1, 1};
 static const casadi_int casadi_s1[3] = {2, 1, 1};
 static const casadi_int casadi_s2[3] = {6, 1, 1};
-static const casadi_int casadi_s3[3] = {97, 1, 1};
+static const casadi_int casadi_s3[3] = {96, 1, 1};
 
-/* usv_dyn_nmpc_dyn_disc_phi_fun:(i0[8],i1[2],i2[6],i3[97])->(o0[8]) */
+/* usv_dyn_nmpc_dyn_disc_phi_fun:(i0[8],i1[2],i2[6],i3[96])->(o0[8]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a000, a001, a002, a003, a004, a005, a006, a007, a008, a009, a010, a011;
   casadi_real a012, a013, a014, a015, a016, a017, a018, a019, a020, a021, a022, a023;

@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <cmath>
 #include <sstream>
+#include <stdexcept>
 
 namespace usv_mpc {
 
@@ -54,6 +55,76 @@ std::pair<double, double> ned_to_body(double vn, double ve, double psi) {
   double u = vn * std::cos(psi) + ve * std::sin(psi);
   double v = -vn * std::sin(psi) + ve * std::cos(psi);
   return {u, v};
+}
+
+RcActuationResult thrust_to_rc_actuation(
+    const Eigen::Vector2d& thrust, const RcActuationConfig& config) {
+  if (!thrust.allFinite() || !std::isfinite(config.thrust_max) ||
+      !std::isfinite(config.thrust_min) ||
+      !std::isfinite(config.steering_sign) ||
+      !std::isfinite(config.throttle_sign) ||
+      !std::isfinite(config.steering_gain) ||
+      !std::isfinite(config.throttle_gain) || config.thrust_max <= 0.0 ||
+      config.thrust_min > 0.0 || config.pwm_min >= config.pwm_center ||
+      config.pwm_center >= config.pwm_max ||
+      std::abs(std::abs(config.steering_sign) - 1.0) > 1e-9 ||
+      std::abs(std::abs(config.throttle_sign) - 1.0) > 1e-9 ||
+      config.steering_gain < 0.0 || config.throttle_gain < 0.0) {
+    throw std::invalid_argument("invalid RC actuation mapping");
+  }
+
+  const double reverse_scale =
+      (config.thrust_min < 0.0) ? -config.thrust_min : config.thrust_max;
+  const double steering_scale = std::max(config.thrust_max, reverse_scale);
+  const double left =
+      std::clamp(thrust(0), config.thrust_min, config.thrust_max);
+  const double right =
+      std::clamp(thrust(1), config.thrust_min, config.thrust_max);
+
+  const double requested_surge = 0.5 * (left + right);
+  const double surge_scale =
+      (requested_surge >= 0.0) ? config.thrust_max : reverse_scale;
+  const double throttle_axis = config.throttle_sign * config.throttle_gain *
+      std::clamp(requested_surge / surge_scale, -1.0, 1.0);
+  const double steering_axis = config.steering_sign * config.steering_gain *
+      std::clamp((right - left) / (2.0 * steering_scale), -1.0, 1.0);
+
+  const auto to_pwm = [&](double axis) {
+    axis = std::clamp(axis, -1.0, 1.0);
+    const double pwm = (axis >= 0.0)
+        ? config.pwm_center + axis * (config.pwm_max - config.pwm_center)
+        : config.pwm_center + axis * (config.pwm_center - config.pwm_min);
+    return static_cast<int>(std::clamp(
+        std::round(pwm), static_cast<double>(config.pwm_min),
+        static_cast<double>(config.pwm_max)));
+  };
+  const auto from_pwm = [&](int pwm) {
+    pwm = std::clamp(pwm, config.pwm_min, config.pwm_max);
+    if (pwm >= config.pwm_center) {
+      return static_cast<double>(pwm - config.pwm_center) /
+             (config.pwm_max - config.pwm_center);
+    }
+    return static_cast<double>(pwm - config.pwm_center) /
+           (config.pwm_center - config.pwm_min);
+  };
+
+  RcActuationResult result;
+  result.steering_pwm = to_pwm(steering_axis);
+  result.throttle_pwm = to_pwm(throttle_axis);
+
+  const double applied_throttle_axis =
+      config.throttle_sign * from_pwm(result.throttle_pwm);
+  const double applied_steering_axis =
+      config.steering_sign * from_pwm(result.steering_pwm);
+  const double applied_surge_scale =
+      (applied_throttle_axis >= 0.0) ? config.thrust_max : reverse_scale;
+  const double applied_surge = applied_throttle_axis * applied_surge_scale;
+  const double applied_yaw = applied_steering_axis * steering_scale;
+  result.effective_thrust(0) = std::clamp(
+      applied_surge - applied_yaw, config.thrust_min, config.thrust_max);
+  result.effective_thrust(1) = std::clamp(
+      applied_surge + applied_yaw, config.thrust_min, config.thrust_max);
+  return result;
 }
 
 double cross_track_error(double x, double y, double x1, double y1,

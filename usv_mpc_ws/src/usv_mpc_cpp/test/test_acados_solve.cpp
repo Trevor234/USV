@@ -30,6 +30,7 @@
  */
 
 #include <cmath>
+#include <stdexcept>
 #include <utility>
 
 #include <gtest/gtest.h>
@@ -128,6 +129,29 @@ TEST(AcadosSolve, RuntimeRateBoundTakesEffect) {  // K2
   }
 }
 
+TEST(AcadosSolve, AppliedControlAnchorsNextRateConstraint) {
+  usv_mpc::MpcParams p = RealBoatParams();
+  p.dT_max = 1.0;
+  usv_mpc::AcadosBackend backend(p);
+  usv_mpc::Vector6d x0 = usv_mpc::Vector6d::Zero();
+  const auto [planned_control, first_info] = backend.solve(x0, StraightRef(p.N));
+  ASSERT_TRUE(first_info.success) << first_info.error;
+  EXPECT_TRUE(planned_control.allFinite());
+
+  const Eigen::Vector2d applied_control(5.0, -5.0);
+  backend.set_applied_control(applied_control);
+  EXPECT_THROW(backend.set_applied_control(Eigen::Vector2d(26.0, 0.0)),
+               std::out_of_range);
+
+  const Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(6, p.N + 1);
+  const auto [u, info] = backend.solve(x0, ref);
+
+  ASSERT_TRUE(info.success) << info.error;
+  const double dT_step = p.dT_max * p.dt;
+  EXPECT_LE((u - applied_control).cwiseAbs().maxCoeff(), dT_step + 1e-6)
+      << "首拍变化率约束没有锚定执行层回写推力";
+}
+
 TEST(AcadosSolve, YawWrapAroundPiIsSmooth) {
   const usv_mpc::MpcParams p = RealBoatParams();
   usv_mpc::AcadosBackend backend(p);
@@ -160,4 +184,31 @@ TEST(AcadosSolve, YawWrapAroundPiIsSmooth) {
   EXPECT_LT(std::abs(u2(0) - u1(0)), 10.0) << "u2(0)=" << u2(0) << " u1(0)=" << u1(0);
   EXPECT_LT(std::abs(u2(1) - u1(1)), 10.0) << "u2(1)=" << u2(1) << " u1(1)=" << u1(1);
   EXPECT_LT(std::abs(u2(1) - u2(0)), 10.0) << "diff=" << u2(1) - u2(0);
+}
+
+TEST(AcadosSolve, LargeHeadingErrorsRemainSolvable) {
+  const usv_mpc::MpcParams p = RealBoatParams();
+  const double heading_errors[] = {M_PI / 2.0, 3.0 * M_PI / 4.0,
+                                   M_PI - 1e-3};
+
+  for (const double heading_error : heading_errors) {
+    SCOPED_TRACE("heading_error=" + std::to_string(heading_error));
+    usv_mpc::AcadosBackend backend(p);
+    usv_mpc::Vector6d x0 = usv_mpc::Vector6d::Zero();
+    Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(6, p.N + 1);
+    ref.row(2).setConstant(heading_error);
+
+    const auto [u, info] = backend.solve(x0, ref);
+    ASSERT_TRUE(info.success) << info.error;
+    EXPECT_TRUE(u.allFinite());
+    EXPECT_TRUE(info.X_pred.allFinite());
+    EXPECT_TRUE(info.U_pred.allFinite());
+    EXPECT_LE(u.cwiseAbs().maxCoeff(), p.T_max + 1e-6);
+  }
+}
+
+TEST(AcadosSolve, NegativeCostWeightIsRejected) {
+  usv_mpc::MpcParams p = RealBoatParams();
+  p.Q_diag(2) = -1.0;
+  EXPECT_THROW(usv_mpc::AcadosBackend backend(p), std::invalid_argument);
 }

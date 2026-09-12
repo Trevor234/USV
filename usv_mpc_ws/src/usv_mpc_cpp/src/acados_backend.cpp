@@ -48,6 +48,12 @@ constexpr int PG_OFF_R  = N_HYDRO + PG_N_Q;
 constexpr int PG_OFF_RD = N_HYDRO + PG_N_Q + PG_N_R;
 constexpr int PG_OFF_QF = N_HYDRO + PG_N_Q + PG_N_R + PG_N_RD;
 
+// NONLINEAR_LS 残差布局：5 个线性状态 + 2 个单位圆航向 + 2 个控制
+// + 2 个控制增量；终端只保留 5 个状态和 2 个航向残差。
+static_assert(USV_DYN_NMPC_NY0 == 11, "unexpected stage-0 residual dimension");
+static_assert(USV_DYN_NMPC_NY == 11, "unexpected stage residual dimension");
+static_assert(USV_DYN_NMPC_NYN == 7, "unexpected terminal residual dimension");
+
 // hydro 参数 -> p_global 前 19 维 (顺序与 usv_model_dynamic.hydro_dict_to_p_global 一致)
 void fill_hydro(double* pg, const HydroParams& h) {
   pg[0]  = h.mass;       pg[1]  = h.Iz;        pg[2]  = h.xg;     pg[3]  = h.d_thruster;
@@ -60,6 +66,14 @@ void fill_hydro(double* pg, const HydroParams& h) {
 
 AcadosBackend::AcadosBackend(const MpcParams& params)
     : params_(params) {
+  if (!params_.Q_diag.allFinite() || !params_.R_diag.allFinite() ||
+      !params_.Rd_diag.allFinite() || !std::isfinite(params_.Qf_scale) ||
+      (params_.Q_diag.array() < 0.0).any() ||
+      (params_.R_diag.array() < 0.0).any() ||
+      (params_.Rd_diag.array() < 0.0).any() || params_.Qf_scale < 0.0) {
+    throw std::invalid_argument("MPC cost weights must be finite and nonnegative");
+  }
+
   // codegen 已 vendored 并静态链接进本包 (codegen_lib),符号直接可用,
   // 无需运行时加载 .so。
 
@@ -306,6 +320,22 @@ Eigen::Vector2d AcadosBackend::safe_fallback_(std::string& note) {
   u_prev_.setZero();
   note += " fallback=zero_thrust(fail=" + std::to_string(fail_count_) + ")";
   return Eigen::Vector2d::Zero();
+}
+
+void AcadosBackend::set_applied_control(
+    const Eigen::Vector2d& applied_control) {
+  constexpr double kBoundTolerance = 1e-9;
+  if (!applied_control.allFinite()) {
+    throw std::invalid_argument("applied control must be finite");
+  }
+  if ((applied_control.array() < params_.T_min - kBoundTolerance).any() ||
+      (applied_control.array() > params_.T_max + kBoundTolerance).any()) {
+    throw std::out_of_range("applied control exceeds MPC thrust bounds");
+  }
+  u_prev_ = applied_control;
+  if (has_warm_) {
+    X_warm_.block<2, 1>(6, 0) = applied_control;
+  }
 }
 
 void AcadosBackend::reset_warmstart() {

@@ -52,7 +52,11 @@ mpc_controller_node:
       purpose: 求解器诊断 (mode_manager_node 消费 + GCS 显示)
       # 关键字段: state(ACTIVE/HOLD/STANDBY), success, fail_count,
       #           solve_time_ms, deadline_miss, hold, control_mode,
-      #           fcu_mode, armed, path_received, profile_synced, tl_n, tr_n
+      #           fcu_mode, armed, path_received, profile_synced,
+      #           tl_n/tr_n (执行层等效推力), tl_cmd_n/tr_cmd_n (求解器计划),
+      #           actuation_anchor_source, actuation_mapping_error_n;
+      # 方案 A 另含: initial_state_residual, max_dynamics_residual,
+      #              max_control_bound_violation, max_control_rate_violation
       # mode_manager 仅消费: success/fail_count/solve_time_ms/hold/state/standby_reason
     - topic: /mpc/predicted_trajectory
       type: nav_msgs/msg/Path

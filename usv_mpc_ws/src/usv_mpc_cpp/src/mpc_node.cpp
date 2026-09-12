@@ -210,6 +210,27 @@ void MpcControllerNode::load_config_() {
   throttle_sign_ = this->get_parameter("throttle_sign").as_double();
   steering_gain_ = this->get_parameter("steering_gain").as_double();
   throttle_gain_ = this->get_parameter("throttle_gain").as_double();
+
+  const std::size_t rc_channel_count =
+      mavros_msgs::msg::OverrideRCIn().channels.size();
+  if (rc_steering_channel_ < 0 || rc_throttle_channel_ < 0 ||
+      static_cast<std::size_t>(rc_steering_channel_) >= rc_channel_count ||
+      static_cast<std::size_t>(rc_throttle_channel_) >= rc_channel_count ||
+      rc_steering_channel_ == rc_throttle_channel_ ||
+      rc_pwm_min_ >= rc_pwm_center_ || rc_pwm_center_ >= rc_pwm_max_ ||
+      !std::isfinite(steering_sign_) || !std::isfinite(throttle_sign_) ||
+      !std::isfinite(steering_gain_) || !std::isfinite(throttle_gain_) ||
+      std::abs(std::abs(steering_sign_) - 1.0) > 1e-9 ||
+      std::abs(std::abs(throttle_sign_) - 1.0) > 1e-9 ||
+      steering_gain_ < 0.0 || throttle_gain_ < 0.0) {
+    throw std::runtime_error(
+        "RC 映射参数非法: 通道须有效且不同，并满足 pwm_min < pwm_center < "
+        "pwm_max、sign=+-1、gain>=0");
+  }
+  if (!std::isfinite(vrx_thrust_scale_) || vrx_thrust_scale_ <= 0.0 ||
+      !std::isfinite(vrx_thrust_cmd_max_) || vrx_thrust_cmd_max_ <= 0.0) {
+    throw std::runtime_error("VRX 推力映射参数必须为有限正数");
+  }
 }
 
 void MpcControllerNode::init_mpc_solver_() {
@@ -499,7 +520,6 @@ void MpcControllerNode::run_dynamic_mpc_() {
   bool in_hold = false;
   if (info.success) {
     solver_fail_count_ = 0;
-    publish_dynamic_output_(u_opt);
     if (control_count_ % 5 == 0) publish_predicted_trajectory_(info.X_pred);
   } else {
     solver_fail_count_++;
@@ -510,78 +530,73 @@ void MpcControllerNode::run_dynamic_mpc_() {
     if (solver_fail_count_ >= solver_hold_threshold_) {
       in_hold = true;
       u_opt.setZero();
-      publish_dynamic_output_(u_opt);
       mpc_->reset_warmstart();
       if (solver_fail_count_ == solver_hold_threshold_) {
         RCLCPP_ERROR(this->get_logger(),
                      "NMPC HOLD 挂起：连续失败 %d 次，正在发布零推力并重置热启动",
                      solver_fail_count_);
       }
-    } else {
-      publish_dynamic_output_(u_opt);
     }
   }
 
-  publish_status_(info, in_hold, u_opt);
+  const Eigen::Vector2d applied_thrust = publish_dynamic_output_(u_opt);
+  // 求解器 solve() 内部先保存了计划首拍；这里用经过 RC/VRX 映射后真正
+  // 下发的等效推力覆盖，使下一拍 ΔT 代价和硬约束从执行输入出发。
+  mpc_->set_applied_control(applied_thrust);
+  publish_status_(info, in_hold, u_opt, applied_thrust);
 
   control_count_++;
   if (control_count_ % 10 == 0) {
     int steer = rc_pwm_center_, thr = rc_pwm_center_;
-    // 取最近 RC debug (从 thrust_to_rc 缓存, 简化: 重算当前 u_opt)
+    // RC debug 与发布路径调用同一个纯映射函数，重算当前 u_opt。
     thrust_to_rc_pwm_(u_opt, steer, thr);
     RCLCPP_INFO(this->get_logger(),
-                "t=%.1fs  位置=(%.1f,%.1f)  左推力=%.1fN  右推力=%.1fN  RC(steer=%d, throttle=%d)  求解时间=%.0fms",
-                control_count_ * mpc_dt_, x_, y_, u_opt(0), u_opt(1), steer, thr,
-                info.solve_time_ms);
+                "t=%.1fs  位置=(%.1f,%.1f)  计划推力=(%.1f,%.1f)N  "
+                "下发等效推力=(%.1f,%.1f)N  RC(steer=%d, throttle=%d)  求解时间=%.0fms",
+                control_count_ * mpc_dt_, x_, y_, u_opt(0), u_opt(1),
+                applied_thrust(0), applied_thrust(1), steer, thr, info.solve_time_ms);
   }
 }
 
 // ── 推力 → RC PWM (对应 Python _thrust_to_rc_pwm, 用缓存 T_max/T_min) ──
-void MpcControllerNode::thrust_to_rc_pwm_(const Eigen::Vector2d& thrust,
-                                          int& steering_pwm, int& throttle_pwm) {
-  double t_max = std::max(dyn_T_max_, 1.0);
-  double t_min = std::fabs(std::min(dyn_T_min_, -1.0));
-  double left = thrust(0), right = thrust(1);
-
-  double throttle_n = 0.5 * (left + right);
-  double throttle_scale = (throttle_n >= 0.0) ? t_max : t_min;
-  throttle_n = throttle_sign_ * throttle_gain_ *
-               std::clamp(throttle_n / throttle_scale, -1.0, 1.0);
-
-  double steering_span = std::max(t_max, t_min);
-  double steering_n = steering_sign_ * steering_gain_ *
-                      std::clamp((right - left) / (2.0 * steering_span), -1.0, 1.0);
-
-  auto to_pwm = [&](double val) -> int {
-    val = std::clamp(val, -1.0, 1.0);
-    double pwm;
-    if (val >= 0.0) pwm = rc_pwm_center_ + val * (rc_pwm_max_ - rc_pwm_center_);
-    else            pwm = rc_pwm_center_ + val * (rc_pwm_center_ - rc_pwm_min_);
-    return static_cast<int>(std::clamp(std::round(pwm),
-                                       static_cast<double>(rc_pwm_min_),
-                                       static_cast<double>(rc_pwm_max_)));
-  };
-  steering_pwm = to_pwm(steering_n);
-  throttle_pwm = to_pwm(throttle_n);
+Eigen::Vector2d MpcControllerNode::thrust_to_rc_pwm_(
+    const Eigen::Vector2d& thrust, int& steering_pwm, int& throttle_pwm) {
+  RcActuationConfig config;
+  config.thrust_max = dyn_T_max_;
+  config.thrust_min = dyn_T_min_;
+  config.pwm_min = rc_pwm_min_;
+  config.pwm_center = rc_pwm_center_;
+  config.pwm_max = rc_pwm_max_;
+  config.steering_sign = steering_sign_;
+  config.throttle_sign = throttle_sign_;
+  config.steering_gain = steering_gain_;
+  config.throttle_gain = throttle_gain_;
+  const RcActuationResult result = thrust_to_rc_actuation(thrust, config);
+  steering_pwm = result.steering_pwm;
+  throttle_pwm = result.throttle_pwm;
+  return result.effective_thrust;
 }
 
-void MpcControllerNode::publish_rc_override_(const Eigen::Vector2d& thrust) {
+Eigen::Vector2d MpcControllerNode::publish_rc_override_(
+    const Eigen::Vector2d& thrust) {
   int steer, thr;
-  thrust_to_rc_pwm_(thrust, steer, thr);
+  const Eigen::Vector2d applied_thrust =
+      thrust_to_rc_pwm_(thrust, steer, thr);
   mavros_msgs::msg::OverrideRCIn msg;
   if (rc_steering_channel_ >= 0 && rc_steering_channel_ < static_cast<int>(msg.channels.size()))
     msg.channels[rc_steering_channel_] = steer;
   if (rc_throttle_channel_ >= 0 && rc_throttle_channel_ < static_cast<int>(msg.channels.size()))
     msg.channels[rc_throttle_channel_] = thr;
   rc_pub_->publish(msg);
+  return applied_thrust;
 }
 
-void MpcControllerNode::publish_dynamic_output_(const Eigen::Vector2d& thrust) {
+Eigen::Vector2d MpcControllerNode::publish_dynamic_output_(
+    const Eigen::Vector2d& thrust) {
   if (output_mode_ == "vrx_thrust") {
-    publish_vrx_thrust_(thrust);
-  } else {
-    publish_rc_override_(thrust);
+    return publish_vrx_thrust_(thrust);
   }
+  return publish_rc_override_(thrust);
 }
 
 void MpcControllerNode::publish_zero_dynamic_output_() {
@@ -599,14 +614,16 @@ void MpcControllerNode::release_rc_override_() {
 
 // 对应 Python _publish_vrx_thrust: NMPC [TL,TR] (N) 经 scale/cmd_max 限幅后
 // 直接发布到 VRX thruster topic (std_msgs/Float64, 单位 N)。
-void MpcControllerNode::publish_vrx_thrust_(const Eigen::Vector2d& thrust) {
+Eigen::Vector2d MpcControllerNode::publish_vrx_thrust_(
+    const Eigen::Vector2d& thrust) {
   std_msgs::msg::Float64 left, right;
-  left.data = std::clamp(thrust(0) * vrx_thrust_scale_,
-                         -vrx_thrust_cmd_max_, vrx_thrust_cmd_max_);
-  right.data = std::clamp(thrust(1) * vrx_thrust_scale_,
-                          -vrx_thrust_cmd_max_, vrx_thrust_cmd_max_);
+  const double lower = std::max(dyn_T_min_, -vrx_thrust_cmd_max_);
+  const double upper = std::min(dyn_T_max_, vrx_thrust_cmd_max_);
+  left.data = std::clamp(thrust(0) * vrx_thrust_scale_, lower, upper);
+  right.data = std::clamp(thrust(1) * vrx_thrust_scale_, lower, upper);
   vrx_left_pub_->publish(left);
   vrx_right_pub_->publish(right);
+  return Eigen::Vector2d(left.data, right.data);
 }
 
 void MpcControllerNode::release_vrx_thrust_() {
@@ -619,7 +636,8 @@ void MpcControllerNode::release_vrx_thrust_() {
 }
 
 void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
-                                        const Eigen::Vector2d& thrust) {
+                                        const Eigen::Vector2d& commanded_thrust,
+                                        const Eigen::Vector2d& applied_thrust) {
   nlohmann::json j;
   j["state"] = in_hold ? "HOLD" : "ACTIVE";
   j["success"] = info.success;
@@ -646,13 +664,19 @@ void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
   j["dynamic_dt"] = dyn_dt_;
   j["dynamic_N"] = dyn_N_;
   j["prediction_time_s"] = dyn_prediction_time_;
-  // 实际推力 (N),供地面站/可视化直接从 /mpc/status 解析。
-  j["tl_n"] = thrust(0);
-  j["tr_n"] = thrust(1);
+  // tl_n/tr_n 保持“实际/等效下发推力”语义；新增 cmd 字段保存求解器计划值。
+  j["tl_n"] = applied_thrust(0);
+  j["tr_n"] = applied_thrust(1);
+  j["tl_cmd_n"] = commanded_thrust(0);
+  j["tr_cmd_n"] = commanded_thrust(1);
+  j["actuation_anchor_source"] =
+      (output_mode_ == "vrx_thrust") ? "vrx_published" : "rc_linearized";
+  j["actuation_mapping_error_n"] =
+      (commanded_thrust - applied_thrust).cwiseAbs().maxCoeff();
   // 对应 RC PWM (与 Python _last_rc_debug 字段对齐)。
   {
     int steering_pwm = rc_pwm_center_, throttle_pwm = rc_pwm_center_;
-    thrust_to_rc_pwm_(thrust, steering_pwm, throttle_pwm);
+    thrust_to_rc_pwm_(commanded_thrust, steering_pwm, throttle_pwm);
     j["steering_pwm"] = steering_pwm;
     j["throttle_pwm"] = throttle_pwm;
   }

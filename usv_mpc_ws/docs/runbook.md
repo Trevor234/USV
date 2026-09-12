@@ -107,6 +107,8 @@ ros2 topic echo /wamv/thrusters/right/thrust --once
 
 - `path_planner_node` 启动后，`/path/reference` 开始发布数据。
 - `/mpc/status` 输出来自 `mpc_controller_node` 的 JSON 状态信息。
+- 方案 B 状态中的 `tl_cmd_n/tr_cmd_n` 是计划推力，`tl_n/tr_n` 是映射后等效下发推力；
+  `actuation_mapping_error_n` 较大时，应检查 RC 增益、PWM 限幅和推进器标定。
 - MPC 正在求解时，`/mpc/predicted_trajectory` 存在并有数据。
 - WAM-V 推力话题收到方案 B 的推力指令。
 
@@ -202,6 +204,11 @@ ros2 topic echo /mpc/status --once
 - `real.launch.py` 默认在模式管理器中禁用了 `auto_arm` 和自动模式切换。
 - 方案 A 使用 `/mavros/setpoint_velocity/cmd_vel`；方案 B 使用
   `/mavros/rc/override`。
+- RTK 差分凭据：`ntrip.launch.py` 依赖
+  `usv_bringup/config/ntrip_params.yaml`（含 CORS 账号密码，不入库）。
+  仓库只提供 `ntrip_params.yaml.example` 模板；首次部署时先
+  `cp ntrip_params.yaml.example ntrip_params.yaml` 并填写真实凭据，
+  树莓派迁移时用 `scp` 单独传输该文件，不随源码提交。
 
 ## 可选的备用启动文件
 

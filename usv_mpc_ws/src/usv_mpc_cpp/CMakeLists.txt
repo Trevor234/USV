@@ -259,6 +259,22 @@ if(BUILD_TESTING)
     set_tests_properties(test_acados_solve PROPERTIES
       ENVIRONMENT "LD_LIBRARY_PATH=${ACADOS_LIB_DIR}:${CASADI_LIB_DIR}"
     )
+
+    # 两个后端求解同一 OCP 的回归。测试通过不含 CasADi 类型的抽象工厂
+    # 构造 fallback，避免 pip wheel 的旧 C++ ABI 泄漏到 gtest 翻译单元。
+    if(CASADI_FOUND)
+      ament_add_gtest(test_backend_consistency test/test_backend_consistency.cpp)
+      target_include_directories(test_backend_consistency PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+      )
+      target_link_libraries(test_backend_consistency mpc_solver_lib)
+      set_target_properties(test_backend_consistency PROPERTIES
+        BUILD_RPATH "${ACADOS_LIB_DIR};${CASADI_LIB_DIR}"
+      )
+      set_tests_properties(test_backend_consistency PROPERTIES
+        ENVIRONMENT "LD_LIBRARY_PATH=${ACADOS_LIB_DIR}:${CASADI_LIB_DIR}"
+      )
+    endif()
   endif()
 endif()
 

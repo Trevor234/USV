@@ -68,7 +68,9 @@ struct MpcParams {
   // 时域
   double dt = 0.2;
   int    N   = 20;
-  // 权重
+  // 权重。Q/R/Rd 定义阶段运行代价密度，两个后端均对整段阶段代价乘 dt；
+  // Qf_scale 只缩放不乘 dt 的终端状态代价。Rd 惩罚每步推力增量 ΔT，
+  // 当前权重按固定 dt 调定，并不表示连续时间的推力变化率权重。
   Eigen::Matrix<double, 6, 1> Q_diag =
       (Eigen::Matrix<double, 6, 1>() << 20.0, 20.0, 50.0, 8.0, 1.0, 8.0).finished();
   Eigen::Vector2d R_diag  = {0.05, 0.05};
@@ -94,6 +96,10 @@ class DynamicMpc {
   virtual std::pair<Eigen::Vector2d, SolveInfo>
   solve(const Vector6d& current_state, const Eigen::MatrixXd& reference) = 0;
 
+  /// 用执行层最终下发的等效左右推力覆盖下一拍 delta_T 锚点。
+  /// 调用方应在每次发布控制后调用；输入必须有限且位于推力硬边界内。
+  virtual void set_applied_control(const Eigen::Vector2d& applied_control) = 0;
+
   /// 清空热启动。
   virtual void reset_warmstart() = 0;
 
@@ -107,5 +113,10 @@ class DynamicMpc {
 
 /// 工厂:优先构造 acados 后端 (codegen 已 vendored+静态链接),失败回退 CasADi。
 std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams& params);
+
+#ifdef USV_MPC_HAS_CASADI
+/// 显式构造 CasADi 后端，供后端一致性诊断和回归测试使用。
+std::unique_ptr<DynamicMpc> make_casadi_dynamic_mpc(const MpcParams& params);
+#endif
 
 }  // namespace usv_mpc

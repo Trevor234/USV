@@ -29,6 +29,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cmath>
 #include <vector>
 
@@ -185,6 +186,7 @@ TEST(KinematicModel5D, FirstOrderActuatorLag) {
 
 #ifdef USV_MPC_HAS_CASADI
 #include <Eigen/Dense>
+#include <cstring>
 
 // ABI 跨界回归测试: 测试单元(new ABI)调用 old-ABI 编译的 CasADi 后端,
 // SolveInfo 以 POD(定长 char 数组)按值跨界 — 验证求解与字符串字段完好。
@@ -209,10 +211,117 @@ TEST(KinematicCasadiBackend, SolveCrossesAbiBoundary) {
     EXPECT_TRUE(info.success) << "tick " << tick;
     EXPECT_STREQ(info.backend, "casadi");
     EXPECT_STREQ(info.error, "");
+    EXPECT_LE(info.initial_state_residual, p.solution_constraint_tol);
+    EXPECT_LE(info.max_dynamics_residual, p.solution_constraint_tol);
+    EXPECT_LE(info.max_control_bound_violation, p.solution_constraint_tol);
+    EXPECT_LE(info.max_control_rate_violation, p.solution_constraint_tol);
     x0(0) += u(0) * p.dt;
     x0(3) = u(0);
     x0(4) = u(1);
   }
+}
+
+// set_applied_command 写回的锚点必须约束首步控制: U(0,0) ∈ anchor ± du_step。
+// (修复前 u_prev_ 与实际下发值脱节, 此测试无法满足 — 真回归覆盖。)
+TEST(KinematicCasadiBackend, AppliedCommandAnchorsRateConstraint) {
+  usv_mpc::KinematicMpcParams p;
+  p.N  = 5;
+  p.dt = 0.2;
+  auto mpc = usv_mpc::make_kinematic_mpc(p);
+  ASSERT_NE(mpc, nullptr);
+
+  Eigen::Matrix<double, 5, 1> x0;
+  x0 << 0.0, 0.0, 0.0, 0.0, 0.0;
+  Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, p.N + 1);
+  for (int k = 0; k <= p.N; ++k) ref(0, k) = 0.1 * k;
+
+  const double du_step = p.du_max * p.dt;  // 0.8 * 0.2 = 0.16
+  const double eps = 5e-3;                 // 收敛约束违反容差余量
+
+  // 锚点 1.5 (界内): 首步指令必须落在 [1.5-du_step, 1.5+du_step]
+  mpc->set_applied_command(Eigen::Vector2d(1.5, 0.0));
+  {
+    auto [u, info] = mpc->solve(x0, ref);
+    ASSERT_TRUE(info.success) << info.error;
+    (void)u;
+    EXPECT_GE(info.U_pred(0, 0), 1.5 - du_step - eps);
+    EXPECT_LE(info.U_pred(0, 0), 1.5 + du_step + eps);
+  }
+
+  // 锚点 99 (超界): 须 clamp 到 u_max=2.0, 否则首步速率约束 ∩ [u_min,u_max]
+  // 为空集 → NLP 不可行。clamp 后窗口 [u_max-du_step, u_max]。
+  mpc->set_applied_command(Eigen::Vector2d(99.0, 0.0));
+  {
+    auto [u, info] = mpc->solve(x0, ref);
+    ASSERT_TRUE(info.success) << info.error;
+    (void)u;
+    EXPECT_GE(info.U_pred(0, 0), 2.0 - du_step - eps);
+    EXPECT_LE(info.U_pred(0, 0), 2.0 + eps);
+  }
+}
+
+// reset_warmstart 清空锚点: 重置后首步指令回到 0 ± du_step
+// (u_min=0 时即 [0, du_step]) — 对应 STANDBY/HOLD 后重新激活的场景。
+TEST(KinematicCasadiBackend, ResetClearsRateAnchor) {
+  usv_mpc::KinematicMpcParams p;
+  p.N  = 5;
+  p.dt = 0.2;
+  auto mpc = usv_mpc::make_kinematic_mpc(p);
+  ASSERT_NE(mpc, nullptr);
+
+  Eigen::Matrix<double, 5, 1> x0;
+  x0 << 0.0, 0.0, 0.0, 0.0, 0.0;
+  Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, p.N + 1);
+  for (int k = 0; k <= p.N; ++k) ref(0, k) = 0.1 * k;
+
+  const double du_step = p.du_max * p.dt;
+  const double eps = 5e-3;
+
+  mpc->set_applied_command(Eigen::Vector2d(1.5, 0.0));
+  {
+    auto [u, info] = mpc->solve(x0, ref);
+    ASSERT_TRUE(info.success) << info.error;
+    (void)u;
+  }
+  mpc->reset_warmstart();
+  {
+    auto [u, info] = mpc->solve(x0, ref);
+    ASSERT_TRUE(info.success) << info.error;
+    (void)u;
+    EXPECT_GE(info.U_pred(0, 0), -eps);
+    EXPECT_LE(info.U_pred(0, 0), du_step + eps);
+  }
+}
+
+// IPOPT 早停回收: max_iter=1 强制早停。迭代点即使全部有限，只要违反
+// 初值、动力学、控制边界或变化率约束，就必须拒绝并返回实际控制锚点。
+TEST(KinematicCasadiBackend, InfeasibleEarlyStopIsRejected) {
+  usv_mpc::KinematicMpcParams p;
+  p.N  = 5;
+  p.dt = 0.2;
+  p.ipopt_max_iter = 1;  // 1 次迭代不可能满足 tol/acceptable(5) → 必早停
+  auto mpc = usv_mpc::make_kinematic_mpc(p);
+  ASSERT_NE(mpc, nullptr);
+
+  Eigen::Matrix<double, 5, 1> x0;
+  x0 << 0.0, 0.0, 0.0, 1.5, 0.0;
+  Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, p.N + 1);
+  for (int k = 0; k <= p.N; ++k) ref(0, k) = 0.3 * k;
+  const Eigen::Vector2d applied(1.5, 0.0);
+  mpc->set_applied_command(applied);
+
+  auto [u, info] = mpc->solve(x0, ref);
+  EXPECT_FALSE(info.success);
+  EXPECT_EQ(std::strncmp(info.error, "ipopt_early_stop_infeasible", 27), 0)
+      << info.error;
+  EXPECT_TRUE(u.isApprox(applied));
+  EXPECT_EQ(info.X_pred.size(), 0);
+  EXPECT_EQ(info.U_pred.size(), 0);
+  EXPECT_GT(std::max({info.initial_state_residual,
+                      info.max_dynamics_residual,
+                      info.max_control_bound_violation,
+                      info.max_control_rate_violation}),
+            p.solution_constraint_tol);
 }
 #endif
 

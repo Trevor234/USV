@@ -51,3 +51,12 @@ __pycache__/
 .DS_Store
 Thumbs.db
 usv_mpc_ws/params_id/
+
+# Local agent plans
+.zcode/
+
+# ArduPilot local build/work tree (not part of USV release)
+ardurover-argus/
+
+# Rosbag recordings and analysis output (not part of USV release)
+usv_vrx_logs/

@@ -54,6 +54,33 @@ std::pair<double, double> body_to_ned(double u, double v, double psi);
 /// 旋转局部 map 帧速度到 body 帧 (legacy 名)。
 std::pair<double, double> ned_to_body(double vn, double ve, double psi);
 
+/// 物理推力到 ArduRover RC override 的本地线性映射参数。
+struct RcActuationConfig {
+  double thrust_max = 25.0;
+  double thrust_min = -25.0;
+  int pwm_min = 1100;
+  int pwm_center = 1500;
+  int pwm_max = 1900;
+  double steering_sign = -1.0;
+  double throttle_sign = 1.0;
+  double steering_gain = 0.4;
+  double throttle_gain = 0.75;
+};
+
+/// RC 映射结果。effective_thrust 是 PWM 量化、增益和本地线性混控后，
+/// 在 MPC [T_L,T_R] 坐标中的等效已下发推力，用于下一拍 delta_T 锚点。
+struct RcActuationResult {
+  int steering_pwm = 1500;
+  int throttle_pwm = 1500;
+  Eigen::Vector2d effective_thrust = Eigen::Vector2d::Zero();
+};
+
+/// 将左右推力映射为 RC PWM，并反算本地线性混控对应的等效推力。
+/// 不包含推进器死区、PWM 非线性、电压影响或 ArduRover 内部动态；这些项需要
+/// 实船标定后才能替换此近似模型。
+RcActuationResult thrust_to_rc_actuation(
+    const Eigen::Vector2d& thrust, const RcActuationConfig& config);
+
 /// 从当前点 (x,y) 到线段 (x1,y1)-(x2,y2) 的有向横向跟踪误差。
 double cross_track_error(double x, double y, double x1, double y1,
                          double x2, double y2);

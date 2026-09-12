@@ -20,10 +20,14 @@
     # cmd_max 远高于 40 N 单桨上限, 仅作安全限幅, 不会截断 T_max。
     vrx_thrust_scale: 1.0
     vrx_thrust_cmd_max: 100.0
+    # 最终发布值还会按 dynamic.T_min/T_max 限幅，并直接写回下一拍 delta_T
+    # 锚点；scale=1.0 时模型推力、Gazebo 输入和锚点均保持 N 单位一致。
 
     dynamic:
       # 2026-09-06: 权重与实机部署值对齐 (mpc_params_B.yaml) —— 仿真与实机
       # 同一套控制器参数, sqrt(Qx/R)=20N=80%T_max, 消除推力饱和(002 包 54.8%)。
+      # Q/R/Rd 为运行代价密度, acados/CasADi 均对整段阶段代价乘 dt;
+      # Qf_scale 作用于不乘 dt 的终端代价。Rd 是固定 dt 下的逐步 ΔT 平滑权重。
       Q: [20.0, 20.0, 50.0, 8.0, 1.0, 8.0]  # State weights [x,y,psi,u,v,r]
       R: [0.05, 0.05]              # Control weights [TL, TR]
       Rd: [0.2, 0.2]

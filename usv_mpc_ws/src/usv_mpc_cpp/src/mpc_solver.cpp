@@ -39,6 +39,12 @@
 
 namespace usv_mpc {
 
+#ifdef USV_MPC_HAS_CASADI
+std::unique_ptr<DynamicMpc> make_casadi_dynamic_mpc(const MpcParams& params) {
+  return std::make_unique<CasadiBackend>(params);
+}
+#endif
+
 std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams& params) {
   // 1. 尝试 acados (codegen 已 vendored 并静态链接进本包)
   try {
@@ -51,7 +57,7 @@ std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams& params) {
 
 #ifdef USV_MPC_HAS_CASADI
   // 2. 回退 CasADi (仅当构建时 ABI 探针通过, 见 CMakeLists)
-  return std::make_unique<CasadiBackend>(params);
+  return make_casadi_dynamic_mpc(params);
 #else
   std::fprintf(stderr,
                "[usv_mpc_cpp] CasADi fallback 未编译进本构建, 无可用求解器后端\n");
@@ -60,4 +66,3 @@ std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams& params) {
 }
 
 }  // namespace usv_mpc
-

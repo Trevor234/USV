@@ -105,12 +105,17 @@ ros2 bag play /path/to/lake_test_20260817_153012 \
 
 ## 6. MPC 状态分析
 
-`/mpc/status` 是 JSON 字符串，包含 `state`、`success`、`fail_count`、`solve_time_ms`、`deadline_miss`、`hold`、`fcu_mode`、`armed`、`path_received`、`profile_synced` 和后端信息。离线分析时建议统计：
+`/mpc/status` 是 JSON 字符串，包含 `state`、`success`、`fail_count`、
+`solve_time_ms`、`deadline_miss`、`hold`、`fcu_mode`、`armed`、
+`path_received`、`profile_synced` 和后端信息。方案 B 还包含
+`tl_cmd_n`/`tr_cmd_n`（求解器计划首拍）、`tl_n`/`tr_n`（执行层等效下发推力）、
+`actuation_anchor_source` 和 `actuation_mapping_error_n`。离线分析时建议统计：
 
 - `solve_time_ms` 的均值、P95、P99 和最大值。
 - `deadline_miss` 次数。
 - 连续失败和 HOLD 区间。
 - `profile_synced=false` 与跟踪误差异常是否同时出现。
+- `actuation_mapping_error_n` 的均值、P95 和峰值，确认 RC 增益或限幅是否让实际输入明显偏离计划。
 - RC override 与 odom/IMU 响应的时延。
 
 ## 7. 未解锁 dry run

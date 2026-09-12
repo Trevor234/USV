@@ -16,8 +16,6 @@ r_cmd (TwistStamped); 本节点用 2026-09-03 辨识的动力学逆模型 + 测�
 参数默认值与 usv_params_sim.yaml / usv_mono 植物模型一致 (数字孪生)。
 cmd_vel 断流 >0.3 s → 推力归零 (MPC 死亡/STANDBY 即停船)。
 """
-import math
-
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
@@ -108,18 +106,12 @@ class CmdvelToThrust(Node):
         self._last_cmd_time = self.get_clock().now()
 
     def _odom_callback(self, msg: Odometry):
-        # gz 真值里程计的 twist 是世界系 (ENU)! 必须按航向旋转到体轴:
-        #   u_meas (前向) =  vx·cosψ + vy·sinψ
-        # 直接拿 linear.x 当前进速度会让纵向 P 反馈随航向振荡
-        # (绕圈时 = 锯齿轨迹, 2026-09-07 实测定位)。
-        q = msg.pose.pose.orientation
-        yaw = math.atan2(2.0 * (q.w * q.z + q.x * q.y),
-                         1.0 - 2.0 * (q.y * q.y + q.z * q.z))
-        c, s = math.cos(yaw), math.sin(yaw)
-        vx = msg.twist.twist.linear.x
-        vy = msg.twist.twist.linear.y
-        self._u_meas = vx * c + vy * s
-        self._r_meas = msg.twist.twist.angular.z  # 平面运动: 世界系=体轴系
+        # nav_msgs/Odometry 契约: pose 位于 header.frame_id, twist 位于
+        # child_frame_id。VRX ground-truth odometry 的 child_frame_id 是
+        # wamv/base_link，因此 linear.x 已是船体前向速度；再次按航向旋转会
+        # 把船体系速度误当成世界系，造成速度反馈随航向周期性失真。
+        self._u_meas = msg.twist.twist.linear.x
+        self._r_meas = msg.twist.twist.angular.z
 
     def _tick(self):
         now = self.get_clock().now()

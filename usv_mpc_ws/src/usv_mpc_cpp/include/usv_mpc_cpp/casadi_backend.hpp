@@ -26,7 +26,7 @@
  * 对应 Python 版本: usv_mpc/mpc_dynamic_legacy.py (DynamicMPCLegacy)
  *
  * acados .so 不可用时启用。用 CasADi C++ Opti API 构建与 legacy Python 版
- * 等价的 NMPC:RK4 动力学约束、Q/R/Rd 代价 (含 1-cos(psi) 航向项)、
+ * 等价的 NMPC:RK4 动力学约束、Q/R/Rd 代价 (含单位圆周期航向项)、
  * T_max/dT_max 边界、warm start。Pi5 上求解 ~80-200ms,接近 200ms 预算上限。
  */
 
@@ -47,6 +47,8 @@ class CasadiBackend : public DynamicMpc {
 
   std::pair<Eigen::Vector2d, SolveInfo>
   solve(const Vector6d& current_state, const Eigen::MatrixXd& reference) override;
+
+  void set_applied_control(const Eigen::Vector2d& applied_control) override;
 
   void reset_warmstart() override;
 

@@ -53,6 +53,26 @@ TEST(Utils, QuaternionToYawAndNormalize) {
   EXPECT_NEAR(usv_mpc::normalize_angle(3.0 * M_PI), M_PI, 1e-9);
 }
 
+TEST(Utils, RcActuationReportsEquivalentAppliedThrust) {
+  const usv_mpc::RcActuationConfig config;
+
+  Eigen::Vector2d surge_command;
+  surge_command << 20.0, 20.0;
+  const auto surge = usv_mpc::thrust_to_rc_actuation(surge_command, config);
+  EXPECT_EQ(surge.steering_pwm, 1500);
+  EXPECT_EQ(surge.throttle_pwm, 1740);
+  EXPECT_NEAR(surge.effective_thrust(0), 15.0, 1e-9);
+  EXPECT_NEAR(surge.effective_thrust(1), 15.0, 1e-9);
+
+  Eigen::Vector2d yaw_command;
+  yaw_command << -20.0, 20.0;
+  const auto yaw = usv_mpc::thrust_to_rc_actuation(yaw_command, config);
+  EXPECT_EQ(yaw.steering_pwm, 1372);
+  EXPECT_EQ(yaw.throttle_pwm, 1500);
+  EXPECT_NEAR(yaw.effective_thrust(0), -8.0, 1e-9);
+  EXPECT_NEAR(yaw.effective_thrust(1), 8.0, 1e-9);
+}
+
 // 对应 Python: test_profile_stamp_parsing_and_sync_state
 TEST(Utils, ProfileStampParsingAndSyncState) {
   std::vector<std::string> labels = {"points", "v_kappa_r_t", "stamp_sec:12", "stamp_nanosec:34"};

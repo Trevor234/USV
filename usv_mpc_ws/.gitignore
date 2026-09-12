@@ -30,6 +30,9 @@ c_generated_code/
 acados_ocp*.json
 acados_sim*.json
 
+# NTRIP credentials (template ntrip_params.yaml.example is tracked)
+src/usv_bringup/config/ntrip_params.yaml
+
 # Rosbag2 recordings (runtime target is /mnt/usv_bags; ignore local tests too)
 /bags/
 /rosbag2_*/

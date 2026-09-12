@@ -31,8 +31,10 @@
 
 #include "usv_mpc_cpp/casadi_kinematic_backend.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
+#include <cstring>
 #include <cmath>
 #include <vector>
 
@@ -150,16 +152,20 @@ CasadiKinematicBackend::CasadiKinematicBackend(const KinematicMpcParams& params)
     opti_.subject_to(opti_.bounded(-dr_step, U_(1, k) - U_(1, k - 1), dr_step));
   }
 
-  // ── IPOPT 求解器选项 (对齐 Python mpc_kinematic.py: max_iter=200, acceptable_iter=5) ──
-  // B 用 max_iter=300, acceptable_iter=10
+  // ── IPOPT 求解器选项 ──
+  // expand: MX→SX 展开, 函数求值更快 (Pi5 上收益明显)。
+  // max_iter/max_cpu_time: 早停时 solve() 抛异常, 由 solve() 的回收逻辑取回
+  // 当前迭代点 (RTI 风格), 而不是丢整拍。max_cpu_time 须 < 节点的
+  // max_solve_time_ms (200ms), 为状态发布留余量。
   opti_.solver("ipopt",
-               {{"print_time", 0}},
-               {{"print_level", 0}, {"max_iter", 200},
+               {{"print_time", 0}, {"expand", true}},
+               {{"print_level", 0}, {"max_iter", params_.ipopt_max_iter},
+                {"max_cpu_time", params_.ipopt_max_cpu_time_s},
                 {"warm_start_init_point", "yes"},
                 {"tol", 1e-4}, {"acceptable_tol", 1e-3},
                 {"acceptable_iter", 5}});
 
-  X_warm_ = Eigen::MatrixXd::Zero(NX, N + 1);  // 3 x (N+1) (B 是 6)
+  X_warm_ = Eigen::MatrixXd::Zero(NX, N + 1);  // 5 x (N+1) (B 是 6)
   U_warm_ = Eigen::MatrixXd::Zero(NU, N);      // 2 x N (同 B)
 }
 
@@ -185,45 +191,118 @@ CasadiKinematicBackend::solve(const Eigen::Matrix<double, 5, 1>& current_state,
   std::vector<double> upv(u_prev_.data(), u_prev_.data() + NU);
   opti_.set_value(p_u_prev_, DM(Sparsity::dense(NU, 1), upv));
 
-  // 热启动初值
-  std::vector<double> xw(NX * (N + 1));
+  // 热启动初值: X 平移滚动 (丢弃首列, 末列复制), U 同样用上次解滚动。
   if (has_warm_) {
+    std::vector<double> xw(NX * (N + 1));
     for (int c = 0; c <= N; ++c)
       for (int r = 0; r < NX; ++r) xw[c * NX + r] = X_warm_(r, c);
+    opti_.set_initial(X_, DM(Sparsity::dense(NX, N + 1), xw));
+    std::vector<double> uw(NU * N);
+    for (int c = 0; c < N; ++c)
+      for (int r = 0; r < NU; ++r) uw[c * NU + r] = U_warm_(r, c);
+    opti_.set_initial(U_, DM(Sparsity::dense(NU, N), uw));
   } else {
+    std::vector<double> xw(NX * (N + 1));
     for (int c = 0; c <= N; ++c)
       for (int r = 0; r < NX; ++r) xw[c * NX + r] = current_state(r);
+    opti_.set_initial(X_, DM(Sparsity::dense(NX, N + 1), xw));
+    opti_.set_initial(U_, DM(Sparsity::dense(NU, N), std::vector<double>(NU * N, 0.0)));
   }
-  opti_.set_initial(X_, DM(Sparsity::dense(NX, N + 1), xw));
-  opti_.set_initial(U_, DM(Sparsity::dense(NU, N), std::vector<double>(NU * N, 0.0)));
 
-  auto t0 = std::chrono::steady_clock::now();
-  try {
-    OptiSol sol = opti_.solve();
-    auto t1 = std::chrono::steady_clock::now();
-    info.solve_time_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+  // 对偶热启动: 按 CasADi Opti 接口把上一拍约束乘子设为本拍初值。
+  if (has_dual_) {
+    try {
+      opti_.set_initial(opti_.lam_g(), lam_g_warm_);
+    } catch (const std::exception&) {
+      has_dual_ = false;
+    }
+  }
 
-    DM X_dm = sol.value(X_);
-    DM U_dm = sol.value(U_);
-    std::vector<double> u0v = U_dm(Slice(0, NU), 0).nonzeros();
-    Eigen::Vector2d u_opt(u0v[0], u0v[1]);
-
+  // 提取候选解并验证完整约束。正常收敛解和早停回收解必须经过同一门禁，
+  // 防止把数值有限、但违反动力学或控制约束的 IPOPT 迭代点发布到实船。
+  Eigen::Vector2d u_out = u_prev_;
+  auto accept_solution = [&](const DM& X_dm, const DM& U_dm,
+                             const char* note, const DM& lam_dm) {
     std::vector<double> x_all = X_dm.nonzeros();
     std::vector<double> u_all = U_dm.nonzeros();
+    if (x_all.size() != static_cast<size_t>(NX * (N + 1)) ||
+        u_all.size() != static_cast<size_t>(NU * N)) {
+      snprintf(info.error, sizeof(info.error), "invalid_solution_dimensions");
+      return false;
+    }
+
     info.X_pred = Eigen::MatrixXd::Zero(NX, N + 1);
     info.U_pred = Eigen::MatrixXd::Zero(NU, N);
     for (int c = 0; c <= N; ++c)
       for (int r = 0; r < NX; ++r) info.X_pred(r, c) = x_all[c * NX + r];
     for (int c = 0; c < N; ++c)
       for (int r = 0; r < NU; ++r) info.U_pred(r, c) = u_all[c * NU + r];
+    Eigen::Vector2d u_opt = info.U_pred.col(0);
 
-    // NaN/Inf 门禁: IPOPT 收敛判据不保证有限值,在写入热启动前拦截,
-    // 避免 NaN 经 u_prev_/X_warm_/U_warm_ 扩散到后续拍。
     if (!u_opt.allFinite() || !info.X_pred.allFinite() ||
         !info.U_pred.allFinite()) {
-      info.success = false;
       snprintf(info.error, sizeof(info.error), "non_finite_solution");
-      return {u_prev_, info};
+      info.X_pred.resize(0, 0);
+      info.U_pred.resize(0, 0);
+      return false;
+    }
+
+    info.initial_state_residual =
+        (info.X_pred.col(0) - current_state).cwiseAbs().maxCoeff();
+    info.max_dynamics_residual = 0.0;
+    info.max_control_bound_violation = 0.0;
+    info.max_control_rate_violation = 0.0;
+
+    const double du_step = params_.du_max * params_.dt;
+    const double dr_step = params_.dr_max * params_.dt;
+    Eigen::Vector2d previous_control = u_prev_;
+    for (int k = 0; k < N; ++k) {
+      Eigen::Vector2d uk = info.U_pred.col(k);
+
+      info.max_control_bound_violation = std::max({
+          info.max_control_bound_violation,
+          params_.u_min - uk(0), uk(0) - params_.u_max,
+          -params_.r_max - uk(1), uk(1) - params_.r_max});
+      info.max_control_rate_violation = std::max({
+          info.max_control_rate_violation,
+          std::abs(uk(0) - previous_control(0)) - du_step,
+          std::abs(uk(1) - previous_control(1)) - dr_step});
+
+      std::vector<double> xk(info.X_pred.col(k).data(),
+                             info.X_pred.col(k).data() + NX);
+      std::vector<double> uk_vec(uk.data(), uk.data() + NU);
+      DM predicted_dm = f_rk4_(std::vector<DM>{
+          DM(Sparsity::dense(NX, 1), xk),
+          DM(Sparsity::dense(NU, 1), uk_vec)}).at(0);
+      std::vector<double> predicted_values = predicted_dm.nonzeros();
+      if (predicted_values.size() != NX) {
+        snprintf(info.error, sizeof(info.error), "invalid_dynamics_output");
+        info.X_pred.resize(0, 0);
+        info.U_pred.resize(0, 0);
+        return false;
+      }
+      Eigen::Map<const Eigen::Matrix<double, NX, 1>> predicted(
+          predicted_values.data());
+      info.max_dynamics_residual = std::max(
+          info.max_dynamics_residual,
+          (predicted - info.X_pred.col(k + 1)).cwiseAbs().maxCoeff());
+      previous_control = uk;
+    }
+
+    const double max_violation = std::max({
+        info.initial_state_residual, info.max_dynamics_residual,
+        info.max_control_bound_violation, info.max_control_rate_violation});
+    if (max_violation > params_.solution_constraint_tol) {
+      snprintf(info.error, sizeof(info.error),
+               "constraint_violation: initial=%.3g dynamics=%.3g "
+               "bounds=%.3g rate=%.3g tol=%.3g",
+               info.initial_state_residual, info.max_dynamics_residual,
+               info.max_control_bound_violation,
+               info.max_control_rate_violation,
+               params_.solution_constraint_tol);
+      info.X_pred.resize(0, 0);
+      info.U_pred.resize(0, 0);
+      return false;
     }
 
     // 热启动滚动 (平移: 丢弃首列, 末列复制; 与 B 完全相同逻辑)
@@ -233,13 +312,56 @@ CasadiKinematicBackend::solve(const Eigen::Matrix<double, 5, 1>& current_state,
     U_warm_.col(N - 1) = info.U_pred.col(N - 1);
     u_prev_ = u_opt;
     has_warm_ = true;
+    lam_g_warm_ = lam_dm;
+    has_dual_ = true;
 
+    u_out = u_opt;
     info.success = true;
-    return {u_opt, info};
-  } catch (const std::exception& e) {
-    // 失败: 返回上次控制, 不更新热启动 (对齐 B, 防止发散)
+    if (note != nullptr) snprintf(info.error, sizeof(info.error), "%s", note);
+    return true;
+  };
+
+  auto t0 = std::chrono::steady_clock::now();
+  try {
+    OptiSol sol = opti_.solve();
     auto t1 = std::chrono::steady_clock::now();
     info.solve_time_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+    if (accept_solution(sol.value(X_), sol.value(U_), nullptr,
+                        sol.value(opti_.lam_g()))) {
+      return {u_out, info};
+    }
+    info.success = false;
+    return {u_prev_, info};
+  } catch (const std::exception& e) {
+    auto t1 = std::chrono::steady_clock::now();
+    info.solve_time_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
+
+    // 早停回收: IPOPT 触发 max_iter/max_cpu_time 时, Opti 先把最后迭代点
+    // 存入内部状态再抛 "Solver failed..." (CasADi 异常带位置前缀, 故用
+    // 子串匹配) — 此时 debug() 可取回。其他异常 (数值失败等, 求解器直接
+    // throw, 无存储) 不可回收, 走通用失败路径。回收解经与成功路径相同的
+    // 门禁后按成功处理 (RTI 风格), 节点侧仍有 solve deadline 兜底。
+    if (std::strstr(e.what(), "Solver failed") != nullptr) {
+      try {
+        OptiAdvanced dbg = opti_.debug();
+        if (accept_solution(dbg.value(X_), dbg.value(U_),
+                            "ipopt_early_stop_feasible",
+                            dbg.value(opti_.lam_g()))) {
+          return {u_out, info};
+        }
+      } catch (const std::exception&) {
+        // 回收失败, 落到通用失败路径
+      }
+      char candidate_error[sizeof(info.error)];
+      snprintf(candidate_error, sizeof(candidate_error), "%s", info.error);
+      info.success = false;
+      snprintf(info.error, sizeof(info.error),
+               "ipopt_early_stop_infeasible: %.180s", candidate_error);
+      return {u_prev_, info};
+    }
+
+    // 失败: 返回上次控制, 不更新热启动 (对齐 B, 防止发散)
     info.success = false;
     snprintf(info.error, sizeof(info.error), "%s", e.what());
     return {u_prev_, info};
@@ -251,6 +373,15 @@ void CasadiKinematicBackend::reset_warmstart() {
   X_warm_.setZero();
   U_warm_.setZero();
   u_prev_.setZero();
+  has_dual_ = false;
+  lam_g_warm_ = DM();
+}
+
+void CasadiKinematicBackend::set_applied_command(const Eigen::Vector2d& applied) {
+  // clamp 到控制边界: 异常测量值 (GPS 重定位等) 若超出边界, 首步速率约束
+  // ∩ 控制边界会变成空集 → NLP 不可行。
+  u_prev_(0) = std::clamp(applied(0), params_.u_min, params_.u_max);
+  u_prev_(1) = std::clamp(applied(1), -params_.r_max, params_.r_max);
 }
 
 Eigen::MatrixXd CasadiKinematicBackend::get_predicted_trajectory() const {

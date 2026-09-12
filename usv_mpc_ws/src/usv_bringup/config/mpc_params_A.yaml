@@ -22,3 +22,6 @@
       dr_max: 1.25                 # Max yaw accel (rad/s²) — 实测 P99=1.22
       tau_u: 0.8                   # 纵向速度一阶滞后时间常数 (s)
       tau_r: 1.78                  # 艏摇角速度一阶滞后时间常数 (s, Iz_eff/Nr)
+      ipopt_max_iter: 50           # IPOPT 迭代上限 (早停时回收当前迭代点, 不丢拍)
+      ipopt_max_cpu_time_ms: 120.0 # IPOPT CPU 时间上限 (ms), 须 < max_solve_time_ms
+      solution_constraint_tol: 0.005 # 候选轨迹最大约束残差;早停解也必须满足

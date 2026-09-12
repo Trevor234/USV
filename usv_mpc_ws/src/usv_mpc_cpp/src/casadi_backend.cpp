@@ -35,6 +35,7 @@
 #include <chrono>
 #include <cstdio>
 #include <cmath>
+#include <stdexcept>
 
 namespace usv_mpc {
 
@@ -107,6 +108,14 @@ MX quad_cost_xy_uvr(const MX& Xk, const MX& ref_k,
 }  // namespace
 
 CasadiBackend::CasadiBackend(const MpcParams& params) : params_(params) {
+  if (!params_.Q_diag.allFinite() || !params_.R_diag.allFinite() ||
+      !params_.Rd_diag.allFinite() || !std::isfinite(params_.Qf_scale) ||
+      (params_.Q_diag.array() < 0.0).any() ||
+      (params_.R_diag.array() < 0.0).any() ||
+      (params_.Rd_diag.array() < 0.0).any() || params_.Qf_scale < 0.0) {
+    throw std::invalid_argument("MPC cost weights must be finite and nonnegative");
+  }
+
   const int N = params_.N;
 
   // RK4 离散动力学函数 f_rk4(state[6], control[2]) -> next[6]
@@ -144,19 +153,29 @@ CasadiBackend::CasadiBackend(const MpcParams& params) : params_(params) {
   MX cost = 0;
   for (int k = 0; k < N; ++k) {
     MX ref_k = p_ref_(Slice(0, 6), k);
-    cost += quad_cost_xy_uvr(X_(Slice(0, 6), k), ref_k, q0, q1, q3, q4, q5);
-    MX e_psi = X_(2, k) - p_ref_(2, k);
-    cost += 2.0 * q_psi * (1.0 - cos(e_psi));
-    cost += r0 * U_(0, k) * U_(0, k) + r1 * U_(1, k) * U_(1, k);
+    MX stage_cost =
+      quad_cost_xy_uvr(X_(Slice(0, 6), k), ref_k, q0, q1, q3, q4, q5);
+    MX e_psi_sin = sin(X_(2, k)) - sin(p_ref_(2, k));
+    MX e_psi_cos = cos(X_(2, k)) - cos(p_ref_(2, k));
+    stage_cost += q_psi *
+      (e_psi_sin * e_psi_sin + e_psi_cos * e_psi_cos);
+    stage_cost +=
+      r0 * U_(0, k) * U_(0, k) + r1 * U_(1, k) * U_(1, k);
     MX du0 = (k == 0) ? (U_(0, k) - p_u_prev_(0)) : (U_(0, k) - U_(0, k - 1));
     MX du1 = (k == 0) ? (U_(1, k) - p_u_prev_(1)) : (U_(1, k) - U_(1, k - 1));
-    cost += rd0 * du0 * du0 + rd1 * du1 * du1;
+    stage_cost += rd0 * du0 * du0 + rd1 * du1 * du1;
+
+    // 与 acados OCP 的 cost scaling 一致：运行代价按 dt 积分，终端代价
+    // 保持单位缩放。这样相同 Q/R/Rd/Qf_scale 对应同一个离散 OCP。
+    cost += params_.dt * stage_cost;
   }
   // 终端代价
   MX ref_N = p_ref_(Slice(0, 6), N);
   cost += qf * quad_cost_xy_uvr(X_(Slice(0, 6), N), ref_N, q0, q1, q3, q4, q5);
-  MX e_psi_f = X_(2, N) - p_ref_(2, N);
-  cost += 2.0 * qf * q_psi * (1.0 - cos(e_psi_f));
+  MX e_psi_f_sin = sin(X_(2, N)) - sin(p_ref_(2, N));
+  MX e_psi_f_cos = cos(X_(2, N)) - cos(p_ref_(2, N));
+  cost += qf * q_psi *
+    (e_psi_f_sin * e_psi_f_sin + e_psi_f_cos * e_psi_f_cos);
   opti_.minimize(cost);
 
   // 动力学约束
@@ -282,6 +301,19 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
     snprintf(info.error, sizeof(info.error), "%s", e.what());
     return {u_prev_, info};
   }
+}
+
+void CasadiBackend::set_applied_control(
+    const Eigen::Vector2d& applied_control) {
+  constexpr double kBoundTolerance = 1e-9;
+  if (!applied_control.allFinite()) {
+    throw std::invalid_argument("applied control must be finite");
+  }
+  if ((applied_control.array() < params_.T_min - kBoundTolerance).any() ||
+      (applied_control.array() > params_.T_max + kBoundTolerance).any()) {
+    throw std::out_of_range("applied control exceeds MPC thrust bounds");
+  }
+  u_prev_ = applied_control;
 }
 
 void CasadiBackend::reset_warmstart() {

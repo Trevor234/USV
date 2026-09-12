@@ -56,6 +56,7 @@ class CasadiKinematicBackend : public KinematicMpc {
         const Eigen::MatrixXd& reference) override;
 
   void reset_warmstart() override;
+  void set_applied_command(const Eigen::Vector2d& applied) override;
   Eigen::MatrixXd get_predicted_trajectory() const override;
 
   int    N() const override { return params_.N; }
@@ -77,6 +78,11 @@ class CasadiKinematicBackend : public KinematicMpc {
   Eigen::MatrixXd X_warm_;  // 5 x (N+1)
   Eigen::MatrixXd U_warm_;  // 2 x N
   Eigen::Vector2d u_prev_ = Eigen::Vector2d::Zero();
+  // 对偶热启动: Opti 每次求解把 lam_g() 符号当前值作为 lam_g0 传给 IPOPT
+  // (solve_prepare 无条件读取), 成功后回存。限制: Opti 不支持 lam_x0,
+  // 界乘子无法热启动, 只有约束乘子生效。
+  casadi::DM lam_g_warm_;
+  bool has_dual_ = false;
 };
 
 }  // namespace usv_mpc
