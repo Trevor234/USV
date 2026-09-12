@@ -240,7 +240,7 @@ def generate_launch_description():
     )
 
     mission_bridge_node = Node(
-        package=planning_pkg,
+        package="usv_planning_cpp",
         executable="mission_bridge_node",
         name="mission_bridge_node",
         output="screen",
