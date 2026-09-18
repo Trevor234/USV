@@ -17,8 +17,6 @@ logs/
 
 # Downloaded packages and local scratch files
 *.deb
-usv_mpc_ws/test_write.txt
-usv_mpc_ws/test_x.txt
 
 # Python caches
 __pycache__/
@@ -36,6 +34,10 @@ __pycache__/
 *.dylib
 *.dll
 *.exe
+usv_mpc_ws/CMakeFiles/
+
+# Generated model validation artifacts
+usv_mpc_ws/artifacts/
 
 # Editors and local tooling
 .vscode/
@@ -50,13 +52,22 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
-usv_mpc_ws/params_id/
+
+# Experiment data, flight logs, and identification datasets
+data/
+tools/params_id/data/
+tools/params_id/data_parsed/
+tools/params_id/results/
 
 # Local agent plans
 .zcode/
 
+# Local migration backups (never commit)
+.local-backups/
+
 # ArduPilot local build/work tree (not part of USV release)
 ardurover-argus/
+ardupilot
 
 # Rosbag recordings and analysis output (not part of USV release)
-usv_vrx_logs/
+usv_vrx_logs
