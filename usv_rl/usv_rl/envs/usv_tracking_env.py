@@ -59,6 +59,9 @@ class UsvTrackingEnv(gym.Env):
         # 终止条件
         pos_err_limit: float = 3.0,
         psi_err_limit: float = math.pi / 2,
+        # 时间参考代价 cap（超出后误差不再增长，避免策略早期奖励爆炸）
+        schedule_pos_cap: float = 3.0,
+        schedule_psi_cap: float = math.pi / 2,
         # 课程：路径类型
         path_type: str = "random",
         # Domain randomization（训练末段开启）
@@ -88,6 +91,8 @@ class UsvTrackingEnv(gym.Env):
         self.failure_penalty = failure_penalty
         self.pos_err_limit = pos_err_limit
         self.psi_err_limit = psi_err_limit
+        self.schedule_pos_cap = schedule_pos_cap
+        self.schedule_psi_cap = schedule_psi_cap
         self.path_type = path_type
         self.hydro_dr_frac = hydro_dr_frac
         self.thrust_delay_max_steps = thrust_delay_max_steps
@@ -262,14 +267,22 @@ class UsvTrackingEnv(gym.Env):
         ref = self.reference
         x, y, psi, u, v, r = self.state
         i_t = self._ref_point_at_time()
-        x_ref, y_ref = ref.xs[i_t], ref.ys[i_t]
-        e_psi = wrap_angle(psi - ref.psis[i_t])
+        dx, dy = x - ref.xs[i_t], y - ref.ys[i_t]
+        e_pos_t = math.hypot(dx, dy)
+        # 调度误差 cap：船远远落后/超前时误差封顶，保留有限惩罚与追赶梯度
+        if e_pos_t > self.schedule_pos_cap:
+            scale = self.schedule_pos_cap / e_pos_t
+            dx, dy = dx * scale, dy * scale
+        e_psi_t = wrap_angle(psi - ref.psis[i_t])
+        e_psi_t = math.copysign(
+            min(abs(e_psi_t), self.schedule_psi_cap), e_psi_t
+        )
         d_thrust = applied - self.prev_thrust
 
         cost = (
-            self.q_x * (x - x_ref) ** 2
-            + self.q_y * (y - y_ref) ** 2
-            + self.q_psi * e_psi ** 2
+            self.q_x * dx ** 2
+            + self.q_y * dy ** 2
+            + self.q_psi * e_psi_t ** 2
             + self.q_u * (u - ref.v_ref[i_t]) ** 2
             + self.q_v * v ** 2
             + self.q_r * (r - ref.r_ref[i_t]) ** 2

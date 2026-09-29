@@ -1,0 +1,14 @@
+# 训练产物不入库
+.venv/
+runs/
+models/
+artifacts/
+*.pkl
+*.zip
+*.onnx
+*.pt
+__pycache__/
+.pytest_cache/
+*.egg-info/
+tests/cpp_golden/dump_golden_trajectory
+

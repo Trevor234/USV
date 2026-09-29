@@ -40,8 +40,11 @@ def generate_launch_description():
         description="Start the matplotlib runtime visualizer",
     )
     scheme_arg = DeclareLaunchArgument(
-        "scheme", default_value="B", choices=["A", "B"],
-        description="A=运动学 MPC(cmd_vel→推力转换) B=动力学 NMPC(直接推力)")
+        "scheme", default_value="B", choices=["A", "B", "C"],
+        description="A=运动学 MPC(cmd_vel→推力转换) B=动力学 NMPC(直接推力) C=RL 策略(ONNX 推理)")
+    rl_model_arg = DeclareLaunchArgument(
+        "rl_model", default_value="",
+        description="方案C 的 ONNX 策略路径（usv_rl.export_policy 导出）")
     record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
     bag_dir_arg = DeclareLaunchArgument(
         "bag_dir",
@@ -137,6 +140,7 @@ def generate_launch_description():
     enabled = LaunchConfiguration("control_enabled")
     is_scheme_a = PythonExpression(["'", scheme, "' == 'A' and '", enabled, "'.lower() == 'true'"])
     is_scheme_b = PythonExpression(["'", scheme, "' == 'B' and '", enabled, "'.lower() == 'true'"])
+    is_scheme_c = PythonExpression(["'", scheme, "' == 'C' and '", enabled, "'.lower() == 'true'"])
 
     def plant_parameter(name):
         return ParameterValue(LaunchConfiguration("plant_" + name), value_type=float)
@@ -214,6 +218,32 @@ def generate_launch_description():
         )],
     )
 
+    # 方案 C: RL 策略 ONNX 推理（usv_rl_ros, 推力直发, 接口与方案 B 对齐）
+    rl_node = TimerAction(
+        period=9.0,
+        actions=[Node(
+            package="usv_rl_ros",
+            executable="rl_policy_node",
+            name="rl_policy_node",
+            output="screen",
+            condition=IfCondition(is_scheme_c),
+            parameters=[{
+                "use_sim_time": True,
+                "model_path": LaunchConfiguration("rl_model"),
+                "odom_topic": odom_topic,
+                "imu_topic": imu_topic,
+                "path_topic": path_topic,
+                "profile_topic": profile_topic,
+                "status_topic": mpc_status_topic,
+                "left_thrust_topic": left_thrust_topic,
+                "right_thrust_topic": right_thrust_topic,
+                "control_rate_hz": 5.0,
+                "t_max": plant_parameter("tmax"),
+                "d_t_max": 80.0,
+            }],
+        )],
+    )
+
     visualizer_node = TimerAction(
         period=10.0,
         actions=[Node(
@@ -279,9 +309,11 @@ def generate_launch_description():
         path_frame_arg,
         vrx,
         scheme_arg,
+        rl_model_arg,
         planner_node,
         mpc_node_b,
         kin_node,
+        rl_node,
         visualizer_node,
         bag_record,
     ])
