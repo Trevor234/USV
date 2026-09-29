@@ -112,7 +112,10 @@ if(CASADI_PKG_RC EQUAL 0 AND EXISTS "${CASADI_PKG_DIR}/include/casadi/casadi.hpp
   endif()
   if(CASADI_ABI_FLAG)
     # 旧 ABI 标志只作用于包含 casadi 头的翻译单元
-    set_source_files_properties("${CMAKE_CURRENT_SOURCE_DIR}/src/casadi_backend.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/mpc_solver.cpp"      PROPERTIES COMPILE_OPTIONS "${CASADI_ABI_FLAG}")
+    set_source_files_properties(
+      "${CMAKE_CURRENT_SOURCE_DIR}/src/casadi_backend.cpp"
+      "${CMAKE_CURRENT_SOURCE_DIR}/src/mpc_solver.cpp"
+      PROPERTIES COMPILE_OPTIONS "${CASADI_ABI_FLAG}")
   endif()
 
   if(CASADI_PROBE_RC EQUAL 0)

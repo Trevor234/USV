@@ -28,25 +28,28 @@
 #include <algorithm>
 #include <cmath>
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 USVKinematicModel::USVKinematicModel(double dt, int rk4_substeps)
-    : dt_(dt), rk4_substeps_(std::max(1, rk4_substeps)) {}
+: dt_(dt), rk4_substeps_(std::max(1, rk4_substeps)) {}
 
 Eigen::Vector3d USVKinematicModel::continuous_ode(
-    const Eigen::Vector3d& state, const Eigen::Vector2d& control) {
+  const Eigen::Vector3d & state, const Eigen::Vector2d & control)
+{
   const double psi = state(2);
   const double u = control(0);   // surge
   const double r = control(1);   // yaw rate
   Eigen::Vector3d rhs;
   rhs << u * std::cos(psi),
-         u * std::sin(psi),
-         r;
+    u * std::sin(psi),
+    r;
   return rhs;
 }
 
 Eigen::Vector3d USVKinematicModel::forward(
-    const Eigen::Vector3d& state, const Eigen::Vector2d& control) const {
+  const Eigen::Vector3d & state, const Eigen::Vector2d & control) const
+{
   Eigen::Vector3d X = state;
   const double h = dt_ / static_cast<double>(rk4_substeps_);
   for (int i = 0; i < rk4_substeps_; ++i) {
@@ -62,25 +65,27 @@ Eigen::Vector3d USVKinematicModel::forward(
 }
 
 USVKinematicModel::Vector5d USVKinematicModel::continuous_ode(
-    const Vector5d& state, const Eigen::Vector2d& control,
-    double tau_u, double tau_r) {
+  const Vector5d & state, const Eigen::Vector2d & control,
+  double tau_u, double tau_r)
+{
   const double psi = state(2);
-  const double u   = state(3);
-  const double r   = state(4);
-  const double uc  = control(0);
-  const double rc  = control(1);
+  const double u = state(3);
+  const double r = state(4);
+  const double uc = control(0);
+  const double rc = control(1);
   Vector5d rhs;
   rhs << u * std::cos(psi),
-         u * std::sin(psi),
-         r,
-         (uc - u) / tau_u,
-         (rc - r) / tau_r;
+    u * std::sin(psi),
+    r,
+    (uc - u) / tau_u,
+    (rc - r) / tau_r;
   return rhs;
 }
 
 USVKinematicModel::Vector5d USVKinematicModel::forward(
-    const Vector5d& state, const Eigen::Vector2d& control,
-    double tau_u, double tau_r) const {
+  const Vector5d & state, const Eigen::Vector2d & control,
+  double tau_u, double tau_r) const
+{
   Vector5d X = state;
   const double h = dt_ / static_cast<double>(rk4_substeps_);
   for (int i = 0; i < rk4_substeps_; ++i) {

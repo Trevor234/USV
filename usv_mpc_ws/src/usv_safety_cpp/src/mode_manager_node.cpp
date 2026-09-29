@@ -39,10 +39,13 @@
 
 using namespace std::chrono_literals;
 
-namespace usv_safety {
+namespace usv_safety
+{
 
-namespace {
-double steady_now() {
+namespace
+{
+double steady_now()
+{
   auto now = std::chrono::steady_clock::now();
   return std::chrono::duration<double>(now.time_since_epoch()).count();
 }
@@ -50,7 +53,8 @@ double steady_now() {
 
 // ── 构造函数 ─────────────────────────────────────────────
 ModeManagerNode::ModeManagerNode()
-    : Node("mode_manager_node") {
+: Node("mode_manager_node")
+{
   declare_parameters_();
   load_config_();
 
@@ -104,7 +108,8 @@ ModeManagerNode::ModeManagerNode()
 }
 
 // ── 声明参数 ─────────────────────────────────────────────
-void ModeManagerNode::declare_parameters_() {
+void ModeManagerNode::declare_parameters_()
+{
   this->declare_parameter("auto_arm", false);
   this->declare_parameter("auto_mode_switch", true);
   this->declare_parameter("geofence_radius", 200.0);
@@ -139,21 +144,22 @@ void ModeManagerNode::declare_parameters_() {
 }
 
 // ── 加载配置 ─────────────────────────────────────────────
-void ModeManagerNode::load_config_() {
-  safety_config_.geofence_radius_m    = this->get_parameter("geofence_radius").as_double();
-  safety_config_.geofence_center_x    = this->get_parameter("geofence_center_x").as_double();
-  safety_config_.geofence_center_y    = this->get_parameter("geofence_center_y").as_double();
-  safety_config_.low_battery_v        = this->get_parameter("low_battery_v").as_double();
-  safety_config_.critical_battery_v   = this->get_parameter("critical_battery_v").as_double();
-  safety_config_.max_solver_failures  = this->get_parameter("max_solver_failures").as_int();
-  safety_config_.max_odom_timeout_s   = this->get_parameter("odom_timeout_s").as_double();
-  safety_config_.max_path_timeout_s   = this->get_parameter("max_path_timeout_s").as_double();
-  safety_config_.max_speed_mps        = this->get_parameter("max_speed_mps").as_double();
+void ModeManagerNode::load_config_()
+{
+  safety_config_.geofence_radius_m = this->get_parameter("geofence_radius").as_double();
+  safety_config_.geofence_center_x = this->get_parameter("geofence_center_x").as_double();
+  safety_config_.geofence_center_y = this->get_parameter("geofence_center_y").as_double();
+  safety_config_.low_battery_v = this->get_parameter("low_battery_v").as_double();
+  safety_config_.critical_battery_v = this->get_parameter("critical_battery_v").as_double();
+  safety_config_.max_solver_failures = this->get_parameter("max_solver_failures").as_int();
+  safety_config_.max_odom_timeout_s = this->get_parameter("odom_timeout_s").as_double();
+  safety_config_.max_path_timeout_s = this->get_parameter("max_path_timeout_s").as_double();
+  safety_config_.max_speed_mps = this->get_parameter("max_speed_mps").as_double();
   safety_config_.mpc_status_timeout_s = this->get_parameter("mpc_status_timeout_s").as_double();
-  battery_timeout_s_   = this->get_parameter("battery_timeout_s").as_double();
+  battery_timeout_s_ = this->get_parameter("battery_timeout_s").as_double();
   takeover_cooldown_s_ = this->get_parameter("manual_takeover_cooldown_s").as_double();
-  max_rtl_retries_     = static_cast<int>(this->get_parameter("max_rtl_retries").as_int());
-  failsafe_mode_       = this->get_parameter("failsafe_mode").as_string();
+  max_rtl_retries_ = static_cast<int>(this->get_parameter("max_rtl_retries").as_int());
+  failsafe_mode_ = this->get_parameter("failsafe_mode").as_string();
   if (failsafe_mode_ != "report" && failsafe_mode_ != "HOLD" && failsafe_mode_ != "RTL") {
     RCLCPP_ERROR(this->get_logger(),
                  "failsafe_mode='%s' 无效 (可选 report/HOLD/RTL), 回退 report",
@@ -163,7 +169,8 @@ void ModeManagerNode::load_config_() {
 }
 
 // ── 飞控状态回调 ─────────────────────────────────────────
-void ModeManagerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr msg) {
+void ModeManagerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr msg)
+{
   if (msg->mode != current_mavros_mode_) {
     // 记录外部/我方模式切换时刻 (人工接管冷却的起点)
     last_mode_change_ = steady_now();
@@ -177,16 +184,17 @@ void ModeManagerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr m
 //                  "solve_time_ms": float, "hold": bool,
 //                  "error": str (可选), "standby_reason": str (可选)}。
 // JSON 解析失败时回退到子串匹配(向后兼容)。
-void ModeManagerNode::mpc_status_callback_(const std_msgs::msg::String::SharedPtr msg) {
+void ModeManagerNode::mpc_status_callback_(const std_msgs::msg::String::SharedPtr msg)
+{
   try {
     auto payload = nlohmann::json::parse(msg->data);
-    mpc_ok_             = payload.value("success", false);
-    mpc_fail_count_     = payload.value("fail_count", 0);
-    mpc_solve_time_ms_  = payload.value("solve_time_ms", 0.0);
-    mpc_hold_           = payload.value("hold", false);
-    mpc_state_          = payload.value("state", "UNKNOWN");
+    mpc_ok_ = payload.value("success", false);
+    mpc_fail_count_ = payload.value("fail_count", 0);
+    mpc_solve_time_ms_ = payload.value("solve_time_ms", 0.0);
+    mpc_hold_ = payload.value("hold", false);
+    mpc_state_ = payload.value("state", "UNKNOWN");
     mpc_standby_reason_ = payload.value("standby_reason", "");
-  } catch (const nlohmann::json::exception& e) {
+  } catch (const nlohmann::json::exception & e) {
     // Legacy: 任何 "error" 子串标记为失败
     std::string lower = msg->data;
     std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
@@ -201,7 +209,8 @@ void ModeManagerNode::mpc_status_callback_(const std_msgs::msg::String::SharedPt
 }
 
 // ── 里程计回调 ───────────────────────────────────────────
-void ModeManagerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg) {
+void ModeManagerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg)
+{
   x_ = msg->pose.pose.position.x;
   y_ = msg->pose.pose.position.y;
   speed_ = std::hypot(msg->twist.twist.linear.x, msg->twist.twist.linear.y);
@@ -213,7 +222,8 @@ void ModeManagerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr ms
 // ── 电池回调 ─────────────────────────────────────────────
 // 电压走 update_battery() 独立域,而非 update_odom():用电池话题刷新
 // odom 看门狗会让 GPS/EKF 断流后 odom failsafe 永远不触发 (P0)。
-void ModeManagerNode::battery_callback_(const sensor_msgs::msg::BatteryState::SharedPtr msg) {
+void ModeManagerNode::battery_callback_(const sensor_msgs::msg::BatteryState::SharedPtr msg)
+{
   double v = msg->voltage;
   if (!std::isnan(v) && v > 0.0) {
     voltage_ = v;
@@ -224,13 +234,15 @@ void ModeManagerNode::battery_callback_(const sensor_msgs::msg::BatteryState::Sh
 }
 
 // ── 路径回调 ─────────────────────────────────────────────
-void ModeManagerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr /*msg*/) {
+void ModeManagerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr /*msg*/)
+{
   path_ever_received_ = true;
   safety_.update_path(true, steady_now());
 }
 
 // ── 周期性安全监控与模式管理 ─────────────────────────────
-void ModeManagerNode::monitor_loop_() {
+void ModeManagerNode::monitor_loop_()
+{
   double now = steady_now();
 
   // ── 里程计看门狗 ──
@@ -316,7 +328,7 @@ void ModeManagerNode::monitor_loop_() {
     auto flags = safety_.active_flags();
     std::string flag_str;
     for (size_t i = 0; i < flags.size(); ++i) {
-      if (i > 0) flag_str += ", ";
+      if (i > 0) {flag_str += ", ";}
       flag_str += flags[i];
     }
     if (failsafe_mode_ == "report") {
@@ -355,17 +367,18 @@ void ModeManagerNode::monitor_loop_() {
   // failsafe RTL 在上方已 return, 不受冷却影响。
   bool auto_switch = this->get_parameter("auto_mode_switch").as_bool();
   bool in_takeover_cooldown =
-      (now - last_mode_change_) < takeover_cooldown_s_;
+    (now - last_mode_change_) < takeover_cooldown_s_;
   if (in_takeover_cooldown && current_mavros_mode_ != "GUIDED") {
     RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                          "人工接管冷却期内, 暂停自动切回 GUIDED");
   }
   if (!in_takeover_cooldown && auto_switch && armed_ &&
-      current_mavros_mode_ != "GUIDED") {
+    current_mavros_mode_ != "GUIDED")
+  {
     bool needs_guided =
-        mpc_ok_ ||
-        (mpc_state_ == "STANDBY" &&
-         mpc_standby_reason_.rfind("wrong_mode", 0) == 0);
+      mpc_ok_ ||
+      (mpc_state_ == "STANDBY" &&
+      mpc_standby_reason_.rfind("wrong_mode", 0) == 0);
     if (needs_guided) {
       switch_mode_("GUIDED");
     }
@@ -374,7 +387,7 @@ void ModeManagerNode::monitor_loop_() {
   // ── 记录警告日志 ──
   auto flags = safety_.active_flags();
   if (safety_.warning_active() && !flags.empty()) {
-    for (const auto& flag : flags) {
+    for (const auto & flag : flags) {
       RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                            "Safety: %s", flag.c_str());
     }
@@ -382,8 +395,9 @@ void ModeManagerNode::monitor_loop_() {
 }
 
 // ── 模式切换 ─────────────────────────────────────────────
-bool ModeManagerNode::switch_mode_(const std::string& mode) {
-  if (current_mavros_mode_ == mode) return true;
+bool ModeManagerNode::switch_mode_(const std::string & mode)
+{
+  if (current_mavros_mode_ == mode) {return true;}
 
   if (!set_mode_cli_->service_is_ready()) {
     RCLCPP_ERROR(this->get_logger(), "SetMode service not ready");
@@ -395,16 +409,16 @@ bool ModeManagerNode::switch_mode_(const std::string& mode) {
   // 结果确认: 发后不管会让 failsafe 静默失效, 这里至少把拒绝暴露到日志
   set_mode_cli_->async_send_request(
       req, [this](rclcpp::Client<mavros_msgs::srv::SetMode>::SharedFuture f) {
-        try {
-          auto resp = f.get();
-          if (!resp->mode_sent) {
-            RCLCPP_ERROR(this->get_logger(),
+      try {
+        auto resp = f.get();
+        if (!resp->mode_sent) {
+          RCLCPP_ERROR(this->get_logger(),
                          "SetMode 请求被拒绝 (mode_sent=false): failsafe 重试"
                          "由监控循环继续发起, 请检查 FCU 模式表");
-          }
-        } catch (const std::exception& e) {
-          RCLCPP_ERROR(this->get_logger(), "SetMode 结果获取失败: %s", e.what());
         }
+      } catch (const std::exception & e) {
+        RCLCPP_ERROR(this->get_logger(), "SetMode 结果获取失败: %s", e.what());
+      }
       });
   RCLCPP_INFO(this->get_logger(), "Switching mode: %s → %s",
               current_mavros_mode_.c_str(), mode.c_str());
@@ -412,7 +426,8 @@ bool ModeManagerNode::switch_mode_(const std::string& mode) {
 }
 
 // ── 解锁/上锁 ───────────────────────────────────────────
-bool ModeManagerNode::request_arm(bool arm) {
+bool ModeManagerNode::request_arm(bool arm)
+{
   if (!cmd_arming_cli_->service_is_ready()) {
     RCLCPP_ERROR(this->get_logger(), "Arming service not ready");
     return false;
@@ -421,22 +436,22 @@ bool ModeManagerNode::request_arm(bool arm) {
   req->value = arm;
   cmd_arming_cli_->async_send_request(
       req, [this](rclcpp::Client<mavros_msgs::srv::CommandBool>::SharedFuture f) {
-        try {
-          auto resp = f.get();
-          if (!resp->success) {
-            RCLCPP_ERROR(this->get_logger(), "Arming 请求被飞控拒绝");
-          }
-        } catch (const std::exception& e) {
-          RCLCPP_ERROR(this->get_logger(), "Arming 结果获取失败: %s", e.what());
+      try {
+        auto resp = f.get();
+        if (!resp->success) {
+          RCLCPP_ERROR(this->get_logger(), "Arming 请求被飞控拒绝");
         }
+      } catch (const std::exception & e) {
+        RCLCPP_ERROR(this->get_logger(), "Arming 结果获取失败: %s", e.what());
+      }
       });
   return true;
 }
 
 // ── 便捷模式切换方法 ─────────────────────────────────────
-bool ModeManagerNode::switch_to_guided() { return switch_mode_("GUIDED"); }
-bool ModeManagerNode::switch_to_manual() { return switch_mode_("MANUAL"); }
-bool ModeManagerNode::switch_to_rtl()    { return switch_mode_("RTL"); }
-bool ModeManagerNode::switch_to_hold()   { return switch_mode_("HOLD"); }
+bool ModeManagerNode::switch_to_guided() {return switch_mode_("GUIDED");}
+bool ModeManagerNode::switch_to_manual() {return switch_mode_("MANUAL");}
+bool ModeManagerNode::switch_to_rtl() {return switch_mode_("RTL");}
+bool ModeManagerNode::switch_to_hold() {return switch_mode_("HOLD");}
 
 }  // namespace usv_safety

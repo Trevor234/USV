@@ -41,12 +41,15 @@
 
 using namespace std::chrono_literals;
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 PathPlannerNode::PathPlannerNode()
-    : Node("path_planner_node") {
+: Node("path_planner_node")
+{
   declare_parameters_();
   load_config_();
+  load_waypoints_from_file_();
 
   // ── 订阅者 ──
   odom_sub_ = this->create_subscription<nav_msgs::msg::Odometry>(
@@ -60,7 +63,7 @@ PathPlannerNode::PathPlannerNode()
                 std::placeholders::_1));
 
   // ── 发布者 ──
-  path_pub_    = this->create_publisher<nav_msgs::msg::Path>(path_topic_, 10);
+  path_pub_ = this->create_publisher<nav_msgs::msg::Path>(path_topic_, 10);
   profile_pub_ = this->create_publisher<std_msgs::msg::Float64MultiArray>(
       profile_topic_, 10);
 
@@ -74,7 +77,8 @@ PathPlannerNode::PathPlannerNode()
               wp_manager_.waypoints().size(), update_rate_);
 }
 
-void PathPlannerNode::declare_parameters_() {
+void PathPlannerNode::declare_parameters_()
+{
   this->declare_parameter("update_rate", 1.0);
   this->declare_parameter("waypoints_file", std::string(""));
   this->declare_parameter("path_resolution", 0.5);
@@ -103,43 +107,62 @@ void PathPlannerNode::declare_parameters_() {
   this->declare_parameter("curvature_opt_corridor", 1.0);
 }
 
-void PathPlannerNode::load_config_() {
-  update_rate_       = this->get_parameter("update_rate").as_double();
-  path_resolution_   = this->get_parameter("path_resolution").as_double();
-  turn_radius_       = this->get_parameter("turn_radius").as_double();
-  odom_topic_        = this->get_parameter("odom_topic").as_string();
-  path_topic_        = this->get_parameter("path_topic").as_string();
-  profile_topic_     = this->get_parameter("profile_topic").as_string();
-  dynamic_wp_topic_  = this->get_parameter("dynamic_waypoints_topic").as_string();
+void PathPlannerNode::load_config_()
+{
+  update_rate_ = this->get_parameter("update_rate").as_double();
+  path_resolution_ = this->get_parameter("path_resolution").as_double();
+  turn_radius_ = this->get_parameter("turn_radius").as_double();
+  odom_topic_ = this->get_parameter("odom_topic").as_string();
+  path_topic_ = this->get_parameter("path_topic").as_string();
+  profile_topic_ = this->get_parameter("profile_topic").as_string();
+  dynamic_wp_topic_ = this->get_parameter("dynamic_waypoints_topic").as_string();
+  waypoints_file_ = this->get_parameter("waypoints_file").as_string();
   default_wp_radius_ = this->get_parameter("default_waypoint_radius").as_double();
 
-  u_max_         = this->get_parameter("u_max").as_double();
-  r_max_         = this->get_parameter("r_max").as_double();
+  u_max_ = this->get_parameter("u_max").as_double();
+  r_max_ = this->get_parameter("r_max").as_double();
   lat_accel_max_ = this->get_parameter("lat_accel_max").as_double();
-  accel_max_     = this->get_parameter("accel_max").as_double();
-  decel_max_     = this->get_parameter("decel_max").as_double();
-  v_end_         = this->get_parameter("v_end").as_double();
-  v_min_         = this->get_parameter("v_min").as_double();
-  enable_curv_opt_   = this->get_parameter("enable_curvature_opt").as_bool();
+  accel_max_ = this->get_parameter("accel_max").as_double();
+  decel_max_ = this->get_parameter("decel_max").as_double();
+  v_end_ = this->get_parameter("v_end").as_double();
+  v_min_ = this->get_parameter("v_min").as_double();
+  enable_curv_opt_ = this->get_parameter("enable_curvature_opt").as_bool();
   curv_opt_max_iter_ = this->get_parameter("curvature_opt_max_iter").as_int();
   curv_opt_corridor_ = this->get_parameter("curvature_opt_corridor").as_double();
 }
 
+void PathPlannerNode::load_waypoints_from_file_()
+{
+  if (waypoints_file_.empty()) {
+    return;
+  }
+  if (wp_manager_.load_from_yaml_file(waypoints_file_, default_wp_radius_)) {
+    RCLCPP_INFO(this->get_logger(),
+                "已从航点文件加载 %zu 个航点: %s",
+                wp_manager_.waypoints().size(), waypoints_file_.c_str());
+  } else {
+    RCLCPP_ERROR(this->get_logger(),
+                 "未能从航点文件加载有效航点: %s", waypoints_file_.c_str());
+  }
+}
+
 // ── 里程计回调 ───────────────────────────────────────────
 void PathPlannerNode::odom_callback_(
-    const nav_msgs::msg::Odometry::SharedPtr msg) {
+  const nav_msgs::msg::Odometry::SharedPtr msg)
+{
   // NaN/Inf 门禁: GPS 未收敛/EKF 发散时里程计携带 NaN, 会卡死
   // update_progress (hypot(NaN,NaN)<radius 恒 false) 并污染路径
-  const auto& p = msg->pose.pose.position;
-  const auto& t = msg->twist.twist;
+  const auto & p = msg->pose.pose.position;
+  const auto & t = msg->twist.twist;
   if (!std::isfinite(p.x) || !std::isfinite(p.y) ||
-      !std::isfinite(t.linear.x)) {
+    !std::isfinite(t.linear.x))
+  {
     return;
   }
   x_ = p.x;
   y_ = p.y;
   // 四元数 -> 偏航角
-  auto& q = msg->pose.pose.orientation;
+  auto & q = msg->pose.pose.orientation;
   double siny = 2.0 * (q.w * q.z + q.x * q.y);
   double cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z);
   psi_ = std::atan2(siny, cosy);
@@ -148,7 +171,8 @@ void PathPlannerNode::odom_callback_(
 
 // ── 动态航点回调 ─────────────────────────────────────────
 void PathPlannerNode::dynamic_waypoints_callback_(
-    const nav_msgs::msg::Path::SharedPtr msg) {
+  const nav_msgs::msg::Path::SharedPtr msg)
+{
   wp_manager_.clear();
 
   if (msg->poses.empty()) {
@@ -159,7 +183,7 @@ void PathPlannerNode::dynamic_waypoints_callback_(
 
   // NaN/Inf 门禁: 一个污染点会让 fillet/采样产生垃圾路径或 UB
   size_t added = 0, skipped = 0;
-  for (const auto& pose : msg->poses) {
+  for (const auto & pose : msg->poses) {
     const double x = pose.pose.position.x;
     const double y = pose.pose.position.y;
     if (!std::isfinite(x) || !std::isfinite(y)) {
@@ -185,7 +209,8 @@ void PathPlannerNode::dynamic_waypoints_callback_(
 }
 
 // ── 发布空路径 ───────────────────────────────────────────
-void PathPlannerNode::publish_empty_path_() {
+void PathPlannerNode::publish_empty_path_()
+{
   auto stamp = this->get_clock()->now();
   nav_msgs::msg::Path path_msg;
   path_msg.header.stamp = stamp;
@@ -195,18 +220,21 @@ void PathPlannerNode::publish_empty_path_() {
 }
 
 // ── 周期性路径发布 ───────────────────────────────────────
-void PathPlannerNode::publish_path_() {
+void PathPlannerNode::publish_path_()
+{
   wp_manager_.update_progress(x_, y_);
 
   if (wp_manager_.mission_complete()) {
     publish_empty_path_();
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "所有航点任务已完成，已发布空参考路径让 MPC 进入 STANDBY 停船");
     return;
   }
 
   if (wp_manager_.waypoints().size() < 2) {
     publish_empty_path_();
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
-                         "等待 Mission Planner 提供至少 2 个有效航点");
+                         "等待有效航点 (至少 2 个; 可通过 waypoints_file 或 Mission Planner 提供)");
     return;
   }
 
@@ -218,7 +246,7 @@ void PathPlannerNode::publish_path_() {
     return;
   }
 
-  auto& [xs, ys, psis, kappas, vs, rs, ts] = result.value();
+  auto & [xs, ys, psis, kappas, vs, rs, ts] = result.value();
   auto stamp = this->get_clock()->now();
 
   // 1) NavPath
@@ -246,11 +274,12 @@ void PathPlannerNode::publish_path_() {
 
 // ── 速度/曲率剖面消息构建 ────────────────────────────────
 std_msgs::msg::Float64MultiArray PathPlannerNode::build_profile_msg_(
-    const Eigen::VectorXd& vs,
-    const Eigen::VectorXd& kappas,
-    const Eigen::VectorXd& rs,
-    const Eigen::VectorXd& ts,
-    const builtin_interfaces::msg::Time& stamp) {
+  const Eigen::VectorXd & vs,
+  const Eigen::VectorXd & kappas,
+  const Eigen::VectorXd & rs,
+  const Eigen::VectorXd & ts,
+  const builtin_interfaces::msg::Time & stamp)
+{
   const int m = static_cast<int>(vs.size());
   std_msgs::msg::Float64MultiArray msg;
 
@@ -276,30 +305,31 @@ std_msgs::msg::Float64MultiArray PathPlannerNode::build_profile_msg_(
 
 // ── 平滑路径生成（几何 + 速度剖面） ─────────────────────
 std::optional<PathPlannerNode::SmoothPathResult>
-PathPlannerNode::generate_smooth_path_() {
-  const auto& wps = wp_manager_.waypoints();
-  if (wps.size() < 2) return std::nullopt;
+PathPlannerNode::generate_smooth_path_()
+{
+  const auto & wps = wp_manager_.waypoints();
+  if (wps.size() < 2) {return std::nullopt;}
 
   // 提取航点坐标
   std::vector<std::pair<double, double>> waypoints_xy;
   waypoints_xy.reserve(wps.size());
-  for (const auto& w : wps) {
+  for (const auto & w : wps) {
     waypoints_xy.emplace_back(w.x, w.y);
   }
 
   // 几何层：圆弧倒角
   auto fillet = fillet_path(waypoints_xy, turn_radius_, path_resolution_);
-  for (const auto& w : fillet.warnings) {
+  for (const auto & w : fillet.warnings) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                          "%s", w.c_str());
   }
-  if (fillet.xs.size() < 2) return std::nullopt;
+  if (fillet.xs.size() < 2) {return std::nullopt;}
 
-  auto xs     = fillet.xs;
-  auto ys     = fillet.ys;
-  auto psis   = fillet.psis;
+  auto xs = fillet.xs;
+  auto ys = fillet.ys;
+  auto psis = fillet.psis;
   auto kappas = fillet.kappas;
-  auto s      = fillet.s;
+  auto s = fillet.s;
 
   // 可选：最小曲率精修（C++ 版本暂不实现 CasADi NLP，保留回退逻辑）
   if (enable_curv_opt_) {
@@ -314,8 +344,8 @@ PathPlannerNode::generate_smooth_path_() {
       std::max(0.0, u_), v_end_, v_min_);
 
   return SmoothPathResult{
-      std::move(xs), std::move(ys), std::move(psis), std::move(kappas),
-      std::move(profile.vs), std::move(profile.rs), std::move(profile.ts)};
+    std::move(xs), std::move(ys), std::move(psis), std::move(kappas),
+    std::move(profile.vs), std::move(profile.rs), std::move(profile.ts)};
 }
 
 }  // namespace usv_planning

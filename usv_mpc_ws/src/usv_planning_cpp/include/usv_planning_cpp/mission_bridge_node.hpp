@@ -36,6 +36,7 @@
 #include <optional>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -45,46 +46,47 @@
 #include <mavros_msgs/srv/waypoint_pull.hpp>
 #include <nav_msgs/msg/path.hpp>
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 /// 地球半径 (m)
 constexpr double EARTH_RADIUS_M = 6378137.0;
 
 /// MAVLink 导航命令 ID
-constexpr uint16_t MAV_CMD_NAV_WAYPOINT        = 16;
+constexpr uint16_t MAV_CMD_NAV_WAYPOINT = 16;
 constexpr uint16_t MAV_CMD_NAV_SPLINE_WAYPOINT = 82;
 
 class MissionBridgeNode : public rclcpp::Node {
- public:
+public:
   MissionBridgeNode();
 
- private:
+private:
   // ── 回调 ────────────────────────────────────────────
   void origin_callback_(
-      const geographic_msgs::msg::GeoPointStamped::SharedPtr msg);
+    const geographic_msgs::msg::GeoPointStamped::SharedPtr msg);
   void waypoints_callback_(
-      const mavros_msgs::msg::WaypointList::SharedPtr msg);
+    const mavros_msgs::msg::WaypointList::SharedPtr msg);
   void pull_mission_();
   void pull_done_callback_(
-      rclcpp::Client<mavros_msgs::srv::WaypointPull>::SharedFuture future);
+    rclcpp::Client<mavros_msgs::srv::WaypointPull>::SharedFuture future);
   void republish_();
 
   /// 航点签名（用于去重）。
   using WaypointSignature = std::vector<std::tuple<
-      uint8_t, uint16_t, bool, bool,
-      float, float, float, float,
-      double, double, double>>;
+        uint8_t, uint16_t, bool, bool,
+        float, float, float, float,
+        double, double, double>>;
   std::pair<uint16_t, WaypointSignature> waypoint_signature_(
-      const mavros_msgs::msg::WaypointList& msg) const;
+    const mavros_msgs::msg::WaypointList & msg) const;
 
   // ── 参数 ────────────────────────────────────────────
   std::string waypoints_topic_;
   std::string origin_topic_;
   std::string output_topic_;
   std::string pull_service_;
-  bool        auto_pull_    = true;
+  bool        auto_pull_ = true;
   double      pull_interval_ = 2.0;
-  bool        skip_home_    = true;
+  bool        skip_home_ = true;
   std::string output_frame_ = "map";
 
   // ── 内部状态 ────────────────────────────────────────

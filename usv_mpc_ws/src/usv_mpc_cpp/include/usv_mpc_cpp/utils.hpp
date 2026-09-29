@@ -39,7 +39,8 @@
 
 #include <Eigen/Dense>
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 /// 将角度归一化到 [-pi, pi]。
 double normalize_angle(double angle);
@@ -55,7 +56,8 @@ std::pair<double, double> body_to_ned(double u, double v, double psi);
 std::pair<double, double> ned_to_body(double vn, double ve, double psi);
 
 /// 物理推力到 ArduRover RC override 的本地线性映射参数。
-struct RcActuationConfig {
+struct RcActuationConfig
+{
   double thrust_max = 25.0;
   double thrust_min = -25.0;
   int pwm_min = 1100;
@@ -69,7 +71,8 @@ struct RcActuationConfig {
 
 /// RC 映射结果。effective_thrust 是 PWM 量化、增益和本地线性混控后，
 /// 在 MPC [T_L,T_R] 坐标中的等效已下发推力，用于下一拍 delta_T 锚点。
-struct RcActuationResult {
+struct RcActuationResult
+{
   int steering_pwm = 1500;
   int throttle_pwm = 1500;
   Eigen::Vector2d effective_thrust = Eigen::Vector2d::Zero();
@@ -79,34 +82,37 @@ struct RcActuationResult {
 /// 不包含推进器死区、PWM 非线性、电压影响或 ArduRover 内部动态；这些项需要
 /// 实船标定后才能替换此近似模型。
 RcActuationResult thrust_to_rc_actuation(
-    const Eigen::Vector2d& thrust, const RcActuationConfig& config);
+  const Eigen::Vector2d & thrust, const RcActuationConfig & config);
 
 /// 从当前点 (x,y) 到线段 (x1,y1)-(x2,y2) 的有向横向跟踪误差。
-double cross_track_error(double x, double y, double x1, double y1,
-                         double x2, double y2);
+double cross_track_error(
+  double x, double y, double x1, double y1,
+  double x2, double y2);
 
 /// 从 profile 的 layout.dim 标签列表解析 stamp。
 /// 返回 (sec, nanosec);ok=false 表示解析失败。
 /// 对应 Python: parse_profile_stamp
 std::pair<int, int> parse_profile_stamp(
-    const std::vector<std::string>& dim_labels, bool& ok);
+  const std::vector<std::string> & dim_labels, bool & ok);
 
 /// path/profile 是否同步及原因字符串。
 /// 对应 Python: profile_sync_state
 /// 返回 (synced, reason)。profile_len<0 表示无 profile。
 std::pair<bool, std::string> profile_sync_state(
-    int path_len, int profile_len,
-    const std::pair<int, int>* path_stamp,
-    const std::pair<int, int>* profile_stamp);
+  int path_len, int profile_len,
+  const std::pair<int, int> * path_stamp,
+  const std::pair<int, int> * profile_stamp);
 
 /// profile 同步原因码 (与 Python 一致)。
-enum class SyncReason {
+enum class SyncReason
+{
   no_profile, path_too_short, length_mismatch,
   legacy_no_profile_stamp, missing_path_stamp, stamp_mismatch, stamp_match
 };
 
 /// 单个参考点 (path + profile 在某时刻的插值结果)。
-struct RefSample {
+struct RefSample
+{
   double x, y, psi, v, r;
   int j;  // 下次搜索的段索引提示
 };
@@ -115,10 +121,10 @@ struct RefSample {
 /// times 单调递增;j_hint 为搜索起点。tk 超出末点时夹取到末点。
 /// 对应 Python: sample_path_profile_at_time
 RefSample sample_path_profile_at_time(
-    const std::vector<std::array<double, 3>>& path,   // [x, y, psi]
-    const std::vector<double>& times,
-    const std::vector<double>& vs,
-    const std::vector<double>& rs,
-    double tk, int j_hint);
+  const std::vector<std::array<double, 3>> & path,    // [x, y, psi]
+  const std::vector<double> & times,
+  const std::vector<double> & vs,
+  const std::vector<double> & rs,
+  double tk, int j_hint);
 
 }  // namespace usv_mpc

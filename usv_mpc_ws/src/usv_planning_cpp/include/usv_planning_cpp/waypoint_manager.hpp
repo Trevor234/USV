@@ -32,24 +32,29 @@
 #include <string>
 #include <vector>
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 /// 包含位置和到达半径的单个航点。
-struct Waypoint {
-  double x         = 0.0;
-  double y         = 0.0;
-  double radius    = 2.0;   // 到达判定半径 (m)
-  double heading   = 0.0;   // 航点处期望航向角 (rad)
+struct Waypoint
+{
+  double x = 0.0;
+  double y = 0.0;
+  double radius = 2.0;      // 到达判定半径 (m)
+  double heading = 0.0;     // 航点处期望航向角 (rad)
   double stay_time = 0.0;   // 到达后停留时间 (s)
 };
 
 /// 管理由有序航点组成的任务。
 class WaypointManager {
- public:
+public:
   WaypointManager() = default;
 
   /// 添加单个航点。
-  void add_waypoint(const Waypoint& wp);
+  void add_waypoint(const Waypoint & wp);
+
+  /// 从 YAML 文件加载航点列表。成功返回 true，失败返回 false 并清空航点。
+  bool load_from_yaml_file(const std::string & filepath, double default_radius = 2.0);
 
   /// 清空所有航点并重置进度。
   void clear();
@@ -61,14 +66,14 @@ class WaypointManager {
   std::vector<Waypoint> get_active_waypoints(int lookahead = 3) const;
 
   // ── 只读访问器 ──
-  const std::vector<Waypoint>& waypoints() const { return waypoints_; }
-  int  current_index() const { return current_idx_; }
-  bool mission_complete() const { return mission_complete_; }
-  const Waypoint& current_waypoint() const;
+  const std::vector<Waypoint> & waypoints() const {return waypoints_;}
+  int  current_index() const {return current_idx_;}
+  bool mission_complete() const {return mission_complete_;}
+  const Waypoint & current_waypoint() const;
 
- private:
+private:
   std::vector<Waypoint> waypoints_;
-  int  current_idx_      = 0;
+  int  current_idx_ = 0;
   bool mission_complete_ = false;
 };
 

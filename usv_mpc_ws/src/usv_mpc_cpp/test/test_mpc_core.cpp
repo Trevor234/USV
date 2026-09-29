@@ -23,10 +23,10 @@
  * @brief MPC 纯逻辑层 gtest 单测 (对拍 Python test_utils_and_sync.py + model sanity)。
  */
 
-#include <gtest/gtest.h>
-
 #include <cmath>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 #include "usv_mpc_cpp/usv_model_dynamic.hpp"
 #include "usv_mpc_cpp/utils.hpp"
@@ -82,11 +82,11 @@ TEST(Utils, ProfileStampParsingAndSyncState) {
   EXPECT_EQ(stamp.first, 12);
   EXPECT_EQ(stamp.second, 34);
 
-  std::pair<int,int> ps{12, 34};
+  std::pair<int, int> ps{12, 34};
   auto r1 = usv_mpc::profile_sync_state(3, 3, &ps, &ps);
   EXPECT_TRUE(r1.first); EXPECT_EQ(r1.second, "stamp_match");
 
-  std::pair<int,int> ps2{12, 35};
+  std::pair<int, int> ps2{12, 35};
   auto r2 = usv_mpc::profile_sync_state(3, 3, &ps2, &ps);
   EXPECT_FALSE(r2.first); EXPECT_EQ(r2.second, "stamp_mismatch");
 
@@ -119,7 +119,9 @@ TEST(FossenModel, ZeroControlZeroSpeedSteadyState) {
   Eigen::Vector2d control; control << 0.0, 0.0;
   auto rhs = USVDynamicModel::continuous_ode(state, control, p);
   // 零速零控下所有导数应为 0 (eta_dot=J*0=0; nu_dot=M^-1*(0-0-0)=0)
-  for (int i = 0; i < 6; ++i) EXPECT_NEAR(rhs(i), 0.0, 1e-9);
+  for (int i = 0; i < 6; ++i) {
+    EXPECT_NEAR(rhs(i), 0.0, 1e-9);
+}
 }
 
 // Fossen 模型: 纯前向推力应产生正纵向加速度 (u_dot > 0)
@@ -155,7 +157,8 @@ TEST(FossenModel, ForwardNormalizesHeading) {
   EXPECT_LE(next(2), M_PI + 1e-9);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

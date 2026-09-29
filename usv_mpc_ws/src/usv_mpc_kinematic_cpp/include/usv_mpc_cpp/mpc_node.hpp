@@ -43,6 +43,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -58,17 +59,18 @@
 #include "usv_mpc_cpp/kinematic_mpc_solver.hpp"
 #include "usv_mpc_cpp/utils.hpp"
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 class MpcControllerNode : public rclcpp::Node {
- public:
+public:
   MpcControllerNode();
   ~MpcControllerNode() override;
 
   /// 节点退出前发送安全停车指令 (零速度 TwistStamped)。
   void safe_shutdown();
 
- private:
+private:
   // ── 初始化 ──────────────────────────────────────────
   void declare_parameters_();
   void load_config_();
@@ -86,22 +88,23 @@ class MpcControllerNode : public rclcpp::Node {
   // ── 控制循环 ────────────────────────────────────────
   void control_loop_();
   std::pair<bool, std::string> can_solve_() const;
-  void enter_standby_(const std::string& reason);
+  void enter_standby_(const std::string & reason);
   void run_kinematic_mpc_();
-  bool enforce_solve_deadline_(SolveInfo& info);
+  bool enforce_solve_deadline_(SolveInfo & info);
 
   // ── 输出 (★ A 输出 TwistStamped, 无 RC 映射) ─────────
-  void publish_velocity_cmd_(const Eigen::Vector2d& u_opt);
+  void publish_velocity_cmd_(const Eigen::Vector2d & u_opt);
   void publish_zero_velocity_();
-  void publish_status_(const SolveInfo& info, bool in_hold,
-                       const Eigen::Vector2d& u_opt,
-                       const Eigen::Vector3d& current_state,
-                       const Eigen::MatrixXd& reference);
-  void publish_standby_status_(const std::string& reason);
-  void publish_predicted_trajectory_(const Eigen::MatrixXd& X_pred);
+  void publish_status_(
+    const SolveInfo & info, bool in_hold,
+    const Eigen::Vector2d & u_opt,
+    const Eigen::Vector3d & current_state,
+    const Eigen::MatrixXd & reference);
+  void publish_standby_status_(const std::string & reason);
+  void publish_predicted_trajectory_(const Eigen::MatrixXd & X_pred);
 
   // ── 参考构建 (对齐 B: 作为 node 私有方法, 无独立类) ───
-  Eigen::MatrixXd build_reference_(const Eigen::Vector3d& current_state);
+  Eigen::MatrixXd build_reference_(const Eigen::Vector3d & current_state);
 
   // ── 状态锁 (传感器回调与控制循环并发) ────────────────
   std::mutex state_lock_;
@@ -156,7 +159,8 @@ class MpcControllerNode : public rclcpp::Node {
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_sub_;
   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr profile_sub_;
   rclcpp::Subscription<mavros_msgs::msg::State>::SharedPtr state_sub_;
-  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr vel_pub_;  // ★ Twist (B 是 rc_pub_)
+  // ★ Twist (B 是 rc_pub_)
+  rclcpp::Publisher<geometry_msgs::msg::TwistStamped>::SharedPtr vel_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr traj_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_;
   rclcpp::TimerBase::SharedPtr timer_;

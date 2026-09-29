@@ -27,11 +27,11 @@
  *   - KinematicModel 4 个测试: 替换 B 的 FossenModel, 测 3 维运动学 ODE
  */
 
-#include <gtest/gtest.h>
-
 #include <algorithm>
 #include <cmath>
 #include <vector>
+
+#include <gtest/gtest.h>
 
 #include "usv_mpc_cpp/usv_model_kinematic.hpp"
 #include "usv_mpc_cpp/kinematic_mpc_solver.hpp"
@@ -117,7 +117,9 @@ TEST(KinematicModel, ZeroControlZeroSpeedSteadyState) {
   control << 0.0, 0.0;
   auto rhs = USVKinematicModel::continuous_ode(state, control);
   // u=0 → dx=0*cos(ψ)=0, dy=0*sin(ψ)=0; r=0 → dψ=0
-  for (int i = 0; i < 3; ++i) EXPECT_NEAR(rhs(i), 0.0, 1e-9);
+  for (int i = 0; i < 3; ++i) {
+    EXPECT_NEAR(rhs(i), 0.0, 1e-9);
+}
 }
 
 // ψ=0 时前向速度只产生 x 方向位移, 不改变航向
@@ -185,7 +187,6 @@ TEST(KinematicModel5D, FirstOrderActuatorLag) {
 }
 
 #ifdef USV_MPC_HAS_CASADI
-#include <Eigen/Dense>
 #include <cstring>
 
 // ABI 跨界回归测试: 测试单元(new ABI)调用 old-ABI 编译的 CasADi 后端,
@@ -193,8 +194,8 @@ TEST(KinematicModel5D, FirstOrderActuatorLag) {
 // (casadi pip wheel 为旧 ABI; 此测试仅在探针通过、后端编入时编译。)
 TEST(KinematicCasadiBackend, SolveCrossesAbiBoundary) {
   usv_mpc::KinematicMpcParams p;
-  p.N   = 5;
-  p.dt  = 0.2;
+  p.N = 5;
+  p.dt = 0.2;
   p.tau_u = 0.8;
   p.tau_r = 1.78;
   auto mpc = usv_mpc::make_kinematic_mpc(p);
@@ -204,7 +205,9 @@ TEST(KinematicCasadiBackend, SolveCrossesAbiBoundary) {
   Eigen::Matrix<double, 5, 1> x0;
   x0 << 0.0, 0.0, 0.0, 0.0, 0.0;
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, p.N + 1);
-  for (int k = 0; k <= p.N; ++k) ref(0, k) = 0.1 * k;  // 缓慢直线参考
+  for (int k = 0; k <= p.N; ++k) {
+    ref(0, k) = 0.1 * k;
+}                                                      // 缓慢直线参考
 
   for (int tick = 0; tick < 3; ++tick) {  // 多拍: 覆盖 warm start 路径
     auto [u, info] = mpc->solve(x0, ref);
@@ -225,7 +228,7 @@ TEST(KinematicCasadiBackend, SolveCrossesAbiBoundary) {
 // (修复前 u_prev_ 与实际下发值脱节, 此测试无法满足 — 真回归覆盖。)
 TEST(KinematicCasadiBackend, AppliedCommandAnchorsRateConstraint) {
   usv_mpc::KinematicMpcParams p;
-  p.N  = 5;
+  p.N = 5;
   p.dt = 0.2;
   auto mpc = usv_mpc::make_kinematic_mpc(p);
   ASSERT_NE(mpc, nullptr);
@@ -233,7 +236,9 @@ TEST(KinematicCasadiBackend, AppliedCommandAnchorsRateConstraint) {
   Eigen::Matrix<double, 5, 1> x0;
   x0 << 0.0, 0.0, 0.0, 0.0, 0.0;
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, p.N + 1);
-  for (int k = 0; k <= p.N; ++k) ref(0, k) = 0.1 * k;
+  for (int k = 0; k <= p.N; ++k) {
+    ref(0, k) = 0.1 * k;
+}
 
   const double du_step = p.du_max * p.dt;  // 0.8 * 0.2 = 0.16
   const double eps = 5e-3;                 // 收敛约束违反容差余量
@@ -264,7 +269,7 @@ TEST(KinematicCasadiBackend, AppliedCommandAnchorsRateConstraint) {
 // (u_min=0 时即 [0, du_step]) — 对应 STANDBY/HOLD 后重新激活的场景。
 TEST(KinematicCasadiBackend, ResetClearsRateAnchor) {
   usv_mpc::KinematicMpcParams p;
-  p.N  = 5;
+  p.N = 5;
   p.dt = 0.2;
   auto mpc = usv_mpc::make_kinematic_mpc(p);
   ASSERT_NE(mpc, nullptr);
@@ -272,7 +277,9 @@ TEST(KinematicCasadiBackend, ResetClearsRateAnchor) {
   Eigen::Matrix<double, 5, 1> x0;
   x0 << 0.0, 0.0, 0.0, 0.0, 0.0;
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, p.N + 1);
-  for (int k = 0; k <= p.N; ++k) ref(0, k) = 0.1 * k;
+  for (int k = 0; k <= p.N; ++k) {
+    ref(0, k) = 0.1 * k;
+}
 
   const double du_step = p.du_max * p.dt;
   const double eps = 5e-3;
@@ -297,7 +304,7 @@ TEST(KinematicCasadiBackend, ResetClearsRateAnchor) {
 // 初值、动力学、控制边界或变化率约束，就必须拒绝并返回实际控制锚点。
 TEST(KinematicCasadiBackend, InfeasibleEarlyStopIsRejected) {
   usv_mpc::KinematicMpcParams p;
-  p.N  = 5;
+  p.N = 5;
   p.dt = 0.2;
   p.ipopt_max_iter = 1;  // 1 次迭代不可能满足 tol/acceptable(5) → 必早停
   auto mpc = usv_mpc::make_kinematic_mpc(p);
@@ -306,7 +313,9 @@ TEST(KinematicCasadiBackend, InfeasibleEarlyStopIsRejected) {
   Eigen::Matrix<double, 5, 1> x0;
   x0 << 0.0, 0.0, 0.0, 1.5, 0.0;
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, p.N + 1);
-  for (int k = 0; k <= p.N; ++k) ref(0, k) = 0.3 * k;
+  for (int k = 0; k <= p.N; ++k) {
+    ref(0, k) = 0.3 * k;
+}
   const Eigen::Vector2d applied(1.5, 0.0);
   mpc->set_applied_command(applied);
 
@@ -318,14 +327,15 @@ TEST(KinematicCasadiBackend, InfeasibleEarlyStopIsRejected) {
   EXPECT_EQ(info.X_pred.size(), 0);
   EXPECT_EQ(info.U_pred.size(), 0);
   EXPECT_GT(std::max({info.initial_state_residual,
-                      info.max_dynamics_residual,
-                      info.max_control_bound_violation,
-                      info.max_control_rate_violation}),
+      info.max_dynamics_residual,
+      info.max_control_bound_violation,
+      info.max_control_rate_violation}),
             p.solution_constraint_tol);
 }
 #endif
 
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

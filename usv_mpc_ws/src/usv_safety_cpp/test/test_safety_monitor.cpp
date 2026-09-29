@@ -33,10 +33,12 @@ using usv_safety::SafetyLevel;
 using usv_safety::SafetyMonitor;
 
 // 辅助: flags 中是否有以 prefix 开头的
-static bool has_flag(const std::vector<std::string>& flags,
-                     const std::string& prefix) {
-  for (const auto& f : flags) {
-    if (f.rfind(prefix, 0) == 0) return true;
+static bool has_flag(
+  const std::vector<std::string> & flags,
+  const std::string & prefix)
+{
+  for (const auto & f : flags) {
+    if (f.rfind(prefix, 0) == 0) {return true;}
   }
   return false;
 }
@@ -117,7 +119,7 @@ TEST(SafetyMonitor, BatteryUpdateDoesNotRefreshOdomWatchdog) {
 // ACTIVE/HOLD 期间 /mpc/status 停发必须触发 failsafe (P0-2)
 TEST(SafetyMonitor, MpcStatusTimeoutTriggersFailsafe) {
   SafetyMonitor m(SafetyConfig{5, 1.0, 5.0, 500.0, 200.0, 0.0, 0.0, 10.0,
-                               10.5, 10.0, 3.0, /*mpc_status_timeout_s*/ 1.0});
+      10.5, 10.0, 3.0, /*mpc_status_timeout_s*/ 1.0});
 
   m.mark_mpc_status(100.0);
   EXPECT_FALSE(m.check_mpc_status_timeout(100.5));
@@ -146,7 +148,8 @@ TEST(SafetyMonitor, SolverFailCountSyncAndClear) {
   EXPECT_FALSE(has_flag(m.active_flags(), "Solver failures"));
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

@@ -48,15 +48,17 @@
 
 #include "usv_mpc_cpp/usv_model_kinematic.hpp"
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 /// 5 状态向量 [x, y, psi, u, r] (含一阶速度滞后)
 using Vector5d = Eigen::Matrix<double, 5, 1>;
 
 /// 求解结果信息 (对应 Python KinematicMPC.solve 返回的 info dict)。
 /// 字段与方案 B 的 SolveInfo 对齐, 便于 mpc_node 统一处理。
-struct SolveInfo {
-  bool        success       = false;
+struct SolveInfo
+{
+  bool        success = false;
   double      solve_time_ms = 0.0;
   // 候选轨迹可行性诊断。成功解和 IPOPT 早停回收解使用同一套门禁。
   double initial_state_residual = 0.0;
@@ -65,8 +67,8 @@ struct SolveInfo {
   double max_control_rate_violation = 0.0;
   // 字符串用定长数组: SolveInfo 按值跨 old/new ABI 边界返回 (casadi wheel
   // 为旧 ABI 构建时), std::string 的析构归属不安全 — POD 可安全跨界。
-  char        backend[16]  = "casadi";   // A 的 C++ 版只有 CasADi
-  char        error[256]   = "";
+  char        backend[16] = "casadi";    // A 的 C++ 版只有 CasADi
+  char        error[256] = "";
   // 预测轨迹 (5 x N+1), 列存 (前 3 行 x,y,psi); 失败时为空。
   Eigen::MatrixXd X_pred;
   // 控制序列 (2 x N), 列存; 失败时为空。
@@ -76,10 +78,11 @@ struct SolveInfo {
 /// 运动学 MPC 参数 (对应 mpc_params.yaml 的 kinematic.*)。
 /// 与方案 B 的 MpcParams 对齐, 但: 无 Rd (控制率代价)、无 HydroParams、
 /// 约束是 u/r 边界 + du/dr 速率 (非 T/dT)。
-struct KinematicMpcParams {
+struct KinematicMpcParams
+{
   // 时域
   double dt = 0.2;
-  int    N   = 20;
+  int    N = 20;
   // 权重 (Q 3维: x, y, psi; R 2维: u, r)
   Eigen::Vector3d Q_diag = {10.0, 10.0, 50.0};
   Eigen::Vector2d R_diag = {1.0, 1.0};
@@ -104,7 +107,7 @@ struct KinematicMpcParams {
 
 /// 运动学 MPC 求解器抽象接口 (对齐 B 的 DynamicMpc)。
 class KinematicMpc {
- public:
+public:
   virtual ~KinematicMpc() = default;
 
   /// 求解运动学 MPC。
@@ -112,8 +115,9 @@ class KinematicMpc {
   /// reference: [3, N+1] 参考轨迹 (x, y, psi)
   /// 返回 (u_opt[2]=[u_cmd_surge, r_cmd_yaw], info)
   virtual std::pair<Eigen::Vector2d, SolveInfo>
-  solve(const Eigen::Matrix<double, 5, 1>& current_state,
-        const Eigen::MatrixXd& reference) = 0;
+  solve(
+    const Eigen::Matrix<double, 5, 1> & current_state,
+    const Eigen::MatrixXd & reference) = 0;
 
   /// 清空热启动 (含对偶乘子; 速率约束锚点 u_prev_ 归零)。
   virtual void reset_warmstart() = 0;
@@ -121,18 +125,18 @@ class KinematicMpc {
   /// 写回"实际下发的指令"作为下一拍速率约束锚点 (U(0,0)-u_prev 约束)。
   /// 节点在每次发布 cmd 后调用, 使锚点语义与真实执行一致; 实现方须
   /// clamp 到 [u_min,u_max]x[-r_max,r_max], 防异常值导致首步约束不可行。
-  virtual void set_applied_command(const Eigen::Vector2d& applied) = 0;
+  virtual void set_applied_command(const Eigen::Vector2d & applied) = 0;
 
   /// 返回预测轨迹 (5 x N+1, 前 3 行 x,y,psi) 或空矩阵。
   virtual Eigen::MatrixXd get_predicted_trajectory() const = 0;
 
   virtual int    N() const = 0;
   virtual double dt() const = 0;
-  virtual const char* backend() const = 0;  // 跨 ABI 边界, 返回字面量
+  virtual const char * backend() const = 0;  // 跨 ABI 边界, 返回字面量
 };
 
 /// 工厂: 构造 CasADi 后端 (A 的 C++ 版唯一后端)。
 /// 与 B 的 make_dynamic_mpc 对齐, 但无 acados cache/inc/lib 参数。
-std::unique_ptr<KinematicMpc> make_kinematic_mpc(const KinematicMpcParams& params);
+std::unique_ptr<KinematicMpc> make_kinematic_mpc(const KinematicMpcParams & params);
 
 }  // namespace usv_mpc

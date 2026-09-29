@@ -33,32 +33,34 @@
 #pragma once
 
 #include <memory>
+#include <utility>
 
 #include <casadi/casadi.hpp>
 
 #include "usv_mpc_cpp/mpc_solver.hpp"
 #include "usv_mpc_cpp/usv_model_dynamic.hpp"
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 class CasadiBackend : public DynamicMpc {
- public:
-  explicit CasadiBackend(const MpcParams& params);
+public:
+  explicit CasadiBackend(const MpcParams & params);
 
   std::pair<Eigen::Vector2d, SolveInfo>
-  solve(const Vector6d& current_state, const Eigen::MatrixXd& reference) override;
+  solve(const Vector6d & current_state, const Eigen::MatrixXd & reference) override;
 
-  void set_applied_control(const Eigen::Vector2d& applied_control) override;
+  void set_applied_control(const Eigen::Vector2d & applied_control) override;
 
   void reset_warmstart() override;
 
   Eigen::MatrixXd get_predicted_trajectory() const override;
 
-  int    N() const override { return params_.N; }
-  double dt() const override { return params_.dt; }
-  const char* backend() const override { return "casadi"; }
+  int    N() const override {return params_.N;}
+  double dt() const override {return params_.dt;}
+  const char * backend() const override {return "casadi";}
 
- private:
+private:
   MpcParams params_;
   casadi::Opti opti_;
   casadi::MX X_;          // 6 x (N+1)

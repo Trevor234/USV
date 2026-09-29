@@ -30,7 +30,7 @@ def generate_launch_description():
     )
     fcu_url_arg = DeclareLaunchArgument(
         "fcu_url",
-        default_value="tcp://127.0.0.1:5760",
+        default_value="tcp://127.0.0.1:5762",
         description="External SITL MAVLink endpoint for MAVROS",
     )
     gcs_url_arg = DeclareLaunchArgument(

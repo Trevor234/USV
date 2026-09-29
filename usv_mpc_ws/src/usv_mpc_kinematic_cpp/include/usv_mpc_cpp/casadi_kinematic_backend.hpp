@@ -39,31 +39,35 @@
 
 #pragma once
 
-#include <casadi/casadi.hpp>
+#include <utility>
+
 #include <Eigen/Dense>
+#include <casadi/casadi.hpp>
 
 #include "usv_mpc_cpp/kinematic_mpc_solver.hpp"
 #include "usv_mpc_cpp/usv_model_kinematic.hpp"
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 class CasadiKinematicBackend : public KinematicMpc {
- public:
-  explicit CasadiKinematicBackend(const KinematicMpcParams& params);
+public:
+  explicit CasadiKinematicBackend(const KinematicMpcParams & params);
 
   std::pair<Eigen::Vector2d, SolveInfo>
-  solve(const Eigen::Matrix<double, 5, 1>& current_state,
-        const Eigen::MatrixXd& reference) override;
+  solve(
+    const Eigen::Matrix<double, 5, 1> & current_state,
+    const Eigen::MatrixXd & reference) override;
 
   void reset_warmstart() override;
-  void set_applied_command(const Eigen::Vector2d& applied) override;
+  void set_applied_command(const Eigen::Vector2d & applied) override;
   Eigen::MatrixXd get_predicted_trajectory() const override;
 
-  int    N() const override { return params_.N; }
-  double dt() const override { return params_.dt; }
-  const char* backend() const override { return "casadi"; }
+  int    N() const override {return params_.N;}
+  double dt() const override {return params_.dt;}
+  const char * backend() const override {return "casadi";}
 
- private:
+private:
   KinematicMpcParams params_;
   casadi::Opti opti_;
   casadi::MX X_;          // 5 x (N+1)

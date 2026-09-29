@@ -35,33 +35,38 @@
 #include <sstream>
 #include <iomanip>
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 // ── 内部辅助函数 ─────────────────────────────────────────
 
 /// 返回 (ux, uy, length)；零向量返回 (0,0,0)。
-static std::tuple<double, double, double> unit_vec(double dx, double dy) {
+static std::tuple<double, double, double> unit_vec(double dx, double dy)
+{
   double length = std::hypot(dx, dy);
-  if (length < 1e-9) return {0.0, 0.0, 0.0};
+  if (length < 1e-9) {return {0.0, 0.0, 0.0};}
   return {dx / length, dy / length, length};
 }
 
 /// 从入方向到出方向的有符号转角（左正右负），范围 [-pi, pi]。
-static double signed_turn(double uin_x, double uin_y,
-                           double uout_x, double uout_y) {
+static double signed_turn(
+  double uin_x, double uin_y,
+  double uout_x, double uout_y)
+{
   double cross = uin_x * uout_y - uin_y * uout_x;
-  double dot   = uin_x * uout_x + uin_y * uout_y;
+  double dot = uin_x * uout_x + uin_y * uout_y;
   return std::atan2(cross, dot);
 }
 
 /// 对直线段按 res 采样（不含起点，避免与上一段重复）。
 static void sample_straight(
-    double x0, double y0, double x1, double y1,
-    double psi, double res,
-    std::vector<double>& xs, std::vector<double>& ys,
-    std::vector<double>& psis, std::vector<double>& kappas) {
+  double x0, double y0, double x1, double y1,
+  double psi, double res,
+  std::vector<double> & xs, std::vector<double> & ys,
+  std::vector<double> & psis, std::vector<double> & kappas)
+{
   double seg_len = std::hypot(x1 - x0, y1 - y0);
-  if (seg_len < 1e-6) return;
+  if (seg_len < 1e-6) {return;}
   int n_steps = std::max(1, static_cast<int>(std::round(seg_len / res)));
   for (int k = 1; k <= n_steps; ++k) {
     double t = static_cast<double>(k) / n_steps;
@@ -74,10 +79,11 @@ static void sample_straight(
 
 /// 对常曲率圆弧精确积分采样（不含起点）。返回 (x_end, y_end, psi_end)。
 static std::tuple<double, double, double> sample_arc(
-    double x0, double y0, double psi0,
-    double kappa, double arc_len, double res,
-    std::vector<double>& xs, std::vector<double>& ys,
-    std::vector<double>& psis, std::vector<double>& kappas_out) {
+  double x0, double y0, double psi0,
+  double kappa, double arc_len, double res,
+  std::vector<double> & xs, std::vector<double> & ys,
+  std::vector<double> & psis, std::vector<double> & kappas_out)
+{
   int n_steps = std::max(1, static_cast<int>(std::round(arc_len / res)));
   double ds = arc_len / n_steps;
   double x = x0, y = y0, psi = psi0;
@@ -101,8 +107,10 @@ static std::tuple<double, double, double> sample_arc(
 
 // ── 公开 API ─────────────────────────────────────────────
 
-Eigen::VectorXd arc_length(const Eigen::VectorXd& xs,
-                            const Eigen::VectorXd& ys) {
+Eigen::VectorXd arc_length(
+  const Eigen::VectorXd & xs,
+  const Eigen::VectorXd & ys)
+{
   const int n = static_cast<int>(xs.size());
   Eigen::VectorXd s = Eigen::VectorXd::Zero(n);
   for (int i = 1; i < n; ++i) {
@@ -112,29 +120,30 @@ Eigen::VectorXd arc_length(const Eigen::VectorXd& xs,
 }
 
 FilletResult fillet_path(
-    const std::vector<std::pair<double, double>>& waypoints,
-    double turn_radius,
-    double resolution) {
+  const std::vector<std::pair<double, double>> & waypoints,
+  double turn_radius,
+  double resolution)
+{
   FilletResult result;
   const int n = static_cast<int>(waypoints.size());
-  if (n < 2) return result;
+  if (n < 2) {return result;}
 
   // 有限性门禁: NaN/Inf 航点会让 round(seg_len/res) 变成 UB、后续几何全部
   // 污染。返回空结果, 由调用方按"路径过短"发布空路径。
-  for (const auto& wp : waypoints) {
+  for (const auto & wp : waypoints) {
     if (!std::isfinite(wp.first) || !std::isfinite(wp.second)) {
       return result;
     }
   }
 
   double res = std::max(1e-3, resolution);
-  double R   = std::max(1e-3, turn_radius);
+  double R = std::max(1e-3, turn_radius);
 
   std::vector<double> xs_v, ys_v, psis_v, kappas_v;
 
   // 连续累积航向：以第一段方向为起点
   auto [ux0, uy0, len0] = unit_vec(
-      waypoints[1].first  - waypoints[0].first,
+      waypoints[1].first - waypoints[0].first,
       waypoints[1].second - waypoints[0].second);
   (void)len0;
   double psi_cont = std::atan2(uy0, ux0);
@@ -156,11 +165,11 @@ FilletResult fillet_path(
     auto [uout_x, uout_y, len_out] = unit_vec(ccx - bx, ccy - by);
     (void)len_in_raw;
 
-    if (uin_x == 0.0 && uin_y == 0.0) continue;
-    if (uout_x == 0.0 && uout_y == 0.0) continue;
+    if (uin_x == 0.0 && uin_y == 0.0) {continue;}
+    if (uout_x == 0.0 && uout_y == 0.0) {continue;}
 
     double delta = signed_turn(uin_x, uin_y, uout_x, uout_y);
-    if (std::abs(delta) < 1e-4) continue;
+    if (std::abs(delta) < 1e-4) {continue;}
 
     // 切线缩进
     double len_in = std::hypot(bx - cx, by - cy);
@@ -172,7 +181,7 @@ FilletResult fillet_path(
     //  留下 G0 尖角 → TOPP 近零速 → 加减速震荡; 2026-09-08 review 定位)
     double t_max_geom = std::min(len_in, 0.5 * len_out);
     double T = std::min(t_desired, t_max_geom);
-    if (T < 1e-6) continue;
+    if (T < 1e-6) {continue;}
 
     double r_eff = T / tan_half;
     if (r_eff < R - 1e-3) {
@@ -211,22 +220,24 @@ FilletResult fillet_path(
 
   // 转换为 Eigen 向量
   const int m = static_cast<int>(xs_v.size());
-  result.xs     = Eigen::Map<Eigen::VectorXd>(xs_v.data(), m);
-  result.ys     = Eigen::Map<Eigen::VectorXd>(ys_v.data(), m);
-  result.psis   = Eigen::Map<Eigen::VectorXd>(psis_v.data(), m);
+  result.xs = Eigen::Map<Eigen::VectorXd>(xs_v.data(), m);
+  result.ys = Eigen::Map<Eigen::VectorXd>(ys_v.data(), m);
+  result.psis = Eigen::Map<Eigen::VectorXd>(psis_v.data(), m);
   result.kappas = Eigen::Map<Eigen::VectorXd>(kappas_v.data(), m);
-  result.s      = arc_length(result.xs, result.ys);
+  result.s = arc_length(result.xs, result.ys);
   return result;
 }
 
-GeometryResult recompute_geometry(const Eigen::VectorXd& xs,
-                                   const Eigen::VectorXd& ys) {
+GeometryResult recompute_geometry(
+  const Eigen::VectorXd & xs,
+  const Eigen::VectorXd & ys)
+{
   GeometryResult res;
   const int n = static_cast<int>(xs.size());
   res.s = arc_length(xs, ys);
 
   if (n < 2) {
-    res.psis   = Eigen::VectorXd::Zero(n);
+    res.psis = Eigen::VectorXd::Zero(n);
     res.kappas = Eigen::VectorXd::Zero(n);
     return res;
   }
@@ -252,8 +263,8 @@ GeometryResult recompute_geometry(const Eigen::VectorXd& xs,
   // unwrap：使相邻差值在 [-pi, pi] 范围内
   for (int i = 1; i < n; ++i) {
     double diff = psi(i) - psi(i - 1);
-    while (diff > M_PI)  diff -= 2.0 * M_PI;
-    while (diff < -M_PI) diff += 2.0 * M_PI;
+    while (diff > M_PI) {diff -= 2.0 * M_PI;}
+    while (diff < -M_PI) {diff += 2.0 * M_PI;}
     psi(i) = psi(i - 1) + diff;
   }
 
@@ -275,7 +286,7 @@ GeometryResult recompute_geometry(const Eigen::VectorXd& xs,
     kappa(i) = (dx(i) * ddy(i) - dy(i) * ddx(i)) / denom;
   }
 
-  res.psis   = std::move(psi);
+  res.psis = std::move(psi);
   res.kappas = std::move(kappa);
   return res;
 }

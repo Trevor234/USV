@@ -35,13 +35,15 @@
 
 using namespace std::chrono_literals;
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 static const std::set<uint16_t> NAV_WAYPOINT_COMMANDS = {
-    MAV_CMD_NAV_WAYPOINT, MAV_CMD_NAV_SPLINE_WAYPOINT};
+  MAV_CMD_NAV_WAYPOINT, MAV_CMD_NAV_SPLINE_WAYPOINT};
 
 MissionBridgeNode::MissionBridgeNode()
-    : Node("mission_bridge_node") {
+: Node("mission_bridge_node")
+{
   // ── 参数声明与读取 ──
   this->declare_parameter("waypoints_topic",
                           std::string("/mavros/mission/waypoints"));
@@ -57,30 +59,30 @@ MissionBridgeNode::MissionBridgeNode()
   this->declare_parameter("output_frame", std::string("map"));
 
   waypoints_topic_ = this->get_parameter("waypoints_topic").as_string();
-  origin_topic_    = this->get_parameter("origin_topic").as_string();
-  output_topic_    = this->get_parameter("output_topic").as_string();
-  pull_service_    = this->get_parameter("pull_service").as_string();
-  auto_pull_       = this->get_parameter("auto_pull").as_bool();
-  pull_interval_   = std::max(0.5, this->get_parameter("pull_interval").as_double());
-  skip_home_       = this->get_parameter("skip_home").as_bool();
-  output_frame_    = this->get_parameter("output_frame").as_string();
+  origin_topic_ = this->get_parameter("origin_topic").as_string();
+  output_topic_ = this->get_parameter("output_topic").as_string();
+  pull_service_ = this->get_parameter("pull_service").as_string();
+  auto_pull_ = this->get_parameter("auto_pull").as_bool();
+  pull_interval_ = std::max(0.5, this->get_parameter("pull_interval").as_double());
+  skip_home_ = this->get_parameter("skip_home").as_bool();
+  output_frame_ = this->get_parameter("output_frame").as_string();
 
   // ── QoS 配置（双订阅防兼容性问题） ──
   auto latched_qos = rclcpp::QoS(rclcpp::KeepLast(1))
-      .reliable()
-      .transient_local();
+    .reliable()
+    .transient_local();
   auto volatile_qos = rclcpp::QoS(rclcpp::KeepLast(10))
-      .reliable();
+    .reliable();
 
   // 航点订阅（latched + volatile 双保险）
   wp_sub_latched_ =
-      this->create_subscription<mavros_msgs::msg::WaypointList>(
+    this->create_subscription<mavros_msgs::msg::WaypointList>(
           waypoints_topic_,
           latched_qos,
           std::bind(&MissionBridgeNode::waypoints_callback_, this,
                     std::placeholders::_1));
   wp_sub_volatile_ =
-      this->create_subscription<mavros_msgs::msg::WaypointList>(
+    this->create_subscription<mavros_msgs::msg::WaypointList>(
           waypoints_topic_,
           volatile_qos,
           std::bind(&MissionBridgeNode::waypoints_callback_, this,
@@ -88,13 +90,13 @@ MissionBridgeNode::MissionBridgeNode()
 
   // 坐标原点订阅（latched + volatile 双保险）
   origin_sub_latched_ =
-      this->create_subscription<geographic_msgs::msg::GeoPointStamped>(
+    this->create_subscription<geographic_msgs::msg::GeoPointStamped>(
           origin_topic_,
           latched_qos,
           std::bind(&MissionBridgeNode::origin_callback_, this,
                     std::placeholders::_1));
   origin_sub_volatile_ =
-      this->create_subscription<geographic_msgs::msg::GeoPointStamped>(
+    this->create_subscription<geographic_msgs::msg::GeoPointStamped>(
           origin_topic_,
           volatile_qos,
           std::bind(&MissionBridgeNode::origin_callback_, this,
@@ -106,7 +108,7 @@ MissionBridgeNode::MissionBridgeNode()
   // 主动拉取定时器
   if (auto_pull_) {
     pull_client_ =
-        this->create_client<mavros_msgs::srv::WaypointPull>(pull_service_);
+      this->create_client<mavros_msgs::srv::WaypointPull>(pull_service_);
     pull_timer_ = this->create_wall_timer(
         std::chrono::duration<double>(pull_interval_),
         std::bind(&MissionBridgeNode::pull_mission_, this));
@@ -121,9 +123,10 @@ MissionBridgeNode::MissionBridgeNode()
 
 // ── 原点回调 ─────────────────────────────────────────────
 void MissionBridgeNode::origin_callback_(
-    const geographic_msgs::msg::GeoPointStamped::SharedPtr msg) {
+  const geographic_msgs::msg::GeoPointStamped::SharedPtr msg)
+{
   std::pair<double, double> new_origin{msg->position.latitude,
-                                        msg->position.longitude};
+    msg->position.longitude};
   if (!origin_.has_value() || origin_.value() != new_origin) {
     origin_ = new_origin;
     RCLCPP_INFO(this->get_logger(), "GP origin set: lat=%.7f, lon=%.7f",
@@ -136,7 +139,8 @@ void MissionBridgeNode::origin_callback_(
 
 // ── 航点回调（去重） ─────────────────────────────────────
 void MissionBridgeNode::waypoints_callback_(
-    const mavros_msgs::msg::WaypointList::SharedPtr msg) {
+  const mavros_msgs::msg::WaypointList::SharedPtr msg)
+{
   auto sig = waypoint_signature_(*msg);
   if (last_signature_.has_value() && last_signature_.value() == sig) {
     return;
@@ -151,9 +155,10 @@ void MissionBridgeNode::waypoints_callback_(
 // ── 航点签名 ─────────────────────────────────────────────
 std::pair<uint16_t, MissionBridgeNode::WaypointSignature>
 MissionBridgeNode::waypoint_signature_(
-    const mavros_msgs::msg::WaypointList& msg) const {
+  const mavros_msgs::msg::WaypointList & msg) const
+{
   WaypointSignature sig;
-  for (const auto& wp : msg.waypoints) {
+  for (const auto & wp : msg.waypoints) {
     sig.emplace_back(
         wp.frame, wp.command, wp.is_current, wp.autocontinue,
         wp.param1, wp.param2, wp.param3, wp.param4,
@@ -163,8 +168,9 @@ MissionBridgeNode::waypoint_signature_(
 }
 
 // ── 主动拉取任务 ─────────────────────────────────────────
-void MissionBridgeNode::pull_mission_() {
-  if (!pull_client_ || pull_in_progress_) return;
+void MissionBridgeNode::pull_mission_()
+{
+  if (!pull_client_ || pull_in_progress_) {return;}
   if (!pull_client_->service_is_ready()) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                          "等待 MAVROS mission pull 服务: %s",
@@ -180,7 +186,8 @@ void MissionBridgeNode::pull_mission_() {
 }
 
 void MissionBridgeNode::pull_done_callback_(
-    rclcpp::Client<mavros_msgs::srv::WaypointPull>::SharedFuture future) {
+  rclcpp::Client<mavros_msgs::srv::WaypointPull>::SharedFuture future)
+{
   pull_in_progress_ = false;
   try {
     auto response = future.get();
@@ -195,15 +202,16 @@ void MissionBridgeNode::pull_done_callback_(
       RCLCPP_INFO(this->get_logger(),
                   "MAVROS mission pull 成功: %d 项", received);
     }
-  } catch (const std::exception& e) {
+  } catch (const std::exception & e) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                          "拉取 MAVROS mission 航点失败: %s", e.what());
   }
 }
 
 // ── 坐标转换并发布 ───────────────────────────────────────
-void MissionBridgeNode::republish_() {
-  if (!last_waypoints_) return;
+void MissionBridgeNode::republish_()
+{
+  if (!last_waypoints_) {return;}
 
   if (!origin_.has_value()) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
@@ -221,7 +229,7 @@ void MissionBridgeNode::republish_() {
 
   int skipped = 0;
   for (size_t i = 0; i < last_waypoints_->waypoints.size(); ++i) {
-    const auto& wp = last_waypoints_->waypoints[i];
+    const auto & wp = last_waypoints_->waypoints[i];
     if (NAV_WAYPOINT_COMMANDS.find(wp.command) == NAV_WAYPOINT_COMMANDS.end()) {
       skipped++;
       continue;
@@ -234,7 +242,8 @@ void MissionBridgeNode::republish_() {
     // 经纬度有效性门禁: NaN/Inf 或未初始化的 (0,0) 航点会被转换成
     // ~10^7 m 外的 ENU 点, MPC 就近投影后参考指向错误方向、全速开船。
     if (!std::isfinite(wp.x_lat) || !std::isfinite(wp.y_long) ||
-        (std::fabs(wp.x_lat) < 1e-6 && std::fabs(wp.y_long) < 1e-6)) {
+      (std::fabs(wp.x_lat) < 1e-6 && std::fabs(wp.y_long) < 1e-6))
+    {
       skipped++;
       RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                            "航点 #%zu 经纬度无效 (lat=%f, lon=%f)，已跳过",
@@ -244,7 +253,7 @@ void MissionBridgeNode::republish_() {
 
     // 经纬度 -> ENU 平面坐标 (m)
     double dE = (wp.y_long - lon0) * (M_PI / 180.0) * EARTH_RADIUS_M * cos_lat0;
-    double dN = (wp.x_lat - lat0)  * (M_PI / 180.0) * EARTH_RADIUS_M;
+    double dN = (wp.x_lat - lat0) * (M_PI / 180.0) * EARTH_RADIUS_M;
 
     geometry_msgs::msg::PoseStamped pose;
     pose.header = path.header;

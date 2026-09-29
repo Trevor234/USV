@@ -35,9 +35,11 @@
 #include "usv_mpc_cpp/casadi_kinematic_backend.hpp"
 #endif
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
-std::unique_ptr<KinematicMpc> make_kinematic_mpc(const KinematicMpcParams& params) {
+std::unique_ptr<KinematicMpc> make_kinematic_mpc(const KinematicMpcParams & params)
+{
   // A 的 C++ 版只有 CasADi 后端。acados 运动学 codegen 签名 (usv_kin_*) 与
   // 方案 B 的 usv_dyn_nmpc_* 不同, 需单独 codegen, 工作量大, 留 TODO
   // (见 docs/acados_migration.md)。

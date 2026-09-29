@@ -49,52 +49,54 @@
 
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "usv_mpc_cpp/mpc_solver.hpp"
 
 // codegen 求解器头 (本包 vendored, acados_generated/, CMake 加 -I)
-#include "acados_solver_usv_dyn_nmpc.h"
+#include "acados_solver_usv_dyn_nmpc.h"  // NOLINT(build/include_subdir)
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 class AcadosBackend : public DynamicMpc {
- public:
+public:
   /// 构造 acados 求解器 (codegen 已静态链接进本包)。
   /// 抛 std::runtime_error 若 create 失败。
-  explicit AcadosBackend(const MpcParams& params);
+  explicit AcadosBackend(const MpcParams & params);
 
   ~AcadosBackend() override;
 
   std::pair<Eigen::Vector2d, SolveInfo>
-  solve(const Vector6d& current_state, const Eigen::MatrixXd& reference) override;
+  solve(const Vector6d & current_state, const Eigen::MatrixXd & reference) override;
 
-  void set_applied_control(const Eigen::Vector2d& applied_control) override;
+  void set_applied_control(const Eigen::Vector2d & applied_control) override;
 
   void reset_warmstart() override;
 
   Eigen::MatrixXd get_predicted_trajectory() const override;
 
-  int    N() const override { return params_.N; }
-  double dt() const override { return params_.dt; }
-  const char* backend() const override { return "acados"; }
+  int    N() const override {return params_.N;}
+  double dt() const override {return params_.dt;}
+  const char * backend() const override {return "acados";}
 
- private:
+private:
   /// 组装 30 维 p_global (19 水动力学 + 6 Q + 2 R + 2 Rd + 1 Qf)。
   std::array<double, 30> build_p_global_() const;
 
   /// K4 分级安全回退:沿历史最优轨迹继续 → 轨迹耗尽后双桨归零。
   /// note 追加回退说明 (写入 SolveInfo.error 供 /mpc/status 上报)。
-  Eigen::Vector2d safe_fallback_(std::string& note);
+  Eigen::Vector2d safe_fallback_(std::string & note);
 
   MpcParams params_;
 
   // acados 句柄
-  usv_dyn_nmpc_solver_capsule* capsule_ = nullptr;
+  usv_dyn_nmpc_solver_capsule * capsule_ = nullptr;
   // nlp 句柄 (用于 set/get, 类型来自 acados)
-  ocp_nlp_config* nlp_config_ = nullptr;
-  ocp_nlp_dims*   nlp_dims_   = nullptr;
-  ocp_nlp_in*     nlp_in_     = nullptr;
-  ocp_nlp_out*    nlp_out_    = nullptr;
+  ocp_nlp_config * nlp_config_ = nullptr;
+  ocp_nlp_dims *   nlp_dims_ = nullptr;
+  ocp_nlp_in *     nlp_in_ = nullptr;
+  ocp_nlp_out *    nlp_out_ = nullptr;
 
   // 热启动状态
   bool has_warm_ = false;

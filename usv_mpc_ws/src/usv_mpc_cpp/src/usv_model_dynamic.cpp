@@ -30,15 +30,19 @@
 
 #include <cmath>
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
-USVDynamicModel::USVDynamicModel(double dt, int rk4_substeps,
-                                 const HydroParams& p)
-    : dt_(dt), rk4_substeps_(rk4_substeps), params_(p) {}
+USVDynamicModel::USVDynamicModel(
+  double dt, int rk4_substeps,
+  const HydroParams & p)
+: dt_(dt), rk4_substeps_(rk4_substeps), params_(p) {}
 
-Vector6d USVDynamicModel::continuous_ode(const Vector6d& state,
-                                         const Eigen::Vector2d& control,
-                                         const HydroParams& p) {
+Vector6d USVDynamicModel::continuous_ode(
+  const Vector6d & state,
+  const Eigen::Vector2d & control,
+  const HydroParams & p)
+{
   double psi_s = state(2);
   double u_s = state(3), v_s = state(4), r_s = state(5);
   double TL = control(0), TR = control(1);
@@ -52,8 +56,8 @@ Vector6d USVDynamicModel::continuous_ode(const Vector6d& state,
 
   Eigen::Matrix3d M;
   M << m11, 0.0, 0.0,
-       0.0, m22, m23,
-       0.0, m32, m33;
+    0.0, m22, m23,
+    0.0, m32, m33;
 
   // 科里奥利矩阵 C(nu)
   double c13 = -m22 * v_s - m23 * r_s;
@@ -83,8 +87,8 @@ Vector6d USVDynamicModel::continuous_ode(const Vector6d& state,
   double sin_psi = std::sin(psi_s);
   Eigen::Matrix3d J;
   J << cos_psi, -sin_psi, 0.0,
-       sin_psi,  cos_psi, 0.0,
-       0.0,      0.0,     1.0;
+    sin_psi, cos_psi, 0.0,
+    0.0, 0.0, 1.0;
   Eigen::Vector3d eta_dot = J * nu;
 
   // 动力学: dot_nu = M^{-1} * (tau - C*nu - D*nu)
@@ -95,8 +99,10 @@ Vector6d USVDynamicModel::continuous_ode(const Vector6d& state,
   return rhs;
 }
 
-Vector6d USVDynamicModel::forward(const Vector6d& state,
-                                  const Eigen::Vector2d& control) const {
+Vector6d USVDynamicModel::forward(
+  const Vector6d & state,
+  const Eigen::Vector2d & control) const
+{
   // RK4 离散化 (rk4_substeps 子步)
   Vector6d X = state;
   double h = dt_ / static_cast<double>(rk4_substeps_);

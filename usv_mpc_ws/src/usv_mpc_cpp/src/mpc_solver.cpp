@@ -37,19 +37,22 @@
 #include "usv_mpc_cpp/casadi_backend.hpp"
 #endif
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 #ifdef USV_MPC_HAS_CASADI
-std::unique_ptr<DynamicMpc> make_casadi_dynamic_mpc(const MpcParams& params) {
+std::unique_ptr<DynamicMpc> make_casadi_dynamic_mpc(const MpcParams & params)
+{
   return std::make_unique<CasadiBackend>(params);
 }
 #endif
 
-std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams& params) {
+std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams & params)
+{
   // 1. 尝试 acados (codegen 已 vendored 并静态链接进本包)
   try {
     return std::make_unique<AcadosBackend>(params);
-  } catch (const std::exception& e) {
+  } catch (const std::exception & e) {
     std::fprintf(stderr,
                  "[usv_mpc_cpp] acados 后端构造失败,回退 CasADi: %s\n",
                  e.what());

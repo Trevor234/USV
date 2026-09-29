@@ -41,17 +41,19 @@
 
 #include <Eigen/Dense>
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 /// 6 维状态向量 (Eigen 无 Vector6d 内置 typedef)。
 using Vector6d = Eigen::Matrix<double, 6, 1>;
 
 /// 19 维水动力学参数 (p_global 的前 19 维)。
 /// 对应 Python: PG_INDICES / hydro_dict_to_p_global。
-struct HydroParams {
-  double mass       = 14.2;
-  double Iz         = 2.13;
-  double xg         = 0.12;
+struct HydroParams
+{
+  double mass = 14.2;
+  double Iz = 2.13;
+  double xg = 0.12;
   double d_thruster = 0.25;
   // 附加质量
   double Xu_dot = -2.0;
@@ -75,29 +77,32 @@ struct HydroParams {
 
 /// USV 三自由度 Fossen 动力学模型 (双推进器)。
 class USVDynamicModel {
- public:
-  USVDynamicModel(double dt = 0.2, int rk4_substeps = 4,
-                  const HydroParams& p = HydroParams{});
+public:
+  USVDynamicModel(
+    double dt = 0.2, int rk4_substeps = 4,
+    const HydroParams & p = HydroParams{});
 
   /// 连续 Fossen ODE 右端 rhs = [eta_dot; nu_dot] (6 维)。
   /// 对应 Python: continuous_ode_expr (数值版, 非符号)。
-  static usv_mpc::Vector6d continuous_ode(const usv_mpc::Vector6d& state,
-                                        const Eigen::Vector2d& control,
-                                        const HydroParams& p);
+  static usv_mpc::Vector6d continuous_ode(
+    const usv_mpc::Vector6d & state,
+    const Eigen::Vector2d & control,
+    const HydroParams & p);
 
   /// 将 6 维状态向前推进 dt 时间步 (RK4)。
   /// 对应 Python: forward
-  usv_mpc::Vector6d forward(const usv_mpc::Vector6d& state,
-                          const Eigen::Vector2d& control) const;
+  usv_mpc::Vector6d forward(
+    const usv_mpc::Vector6d & state,
+    const Eigen::Vector2d & control) const;
 
   // ── 维度访问器 ──
-  int n_states() const { return 6; }
-  int n_controls() const { return 2; }
-  double dt() const { return dt_; }
+  int n_states() const {return 6;}
+  int n_controls() const {return 2;}
+  double dt() const {return dt_;}
 
-  const HydroParams& params() const { return params_; }
+  const HydroParams & params() const {return params_;}
 
- private:
+private:
   double dt_;
   int rk4_substeps_;
   HydroParams params_;

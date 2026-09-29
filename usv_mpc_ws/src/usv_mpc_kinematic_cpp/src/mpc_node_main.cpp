@@ -36,27 +36,28 @@
 
 #include "usv_mpc_cpp/mpc_node.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
   auto node = std::make_shared<usv_mpc::MpcControllerNode>();
 
   // SIGINT 时 rclcpp 信号处理器在 spin 返回前就触发 context shutdown;
   // on_shutdown 回调是发布安全停车指令的最后时机 (此刻 context 仍可用)。
   node->get_node_base_interface()->get_context()->on_shutdown(
-      [ptr = node.get()]() { ptr->safe_shutdown(); });
+    [ptr = node.get()]() {ptr->safe_shutdown();});
 
   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 3);
   executor.add_node(node);
   try {
     executor.spin();
-  } catch (const std::exception& e) {
+  } catch (const std::exception & e) {
     fprintf(stderr, "[mpc_node] executor 异常: %s\n", e.what());
   }
   // 兜底: 非 SIGINT 退出 (异常等) 时 on_shutdown 未触发, 这里再发一次;
   // 若 shutdown 已进行过, publish 会抛错, 捕获即可 (幂等, 重复发送无害)。
   try {
     node->safe_shutdown();
-  } catch (const std::exception& e) {
+  } catch (const std::exception & e) {
     fprintf(stderr, "[mpc_node] safe_shutdown: %s\n", e.what());
   }
   node.reset();

@@ -31,49 +31,98 @@
 #include <algorithm>
 #include <cmath>
 
-namespace usv_planning {
+#include <yaml-cpp/yaml.h>
 
-void WaypointManager::add_waypoint(const Waypoint& wp) {
+namespace usv_planning
+{
+
+void WaypointManager::add_waypoint(const Waypoint & wp)
+{
   waypoints_.push_back(wp);
 }
 
-void WaypointManager::clear() {
+bool WaypointManager::load_from_yaml_file(
+  const std::string & filepath,
+  double default_radius)
+{
+  clear();
+  try {
+    YAML::Node config = YAML::LoadFile(filepath);
+    if (!config["waypoints"] || !config["waypoints"].IsSequence()) {
+      return false;
+    }
+    for (const auto & node : config["waypoints"]) {
+      if (!node["x"] || !node["y"]) {
+        continue;
+      }
+      double x = node["x"].as<double>();
+      double y = node["y"].as<double>();
+      if (!std::isfinite(x) || !std::isfinite(y)) {
+        continue;
+      }
+      Waypoint wp;
+      wp.x = x;
+      wp.y = y;
+      wp.radius = node["radius"] ? node["radius"].as<double>() : default_radius;
+      double heading_deg = node["heading_deg"] ? node["heading_deg"].as<double>() : 0.0;
+      wp.heading = heading_deg * M_PI / 180.0;
+      wp.stay_time = node["stay_time"] ? node["stay_time"].as<double>() : 0.0;
+      waypoints_.push_back(wp);
+    }
+    return !waypoints_.empty();
+  } catch (const std::exception &) {
+    clear();
+    return false;
+  }
+}
+
+void WaypointManager::clear()
+{
   waypoints_.clear();
   current_idx_ = 0;
   mission_complete_ = false;
 }
 
-const Waypoint& WaypointManager::current_waypoint() const {
+const Waypoint & WaypointManager::current_waypoint() const
+{
   if (mission_complete_) {
     return waypoints_.back();
   }
   return waypoints_[current_idx_];
 }
 
-bool WaypointManager::update_progress(double x, double y) {
-  if (mission_complete_ || waypoints_.empty()) return false;
+bool WaypointManager::update_progress(double x, double y)
+{
+  if (mission_complete_ || waypoints_.empty()) {return false;}
 
-  const auto& wp = waypoints_[current_idx_];
-  double dist = std::hypot(x - wp.x, y - wp.y);
-  if (dist < wp.radius) {
-    current_idx_++;
-    if (current_idx_ >= static_cast<int>(waypoints_.size())) {
-      mission_complete_ = true;
+  bool advanced = false;
+  while (current_idx_ < static_cast<int>(waypoints_.size())) {
+    const auto & wp = waypoints_[current_idx_];
+    double dist = std::hypot(x - wp.x, y - wp.y);
+    if (dist < wp.radius) {
+      current_idx_++;
+      advanced = true;
+      if (current_idx_ >= static_cast<int>(waypoints_.size())) {
+        mission_complete_ = true;
+        break;
+      }
+    } else {
+      break;
     }
-    return true;
   }
-  return false;
+  return advanced;
 }
 
 std::vector<Waypoint> WaypointManager::get_active_waypoints(
-    int lookahead) const {
+  int lookahead) const
+{
   if (mission_complete_) {
     return {waypoints_.back()};
   }
   int end = std::min(current_idx_ + lookahead,
                      static_cast<int>(waypoints_.size()));
   return {waypoints_.begin() + current_idx_,
-          waypoints_.begin() + end};
+    waypoints_.begin() + end};
 }
 
 }  // namespace usv_planning

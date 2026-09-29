@@ -29,23 +29,32 @@
  * RK4 离散化, Opti+IPOPT 求解 NMPC。
  */
 
-#include "usv_mpc_cpp/casadi_backend.hpp"
-#include "usv_mpc_cpp/utils.hpp"
-
 #include <chrono>
 #include <cstdio>
 #include <cmath>
 #include <stdexcept>
 
-namespace usv_mpc {
+#include "usv_mpc_cpp/casadi_backend.hpp"
+#include "usv_mpc_cpp/utils.hpp"
 
-namespace {
+namespace usv_mpc
+{
 
-using namespace casadi;
+namespace
+{
+
+using casadi::DM;
+using casadi::Function;
+using casadi::MX;
+using casadi::Opti;
+using casadi::OptiSol;
+using casadi::Slice;
+using casadi::Sparsity;
 
 /// 符号 Fossen ODE 右端 rhs=[eta_dot; nu_dot] (6 维)。
 /// 与 Python continuous_ode_expr 等价 (数值参数固化)。
-MX fossen_ode(const MX& s, const MX& u_in, const HydroParams& p) {
+MX fossen_ode(const MX & s, const MX & u_in, const HydroParams & p)
+{
   MX psi_s = s(2), u_s = s(3), v_s = s(4), r_s = s(5);
   MX TL = u_in(0), TR = u_in(1);
 
@@ -95,8 +104,10 @@ MX fossen_ode(const MX& s, const MX& u_in, const HydroParams& p) {
 }
 
 /// 取行子集 (idx_xy_uvr = [0,1,3,4,5]) 的代价和。
-MX quad_cost_xy_uvr(const MX& Xk, const MX& ref_k,
-                    double q0, double q1, double q3, double q4, double q5) {
+MX quad_cost_xy_uvr(
+  const MX & Xk, const MX & ref_k,
+  double q0, double q1, double q3, double q4, double q5)
+{
   MX e0 = Xk(0) - ref_k(0);
   MX e1 = Xk(1) - ref_k(1);
   MX e3 = Xk(3) - ref_k(3);
@@ -107,12 +118,15 @@ MX quad_cost_xy_uvr(const MX& Xk, const MX& ref_k,
 
 }  // namespace
 
-CasadiBackend::CasadiBackend(const MpcParams& params) : params_(params) {
+CasadiBackend::CasadiBackend(const MpcParams & params)
+: params_(params)
+{
   if (!params_.Q_diag.allFinite() || !params_.R_diag.allFinite() ||
-      !params_.Rd_diag.allFinite() || !std::isfinite(params_.Qf_scale) ||
-      (params_.Q_diag.array() < 0.0).any() ||
-      (params_.R_diag.array() < 0.0).any() ||
-      (params_.Rd_diag.array() < 0.0).any() || params_.Qf_scale < 0.0) {
+    !params_.Rd_diag.allFinite() || !std::isfinite(params_.Qf_scale) ||
+    (params_.Q_diag.array() < 0.0).any() ||
+    (params_.R_diag.array() < 0.0).any() ||
+    (params_.Rd_diag.array() < 0.0).any() || params_.Qf_scale < 0.0)
+  {
     throw std::invalid_argument("MPC cost weights must be finite and nonnegative");
   }
 
@@ -201,18 +215,19 @@ CasadiBackend::CasadiBackend(const MpcParams& params) : params_(params) {
   }
 
   opti_.solver("ipopt",
-               {{"print_time", 0}},
-               {{"print_level", 0}, {"max_iter", 300},
-                {"warm_start_init_point", "yes"},
-                {"tol", 1e-4}, {"acceptable_tol", 1e-3},
-                {"acceptable_iter", 10}});
+    {{"print_time", 0}},
+    {{"print_level", 0}, {"max_iter", 300},
+      {"warm_start_init_point", "yes"},
+      {"tol", 1e-4}, {"acceptable_tol", 1e-3},
+      {"acceptable_iter", 10}});
 
   X_warm_ = Eigen::MatrixXd::Zero(6, N + 1);
   U_warm_ = Eigen::MatrixXd::Zero(2, N);
 }
 
 std::pair<Eigen::Vector2d, SolveInfo>
-CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& reference) {
+CasadiBackend::solve(const Vector6d & current_state, const Eigen::MatrixXd & reference)
+{
   SolveInfo info;
   snprintf(info.backend, sizeof(info.backend), "casadi");
   const int N = params_.N;
@@ -247,11 +262,17 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
   // 热启动初值
   std::vector<double> xw(6 * (N + 1));
   if (has_warm_) {
-    for (int c = 0; c <= N; ++c)
-      for (int r = 0; r < 6; ++r) xw[c * 6 + r] = X_warm_(r, c);
+    for (int c = 0; c <= N; ++c) {
+      for (int r = 0; r < 6; ++r) {
+        xw[c * 6 + r] = X_warm_(r, c);
+      }
+    }
   } else {
-    for (int c = 0; c <= N; ++c)
-      for (int r = 0; r < 6; ++r) xw[c * 6 + r] = current_state(r);
+    for (int c = 0; c <= N; ++c) {
+      for (int r = 0; r < 6; ++r) {
+        xw[c * 6 + r] = current_state(r);
+      }
+    }
   }
   opti_.set_initial(X_, DM(Sparsity::dense(6, N + 1), xw));
   opti_.set_initial(U_, DM(Sparsity::dense(2, N), std::vector<double>(2 * N, 0.0)));
@@ -271,15 +292,22 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
     std::vector<double> u_all = U_dm.nonzeros();
     info.X_pred = Eigen::MatrixXd::Zero(6, N + 1);
     info.U_pred = Eigen::MatrixXd::Zero(2, N);
-    for (int c = 0; c <= N; ++c)
-      for (int r = 0; r < 6; ++r) info.X_pred(r, c) = x_all[c * 6 + r];
-    for (int c = 0; c < N; ++c)
-      for (int r = 0; r < 2; ++r) info.U_pred(r, c) = u_all[c * 2 + r];
+    for (int c = 0; c <= N; ++c) {
+      for (int r = 0; r < 6; ++r) {
+        info.X_pred(r, c) = x_all[c * 6 + r];
+      }
+    }
+    for (int c = 0; c < N; ++c) {
+      for (int r = 0; r < 2; ++r) {
+        info.U_pred(r, c) = u_all[c * 2 + r];
+      }
+    }
 
     // NaN/Inf 门禁: IPOPT 收敛判据不保证有限值,在写入热启动前拦截,
     // 避免 NaN 经 u_prev_/X_warm_/U_warm_ 扩散到后续拍。
     if (!u_opt.allFinite() || !info.X_pred.allFinite() ||
-        !info.U_pred.allFinite()) {
+      !info.U_pred.allFinite())
+    {
       info.success = false;
       snprintf(info.error, sizeof(info.error), "non_finite_solution");
       return {u_prev_, info};
@@ -294,7 +322,7 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
 
     info.success = true;
     return {u_opt, info};
-  } catch (const std::exception& e) {
+  } catch (const std::exception & e) {
     auto t1 = std::chrono::steady_clock::now();
     info.solve_time_ms = std::chrono::duration<double, std::milli>(t1 - t0).count();
     info.success = false;
@@ -304,27 +332,31 @@ CasadiBackend::solve(const Vector6d& current_state, const Eigen::MatrixXd& refer
 }
 
 void CasadiBackend::set_applied_control(
-    const Eigen::Vector2d& applied_control) {
+  const Eigen::Vector2d & applied_control)
+{
   constexpr double kBoundTolerance = 1e-9;
   if (!applied_control.allFinite()) {
     throw std::invalid_argument("applied control must be finite");
   }
   if ((applied_control.array() < params_.T_min - kBoundTolerance).any() ||
-      (applied_control.array() > params_.T_max + kBoundTolerance).any()) {
+    (applied_control.array() > params_.T_max + kBoundTolerance).any())
+  {
     throw std::out_of_range("applied control exceeds MPC thrust bounds");
   }
   u_prev_ = applied_control;
 }
 
-void CasadiBackend::reset_warmstart() {
+void CasadiBackend::reset_warmstart()
+{
   has_warm_ = false;
   X_warm_.setZero();
   U_warm_.setZero();
   u_prev_.setZero();
 }
 
-Eigen::MatrixXd CasadiBackend::get_predicted_trajectory() const {
-  if (!has_warm_) return Eigen::MatrixXd();
+Eigen::MatrixXd CasadiBackend::get_predicted_trajectory() const
+{
+  if (!has_warm_) {return Eigen::MatrixXd();}
   return X_warm_;
 }
 

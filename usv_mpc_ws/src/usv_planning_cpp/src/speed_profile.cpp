@@ -33,21 +33,23 @@
 #include <algorithm>
 #include <cmath>
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 static constexpr double EPS = 1e-6;
 
 ProfileResult compute_profile(
-    const Eigen::VectorXd& kappas,
-    const Eigen::VectorXd& s,
-    double u_max,
-    double r_max,
-    double a_lat_max,
-    double a_acc,
-    double a_dec,
-    double v_start,
-    double v_end,
-    double v_min) {
+  const Eigen::VectorXd & kappas,
+  const Eigen::VectorXd & s,
+  double u_max,
+  double r_max,
+  double a_lat_max,
+  double a_acc,
+  double a_dec,
+  double v_start,
+  double v_end,
+  double v_min)
+{
   const int n = static_cast<int>(s.size());
   ProfileResult result;
 
@@ -62,10 +64,10 @@ ProfileResult compute_profile(
   }
 
   // 参数下限保护
-  u_max     = std::max(EPS, u_max);
+  u_max = std::max(EPS, u_max);
   a_lat_max = std::max(EPS, a_lat_max);
-  a_acc     = std::max(EPS, a_acc);
-  a_dec     = std::max(EPS, a_dec);
+  a_acc = std::max(EPS, a_acc);
+  a_dec = std::max(EPS, a_dec);
 
   Eigen::VectorXd kappa_abs = kappas.array().abs();
 
@@ -74,7 +76,7 @@ ProfileResult compute_profile(
   for (int i = 0; i < n; ++i) {
     if (kappa_abs(i) > EPS) {
       double v_turn = r_max / kappa_abs(i);
-      double v_lat  = std::sqrt(a_lat_max / kappa_abs(i));
+      double v_lat = std::sqrt(a_lat_max / kappa_abs(i));
       v_curve(i) = std::min({v_curve(i), v_turn, v_lat});
     }
   }
@@ -105,7 +107,7 @@ ProfileResult compute_profile(
   // ── 时间积分（梯形） ──
   Eigen::VectorXd ts = Eigen::VectorXd::Zero(n);
   for (int i = 1; i < n; ++i) {
-    double ds    = s(i) - s(i - 1);
+    double ds = s(i) - s(i - 1);
     double v_avg = std::max(0.5 * (v(i - 1) + v(i)), v_min);
     ts(i) = ts(i - 1) + ds / v_avg;
   }

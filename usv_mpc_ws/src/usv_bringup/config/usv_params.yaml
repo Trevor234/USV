@@ -16,8 +16,8 @@
 #
 # IMPORTANT: parameter names must match `_declare_parameter` calls in mpc_node.py
 # (flat dotted names in code, nested in YAML). Keep aligned with mpc_params.yaml style.
-# The VRX/Gazebo 30 kg sim boat uses usv_mono_dynamics.xacro directly and does
-# NOT read this file's hydrodynamics — only real.launch.py does.
+# VRX defaults to the usv_params_sim.yaml snapshot. To use this file for both
+# the generated Gazebo boat and its MPC, pass vehicle_config:=<this file>.
 
 /**:
   ros__parameters:

@@ -29,14 +29,17 @@
 #pragma once
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <Eigen/Dense>
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 /// fillet_path 的输出结果。
-struct FilletResult {
+struct FilletResult
+{
   Eigen::VectorXd xs;       // 位置 x
   Eigen::VectorXd ys;       // 位置 y
   Eigen::VectorXd psis;     // 连续累积航向 (rad)
@@ -46,7 +49,8 @@ struct FilletResult {
 };
 
 /// recompute_geometry 的输出结果。
-struct GeometryResult {
+struct GeometryResult
+{
   Eigen::VectorXd psis;
   Eigen::VectorXd kappas;
   Eigen::VectorXd s;
@@ -61,9 +65,9 @@ struct GeometryResult {
  * @return FilletResult
  */
 FilletResult fillet_path(
-    const std::vector<std::pair<double, double>>& waypoints,
-    double turn_radius,
-    double resolution);
+  const std::vector<std::pair<double, double>> & waypoints,
+  double turn_radius,
+  double resolution);
 
 /**
  * @brief 从离散点数值重算 (psi_continuous, kappa, s)。
@@ -71,14 +75,14 @@ FilletResult fillet_path(
  * 供最小曲率精修改动点位后重新导出航向/曲率使用。
  */
 GeometryResult recompute_geometry(
-    const Eigen::VectorXd& xs,
-    const Eigen::VectorXd& ys);
+  const Eigen::VectorXd & xs,
+  const Eigen::VectorXd & ys);
 
 /**
  * @brief 累积弧长计算。
  */
 Eigen::VectorXd arc_length(
-    const Eigen::VectorXd& xs,
-    const Eigen::VectorXd& ys);
+  const Eigen::VectorXd & xs,
+  const Eigen::VectorXd & ys);
 
 }  // namespace usv_planning

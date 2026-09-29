@@ -27,9 +27,6 @@
  * (原 usv_mpc/mpc_dynamic.py 的 _solve_acados / _build_acados_solver)。
  */
 
-#include "usv_mpc_cpp/acados_backend.hpp"
-#include "usv_mpc_cpp/utils.hpp"
-
 #include <chrono>
 #include <cmath>
 #include <cstdio>
@@ -37,14 +34,19 @@
 
 #include <acados_c/ocp_nlp_interface.h>
 
-namespace usv_mpc {
+#include "usv_mpc_cpp/acados_backend.hpp"
+#include "usv_mpc_cpp/utils.hpp"
 
-namespace {
+namespace usv_mpc
+{
+
+namespace
+{
 // p_global 布局索引 (与 mpc_dynamic.py _pg_indices_weights 一致)
 constexpr int N_HYDRO = 19;
 constexpr int PG_N_Q = 6, PG_N_R = 2, PG_N_RD = 2, PG_N_QF = 1;
-constexpr int PG_OFF_Q  = N_HYDRO;
-constexpr int PG_OFF_R  = N_HYDRO + PG_N_Q;
+constexpr int PG_OFF_Q = N_HYDRO;
+constexpr int PG_OFF_R = N_HYDRO + PG_N_Q;
 constexpr int PG_OFF_RD = N_HYDRO + PG_N_Q + PG_N_R;
 constexpr int PG_OFF_QF = N_HYDRO + PG_N_Q + PG_N_R + PG_N_RD;
 
@@ -55,22 +57,25 @@ static_assert(USV_DYN_NMPC_NY == 11, "unexpected stage residual dimension");
 static_assert(USV_DYN_NMPC_NYN == 7, "unexpected terminal residual dimension");
 
 // hydro 参数 -> p_global 前 19 维 (顺序与 usv_model_dynamic.hydro_dict_to_p_global 一致)
-void fill_hydro(double* pg, const HydroParams& h) {
-  pg[0]  = h.mass;       pg[1]  = h.Iz;        pg[2]  = h.xg;     pg[3]  = h.d_thruster;
-  pg[4]  = h.Xu_dot;     pg[5]  = h.Yv_dot;    pg[6]  = h.Yr_dot; pg[7]  = h.Nv_dot;
-  pg[8]  = h.Nr_dot;     pg[9]  = h.Xu;        pg[10] = h.Yv;     pg[11] = h.Yr;
+void fill_hydro(double * pg, const HydroParams & h)
+{
+  pg[0] = h.mass;       pg[1] = h.Iz;        pg[2] = h.xg;     pg[3] = h.d_thruster;
+  pg[4] = h.Xu_dot;     pg[5] = h.Yv_dot;    pg[6] = h.Yr_dot; pg[7] = h.Nv_dot;
+  pg[8] = h.Nr_dot;     pg[9] = h.Xu;        pg[10] = h.Yv;     pg[11] = h.Yr;
   pg[12] = h.Nv;         pg[13] = h.Nr;        pg[14] = h.Xuu;    pg[15] = h.Yvv;
   pg[16] = h.Yrr;        pg[17] = h.Nvv;       pg[18] = h.Nrr;
 }
 }  // namespace
 
-AcadosBackend::AcadosBackend(const MpcParams& params)
-    : params_(params) {
+AcadosBackend::AcadosBackend(const MpcParams & params)
+: params_(params)
+{
   if (!params_.Q_diag.allFinite() || !params_.R_diag.allFinite() ||
-      !params_.Rd_diag.allFinite() || !std::isfinite(params_.Qf_scale) ||
-      (params_.Q_diag.array() < 0.0).any() ||
-      (params_.R_diag.array() < 0.0).any() ||
-      (params_.Rd_diag.array() < 0.0).any() || params_.Qf_scale < 0.0) {
+    !params_.Rd_diag.allFinite() || !std::isfinite(params_.Qf_scale) ||
+    (params_.Q_diag.array() < 0.0).any() ||
+    (params_.R_diag.array() < 0.0).any() ||
+    (params_.Rd_diag.array() < 0.0).any() || params_.Qf_scale < 0.0)
+  {
     throw std::invalid_argument("MPC cost weights must be finite and nonnegative");
   }
 
@@ -91,9 +96,9 @@ AcadosBackend::AcadosBackend(const MpcParams& params)
 
   // 取 nlp 句柄 (用于 set/get x/u/lbx/ubx)
   nlp_config_ = usv_dyn_nmpc_acados_get_nlp_config(capsule_);
-  nlp_dims_   = usv_dyn_nmpc_acados_get_nlp_dims(capsule_);
-  nlp_in_     = usv_dyn_nmpc_acados_get_nlp_in(capsule_);
-  nlp_out_    = usv_dyn_nmpc_acados_get_nlp_out(capsule_);
+  nlp_dims_ = usv_dyn_nmpc_acados_get_nlp_dims(capsule_);
+  nlp_in_ = usv_dyn_nmpc_acados_get_nlp_in(capsule_);
+  nlp_out_ = usv_dyn_nmpc_acados_get_nlp_out(capsule_);
 
   // codegen 烘焙值校验: 运行时 N/dt 与 vendored 生成码不一致时,
   // update_params / ocp_nlp_out_set 会按错误的 stage 数越界写 (内存破坏),
@@ -112,7 +117,8 @@ AcadosBackend::AcadosBackend(const MpcParams& params)
   }
   const double baked_dt = (nlp_in_->Ts != nullptr) ? nlp_in_->Ts[0] : 0.0;
   if (!(std::isfinite(baked_dt) &&
-        std::fabs(baked_dt - params_.dt) < 1e-9)) {
+    std::fabs(baked_dt - params_.dt) < 1e-9))
+  {
     usv_dyn_nmpc_acados_free(capsule_);
     usv_dyn_nmpc_acados_free_capsule(capsule_);
     capsule_ = nullptr;
@@ -125,13 +131,14 @@ AcadosBackend::AcadosBackend(const MpcParams& params)
   // 初始化 p_global 运行时值 (30 维)
   auto pg = build_p_global_();
   usv_dyn_nmpc_acados_set_p_global_and_precompute_dependencies(
-      capsule_, const_cast<double*>(pg.data()), 30);
+      capsule_, const_cast<double *>(pg.data()), 30);
 
   X_warm_ = Eigen::MatrixXd::Zero(8, params_.N + 1);
   U_warm_ = Eigen::MatrixXd::Zero(2, params_.N);
 }
 
-AcadosBackend::~AcadosBackend() {
+AcadosBackend::~AcadosBackend()
+{
   if (capsule_ != nullptr) {
     usv_dyn_nmpc_acados_free(capsule_);
     usv_dyn_nmpc_acados_free_capsule(capsule_);
@@ -139,19 +146,28 @@ AcadosBackend::~AcadosBackend() {
   }
 }
 
-std::array<double, 30> AcadosBackend::build_p_global_() const {
+std::array<double, 30> AcadosBackend::build_p_global_() const
+{
   std::array<double, 30> pg{};
   fill_hydro(pg.data(), params_.hydro);
-  for (int i = 0; i < PG_N_Q; ++i)  pg[PG_OFF_Q + i]  = params_.Q_diag(i);
-  for (int i = 0; i < PG_N_R; ++i)  pg[PG_OFF_R + i]  = params_.R_diag(i);
-  for (int i = 0; i < PG_N_RD; ++i) pg[PG_OFF_RD + i] = params_.Rd_diag(i);
+  for (int i = 0; i < PG_N_Q; ++i) {
+    pg[PG_OFF_Q + i] = params_.Q_diag(i);
+  }
+  for (int i = 0; i < PG_N_R; ++i) {
+    pg[PG_OFF_R + i] = params_.R_diag(i);
+  }
+  for (int i = 0; i < PG_N_RD; ++i) {
+    pg[PG_OFF_RD + i] = params_.Rd_diag(i);
+  }
   pg[PG_OFF_QF] = params_.Qf_scale;
   return pg;
 }
 
 std::pair<Eigen::Vector2d, SolveInfo>
-AcadosBackend::solve(const Vector6d& current_state,
-                     const Eigen::MatrixXd& reference) {
+AcadosBackend::solve(
+  const Vector6d & current_state,
+  const Eigen::MatrixXd & reference)
+{
   SolveInfo info;
   snprintf(info.backend, sizeof(info.backend), "acados");
   const int N = params_.N;
@@ -197,7 +213,9 @@ AcadosBackend::solve(const Vector6d& current_state,
     double ref_psi_prev = current_state(2);
     for (int k = 0; k <= N; ++k) {
       double ref_k[6];
-      for (int i = 0; i < 6; ++i) ref_k[i] = reference(i, k);
+      for (int i = 0; i < 6; ++i) {
+        ref_k[i] = reference(i, k);
+      }
       ref_k[2] = ref_psi_prev + normalize_angle(ref_k[2] - ref_psi_prev);
       ref_psi_prev = ref_k[2];
       usv_dyn_nmpc_acados_update_params(capsule_, k, ref_k, 6);
@@ -232,7 +250,7 @@ AcadosBackend::solve(const Vector6d& current_state,
     int status = usv_dyn_nmpc_acados_solve(capsule_);
     auto t1 = std::chrono::steady_clock::now();
     info.solve_time_ms =
-        std::chrono::duration<double, std::milli>(t1 - t0).count();
+      std::chrono::duration<double, std::milli>(t1 - t0).count();
 
     if (status != 0) {
       // K4: 分级安全回退,不再简单保持上一步推力
@@ -289,7 +307,7 @@ AcadosBackend::solve(const Vector6d& current_state,
 
     info.success = true;
     return {u_opt, info};
-  } catch (const std::exception& e) {
+  } catch (const std::exception & e) {
     ++fail_count_;
     info.success = false;
     std::string note = std::string("acados_exception: ") + e.what();
@@ -300,7 +318,8 @@ AcadosBackend::solve(const Vector6d& current_state,
   }
 }
 
-Eigen::Vector2d AcadosBackend::safe_fallback_(std::string& note) {
+Eigen::Vector2d AcadosBackend::safe_fallback_(std::string & note)
+{
   // K4 分级回退:
   //   ① 连续失败 < N 步且有历史最优轨迹 → 沿轨迹继续(取 shift 后首控制,
   //      每次失败轨迹前移一格,末端补零使推力自然衰减趋向停船);
@@ -309,7 +328,7 @@ Eigen::Vector2d AcadosBackend::safe_fallback_(std::string& note) {
   const int N = params_.N;
   if (has_warm_ && fail_count_ < N) {
     Eigen::Vector2d u_fb =
-        U_warm_.col(0).cwiseMax(params_.T_min).cwiseMin(params_.T_max);
+      U_warm_.col(0).cwiseMax(params_.T_min).cwiseMin(params_.T_max);
     U_warm_.leftCols(N - 1) = U_warm_.rightCols(N - 1);
     U_warm_.col(N - 1).setZero();
     X_warm_.leftCols(N) = X_warm_.rightCols(N);
@@ -323,13 +342,15 @@ Eigen::Vector2d AcadosBackend::safe_fallback_(std::string& note) {
 }
 
 void AcadosBackend::set_applied_control(
-    const Eigen::Vector2d& applied_control) {
+  const Eigen::Vector2d & applied_control)
+{
   constexpr double kBoundTolerance = 1e-9;
   if (!applied_control.allFinite()) {
     throw std::invalid_argument("applied control must be finite");
   }
   if ((applied_control.array() < params_.T_min - kBoundTolerance).any() ||
-      (applied_control.array() > params_.T_max + kBoundTolerance).any()) {
+    (applied_control.array() > params_.T_max + kBoundTolerance).any())
+  {
     throw std::out_of_range("applied control exceeds MPC thrust bounds");
   }
   u_prev_ = applied_control;
@@ -338,7 +359,8 @@ void AcadosBackend::set_applied_control(
   }
 }
 
-void AcadosBackend::reset_warmstart() {
+void AcadosBackend::reset_warmstart()
+{
   has_warm_ = false;
   fail_count_ = 0;
   X_warm_.setZero();
@@ -349,8 +371,9 @@ void AcadosBackend::reset_warmstart() {
   }
 }
 
-Eigen::MatrixXd AcadosBackend::get_predicted_trajectory() const {
-  if (!has_warm_) return Eigen::MatrixXd();
+Eigen::MatrixXd AcadosBackend::get_predicted_trajectory() const
+{
+  if (!has_warm_) {return Eigen::MatrixXd();}
   return X_warm_.topRows(6);
 }
 

@@ -30,10 +30,12 @@
 
 #include <Eigen/Dense>
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 /// compute_profile 的输出结果。
-struct ProfileResult {
+struct ProfileResult
+{
   Eigen::VectorXd vs;   // 每点速度 (m/s)
   Eigen::VectorXd rs;   // 参考转艏角速度 = kappa*v (rad/s)
   Eigen::VectorXd ts;   // 每点时间戳 (s)
@@ -55,15 +57,15 @@ struct ProfileResult {
  * @return ProfileResult
  */
 ProfileResult compute_profile(
-    const Eigen::VectorXd& kappas,
-    const Eigen::VectorXd& s,
-    double u_max,
-    double r_max,
-    double a_lat_max,
-    double a_acc,
-    double a_dec,
-    double v_start,
-    double v_end,
-    double v_min = 0.2);
+  const Eigen::VectorXd & kappas,
+  const Eigen::VectorXd & s,
+  double u_max,
+  double r_max,
+  double a_lat_max,
+  double a_acc,
+  double a_dec,
+  double v_start,
+  double v_end,
+  double v_min = 0.2);
 
 }  // namespace usv_planning

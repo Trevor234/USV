@@ -54,9 +54,9 @@ def generate_launch_description():
 
     
  
-    # fcu_url: 连接飞控的串口参数。默认 /dev/ttyAMA10:921600。    
+    # fcu_url: 连接飞控的串口参数。默认 Jetson Orin /dev/ttyTHS1:921600。
     fcu_url_arg = DeclareLaunchArgument(
-        "fcu_url", default_value="/dev/ttyAMA10:921600",
+        "fcu_url", default_value="/dev/ttyTHS1:921600",
         description="FCU serial connection URL"
     )
 

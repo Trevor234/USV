@@ -299,6 +299,17 @@ sha256sum usv_mpc_ws_source.tar.gz
 
 ### 8.1 依赖检查
 
+首次在树莓派上执行依赖检查时，先安装并初始化 `rosdep`（只需初始化一次）：
+
+```bash
+sudo apt-get update
+sudo apt-get install -y python3-rosdep
+if [ ! -f /etc/ros/rosdep/sources.list.d/20-default.list ]; then
+  sudo rosdep init
+fi
+rosdep update
+```
+
 在预发布工作空间执行：
 
 ```bash
@@ -307,6 +318,8 @@ source /opt/ros/jazzy/setup.bash
 rosdep check --from-paths src --ignore-src
 ```
 
+仓库根目录随源码提供 package_format3.xsd，所有 package.xml 使用相对路径引用该 schema，因此 ament_xmllint 不依赖外网 DNS。
+
 先保存缺失依赖列表，再按系统维护策略安装：
 
 ```bash
@@ -314,7 +327,7 @@ rosdep install --from-paths src --ignore-src -r -y --rosdistro jazzy
 python3 -m pip install --user -r requirements.txt
 ```
 
-确认至少具备：编译工具、colcon、Eigen3、nlohmann-json、MAVROS、`mavros_msgs`、`geographic_msgs`、rosbag2/MCAP，以及真实艇启动所用的其他 ROS 包。CasADi Python 版本与 C++ 链接库必须来自同一套树莓派环境。
+确认至少具备：编译工具、colcon、Eigen3、nlohmann-json、MAVROS、`mavros_msgs`、`geographic_msgs`、`ros-jazzy-nlohmann-json-schema-validator-vendor`、`ros-jazzy-ntrip-client`、rosbag2/MCAP，以及真实艇启动所用的其他 ROS 包。CasADi Python 版本与 C++ 链接库必须来自同一套树莓派环境。
 
 `rosdep` 不会自动安装项目自编译的 acados。其版本和动态库检查按第 6.1 节单独完成。
 
@@ -611,4 +624,3 @@ systemd 服务文件校验值：
 - [ ] 关键 ROS 话题、飞控链路和遥测正常；
 - [ ] 回滚路径保持完整；
 - [ ] 发布记录已归档且不含密码。
-

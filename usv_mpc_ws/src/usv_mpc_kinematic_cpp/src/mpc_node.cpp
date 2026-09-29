@@ -41,17 +41,21 @@
 #include <cstring>
 #include <nlohmann/json.hpp>
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
-namespace {
-double steady_now() {
+namespace
+{
+double steady_now()
+{
   auto now = std::chrono::steady_clock::now();
   return std::chrono::duration<double>(now.time_since_epoch()).count();
 }
 }  // namespace
 
 MpcControllerNode::MpcControllerNode()
-    : Node("mpc_controller_node") {
+: Node("mpc_controller_node")
+{
   declare_parameters_();
   load_config_();
   init_mpc_solver_();
@@ -68,12 +72,14 @@ MpcControllerNode::MpcControllerNode()
       control_cb_group_);
 }
 
-MpcControllerNode::~MpcControllerNode() {
+MpcControllerNode::~MpcControllerNode()
+{
   // safe_shutdown 由 main 在 rclcpp::shutdown 前显式调用
 }
 
 // ── 参数声明 (默认值与 mpc_params.yaml 对齐; kinematic.* 命名空间) ──
-void MpcControllerNode::declare_parameters_() {
+void MpcControllerNode::declare_parameters_()
+{
   this->declare_parameter("scheme", std::string("A"));
   this->declare_parameter("control_mode", std::string("kinematic"));
   this->declare_parameter("mpc_dt", 0.2);
@@ -118,7 +124,8 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("kinematic.backend", std::string("ipopt"));
 }
 
-void MpcControllerNode::load_config_() {
+void MpcControllerNode::load_config_()
+{
   // 此工作目录仅方案 A; scheme 强制 A, control_mode 仅 kinematic/idle
   scheme_ = "A";
   std::string mode_str = this->get_parameter("control_mode").as_string();
@@ -153,7 +160,8 @@ void MpcControllerNode::load_config_() {
   // ★ 无 RC 参数加载
 }
 
-void MpcControllerNode::init_mpc_solver_() {
+void MpcControllerNode::init_mpc_solver_()
+{
   KinematicMpcParams p;
   p.dt = this->get_parameter("kinematic.dt").as_double();
   double prediction_time = static_cast<double>(horizon_) * mpc_dt_;
@@ -171,7 +179,9 @@ void MpcControllerNode::init_mpc_solver_() {
         std::to_string(Qv.size()) + "/" + std::to_string(Rv.size()) +
         "), 请检查 mpc_params yaml");
   }
-  for (int i = 0; i < 3; ++i) p.Q_diag(i) = Qv[i];
+  for (int i = 0; i < 3; ++i) {
+    p.Q_diag(i) = Qv[i];
+  }
   p.R_diag << Rv[0], Rv[1];
   p.Qf_scale = this->get_parameter("kinematic.Qf_scale").as_double();
   p.u_max = this->get_parameter("kinematic.u_max").as_double();
@@ -183,15 +193,16 @@ void MpcControllerNode::init_mpc_solver_() {
   p.tau_r = this->get_parameter("kinematic.tau_r").as_double();
   p.ipopt_max_iter = static_cast<int>(this->get_parameter("kinematic.ipopt_max_iter").as_int());
   p.ipopt_max_cpu_time_s =
-      this->get_parameter("kinematic.ipopt_max_cpu_time_ms").as_double() / 1000.0;
+    this->get_parameter("kinematic.ipopt_max_cpu_time_ms").as_double() / 1000.0;
   p.solution_constraint_tol =
-      this->get_parameter("kinematic.solution_constraint_tol").as_double();
+    this->get_parameter("kinematic.solution_constraint_tol").as_double();
   // ★ 无 HydroParams 加载
   // ★ 无 acados cache_dir
   mpc_ = make_kinematic_mpc(p);  // 直接 CasadiKinematicBackend
 }
 
-void MpcControllerNode::init_state_() {
+void MpcControllerNode::init_state_()
+{
   x_ = y_ = psi_ = u_ = v_ = r_ = 0.0;
   odom_received_ = imu_received_ = path_received_ = false;
   armed_ = false;
@@ -202,7 +213,8 @@ void MpcControllerNode::init_state_() {
   last_odom_time_ = 0.0;
 }
 
-void MpcControllerNode::init_pubsub_() {
+void MpcControllerNode::init_pubsub_()
+{
   io_cb_group_ = this->create_callback_group(
       rclcpp::CallbackGroupType::Reentrant);
   control_cb_group_ = this->create_callback_group(
@@ -237,17 +249,19 @@ void MpcControllerNode::init_pubsub_() {
 }
 
 // ── 回调 (与 B 几乎逐行相同, 仅 reference_path_ 类型对齐 utils) ──
-void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg) {
-  const auto& p = msg->pose.pose.position;
-  const auto& q = msg->pose.pose.orientation;
-  const auto& t = msg->twist.twist;
+void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg)
+{
+  const auto & p = msg->pose.pose.position;
+  const auto & q = msg->pose.pose.orientation;
+  const auto & t = msg->twist.twist;
   // NaN/Inf 门禁: 一个污染样本 (GPS 重定位/EKF 发散) 若进入状态,求解器可能
   // 仍返回"成功"解并把 NaN 速度指令发给 GUIDED。直接丢弃。
   if (!std::isfinite(p.x) || !std::isfinite(p.y) ||
-      !std::isfinite(q.x) || !std::isfinite(q.y) ||
-      !std::isfinite(q.z) || !std::isfinite(q.w) ||
-      !std::isfinite(t.linear.x) || !std::isfinite(t.linear.y) ||
-      !std::isfinite(t.angular.z)) {
+    !std::isfinite(q.x) || !std::isfinite(q.y) ||
+    !std::isfinite(q.z) || !std::isfinite(q.w) ||
+    !std::isfinite(t.linear.x) || !std::isfinite(t.linear.y) ||
+    !std::isfinite(t.angular.z))
+  {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                          "odom 含 NaN/Inf, 丢弃该样本");
     return;
@@ -269,7 +283,8 @@ void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr 
   last_odom_time_ = steady_now();
 }
 
-void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg) {
+void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg)
+{
   double r = msg->angular_velocity.z;  // 直接陀螺仪角速度, 更灵敏
   if (!std::isfinite(r)) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
@@ -281,30 +296,34 @@ void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg
   imu_received_ = true;
 }
 
-void MpcControllerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr msg) {
+void MpcControllerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr msg)
+{
   std::lock_guard<std::mutex> lk(state_lock_);
   reference_path_.clear();
-  for (const auto& pose : msg->poses) {
-    auto& q = pose.pose.orientation;
+  for (const auto & pose : msg->poses) {
+    auto & q = pose.pose.orientation;
     reference_path_.push_back({pose.pose.position.x, pose.pose.position.y,
-                               quaternion_to_yaw(q.x, q.y, q.z, q.w)});
+        quaternion_to_yaw(q.x, q.y, q.z, q.w)});
   }
   reference_path_stamp_ = {static_cast<int>(msg->header.stamp.sec),
-                           static_cast<int>(msg->header.stamp.nanosec)};
+    static_cast<int>(msg->header.stamp.nanosec)};
   path_received_ = !reference_path_.empty();
 }
 
-void MpcControllerNode::profile_callback_(const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
+void MpcControllerNode::profile_callback_(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
+{
   std::lock_guard<std::mutex> lk(state_lock_);
   // 从 layout.dim 提取标签, 解析 stamp (utils 保持纯逻辑, 不依赖 ROS 消息)
   std::vector<std::string> labels;
   labels.reserve(msg->layout.dim.size());
-  for (const auto& d : msg->layout.dim) labels.push_back(d.label);
+  for (const auto & d : msg->layout.dim) {
+    labels.push_back(d.label);
+  }
   bool ok = false;
   ref_profile_stamp_ = parse_profile_stamp(labels, ok);
-  if (!ok) ref_profile_stamp_ = {-1, -1};
+  if (!ok) {ref_profile_stamp_ = {-1, -1};}
 
-  const auto& data = msg->data;
+  const auto & data = msg->data;
   if (data.size() < 4 || data.size() % 4 != 0) {
     ref_profile_.clear();
     profile_sync_reason_ = "empty_or_malformed_profile";
@@ -318,7 +337,8 @@ void MpcControllerNode::profile_callback_(const std_msgs::msg::Float64MultiArray
   }
 }
 
-void MpcControllerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr msg) {
+void MpcControllerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr msg)
+{
   std::lock_guard<std::mutex> lk(state_lock_);
   armed_ = msg->armed;
   mode_ = msg->mode;
@@ -326,31 +346,39 @@ void MpcControllerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr
 }
 
 // ── 控制循环 (与 B 逐行相同, 状态机逻辑方案无关) ──────────
-std::pair<bool, std::string> MpcControllerNode::can_solve_() const {
+std::pair<bool, std::string> MpcControllerNode::can_solve_() const
+{
   double now = steady_now();
-  if (!odom_received_) return {false, "no_odom"};
-  if (odom_timeout_s_ > 0.0 && (now - last_odom_time_) > odom_timeout_s_)
+  if (!odom_received_) {return {false, "no_odom"};}
+  if (odom_timeout_s_ > 0.0 && (now - last_odom_time_) > odom_timeout_s_) {
     return {false, "odom_timeout"};
-  if (!path_received_ || reference_path_.size() < 2) return {false, "no_path"};
+  }
+  if (!path_received_ || reference_path_.size() < 2) {return {false, "no_path"};}
   if (require_fcu_state_) {
-    if (last_state_time_ == 0.0) return {false, "no_state"};
-    if (state_timeout_s_ > 0.0 && (now - last_state_time_) > state_timeout_s_)
+    if (last_state_time_ == 0.0) {return {false, "no_state"};}
+    if (state_timeout_s_ > 0.0 && (now - last_state_time_) > state_timeout_s_) {
       return {false, "state_timeout"};
-    if (!armed_) return {false, "disarmed"};
+    }
+    if (!armed_) {return {false, "disarmed"};}
     if (!allowed_fcu_modes_.empty()) {
       bool allowed = false;
-      for (const auto& m : allowed_fcu_modes_) if (m == mode_) { allowed = true; break; }
-      if (!allowed) return {false, "wrong_mode(" + mode_ + ")"};
+      for (const auto & m : allowed_fcu_modes_) {
+        if (m == mode_) {
+          allowed = true; break;
+        }
+      }
+      if (!allowed) {return {false, "wrong_mode(" + mode_ + ")"};}
     }
   }
   return {true, ""};
 }
 
-void MpcControllerNode::enter_standby_(const std::string& reason) {
+void MpcControllerNode::enter_standby_(const std::string & reason)
+{
   bool transition = (prev_state_ != "STANDBY");
   if (transition) {
     solver_fail_count_ = 0;
-    if (mpc_) mpc_->reset_warmstart();
+    if (mpc_) {mpc_->reset_warmstart();}
     publish_zero_velocity_();  // ★ 零速度 (B 是 release_rc_override_)
     RCLCPP_INFO(this->get_logger(), "MPC → STANDBY: %s", reason.c_str());
   }
@@ -360,7 +388,8 @@ void MpcControllerNode::enter_standby_(const std::string& reason) {
                        "MPC 等待飞控就绪: %s", reason.c_str());
 }
 
-void MpcControllerNode::control_loop_() {
+void MpcControllerNode::control_loop_()
+{
   std::pair<bool, std::string> cs;
   bool armed;
   std::string mode;
@@ -392,7 +421,8 @@ void MpcControllerNode::control_loop_() {
   run_kinematic_mpc_();
 }
 
-bool MpcControllerNode::enforce_solve_deadline_(SolveInfo& info) {
+bool MpcControllerNode::enforce_solve_deadline_(SolveInfo & info)
+{
   bool deadline_miss = max_solve_time_ms_ > 0.0 && info.solve_time_ms > max_solve_time_ms_;
   if (deadline_miss) {
     info.success = false;
@@ -402,7 +432,8 @@ bool MpcControllerNode::enforce_solve_deadline_(SolveInfo& info) {
   return deadline_miss;
 }
 
-void MpcControllerNode::run_kinematic_mpc_() {
+void MpcControllerNode::run_kinematic_mpc_()
+{
   Eigen::Matrix<double, 5, 1> current_state_5d;
   Eigen::Vector3d current_pose;
   Eigen::MatrixXd reference;
@@ -415,7 +446,7 @@ void MpcControllerNode::run_kinematic_mpc_() {
 
   auto [u_opt, info] = mpc_->solve(current_state_5d, reference);
   bool deadline_miss = enforce_solve_deadline_(info);
-  if (deadline_miss) u_opt.setZero();
+  if (deadline_miss) {u_opt.setZero();}
 
   bool in_hold = false;
   if (info.success) {
@@ -426,7 +457,7 @@ void MpcControllerNode::run_kinematic_mpc_() {
                            "IPOPT 早停回收 (%s), 已发布当前迭代点", info.error);
     }
     publish_velocity_cmd_(u_opt);  // ★ Twist (B 是 publish_dynamic_output_)
-    if (control_count_ % 5 == 0) publish_predicted_trajectory_(info.X_pred);
+    if (control_count_ % 5 == 0) {publish_predicted_trajectory_(info.X_pred);}
   } else {
     solver_fail_count_++;
     if (solver_fail_count_ <= 3) {
@@ -463,7 +494,8 @@ void MpcControllerNode::run_kinematic_mpc_() {
 // ── 输出: TwistStamped (★ 与 B 的 thrust→RC PWM 完全不同, 无映射) ──
 // 发布后把实际下发值写回求解器作为速率约束锚点, 使锚点与真实执行一致
 // (覆盖成功/失败重放/deadline 置零/HOLD 置零全部分支, 不会与发布逻辑漂移)。
-void MpcControllerNode::publish_velocity_cmd_(const Eigen::Vector2d& u_opt) {
+void MpcControllerNode::publish_velocity_cmd_(const Eigen::Vector2d & u_opt)
+{
   geometry_msgs::msg::TwistStamped msg;
   msg.header.stamp = this->get_clock()->now();
   msg.header.frame_id = body_frame_;
@@ -471,17 +503,20 @@ void MpcControllerNode::publish_velocity_cmd_(const Eigen::Vector2d& u_opt) {
   msg.twist.linear.y = 0.0;
   msg.twist.angular.z = u_opt(1);  // r_yaw
   vel_pub_->publish(msg);
-  if (mpc_) mpc_->set_applied_command(u_opt);
+  if (mpc_) {mpc_->set_applied_command(u_opt);}
 }
 
-void MpcControllerNode::publish_zero_velocity_() {
+void MpcControllerNode::publish_zero_velocity_()
+{
   publish_velocity_cmd_(Eigen::Vector2d::Zero());
 }
 
-void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
-                                        const Eigen::Vector2d& u_opt,
-                                        const Eigen::Vector3d& current_state,
-                                        const Eigen::MatrixXd& reference) {
+void MpcControllerNode::publish_status_(
+  const SolveInfo & info, bool in_hold,
+  const Eigen::Vector2d & u_opt,
+  const Eigen::Vector3d & current_state,
+  const Eigen::MatrixXd & reference)
+{
   nlohmann::json j;
   j["state"] = in_hold ? "HOLD" : "ACTIVE";
   j["success"] = info.success;
@@ -524,14 +559,15 @@ void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
     j["psi_ref"] = reference(2, 0);
     j["e_psi"] = normalize_angle(current_state(2) - reference(2, 0));
   }
-  if (!info.success) j["error"] = info.error;
+  if (!info.success) {j["error"] = info.error;}
 
   std_msgs::msg::String msg;
   msg.data = j.dump();
   status_pub_->publish(msg);
 }
 
-void MpcControllerNode::publish_standby_status_(const std::string& reason) {
+void MpcControllerNode::publish_standby_status_(const std::string & reason)
+{
   nlohmann::json j;
   j["state"] = "STANDBY";
   j["success"] = false;
@@ -554,8 +590,9 @@ void MpcControllerNode::publish_standby_status_(const std::string& reason) {
   status_pub_->publish(msg);
 }
 
-void MpcControllerNode::publish_predicted_trajectory_(const Eigen::MatrixXd& X_pred) {
-  if (!publish_predicted_ || X_pred.size() == 0) return;
+void MpcControllerNode::publish_predicted_trajectory_(const Eigen::MatrixXd & X_pred)
+{
+  if (!publish_predicted_ || X_pred.size() == 0) {return;}
   nav_msgs::msg::Path msg;
   msg.header.stamp = this->get_clock()->now();
   msg.header.frame_id = path_frame_;
@@ -573,12 +610,13 @@ void MpcControllerNode::publish_predicted_trajectory_(const Eigen::MatrixXd& X_p
 }
 
 // ── 参考构建 (对应 Python _build_reference; ★ 3 维, start_offset=1) ──
-Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d& current_state) {
+Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d & current_state)
+{
   const int N = mpc_->N();
   double dt = mpc_->dt();
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, N + 1);  // ★ 3 维 (B 是 6)
-  const auto& path = reference_path_;
-  if (path.empty()) return ref;
+  const auto & path = reference_path_;
+  if (path.empty()) {return ref;}
 
   // 最近点 + start_offset
   double best_d = 1e18;
@@ -595,16 +633,16 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d& curre
 
   // profile 同步判定
   int profile_len = ref_profile_.empty() ? -1 : static_cast<int>(ref_profile_.size());
-  const std::pair<int, int>* p_stamp =
-      (ref_profile_stamp_.first >= 0) ? &ref_profile_stamp_ : nullptr;
-  const std::pair<int, int>* path_stamp =
-      (reference_path_stamp_.first >= 0) ? &reference_path_stamp_ : nullptr;
+  const std::pair<int, int> * p_stamp =
+    (ref_profile_stamp_.first >= 0) ? &ref_profile_stamp_ : nullptr;
+  const std::pair<int, int> * path_stamp =
+    (reference_path_stamp_.first >= 0) ? &reference_path_stamp_ : nullptr;
   auto [synced, sync_reason] = profile_sync_state(
       static_cast<int>(path.size()), profile_len, path_stamp, p_stamp);
 
   if (synced) {
     std::vector<double> times(ref_profile_.size()), vs(ref_profile_.size()),
-        rs(ref_profile_.size());
+    rs(ref_profile_.size());
     for (size_t i = 0; i < ref_profile_.size(); ++i) {
       times[i] = ref_profile_[i][3];
       vs[i] = ref_profile_[i][0];
@@ -636,7 +674,7 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d& curre
     for (int k = 0; k <= N; ++k) {
       double s_des = cruise_speed_ * dt * k;
       int j = 0;
-      while (j < static_cast<int>(arc.size()) - 1 && arc[j + 1] < s_des) ++j;
+      while (j < static_cast<int>(arc.size()) - 1 && arc[j + 1] < s_des) {++j;}
       int ii = std::min(idx + j, static_cast<int>(path.size()) - 1);
       if (ii < static_cast<int>(path.size()) - 1 && j < static_cast<int>(arc.size()) - 1) {
         double seg_len = arc[j + 1] - arc[j];
@@ -662,7 +700,8 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d& curre
   return ref;
 }
 
-void MpcControllerNode::safe_shutdown() {
+void MpcControllerNode::safe_shutdown()
+{
   publish_zero_velocity_();
   publish_standby_status_("node_shutdown");
   RCLCPP_INFO(this->get_logger(), "MPC 节点退出: 已发送安全停车指令");

@@ -1,7 +1,7 @@
 # USV physical parameters — single source of truth.
 #
 # Used by:
-#   - usv_simulation/models/usv_2m/model.sdf (xacro substitutes geometry)
+#   - usv_simulation/vrx_model.py (native SDF generation for VRX)
 #
 # References: implementation_plan.md §九 (initial estimates).
 #

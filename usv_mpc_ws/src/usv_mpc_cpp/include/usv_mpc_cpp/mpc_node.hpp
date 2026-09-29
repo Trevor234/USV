@@ -38,6 +38,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -54,17 +55,18 @@
 #include "usv_mpc_cpp/mpc_solver.hpp"
 #include "usv_mpc_cpp/utils.hpp"
 
-namespace usv_mpc {
+namespace usv_mpc
+{
 
 class MpcControllerNode : public rclcpp::Node {
- public:
+public:
   MpcControllerNode();
   ~MpcControllerNode() override;
 
   /// 节点退出前发送安全停车指令。
   void safe_shutdown();
 
- private:
+private:
   // ── 初始化 ──────────────────────────────────────────
   void declare_parameters_();
   void load_config_();
@@ -82,27 +84,29 @@ class MpcControllerNode : public rclcpp::Node {
   // ── 控制循环 ────────────────────────────────────────
   void control_loop_();
   std::pair<bool, std::string> can_solve_() const;
-  void enter_standby_(const std::string& reason);
+  void enter_standby_(const std::string & reason);
   void run_dynamic_mpc_();
-  bool enforce_solve_deadline_(SolveInfo& info);
+  bool enforce_solve_deadline_(SolveInfo & info);
 
   // ── 输出 ────────────────────────────────────────────
-  Eigen::Vector2d thrust_to_rc_pwm_(const Eigen::Vector2d& thrust,
-                                    int& steering_pwm, int& throttle_pwm);
-  Eigen::Vector2d publish_rc_override_(const Eigen::Vector2d& thrust);
-  Eigen::Vector2d publish_vrx_thrust_(const Eigen::Vector2d& thrust);
+  Eigen::Vector2d thrust_to_rc_pwm_(
+    const Eigen::Vector2d & thrust,
+    int & steering_pwm, int & throttle_pwm);
+  Eigen::Vector2d publish_rc_override_(const Eigen::Vector2d & thrust);
+  Eigen::Vector2d publish_vrx_thrust_(const Eigen::Vector2d & thrust);
   void release_vrx_thrust_();
-  Eigen::Vector2d publish_dynamic_output_(const Eigen::Vector2d& thrust);
+  Eigen::Vector2d publish_dynamic_output_(const Eigen::Vector2d & thrust);
   void publish_zero_dynamic_output_();
   void release_rc_override_();
-  void publish_status_(const SolveInfo& info, bool in_hold,
-                       const Eigen::Vector2d& commanded_thrust,
-                       const Eigen::Vector2d& applied_thrust);
-  void publish_standby_status_(const std::string& reason);
-  void publish_predicted_trajectory_(const Eigen::MatrixXd& X_pred);
+  void publish_status_(
+    const SolveInfo & info, bool in_hold,
+    const Eigen::Vector2d & commanded_thrust,
+    const Eigen::Vector2d & applied_thrust);
+  void publish_standby_status_(const std::string & reason);
+  void publish_predicted_trajectory_(const Eigen::MatrixXd & X_pred);
 
   // ── 参考构建 ────────────────────────────────────────
-  Eigen::MatrixXd build_reference_(const Vector6d& current_state);
+  Eigen::MatrixXd build_reference_(const Vector6d & current_state);
 
   // ── 状态锁 (传感器回调与控制循环并发) ────────────────
   std::mutex state_lock_;

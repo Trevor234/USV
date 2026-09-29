@@ -46,10 +46,11 @@
 
 #include "usv_safety_cpp/safety_monitor.hpp"
 
-namespace usv_safety {
+namespace usv_safety
+{
 
 class ModeManagerNode : public rclcpp::Node {
- public:
+public:
   ModeManagerNode();
 
   /// 请求解锁/上锁。
@@ -64,7 +65,7 @@ class ModeManagerNode : public rclcpp::Node {
   /// 切换到 HOLD 模式。
   bool switch_to_hold();
 
- private:
+private:
   // ── 初始化辅助 ──────────────────────────────────────
   void declare_parameters_();
   void load_config_();
@@ -80,46 +81,46 @@ class ModeManagerNode : public rclcpp::Node {
   void monitor_loop_();
 
   // ── 模式切换 ────────────────────────────────────────
-  bool switch_mode_(const std::string& mode);
+  bool switch_mode_(const std::string & mode);
 
   // ── 安全监控器（纯逻辑） ────────────────────────────
   SafetyConfig  safety_config_;
   SafetyMonitor safety_;
 
   // ── 内部状态 ────────────────────────────────────────
-  std::string current_mavros_mode_   = "MANUAL";
-  bool        armed_                 = false;
-  bool        mpc_ok_                = true;   // 默认 True,直到收到真正的错误
-  int         mpc_fail_count_        = 0;
-  double      mpc_solve_time_ms_     = 0.0;
-  bool        mpc_hold_              = false;
-  std::string mpc_state_             = "UNKNOWN";  // ACTIVE/HOLD/STANDBY/UNKNOWN
+  std::string current_mavros_mode_ = "MANUAL";
+  bool        armed_ = false;
+  bool        mpc_ok_ = true;                  // 默认 True,直到收到真正的错误
+  int         mpc_fail_count_ = 0;
+  double      mpc_solve_time_ms_ = 0.0;
+  bool        mpc_hold_ = false;
+  std::string mpc_state_ = "UNKNOWN";              // ACTIVE/HOLD/STANDBY/UNKNOWN
   std::string mpc_standby_reason_;
-  double      last_mpc_status_time_  = 0.0;
+  double      last_mpc_status_time_ = 0.0;
   // 每条 /mpc/status 递增; 监控循环据此只消费"新"状态 (避免按 2Hz 监控
   // 节拍重复喂同一份失败, 把失败计数膨胀)
-  uint64_t    mpc_status_seq_        = 0;
-  uint64_t    last_status_seq_used_  = 0;
-  double      x_                     = 0.0;
-  double      y_                     = 0.0;
-  double      speed_                 = 0.0;
+  uint64_t    mpc_status_seq_ = 0;
+  uint64_t    last_status_seq_used_ = 0;
+  double      x_ = 0.0;
+  double      y_ = 0.0;
+  double      speed_ = 0.0;
   // 安全哨兵值:缺失电池遥测不得触发低/临界电池 failsafe
   // (任务中途意外 RTL 本身就是一种危险)。
-  double      voltage_               = 99.0;
-  bool        battery_received_      = false;
-  bool        odom_received_         = false;
-  double      last_odom_rx_          = 0.0;
-  bool        path_ever_received_    = false;
-  double      last_battery_rx_       = 0.0;
+  double      voltage_ = 99.0;
+  bool        battery_received_ = false;
+  bool        odom_received_ = false;
+  double      last_odom_rx_ = 0.0;
+  bool        path_ever_received_ = false;
+  double      last_battery_rx_ = 0.0;
   // 人工接管冷却: FCU 模式变化时刻起, 该时长内 auto_mode_switch 不拉回
-  double      last_mode_change_      = 0.0;
-  double      battery_timeout_s_     = 10.0;
-  double      takeover_cooldown_s_   = 10.0;
+  double      last_mode_change_ = 0.0;
+  double      battery_timeout_s_ = 10.0;
+  double      takeover_cooldown_s_ = 10.0;
   // FAILSAFE 模式切换重发上限 (达到后停止指令洪水, 保持 failsafe 等待人工介入)
-  int         max_rtl_retries_       = 10;
-  int         rtl_attempts_          = 0;
+  int         max_rtl_retries_ = 10;
+  int         rtl_attempts_ = 0;
   // FAILSAFE 触发时的动作: "report"(只报错) / "HOLD" / "RTL"
-  std::string failsafe_mode_        = "report";
+  std::string failsafe_mode_ = "report";
 
   // ── ROS 通信接口 ────────────────────────────────────
   // 订阅者

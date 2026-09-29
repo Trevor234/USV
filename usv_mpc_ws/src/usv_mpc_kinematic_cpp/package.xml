@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="../../package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>usv_mpc_kinematic_cpp</name>
   <version>0.1.0</version>
@@ -15,7 +15,7 @@
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
   <depend>mavros_msgs</depend>
-  <depend>nlohmann_json</depend>
+  <depend>nlohmann_json_schema_validator_vendor</depend>
   <!-- Eigen3: 运动学模型数值运算 (替代 numpy) -->
   <build_depend>eigen</build_depend>
 

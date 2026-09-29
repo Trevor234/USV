@@ -23,14 +23,16 @@
  * @brief 规划纯逻辑层 gtest 单测 (对拍 Python test_speed_profile_and_fillet.py)。
  */
 
-#include <gtest/gtest.h>
+#include <cmath>
+#include <fstream>
+#include <vector>
 
 #include <Eigen/Dense>
-#include <cmath>
-#include <vector>
+#include <gtest/gtest.h>
 
 #include "usv_planning_cpp/speed_profile.hpp"
 #include "usv_planning_cpp/trajectory_optimizer.hpp"
+#include "usv_planning_cpp/waypoint_manager.hpp"
 
 using usv_planning::compute_profile;
 using usv_planning::fillet_path;
@@ -45,11 +47,17 @@ TEST(SpeedProfile, RespectsLimitsAndTimeMonotonicity) {
   EXPECT_EQ(r.rs.size(), s.size());
   EXPECT_EQ(r.ts.size(), s.size());
   // v <= u_max
-  for (int i = 0; i < r.vs.size(); ++i) EXPECT_LE(r.vs(i), 1.0 + 1e-9);
+  for (int i = 0; i < r.vs.size(); ++i) {
+    EXPECT_LE(r.vs(i), 1.0 + 1e-9);
+}
   // |r| <= r_max
-  for (int i = 0; i < r.rs.size(); ++i) EXPECT_LE(std::fabs(r.rs(i)), 0.3 + 1e-9);
+  for (int i = 0; i < r.rs.size(); ++i) {
+    EXPECT_LE(std::fabs(r.rs(i)), 0.3 + 1e-9);
+}
   // ts 单调不减
-  for (int i = 1; i < r.ts.size(); ++i) EXPECT_GE(r.ts(i) - r.ts(i - 1), -1e-9);
+  for (int i = 1; i < r.ts.size(); ++i) {
+    EXPECT_GE(r.ts(i) - r.ts(i - 1), -1e-9);
+}
 }
 
 // 对应 Python: test_fillet_path_outputs_finite_geometry
@@ -69,11 +77,42 @@ TEST(FilletPath, OutputsFiniteGeometry) {
     EXPECT_TRUE(std::isfinite(r.kappas(i)));
   }
   // s 单调不减
-  for (int i = 1; i < r.s.size(); ++i) EXPECT_GE(r.s(i) - r.s(i - 1), -1e-9);
+  for (int i = 1; i < r.s.size(); ++i) {
+    EXPECT_GE(r.s(i) - r.s(i - 1), -1e-9);
+}
   EXPECT_TRUE(r.warnings.empty());
 }
 
-int main(int argc, char** argv) {
+TEST(WaypointManager, LoadFromYamlFile) {
+  const std::string test_yaml = "/tmp/test_wps.yaml";
+  std::ofstream ofs(test_yaml);
+  ofs << "waypoints:\n"
+      << "  - {x: 1.0, y: 2.0, radius: 1.5, heading_deg: 90.0, stay_time: 2.0}\n"
+      << "  - {x: 3.0, y: 4.0}\n";
+  ofs.close();
+
+  usv_planning::WaypointManager wm;
+  EXPECT_TRUE(wm.load_from_yaml_file(test_yaml, 2.5));
+  EXPECT_EQ(wm.waypoints().size(), 2u);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[0].x, 1.0);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[0].y, 2.0);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[0].radius, 1.5);
+  EXPECT_NEAR(wm.waypoints()[0].heading, M_PI / 2.0, 1e-6);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[0].stay_time, 2.0);
+
+  EXPECT_DOUBLE_EQ(wm.waypoints()[1].x, 3.0);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[1].y, 4.0);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[1].radius, 2.5);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[1].heading, 0.0);
+  EXPECT_DOUBLE_EQ(wm.waypoints()[1].stay_time, 0.0);
+
+  std::remove(test_yaml.c_str());
+
+  EXPECT_FALSE(wm.load_from_yaml_file("/tmp/nonexistent_file_12345.yaml"));
+}
+
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

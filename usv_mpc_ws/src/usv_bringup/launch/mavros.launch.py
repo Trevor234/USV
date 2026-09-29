@@ -18,7 +18,7 @@ def generate_launch_description():
     bringup_dir = get_package_share_directory("usv_bringup")
 
     fcu_url_arg = DeclareLaunchArgument(
-        "fcu_url", default_value="/dev/ttyAMA10:921600",
+        "fcu_url", default_value="/dev/ttyTHS1:921600",
         description="FCU serial connection URL"
     )
     gcs_url_arg = DeclareLaunchArgument(

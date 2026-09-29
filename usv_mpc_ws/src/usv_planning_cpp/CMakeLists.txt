@@ -18,6 +18,8 @@ find_package(geometry_msgs REQUIRED)
 find_package(mavros_msgs REQUIRED)
 find_package(geographic_msgs REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(yaml_cpp_vendor REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
 # ── 纯逻辑库（不含 ROS 依赖，替代 numpy 数学运算） ──────
 add_library(planning_lib
@@ -31,6 +33,7 @@ target_include_directories(planning_lib PUBLIC
 )
 target_link_libraries(planning_lib
   Eigen3::Eigen
+  yaml-cpp
 )
 
 # ── 可执行文件 1: mission_bridge_node ─────────────────────

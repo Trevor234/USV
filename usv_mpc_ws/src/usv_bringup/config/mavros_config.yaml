@@ -1,9 +1,9 @@
 # MAVROS Configuration for USV MicoAir743
 #
-# Serial connection: validated FCU MAVLink port → /dev/ttyAMA10 on RPi5
+# Serial connection: FCU MAVLink port on Jetson Orin → /dev/ttyTHS1
 # Baud rate: 921600
 #
-# fcu_url: primary MAVLink link between Raspberry Pi and flight controller
+# fcu_url: primary MAVLink link between Jetson Orin and flight controller
 # gcs_url: optional MAVLink forwarding endpoint for a ground station
 #          on the Raspberry Pi network
 #
@@ -12,7 +12,7 @@
 
 /**:
   ros__parameters:
-    fcu_url: "/dev/ttyAMA10:921600"
+    fcu_url: "/dev/ttyTHS1:921600"
     gcs_url: "tcp-l://:14550"
     tgt_system: 1
     tgt_component: 1
@@ -34,5 +34,4 @@
       - "waypoint"
     plugin_denylist:
       - "_disabled_plugin_name_that_matches_nothing"
-
 

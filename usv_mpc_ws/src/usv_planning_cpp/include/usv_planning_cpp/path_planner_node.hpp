@@ -45,15 +45,17 @@
 
 #include "usv_planning_cpp/waypoint_manager.hpp"
 
-namespace usv_planning {
+namespace usv_planning
+{
 
 class PathPlannerNode : public rclcpp::Node {
- public:
+public:
   PathPlannerNode();
 
- private:
+private:
   void declare_parameters_();
   void load_config_();
+  void load_waypoints_from_file_();
 
   // ── 回调 ────────────────────────────────────────────
   void odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg);
@@ -62,50 +64,52 @@ class PathPlannerNode : public rclcpp::Node {
   void publish_empty_path_();
 
   // ── 路径生成 ────────────────────────────────────────
-  struct SmoothPathResult {
+  struct SmoothPathResult
+  {
     Eigen::VectorXd xs, ys, psis, kappas, vs, rs, ts;
   };
   std::optional<SmoothPathResult> generate_smooth_path_();
 
   std_msgs::msg::Float64MultiArray build_profile_msg_(
-      const Eigen::VectorXd& vs,
-      const Eigen::VectorXd& kappas,
-      const Eigen::VectorXd& rs,
-      const Eigen::VectorXd& ts,
-      const builtin_interfaces::msg::Time& stamp);
+    const Eigen::VectorXd & vs,
+    const Eigen::VectorXd & kappas,
+    const Eigen::VectorXd & rs,
+    const Eigen::VectorXd & ts,
+    const builtin_interfaces::msg::Time & stamp);
 
   // ── 航点管理 ────────────────────────────────────────
   WaypointManager wp_manager_;
 
   // ── 当前位姿 ────────────────────────────────────────
-  double x_   = 0.0;
-  double y_   = 0.0;
+  double x_ = 0.0;
+  double y_ = 0.0;
   double psi_ = 0.0;
-  double u_   = 0.0;  // 当前纵向速度
+  double u_ = 0.0;    // 当前纵向速度
 
   // ── 配置参数 ────────────────────────────────────────
-  double      update_rate_       = 1.0;
-  double      path_resolution_   = 0.5;
-  double      turn_radius_       = 5.0;
+  double      update_rate_ = 1.0;
+  double      path_resolution_ = 0.5;
+  double      turn_radius_ = 5.0;
   std::string odom_topic_;
   std::string path_topic_;
   std::string profile_topic_;
   std::string dynamic_wp_topic_;
+  std::string waypoints_file_;
   double      default_wp_radius_ = 2.0;
 
   // TOPP 速度剖面约束
-  double u_max_         = 2.0;
-  double r_max_         = 0.5;
+  double u_max_ = 2.0;
+  double r_max_ = 0.5;
   double lat_accel_max_ = 1.0;
-  double accel_max_     = 0.5;
-  double decel_max_     = 0.5;
-  double v_end_         = 0.0;
-  double v_min_         = 0.2;
+  double accel_max_ = 0.5;
+  double decel_max_ = 0.5;
+  double v_end_ = 0.0;
+  double v_min_ = 0.2;
 
   // 可选最小曲率精修
-  bool   enable_curv_opt_       = false;
-  int    curv_opt_max_iter_     = 40;
-  double curv_opt_corridor_     = 1.0;
+  bool   enable_curv_opt_ = false;
+  int    curv_opt_max_iter_ = 40;
+  double curv_opt_corridor_ = 1.0;
 
   // ── ROS 通信 ────────────────────────────────────────
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;

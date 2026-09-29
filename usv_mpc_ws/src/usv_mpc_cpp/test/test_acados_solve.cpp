@@ -38,13 +38,15 @@
 #include "usv_mpc_cpp/acados_backend.hpp"
 #include "usv_mpc_cpp/utils.hpp"
 
-namespace {
+namespace
+{
 
 // MpcParams 默认值即 2026-07-23 真船辨识参数 (见 mpc_solver.hpp)。
-usv_mpc::MpcParams RealBoatParams() { return usv_mpc::MpcParams(); }
+usv_mpc::MpcParams RealBoatParams() {return usv_mpc::MpcParams();}
 
 // 直线前推参考: 1 m/s, dt=0.2 s。
-Eigen::MatrixXd StraightRef(int n) {
+Eigen::MatrixXd StraightRef(int n)
+{
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(6, n + 1);
   for (int k = 0; k <= n; ++k) {
     ref(0, k) = 0.2 * k;
@@ -124,7 +126,7 @@ TEST(AcadosSolve, RuntimeRateBoundTakesEffect) {  // K2
   ASSERT_EQ(info.U_pred.cols(), p.N);
   for (int k = 1; k < p.N; ++k) {
     const double du =
-        (info.U_pred.col(k) - info.U_pred.col(k - 1)).cwiseAbs().maxCoeff();
+      (info.U_pred.col(k) - info.U_pred.col(k - 1)).cwiseAbs().maxCoeff();
     EXPECT_LE(du, dT_step + 1e-6) << "stage " << k << " 变化率越界";
   }
 }
@@ -189,7 +191,7 @@ TEST(AcadosSolve, YawWrapAroundPiIsSmooth) {
 TEST(AcadosSolve, LargeHeadingErrorsRemainSolvable) {
   const usv_mpc::MpcParams p = RealBoatParams();
   const double heading_errors[] = {M_PI / 2.0, 3.0 * M_PI / 4.0,
-                                   M_PI - 1e-3};
+    M_PI - 1e-3};
 
   for (const double heading_error : heading_errors) {
     SCOPED_TRACE("heading_error=" + std::to_string(heading_error));

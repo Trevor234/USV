@@ -30,7 +30,8 @@
 
 #include "usv_safety_cpp/mode_manager_node.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char * argv[])
+{
   rclcpp::init(argc, argv);
   auto node = std::make_shared<usv_safety::ModeManagerNode>();
   rclcpp::spin(node);

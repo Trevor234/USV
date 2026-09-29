@@ -1,9 +1,9 @@
 /**:
   ros__parameters:
     # --- VRX 仿真 overlay (配合 usv_params_sim.yaml 使用) ---
-    # 2026-09-06 起仿真船为实船数字孪生 (14.2 kg / 25 N, USVANSIS 09-03 辨识),
-    # MPC 模型与 Gazebo 植物一致 (usv_mono_*.xacro), 推力 1:1 直发
-    # (vrx_thrust_scale=1.0) —— 仿真调参结论可直接迁移 rc_override 实机路径。
+    # vrx.launch.py 为生成的原生 SDF 与 MPC 加载相同的 effective_vehicle.yaml。
+    # 水平面附加质量交叉项作显式对称化；三维浮力/姿态仍是近似。
+    # 推力按 N 1:1 直发，闭环仿真结论需要实机复验。
 
     control_mode: "dynamic"
     output_mode: "vrx_thrust"      # C++ mpc_node: 推力直发 Gazebo thruster topic
@@ -17,7 +17,7 @@
     cruise_speed: 0.6
 
     # gz Thruster 接收 [N]。NMPC [T_L,T_R] 已是 N -> 1:1 发布。
-    # cmd_max 远高于 40 N 单桨上限, 仅作安全限幅, 不会截断 T_max。
+    # cmd_max 高于默认 25 N 单桨上限；launch 最终按物理 YAML 覆盖 T_min/T_max。
     vrx_thrust_scale: 1.0
     vrx_thrust_cmd_max: 100.0
     # 最终发布值还会按 dynamic.T_min/T_max 限幅，并直接写回下一拍 delta_T

@@ -1,94 +1,70 @@
-# USV MPC Topic and Frame Contract
+# USV MPC 话题与坐标系契约规范
 
-This document is the authoritative interface map for the USV MPC stack. Keep
-launch files, YAML parameters, and node defaults aligned with this contract.
+本文档是 USV MPC 控制软件栈的权威接口映射规范。所有 Launch 启动文件、YAML 参数以及节点默认值均需与本契约保持严格对齐。
 
-## Common interfaces
+## 通用接口
 
-| Interface | Default topic/frame | Message / meaning |
+| 接口名称 | 默认话题 / 坐标系 | 消息类型 / 说明 |
 | --- | --- | --- |
-| Reference path | `/path/reference` | `nav_msgs/msg/Path`, path frame is `map` |
-| Dynamic waypoints | `/usv/mission/waypoints_local` | `nav_msgs/msg/Path`, local mission waypoints |
-| MPC status | `/mpc/status` | `std_msgs/msg/String`, JSON diagnostics |
-| MPC predicted trajectory | `/mpc/predicted_trajectory` | `nav_msgs/msg/Path` |
-| Map frame | `map` | Global/world path and odometry frame |
-| Body frame | `base_link` | USV body frame for commands/diagnostics |
+| 参考路径 | `/path/reference` | `nav_msgs/msg/Path`，路径坐标系为 `map` |
+| 动态航点 | `/usv/mission/waypoints_local` | `nav_msgs/msg/Path`，局部任务航点 |
+| MPC 状态 | `/mpc/status` | `std_msgs/msg/String`，JSON 格式诊断信息 |
+| MPC 预测轨迹 | `/mpc/predicted_trajectory` | `nav_msgs/msg/Path` |
+| 地图/世界坐标系 | `map` | 全局/世界路径及里程计坐标系 |
+| 机体坐标系 | `base_link` | 用于指令与诊断的 USV 船体自身坐标系 |
 
-Scheme A publishes candidate-solution feasibility diagnostics in `/mpc/status`:
-`initial_state_residual`, `max_dynamics_residual`,
-`max_control_bound_violation`, and `max_control_rate_violation`. A recovered
-IPOPT iterate is successful only when all four values are within
-`kinematic.solution_constraint_tol`.
+方案 A 在 `/mpc/status` 中发布候选解的可行性诊断信息：`initial_state_residual`（初始状态残差）、`max_dynamics_residual`（最大动力学残差）、`max_control_bound_violation`（最大控制量越界值）以及 `max_control_rate_violation`（最大控制率越界值）。仅当这四个值均在 `kinematic.solution_constraint_tol` 容差范围内时，恢复出的 IPOPT 迭代解才被认定为求解成功。
 
-Scheme B publishes the solver's planned first thrust as `tl_cmd_n`/`tr_cmd_n` and
-the execution-layer equivalent input used for the next rate anchor as
-`tl_n`/`tr_n`. `actuation_anchor_source` is `rc_linearized` for RC override and
-`vrx_published` for direct VRX thrust. `actuation_mapping_error_n` is the
-largest absolute difference between the planned and anchored values.
+方案 B 将求解器规划的首步推力发布为 `tl_cmd_n`/`tr_cmd_n`，并将执行层用于下一个控制变化率锚定点的等效输入发布为 `tl_n`/`tr_n`。对于 RC 覆盖模式，`actuation_anchor_source` 为 `rc_linearized`；对于 VRX 直驱推力模式，则为 `vrx_published`。`actuation_mapping_error_n` 记录规划推力与锚定推力之间的最大绝对差值。
 
-## Runtime profiles
+## 运行环境配置（Runtime Profiles）
 
-### `vrx` — real VRX Gazebo Sim / WAM-V
+### `vrx` — 真实 VRX Gazebo 仿真 / WAM-V 双体船
 
-| Interface | Topic |
+| 接口 | 对应话题 |
 | --- | --- |
-| Odometry | `/wamv/sensors/position/ground_truth_odometry` |
-| IMU | `/wamv/sensors/imu/imu/data` |
-| Left thrust command | `/wamv/thrusters/left/thrust` |
-| Right thrust command | `/wamv/thrusters/right/thrust` |
+| 里程计 (Odometry) | `/wamv/sensors/position/ground_truth_odometry` |
+| IMU 惯导 | `/wamv/sensors/imu/imu/data` |
+| 左推进器推力指令 | `/wamv/thrusters/left/thrust` |
+| 右推进器推力指令 | `/wamv/thrusters/right/thrust` |
 
-Notes:
+注意事项：
 
-- VRX waypoints must use the same world/map coordinates as the WAM-V odometry.
-  They are **not** local to the boat spawn point.
-- VRX odometry follows the `nav_msgs/msg/Odometry` frame contract: pose is in
-  `header.frame_id` (`map`) and twist is in `child_frame_id`
-  (`wamv/base_link`). Scheme A's `cmdvel_to_thrust` consumes
-  `twist.linear.x` directly as body-frame surge speed and must not rotate it by
-  the pose yaw again.
-- The default WAM-V spawn in `sydney_regatta` is around `(-532, 162)`, so a
-  YAML route around `(0, 0)` is hundreds of meters away.
-- VRX thrust topics use the WAM-V thruster command scale; `mpc_node` maps its
-  internal left/right thrust values through `vrx_thrust_scale`, clamps them to
-  the configured dynamic thrust bounds, and writes the final published values
-  back as the next `delta_T` anchor.
+- VRX 航点必须使用与 WAM-V 里程计完全相同的世界/地图坐标系（`map`），**不能**使用相对于船体生成点的局部坐标。
+- VRX 里程计遵循 `nav_msgs/msg/Odometry` 坐标系契约：位姿（Pose）位于 `header.frame_id`（`map`），速度（Twist）位于 `child_frame_id`（`wamv/base_link`）。方案 A 的 `cmdvel_to_thrust` 直接消费 `twist.linear.x` 作为机体纵向速度（surge speed），**严禁再次根据航向角（yaw）进行旋转变换**。
+- `sydney_regatta` 场景中 WAM-V 的默认生成位置大约在 `(-532, 162)` 附近，因此配置在 `(0, 0)` 附近的 YAML 航线实际相距数百米。
+- VRX 推力话题使用 WAM-V 推进器指令尺度；`mpc_node` 会通过 `vrx_thrust_scale` 缩放内部左右推力值，并将其截断在配置的动态推力边界内，最后将实际发布的推力值写回，作为下一次 `delta_T` 的锚定点。
 
-### `sitl_mavros` — ArduPilot SITL + MAVROS
+### `sitl_mavros` — ArduPilot SITL 软件在环仿真 + MAVROS
 
-| Interface | Topic |
+| 接口 | 对应话题 |
 | --- | --- |
-| Odometry | `/mavros/local_position/odom` |
-| IMU | `/mavros/imu/data` |
-| FCU state | `/mavros/state` |
-| Scheme A velocity command | `/mavros/setpoint_velocity/cmd_vel` |
-| Scheme B RC override | `/mavros/rc/override` |
-| RC output | `/mavros/rc/out` |
+| 里程计 | `/mavros/local_position/odom` |
+| IMU 惯导 | `/mavros/imu/data` |
+| 飞控连接状态 (FCU) | `/mavros/state` |
+| 方案 A 速度指令 | `/mavros/setpoint_velocity/cmd_vel` |
+| 方案 B RC 覆盖输入 | `/mavros/rc/override` |
+| RC 输出反馈 | `/mavros/rc/out` |
 
-Scheme B's RC path uses the configured PWM gains and signs to produce the
-override. After integer PWM quantization, the node reports a linearized
-equivalent thrust in `tl_n`/`tr_n`; this is a command-side estimate until PWM,
-dead zone, propulsion and battery-voltage calibration data are available.
+方案 B 的 RC 链路通过配置的 PWM 增益和正负号生成覆盖指令。在整型 PWM 量化后，节点会在 `tl_n`/`tr_n` 中上报线性化等效推力；在获取完整的 PWM、死区、推进系统及电池电压标定数据之前，该值属于指令侧估算值。
 
-### `real_mavros` — real boat + MAVROS
+### `real_mavros` — 真实硬件船艇 + MAVROS
 
-Use the same MAVROS topic contract as `sitl_mavros` unless the hardware launch
-explicitly remaps topics. Any deviation should be documented in the launch file
-and reflected in this document.
+除非硬件 Launch 文件中显式重映射（remap）了相关话题，否则必须使用与 `sitl_mavros` 完全一致的 MAVROS 话题契约。任何改动均应在 Launch 文件中记录，并同步更新到本文档中。
 
-### `fallback_gz` — project Gazebo Sim fallback
+### `fallback_gz` — 项目本地 Gazebo 仿真兜底方案
 
-| Interface | Topic |
+| 接口 | 对应话题 |
 | --- | --- |
-| Gazebo model odometry | `/model/usv_2m/odometry` |
-| Wrench command | `/world/lake_gz/wrench` |
-| Force command bridge input | `/usv/cmd_force` |
+| Gazebo 模型里程计 | `/model/usv_2m/odometry` |
+| 船体扳手（力和力矩）指令 | `/world/lake_gz/wrench` |
+| 力指令桥接输入 | `/usv/cmd_force` |
 
-### `classic_gazebo` — Gazebo Classic legacy/fallback
+### `classic_gazebo` — 旧版 Gazebo Classic（遗留/后备）
 
-Gazebo Classic launch files use `GAZEBO_*` environment variables and may depend
-on `gazebo_ros`. They are not the preferred VRX validation path on ROS 2 Jazzy.
+Gazebo Classic 的 Launch 文件依赖 `GAZEBO_*` 环境变量且可能依赖 `gazebo_ros`。在 ROS 2 Jazzy 环境下，这不是推荐的 VRX 验证路径。
 
-## Debug checklist
+## 调试排查清单（Debug checklist）
 
 ```bash
 ros2 topic list | grep -E 'mpc|path|wamv|mavros|usv'
@@ -97,7 +73,7 @@ ros2 topic info /path/reference
 ros2 param dump /mpc_controller_node
 ```
 
-For VRX, also check:
+在 VRX 仿真环境下，还需检查：
 
 ```bash
 ros2 topic echo /wamv/sensors/position/ground_truth_odometry --once

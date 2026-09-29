@@ -7,13 +7,16 @@
 CasADi fallback)。本工作区在 B 的基础上额外保留并维护**开发专用能力**:VRX Gazebo 仿真、
 ArduPilot SITL 联调、参数辨识工具链。
 
+VRX 船模与水动力配置见 [VRX 船模与水动力配置说明](docs/vrx_model_hydrodynamics.md)：
+原生 SDF 单体船，按辨识 YAML 生成外形、总质量、重心、附加质量、阻尼和双桨间距。
+
 ## 与 usv_mpc_ws_B(Pi5 部署)的关系
 
 | 项 | 本工作区(开发) | usv_mpc_ws_B(Pi5 部署) |
 |---|---|---|
 | 算法(控制器/规划/安全) | **同源,以 B 为准** | 上游(source of truth) |
 | VRX/Gazebo 仿真 | ✅ `sim/sitl/vrx.launch.py` | ❌(仅 matplotlib 可视化) |
-| 仿真船参数 | `usv_params_sim.yaml`(30 kg 单体船) | — |
+| 仿真船参数 | `usv_params_sim.yaml`(14.2 kg / 1.2 m 单体船，生成器同步 MPC) | — |
 | 真船参数 | `usv_params*.yaml`(14.2 kg,2026-07-23 辨识) | 同左 |
 | 参数辨识工具链 | ✅ `参数识别/` | ❌ |
 | acados | x86 源码编译(`~/acados`) | aarch64 源码编译 |
@@ -29,7 +32,7 @@ ArduPilot SITL 联调、参数辨识工具链。
 | `usv_mpc_kinematic_cpp` | C++ | 运动学 MPC 的 C++ 版(方案 A 实机用) |
 | `usv_planning` / `usv_planning_cpp` | Py/C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
 | `usv_safety` / `usv_safety_cpp` | Py/C++ | 模式管理 + 安全监控(围栏/电池/求解器/看门狗 failsafe → RTL) |
-| `usv_simulation` | Python | matplotlib 实时可视化 + telemetry bridge(无 Gazebo 依赖) |
+| `usv_simulation` | Python | 原生 VRX 船模生成、推力转换、matplotlib 可视化和 telemetry bridge |
 | `usv_bringup` | — | launch(`real/mavros/ntrip/record/sim/sitl/vrx`)+ 全部 YAML 配置 |
 
 ## 两个控制方案
@@ -72,9 +75,10 @@ ros2 launch usv_bringup vrx.launch.py headless:=True       # 无头
 ros2 launch usv_bringup vrx.launch.py record_bag:=True     # 顺带录 bag
 ```
 
-- MPC 参数:`mpc_params.yaml` + `usv_params_sim.yaml`(30 kg 仿真船)+ `mpc_params_vrx.yaml`(overlay,
+- MPC 参数:`mpc_params.yaml` + `usv_params_sim.yaml`(14.2 kg / 1.2 m 参数快照)+ `mpc_params_vrx.yaml`(overlay,
   `output_mode=vrx_thrust` 直接发布 `/wamv/thrusters/{left,right}/thrust`)。
-- 需要本机装好 VRX(`vrx_gz`、`wamv_gazebo`)与 Gazebo;仿真船模型在 `src/usv_simulation/urdf/`。
+- 需要本机装好 VRX(`vrx_gz`、`wamv_gazebo`)与 Gazebo；船模由
+  `src/usv_simulation/usv_simulation/vrx_model.py` 启动时生成原生 SDF，旧 Xacro 仅保留作历史复现。
 
 ### ArduPilot SITL(无 Gazebo)
 
@@ -118,7 +122,7 @@ colcon test && colcon test-result --verbose           # pytest + gtest(C++ 包�
 | `mpc_params_vrx.yaml` | VRX 仿真 overlay(实船孪生 25 N + `vrx_thrust` 输出) |
 | `usv_params.yaml` | **真船**水动力学(14.2 kg / 1.2 m,2026-07-23 辨识,sway-yaw 耦合项置零保证开环稳定) |
 | `usv_params_A.yaml` / `usv_params_B.yaml` | 方案变体(真船) |
-| `usv_params_sim.yaml` | **仿真船**水动力学(30 kg 单体,与 `usv_mono_dynamics.xacro` 一致) |
+| `usv_params_sim.yaml` | **仿真船**辨识参数快照(14.2 kg / 1.2 m；由 VRX 生成器与 MPC 共用) |
 | `path_config.yaml` | 圆弧倒角半径、TOPP 限制(规划可行域 ⊆ 控制可行域) |
 | `safety_params.yaml` | 围栏/电池/求解器/看门狗阈值 |
 | `ntrip_params.yaml` | CORS 差分数据源(RTK) |
