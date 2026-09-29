@@ -8,11 +8,33 @@
 | 项 | 值 | 对齐来源 |
 |---|---|---|
 | 决策频率 | 5 Hz（dt=0.2 s） | mpc_params.yaml `mpc_dt` |
-| 动作空间 | [T_L, T_R] ∈ ±25 N + 80 N/s 限率 | mpc_params.yaml 推力约束 |
-| 奖励 | −MPC 代价（Q=[20,20,50,8,1,8], R=[0.05,0.05], Rd=[0.2,0.2]）+ 进度项 | mpc_params.yaml `dynamic.*` |
+| 动作空间 | [-1,1] 归一化 → [T_L,T_R] ∈ ±25N + 80 N/s 限率 | mpc_params.yaml 推力约束 |
+| 奖励 | −MPC 代价（Q=[20,20,50,8,1,8], R=[0.05,0.05], Rd=[0.2,0.2]）+ 空间项(q=100) + 进度项(w=15) | mpc_params.yaml `dynamic.*` |
 | 动力学 | Fossen 3-DOF RK4×4（与 C++ 200 步对拍 <1e-8） | usv_model_dynamic.cpp |
 | 水动力参数 | usv_params_sim.yaml 快照（2026-09-03 辨识） | usv_bringup/config |
 | 观测 | 43 维（相对量，无绝对 x/y） | usv_rl/observation.py 单一真源 |
+
+## 训练成果（v5，随机路径 50 episode，DR 关闭）
+
+| 指标 | LOS 基线 | PPO (v5 s4_dr) |
+|---|---|---|
+| 成功率 | 100% | 100% |
+| 横向误差 RMS | 0.404 m | **0.312 m** |
+| 横向误差 max | 1.172 m | **1.056 m** |
+| 航向误差 RMS | 25.8° | **16.1°** |
+| 单次推理 | — | 0.03 ms (ONNX) |
+
+部署模型：`models/v5/s4_dr/policy.onnx`（含 VecNormalize 折叠 + 反缩放，直接输入原始观测输出物理推力 N；经 domain randomization ±20% 水动力/推力延迟/观测噪声训练）。
+
+## 激励设计教训（五轮迭代，每轮一个 reward hacking）
+
+| 轮 | 症状 | 根因 → 修复 |
+|---|---|---|
+| v1 | 倒车自尽（ep_len 23 步） | 存活罚 >> 速死罚 → 调度 rebase + 终端奖惩 |
+| v2 | 0.24m 精度沿路径线倒车 | 前进回报 ≈ 死亡回报 → 进度权重 15 |
+| v3 | ep_len 303→27 单调衰减 | 提前终止 = 求死通道 → 训练期取消提前终止 |
+| sanity4 | 悬停蹭 rebase | ±25N 量纲下 PPO 探索只有 ±1N → 动作归一化 [-1,1] |
+| v4/sanity5 | 直线冲线 / 赛车线甩宽 | rebase 让几何失约束；2m 封顶梯度饱和 → 空间项 q=100 |
 
 ## 目录
 
