@@ -41,8 +41,10 @@ class DeterministicActor(nn.Module):
         norm = (obs - self.obs_mean) / torch.sqrt(self.obs_var + self.eps)
         norm = torch.clamp(norm, -self.clip_obs, self.clip_obs)
         mean = self.net(norm)
-        # PPO 高斯策略均值已是物理量纲（±25 N），SB3 predict 仅做 clip
-        return torch.clamp(mean, self.act_low, self.act_high)
+        # 动作空间归一化 [-1,1]：SB3 predict 输出 clip 后的归一化动作，
+        # 这里折叠反缩放，使 ONNX 直接输出物理推力 N
+        a01 = torch.clamp(mean, -1.0, 1.0)
+        return self.act_low + (a01 + 1.0) * 0.5 * (self.act_high - self.act_low)
 
 
 def export(model_path: str, vecnorm_path: str, out_path: str, opset: int = 13) -> Path:
@@ -101,14 +103,13 @@ def _verify(actor, sb3_model, out: Path, obs_dim: int, act_low, act_high) -> Non
         raw = rng.normal(0, 2.0, (1, obs_dim)).astype(np.float32)
         onnx_out = sess.run(["thrust"], {"obs": raw})[0]
 
-        # SB3 参考路径：手动归一化 → predict(deterministic=mean) → clip 到动作界
+        # SB3 参考路径：手动归一化 → predict(deterministic=mean) → clip 后反缩放
         norm = np.clip(
             (raw - actor.obs_mean.numpy()) / np.sqrt(actor.obs_var.numpy() + 1e-8),
             -actor.clip_obs, actor.clip_obs,
         ).astype(np.float32)
-        torch_act = np.clip(
-            sb3_model.predict(norm, deterministic=True)[0], act_low, act_high
-        )
+        a01 = np.clip(sb3_model.predict(norm, deterministic=True)[0], -1.0, 1.0)
+        torch_act = act_low + (a01 + 1.0) * 0.5 * (act_high - act_low)
         max_diff = max(max_diff, float(np.max(np.abs(onnx_out - torch_act))))
     print(f"ONNX 导出完成: {out}  (与 SB3 predict 最大差 {max_diff:.2e} N)")
     assert max_diff < 1e-3, f"ONNX 与 SB3 推理不一致: {max_diff}"

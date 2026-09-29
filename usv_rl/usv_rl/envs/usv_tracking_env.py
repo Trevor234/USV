@@ -65,6 +65,9 @@ class UsvTrackingEnv(gym.Env):
         # 调度重定位：沿迹偏差超阈值时把时间参考拉回船附近（MPC 重规划语义），
         # 防止"落后罚到死比追上去更划算"的退化策略
         schedule_rebase_m: float = 2.0,
+        # 训练期关闭提前终止：违规只持续计罚不判死——
+        # 只要"早死"比"带伤活着"省，PPO 就会先学死（v3 教训：ep_len 303→27.7）
+        early_termination: bool = True,
         # 课程：路径类型
         path_type: str = "random",
         # Domain randomization（训练末段开启）
@@ -97,6 +100,7 @@ class UsvTrackingEnv(gym.Env):
         self.schedule_pos_cap = schedule_pos_cap
         self.schedule_psi_cap = schedule_psi_cap
         self.schedule_rebase_m = schedule_rebase_m
+        self.early_termination = early_termination
         self.path_type = path_type
         self.hydro_dr_frac = hydro_dr_frac
         self.thrust_delay_max_steps = thrust_delay_max_steps
@@ -111,7 +115,9 @@ class UsvTrackingEnv(gym.Env):
 
         n_obs = 3 + 2 + 2 + 2 + 4 * len(self.lookahead) + 2
         self.observation_space = spaces.Box(-np.inf, np.inf, (n_obs,), np.float32)
-        self.action_space = spaces.Box(-t_max_thrust, t_max_thrust, (2,), np.float32)
+        # 动作归一化到 [-1,1]：PPO 初始 std=1 即覆盖全推力量程（±25N 量纲下
+        # std=1 只能探索 4% 满量程，策略永远摸不到巡航推力）
+        self.action_space = spaces.Box(-1.0, 1.0, (2,), np.float32)
 
         self._rng = np.random.default_rng()
         self._reset_state()
@@ -188,19 +194,18 @@ class UsvTrackingEnv(gym.Env):
 
     # ------------------------------------------------------------------
     def step(self, action: np.ndarray):
-        action = np.clip(np.asarray(action, dtype=np.float64), -self.t_max_thrust, self.t_max_thrust)
-
-        # 推力速率限制（与 MPC dT_max 一致）+ 可选执行延迟
+        # [-1,1] → 物理推力 N，再施加速率限制
+        action = np.clip(np.asarray(action, dtype=np.float64), -1.0, 1.0)
+        raw_thrust = action * self.t_max_thrust
         max_delta = self.d_t_max * self.dt
         target = np.clip(
-            self.prev_thrust + np.clip(action - self.prev_thrust, -max_delta, max_delta),
+            self.prev_thrust + np.clip(raw_thrust - self.prev_thrust, -max_delta, max_delta),
             -self.t_max_thrust, self.t_max_thrust,
         )
+        applied = target
         if self.thrust_queue:
             self.thrust_queue.append(target)
             applied = self.thrust_queue.pop(0)
-        else:
-            applied = target
 
         prev_state = self.state
         self.state = self.model.forward(self.state, applied)
@@ -323,20 +328,26 @@ class UsvTrackingEnv(gym.Env):
         return float(reward)
 
     def _check_done(self) -> tuple[bool, bool, str]:
-        """终止用空间参考（最近路径点）：超前/滞后调度只影响奖励，不判死。"""
+        """成功终止；超时截断；违规默认不判死（early_termination=False 时
+        仅在超时那一刻用违规原因标记，供指标统计）。"""
         ref = self.reference
         i_p = self.prog_idx
         e_pos = math.hypot(self.state[0] - ref.xs[i_p], self.state[1] - ref.ys[i_p])
         e_psi = abs(wrap_angle(self.state[2] - ref.psis[i_p]))
 
-        if e_pos > self.pos_err_limit:
-            return True, False, "pos_err"
-        if e_psi > self.psi_err_limit:
-            return True, False, "psi_err"
         if self.traveled_s >= ref.total_length - self.path_resolution * 1.5:
             return True, False, "success"
+
+        reason = ""
+        if e_pos > self.pos_err_limit:
+            reason = "pos_err"
+        elif e_psi > self.psi_err_limit:
+            reason = "psi_err"
+
         if self.step_count >= self._episode_step_limit:
-            return False, True, "timeout"
+            return False, True, reason or "timeout"
+        if reason and self.early_termination:
+            return True, False, reason
         return False, False, ""
 
     def _info(self, ds_prog: float, reason: str = "") -> dict[str, Any]:

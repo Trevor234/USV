@@ -30,7 +30,8 @@ def test_compose_observation_matches_env(path_type: str):
         xs, ys, psis, kappas, vs, rs, ss, ts = _reference_arrays(env)
         obs_compose = compose_observation(
             env.state, xs, ys, psis, kappas, vs, rs, ss, ts,
-            t_now=env.step_count * env.dt,
+            # 与 env._ref_point_at_time 的有效调度时刻一致（含 rebase lag）
+            t_now=env.step_count * env.dt - env._t_lag,
             prog_idx=env.prog_idx,
             prev_thrust=env.prev_thrust,
             lookahead=env.lookahead,

@@ -24,8 +24,8 @@ def test_spaces(env):
     # [u,v,r] + [sin,cos psi] + [sin,cos e_psi] + [v_ref,r_ref] + K×4 + [TL,TR]_prev
     assert env.observation_space.shape == (3 + 2 + 2 + 2 + 4 * n_look + 2,)
     assert env.action_space.shape == (2,)
-    assert env.action_space.low[0] == pytest.approx(-25.0)
-    assert env.action_space.high[0] == pytest.approx(25.0)
+    assert env.action_space.low[0] == pytest.approx(-1.0)
+    assert env.action_space.high[0] == pytest.approx(1.0)
     assert env.observation_space.dtype == np.float32
 
 
@@ -56,7 +56,7 @@ def test_step_contract(env):
 
 def test_thrust_rate_limit(env):
     env.reset(seed=1)
-    big = np.array([25.0, 25.0])
+    big = np.array([1.0, 1.0])  # 归一化动作 +1 → 请求 +25N
     _, _, _, _, info = env.step(big)
     # 第一步从 0 出发，最多允许 dT_max*dt = 16 N
     assert info["applied_thrust"][0] == pytest.approx(80.0 * 0.2)

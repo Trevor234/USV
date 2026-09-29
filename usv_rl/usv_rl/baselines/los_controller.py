@@ -68,4 +68,5 @@ class LosController:
 
         tl = 0.5 * (tau_x - tau_n / d)
         tr = 0.5 * (tau_x + tau_n / d)
-        return np.clip(np.array([tl, tr]), -t_max, t_max)
+        # 动作空间归一化到 [-1,1]（env 内部 ×t_max 映射为物理推力）
+        return np.clip(np.array([tl, tr]) / t_max, -1.0, 1.0)
