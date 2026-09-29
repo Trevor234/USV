@@ -68,6 +68,12 @@ class UsvTrackingEnv(gym.Env):
         # 训练期关闭提前终止：违规只持续计罚不判死——
         # 只要"早死"比"带伤活着"省，PPO 就会先学死（v3 教训：ep_len 303→27.7）
         early_termination: bool = True,
+        # 空间最近点距离惩罚封顶（m）：rebase 会跟着船走，时间参考惩罚管不住
+        # 抄近道——路径几何必须用空间项显式约束（v4 教训：13.6m 横向误差冲线）
+        spatial_pos_cap: float = 2.0,
+        # 空间项独立权重：须压过"甩宽过弯换速度"的赛车线收益（v4.5 教训：q=20
+        # 时 Z字 e_ct 仍有 2.76m——速度收益 > 贴线代价）
+        q_pos_spatial: float = 100.0,
         # 课程：路径类型
         path_type: str = "random",
         # Domain randomization（训练末段开启）
@@ -101,6 +107,8 @@ class UsvTrackingEnv(gym.Env):
         self.schedule_psi_cap = schedule_psi_cap
         self.schedule_rebase_m = schedule_rebase_m
         self.early_termination = early_termination
+        self.spatial_pos_cap = spatial_pos_cap
+        self.q_pos_spatial = q_pos_spatial
         self.path_type = path_type
         self.hydro_dr_frac = hydro_dr_frac
         self.thrust_delay_max_steps = thrust_delay_max_steps
@@ -314,9 +322,15 @@ class UsvTrackingEnv(gym.Env):
         )
         d_thrust = applied - self.prev_thrust
 
+        # 空间最近点距离（路径几何约束；rebase 使时间参考跟随船，此项不可省）
+        i_p = self.prog_idx
+        e_pos_sp = math.hypot(x - ref.xs[i_p], y - ref.ys[i_p])
+        e_pos_sp = min(e_pos_sp, self.spatial_pos_cap)
+
         cost = (
             self.q_x * dx ** 2
             + self.q_y * dy ** 2
+            + self.q_pos_spatial * e_pos_sp ** 2
             + self.q_psi * e_psi_t ** 2
             + self.q_u * (u - ref.v_ref[i_t]) ** 2
             + self.q_v * v ** 2
