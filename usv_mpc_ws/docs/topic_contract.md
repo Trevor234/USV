@@ -17,6 +17,8 @@
 
 方案 B 将求解器规划的首步推力发布为 `tl_cmd_n`/`tr_cmd_n`，并将执行层用于下一个控制变化率锚定点的等效输入发布为 `tl_n`/`tr_n`。对于 RC 覆盖模式，`actuation_anchor_source` 为 `rc_linearized`；对于 VRX 直驱推力模式，则为 `vrx_published`。`actuation_mapping_error_n` 记录规划推力与锚定推力之间的最大绝对差值。
 
+方案 C（`usv_rl_ros/rl_policy_node`，强化学习）复用方案 B 的全部公共话题：订阅相同的 odom/IMU/参考路径/速度剖面，在 VRX 模式发布相同的 `/wamv/thrusters/{left,right}/thrust` 推力话题，并发布与 `/mpc/status` 同构的 JSON（`control_mode` 为 `rl`，`backend` 为 `onnx_ppo`，`solve_time_ms` 为推理耗时）。安全节点的 `/mpc/status` 看门狗对方案 C 无需改动。方案 C 的动作侧约束与方案 B 一致：±25 N clamp + 80 N/s 速率限制。`real_mavros` 模式下的 `rc_override` 输出在部署阶段接入。
+
 ## 运行环境配置（Runtime Profiles）
 
 ### `vrx` — 真实 VRX Gazebo 仿真 / WAM-V 双体船
