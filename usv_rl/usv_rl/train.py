@@ -65,8 +65,8 @@ class SyncVecNormalizeEvalCallback(EvalCallback):
         self._train_env_ref = train_env
 
     def _on_step(self) -> bool:
-        train_norm = VecNormalize.wrap_get(self._train_env_ref)
-        if train_norm is not None:
+        train_norm = self._train_env_ref
+        if isinstance(train_norm, VecNormalize):
             self.eval_env.obs_rms = train_norm.obs_rms
             self.eval_env.ret_rms = train_norm.ret_rms
         self.eval_env.training = False
@@ -181,6 +181,7 @@ def main() -> None:
               f"overrides={stage.get('env_overrides', {})} ===")
         model.learn(
             total_timesteps=stage["total_steps"],
+            callback=callbacks,
             reset_num_timesteps=(si == 0 and args.resume is None),
             tb_log_name=args.run_name,
             progress_bar=False,

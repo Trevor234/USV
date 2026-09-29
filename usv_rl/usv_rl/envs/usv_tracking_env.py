@@ -62,6 +62,9 @@ class UsvTrackingEnv(gym.Env):
         # 时间参考代价 cap（超出后误差不再增长，避免策略早期奖励爆炸）
         schedule_pos_cap: float = 3.0,
         schedule_psi_cap: float = math.pi / 2,
+        # 调度重定位：沿迹偏差超阈值时把时间参考拉回船附近（MPC 重规划语义），
+        # 防止"落后罚到死比追上去更划算"的退化策略
+        schedule_rebase_m: float = 2.0,
         # 课程：路径类型
         path_type: str = "random",
         # Domain randomization（训练末段开启）
@@ -93,6 +96,7 @@ class UsvTrackingEnv(gym.Env):
         self.psi_err_limit = psi_err_limit
         self.schedule_pos_cap = schedule_pos_cap
         self.schedule_psi_cap = schedule_psi_cap
+        self.schedule_rebase_m = schedule_rebase_m
         self.path_type = path_type
         self.hydro_dr_frac = hydro_dr_frac
         self.thrust_delay_max_steps = thrust_delay_max_steps
@@ -122,6 +126,7 @@ class UsvTrackingEnv(gym.Env):
         self.thrust_queue: list[np.ndarray] = []
         self.traveled_s = 0.0
         self._episode_step_limit = self.max_steps
+        self._t_lag = 0.0                     # 调度滞后（时间参考向后平移量）
 
     def _sample_reference(self) -> None:
         kappas, lengths = sample_kappa_segments(
@@ -166,6 +171,7 @@ class UsvTrackingEnv(gym.Env):
         self.step_count = 0
         self.prog_idx = 0
         self.traveled_s = 0.0
+        self._t_lag = 0.0
         self.prev_thrust = np.zeros(2)
         # episode 步数上限随参考轨迹时长自适应（剖面时间 + 5 s 追赶余量），
         # 不超过配置的 max_steps 绝对上限
@@ -203,10 +209,13 @@ class UsvTrackingEnv(gym.Env):
         prev_s = self.traveled_s
         self._update_progress()
         ds_prog = self.traveled_s - prev_s
+        self._rebase_schedule()
 
         obs = self._get_obs()
         reward = self._reward(applied, target, ds_prog)
         terminated, truncated, reason = self._check_done()
+        if terminated:
+            reward += self.success_bonus if reason == "success" else -self.failure_penalty
         self.prev_thrust = applied
 
         info = self._info(ds_prog, reason=reason)
@@ -225,7 +234,28 @@ class UsvTrackingEnv(gym.Env):
         self.traveled_s = ref.s[self.prog_idx]
 
     def _ref_point_at_time(self) -> int:
-        return self.reference.at_time(self.step_count * self.dt)
+        t_eff = max(self.step_count * self.dt - self._t_lag, 0.0)
+        return self.reference.at_time(t_eff)
+
+    def _rebase_schedule(self) -> None:
+        """沿迹偏差超阈值时平移时间参考（MPC 重规划语义）。
+
+        落后 → lag 增大（参考回退到船附近）；超前 → lag 减小（下限 0）。
+        """
+        if self.schedule_rebase_m <= 0.0:
+            return
+        ref = self.reference
+        i_t = self._ref_point_at_time()
+        hd = ref.psis[i_t]
+        e_along = (self.state[0] - ref.xs[i_t]) * math.cos(hd) + \
+            (self.state[1] - ref.ys[i_t]) * math.sin(hd)
+        vr = max(float(ref.v_ref[i_t]), 0.1)
+        if e_along < -self.schedule_rebase_m:
+            self._t_lag += (-e_along - self.schedule_rebase_m) / vr
+        elif e_along > self.schedule_rebase_m:
+            self._t_lag = max(
+                self._t_lag - (e_along - self.schedule_rebase_m) / vr, 0.0
+            )
 
     def _get_obs(self) -> np.ndarray:
         ref = self.reference
