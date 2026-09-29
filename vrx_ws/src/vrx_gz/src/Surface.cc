@@ -70,6 +70,10 @@ class vrx::Surface::Implementation
   /// points are contained within the hull. You should pass reasonable points.
   public: std::vector<math::Vector3d> points;
 
+  /// Apply sample forces about the link origin instead of the legacy COM
+  /// offset convention. Opt-in preserves existing VRX models.
+  public: bool pointsInLinkFrame = false;
+
   /// \brief The wavefield.
   public: Wavefield wavefield;
 
@@ -169,6 +173,8 @@ void Surface::Configure(const sim::Entity &_entity,
   }
 
   // Parse the optional <points> element.
+  this->dataPtr->pointsInLinkFrame =
+    _sdf->Get<bool>("points_in_link_frame", false).first;
   this->dataPtr->ParsePoints(_sdf);
 
   // Get the gravity from the world.
@@ -256,9 +262,19 @@ void Surface::PreUpdate(const sim::UpdateInfo &_info,
 
     // Apply force at the point.
     // Position is in the link frame and force is in world frame.
-    this->dataPtr->link.AddWorldForce(_ecm,
-      math::Vector3d(0, 0, kBuoyForce),
-      bpnt);
+    const math::Vector3d forceWorld(0, 0, kBuoyForce);
+    if (this->dataPtr->pointsInLinkFrame)
+    {
+      // AddWorldWrench is about the link origin. AddWorldForce(position)
+      // instead adds the link's inertial offset to position; that would
+      // double-count a nonzero center of mass for link-frame samples.
+      this->dataPtr->link.AddWorldWrench(_ecm, forceWorld,
+        kBpntW.Cross(forceWorld));
+    }
+    else
+    {
+      this->dataPtr->link.AddWorldForce(_ecm, forceWorld, bpnt);
+    }
 
     // Debug output:
     // gzdbg << bpnt.X() << "," << bpnt.Y() << "," << bpnt.Z() << std::endl;

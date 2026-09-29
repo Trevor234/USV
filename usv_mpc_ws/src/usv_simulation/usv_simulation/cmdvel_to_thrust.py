@@ -13,7 +13,7 @@ r_cmd (TwistStamped); 本节点用 2026-09-03 辨识的动力学逆模型 + 测�
   yaw_ff(r)  = |Nr|·r + |Nrr|·r·|r|   (阶段 3 艏摇阻尼前馈)
   d          = 半桨距 0.25 m
 
-参数默认值与 usv_params_sim.yaml / usv_mono 植物模型一致 (数字孪生)。
+参数默认值与 usv_params_sim.yaml / vrx_model.py 生成的 SDF 植物模型一致。
 cmd_vel 断流 >0.3 s → 推力归零 (MPC 死亡/STANDBY 即停船)。
 """
 import rclpy

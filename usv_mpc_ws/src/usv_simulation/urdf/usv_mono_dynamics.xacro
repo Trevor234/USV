@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+<!-- LEGACY: not used by vrx.launch.py. Native SDF uses fluid_added_mass plus
+     gz::sim::systems::Hydrodynamics (negative damping, *abs* quadratic tags).
+     The old SimpleHydrodynamics plugin below has DIFFERENT sign conventions. -->
 <!-- Buoyancy + Fossen hydrodynamics for the single-hull USV, reusing VRX's
      gz-sim plugins (libSurface.so / libSimpleHydrodynamics.so) but scaled to the
      real 2 m / 30 kg dual-thruster boat (see usv_bringup/config/usv_params.yaml).

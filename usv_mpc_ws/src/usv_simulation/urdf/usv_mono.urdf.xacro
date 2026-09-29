@@ -1,4 +1,7 @@
 <?xml version="1.0"?>
+<!-- LEGACY MODEL: retained only for reproducing old runs. vrx.launch.py now
+     generates a native SDF with usv_simulation.vrx_model; this file is not loaded.
+     The dimensions/mass below do not describe the identified 14.2 kg boat. -->
 <!-- Single-hull, dual-thruster USV for VRX.
 
      Design goal: match the real 2 m / 30 kg differential-thrust boat while

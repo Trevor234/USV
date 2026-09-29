@@ -11,9 +11,10 @@ setup(
     data_files=[
         ("share/ament_index/resource_index/packages", ["resource/" + package_name]),
         ("share/" + package_name, ["package.xml"]),
-        # VRX sim boat model (usv_mono.urdf.xacro + dynamics xacro), consumed by
-        # usv_bringup/launch/vrx.launch.py via get_package_share_directory.
+        # Legacy Xacro plus inputs used by the native SDF generator in vrx.launch.py.
         (f"share/{package_name}/urdf", glob("urdf/*.xacro")),
+        (f"share/{package_name}/config", glob("config/*.yaml")),
+        (f"share/{package_name}/worlds", glob("worlds/*.sdf")),
     ],
     install_requires=["setuptools"],
     zip_safe=True,
@@ -25,7 +26,8 @@ setup(
     entry_points={
         "console_scripts": [
             "visualizer = usv_simulation.visualizer:main",
-        "cmdvel_to_thrust = usv_simulation.cmdvel_to_thrust:main",
+            "build_vrx_model = usv_simulation.vrx_model:main",
+            "cmdvel_to_thrust = usv_simulation.cmdvel_to_thrust:main",
             "telemetry_bridge = usv_simulation.telemetry_bridge:main",
         ],
     },
