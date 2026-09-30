@@ -65,6 +65,7 @@ class RlPolicyNode(Node):
         self.declare_parameter("t_max", 25.0)
         self.declare_parameter("d_t_max", 80.0)
         self.declare_parameter("cruise_speed", 0.6)
+        self.declare_parameter("schedule_rebase_m", 2.0)
         self.declare_parameter(
             "lookahead", [float(v) for v in DEFAULT_LOOKAHEAD])
 
@@ -80,6 +81,7 @@ class RlPolicyNode(Node):
         self.t_max = float(self.get_parameter("t_max").value)
         self.d_t_max = float(self.get_parameter("d_t_max").value)
         self.cruise_speed = float(self.get_parameter("cruise_speed").value)
+        self.schedule_rebase_m = float(self.get_parameter("schedule_rebase_m").value)
         self.lookahead = tuple(
             float(v) for v in self.get_parameter("lookahead").value)
         self.dt = 1.0 / self.rate_hz
@@ -109,6 +111,8 @@ class RlPolicyNode(Node):
         self.prog_idx = 0
         self._path_fp = None                 # 路径几何指纹（防每秒重发重置任务时钟）
         self._mission_t0 = None              # 任务时钟起点：新路径首次出现的时刻
+        self._t_lag = 0.0                    # 调度滞后（与训练环境 rebase 语义一致）
+        self.schedule_rebase_m = 2.0
         self.prev_thrust = np.zeros(2)
         self.standby_reason = "init"
 
@@ -216,9 +220,27 @@ class RlPolicyNode(Node):
         now = self.get_clock().now()
         if self._mission_t0 is not None:
             # 任务时钟：从新路径首次出现起累计（不受规划器每秒重发影响）
-            path_time = now.nanoseconds * 1e-9 - self._mission_t0
+            mission_time = max(now.nanoseconds * 1e-9 - self._mission_t0, 0.0)
         else:
-            path_time = 0.0
+            mission_time = 0.0
+
+        # 调度 rebase（与训练环境 _rebase_schedule 语义一致）：沿迹偏差超阈
+        # 时平移时间参考。缺了这步，任务时钟一旦超过剖面总时长，参考就钳在
+        # 路径终点 v_ref≈0，策略会以阻力平衡速度滑行（VRX 实测 0.3 m/s 的根因）
+        i_t = int(np.clip(
+            np.searchsorted(self.prof_t, max(mission_time - self._t_lag, 0.0),
+                            side="right") - 1,
+            0, len(self.prof_t) - 1))
+        hd = self.ref_psis[i_t]
+        e_along = ((self.state[0] - self.ref_xs[i_t]) * math.cos(hd)
+                   + (self.state[1] - self.ref_ys[i_t]) * math.sin(hd))
+        vr = max(float(self.prof_v[i_t]), 0.1)
+        if e_along < -self.schedule_rebase_m:
+            self._t_lag += (-e_along - self.schedule_rebase_m) / vr
+        elif e_along > self.schedule_rebase_m:
+            self._t_lag = max(
+                self._t_lag - (e_along - self.schedule_rebase_m) / vr, 0.0)
+        path_time = max(mission_time - self._t_lag, 0.0)
 
         self.prog_idx = advance_progress(
             self.ref_xs, self.ref_ys, self.state[0], self.state[1], self.prog_idx)
@@ -269,6 +291,7 @@ class RlPolicyNode(Node):
             "path_len": 0 if self.ref_xs is None else int(len(self.ref_xs)),
             "profile_synced": bool(self.profile_synced),
             "profile_sync_reason": "synced" if self.profile_synced else "fallback_cruise",
+            "t_lag": round(self._t_lag, 2),
             "x": x, "y": y, "psi": psi, "u": u, "v": v, "r": r,
             "dynamic_dt": self.dt,
             "dynamic_N": 1,
