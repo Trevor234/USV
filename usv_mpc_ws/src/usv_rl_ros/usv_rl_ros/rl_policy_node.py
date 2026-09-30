@@ -107,6 +107,8 @@ class RlPolicyNode(Node):
         self.path_stamp = None
         self.path_received = False
         self.prog_idx = 0
+        self._path_fp = None                 # 路径几何指纹（防每秒重发重置任务时钟）
+        self._mission_t0 = None              # 任务时钟起点：新路径首次出现的时刻
         self.prev_thrust = np.zeros(2)
         self.standby_reason = "init"
 
@@ -136,6 +138,15 @@ class RlPolicyNode(Node):
     def _imu_cb(self, msg: Imu) -> None:
         self.r_from_imu = msg.angular_velocity.z
 
+    @staticmethod
+    def _path_fingerprint(xs, ys) -> tuple:
+        """路径几何指纹：规划器每秒重发同一路径（戳会变），据此区分真·新路径。"""
+        return (
+            len(xs),
+            round(float(xs[0]), 3), round(float(ys[0]), 3),
+            round(float(xs[-1]), 3), round(float(ys[-1]), 3),
+        )
+
     def _path_cb(self, msg: PathMsg) -> None:
         n = len(msg.poses)
         if n < 2:
@@ -149,10 +160,15 @@ class RlPolicyNode(Node):
         s = np.concatenate([[0.0], np.cumsum(seg)])
         self.ref_xs, self.ref_ys, self.ref_psis, self.ref_s = xs, ys, psis, s
         self.path_received = True
-        new_path = self.path_stamp is None or msg.header.stamp != self.path_stamp
-        self.path_stamp = msg.header.stamp
-        if new_path:
+
+        fp = self._path_fingerprint(xs, ys)
+        now_sec = self.get_clock().now().nanoseconds * 1e-9
+        if fp != self._path_fp:
+            # 真·新路径：任务时钟归零、进度归零
+            self._path_fp = fp
+            self._mission_t0 = now_sec
             self.prog_idx = 0
+        self.path_stamp = msg.header.stamp
         self.profile_synced = (
             self.prof_v is not None and len(self.prof_v) == len(xs)
         )
@@ -198,9 +214,9 @@ class RlPolicyNode(Node):
             self.state[5] = self.r_from_imu
 
         now = self.get_clock().now()
-        if self.path_stamp is not None:
-            stamp = self.path_stamp
-            path_time = now.nanoseconds / 1e9 - (stamp.sec + stamp.nanosec * 1e-9)
+        if self._mission_t0 is not None:
+            # 任务时钟：从新路径首次出现起累计（不受规划器每秒重发影响）
+            path_time = now.nanoseconds * 1e-9 - self._mission_t0
         else:
             path_time = 0.0
 
