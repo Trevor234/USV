@@ -86,6 +86,12 @@ ros2 launch usv_bringup vrx.launch.py scheme:=B record_bag:=true run_id:=mpc_b_0
 ```
 
 部署机（Pi5/Orin）需 `pip install` 本包（核心依赖仅 numpy/pyyaml/gymnasium）+ onnxruntime。
+Ubuntu 24.04（PEP 668）系统 Python 安装命令（ROS 节点跑在系统 Python，不是训练 venv）：
+
+```bash
+python3 -m pip install --user --break-system-packages -e ~/USV/usv_rl
+python3 -m pip install --user --break-system-packages onnxruntime
+```
 `real.launch.py` 的 scheme C（rc_override 模式）在部署阶段接入——节点需先移植
 推力→PWM 映射（RcActuation，steering_sign=-1）。
 
