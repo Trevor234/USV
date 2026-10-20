@@ -15,6 +15,8 @@
   <depend>sensor_msgs</depend>
   <depend>mavros_msgs</depend>
   <depend>std_msgs</depend>
+  <depend>rosgraph_msgs</depend>
+  <depend>usv_research_interfaces</depend>
   <depend>nlohmann_json_schema_validator_vendor</depend>
   <!-- Eigen3: Fossen 模型数值运算 (替代 numpy) -->
   <build_depend>eigen</build_depend>

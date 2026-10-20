@@ -21,6 +21,8 @@ find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(mavros_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rosgraph_msgs REQUIRED)
+find_package(usv_research_interfaces REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(Eigen3 REQUIRED)
 
@@ -54,7 +56,8 @@ set_target_properties(codegen_lib PROPERTIES
   C_STANDARD 99
   POSITION_INDEPENDENT_CODE ON)
 target_include_directories(codegen_lib PUBLIC
-  ${ACADOS_GEN_DIR}
+  $<BUILD_INTERFACE:${ACADOS_GEN_DIR}>
+  $<INSTALL_INTERFACE:include/usv_mpc_cpp/acados_generated>
   ${ACADOS_INC_DIR}
   ${ACADOS_INC_DIR}/acados
   ${BLASFEO_INC_DIR}
@@ -138,6 +141,7 @@ find_package(Python3 REQUIRED COMPONENTS Interpreter)
 add_library(mpc_core_lib
   src/usv_model_dynamic.cpp
   src/utils.cpp
+  src/p1_input_core.cpp
 )
 target_include_directories(mpc_core_lib PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -161,7 +165,8 @@ target_include_directories(mpc_solver_lib PUBLIC
   ${ACADOS_INC_DIR}
   ${BLASFEO_INC_DIR}
   ${HPIPM_INC_DIR}
-  ${ACADOS_GEN_DIR}
+  $<BUILD_INTERFACE:${ACADOS_GEN_DIR}>
+  $<INSTALL_INTERFACE:include/usv_mpc_cpp/acados_generated>
 )
 target_link_libraries(mpc_solver_lib PUBLIC mpc_core_lib)
 target_link_libraries(mpc_solver_lib PUBLIC nlohmann_json::nlohmann_json)
@@ -198,6 +203,8 @@ ament_target_dependencies(mpc_node
   mavros_msgs
   std_msgs
   nlohmann_json
+  rosgraph_msgs
+  usv_research_interfaces
 )
 
 # ── RPATH: 让运行时找到 acados/casadi/blasfeo/hpipm .so ──
@@ -247,7 +254,38 @@ if(BUILD_TESTING)
   )
   target_link_libraries(test_mpc_core mpc_core_lib)
 
+  # Exercise the node's actual output mapping using an injected test solver.
+  ament_add_gtest(test_deadline_control
+    test/test_deadline_control.cpp src/mpc_node.cpp)
+  target_include_directories(test_deadline_control PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+  target_link_libraries(test_deadline_control mpc_solver_lib)
+  ament_target_dependencies(test_deadline_control
+    rclcpp geometry_msgs nav_msgs sensor_msgs mavros_msgs std_msgs nlohmann_json rosgraph_msgs usv_research_interfaces)
+  set_target_properties(test_deadline_control PROPERTIES
+    BUILD_RPATH "${ACADOS_LIB_DIR};${CASADI_LIB_DIR}"
+  )
+  set_tests_properties(test_deadline_control PROPERTIES
+    ENVIRONMENT "LD_LIBRARY_PATH=${ACADOS_LIB_DIR}:${CASADI_LIB_DIR}:$ENV{LD_LIBRARY_PATH};ROS_DOMAIN_ID=88;ROS_LOCALHOST_ONLY=1"
+    TIMEOUT 60
+  )
+
   # gtest: acados 后端冒烟 + K1/K2 运行时约束边界回归 (需 acados 运行时库)
+  ament_add_gtest(test_research_contract
+    test/test_research_contract.cpp src/mpc_node.cpp)
+  target_include_directories(test_research_contract PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+  target_link_libraries(test_research_contract mpc_solver_lib)
+  ament_target_dependencies(test_research_contract
+    rclcpp geometry_msgs nav_msgs sensor_msgs mavros_msgs std_msgs nlohmann_json
+    rosgraph_msgs usv_research_interfaces)
+  set_target_properties(test_research_contract PROPERTIES
+    BUILD_RPATH "${ACADOS_LIB_DIR};${CASADI_LIB_DIR}")
+  set_tests_properties(test_research_contract PROPERTIES
+    ENVIRONMENT "LD_LIBRARY_PATH=${ACADOS_LIB_DIR}:${CASADI_LIB_DIR}:$ENV{LD_LIBRARY_PATH};ROS_DOMAIN_ID=89;ROS_LOCALHOST_ONLY=1"
+    TIMEOUT 120)
+
   if(EXISTS "${ACADOS_LIB_DIR}/libacados.so")
     ament_add_gtest(test_acados_solve test/test_acados_solve.cpp)
     target_include_directories(test_acados_solve PRIVATE
@@ -280,5 +318,12 @@ if(BUILD_TESTING)
     endif()
   endif()
 endif()
+
+# P1_EXPORT_CORE_V1: backend has one owner in the independent solver process.
+install(TARGETS mpc_core_lib mpc_solver_lib codegen_lib
+  EXPORT p1_core_targets ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
+install(DIRECTORY acados_generated/ DESTINATION include/usv_mpc_cpp/acados_generated FILES_MATCHING PATTERN "*.h")
+ament_export_targets(p1_core_targets HAS_LIBRARY_TARGET NAMESPACE usv_mpc_cpp::)
+ament_export_dependencies(Eigen3 nlohmann_json)
 
 ament_package()
