@@ -16,7 +16,7 @@
 | 第 6 章 | 映射到你的项目：UsvTrackingEnv 逐段精读 | 60 分钟 |
 | 第 7 章 | 训练全流程：VecEnv/归一化/课程/TensorBoard | 30 分钟 |
 | 第 8 章 | 部署链路：从 .zip 到 ROS 节点 | 20 分钟 |
-| 第 9 章 | 实战复盘：五轮 reward hacking（精华） | 40 分钟 |
+| 第 9 章 | 实战复盘：五轮 reward hacking + 部署事故（精华） | 50 分钟 |
 | 第 10 章 | 速查手册 | 随查随用 |
 
 > 每章末尾都有 **🔧 实操环节**。实操命令默认在 `~/USV/usv_rl` 的虚拟环境中执行：
@@ -891,20 +891,22 @@ cd ~/USV/usv_rl && source .venv/bin/activate
 # LOS 基线 50 条随机路径
 python -m usv_rl.evaluate --baseline los --episodes 50
 # v5 策略同题对比（DR 关闭、确定性推理）
-python -m usv_rl.evaluate --model models/v5/best/best_model.zip \
+# 注意: 用 s4_dr/model.zip（与下表及 README 成果表同源）；best/best_model.zip 是
+# EvalCallback 按评估奖励存的最优 checkpoint，数字会略有不同（能耗 ~7458）
+python -m usv_rl.evaluate --model models/v5/s4_dr/model.zip \
     --vecnorm models/v5/s4_dr/vecnormalize.pkl --episodes 50
 ```
 
-参考结果（2026-09-30 实测）：
+参考结果（2026-09-30 初测；2026-10-06 同命令复现，各指标逐项一致）：
 
 | 指标 | LOS 基线 | PPO v5 |
 |---|---|---|
 | 成功率 | 100% | 100% |
 | 横向误差 RMS | 0.404 m | **0.312 m** |
 | 航向误差 RMS | 25.8° | **16.1°** |
-| 能耗均值 | 2416 N²·s | 7458 N²·s |
+| 能耗均值 | 2416 N²·s | **7338 N²·s** |
 
-读表三件事：① RL 精度全面占优；② RL 能耗更高（对精度更贪婪）——精度/能耗权衡由奖励权重 $R$ 控制，这是 RL 相比固定 MPC 的自由度；③ 指标定义见 `evaluate.py`（横向误差 RMS 为逐步统计，不是终值）。
+读表三件事：① RL 精度全面占优；② RL 能耗约 3 倍、控制动作量约 16 倍——对精度更贪婪，平滑权重 $R_d$ 是权衡旋钮（三栏式结果分析见组会汇报第 16 页）；③ 指标定义见 `evaluate.py`（横向误差 RMS 为逐步统计，不是终值）。
 
 ---
 
@@ -1004,17 +1006,24 @@ tensorboard --logdir runs/ --host 127.0.0.1 --port 6006
 
 | 训练产物 | 部署形态 | 说明 |
 |---|---|---|
-| `model.zip`（torch 策略） | `policy.onnx` | 依赖解耦：部署机不需要 torch，只需 onnxruntime |
+| `model.zip`（torch 策略） | `policy_physical_n.onnx` + `policy_physical_n.manifest.json` | 依赖解耦：部署机不需要 torch，只需 onnxruntime；manifest 是随模型走的"合同"（见下） |
 | `vecnormalize.pkl`（观测统计） | **折叠进 ONNX 图** | 推理输入原始观测，图内自动 (o−μ)/σ |
 | `env.yaml` 的观测/动作定义 | `observation.py`（单一真源） | 训练与部署共用同一份观测拼接代码 + 等价性测试 |
 
 为什么用 ONNX：跨语言/跨框架的推理标准，onnxruntime 纯 C++ 实现，43 维→2 维的小网络单次推理 **0.03 ms**（5 Hz 周期的 1/6000），Pi5/Orin 无压力。
 
-**折叠原理**：训练时 `VecNormalize` 在网络外面做归一化；导出时把归一化做成图的前两层：
+**折叠原理**：训练时 `VecNormalize` 在网络外面做归一化；导出时把归一化和物理缩放都做成图内的层：
 
 $$\text{obs} \longrightarrow \frac{\text{obs} - \mu}{\sqrt{\sigma^2+\epsilon}} \longrightarrow \mathrm{clip}(\pm 10) \longrightarrow \mathrm{MLP} \longrightarrow \mathrm{clip}(\pm 1) \longrightarrow \times\,25\,\mathrm{N} \longrightarrow \text{thrust}$$
 
-导出后必须**对拍验证**：同一批随机观测过 ONNX 与过 SB3，推力差必须 < 1e-3 N（实测 7e-7）。
+**导出即契约**（`export_policy.py`，2026-10-03 重写后）——图内最后一级固定 `clip(±1) × 25 N`，ONNX 输出**直接是物理牛顿**：
+
+- `thrust_scale_n` 钉死为 25.0（传其它值直接 ValueError 拒绝）；`VecNormalize` 强制折叠，统计量冻结校验
+- **独立 oracle 对拍**：同一批观测（64 条合成 + 可选实测 `.npy`）分别过 ONNX 与过 `VecNormalize.normalize_obs + SB3.predict(deterministic=True)`，逐条推力差必须 < 1e-3 N（v5 实测 max **1.9e-5 N**，72 条实测观测）
+- 产出 **manifest（contract_version=1）**：`output_unit="N"`、`action_order=["T_L","T_R"]`、输入输出名与 43/2 维、`thrust_scale_n`、`physical_low/high_n=±25`、`normalization_embedded=true`、**`onnx_sha256`**（图文件字节哈希）、源模型与统计量哈希、verification 对拍记录、完整导出命令、依赖版本
+- 拒绝覆盖已存在产物（临时文件 + 同目录原子发布，失败自清理），导出命令原样写入 manifest 供复核
+
+**部署侧契约门（`rl_policy_node`）**：加载时逐项校验 manifest——contract_version、单位、动作顺序、输入输出名与维数、`normalization_embedded`、`thrust_scale_n≈25.0`、`physical_low/high_n=±25`；节点当前 `t_max` 参数必须同为 25 N（**双向绑定**）；`onnx_sha256` 必须与 ONNX 文件字节的 SHA256 一致；再核 ORT 会话的张量名/类型/形状与图内 `usv.*` 元数据。**任何一项不符：节点拒绝上线，保持 STANDBY 零推力，状态 reason=`model_contract_invalid`。**
 
 ## 8.2 rl_policy_node 数据流
 
@@ -1037,14 +1046,16 @@ $$\text{obs} \longrightarrow \frac{\text{obs} - \mu}{\sqrt{\sigma^2+\epsilon}} \
 1. **话题契约完全一致**：订阅 odom/imu/path/profile，发布推力 + `/mpc/status` 同构 JSON——安全节点（看门狗/failsafe）**零改动**就能监控 RL
 2. **调度语义一致**：节点实现与训练环境相同的任务时钟锚定（路径几何指纹防 1Hz 重发干扰）+ rebase
 3. **执行约束一致**：限幅限率在节点内复现
+4. **模型契约一致**：加载时硬校验 manifest 并与节点 `t_max` 双向绑定（见 8.1 契约门）——不匹配的模型根本无法上线
 
-## 8.3 三个部署期专属的坑（训练期不存在）
+## 8.3 四个部署期专属的坑（训练期不存在）
 
 | 坑 | 症状 | 修复 |
 |---|---|---|
 | 规划器 1Hz 重发路径、戳常新 | 任务时钟每秒清零 → 策略悬停（推力 0.05N，船不动） | 路径几何指纹判"真·新路径" |
 | 任务时钟超过剖面总时长 | 参考钳在终点 v_ref≈0 → 策略以阻力平衡速度滑行（实测 0.3 m/s） | 移植训练环境的 rebase 到节点 |
 | 观测语义漂移 | 训练 95 分 → 部署完全不会动 | observation.py 单一真源 + 等价性测试 |
+| **导出图缺物理缩放**（2026-10-03 审计发现） | 训练评估满分，VRX 实际最大推力仅 ±1.0 N（船怠速爬行，均速 0.267 m/s） | 图内 25×clip 重导出 `policy_physical_n.onnx` + manifest 契约 + 部署硬校验门（案卷六） |
 
 **方法论**：观测等价性测试（`tests/test_obs_equivalence.py`）只能锁"拼接代码"，锁不住"时间语义"。凡是训练环境里影响观测**取值**的动态机制（rebase、时钟推进），部署侧都要逐条对照实现——清单在第 10 章。
 
@@ -1052,13 +1063,15 @@ $$\text{obs} \longrightarrow \frac{\text{obs} - \mu}{\sqrt{\sigma^2+\epsilon}} \
 
 ```bash
 cd ~/USV/usv_rl && source .venv/bin/activate
-# 1. 导出（对拍打印 <1e-3 N 即通过）
-python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip
+# 1. 导出（--thrust-scale-n 必填且只接受 25.0；对拍打印 <1e-3 N 即通过）
+python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip --thrust-scale-n 25.0
+#    产物: policy_physical_n.onnx + policy_physical_n.manifest.json（旧 policy.onnx
+#    是缩放 bug 时代的产物，输出 [-1,1]，仅留作诊断对照，勿再部署）
 # 2. 端到端冒烟：ONNX 直接在训练环境里跑 20 条轨迹
 python -c "
 import numpy as np, onnxruntime as ort
 from usv_rl.envs import UsvTrackingEnv
-sess = ort.InferenceSession('models/v5/s4_dr/policy.onnx')
+sess = ort.InferenceSession('models/v5/s4_dr/policy_physical_n.onnx')
 env = UsvTrackingEnv(path_type='random')
 ok = 0
 for ep in range(20):
@@ -1068,14 +1081,16 @@ for ep in range(20):
         done = t or tr
     ok += info['done_reason'] == 'success'
 print(f'ONNX 端到端成功率 {ok}/20')"
-# 3. VRX 实测（scheme C，航点文件见 README）
+#    注意: policy_physical_n.onnx 输出物理 N，喂给 UsvTrackingEnv 时环境会再 ×25——
+#    此冒烟只验"图能跑通、成功率不塌"，动作量纲以 manifest + 部署门为准
+# 3. VRX 实测（scheme C，航点文件见 README，rl_model 指向 policy_physical_n.onnx）
 ```
 
 ---
 
-# 第 9 章 实战复盘：五轮 reward hacking（本案卷比前面所有理论都值钱）
+# 第 9 章 实战复盘：五轮 reward hacking + 一次部署事故（本案卷比前面所有理论都值钱）
 
-以下五轮失败**全部真实发生**在 v1→v5 的开发过程中（2026-09-30，同一份代码上）。每轮按"症状→诊断→根因→修复"四段展开。看完你会真正理解那句话：**RL 的难点不在算法，在奖励设计**。
+以下案卷（第 1–5 轮 reward hacking + 第 6 桩部署链路事故）**全部真实发生**在 v1→v5 的开发与部署过程中（2026-09-30 → 10-03，同一份代码上）。每份按"症状→诊断→根因→修复"四段展开。看完你会真正理解那句话：**RL 的难点不在算法，在奖励设计——以及奖励之外每一个"顺手做了"的环节**。
 
 > reward hacking：策略找到了"刷分"的漏洞——它没有违反规则，它只是把规则的目标扭曲成了字面执行。奖励是你唯一能对策略说的话，而策略是把它当字面合同的律师。
 
@@ -1158,7 +1173,25 @@ print(f'ONNX 端到端成功率 {ok}/20')"
 
 **教训**：*"成功率"不是任务的全部——奖励漏掉的维度，策略一定会拿去做交易。检查方法：把训练出的行为录像看一遍，问自己"这是我想要的吗"；把奖励里每个被 rebase/终止/归一化弱化的项列出来，问"它还约束得住吗"。*
 
-## 五轮总账
+## 案卷六：单位缩放 bug（部署链路版——策略没作弊，是管线在说谎）
+
+**症状**：v5 训练评估全绿（成功率 100%、CTE 0.312 m），上 VRX（scheme C）后船像被钉住一样怠速爬行：**实际最大推力只有 ±1.0 N**（满量程 ±25 N 的 4%），平均航速 0.267 m/s。策略权重、观测、训练曲线全部"正确"——它就是不动。
+
+**诊断**：问题不在 RL 侧。用只读方式检查部署的 `policy.onnx` 计算图（不执行、不修改，只看图结构）：输出节点是 `clip(±1)`——**图输出的是归一化动作，不是物理推力**。VecNormalize 的归一化折叠做了，"×25 N" 的物理缩放根本没进图。
+
+**根因**：旧导出器把"归一化折叠"当成了"缩放折叠"——代码注释与文档都宣称"输出物理量纲"，实现里却少了最后一步乘法。训练侧自始至终正确：SB3 `predict` 输出 [-1,1]，训练环境在 `step()` 内部自己 ×25。**断点在导出这一环**：训练环境替策略做的缩放，ONNX 图没有继承。这是前五轮 reward hacking 的镜像——那五轮是"策略钻规则的空子"，这一桩是"管线对部署撒了谎"。
+
+**修复**：
+
+1. 重写导出器：图内末级固定 `clip(±1) × 25 N`，`thrust_scale_n` 钉死且必须显式传入（8.1 节）
+2. 产出 manifest 契约（单位/维数/缩放/SHA256/对拍记录）+ **独立 oracle 对拍**（以 SB3 predict 为基准，容差 1e-3 N，实测 1.9e-5 N）
+3. 部署节点加**硬校验门**：manifest 逐项核对 + SHA256 对文件字节 + `t_max` 双向绑定，不符即 STANDBY 零推力
+
+修复后同一策略：VRX 最大推力 1.0 → **20.15 N**，均速 0.267 → **0.861 m/s**（CTE 0.117→0.147 m——速度上来后贴线更难，如实记录为回归而非改善）。
+
+**教训**：*"训练侧正确"≠"部署侧正确"。任何训练环境里"顺手做了"的变换（缩放、归一化、限幅），部署侧要么逐位复现、要么折叠进图并用契约锁死、双向校验。检验方法与 reward hacking 同款：不要信注释和文档，直接检查部署产物的计算图。*
+
+## 六案总账（五轮 reward hacking + 一次部署事故）
 
 | 轮 | 症状一句话 | 根因一句话 | 修复一句话 |
 |---|---|---|---|
@@ -1167,6 +1200,7 @@ print(f'ONNX 端到端成功率 {ok}/20')"
 | v3 | ep_len 303→27 单调衰减 | 自杀是梯度可达的捷径 | 取消训练期提前终止 |
 | sanity4 | 悬停挪不动 | 探索半径 = 满量程 4% | 动作归一化 [-1,1] |
 | v4→v5 | 13.6m 直线冲线/赛车线 | 几何失约束 + 封顶梯度饱和 | 空间项 q=100 |
+| 案卷六 | 训练满分，实船推力仅 ±1 N | 导出图缺物理缩放，管线说谎 | 图内 ×25 + manifest + 部署门 |
 
 ## 🔧 第 9 章实操：三个奖励陷阱思考题
 
@@ -1232,10 +1266,11 @@ usv_rl/                          训练侧（纯 Python，不进 colcon）
 ├── usv_rl/baselines/los_controller.py   LOS+PD 解析基线
 ├── usv_rl/train.py              PPO 训练入口（课程/回调/并行）
 ├── usv_rl/evaluate.py           指标评估（vs LOS）
-├── usv_rl/export_policy.py      ONNX 导出（含归一化折叠与对拍）
-├── tests/                       对拍/API/等价性测试（21 个）
-├── models/v5/                   训练产物（best/、s4_dr/、checkpoints）
-└── runs/                        TensorBoard 日志
+├── usv_rl/export_policy.py      ONNX 导出（契约式：图内 ×25N、manifest、oracle 对拍）
+├── tests/                       对拍/API/等价性/导出契约测试（pytest 收集 53 例：动力学对拍 7 / 环境 API 8 / 导出契约 32 / 观测等价 6）
+├── models/v5/                   训练产物（best/、s4_dr/ 含 policy_physical_n.onnx+manifest、checkpoints）
+├── runs/                        TensorBoard 日志
+└── docs/report_assets/          组会汇报图表与复现脚本（fig_curves/fig_trajectory、评估落盘 eval_*.txt、build_ppt.js）
 
 usv_mpc_ws/src/usv_rl_ros/       部署侧（ament_python）
 └── usv_rl_ros/rl_policy_node.py  ONNX 推理节点（scheme C）
@@ -1251,13 +1286,14 @@ pytest tests/ -q                                            # 全部测试
 python -m usv_rl.train --run-name v6 --n-envs 16            # 全课程训练
 python -m usv_rl.train --run-name t --stage s1_straight --total-steps 1500000   # 单阶段试跑
 python -m usv_rl.evaluate --baseline los --episodes 50      # LOS 基线
-python -m usv_rl.evaluate --model models/v5/best/best_model.zip \
-    --vecnorm models/v5/s4_dr/vecnormalize.pkl --episodes 50 # 策略评估
-python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip   # 导出 ONNX
+python -m usv_rl.evaluate --model models/v5/s4_dr/model.zip \
+    --vecnorm models/v5/s4_dr/vecnormalize.pkl --episodes 50 # 策略评估（成果表同源配置）
+python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip \
+    --thrust-scale-n 25.0                                    # 导出 ONNX（契约式，见 8.1）
 tensorboard --logdir runs/ --port 6006                      # 看曲线
 # VRX 实测（三层 source 后）：
 ros2 launch usv_bringup vrx.launch.py scheme:=C record_bag:=true \
-    rl_model:=$HOME/USV/usv_rl/models/v5/s4_dr/policy.onnx \
+    rl_model:=$HOME/USV/usv_rl/models/v5/s4_dr/policy_physical_n.onnx \
     waypoints_file:=$HOME/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml
 ```
 
@@ -1268,6 +1304,7 @@ ros2 launch usv_bringup vrx.launch.py scheme:=C record_bag:=true \
 - [ ] rebase 语义与训练环境一致
 - [ ] 动作映射：ONNX 输出量纲 → 物理推力（限幅/限率）
 - [ ] VecNormalize 统计与模型同代（pkl 与 zip 配套）
+- [ ] manifest 契约校验通过：output_unit=N、维数 43/2、thrust_scale_n=25 且与节点 t_max 双向一致、onnx_sha256 与文件字节一致
 - [ ] /mpc/status 同构发布（安全看门狗）
 - [ ] ONNX 对拍 < 1e-3 N
 
@@ -1279,10 +1316,19 @@ ros2 launch usv_bringup vrx.launch.py scheme:=C record_bag:=true \
 4. **GAE 论文** *High-Dimensional Continuous Control Using Generalized Advantage Estimation* (Schulman et al., 2016)——3.6 的完整版
 5. **Domain Randomization**（Tobin et al., 2017）与 sim-to-real 综述——第 5、6 章的延伸
 6. 船的动力学背景：Fossen《Handbook of Marine Craft Hydrodynamics and Motion Control》第 6-8 章
+7. **仓库内部材料**（按案例对照读）：
+   - `docs/组会汇报_方案C_RL路径跟踪_20261006.pptx` + `docs/report_assets/`——本教程的图表化版本，含三栏式结果分析
+   - `usv_mpc_ws/docs/research/v5_ONNX_物理推力缩放_修复报告_2026-10-03.md`——案卷六的完整审计与修复记录
+   - `usv_mpc_ws/docs/research/p0_data_contract.md`——P0 发布端数据契约（研究数据基建，GP 标签与执行时序证据的前置，超出本教程范围仅作指针）
 
 ---
 
-*教程完 · 2026-09-30 · 与 `codex/scheme-c-rl` 分支的 v5 代码同步。发现与现实代码不符处，以代码为准并请更新本文。*
+*教程完 · 初版 2026-09-30，修订 2026-10-06 · 与 `codex/scheme-c-rl` 工作区代码同步。发现与现实代码不符处，以代码为准并请更新本文。*
+
+**修订记录**
+
+- 2026-09-30 初版：十章全流程 + 五轮 reward hacking 案卷，对齐 v5。
+- 2026-10-06 修订：新增案卷六（ONNX 单位 bug）与 8.1 导出契约/部署契约门；8.3 坑表补第 4 行；评估命令与成果数字统一到 s4_dr 并补 10-06 复现说明；测试数 21→30；10.2 文件地图补契约产物与 report_assets；10.4 清单补 manifest 校验项。
 
 
 

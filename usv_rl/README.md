@@ -14,7 +14,7 @@
 | 水动力参数 | usv_params_sim.yaml 快照（2026-09-03 辨识） | usv_bringup/config |
 | 观测 | 43 维（相对量，无绝对 x/y） | usv_rl/observation.py 单一真源 |
 
-## 训练成果（v5，随机路径 50 episode，DR 关闭）
+## 训练成果（v5，随机路径 50 episode，DR 关闭；2026-09-30 初测，2026-10-06 同命令复现逐项一致）
 
 | 指标 | LOS 基线 | PPO (v5 s4_dr) |
 |---|---|---|
@@ -23,8 +23,9 @@
 | 横向误差 max | 1.172 m | **1.056 m** |
 | 航向误差 RMS | 25.8° | **16.1°** |
 | 单次推理 | — | 0.03 ms (ONNX) |
+| 能耗均值 | 2416 N²·s | 7338 N²·s（精度换能耗的权衡，见教程 6.7） |
 
-部署模型：`models/v5/s4_dr/policy.onnx`（含 VecNormalize 折叠 + 反缩放，直接输入原始观测输出物理推力 N；经 domain randomization ±20% 水动力/推力延迟/观测噪声训练）。
+部署模型：`models/v5/s4_dr/policy_physical_n.onnx` + `policy_physical_n.manifest.json`（契约式导出：VecNormalize 折叠进图，图内 `clip(±1)×25N`，输出直接为物理推力 N；manifest 记录单位/维数/缩放/SHA256/对拍记录，部署节点加载时硬校验，不符即 STANDBY 零推力。经 domain randomization ±20% 水动力/推力延迟/观测噪声训练）。旧 `policy.onnx` 输出归一化动作 [-1,1]（缺物理缩放，2026-10-03 审计发现），仅留作诊断对照，勿再部署。
 
 ## 激励设计教训（五轮迭代，每轮一个 reward hacking）
 
@@ -48,8 +49,8 @@ usv_rl/observation.py     观测构建单一真源（ROS 节点共用）
 usv_rl/baselines/         LOS+PD 解析基线
 usv_rl/train.py           PPO 训练（课程/评估回调/TensorBoard）
 usv_rl/evaluate.py        指标评估（成功率/横向误差/能耗/平滑度）
-usv_rl/export_policy.py   ONNX 导出（含 VecNormalize 折叠，对拍 <1e-3 N）
-tests/                    对拍 + API + 等价性测试（17 个）
+usv_rl/export_policy.py   契约式 ONNX 导出（图内 ×25N + manifest + 独立 oracle 对拍 <1e-3 N）
+tests/                    对拍 + API + 等价性 + 导出契约测试（pytest 收集 53 例）
 ```
 
 ## 使用
@@ -66,13 +67,13 @@ pytest tests/ -q
 python -m usv_rl.train --run-name v1 --n-envs 16
 tensorboard --logdir runs/
 
-# 评估（PPO vs LOS 基线）
+# 评估（PPO vs LOS 基线；s4_dr 与上方成果表同源）
 python -m usv_rl.evaluate --baseline los --episodes 50
-python -m usv_rl.evaluate --model models/v1/best/best_model.zip \
-    --vecnorm models/v1/best/vecnormalize.pkl --episodes 50
+python -m usv_rl.evaluate --model models/v5/s4_dr/model.zip \
+    --vecnorm models/v5/s4_dr/vecnormalize.pkl --episodes 50
 
-# 导出 ONNX（部署）
-python -m usv_rl.export_policy --model models/v1/best/best_model.zip
+# 导出 ONNX（契约式；--thrust-scale-n 必填且只接受 25.0）
+python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip --thrust-scale-n 25.0
 ```
 
 ## VRX 验证（scheme C）
@@ -80,7 +81,7 @@ python -m usv_rl.export_policy --model models/v1/best/best_model.zip
 ```bash
 # 三层 source：/opt/ros/jazzy → vrx_ws/install → usv_mpc_ws/install
 ros2 launch usv_bringup vrx.launch.py scheme:=C \
-    rl_model:=$(pwd)/usv_rl/models/v1/policy.onnx
+    rl_model:=$(pwd)/usv_rl/models/v5/s4_dr/policy_physical_n.onnx
 # 对比方案 B（MPC）：
 ros2 launch usv_bringup vrx.launch.py scheme:=B record_bag:=true run_id:=mpc_b_001
 ```
@@ -98,7 +99,7 @@ python3 -m pip install --user --break-system-packages onnxruntime
 ## 已知坑（踩过的）
 
 - **VecEnv 单环境动作形状**：`DummyVecEnv.step` 传 `(2,)` 会被取成标量——必须 `(1,2)`。
-- **SB3 PPO 高斯均值已是物理量纲**：导出 ONNX 只需 clip，不要 tanh 反缩放。
+- **策略输出是归一化动作 [-1,1]，物理 N 必须显式缩放**：SB3 PPO 的高斯均值在动作空间量纲（[-1,1]），物理推力 = clip(mean)×25。缩放必须折叠进 ONNX 图并写入 manifest（`policy_physical_n.onnx`）——只在文档里"声明"物理量纲、图里不实现，就是 2026-10-03 单位 bug 的根源。
 - **nav_msgs/Path 遮蔽 pathlib.Path**：ROS 节点导入需 alias。
 - **ament_python 脚本目录**：需要 setup.cfg 指定 `install_scripts=$base/lib/<pkg>`。
 - torch≥2.9 的 ONNX 导出用 `dynamo=False`；`action_net` 是单层 Linear，

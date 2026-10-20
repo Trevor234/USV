@@ -19,7 +19,9 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import math
+import time
 from pathlib import Path
 
 import numpy as np
@@ -49,9 +51,88 @@ def yaw_from_quaternion(q: Quaternion) -> float:
     )
 
 
+def load_policy_contract(model_path: str | Path, t_max: float) -> dict:
+    """Validate the hash-bound physical-N deployment contract before inference."""
+    model_path = Path(model_path)
+    manifest_path = model_path.with_suffix(".manifest.json")
+    try:
+        contract = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise ValueError(f"cannot read policy manifest: {manifest_path}") from exc
+    if not isinstance(contract, dict):
+        raise ValueError("policy manifest must be a JSON object")
+    expected = {
+        "contract_version": 1, "output_unit": "N",
+        "action_order": ["T_L", "T_R"],
+        "input_name": "obs", "input_dim": 43,
+        "output_name": "thrust", "output_dim": 2,
+        "normalization_embedded": True,
+    }
+    for name, value in expected.items():
+        actual = contract.get(name)
+        # bool is an int in Python; reject it for dimensions/version.
+        if type(actual) is not type(value) or actual != value:
+            raise ValueError(f"invalid policy contract {name}: {actual!r}")
+    if not math.isfinite(t_max) or not math.isclose(t_max, 25.0, abs_tol=1e-6):
+        raise ValueError("this physical-N contract requires current t_max=25 N")
+    scale = contract.get("thrust_scale_n")
+    if (isinstance(scale, bool) or not isinstance(scale, (int, float))
+            or not math.isfinite(scale)
+            or not math.isclose(scale, 25.0, abs_tol=1e-6)):
+        raise ValueError("policy thrust_scale_n must be 25 N")
+    for name, value in (("physical_low_n", [-25.0, -25.0]),
+                        ("physical_high_n", [25.0, 25.0])):
+        actual = contract.get(name)
+        if (not isinstance(actual, list) or len(actual) != 2
+                or any(isinstance(v, bool) or not isinstance(v, (int, float))
+                       or not math.isfinite(v)
+                       or not math.isclose(v, ref, abs_tol=1e-6)
+                       for v, ref in zip(actual, value))):
+            raise ValueError(f"invalid policy contract {name}: {actual!r}")
+    actual_hash = hashlib.sha256(model_path.read_bytes()).hexdigest()
+    if contract.get("onnx_sha256") != actual_hash:
+        raise ValueError("policy ONNX SHA256 does not match manifest")
+    return contract
+
+
+def validate_policy_session(session, contract: dict) -> None:
+    """Check the real ORT interface and any declared graph unit metadata."""
+    for args, name, dim in ((session.get_inputs(), "obs", 43),
+                            (session.get_outputs(), "thrust", 2)):
+        if len(args) != 1:
+            raise ValueError(f"policy must have exactly one {name} tensor")
+        arg = args[0]
+        shape = arg.shape
+        if (arg.name != name or arg.type != "tensor(float)"
+                or not isinstance(shape, (tuple, list)) or len(shape) != 2
+                or shape[1] != dim
+                or not (shape[0] is None or isinstance(shape[0], str)
+                        or (type(shape[0]) is int and shape[0] == 1))):
+            raise ValueError(f"invalid policy tensor {name}: {arg.name}, {arg.type}, {shape}")
+    metadata = session.get_modelmeta().custom_metadata_map or {}
+    expected = {
+        "usv.contract_version": str(contract["contract_version"]),
+        "usv.output_unit": contract["output_unit"],
+        "usv.action_order": ",".join(contract["action_order"]),
+        "usv.input_dim": str(contract["input_dim"]),
+        "usv.output_dim": str(contract["output_dim"]),
+    }
+    for name, value in expected.items():
+        if name in metadata and metadata[name] != value:
+            raise ValueError(f"ONNX metadata disagrees with manifest: {name}")
+    if "usv.thrust_scale_n" in metadata:
+        try:
+            scale = float(metadata["usv.thrust_scale_n"])
+        except (TypeError, ValueError) as exc:
+            raise ValueError("invalid ONNX thrust scale metadata") from exc
+        if not math.isfinite(scale) or not math.isclose(
+                scale, contract["thrust_scale_n"], abs_tol=1e-6):
+            raise ValueError("ONNX thrust scale metadata disagrees with manifest")
+
+
 class RlPolicyNode(Node):
-    def __init__(self) -> None:
-        super().__init__("rl_policy_node")
+    def __init__(self, *, parameter_overrides=None) -> None:
+        super().__init__("rl_policy_node", parameter_overrides=parameter_overrides)
 
         self.declare_parameter("model_path", "")
         self.declare_parameter("odom_topic", "/wamv/sensors/position/ground_truth_odometry")
@@ -88,11 +169,20 @@ class RlPolicyNode(Node):
 
         # ── 推理会话 ──
         self.session = None
+        self.model_contract_invalid = False
         if self.model_path and Path(self.model_path).exists():
-            import onnxruntime as ort
-            self.session = ort.InferenceSession(
-                self.model_path, providers=["CPUExecutionProvider"])
-            self.get_logger().info(f"加载策略: {self.model_path}")
+            try:
+                contract = load_policy_contract(self.model_path, self.t_max)
+                import onnxruntime as ort
+                candidate = ort.InferenceSession(
+                    self.model_path, providers=["CPUExecutionProvider"])
+                validate_policy_session(candidate, contract)
+                self.session = candidate
+                self.get_logger().info(f"加载物理N策略: {self.model_path}")
+            except Exception as exc:
+                self.model_contract_invalid = True
+                self.get_logger().error(
+                    f"策略合同无效: {exc} — 节点将保持 STANDBY 零推力")
         else:
             self.get_logger().error(
                 f"模型不存在: '{self.model_path}' — 节点将保持 STANDBY 零推力")
@@ -112,7 +202,6 @@ class RlPolicyNode(Node):
         self._path_fp = None                 # 路径几何指纹（防每秒重发重置任务时钟）
         self._mission_t0 = None              # 任务时钟起点：新路径首次出现的时刻
         self._t_lag = 0.0                    # 调度滞后（与训练环境 rebase 语义一致）
-        self.schedule_rebase_m = 2.0
         self.prev_thrust = np.zeros(2)
         self.standby_reason = "init"
 
@@ -134,13 +223,24 @@ class RlPolicyNode(Node):
         p, t = msg.pose.pose.position, msg.pose.pose.orientation
         lin = msg.twist.twist.linear
         ang = msg.twist.twist.angular
+        # NaN/Inf 与四元数退化门禁 (对齐 MPC 节点): 单个污染样本 (EKF 发散/
+        # GPS 重定位) 进观测 → NaN 推力直发执行器 (clip 拦不住 NaN)。
+        qn = t.x * t.x + t.y * t.y + t.z * t.z + t.w * t.w
+        if not (math.isfinite(qn) and qn >= 1e-12 and
+                all(math.isfinite(v) for v in (p.x, p.y, lin.x, lin.y, ang.z))):
+            self.get_logger().warning(
+                "odom 含 NaN/Inf 或四元数退化, 丢弃该样本",
+                throttle_duration_sec=5.0)
+            return
         self.state = np.array([
             p.x, p.y, yaw_from_quaternion(t), lin.x, lin.y, ang.z,
         ])
         self.have_odom = True
 
     def _imu_cb(self, msg: Imu) -> None:
-        self.r_from_imu = msg.angular_velocity.z
+        r = msg.angular_velocity.z
+        if math.isfinite(r):
+            self.r_from_imu = r
 
     @staticmethod
     def _path_fingerprint(xs, ys) -> tuple:
@@ -206,11 +306,34 @@ class RlPolicyNode(Node):
     # ────────────────────────── 控制循环 ──────────────────────────
     def _control_loop(self) -> None:
         if not self.have_odom or self.ref_xs is None or self.session is None:
-            reason = ("no_odom" if not self.have_odom else
+            reason = ("model_contract_invalid" if self.model_contract_invalid else
+                      "no_odom" if not self.have_odom else
                       "no_path" if self.ref_xs is None else "model_missing")
             self._publish_thrust(np.zeros(2))
             self._publish_status(active=False, reason=reason, raw=np.zeros(2),
                                  applied=np.zeros(2), infer_ms=0.0)
+            return
+
+        # 2026-10-09 审查修复: 推理/观测异常曾直接打崩节点 (rclpy.spin 逃逸),
+        # VRX 下无 mode_manager 兜底 → 推力锁存 = 失控船。任何异常都降级为
+        # 零推力 STANDBY 并保持定时器存活。
+        try:
+            self._control_step()
+        except Exception as exc:  # noqa: BLE001 — 定时器回调必须永不逃逸
+            self.get_logger().error(
+                f"控制循环异常, 本拍零推力: {exc}", throttle_duration_sec=5.0)
+            self._publish_thrust(np.zeros(2))
+            self._publish_status(active=False, reason="control_loop_error",
+                                 raw=np.zeros(2), applied=np.zeros(2), infer_ms=0.0)
+
+    def _control_step(self) -> None:
+        # 观测有限性门禁: NaN/Inf 状态 (上游残留路径) 不进推理。
+        if not np.isfinite(self.state).all():
+            self.get_logger().warning(
+                "状态含 NaN/Inf, 本拍零推力", throttle_duration_sec=5.0)
+            self._publish_thrust(np.zeros(2))
+            self._publish_status(active=False, reason="nonfinite_state",
+                                 raw=np.zeros(2), applied=np.zeros(2), infer_ms=0.0)
             return
 
         # IMU r 覆盖（比 odom 灵敏，与 mpc_node 同）
@@ -252,11 +375,26 @@ class RlPolicyNode(Node):
             prog_idx=self.prog_idx, prev_thrust=self.prev_thrust,
             lookahead=self.lookahead,
         )
+        if not np.isfinite(obs).all():
+            self.get_logger().warning(
+                "观测向量含 NaN/Inf, 本拍零推力", throttle_duration_sec=5.0)
+            self._publish_thrust(np.zeros(2))
+            self._publish_status(active=False, reason="nonfinite_obs",
+                                 raw=np.zeros(2), applied=np.zeros(2), infer_ms=0.0)
+            return
 
-        import time as _time
-        t0 = _time.monotonic()
+        t0 = time.monotonic()
         raw = self.session.run(["thrust"], {"obs": obs[None].astype(np.float32)})[0][0]
-        infer_ms = (_time.monotonic() - t0) * 1e3
+        infer_ms = (time.monotonic() - t0) * 1e3
+        # 推理输出有限性门禁: NaN 经 apply_thrust_limits 的 clip 仍是 NaN。
+        if not np.isfinite(raw).all():
+            self.get_logger().error(
+                "策略输出含 NaN/Inf, 本拍零推力", throttle_duration_sec=5.0)
+            self._publish_thrust(np.zeros(2))
+            self._publish_status(active=False, reason="nonfinite_action",
+                                 raw=np.zeros(2), applied=np.zeros(2),
+                                 infer_ms=infer_ms)
+            return
 
         applied, _target = apply_thrust_limits(
             self.prev_thrust, raw, self.t_max, self.d_t_max, self.dt)
@@ -276,6 +414,12 @@ class RlPolicyNode(Node):
     def _publish_status(self, active: bool, reason: str, raw: np.ndarray,
                         applied: np.ndarray, infer_ms: float) -> None:
         x, y, psi, u, v, r = self.state
+
+        def _fin(value: float) -> float:
+            """NaN/Inf 清洗: 非有限值以 0.0 呈现, 防 JSON 里出现 NaN 字面量
+            (严格解析器会崩, mode_manager 的容错路径也会每拍告警)。"""
+            return float(value) if math.isfinite(value) else 0.0
+
         j = {
             "state": "ACTIVE" if active else "STANDBY",
             "success": active,
@@ -291,15 +435,16 @@ class RlPolicyNode(Node):
             "path_len": 0 if self.ref_xs is None else int(len(self.ref_xs)),
             "profile_synced": bool(self.profile_synced),
             "profile_sync_reason": "synced" if self.profile_synced else "fallback_cruise",
-            "t_lag": round(self._t_lag, 2),
-            "x": x, "y": y, "psi": psi, "u": u, "v": v, "r": r,
+            "t_lag": round(_fin(self._t_lag), 2),
+            "x": _fin(x), "y": _fin(y), "psi": _fin(psi),
+            "u": _fin(u), "v": _fin(v), "r": _fin(r),
             "dynamic_dt": self.dt,
             "dynamic_N": 1,
             "prediction_time_s": self.dt,
-            "tl_n": float(applied[0]),
-            "tr_n": float(applied[1]),
-            "tl_cmd_n": float(raw[0]),
-            "tr_cmd_n": float(raw[1]),
+            "tl_n": _fin(applied[0]),
+            "tr_n": _fin(applied[1]),
+            "tl_cmd_n": _fin(raw[0]),
+            "tr_cmd_n": _fin(raw[1]),
             "actuation_anchor_source": "vrx_published",
         }
         if not active:
