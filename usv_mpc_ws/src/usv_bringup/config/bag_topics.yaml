@@ -1,5 +1,10 @@
 # Core closed-loop topics recorded during real USV runs.
 # Message types, QoS, and semantics remain defined in topic_contract.yaml.
+# GPS 状态用于实机定位质量分析 (单点/RTK Float/RTK Fixed)。
+# gpsstatus/gps1/raw 提供 fix_type/eph/卫星数; raw/fix 提供经纬度原值。
+# 发布频率由固件、消息流和配置决定, 需从实际录制数据测量。
+# 本清单不录 RTCM 原始流; RTCM 回放不能替代实时差分连接。
+# 仿真研究入口使用独立话题清单; 此处保留实机记录配置。
 topics:
   - /mavros/local_position/odom
   - /mavros/imu/data
@@ -10,3 +15,5 @@ topics:
   - /path/reference_profile
   - /usv/mission/waypoints_local
   - /mpc/predicted_trajectory
+  - /mavros/gpsstatus/gps1/raw
+  - /mavros/global_position/raw/fix

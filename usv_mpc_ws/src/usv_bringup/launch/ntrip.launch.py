@@ -3,7 +3,12 @@
 数据通路:
   CORS caster --NTRIP/RTCM3--> ntrip_client
     发布 rtcm(mavros_msgs/RTCM)      --重映射--> /mavros/gps_rtk/send_rtcm
-    订阅 fix (sensor_msgs/NavSatFix) <--重映射-- /mavros/global_position/raw/fix  (上传GGA, VRS必需)
+    订阅 fix (sensor_msgs/NavSatFix) <--重映射-- /fix_for_ntrip (QoS中继, 见下)
+  fix_qos_relay (本launch自带, 2026-10-09 引入):
+    /mavros/global_position/raw/fix (BEST_EFFORT) --> /fix_for_ntrip (RELIABLE)
+    原因: MAVROS raw/fix 是 BEST_EFFORT, 而 ntrip_client 的 fix 订阅是
+    RELIABLE 且未启用 rclpy qos_overriding_options, 参数表无法覆盖,
+    只能靠中继桥接。中继断了 GGA 就上不去, VRS 不发差分。
   MAVROS gps_rtk 插件 --GPS_RTCM_DATA(MAVLink)--> MicoAir743 --GPS串口--> RTK模块
 
 前置: 先在 config/ntrip_params.yaml 填好 CORS 账号/挂载点。
@@ -35,7 +40,7 @@ def generate_launch_description():
         description="MAVROS gps_rtk 插件的 RTCM 输入话题 (mavros_msgs/RTCM)",
     )
     fix_topic_arg = DeclareLaunchArgument(
-        "fix_topic", default_value="/mavros/global_position/raw/fix",
+        "fix_topic", default_value="/fix_for_ntrip",
         description="用于生成上传给 CORS 的 GGA 的 NavSatFix 来源 (VRS 必需); "
                     "也可用 /mavros/global_position/global",
     )
@@ -58,9 +63,19 @@ def generate_launch_description():
         ],
     )
 
+    # QoS 中继 (2026-10-09): raw/fix BEST_EFFORT -> /fix_for_ntrip RELIABLE。
+    # ntrip_client 的 fix 订阅无法用参数覆盖 QoS, 只能经此桥接。
+    fix_qos_relay = Node(
+        package="usv_bringup",
+        executable="fix_qos_relay",
+        name="fix_qos_relay",
+        output="screen",
+    )
+
     return LaunchDescription([
         params_file_arg,
         rtcm_topic_arg,
         fix_topic_arg,
+        fix_qos_relay,
         ntrip_node,
     ])

@@ -102,6 +102,25 @@ mode_manager_node:
     - /mavros/cmd/arming
 
 # ---------------------------------------------------------------------------
+# GPS 状态话题 (2026-10-09 加入 bag_topics.yaml 录制; RTK 事后分析用)
+# ---------------------------------------------------------------------------
+# 用途: 区分任务录制数据中的定位质量段 (单点/RTK Float/RTK Fixed),配合
+# odom (EKF 融合了 RTK 结果) 做参数辨识与跟踪误差分析。
+# 本实机清单不录 RTCM 原始流; 发布速率需测量, 回放不能替代实时差分连接。
+gps_status_topics:
+  - topic: /mavros/gpsstatus/gps1/raw
+    type: mavros_msgs/msg/GPSRAW
+    qos: runtime_endpoint_check_required
+    # 发布端 QoS 需实机 ros2 topic info --verbose 核对。
+    purpose: fix_type (3=单点, 5=RTK Float, 6=RTK Fixed), eph, 卫星数
+  - topic: /mavros/global_position/raw/fix
+    type: sensor_msgs/msg/NavSatFix
+    qos: runtime_endpoint_check_required
+    # 发布端 QoS 需实机核对; 录制订阅请求见 rosbag_qos_overrides.yaml。
+    purpose: GPS 经纬度原值; 亦为 NTRIP 客户端 GGA 上报来源 (经 /fix_for_ntrip
+             QoS 中继, 见 ntrip.launch.py)
+
+# ---------------------------------------------------------------------------
 # path / profile 时间同步契约 (核心)
 # ---------------------------------------------------------------------------
 # /path/reference (NavPath) 与 /path/reference_profile (Float64MultiArray) 必须由

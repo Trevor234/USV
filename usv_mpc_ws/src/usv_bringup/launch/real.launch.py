@@ -200,7 +200,6 @@ def generate_launch_description():
 
     
 
-    # 安全节点恒为 C++ (usv_safety_cpp)。Python usv_safety 包已删除;
     # use_cpp 现仅控制 planning 的实现选择。
     safety_node = Node(
         package="usv_safety_cpp",

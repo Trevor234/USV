@@ -10,3 +10,13 @@
   durability: volatile
   history: keep_last
   depth: 5
+
+# raw/fix 的录制器采用 best_effort 订阅请求; 在 reliability 维度与
+# best_effort 或 reliable 发布端兼容, 其余 QoS 和实际接收需实机核验。
+# 此配置不声明发布端的实测 QoS。
+# gpsstatus/gps1/raw 未配置显式覆盖, 实机前需核对端点 QoS 与录制结果。
+/mavros/global_position/raw/fix:
+  reliability: best_effort
+  durability: volatile
+  history: keep_last
+  depth: 5

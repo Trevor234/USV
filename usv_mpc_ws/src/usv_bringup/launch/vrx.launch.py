@@ -53,6 +53,20 @@ def generate_launch_description():
     )
     run_id_arg = DeclareLaunchArgument("run_id", default_value="vrx_scheme_b_run")
 
+    research_defaults = {
+        # P0_REFERENCE_PREDICTION_V1
+        'enable_reference_prediction_logging': 'false', 'research_nominal_config_hash': '',
+        'enable_research_logging': 'false', 'research_logging_armed': 'false',
+        'research_run_id': '', 'research_baseline_id': '', 'research_output_dir': '',
+        'research_config_hash': '', 'research_expected_pose_frame': '',
+        'research_expected_child_frame': '', 'research_frame_contract_verified': 'false',
+    }
+    research_args = [DeclareLaunchArgument(k, default_value=v) for k, v in research_defaults.items()]
+    research_parameters = {k: ParameterValue(LaunchConfiguration(k), value_type=bool if k in
+        ('enable_reference_prediction_logging', 'enable_research_logging',
+         'research_logging_armed', 'research_frame_contract_verified') else str)
+        for k in research_defaults}
+
     odom_topic_arg = DeclareLaunchArgument(
         "odom_topic", default_value="/wamv/sensors/position/ground_truth_odometry"
     )
@@ -99,7 +113,9 @@ def generate_launch_description():
 
     mpc_params = os.path.join(bringup_share, "config", "mpc_params.yaml")
     mpc_params_a = os.path.join(bringup_share, "config", "mpc_params_A.yaml")
-    usv_params_sim = LaunchConfiguration("effective_vehicle")
+    # P0_INDEPENDENT_CONTROLLER_CONFIG: opt-in B override, legacy fallback.
+    usv_params_sim = LaunchConfiguration(
+        "controller_vehicle", default=LaunchConfiguration("effective_vehicle"))
     mpc_overlay = os.path.join(bringup_share, "config", "mpc_params_vrx.yaml")
     path_params = os.path.join(bringup_share, "config", "path_config.yaml")
 
@@ -145,6 +161,11 @@ def generate_launch_description():
     def plant_parameter(name):
         return ParameterValue(LaunchConfiguration("plant_" + name), value_type=float)
 
+    def controller_parameter(name):
+        return ParameterValue(LaunchConfiguration(
+            "controller_" + name, default=LaunchConfiguration("plant_" + name)),
+            value_type=float)
+
     # 方案 B: 动力学 NMPC, 推力 1:1 直发 (现有路径)
     mpc_node_b = TimerAction(
         period=9.0,
@@ -155,10 +176,10 @@ def generate_launch_description():
             output="screen",
             condition=IfCondition(is_scheme_b),
             additional_env=solver_environment,
-            parameters=[mpc_params, usv_params_sim, mpc_overlay, {
+            parameters=[mpc_params, usv_params_sim, mpc_overlay, research_parameters, {
                 "use_sim_time": True,
-                "dynamic.T_max": plant_parameter("tmax"),
-                "dynamic.T_min": plant_parameter("tmin"),
+                "dynamic.T_max": controller_parameter("tmax"),
+                "dynamic.T_min": controller_parameter("tmin"),
                 "odom_topic": odom_topic,
                 "imu_topic": imu_topic,
                 "path_topic": path_topic,
@@ -279,12 +300,13 @@ def generate_launch_description():
             profile_topic,
             mpc_status_topic,
             predicted_trajectory_topic,
+            "/clock",
         ],
         output="screen",
         condition=IfCondition(record_bag),
     )
 
-    return LaunchDescription([
+    return LaunchDescription(research_args + [
         world_arg,
         headless_arg,
         paused_arg,

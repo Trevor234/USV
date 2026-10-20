@@ -44,9 +44,12 @@ def test_rosbag_qos_overrides_match_sensor_topics():
     ) as f:
         overrides = yaml.safe_load(f)
 
+    # 录制器显式订阅请求覆盖 odom/imu/raw-fix。
+    # 此测试检查配置一致性, 不证明实机发布端 QoS 或实际消息接收。
     expected_topics = {
         "/mavros/local_position/odom",
         "/mavros/imu/data",
+        "/mavros/global_position/raw/fix",
     }
     assert set(overrides) == expected_topics
     assert set(overrides).issubset(topics)

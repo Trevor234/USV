@@ -10,18 +10,19 @@
     odom_timeout_s: 1.0
     max_path_timeout_s: 5.0
     max_speed_mps: 3.0
-    # /mpc/status 新鲜度看门狗: MPC 在 ACTIVE/HOLD 期间 status 停发超过该
-    # 时长即触发 failsafe RTL (MPC 节点死亡时 FCU 会锁存最后一条速度指令)。
-    # mpc_node 以 5Hz 发布 status, 1.0s ≈ 容忍丢 4 帧。
+    # /mpc/status 新鲜度看门狗: ACTIVE/HOLD 期间 status 超过阈值未更新,
+    # 触发所配置的 failsafe 处理; 具体触发条件见 mode_manager_node。
+    # FCU 指令/RC 覆盖超时取决于固件、参数及实际指令类型, 需独立核验。
+    # 此阈值与模式请求均不构成物理停船保证。
     mpc_status_timeout_s: 1.0
-    # FAILSAFE RTL 重发上限: 超过该次数仍未能进入 RTL 则停止重发并保持
-    # 告警 (FCU 链路断/home 未设时无限重发毫无意义)。0.5s 一次, 10 次=5s。
+    # FAILSAFE 模式请求重发上限: 达到上限仍未进入所请求模式时保持告警。
+    # 此计数适用于所配置的 failsafe 模式, 不仅是 RTL。
     max_rtl_retries: 10
     # FAILSAFE 触发时的动作:
-    #   "report" — 只报错不切模式, 控制权完全留给人工 (测试期默认;
-    #              9-03 实测教训: 测试期 bug 频发, 自动切模式弊大于利)
-    #   "HOLD"   — 切 HOLD 原地保持 (正式任务推荐; 船停船即安全, 捞船即可)
-    #   "RTL"    — 切 RTL 返航 (需要 home 已设 + 传感器健康; 低电量预警期
-    #              "趁有电回家"场景可用)
-    # 注意: report 模式下自动恢复 (auto_switch) 同样被抑制, 人工全程接管。
-    failsafe_mode: "report"
+    #   "report" — 报告故障, 不主动切换 FCU 模式; 需按受控流程人工处理。
+    #   "HOLD"   — 请求 FCU 进入 HOLD; 切换成功及船体停止需独立确认。
+    #   "RTL"    — 请求 FCU 返航; 需核对 home、传感器、链路和剩余能量。
+    # report 模式下本节点自动恢复 (auto_switch) 同样被抑制。
+    # 当前默认 HOLD; 不依赖“GUIDED 无超时”假设。
+    # 实机验收需检查固件、指令类型、持续重发来源、模式确认与停止效果。
+    failsafe_mode: "HOLD"
