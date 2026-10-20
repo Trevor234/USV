@@ -43,8 +43,17 @@ int main(int argc, char * argv[])
 
   // SIGINT 时 rclcpp 信号处理器在 spin 返回前就触发 context shutdown;
   // on_shutdown 回调是发布安全停车指令的最后时机 (此刻 context 仍可用)。
+  // 对齐 B: 信号线程上抛异常会逃逸进 shutdown 处理 → std::terminate, 必须捕获。
   node->get_node_base_interface()->get_context()->on_shutdown(
-    [ptr = node.get()]() {ptr->safe_shutdown();});
+    [ptr = node.get()]() {
+      try {
+        ptr->safe_shutdown();
+      } catch (const std::exception & e) {
+        fprintf(stderr, "[mpc_node] on_shutdown safe_shutdown: %s\n", e.what());
+      } catch (...) {
+        fprintf(stderr, "[mpc_node] on_shutdown safe_shutdown: 未知异常\n");
+      }
+    });
 
   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 3);
   executor.add_node(node);

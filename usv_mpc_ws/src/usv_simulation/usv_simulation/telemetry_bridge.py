@@ -268,10 +268,13 @@ def main(args=None):
             ref_obj["h"] = h
             state["last_ref_hash"] = h
 
-        # 轨迹增量: 更新已发送计数
-        state["last_track"] += len(snap["track"].get("append", []))
-
+        # 帧成功进入共享发送缓存后, 使用同次快照的绝对游标。
+        # deque 逐出旧点后, append 长度不等于累计新增数。
+        # 这里确认缓存提交, 不代表 TCP 客户端已收到。
+        # next 仅供生成端使用, 不改变 v1 TCP 帧的 track 字段。
+        next_track = snap["track"].pop("next")
         server.update(_frame(snap))
+        state["last_track"] = next_track
 
         now = time.monotonic()
         if now - last_log > 5.0:

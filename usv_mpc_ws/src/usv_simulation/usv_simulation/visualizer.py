@@ -28,6 +28,9 @@ class USVVisualizer(Node):
         self._load_parameters()
 
         self._history = deque(maxlen=self._history_length)
+        # 绝对累计计数 (单调递增): snapshot 的 track_since 是绝对游标,
+        # deque 环绕后需用它换算相对索引, 否则增量轨迹永久截断为空。
+        self._history_total = 0
         self._ref_path: List[Tuple[float, float]] = []
         self._mpc_traj: List[Tuple[float, float]] = []
         self._mission_waypoints: List[Tuple[float, float]] = []
@@ -159,6 +162,7 @@ class USVVisualizer(Node):
         self._v = msg.twist.twist.linear.y
         self._r = msg.twist.twist.angular.z
         self._history.append((self._x, self._y, self._psi))
+        self._history_total += 1
 
     def _ref_callback(self, msg: NavPath):
         self._mark_topic("ref")
@@ -384,8 +388,9 @@ class USVVisualizer(Node):
     def snapshot(self, track_since: int = 0) -> Dict[str, Any]:
         """导出结构化状态快照，供遥测桥接打包发送。
 
-        track_since 用于增量轨迹：只返回 history 中该索引之后的新增点，
-        避免每帧重发整段航迹。返回字典与地面站 usv_gcs 的数据契约对齐。
+        track_since 是累计样本数的绝对游标; 返回仍保留的后续点。
+        track.next 是本次快照的下一游标, 不等于本次 append 长度。
+        缓冲区已逐出的点无法恢复。返回字典与地面站 usv_gcs 契约对齐。
         """
         now = time.monotonic()
 
@@ -460,7 +465,14 @@ class USVVisualizer(Node):
         }
 
         hist = list(self._history)
-        track_append = [[p[0], p[1], p[2]] for p in hist[track_since:]]
+        history_total = self._history_total
+        # track_since 是绝对游标 (历史累计总数); deque 有界环绕会逐出旧点,
+        # 换算相对索引: 已逐出数 = 累计总数 - 当前长度。环绕后 (约
+        # history_length 个样本) 未换算的游标会恒大于 len(hist), 增量轨迹
+        # 永久截断为空 —— GCS 轨迹显示停止更新。clamp 到 [0, len]。
+        evicted = max(0, history_total - len(hist))
+        since = min(max(track_since - evicted, 0), len(hist))
+        track_append = [[p[0], p[1], p[2]] for p in hist[since:]]
 
         if self._cmd_vel is not None:
             cmd_vel = f"u={self._cmd_vel[0]:.2f}, r={self._cmd_vel[1]:.2f}"
@@ -476,7 +488,7 @@ class USVVisualizer(Node):
             "cmd_vel": cmd_vel,
             "topics": topics,
             "paths": paths,
-            "track": {"append": track_append},
+            "track": {"append": track_append, "next": history_total},
         }
 
 

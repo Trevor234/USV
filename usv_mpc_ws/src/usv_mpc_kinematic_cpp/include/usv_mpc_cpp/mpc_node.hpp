@@ -40,6 +40,7 @@
 #pragma once
 
 #include <array>
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -71,6 +72,9 @@ public:
   void safe_shutdown();
 
 private:
+  // Tests inject a solver without exposing fault-injection ROS parameters.
+  friend class MpcControllerNodeTestAccess;
+  explicit MpcControllerNode(std::unique_ptr<KinematicMpc> solver);
   // ── 初始化 ──────────────────────────────────────────
   void declare_parameters_();
   void load_config_();
@@ -90,7 +94,8 @@ private:
   std::pair<bool, std::string> can_solve_() const;
   void enter_standby_(const std::string & reason);
   void run_kinematic_mpc_();
-  bool enforce_solve_deadline_(SolveInfo & info);
+  // Returns true when timing rejects the result (timeout or invalid timing).
+  bool enforce_solve_deadline_(SolveInfo & info, double solve_wall_time_ms);
 
   // ── 输出 (★ A 输出 TwistStamped, 无 RC 映射) ─────────
   void publish_velocity_cmd_(const Eigen::Vector2d & u_opt);
@@ -114,6 +119,13 @@ private:
   double kin_dt_ = 0.0;
   int kin_N_ = 0;
   double kin_prediction_time_ = 0.0;
+  // Deadline 拒绝后的重放指令 (repeat-last 语义, 对齐 B)。
+  Eigen::Vector2d last_commanded_velocity_ = Eigen::Vector2d::Zero();
+  bool has_last_command_ = false;
+  // Shutdown can run outside the timer's callback group. Serialize output and
+  // cache changes without holding this mutex across synchronous solve().
+  std::mutex control_output_mutex_;
+  std::atomic<bool> shutting_down_{false};
 
   // ── 当前状态 (运动学只用 x,y,psi; u/v/r 用于 status 上报) ──
   double x_ = 0, y_ = 0, psi_ = 0, u_ = 0, v_ = 0, r_ = 0;

@@ -176,6 +176,27 @@ if(BUILD_TESTING)
   )
   # 链接 mpc_solver_lib: 使 ABI 跨界测试在新 ABI 测试 TU 中调用 old-ABI casadi 后端
   target_link_libraries(test_mpc_core mpc_solver_lib)
+
+  # gtest: 安全修复回归 (C1 recheck / C2 关机锁 / M2 墙钟 deadline / M1 四元数门禁)
+  # (移植自方案 B 的 test_deadline_control; 注入 FakeKinematicMpc, 不依赖 casadi。
+  #  mpc_node.cpp 需直接编进测试 —— 节点实现不在任何库里。)
+  ament_add_gtest(test_deadline_control
+    test/test_deadline_control.cpp
+    src/mpc_node.cpp
+  )
+  target_include_directories(test_deadline_control PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+  target_link_libraries(test_deadline_control mpc_solver_lib)
+  ament_target_dependencies(test_deadline_control
+    rclcpp
+    geometry_msgs
+    nav_msgs
+    sensor_msgs
+    mavros_msgs
+    std_msgs
+    nlohmann_json
+  )
 endif()
 
 ament_package()

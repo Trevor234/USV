@@ -35,10 +35,12 @@
 
 #include "usv_mpc_cpp/mpc_node.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <functional>
 #include <cstring>
+#include <utility>
 #include <nlohmann/json.hpp>
 
 namespace usv_mpc
@@ -70,6 +72,22 @@ MpcControllerNode::MpcControllerNode()
       std::chrono::duration<double>(mpc_dt_),
       std::bind(&MpcControllerNode::control_loop_, this),
       control_cb_group_);
+}
+
+// Tests inject a solver without exposing fault-injection ROS parameters.
+MpcControllerNode::MpcControllerNode(std::unique_ptr<KinematicMpc> solver)
+: Node("mpc_controller_node"), mpc_(std::move(solver))
+{
+  declare_parameters_();
+  load_config_();
+  init_state_();
+  init_pubsub_();
+  // 测试不跑控制循环, 但 timer_ 需真实存在 (取消而非缺省), 与 B 一致。
+  timer_ = this->create_wall_timer(
+      std::chrono::duration<double>(mpc_dt_),
+      std::bind(&MpcControllerNode::control_loop_, this),
+      control_cb_group_);
+  timer_->cancel();
 }
 
 MpcControllerNode::~MpcControllerNode()
@@ -267,9 +285,13 @@ void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr 
     return;
   }
   double psi = quaternion_to_yaw(q.x, q.y, q.z, q.w);
-  if (!std::isfinite(psi)) {  // 全零四元数等退化输入
+  // 四元数范数门禁 (对齐 B 的 admit_odom): 全零四元数的 yaw 是有限值 0,
+  // isfinite 拦不住; 未归一化四元数也会扭曲 yaw 公式 (1-2(y²+z²) 仅对
+  // 单位范数成立)。范数非有限或接近零即丢弃。
+  const double qnorm2 = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
+  if (!std::isfinite(psi) || !std::isfinite(qnorm2) || qnorm2 < 1e-12) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
-                         "odom 四元数退化, 丢弃该样本");
+                         "odom 四元数退化 (|q|²=%.3e), 丢弃该样本", qnorm2);
     return;
   }
   std::lock_guard<std::mutex> lk(state_lock_);
@@ -375,13 +397,15 @@ std::pair<bool, std::string> MpcControllerNode::can_solve_() const
 
 void MpcControllerNode::enter_standby_(const std::string & reason)
 {
+  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
+  if (shutting_down_.load()) {return;}
   bool transition = (prev_state_ != "STANDBY");
   if (transition) {
     solver_fail_count_ = 0;
     if (mpc_) {mpc_->reset_warmstart();}
-    publish_zero_velocity_();  // ★ 零速度 (B 是 release_rc_override_)
     RCLCPP_INFO(this->get_logger(), "MPC → STANDBY: %s", reason.c_str());
   }
+  publish_zero_velocity_();  // ★ 零速度 (B 是 release_rc_override_)
   prev_state_ = "STANDBY";
   publish_standby_status_(reason);
   RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
@@ -421,32 +445,70 @@ void MpcControllerNode::control_loop_()
   run_kinematic_mpc_();
 }
 
-bool MpcControllerNode::enforce_solve_deadline_(SolveInfo & info)
+bool MpcControllerNode::enforce_solve_deadline_(
+  SolveInfo & info, double solve_wall_time_ms)
 {
-  bool deadline_miss = max_solve_time_ms_ > 0.0 && info.solve_time_ms > max_solve_time_ms_;
+  // 墙钟与后端计时双检 (对齐 B): Pi 调度抢占下 wall 可远超 IPOPT 内部
+  // CPU 时间, 只查后端时间会发布基于旧状态的过期解。
+  if (!std::isfinite(solve_wall_time_ms) || solve_wall_time_ms < 0.0 ||
+    !std::isfinite(info.solve_time_ms) || info.solve_time_ms < 0.0 ||
+    !std::isfinite(max_solve_time_ms_))
+  {
+    info.success = false;
+    snprintf(info.error, sizeof(info.error),
+             "solve_timing_invalid: wall=%.1fms backend=%.1fms limit=%.1fms",
+             solve_wall_time_ms, info.solve_time_ms, max_solve_time_ms_);
+    return true;
+  }
+  const bool deadline_miss = max_solve_time_ms_ > 0.0 &&
+    (solve_wall_time_ms > max_solve_time_ms_ || info.solve_time_ms > max_solve_time_ms_);
   if (deadline_miss) {
     info.success = false;
-    snprintf(info.error, sizeof(info.error), "solve_timeout: %.1fms > %.1fms",
-             info.solve_time_ms, max_solve_time_ms_);
+    snprintf(info.error, sizeof(info.error),
+             "solve_timeout: wall=%.1fms backend=%.1fms limit=%.1fms",
+             solve_wall_time_ms, info.solve_time_ms, max_solve_time_ms_);
   }
   return deadline_miss;
 }
 
 void MpcControllerNode::run_kinematic_mpc_()
 {
+  if (shutting_down_.load()) {return;}
   Eigen::Matrix<double, 5, 1> current_state_5d;
   Eigen::Vector3d current_pose;
   Eigen::MatrixXd reference;
   {
-    std::lock_guard<std::mutex> lk(state_lock_);
+    // C1 修复 (对齐 B): can_solve_ 在锁释放后可能被 path_callback_ 抢先清空
+    // 路径, 不重查会让 build_reference_ 返回全零参考 → 船被命令驶向地图原点。
+    // 该窗口在每次任务结束 (规划器发空路径) 时都会打开。
+    std::unique_lock<std::mutex> lk(state_lock_);
+    const auto rechecked = can_solve_();
+    if (!rechecked.first) {
+      // standby 会先取 output 锁再取 state 锁 (见 enter_standby_), 先释放本锁防死锁。
+      lk.unlock();
+      enter_standby_(rechecked.second);
+      return;
+    }
     current_pose << x_, y_, normalize_angle(psi_);
     current_state_5d << x_, y_, normalize_angle(psi_), u_, r_;
     reference = build_reference_(current_pose);
   }
 
+  const auto solve_start = std::chrono::steady_clock::now();
   auto [u_opt, info] = mpc_->solve(current_state_5d, reference);
-  bool deadline_miss = enforce_solve_deadline_(info);
-  if (deadline_miss) {u_opt.setZero();}
+  const double solve_wall_time_ms = std::chrono::duration<double, std::milli>(
+    std::chrono::steady_clock::now() - solve_start).count();
+
+  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
+  if (shutting_down_.load()) {return;}
+  const bool time_rejected = enforce_solve_deadline_(info, solve_wall_time_ms);
+  Eigen::Vector2d selected_command = u_opt;
+  if (time_rejected) {
+    // solve() 可能已把迟到候选移入热启动, 连同状态一起拒绝 (对齐 B)。
+    mpc_->reset_warmstart();
+    selected_command = has_last_command_ ?
+      last_commanded_velocity_ : Eigen::Vector2d::Zero();
+  }
 
   bool in_hold = false;
   if (info.success) {
@@ -456,7 +518,7 @@ void MpcControllerNode::run_kinematic_mpc_()
       RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                            "IPOPT 早停回收 (%s), 已发布当前迭代点", info.error);
     }
-    publish_velocity_cmd_(u_opt);  // ★ Twist (B 是 publish_dynamic_output_)
+    publish_velocity_cmd_(selected_command);
     if (control_count_ % 5 == 0) {publish_predicted_trajectory_(info.X_pred);}
   } else {
     solver_fail_count_++;
@@ -466,28 +528,33 @@ void MpcControllerNode::run_kinematic_mpc_()
     }
     if (solver_fail_count_ >= solver_hold_threshold_) {
       in_hold = true;
-      u_opt.setZero();
-      publish_velocity_cmd_(u_opt);
-      mpc_->reset_warmstart();
+      selected_command.setZero();
+      publish_velocity_cmd_(selected_command);
+      if (!time_rejected) {mpc_->reset_warmstart();}
       if (solver_fail_count_ == solver_hold_threshold_) {
         RCLCPP_ERROR(this->get_logger(),
                      "MPC HOLD 挂起：连续失败 %d 次，正在发布零速度并重置热启动",
                      solver_fail_count_);
       }
     } else {
-      publish_velocity_cmd_(u_opt);
+      publish_velocity_cmd_(selected_command);
     }
   }
 
+  last_commanded_velocity_ = selected_command;
+  has_last_command_ = true;
+
   // 暴露 u_opt / 航向参考给 status (对齐 Python A 的 status 字段)
-  publish_status_(info, in_hold, u_opt, current_pose, reference);
+  publish_status_(info, in_hold, selected_command, current_pose, reference);
 
   control_count_++;
   if (control_count_ % 25 == 0) {  // 约每 5 秒 (对齐 Python A)
     RCLCPP_INFO(this->get_logger(),
                 "t=%.1fs  位置=(%.1f,%.1f)  航向=%.0f°  指令=(u=%.2f, r=%.1f°/s)  求解时间=%.0fms",
-                control_count_ * mpc_dt_, x_, y_, psi_ * 180.0 / M_PI,
-                u_opt(0), u_opt(1) * 180.0 / M_PI, info.solve_time_ms);
+                control_count_ * mpc_dt_, current_pose(0), current_pose(1),
+                current_pose(2) * 180.0 / M_PI,
+                selected_command(0), selected_command(1) * 180.0 / M_PI,
+                info.solve_time_ms);
   }
 }
 
@@ -702,6 +769,10 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d & curr
 
 void MpcControllerNode::safe_shutdown()
 {
+  // 对齐 B: 先置关机标志, 让在途的控制循环在输出锁上让行; shutdown 可能
+  // 在信号线程执行, 此处不再触碰求解器 (避免与在途 solve() 竞争 CasADi 后端)。
+  shutting_down_.store(true);
+  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
   publish_zero_velocity_();
   publish_standby_status_("node_shutdown");
   RCLCPP_INFO(this->get_logger(), "MPC 节点退出: 已发送安全停车指令");
