@@ -55,6 +55,7 @@ ModeManagerNode::ModeManagerNode()
   load_config_();
 
   safety_ = SafetyMonitor(safety_config_);
+  startup_time_ = steady_now();
 
   // ── 订阅者 ──────────────────────────────────────────
 
@@ -243,11 +244,19 @@ void ModeManagerNode::monitor_loop_() {
   // ── 里程计看门狗 ──
   // update_odom() 仅从真实 odom 回调调用,故 check_odom_timeout() 反映传感器新鲜度。
   // 不要在此处刷新它,否则该看门狗会自复位。
-  if (!fcu_connected_) {
+  // 启动宽限期: MAVROS 从启动到首次连上 FCU 需要数秒 (串口枚举 + 心跳)。
+  // 这段时间 connected=false 属正常启动过程, 不应触发 failsafe。
+  constexpr double kLinkGraceSec = 15.0;
+  const bool link_grace = (now - startup_time_) < kLinkGraceSec;
+
+  if (!fcu_connected_ && !link_grace) {
     // 与飞控断链时: armed_ 会被 MAVROS 置 false, 若仍以 armed_ 作武装条件,
     // 所有看门狗会在最需要保护的时刻静默 —— 而 FCU 会锁存最后一条速度指令。
     // 断链本身即最强烈的 failsafe 信号。
     safety_.set_odom_watchdog("FCU link lost", now);
+  } else if (!fcu_connected_) {
+    // 宽限期内尚未连上: 不报警, 也不清空 (避免掩盖真实故障)。
+    safety_.set_odom_watchdog("", now);
   } else if (!armed_) {
     // 已连接但未解锁: 码头/台架调试, 不因尚无里程计就切换模式。
     safety_.set_odom_watchdog("", now);

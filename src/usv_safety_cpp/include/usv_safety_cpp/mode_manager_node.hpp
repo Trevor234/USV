@@ -97,6 +97,9 @@ class ModeManagerNode : public rclcpp::Node {
   // 看门狗武装条件必须用 connected 而非 armed: 断链时 /mavros/state 会把
   // armed 置 false, 若用它作武装条件, 所有保护会在最需要时静默。
   bool        fcu_connected_         = false;
+  // 启动宽限期起点。MAVROS 启动到首次连上 FCU 需要数秒, 这段时间
+  // connected=false 是正常现象, 不能据此触发 failsafe。
+  double      startup_time_          = 0.0;
   bool        mpc_ok_                = true;   // 默认 True,直到收到真正的错误
   int         mpc_fail_count_        = 0;
   double      mpc_solve_time_ms_     = 0.0;

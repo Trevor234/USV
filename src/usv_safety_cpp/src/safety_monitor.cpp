@@ -144,7 +144,10 @@ void SafetyMonitor::set_odom_watchdog(const std::string& flag,
   if (!flag.empty()) {
     new_flags.push_back(flag);
   }
-  replace_flags_({"No odometry received", "Odometry timeout"}, new_flags, ts);
+  // "FCU link lost" 也必须列入被替换集合, 否则断链期间每 0.5s 追加一条,
+  // 恢复后也不会被清除, flags 会无限累积同一条告警。
+  replace_flags_({"No odometry received", "Odometry timeout", "FCU link lost"},
+                 new_flags, ts);
 }
 
 void SafetyMonitor::mark_mpc_status(double timestamp) {
