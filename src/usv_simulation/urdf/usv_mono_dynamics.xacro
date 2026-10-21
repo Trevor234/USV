@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<!-- Buoyancy + Fossen hydrodynamics for the single-hull USV, reusing VRX's
+     gz-sim plugins (libSurface.so / libSimpleHydrodynamics.so) but scaled to the
+     real 2 m / 30 kg dual-thruster boat (see usv_bringup/config/usv_params.yaml).
+
+     Differences vs the WAM-V catamaran version:
+       - ONE Surface (buoyancy) along the hull centerline instead of two pontoons.
+       - Drag/added-mass magnitudes reduced ~10-20x to the small monohull.
+     These are first-pass values — expect to tune zW/kP/mQ for heave/roll/pitch
+     stability and xU/nR for surge/yaw tracking once it runs. -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="usv_mono_dynamics" params="name">
+    <gazebo>
+      <!-- Single-hull buoyancy: one floating "cylinder" along the centerline -->
+      <plugin filename="libSurface.so" name="vrx::Surface">
+        <link_name>${namespace}/base_link</link_name>
+        <hull_length>2.0</hull_length>
+        <hull_radius>0.25</hull_radius>
+        <fluid_level>0</fluid_level>
+        <points>
+          <point>0.6 0 0</point>
+          <point>-0.6 0 0</point>
+        </points>
+        <wavefield>
+          <topic>/vrx/wavefield/parameters</topic>
+        </wavefield>
+      </plugin>
+
+      <!-- Fossen drag / added mass. Magnitudes from usv_params.yaml
+           (plugin takes POSITIVE coefficients; YAML stores Fossen-negative). -->
+      <plugin filename="libSimpleHydrodynamics.so" name="vrx::SimpleHydrodynamics">
+        <link_name>${namespace}/base_link</link_name>
+        <!-- Added mass -->
+        <xDotU>3.0</xDotU>
+        <yDotV>20.0</yDotV>
+        <nDotR>2.0</nDotR>
+        <!-- Linear + quadratic drag -->
+        <xU>8.0</xU>
+        <xUU>15.0</xUU>
+        <yV>30.0</yV>
+        <yVV>60.0</yVV>
+        <zW>150.0</zW>
+        <kP>50.0</kP>
+        <kPP>50.0</kPP>
+        <mQ>50.0</mQ>
+        <mQQ>50.0</mQQ>
+        <nR>5.0</nR>
+        <nRR>3.0</nRR>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>

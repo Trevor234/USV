@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!-- Lightweight thruster pods for the 14.2 kg monohull digital twin.
+
+     Replaces the WAM-V engine.xacro macro, whose pods are 15 kg EACH — heavier
+     than the entire real boat. Plugin interface is identical to
+     wamv_gazebo/urdf/thruster_layouts/wamv_gazebo_thruster_config.xacro so the
+     /wamv/thrusters/{left,right}/... topics and the vrx_gz bridge keep working.
+
+     2026-09-03 USVANSIS identification: K = 1.6437e-6 N/RPM²
+     → N/(rad/s)²: K·(60/2π)² ≈ 1.5e-4  (T = coeff·ω², 25 N @ ~3900 RPM).
+
+     NOTE: pod/propeller links carry NO collision geometry — with the tiny pod
+     mass the ODE collision solver intermittently NaN'd at the first step
+     (aabbBound assert); nothing in the water needs to contact the pods, so
+     collision shapes are simply omitted (visual only). -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+  <xacro:macro name="usv_mono_engine" params="prefix position:='0 0 0'">
+    <link name="${namespace}/${prefix}_engine_link">
+      <visual>
+        <origin xyz="0 0 -0.09"/>
+        <geometry><box size="0.08 0.06 0.25"/></geometry>
+      </visual>
+      <inertial>
+        <origin xyz="0 0 -0.09"/>
+        <mass value="0.6"/>
+        <inertia ixx="0.0033" ixy="0.0" ixz="0.0" iyy="0.0034" iyz="0.0" izz="0.0005"/>
+      </inertial>
+    </link>
+
+    <link name="${namespace}/${prefix}_propeller_link">
+      <visual>
+        <origin rpy="0 1.57 0"/>
+        <geometry><cylinder length="0.04" radius="0.035"/></geometry>
+      </visual>
+      <inertial>
+        <mass value="0.1"/>
+        <inertia ixx="0.00006" ixy="0.0" ixz="0.0" iyy="0.00004" iyz="0.0" izz="0.00004"/>
+      </inertial>
+    </link>
+
+    <joint name="${namespace}/${prefix}_chassis_engine_joint" type="revolute">
+      <axis xyz="0 0 1"/>
+      <limit lower="${-pi}" upper="${pi}" effort="10" velocity="10"/>
+      <origin xyz="${position}"/>
+      <parent link="${namespace}/base_link"/>
+      <child link="${namespace}/${prefix}_engine_link"/>
+    </joint>
+
+    <joint name="${namespace}/${prefix}_engine_propeller_joint" type="continuous">
+      <axis xyz="1 0 0"/>
+      <parent link="${namespace}/${prefix}_engine_link"/>
+      <child link="${namespace}/${prefix}_propeller_link"/>
+      <origin xyz="-0.04 0 -0.2"/>
+      <limit effort="20" velocity="500"/>
+      <dynamics friction="0.01" damping="0.005"/>
+    </joint>
+
+    <gazebo>
+      <plugin filename="gz-sim-thruster-system"
+              name="gz::sim::systems::Thruster">
+        <joint_name>${namespace}/${prefix}_engine_propeller_joint</joint_name>
+        <!-- 2026-09-03 辨识: K=1.6437e-6 N/RPM² → 1.5e-4 N/(rad/s)²。
+             插件的有效推力系数 = fluid_density * c * D^4 (T = ρ·c·D⁴·ω²),
+             故 c = 1.5e-4/(1000*0.2⁴) = 9.37e-5 → 25 N @ ~3900 RPM。
+             注意: c 必须与 D 匹配, 否则 ω 指令发散 (曾致 ODE 崩溃)。 -->
+        <!-- 2026-09-03 辨识: K=1.6437e-6 N/RPM² → 1.5e-4 N/(rad/s)²。
+             插件有效推力系数 = fluid_density * c * D^4 (T = ρ·c·D⁴·ω²),
+             故 c = 1.5e-4/(1000*0.2⁴) = 9.37e-5 → 25 N @ ~3900 RPM。 -->
+        <thrust_coefficient>0.0000937</thrust_coefficient>
+        <fluid_density>1000</fluid_density>
+        <propeller_diameter>0.2</propeller_diameter>
+        <velocity_control>true</velocity_control>
+        <max_thrust_cmd>25.0</max_thrust_cmd>
+        <namespace>${namespace}</namespace>
+        <topic>thrusters/${prefix}/thrust</topic>
+        <!-- Not used by Gazebo but used to run the bridge easily -->
+        <name>${prefix}</name>
+      </plugin>
+
+      <plugin filename="gz-sim-joint-position-controller-system"
+              name="gz::sim::systems::JointPositionController">
+        <joint_name>${namespace}/${prefix}_chassis_engine_joint</joint_name>
+        <use_velocity_commands>true</use_velocity_commands>
+        <topic>${namespace}/thrusters/${prefix}/pos</topic>
+        <!-- Not used by Gazebo but used to run the bridge easily -->
+        <name>${prefix}</name>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+</robot>
