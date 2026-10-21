@@ -148,9 +148,17 @@ void MpcControllerNode::load_config_()
   scheme_ = "A";
   std::string mode_str = this->get_parameter("control_mode").as_string();
   if (mode_str != "kinematic" && mode_str != "idle") {
+    // 非法值降级到 idle: 不解算、只发零速度。这是安全侧的选择,
+    // 与日志声明一致 (原实现只打日志却继续正常控制)。
     RCLCPP_ERROR(this->get_logger(),
-                 "control_mode='%s' 不支持 (仅 kinematic/idle), fallback IDLE",
+                 "control_mode='%s' 不支持 (仅 kinematic/idle), 已降级为 IDLE",
                  mode_str.c_str());
+    mode_str = "idle";
+  }
+  control_mode_ = mode_str;
+  if (control_mode_ == "idle") {
+    RCLCPP_WARN(this->get_logger(),
+                "control_mode=idle: 将持续发布零速度, 不进行 MPC 解算");
   }
 
   mpc_dt_ = this->get_parameter("mpc_dt").as_double();
@@ -414,6 +422,13 @@ void MpcControllerNode::enter_standby_(const std::string & reason)
 
 void MpcControllerNode::control_loop_()
 {
+  // idle 模式: 不解算, 持续发布零速度。用于码头/台架调试,
+  // 保证"停住控制输出"这个开关真实有效。
+  if (control_mode_ == "idle") {
+    enter_standby_("control_mode=idle");
+    return;
+  }
+
   std::pair<bool, std::string> cs;
   bool armed;
   std::string mode;
@@ -593,7 +608,7 @@ void MpcControllerNode::publish_status_(
   j["deadline_miss"] = (std::strncmp(info.error, "solve_timeout", 13) == 0);
   j["hold"] = in_hold;
   j["scheme"] = scheme_;
-  j["control_mode"] = "kinematic";
+  j["control_mode"] = control_mode_;
   j["backend"] = info.backend;
   j["require_fcu_state"] = require_fcu_state_;
   {

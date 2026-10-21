@@ -55,7 +55,32 @@ bool WaypointManager::update_progress(double x, double y) {
 
   const auto& wp = waypoints_[current_idx_];
   double dist = std::hypot(x - wp.x, y - wp.y);
-  if (dist < wp.radius) {
+
+  // 倒角会让参考路径在拐角处外切, 路径到航点的最近距离随转弯角急剧增大:
+  //   turn_radius=12m 时 90 度约 5m、120 度约 12m、150 度约 34m。
+  // 只按 radius(默认 2m) 判定, 大角度航点永远不会被认为到达, 任务卡死。
+  //
+  // 补充判据: 沿进入该航点的航段方向, 船是否已越过航点。
+  // 投影 > 0 表示已越过; 仅在与航点距离足够近(避免绕远路时误判)时启用,
+  // 该距离阈值按航段长度的一半放宽, 保证倒角外切点一定落在判定范围内。
+  bool passed = false;
+  if (current_idx_ > 0) {
+    const auto& prev = waypoints_[current_idx_ - 1];
+    double seg_x = wp.x - prev.x;
+    double seg_y = wp.y - prev.y;
+    double seg_len = std::hypot(seg_x, seg_y);
+    if (seg_len > 1e-6) {
+      double ux = seg_x / seg_len;
+      double uy = seg_y / seg_len;
+      double along = (x - wp.x) * ux + (y - wp.y) * uy;   // >0 = 已越过
+      double lateral = std::abs((x - wp.x) * (-uy) + (y - wp.y) * ux);
+      // 侧向偏差不超过倒角外切量级的一半, 且投影已越过航点
+      double gate = std::max(wp.radius, 0.5 * seg_len);
+      passed = (along > 0.0) && (std::hypot(along, lateral) < gate);
+    }
+  }
+
+  if (dist < wp.radius || passed) {
     current_idx_++;
     if (current_idx_ >= static_cast<int>(waypoints_.size())) {
       mission_complete_ = true;

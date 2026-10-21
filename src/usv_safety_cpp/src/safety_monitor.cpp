@@ -267,6 +267,9 @@ SafetyLevel SafetyMonitor::level_from_flags_(
       "GEOFENCE VIOLATION", "CRITICAL battery", "Solver failed",
       "No path update", "No odometry received", "Odometry timeout",
       "No MPC status", "MPC status timeout",
+      // 与飞控链路断开: MAVROS 会把 armed 置 false, 而 FCU 侧会锁存最后
+      // 一条速度指令。断链必须与"里程计超时"同级, 不能被 armed 门禁吞掉。
+      "FCU link lost",
   };
   static const std::vector<std::string> kWarningPrefixes = {
       "Approaching geofence boundary", "Speed limit exceeded",

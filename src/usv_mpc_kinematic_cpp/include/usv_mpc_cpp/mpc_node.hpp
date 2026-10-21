@@ -147,6 +147,9 @@ private:
   std::string profile_sync_reason_ = "no_profile";
 
   // ── 配置 ────────────────────────────────────────────
+  // 控制模式: "kinematic" 正常解算; "idle" 只发零速度不解算。
+  // 原实现读入局部变量后丢弃, 导致 idle 是假开关 (2026-10-21 修复)。
+  std::string control_mode_ = "kinematic";
   std::string scheme_ = "A";
   double mpc_dt_ = 0.2;
   int horizon_ = 20;

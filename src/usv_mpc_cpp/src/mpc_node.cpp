@@ -515,7 +515,16 @@ void MpcControllerNode::run_dynamic_mpc_() {
   U_pred:预测控制序列
   */
   auto [u_opt, info] = mpc_->solve(current_state, reference);
-  enforce_solve_deadline_(info);
+  const bool time_rejected = enforce_solve_deadline_(info);
+
+  // deadline 拒绝 ≠ 普通求解失败: 迟到解可能已经把候选移进热启动,
+  // 且它的"第一拍"对应的是过去的状态。必须立即丢弃并重置热启动,
+  // 而不是等连续失败 5 次才归零 —— 那 5 拍下发的全是已确认迟到的解。
+  // (对齐方案 A 的 time_rejected 路径; 2026-10-21 修复)
+  if (time_rejected) {
+    mpc_->reset_warmstart();
+    u_opt = has_last_thrust_ ? last_commanded_thrust_ : Eigen::Vector2d::Zero();
+  }
 
   bool in_hold = false;
   if (info.success) {
@@ -540,6 +549,8 @@ void MpcControllerNode::run_dynamic_mpc_() {
   }
 
   const Eigen::Vector2d applied_thrust = publish_dynamic_output_(u_opt);
+  last_commanded_thrust_ = applied_thrust;
+  has_last_thrust_ = true;
   // 求解器 solve() 内部先保存了计划首拍；这里用经过 RC/VRX 映射后真正
   // 下发的等效推力覆盖，使下一拍 ΔT 代价和硬约束从执行输入出发。
   mpc_->set_applied_control(applied_thrust);

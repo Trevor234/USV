@@ -121,6 +121,10 @@ class MpcControllerNode : public rclcpp::Node {
   bool armed_ = false;
   std::string mode_ = "MANUAL";
   int solver_fail_count_ = 0;
+  // deadline 拒绝时复用上一拍实际下发的推力 (正确的"保持"语义);
+  // 从未成功下发过则用零推力。(2026-10-21)
+  Eigen::Vector2d last_commanded_thrust_ = Eigen::Vector2d::Zero();
+  bool has_last_thrust_ = false;
   int control_count_ = 0;
   double last_state_time_ = 0.0;
   double last_odom_time_ = 0.0;

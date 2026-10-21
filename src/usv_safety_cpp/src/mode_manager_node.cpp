@@ -170,6 +170,7 @@ void ModeManagerNode::state_callback_(const mavros_msgs::msg::State::SharedPtr m
   }
   current_mavros_mode_ = msg->mode;
   armed_ = msg->armed;
+  fcu_connected_ = msg->connected;
 }
 
 // ── MPC 状态回调（JSON 解析） ────────────────────────────
@@ -236,9 +237,13 @@ void ModeManagerNode::monitor_loop_() {
   // ── 里程计看门狗 ──
   // update_odom() 仅从真实 odom 回调调用,故 check_odom_timeout() 反映传感器新鲜度。
   // 不要在此处刷新它,否则该看门狗会自复位。
-  if (!armed_) {
-    // 解锁前 MAVROS/EKF 可能仍在启动。不要因尚无里程计就切换模式;
-    // 车辆解锁后才开始执行看门狗。
+  if (!fcu_connected_) {
+    // 与飞控断链时: armed_ 会被 MAVROS 置 false, 若仍以 armed_ 作武装条件,
+    // 所有看门狗会在最需要保护的时刻静默 —— 而 FCU 会锁存最后一条速度指令。
+    // 断链本身即最强烈的 failsafe 信号。
+    safety_.set_odom_watchdog("FCU link lost", now);
+  } else if (!armed_) {
+    // 已连接但未解锁: 码头/台架调试, 不因尚无里程计就切换模式。
     safety_.set_odom_watchdog("", now);
   } else if (!odom_received_) {
     safety_.set_odom_watchdog("No odometry received", now);
@@ -335,16 +340,28 @@ void ModeManagerNode::monitor_loop_() {
       } else {
         // 2026-09-03 实测教训: FCU 链路断时 set_mode 永远无效、mode 永远
         // 变不成目标模式, 无限重发只是指令洪水。达到上限后停止重发。
+        // 但"停止重发"不能等于"什么都不做": FCU 侧会锁存最后一条速度指令,
+        // 船会保持最后一次速度继续行驶。此处提供唯一可用的兜底 ——
+        // 上锁(disarm), 让飞控切断动力输出。代价是失去操控, 但优于
+        // 一条无人接管、持续行驶的船。
         RCLCPP_ERROR_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                               "FAILSAFE 持续, 但 %s 已连发 %d 次仍未生效 — "
-                              "检查 FCU 链路, 已停止重发",
+                              "已升级为 disarm 兜底",
                               failsafe_mode_.c_str(), rtl_attempts_);
+        if (!failsafe_disarm_sent_ && armed_) {
+          RCLCPP_ERROR(this->get_logger(),
+                       "FAILSAFE 兜底: 请求 DISARM (切模式失败, 切断动力)");
+          if (request_arm(false)) {
+            failsafe_disarm_sent_ = true;
+          }
+        }
       }
     }
     return;
   }
-  // failsafe 解除后重置重试计数, 下次 failsafe 仍能正常发起
+  // failsafe 解除后重置重试计数与兜底标志, 下次 failsafe 仍能正常发起
   rtl_attempts_ = 0;
+  failsafe_disarm_sent_ = false;
 
   // ── 自动模式切换 ──
   // 触发条件: armed 且不在 GUIDED,且 MPC 有意愿解算 ——

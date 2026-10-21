@@ -89,6 +89,10 @@ class ModeManagerNode : public rclcpp::Node {
   // ── 内部状态 ────────────────────────────────────────
   std::string current_mavros_mode_   = "MANUAL";
   bool        armed_                 = false;
+  // MAVROS 链路连接状态 (来自 /mavros/state.connected)。
+  // 看门狗武装条件必须用 connected 而非 armed: 断链时 /mavros/state 会把
+  // armed 置 false, 若用它作武装条件, 所有保护会在最需要时静默。
+  bool        fcu_connected_         = false;
   bool        mpc_ok_                = true;   // 默认 True,直到收到真正的错误
   int         mpc_fail_count_        = 0;
   double      mpc_solve_time_ms_     = 0.0;
@@ -118,6 +122,8 @@ class ModeManagerNode : public rclcpp::Node {
   // FAILSAFE 模式切换重发上限 (达到后停止指令洪水, 保持 failsafe 等待人工介入)
   int         max_rtl_retries_       = 10;
   int         rtl_attempts_          = 0;
+  // 兜底: set_mode 重试耗尽后 disarm, 让飞控切断动力。
+  bool        failsafe_disarm_sent_  = false;
   // FAILSAFE 触发时的动作: "report"(只报错) / "HOLD" / "RTL"
   std::string failsafe_mode_        = "report";
 
