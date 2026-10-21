@@ -96,6 +96,11 @@ ModeManagerNode::ModeManagerNode()
   set_mode_cli_ = this->create_client<mavros_msgs::srv::SetMode>(set_mode_service);
   cmd_arming_cli_ = this->create_client<mavros_msgs::srv::CommandBool>(arming_service);
 
+  // 安全状态对外发布。保持 10 深度: failsafe 期间 0.5s 一拍, 地面站
+  // 短暂断连后可补上最近的若干帧。
+  safety_status_pub_ = this->create_publisher<std_msgs::msg::String>(
+      this->get_parameter("safety_status_topic").as_string(), 10);
+
   // ── 定时器（0.5 秒周期） ───────────────────────────
   timer_ = this->create_wall_timer(
       500ms, std::bind(&ModeManagerNode::monitor_loop_, this));
@@ -136,6 +141,7 @@ void ModeManagerNode::declare_parameters_() {
   this->declare_parameter("battery_topic", std::string("/mavros/battery"));
   this->declare_parameter("set_mode_service", std::string("/mavros/set_mode"));
   this->declare_parameter("arming_service", std::string("/mavros/cmd/arming"));
+  this->declare_parameter("safety_status_topic", std::string("/safety/status"));
 }
 
 // ── 加载配置 ─────────────────────────────────────────────
@@ -324,6 +330,7 @@ void ModeManagerNode::monitor_loop_() {
       if (i > 0) flag_str += ", ";
       flag_str += flags[i];
     }
+    publish_safety_status_("FAILSAFE", flag_str);
     if (failsafe_mode_ == "report") {
       // 测试期模式: 只报错不切模式, 控制权完全留给人工。
       // 自动恢复 (auto_switch) 也被下方 return 抑制。
@@ -386,6 +393,17 @@ void ModeManagerNode::monitor_loop_() {
     if (needs_guided) {
       switch_mode_("GUIDED");
     }
+  }
+
+  // ── 发布安全状态 (非 failsafe 路径) ──
+  {
+    auto flags_now = safety_.active_flags();
+    std::string joined;
+    for (size_t i = 0; i < flags_now.size(); ++i) {
+      if (i > 0) joined += ", ";
+      joined += flags_now[i];
+    }
+    publish_safety_status_(safety_level_name_(safety_.level()), joined);
   }
 
   // ── 记录警告日志 ──
@@ -455,5 +473,41 @@ bool ModeManagerNode::switch_to_guided() { return switch_mode_("GUIDED"); }
 bool ModeManagerNode::switch_to_manual() { return switch_mode_("MANUAL"); }
 bool ModeManagerNode::switch_to_rtl()    { return switch_mode_("RTL"); }
 bool ModeManagerNode::switch_to_hold()   { return switch_mode_("HOLD"); }
+
+
+// ── 安全状态发布 ─────────────────────────────────────────
+// 对外暴露安全等级、活动标志与建议动作, 供地面站显示与 bag 记录。
+// 此前安全节点没有任何 publisher, 所有告警只存在于本节点的日志里。
+const char* ModeManagerNode::safety_level_name_(SafetyLevel level) {
+  switch (level) {
+    case SafetyLevel::NOMINAL:  return "NOMINAL";
+    case SafetyLevel::WARNING:  return "WARNING";
+    case SafetyLevel::CAUTION:  return "CAUTION";
+    case SafetyLevel::FAILSAFE: return "FAILSAFE";
+  }
+  return "UNKNOWN";
+}
+
+void ModeManagerNode::publish_safety_status_(
+    const char* level, const std::string& flags) {
+  if (!safety_status_pub_) {
+    return;
+  }
+  nlohmann::json j;
+  j["level"] = level;
+  j["flags"] = flags;
+  j["recommended_action"] = safety_.recommended_action();
+  j["failsafe_mode"] = failsafe_mode_;
+  j["rtl_attempts"] = rtl_attempts_;
+  j["failsafe_disarm_sent"] = failsafe_disarm_sent_;
+  j["fcu_connected"] = fcu_connected_;
+  j["armed"] = armed_;
+  j["fcu_mode"] = current_mavros_mode_;
+  j["mpc_state"] = mpc_state_;
+  j["mpc_standby_reason"] = mpc_standby_reason_;
+  std_msgs::msg::String msg;
+  msg.data = j.dump();
+  safety_status_pub_->publish(msg);
+}
 
 }  // namespace usv_safety

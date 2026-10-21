@@ -71,6 +71,24 @@ def _start_recorder(context):
         raise RuntimeError(f"Bag output path is not a directory: {bag_output_dir}")
     if not os.access(bag_output_dir, os.R_OK | os.W_OK | os.X_OK):
         raise RuntimeError(f"Bag output directory is not accessible and writable: {bag_output_dir}")
+
+    # 剩余空间预检。写满后 ros2 bag 会退出, 而 systemd Restart=always 会每
+    # 10 秒重建一个空 bag 目录, 形成重启风暴, 且没有明确的"磁盘满"告警。
+    # 宁可启动时 fail fast, 让人看到真实原因。
+    min_free = _parse_nonnegative_int(
+        "min_free_bytes", LaunchConfiguration("min_free_bytes").perform(context)
+    )
+    if min_free > 0:
+        st = os.statvfs(bag_output_dir)
+        free_bytes = st.f_bavail * st.f_frsize
+        if free_bytes < min_free:
+            raise RuntimeError(
+                f"Bag output directory has only {free_bytes / 1e9:.1f} GB free, "
+                f"below min_free_bytes={min_free / 1e9:.1f} GB. "
+                "Free space on the recording drive before starting."
+            )
+        print(f"[record] free space {free_bytes / 1e9:.1f} GB "
+              f"(min {min_free / 1e9:.1f} GB)", flush=True)
     if not topics_file.is_file() or not os.access(topics_file, os.R_OK):
         raise RuntimeError(f"Rosbag topics file is missing or unreadable: {topics_file}")
     if not qos_path.is_file() or not os.access(qos_path, os.R_OK):
@@ -182,6 +200,14 @@ def generate_launch_description():
             "max_cache_size",
             default_value="104857600",
             description="rosbag2 write-cache size in bytes (0 disables caching)",
+        ),
+        DeclareLaunchArgument(
+            "min_free_bytes",
+            default_value="5368709120",
+            description=(
+                "Refuse to start if free space is below this many bytes "
+                "(default 5 GB). Prevents the disk-full restart storm."
+            ),
         ),
         DeclareLaunchArgument(
             "storage_config_file",

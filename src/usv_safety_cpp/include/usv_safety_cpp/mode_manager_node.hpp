@@ -72,6 +72,10 @@ class ModeManagerNode : public rclcpp::Node {
   // ── 回调函数 ────────────────────────────────────────
   void state_callback_(const mavros_msgs::msg::State::SharedPtr msg);
   void mpc_status_callback_(const std_msgs::msg::String::SharedPtr msg);
+
+  // 安全状态发布辅助
+  static const char* safety_level_name_(SafetyLevel level);
+  void publish_safety_status_(const char* level, const std::string& flags);
   void odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg);
   void battery_callback_(const sensor_msgs::msg::BatteryState::SharedPtr msg);
   void path_callback_(const nav_msgs::msg::Path::SharedPtr msg);
@@ -136,6 +140,10 @@ class ModeManagerNode : public rclcpp::Node {
   rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr            path_sub_;
 
   // 服务客户端
+  // 安全状态对外发布 (JSON)。此前安全节点没有任何 publisher,
+  // 围栏/电池/求解器告警与 failsafe 事件对地面站完全不可见, 也不进 bag。
+  // (2026-10-21)
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr      safety_status_pub_;
   rclcpp::Client<mavros_msgs::srv::SetMode>::SharedPtr      set_mode_cli_;
   rclcpp::Client<mavros_msgs::srv::CommandBool>::SharedPtr  cmd_arming_cli_;
 

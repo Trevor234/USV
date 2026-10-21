@@ -45,6 +45,18 @@ mpc_controller_node:
         throttle: { channel: 3, default_index: 2 }   # CH3, rc_throttle_channel=2
       pwm_range: { min: 1100, center: 1500, max: 1900 }
       # 释放: 全零 OverrideRCIn 表示释放所有通道 (FCU 回到正常 RC 输入)
+      # 适用方案: B (动力学 NMPC, MANUAL 模式)
+    - topic: /mavros/setpoint_velocity/cmd_vel
+      type: geometry_msgs/msg/TwistStamped
+      frame: base_link      # twist 在机体坐标系 (u_surge, r_yaw)
+      qos: reliable depth=10
+      purpose: 运动学 MPC 控制输出 (方案 A);MAVROS setpoint_velocity → FCU GUIDED
+      fields:
+        linear.x:  u_surge (m/s)
+        angular.z: r_yaw (rad/s)
+      # 适用方案: A (运动学 MPC, GUIDED 模式)
+      # 2026-10-21: 此前契约只记录 rc/override, 与实机部署的方案 A 不符,
+      # 导致 bag 录制清单也漏掉真正的控制输出。
     - topic: /mpc/status
       type: std_msgs/msg/String
       qos: depth=10

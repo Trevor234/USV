@@ -1,0 +1,61 @@
+[Unit]
+Description=USV rosbag2 recorder (pure recording, no MAVROS)
+Documentation=file:///home/trevor/usv_mpc_ws_B/src/usv_bringup/launch/record.launch.py
+After=usv-system.service
+# 禁止加 RequiresMountsFor=/mnt/usv_bags: 它会绕过 fstab 的 x-systemd.automount 惰性挂载,
+# 在开机时强制真实挂载, 与 device-timeout 竞速 —— USB 冷插枚举(实测 13~17s)慢于超时即
+# dependency 失败, 而 Restart= 对 dependency 失败无效, 服务将永不启动(2026-10-06 定位)。
+# 挂载等待放在 ExecStartPre 里触发 automount, 失败由 Restart=always 兜底重试。
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+# 注意: 这里刻意不写 Requires/BindsTo usv-system.service。
+# 录制属于旁挂功能, 绝不能因为控制栈重启/停止而反过来把控制栈拖死,
+# 也不能让录制失败影响 ros2 launch usv_bringup real.launch.py 的可用性。
+
+[Service]
+Type=simple
+User=trevor
+Group=trevor
+WorkingDirectory=/home/trevor/usv_mpc_ws_B
+Environment=HOME=/home/trevor
+Environment=ROS_DOMAIN_ID=0
+
+# DDS 只走 lo + eth0, 排除 5G(wwan0)。wwan0 的 10.x/8 地址会被 FastDDS
+# 通告为回程单播定位符, 数据发进蜂窝口黑洞。详见 fastdds_lan.xml。
+Environment=FASTDDS_DEFAULT_PROFILES_FILE=/home/trevor/.ros/fastdds_lan.xml
+Environment=FASTRTPS_DEFAULT_PROFILES_FILE=/home/trevor/.ros/fastdds_lan.xml
+
+# 外接 SSD 没挂好就直接失败, 由 systemd 重试, 不要写进内存盘
+# 第一条先触碰挂载点触发 automount(设备未就绪时该调用阻塞至 device-timeout=30s), 再做下列确认
+ExecStartPre=/bin/sh -ec 'ls /mnt/usv_bags >/dev/null'
+ExecStartPre=/usr/bin/mountpoint -q /mnt/usv_bags
+ExecStartPre=/usr/bin/test -w /mnt/usv_bags
+
+# record.launch.py 只启动 ros2 bag record, 不启动 mavros 或任何控制节点。
+# 这一点至关重要: 早期用 real.launch.py record:=true 录, 会连带拉起第二套
+# mavros, 与 usv-system 抢 /dev/ttyAMA10 串口, 导致 MAVLink 帧损坏。
+#
+# 实时落盘参数(2026-09-04 改):
+#   max_cache_size=0   关闭双缓冲缓存, 每条消息立即写盘(默认 100MB, 断电丢最多 15 分钟)
+#   max_bag_duration=0 不做时间分卷(默认 900s)
+#   max_bag_size=0     不做大小分卷, 全程写单个 mcap(默认 3GB)
+#   storage_config_file  用 mcap_realtime.yaml(noChunking) 替代默认的 zstd_fast 预设。
+#                        只关缓存还不够: MCAP 还有 chunk 缓冲层(默认 768KB, 700B/s 下要
+#                        18 分钟才 flush), noChunking 才能真正做到每条消息立即落盘。
+#                        代价: 无压缩(文件大 1.5~2 倍)、无 message index。见该 yaml 注释。
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/trevor/usv_mpc_ws_B/install/setup.bash && exec ros2 launch usv_bringup record.launch.py bag_output_dir:=/mnt/usv_bags max_cache_size:=0 max_bag_duration:=0 max_bag_size:=0 storage_config_file:=/home/trevor/.ros/mcap_realtime.yaml'
+
+Restart=always
+RestartSec=10
+
+# ExecStartPre 触发 automount 最多等 device-timeout=30s, 启动超时留足余量
+TimeoutStartSec=120
+
+# ros2 bag 需要时间刷盘, 停服务时给足超时
+KillSignal=SIGINT
+KillMode=mixed
+TimeoutStopSec=90
+
+[Install]
+WantedBy=multi-user.target

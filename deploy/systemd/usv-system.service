@@ -1,0 +1,19 @@
+[Unit]
+Description=USV control system (scheme A/B switchable via /etc/default/usv-system)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=trevor
+# 方案选择: 编辑 /etc/default/usv-system 里的 SCHEME=A 或 B, 然后 systemctl restart usv-system
+EnvironmentFile=/etc/default/usv-system
+Environment=ACADOS_SOURCE_DIR=/home/trevor/acados
+ExecStart=/bin/bash -c 'source /opt/ros/jazzy/setup.bash && source /home/trevor/usv_mpc_ws_B/install/setup.bash && exec ros2 launch usv_bringup real.launch.py scheme:=${SCHEME}'
+Restart=always
+RestartSec=5
+# 默认 KillMode=control-group: 停服务时杀掉 cgroup 内所有子进程, 避免节点残留抢串口
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target

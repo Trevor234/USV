@@ -1,0 +1,19 @@
+# MCAP storage config —— 供 `ros2 bag record --storage-config-file` 使用
+#
+# noChunking: true
+#   关闭 chunk 缓冲, 每条消息一到达就写入文件数据区。
+#   这是断电/崩溃时数据损失最小的配置: 只丢操作系统 page cache 里最近几秒的数据,
+#   而不是默认配置下最长 15 分钟(100MB 缓存 + 900s 分卷)的数据。
+#
+# 代价(已知且有意为之):
+#   1. MCAP 只在 chunk 级别做压缩, 关掉 chunking 就等于没有压缩, 文件约大 1.5~2 倍。
+#   2. 没有 chunk 就没有 message index, 按时间戳 seek 需要扫描文件; 顺序回放不受影响。
+#   3. 崩溃未正常关闭时文件尾部没有 summary, 需要 `mcap recover` 修复(见下)。
+#
+# 实测量级约 1~2 KB/s, 30GB SSD 可连续录数百天, 所以体积不是瓶颈, 换实时性划算。
+#
+# 备选方案(想要压缩就用这个, 落盘粒度约 30~60 秒):
+#   chunkSize: 32768
+#   compression: Zstd
+#   compressionLevel: 1
+noChunking: true

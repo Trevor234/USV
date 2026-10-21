@@ -33,18 +33,10 @@ def generate_launch_description():
     bringup_dir = get_package_share_directory("usv_bringup")
 
 
-    # use_cpp: 切换已重写为 C++ 的节点 (safety/planning/mpc 同进同退),与方案 A 一致。
-    # True 用 *_cpp 包,False 用原 Python 包,便于 A/B 灰度对比与回退。
-    use_cpp_arg = DeclareLaunchArgument(
-        "use_cpp", default_value="false",
-        description="Use C++ node implementations where available (A/B toggle)"
-    )
-
     # scheme: 控制方案选择。A=运动学 MPC(kinematic), B=动力学 NMPC(dynamic)。
     # 切换时自动选择对应的 MPC 包和参数配置文件:
     #   A: usv_mpc_kinematic_cpp + mpc_params_A.yaml + usv_params_A.yaml
     #   B: usv_mpc_cpp          + mpc_params_B.yaml + usv_params_B.yaml
-    # 注意: use_cpp=false 时 MPC 用 Python 包(usv_mpc),方案 A 才有 Python MPC。
     scheme_arg = DeclareLaunchArgument(
         "scheme", default_value="B",
         description="控制方案: A=运动学MPC, B=动力学NMPC",
@@ -162,7 +154,6 @@ def generate_launch_description():
     visualize = LaunchConfiguration("visualize")
     telemetry = LaunchConfiguration("telemetry")
     use_ntrip = LaunchConfiguration("use_ntrip")
-    use_cpp = LaunchConfiguration("use_cpp")
     scheme = LaunchConfiguration("scheme")
     record = LaunchConfiguration("record")
     bag_output_dir = LaunchConfiguration("bag_output_dir")
@@ -200,8 +191,7 @@ def generate_launch_description():
 
     
 
-    # 安全节点恒为 C++ (usv_safety_cpp)。Python usv_safety 包已删除;
-    # use_cpp 现仅控制 planning 的实现选择。
+    # 安全节点恒为 C++ (usv_safety_cpp)。Python usv_safety 包已删除。
     safety_node = Node(
         package="usv_safety_cpp",
         executable="mode_manager_node",
@@ -222,8 +212,7 @@ def generate_launch_description():
         ],
     )
 
-    # 规划节点恒为 C++ (usv_planning_cpp)。Python usv_planning 包已删除;
-    # use_cpp 现仅控制 MPC 后端选择 (如有)。
+    # 规划节点恒为 C++ (usv_planning_cpp)。Python usv_planning 包已删除。
     planner_node = Node(
         package="usv_planning_cpp",
         executable="path_planner_node",
@@ -295,7 +284,14 @@ def generate_launch_description():
                 "path_topic": "/path/reference",
                 "profile_topic": profile_topic,
                 "state_topic": mavros_state_topic,
+                # 方案相关参数: 两边都显式传入, 各自节点只声明自己认识的那个。
+                # ROS 2 对未声明参数静默忽略, 不会报错。
+                #   A: velocity_topic  (/mavros/setpoint_velocity/cmd_vel)
+                #   B: rc_override_topic (/mavros/rc/override)
+                # 2026-10-21: 此前只传 rc_override_topic, 方案 A 的
+                # velocity_topic 完全依赖代码默认值, 契约里也没有记录。
                 "rc_override_topic": mavros_rc_override_topic,
+                "velocity_topic": "/mavros/setpoint_velocity/cmd_vel",
             },
         ],
     )
@@ -366,7 +362,6 @@ def generate_launch_description():
     )
     return LaunchDescription([
         log_msg,
-        use_cpp_arg,
         scheme_arg,
         fcu_url_arg,
         gcs_url_arg,

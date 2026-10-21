@@ -8,7 +8,13 @@ topics:
   - /mavros/local_position/odom
   - /mavros/imu/data
   - /mavros/state
+  # 方案 B 的控制输出 (OverrideRCIn)。方案 A 下该话题无 publisher,
+  # 录不到数据但保留兼容。
   - /mavros/rc/override
+  # 方案 A 的控制输出 (TwistStamped, u_surge + r_yaw), 5 Hz RELIABLE。
+  # 2026-10-21: 此前只录 rc/override, 实机跑方案 A 时真正的执行指令
+  # 完全没有落盘, 事故复盘无法重放控制输出。
+  - /mavros/setpoint_velocity/cmd_vel
   - /mpc/status
   - /path/reference
   - /path/reference_profile
