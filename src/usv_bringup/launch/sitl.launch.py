@@ -9,6 +9,11 @@ Prerequisites:
 Usage:
   ros2 launch usv_bringup sitl.launch.py                # scheme A (运动学, Python)
   ros2 launch usv_bringup sitl.launch.py scheme:=B      # scheme B (C++ NMPC, RC override)
+
+注意 (Pi5 实机部署):
+  本工作区为树莓派 5 实机部署, 未安装 Gazebo / VRX / ArduPilot SITL。
+  本 launch 文件保留自开发工作区 (usv_mpc_ws), 在 Pi 上**无法运行**;
+  实机请使用 `real.launch.py`。若需要仿真验证, 请在开发机上执行。
 """
 
 import os

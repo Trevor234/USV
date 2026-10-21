@@ -1,8 +1,13 @@
 """VRX Gazebo Sim + MPC Scheme B (C++ 动力学 NMPC) validation launch.
 
 MPC 节点为 usv_mpc_cpp (C++ NMPC, output_mode=vrx_thrust 直接发布推力),
-参数 = mpc_params.yaml (基础) + usv_params_sim.yaml (30 kg 仿真船) +
-mpc_params_vrx.yaml (VRX overlay)。实机参数 (usv_params.yaml) 不用于仿真。
+参数 = mpc_params_B.yaml (基础) + usv_params_sim.yaml (30 kg 仿真船) +
+mpc_params_vrx.yaml (VRX overlay)。实机参数 (usv_params_B.yaml) 不用于仿真。
+
+注意 (Pi5 实机部署):
+  本工作区为树莓派 5 实机部署, 未安装 Gazebo / VRX / ArduPilot SITL。
+  本 launch 文件保留自开发工作区 (usv_mpc_ws), 在 Pi 上**无法运行**;
+  实机请使用 `real.launch.py`。若需要仿真验证, 请在开发机上执行。
 """
 
 import os
@@ -110,7 +115,10 @@ def generate_launch_description():
         }.items(),
     )
 
-    mpc_params = os.path.join(bringup_share, "config", "mpc_params.yaml")
+    # 使用 mpc_params_B.yaml: 与原先的 mpc_params.yaml 内容完全相同,
+    # 两份重复文件已合并为一份 (2026-10-21)。方案 B 的实机与仿真共用
+    # 同一份基础参数, 差异通过 mpc_params_vrx.yaml overlay 表达。
+    mpc_params = os.path.join(bringup_share, "config", "mpc_params_B.yaml")
     mpc_params_a = os.path.join(bringup_share, "config", "mpc_params_A.yaml")
     usv_params_sim = os.path.join(bringup_share, "config", "usv_params_sim.yaml")
     mpc_overlay = os.path.join(bringup_share, "config", "mpc_params_vrx.yaml")

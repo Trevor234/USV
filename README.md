@@ -27,10 +27,14 @@ ArduPilot SITL 联调、参数辨识工具链。
 |:---|:---|:---|
 | `usv_mpc_cpp` | C++ | **动力学 NMPC(方案 B)**:Fossen 3-DOF + acados SQP_RTI(vendored codegen)+ CasADi fallback;输出后端 `rc_override`(实机)/`vrx_thrust`(VRX 仿真) |
 | `usv_mpc_kinematic_cpp` | C++ | 运动学 MPC 的 C++ 版(方案 A 实机用) |
-| `usv_planning` / `usv_planning_cpp` | Py/C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
-| `usv_safety` / `usv_safety_cpp` | Py/C++ | 模式管理 + 安全监控(围栏/电池/求解器/看门狗 failsafe → RTL) |
+| `usv_planning_cpp` | C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
+| `usv_safety_cpp` | C++ | 模式管理 + 安全监控(围栏/电池/求解器/看门狗 failsafe → RTL) |
 | `usv_simulation` | Python | matplotlib 实时可视化 + telemetry bridge(无 Gazebo 依赖) |
 | `usv_bringup` | — | launch(`real/mavros/ntrip/record/sim/sitl/vrx`)+ 全部 YAML 配置 |
+
+> 注: Python 版 `usv_planning` / `usv_safety` / `usv_mpc` 包已于 2026-09
+> 删除, 现在全部为 C++ 实现 (`*_cpp`)。
+
 
 ## 两个控制方案
 
@@ -40,7 +44,7 @@ ArduPilot SITL 联调、参数辨识工具链。
 | 控制量 | `[u_surge, r_yaw]` | `[T_L, T_R]`(推力) |
 | 实现 | C++ `usv_mpc_kinematic_cpp`(CasADi/IPOPT;2026-09-06 起 Python 版已删除, 方案 A 恒为 C++) | **C++ `usv_mpc_cpp`**(Python 动力学实现已删除) |
 | 输出 | `cmd_vel`(GUIDED) | RC override(MANUAL)/ vrx_thrust(仿真) |
-| 参数 | `mpc_params_A.yaml` | `mpc_params_B.yaml` + `usv_params.yaml`(真船) |
+| 参数 | `mpc_params_A.yaml` | `mpc_params_B.yaml` + `usv_params_B.yaml`(真船) |
 
 ## 构建
 
@@ -72,7 +76,7 @@ ros2 launch usv_bringup vrx.launch.py headless:=True       # 无头
 ros2 launch usv_bringup vrx.launch.py record_bag:=True     # 顺带录 bag
 ```
 
-- MPC 参数:`mpc_params.yaml` + `usv_params_sim.yaml`(30 kg 仿真船)+ `mpc_params_vrx.yaml`(overlay,
+- MPC 参数:`mpc_params_B.yaml` + `usv_params_sim.yaml`(30 kg 仿真船)+ `mpc_params_vrx.yaml`(overlay,
   `output_mode=vrx_thrust` 直接发布 `/wamv/thrusters/{left,right}/thrust`)。
 - 需要本机装好 VRX(`vrx_gz`、`wamv_gazebo`)与 Gazebo;仿真船模型在 `src/usv_simulation/urdf/`。
 
@@ -113,10 +117,10 @@ colcon test && colcon test-result --verbose           # pytest + gtest(C++ 包�
 
 | 文件 | 内容 |
 |:---|:---|
-| `mpc_params.yaml` | NMPC 基础参数(真船 25 N 整定,方案 B) |
+| `mpc_params_B.yaml` | NMPC 基础参数(真船 25 N 整定,方案 B) |
 | `mpc_params_A.yaml` / `mpc_params_B.yaml` | 方案 A/B 实机参数(`scheme` 切换时由 `real.launch.py` 选择) |
 | `mpc_params_vrx.yaml` | VRX 仿真 overlay(实船孪生 25 N + `vrx_thrust` 输出) |
-| `usv_params.yaml` | **真船**水动力学(14.2 kg / 1.2 m,2026-07-23 辨识,sway-yaw 耦合项置零保证开环稳定) |
+| `usv_params_B.yaml` | **真船**水动力学(14.2 kg / 1.2 m,2026-07-23 辨识,sway-yaw 耦合项置零保证开环稳定) |
 | `usv_params_A.yaml` / `usv_params_B.yaml` | 方案变体(真船) |
 | `usv_params_sim.yaml` | **仿真船**水动力学(30 kg 单体,与 `usv_mono_dynamics.xacro` 一致) |
 | `path_config.yaml` | 圆弧倒角半径、TOPP 限制(规划可行域 ⊆ 控制可行域) |
@@ -129,7 +133,7 @@ colcon test && colcon test-result --verbose           # pytest + gtest(C++ 包�
 
 ## 开发工具链(本工作区特有)
 
-- `参数识别/` —— 2026-07-23 真船参数辨识脚本与结果(`usv_params.yaml` 数值的来源)
+- `参数识别/` —— 2026-07-23 真船参数辨识脚本与结果(`usv_params_B.yaml` 数值的来源)
 - `scripts/smoke_check_topics.sh` —— 实机/仿真话题冒烟检查
 - `docs/runbook.md` —— 运维手册;`docs/topic_contract.md` —— 话题契约说明(以 `topic_contract.yaml` 为准)
 

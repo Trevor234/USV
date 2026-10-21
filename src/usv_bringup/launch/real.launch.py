@@ -253,7 +253,27 @@ def generate_launch_description():
     # acados/CasADi 运行时库路径: 非交互式启动(如 SSH、systemd)不 source .bashrc,
     # 故在此显式设置 LD_LIBRARY_PATH, 确保 scheme=B 的 mpc_node 能找到 libhpipm.so 等。
     _acados_lib = os.path.expanduser("~/acados/lib")
-    _casadi_lib = os.path.expanduser("~/.local/lib/python3.12/site-packages/casadi")
+    # CasADi 的运行时库目录随 Python 版本变化。原先硬编码 python3.12,
+    # 系统 Python 升级后路径失效且不会有任何提示 —— 只会在求解时报
+    # 找不到 .so。改为动态发现: 优先当前解释器版本, 否则扫描 site-packages
+    # 下任意 pythonX.Y 目录。
+    def _find_casadi_lib():
+        import glob
+        candidates = []
+        import sys
+        candidates.append(
+            os.path.expanduser(
+                f"~/.local/lib/python{sys.version_info.major}.{sys.version_info.minor}"
+                "/site-packages/casadi"))
+        candidates.extend(sorted(glob.glob(
+            os.path.expanduser("~/.local/lib/python*/site-packages/casadi")),
+            reverse=True))
+        for c in candidates:
+            if os.path.isdir(c):
+                return c
+        return ""
+
+    _casadi_lib = _find_casadi_lib()
     _mpc_ld_path = ":".join(p for p in [
         os.environ.get("LD_LIBRARY_PATH", ""),
         _acados_lib,

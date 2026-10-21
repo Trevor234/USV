@@ -68,7 +68,7 @@ MpcControllerNode::~MpcControllerNode() {
   // safe_shutdown 由 main 在 rclpy::shutdown 前显式调用
 }
 
-// ── 参数声明 (默认值与清理后的 mpc_params.yaml/usv_params.yaml 对齐) ──
+// ── 参数声明 (默认值与清理后的 mpc_params_B.yaml/usv_params_B.yaml 对齐) ──
 void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("control_mode", std::string("dynamic"));
   this->declare_parameter("mpc_dt", 0.2);

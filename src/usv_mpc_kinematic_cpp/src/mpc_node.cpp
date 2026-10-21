@@ -95,7 +95,7 @@ MpcControllerNode::~MpcControllerNode()
   // safe_shutdown 由 main 在 rclcpp::shutdown 前显式调用
 }
 
-// ── 参数声明 (默认值与 mpc_params.yaml 对齐; kinematic.* 命名空间) ──
+// ── 参数声明 (默认值与 mpc_params_A.yaml 对齐; kinematic.* 命名空间) ──
 void MpcControllerNode::declare_parameters_()
 {
   this->declare_parameter("scheme", std::string("A"));

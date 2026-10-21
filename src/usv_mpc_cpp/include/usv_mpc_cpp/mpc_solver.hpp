@@ -63,7 +63,7 @@ struct SolveInfo {
   Eigen::MatrixXd U_pred;
 };
 
-/// MPC 求解参数 (对应 mpc_params.yaml 的 dynamic.* + vehicle.*)。
+/// MPC 求解参数 (对应 mpc_params_B.yaml 的 dynamic.* + vehicle.*)。
 struct MpcParams {
   // 时域
   double dt = 0.2;

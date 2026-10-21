@@ -15,7 +15,7 @@
 #   - usv_mpc_dynamic.m (kept in sync manually)
 #
 # IMPORTANT: parameter names must match `_declare_parameter` calls in mpc_node.py
-# (flat dotted names in code, nested in YAML). Keep aligned with mpc_params.yaml style.
+# (flat dotted names in code, nested in YAML). Keep aligned with mpc_params_B.yaml style.
 # The VRX/Gazebo 30 kg sim boat uses usv_mono_dynamics.xacro directly and does
 # NOT read this file's hydrodynamics — only real.launch.py does.
 
@@ -68,11 +68,11 @@
     # ----- Thruster -----
     # K_T=25 N assumed (no bollard-pull calibration yet). T_max forward/reverse
     # are equal per identification. NOTE: T_max/T_min/dT_max are also declared in
-    # mpc_params.yaml under `dynamic.*` and take precedence there for MPC.
+    # mpc_params_B.yaml under `dynamic.*` and take precedence there for MPC.
     # Repeated here so the parameter-identification scripts read a single file.
-    # Keep in sync with mpc_params.yaml.
+    # Keep in sync with mpc_params_B.yaml.
     #
-    # 本工作目录的 mpc_node 不消费此块 (实机 PWM 边界见 mpc_params.yaml 的 rc_pwm_*,
+    # 本工作目录的 mpc_node 不消费此块 (实机 PWM 边界见 mpc_params_B.yaml 的 rc_pwm_*,
     # 推力边界见 dynamic.T_max/T_min)。保留此块作为物理辨识结果的单一事实来源,
     # 供参数辨识脚本 (不在本工作目录内) 读取。
     thruster:

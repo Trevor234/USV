@@ -73,7 +73,7 @@ struct SolveInfo {
   Eigen::MatrixXd U_pred;
 };
 
-/// 运动学 MPC 参数 (对应 mpc_params.yaml 的 kinematic.*)。
+/// 运动学 MPC 参数 (对应 mpc_params_A.yaml 的 kinematic.*)。
 /// 与方案 B 的 MpcParams 对齐, 但: 无 Rd (控制率代价)、无 HydroParams、
 /// 约束是 u/r 边界 + du/dr 速率 (非 T/dT)。
 struct KinematicMpcParams {

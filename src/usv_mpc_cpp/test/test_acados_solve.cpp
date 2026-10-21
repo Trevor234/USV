@@ -65,7 +65,7 @@ TEST(AcadosSolve, NominalSolveSucceedsWithinBounds) {
   ASSERT_TRUE(info.success) << info.error;
   EXPECT_LE(std::abs(u(0)), p.T_max + 1e-6);
   EXPECT_LE(std::abs(u(1)), p.T_max + 1e-6);
-  EXPECT_LT(info.solve_time_ms, 200.0);  // mpc_params.yaml max_solve_time_ms
+  EXPECT_LT(info.solve_time_ms, 200.0);  // mpc_params_B.yaml max_solve_time_ms
   EXPECT_EQ(info.X_pred.rows(), 6);
   EXPECT_EQ(info.X_pred.cols(), p.N + 1);
   EXPECT_EQ(info.U_pred.cols(), p.N);
