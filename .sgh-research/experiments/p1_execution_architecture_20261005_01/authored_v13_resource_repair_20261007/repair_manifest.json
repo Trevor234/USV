@@ -1,0 +1,18 @@
+{
+  "safety/p1_resources.hpp": {
+    "sha256": "b4cf39fd2fd81b37d451b07e9ca1169f32df9af880469740c6dfc333c2e6ae45",
+    "bytes": 13377
+  },
+  "safety/solver_worker.cpp": {
+    "sha256": "37bb25b6a8cfe0f44435ed9bb5d36c67ab46dbf0800fe15d3e36a4a62f363d8c",
+    "bytes": 14534
+  },
+  "safety/test_p1_resources.cpp": {
+    "sha256": "494fb209034410a22a17afff8cb29ef596a95110e755ec6c90f57b76f3e48f7e",
+    "bytes": 8359
+  },
+  "runtime/check_resource_delivery.py": {
+    "sha256": "b84d33025f53c92c5af211c5a388cccfa432f0ba825fe41a7975ed13866805aa",
+    "bytes": 9131
+  }
+}

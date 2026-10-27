@@ -1,0 +1,14 @@
+{
+  "assets": [
+    {
+      "link_target": null,
+      "path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/support_checker/fixture_run_02/test_06_file_replaced_by_directory_fails/module.py",
+      "resolved_path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/support_checker/fixture_run_02/test_06_file_replaced_by_directory_fails/module.py",
+      "sha256": "2cd2fc2281d0d5ddab5cc23d9485c6e7e5018541bcb13e627fad2561f92c18c8",
+      "type": "file"
+    }
+  ],
+  "schema": "sim-shared-support-asset-lock/v1",
+  "scope": "SIM_SHARED_SUPPORT",
+  "version": "fixture_fixed_expected_v1"
+}

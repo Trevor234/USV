@@ -1,0 +1,215 @@
+{
+  "batch_registered": 99,
+  "cases": [
+    {
+      "assertions": [
+        "terminal_add_rejects_while_full",
+        "blocked_publisher_delivered_nothing_yet",
+        "accepted_capacity_plus_one",
+        "rejected_equals_K",
+        "overflow_and_failure_each_once",
+        "publisher_delivered_exactly_accepted",
+        "file_rows_accepted_plus_summary",
+        "generated_equals_attempts",
+        "balance_generated_equals_emitted_plus_dropped",
+        "normal_source_complete_false",
+        "failed_terminal_after_close",
+        "peak_equals_capacity",
+        "snapshot_dropped_matches",
+        "snapshot_generated_matches"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T3-Q1d",
+      "family": "queue_pressure_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T3-queue-pressure/v1",
+      "stimulus": {
+        "attempts": 2561,
+        "deterministic_seed": "one event drained and provably blocked before flood",
+        "producer_threads": 1,
+        "publisher_mode": "blocking_until_released"
+      },
+      "target": "DiagSink add/loop/close"
+    },
+    {
+      "assertions": [
+        "bounded_drain_out_completed",
+        "attempts_all_accounted",
+        "generated_equals_attempts",
+        "dropped_equals_rejected",
+        "pressure_actually_applied",
+        "failed_flag_true",
+        "peak_within_capacity",
+        "queue_overflow_phase_exactly_once",
+        "source_failure_phase_exactly_once",
+        "publisher_delivered_exactly_accepted",
+        "file_rows_accepted_plus_summary",
+        "generated_equals_attempts",
+        "balance_generated_equals_emitted_plus_dropped",
+        "normal_source_complete_false"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T3-Q1r",
+      "family": "queue_pressure_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T3-queue-pressure/v1",
+      "stimulus": {
+        "attempts": 2560,
+        "delay_ms": 2,
+        "producer_threads": 1,
+        "publisher_mode": "delay"
+      },
+      "target": "DiagSink add/loop/close"
+    },
+    {
+      "assertions": [
+        "bounded_drain_out_completed",
+        "attempts_all_accounted",
+        "generated_equals_attempts",
+        "dropped_equals_rejected",
+        "pressure_actually_applied",
+        "failed_flag_true",
+        "peak_within_capacity",
+        "queue_overflow_phase_exactly_once",
+        "source_failure_phase_exactly_once",
+        "publisher_delivered_exactly_accepted",
+        "file_rows_accepted_plus_summary",
+        "generated_equals_attempts",
+        "balance_generated_equals_emitted_plus_dropped",
+        "normal_source_complete_false"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T3-Q2",
+      "family": "queue_pressure_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T3-queue-pressure/v1",
+      "stimulus": {
+        "attempts_per_thread": 768,
+        "delay_ms": 2,
+        "producer_threads": 4,
+        "publisher_mode": "delay"
+      },
+      "target": "DiagSink add/loop/close"
+    },
+    {
+      "assertions": [
+        "bounded_drain_out_completed",
+        "attempts_all_accounted",
+        "generated_equals_attempts",
+        "dropped_equals_rejected",
+        "pressure_actually_applied",
+        "failed_flag_true",
+        "peak_within_capacity",
+        "queue_overflow_phase_exactly_once",
+        "source_failure_phase_exactly_once",
+        "publisher_delivered_exactly_accepted",
+        "file_rows_accepted_plus_summary",
+        "generated_equals_attempts",
+        "balance_generated_equals_emitted_plus_dropped",
+        "normal_source_complete_false",
+        "each_accepted_event_exactly_once",
+        "sequences_within_registered_ranges"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T3-Q3",
+      "family": "queue_pressure_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T3-queue-pressure/v1",
+      "stimulus": {
+        "attempts": 2560,
+        "delay_ms": 2,
+        "identity_check": true,
+        "producer_threads": 1,
+        "publisher_mode": "delay"
+      },
+      "target": "DiagSink add/loop/close"
+    },
+    {
+      "assertions": [
+        "bounded_drain_completed",
+        "no_pressure_no_rejection",
+        "failed_flag_false",
+        "no_overflow_no_failure_phases",
+        "normal_source_complete_true",
+        "dropped_zero",
+        "all_emitted",
+        "generated_equals_attempts"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T3-Q4",
+      "family": "queue_pressure_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T3-queue-pressure/v1",
+      "stimulus": {
+        "attempts": 100,
+        "producer_threads": 1,
+        "publisher_mode": "immediate"
+      },
+      "target": "DiagSink add/loop/close"
+    }
+  ],
+  "family_registered": "T3-Q",
+  "fixed_parameters": {
+    "K": 2048,
+    "capacity": 512,
+    "contract_log_capacity_reference": "common/p1_full_contract.hpp (log_capacity=512)",
+    "delay_publish_ms": 2,
+    "q2_attempts_per_thread": 768,
+    "q2_threads": 4,
+    "single_producer_attempts": 2560
+  },
+  "governance": {
+    "assertion_change_policy": "changing any assertion after registration requires a new case_id",
+    "auto_retry": 0,
+    "failure_originals_preserved": true,
+    "pre_registration_required": true,
+    "single_finite_execution": true
+  },
+  "not_claimed": [
+    "four-role Stored reconciliation (publisher seam stands in for delivery observation)",
+    "any stage qualification or research conclusion"
+  ],
+  "obligation_binding": {
+    "design": "experiments/scheme_A_M4_t3_case_design_20261025_98/documents/\u65b9\u6848A_\u7b2c98\u6279_T3\u573a\u666f\u8bbe\u8ba1_Sink\u538b\u529b\u4e0ecleanup\u5931\u8d25\u8fb9\u754c_2026-10-25.md",
+    "register": "experiments/scheme_A_M4_fixture_gap_20261024_67/postrun/case_applicability_v1.md",
+    "row": "actual_source_recording.03"
+  },
+  "revision": 2,
+  "revision_note": "attempt-1 verdict failed for T3-Q1r/T3-Q2/T3-Q3 on assertion-count comparison only (binary emitted 14/14/16 named assertions, registration listed 13/13/15): the shared balance_checks helper emits generated_equals_attempts a second time in racing cases. No assertion name, semantics, stimulus, binary SHA, or bundle SHA changed. Failed attempt-1 run originals preserved under implementation/runs/ and postrun/t3q_run_verdict_v1.json; affected cases re-run once into <case>_r2 directories.",
+  "schema": "T3-case-registration/v1",
+  "tree_base": {
+    "binary_sha256": "011b1d46ea3f96e3610f34a173150419e9d46e0fb1478c974e0f614ef10d87fd",
+    "bundle_sha256": "fa77feeed4e3ebf4af44672aee69515a987c3ae90303185ae2067a4bb59c90d6",
+    "source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author"
+  }
+}

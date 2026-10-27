@@ -3,13 +3,15 @@
 用法:
     python -m usv_rl.train --run-name v0 --total-steps 10000000
     python -m usv_rl.train --run-name v0 --stage s4_dr          # 只跑单阶段
-    python -m usv_rl.train --run-name v0 --resume models/v0/s3_random/model.zip
+    python -m usv_rl.train --run-name v0 --resume <artifacts>/rl_models/v0/s3_random/model.zip
 
 结构:
 - 训练环境: SubprocVecEnv(UsvTrackingEnv) + VecNormalize
 - 课程: ppo.yaml curriculum 顺序执行，模型与归一化统计全程延续
 - 评估: EvalCallback 定期在无 DR 环境上确定性评估，保存 best_model
-- 产物: models/<run>/<stage>/model.zip + vecnormalize.pkl；runs/<run>/ TensorBoard
+- 产物: <artifacts>/rl_models/<run>/<stage>/model.zip + vecnormalize.pkl
+        <artifacts>/rl_runs/<run>/ TensorBoard
+        （<artifacts> 默认是仓库顶层 artifacts/，见 usv_rl.paths）
 """
 from __future__ import annotations
 
@@ -28,8 +30,9 @@ from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize
 
 from usv_rl.envs import _ENV_ID
+from usv_rl.paths import RL_MODELS, RL_RUNS
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[1]   # usv_rl/：configs 等源码资产仍在这里
 
 
 def linear_schedule_fn(initial_lr: float):
@@ -81,6 +84,40 @@ def build_vec_env(env_cfg: dict, n_envs: int, base_seed: int, use_subproc: bool)
     return DummyVecEnv(fns)
 
 
+def resolve_device(requested: str) -> str:
+    """把 auto 解析成实际 device，并对显式 cuda 做可用性前置校验。
+
+    宁可在这里报错退出，也不要让 SB3 静默回落到 cpu —— 否则 train_meta.json
+    记录的 device 与实际训练所用不一致，产物 provenance 就不可信了。
+    """
+    req = (requested or "cpu").strip().lower()
+    if req == "auto":
+        return "cuda" if torch.cuda.is_available() else "cpu"
+    if req.startswith("cuda") and not torch.cuda.is_available():
+        raise SystemExit(
+            f"请求 device={requested!r}，但 torch.cuda.is_available() 为 False。\n"
+            f"  torch={torch.__version__} cuda_build={torch.version.cuda}\n"
+            "  排查：nvidia-smi 是否能通、内核模块版本是否与用户态库一致"
+            "（HWE 内核升级后需同步安装 linux-modules-nvidia-<ver>-open-<kernel>）。"
+        )
+    return req
+
+
+def describe_device(device: str) -> dict:
+    """记录到 train_meta.json 的硬件事实，便于日后复算与归因。"""
+    info = {
+        "device": device,
+        "torch": torch.__version__,
+        "cuda_available": torch.cuda.is_available(),
+        "cuda_build": torch.version.cuda,
+        "torch_threads": torch.get_num_threads(),
+    }
+    if device.startswith("cuda"):
+        info["gpu_name"] = torch.cuda.get_device_name(0)
+        info["gpu_capability"] = "sm_%d%d" % torch.cuda.get_device_capability(0)
+    return info
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="USV 方案C PPO 训练")
     parser.add_argument("--run-name", default=f"run_{time.strftime('%Y%m%d_%H%M%S')}")
@@ -90,6 +127,8 @@ def main() -> None:
     parser.add_argument("--n-envs", type=int, default=None)
     parser.add_argument("--resume", default=None, help="model.zip 路径（需同目录 vecnormalize.pkl）")
     parser.add_argument("--no-subproc", action="store_true")
+    parser.add_argument("--device", default=None,
+                        help="覆盖 ppo.yaml 的 device：cpu | cuda | auto（默认取配置，即 cpu）")
     args = parser.parse_args()
 
     ppo_cfg, env_cfg = load_configs(args.config)
@@ -97,9 +136,11 @@ def main() -> None:
         ppo_cfg["n_envs"] = args.n_envs
     n_envs = ppo_cfg["n_envs"]
     seed = ppo_cfg["seed"]
+    device = resolve_device(args.device or ppo_cfg.get("device", "cpu"))
+    print(f"device={device}（{describe_device(device)}）")
 
-    run_dir = ROOT / "models" / args.run_name
-    tb_dir = ROOT / "runs" / args.run_name
+    run_dir = RL_MODELS / args.run_name
+    tb_dir = RL_RUNS / args.run_name
     run_dir.mkdir(parents=True, exist_ok=True)
 
     stages = [s for s in ppo_cfg["curriculum"] if args.stage in (None, s["name"])]
@@ -142,10 +183,11 @@ def main() -> None:
         gae_lambda=ppo_kw["gae_lambda"], clip_range=ppo_kw["clip_range"],
         ent_coef=ppo_kw["ent_coef"], vf_coef=ppo_kw["vf_coef"],
         max_grad_norm=ppo_kw["max_grad_norm"],
-        seed=seed, device="cpu", tensorboard_log=str(tb_dir), verbose=1,
+        seed=seed, device=device, tensorboard_log=str(tb_dir), verbose=1,
     )
     if args.resume:
-        model = PPO.load(args.resume, env=train_env, tensorboard_log=str(tb_dir))
+        model = PPO.load(args.resume, env=train_env, device=device,
+                         tensorboard_log=str(tb_dir))
         vn_path = Path(args.resume).parent / "vecnormalize.pkl"
         if vn_path.exists():
             train_env = VecNormalize.load(str(vn_path), train_env.venv)
@@ -197,12 +239,36 @@ def main() -> None:
     train_env.close()
     eval_env.close()
     meta = {
-        "run_name": args.run_name, "n_envs": n_envs, "seed": seed,
-        "total_steps": total_done, "wall_time_s": round(time.time() - t0, 1),
+        "run_name": args.run_name,
+        "n_envs": n_envs,
+        "seed": seed,
+        "total_steps": total_done,
+        "wall_time_s": round(time.time() - t0, 1),
         "stages": [s["name"] for s in stages],
+        # --- 以下为 provenance 补全：旧版 meta 只有上面 6 个字段，
+        #     不含奖励权重/课程覆盖/device，导致无法从产物反推当时配置（见评审 D18）---
+        "module": "usv_rl.train",
+        "device": describe_device(device),
+        "stage_overrides": {
+            s["name"]: s.get("env_overrides", {}) for s in stages
+        },
+        "stage_total_steps": {s["name"]: s["total_steps"] for s in stages},
+        "config": {
+            "ppo": ppo_cfg.get("ppo", {}),
+            "policy_kwargs": ppo_cfg.get("policy_kwargs", {}),
+            "vecnormalize": ppo_cfg.get("vecnormalize", {}),
+            "eval": ppo_cfg.get("eval", {}),
+        },
+        "env": env_cfg,
+        "cli": {
+            "config": args.config, "total_steps": args.total_steps,
+            "stage": args.stage, "n_envs": args.n_envs,
+            "no_subproc": args.no_subproc, "resume": args.resume,
+            "device": args.device,
+        },
     }
     (run_dir / "train_meta.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
-    print(f"\n训练完成: {meta}")
+    print(f"\n训练完成: { {k: meta[k] for k in ('run_name', 'n_envs', 'seed', 'total_steps', 'wall_time_s')} }")
 
 
 if __name__ == "__main__":

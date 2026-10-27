@@ -1,0 +1,48 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_V2_supervisor_bridge_20261019_36/author/observer/tests/test_reference_activation_alignment.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/observer/tests/test_reference_activation_alignment.cpp
+@@ -33,6 +33,8 @@
+  static void clear(Regulator&r){r.invalidate_locked();}
+  static void change_version(Regulator&r){++r.version_.task;r.invalidate_locked();}
+  static void one_channel(Regulator&r){r.history_.erase(r.history_.begin());}
++ static void enable_interleave(Regulator&r){r.v3_policy_=activation_interleave::policy;r.last_accepted_=p1::monotonic_ns()-100000000;}
++ static void rollback_clock(Regulator&r){rosgraph_msgs::msg::Clock c;c.clock.sec=99;r.clock(c);}
+  static void stop(Regulator&r){r.stopping_=true;}
+  static void clock_future(Regulator&r){r.sim_=SIM+30000000;}
+  struct Result{p1::Decision decision;p1::Json trace;};
+@@ -102,3 +104,36 @@
+ TEST_F(Activation,ImuThenOdomAcrossAttemptsRetainsOriginalRefusal){auto result=C33MatrixAccess::activate(*r,[&](int n){if(n==1)C33MatrixAccess::imu(*r,SIM);else C33MatrixAccess::odom(*r,SIM);});EXPECT_FALSE(result.decision.candidate_accepted);ASSERT_EQ(result.trace["attempts"].size(),2u);EXPECT_EQ(result.trace["attempts"][0]["input_gate_reads"]["input_imu_equal"],false);EXPECT_EQ(result.trace["attempts"][1]["input_gate_reads"]["input_odom_equal"],false);outcome(result);}
+ TEST_F(Activation,CapturedTraceSurvivesCallbacksAfterCommitAndPublishReturn){auto result=C33MatrixAccess::activate(*r,{},[&]{C33MatrixAccess::odom(*r,SIM,.01);C33MatrixAccess::imu(*r,SIM,.02);});ASSERT_TRUE(result.decision.candidate_accepted);const auto &a=result.trace["attempts"][0];EXPECT_EQ(a["raw_snapshot"]["odom_sequence"],2);EXPECT_EQ(a["guard_snapshot"]["odom_sequence"],2);EXPECT_EQ(a["selected_frame"]["odom_sequence"],1);EXPECT_EQ(a["raw_snapshot"]["state"][3],0);EXPECT_EQ(C33MatrixAccess::snapshot(*r).odom_seq,3u);EXPECT_GE(result.trace["materialized_start_ns"].get<int64_t>(),result.trace["observer_publish_return_ns"].get<int64_t>());EXPECT_GE(result.trace["observer_publish_return_ns"].get<int64_t>(),result.decision.activation_commit_ns);outcome(result);}
+ TEST_F(Activation,PostCommitFormattingDelayCannotRewriteOriginalVerdict){auto result=C33MatrixAccess::activate(*r,{},[&]{C33MatrixAccess::odom(*r,SIM,.02);std::this_thread::sleep_for(std::chrono::milliseconds(22));});ASSERT_TRUE(result.decision.candidate_accepted);EXPECT_EQ(result.trace["attempts"][0]["reason"],"");EXPECT_GE(result.trace["materialized_start_ns"].get<int64_t>()-result.decision.activation_commit_ns,22000000);EXPECT_FALSE(result.decision.publish_success[0]);outcome(result);}
++
++TEST_F(Activation,V3ActualCallbackThreadCanCompleteDuringWait){
++ C33MatrixAccess::enable_interleave(*r);
++ std::thread callback([&]{std::this_thread::sleep_for(std::chrono::milliseconds(2));C33MatrixAccess::odom(*r,SIM);});
++ auto result=C33MatrixAccess::activate(*r);callback.join();
++ ASSERT_EQ(result.trace["attempts"].size(),2u);const auto &w=result.trace["attempts"][0]["diagnostic_interleave"];
++ EXPECT_TRUE(w["changed"].get<bool>());EXPECT_FALSE(w["business_mutex_held_during_wait"].get<bool>());
++ EXPECT_TRUE(result.trace["attempts"][0]["retry"].get<bool>());EXPECT_FALSE(result.trace["attempts"][1].contains("diagnostic_interleave"));
++ EXPECT_TRUE(result.decision.candidate_accepted)<<result.decision.reason;outcome(result);
++}
++TEST_F(Activation,V3TimeoutDoesNotExtendOriginalJitterBudget){
++ C33MatrixAccess::enable_interleave(*r);auto result=C33MatrixAccess::activate(*r);
++ ASSERT_EQ(result.trace["attempts"].size(),1u);EXPECT_FALSE(result.trace["attempts"][0]["diagnostic_interleave"]["changed"].get<bool>());
++ EXPECT_FALSE(result.decision.candidate_accepted);EXPECT_EQ(result.decision.reason,"tick_jitter_at_commit");outcome(result);
++}
++TEST_F(Activation,V3ActualClockRollbackInvalidatesHistoryAndCandidate){
++ auto before=C33MatrixAccess::snapshot(*r);auto result=C33MatrixAccess::activate(*r,[&](int){C33MatrixAccess::rollback_clock(*r);});
++ auto after=C33MatrixAccess::snapshot(*r);EXPECT_GT(after.version.epoch,before.version.epoch);
++ EXPECT_GT(after.activation_history_generation,before.activation_history_generation);EXPECT_TRUE(after.activation_frames.empty());
++ EXPECT_FALSE(result.decision.candidate_accepted);EXPECT_EQ(result.trace["attempts"].size(),1u);outcome(result);
++}
++TEST(V3Entry,ExplicitPolicyCannotEnableOutsideSelectedScope){
++ using activation_interleave::validate;const auto p=activation_interleave::policy;const auto b=activation_interleave::wait_budget_ns;
++ EXPECT_NO_THROW(validate(p,b,"shadow",true,true,false));
++ EXPECT_NO_THROW(validate("none",0,"shadow",true,true,false));
++ EXPECT_THROW(validate(p,b,"execute",true,true,false),std::runtime_error);
++ EXPECT_THROW(validate(p,b,"shadow",false,true,false),std::runtime_error);
++ EXPECT_THROW(validate(p,b,"shadow",true,false,false),std::runtime_error);
++ EXPECT_THROW(validate(p,b,"shadow",true,true,true),std::runtime_error);
++ EXPECT_THROW(validate(p,b+1,"shadow",true,true,false),std::runtime_error);
++ EXPECT_THROW(validate("none",b,"shadow",true,true,false),std::runtime_error);
++ EXPECT_THROW(validate("typo",b,"shadow",true,true,false),std::runtime_error);
++}

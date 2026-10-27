@@ -1,0 +1,11 @@
+# entry_v2 单处 GTest 源行修复
+
+日期：2026-10-09。状态：v2本地创建，未在本修复步骤编译或运行测试。
+
+entry_v1 native configure成功、生产target完成link；test_shadow_entry的编译在原第79行失败，两条EXPECT_NO_THROW在同一源行生成同名`gtest_label_testnothrow_79`标签。编译返回2，测试0执行。已保存编译日志只显示这个case的跳转/重复标签错误；这不证明其他尚未完成目标或v2必通过。
+
+v1 manifest SHA-256：`3ef66a9147cbee0ea1f4a3296e876ec50922d6e9ca72a8f8047e667994c47226`。绑定失败日志：`../entry_v1_failure/build_supervision/compile.console.log`，SHA-256 `82478179bd6fc005d31d5f61f2cf12116fc79af8b6a3dfe107a53c7920d88649`。
+
+本修复复制entry_v1全部21个文件到新的entry_v2，仅将`CompleteDiag5CapabilityFlagAndZeroPolicyRemainCompatible`中两个EXPECT_NO_THROW拆到各自独立源行，case断言和顺序保持。没有加permissive flag，生产runtime源码、helper、CMake、两个继承测试文件和其他case正文不变；runtime source SHA仍为`c5b3b1f419d0835b06851f332b49f2f1eb43fa766dae19f85999de74aaf05452`。
+
+source_lineage/source_manifest已更新为v2路径、测试SHA及pending状态，附此修复说明。23新case+18继承case共41声明case保持；没有新binary SHA、native测试通过或D1动态资格声明。v1源码、manifest和失败证据保留原身份。

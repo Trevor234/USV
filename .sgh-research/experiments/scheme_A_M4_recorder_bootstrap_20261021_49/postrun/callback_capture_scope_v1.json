@@ -1,0 +1,33 @@
+{
+  "schema": "M4-received-callback-vs-complete-capture-scope/v1",
+  "fixture_clock_publications": 1076,
+  "Regulator_clock_callbacks": 1061,
+  "not_received_by_Regulator_callbacks": 15,
+  "breakdown": {
+    "pre_bootstrap": 5,
+    "within_API_stream": 2,
+    "after_last_API": 8
+  },
+  "missing_sim_stamps_ns": [
+    100000093879,
+    100428307082,
+    100448592114,
+    100489506615,
+    100509886080,
+    100528248782,
+    100548394417,
+    121328682859,
+    121349439102,
+    121368036331,
+    121388716711,
+    121409277834,
+    121427906506,
+    121448589025,
+    121470015480
+  ],
+  "Regulator_ClockQoS_keep_last": 1,
+  "complete_Fixture_transport_and_Stored_clock_count": 1076,
+  "normal_job_source_age_checks_passed": true,
+  "claim_all_DDS_publications_reached_Regulator": false,
+  "unexplained_Stored_loss": 0
+}

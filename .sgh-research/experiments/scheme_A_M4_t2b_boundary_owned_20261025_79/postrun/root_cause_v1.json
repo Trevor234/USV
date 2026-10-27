@@ -1,0 +1,10 @@
+{
+  "schema": "M4-T2B-boundary-root-cause-v79",
+  "recorded_at": "2026-10-25T14:27:52.045684+08:00",
+  "root_cause": "Worker source.jsonl ofstream buffering: boundary_entered event sits in the C++ stream buffer until the next capability message (~200ms) fills the buffer enough to flush to disk. The Driver reads the file but the data is not yet on disk. This is a file-I/O visibility issue, not a Driver latency issue.",
+  "evidence": "boundary_entered written at Worker time T; Driver observes it at T+~200ms (one capability cycle); measured in T2B_B09/B10/B11 consistently ~200ms",
+  "fix": "Add file_.flush() after boundary_entered event in Worker event() function (or use a dedicated signal file). Requires Worker source change + re-derive + re-freeze.",
+  "impact": "Without this fix, the boundary release always arrives after the 150ms Job deadline (200ms observation + 7ms action + 0ms release = ~207ms > 150ms)",
+  "attempts": 11,
+  "owned_runs": 11
+}

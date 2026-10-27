@@ -1,0 +1,51 @@
+{
+  "all_sources_runs_failed_attempts_and_raw_Storage_preserved": true,
+  "bytes": 37936,
+  "count": 6,
+  "directories": [],
+  "files": [
+    {
+      "bytes": 1283,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/CMakeLists.txt",
+      "relative_path": "CMakeLists.txt",
+      "sha256": "d225a094824b8b7be6964fddae9368f00631bdd6a1ff98b2e7915f0ef885e75b",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/CMakeLists.txt"
+    },
+    {
+      "bytes": 24476,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/actual_first_control_input_v1.json",
+      "relative_path": "actual_first_control_input_v1.json",
+      "sha256": "24f23593c3134c8729e3f130c40fa217517acfb8c714495a3e98fd2e0293ec26",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/actual_first_control_input_v1.json"
+    },
+    {
+      "bytes": 3111,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/common_replay.hpp",
+      "relative_path": "common_replay.hpp",
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/common_replay.hpp"
+    },
+    {
+      "bytes": 2268,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/main.cpp",
+      "relative_path": "main.cpp",
+      "sha256": "d9e90981d3d715a0867a8cace2c31944c2452064155475da1b933500218dce11",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/main.cpp"
+    },
+    {
+      "bytes": 5163,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/probe.hpp",
+      "relative_path": "probe.hpp",
+      "sha256": "086abd007957607133e94be4c20b725f3f4710314b6eb0f518ec84320a4174b1",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/probe.hpp"
+    },
+    {
+      "bytes": 1635,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/test_probe.cpp",
+      "relative_path": "test_probe.cpp",
+      "sha256": "2a72abfd50577f84325f1c54d85439e9f9a93972782eacae69023cba337d6cc9",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/test_probe.cpp"
+    }
+  ],
+  "schema": "first-control-fixed-tail-author-freeze/v1"
+}

@@ -1,0 +1,1587 @@
+{
+  "schema": "p1-B0-current-gtest-audit-v1",
+  "supersedes_count_only": "contract_v14_build_result_20261007.json",
+  "gtest_count": 91,
+  "identities": [
+    "Activation.SourceSequenceDoesNotReplaceStateAndVersionGate",
+    "Admission.ClearBetweenCutoffAndActivationInvalidates",
+    "Admission.FixedCapacityAndMissedTickNeverRollsForward",
+    "Admission.WrongTargetDuplicateAndVersion",
+    "Anchor.PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack",
+    "CapabilityLease.BackwardClockTerminal",
+    "CapabilityLease.BeyondDeadlineTerminal",
+    "CapabilityLease.ExactDeadlineAllowed",
+    "CapabilityLease.ExactDeadlineCanRenew",
+    "CapabilityLease.FreshReceiptExtends",
+    "CapabilityLease.IgnoredReceiptDoesNotExtend",
+    "CapabilityLease.LateReceiptCannotHideExpiration",
+    "CapabilityLease.LongMonotonicUptimeSafe",
+    "CapabilityLease.NegativeClockRejected",
+    "CapabilityLease.NoLeaseBeforeFirstValidReceipt",
+    "CapabilityLease.RejectTooShort",
+    "CapabilityLease.RejectUnbounded",
+    "CapabilityLease.TerminalCannotResume",
+    "CapabilityLease.ZeroClockRejected",
+    "ClockWindow.DurationAndRealtimeRatioBoundariesAreInclusive",
+    "ClockWindow.HighRateClockRetainsRequiredDurationAtFiniteCapacity",
+    "ClockWindow.InvalidInputsAndBurstsCannotClaimEstablishedAlignment",
+    "ClockWindow.ReceiveGapRemovesStaleValidityAndNeedsNewCoverage",
+    "ClockWindow.RepeatedSimulationTimeCannotKeepPreviousValidRatio",
+    "ClockWindow.ResetBackwardJumpAndDuplicateReceiveRequireFreshWindow",
+    "Command.AmplitudeAndActualSteadySpacing",
+    "Deadline.BeforeAndAfterHaveDifferentResults",
+    "Deadline.EqualityRegistrationSurvivesEitherCutoffOrder",
+    "Deadline.RegistrationCompletionAfterDeadlineRetractsSlot",
+    "Fallback.FifthMissRampsAndNeverInstantlyDropsLargeThrust",
+    "InputCore.EligibilityPreservesF5ReasonPriority",
+    "InputCore.MappingMatchesDeclaredPhysicalClamp",
+    "InputCore.NumericAndMixedRate",
+    "InputCore.PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture",
+    "InputCore.TargetReferenceIsRebuiltFromPredictedNearestPoint",
+    "P1FullContract.BoolsFloatsAndInt64OverflowAreNotIntegerBounds",
+    "P1FullContract.DiagnosticModesRetainExplicitExecuteRejection",
+    "P1FullContract.DuplicateKeysRejectAtAllObjectDepths",
+    "P1FullContract.EmptyOversizeAndInvalidNumericJsonReject",
+    "P1FullContract.EveryTopLevelFieldIsRequired",
+    "P1FullContract.FixedNominalAndCommandProfileRejectDrift",
+    "P1FullContract.FormalFlagsFaultsAndEvidenceMarkersAreChecked",
+    "P1FullContract.FormalPreFreezeHasIndependentResourceVersion",
+    "P1FullContract.FrozenSchemaCannotSelfAuthorizePhysicalStartup",
+    "P1FullContract.NonfiniteAndArrayShapeReject",
+    "P1FullContract.ResourceDomainPreservedWithoutClaimingCoverage",
+    "P1FullContract.UnknownOrMixedRevisionsReject",
+    "PreparationBarrier.DisabledDefault",
+    "PreparationBarrier.RejectBeyondFiniteBound",
+    "PreparationBarrier.RejectDisabledFaultContract",
+    "PreparationBarrier.RejectExecute",
+    "PreparationBarrier.RejectNegative",
+    "PreparationBarrier.RejectShadow",
+    "PreparationBarrier.ThirdTakeOnly",
+    "PublicationHistory.ChangedThenReturnedIsNotSameInputHistory",
+    "PublicationHistory.EvictedFreezeAnchorDoesNotAuthorizeCurrentValue",
+    "PublicationHistory.MissingChannelOrSequenceCannotProveEquivalence",
+    "PublicationHistory.SameValueRepetitionPreservesInputAssumption",
+    "PublicationHistory.UnknownAndNonfinitePublicationsInvalidateProof",
+    "PublicationHistory.WrongTimeAndOutOfOrderRecordsAreRejected",
+    "Resources.ActualSizeMatchesSerializationAcrossPaddingAndHistory",
+    "Resources.ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected",
+    "Resources.ContractMustBeIntegralAndWithinHardCaps",
+    "Resources.ContractPoliciesAreExact",
+    "Resources.EveryCandidateStringRejectsOverLimitBeforeCopy",
+    "Resources.EveryCapabilityStringRejectsOverLimit",
+    "Resources.EveryJobStringAllowsBoundaryAndRejectsOneByteOver",
+    "Resources.ExistingProducerLayoutsRemainAllowedIncludingClear",
+    "Resources.FixedNativeErrorBufferRequiresTerminatorWithinCapacity",
+    "Resources.HistoryUsesContractCapacityAndDoesNotReplaceShapeGate",
+    "Resources.InstalledSerializationAtFullJobAndCandidateBoundary",
+    "Resources.PathMetadataBoundaryAndCountRejection",
+    "Resources.ProfileDimensionsLabelsAndDataBoundaries",
+    "Resources.SmallerCacheDoesNotShrinkWireSchemaBudget",
+    "Resources.Utf8ReasonUsesBytes",
+    "SchedulerBoundary.ExactAndAdjacentDueTicks",
+    "SourceTime.InvalidChronologyAndExtrapolationOverflowAreRejected",
+    "SourceTime.LagAndFutureLimitsAreInclusive",
+    "SourceTime.OnlyMixedStateUsesImuPhysicalAge",
+    "SourceTime.PhysicalNowExtrapolatesClockToCommitAtOneToOne",
+    "SourceTime.ReceiveAgeAndPhysicalLagAreIndependent",
+    "TickBarrier.DiagnosticModeAndFaultPermissionRequired",
+    "TickBarrier.DisabledInEveryMode",
+    "TickBarrier.FiniteInclusiveBounds",
+    "TickBarrier.OneShotOnThirdAttempt",
+    "WorkerLiveness.AliveThenExited",
+    "WorkerLiveness.KilledBeforeReaping",
+    "WorkerLiveness.OldIdentityRemainsDead",
+    "WorkerLiveness.RejectsMissingProcess",
+    "WorkerLiveness.RejectsNonpositive",
+    "WorkerLiveness.RejectsOverflow"
+  ],
+  "cases": [
+    {
+      "identity": "Deadline.EqualityRegistrationSurvivesEitherCutoffOrder",
+      "attributes": {
+        "name": "EqualityRegistrationSurvivesEitherCutoffOrder",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "8",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Deadline"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Deadline.BeforeAndAfterHaveDifferentResults",
+      "attributes": {
+        "name": "BeforeAndAfterHaveDifferentResults",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "9",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Deadline"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Deadline.RegistrationCompletionAfterDeadlineRetractsSlot",
+      "attributes": {
+        "name": "RegistrationCompletionAfterDeadlineRetractsSlot",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "23",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Deadline"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Admission.WrongTargetDuplicateAndVersion",
+      "attributes": {
+        "name": "WrongTargetDuplicateAndVersion",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "10",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Admission"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Admission.ClearBetweenCutoffAndActivationInvalidates",
+      "attributes": {
+        "name": "ClearBetweenCutoffAndActivationInvalidates",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "11",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Admission"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Admission.FixedCapacityAndMissedTickNeverRollsForward",
+      "attributes": {
+        "name": "FixedCapacityAndMissedTickNeverRollsForward",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "12",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Admission"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Activation.SourceSequenceDoesNotReplaceStateAndVersionGate",
+      "attributes": {
+        "name": "SourceSequenceDoesNotReplaceStateAndVersionGate",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "13",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Activation"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Anchor.PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack",
+      "attributes": {
+        "name": "PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "14",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Anchor"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Command.AmplitudeAndActualSteadySpacing",
+      "attributes": {
+        "name": "AmplitudeAndActualSteadySpacing",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "15",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Command"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Fallback.FifthMissRampsAndNeverInstantlyDropsLargeThrust",
+      "attributes": {
+        "name": "FifthMissRampsAndNeverInstantlyDropsLargeThrust",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "16",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.Fallback"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "InputCore.EligibilityPreservesF5ReasonPriority",
+      "attributes": {
+        "name": "EligibilityPreservesF5ReasonPriority",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "17",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.InputCore"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "InputCore.NumericAndMixedRate",
+      "attributes": {
+        "name": "NumericAndMixedRate",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "18",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.InputCore"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "InputCore.MappingMatchesDeclaredPhysicalClamp",
+      "attributes": {
+        "name": "MappingMatchesDeclaredPhysicalClamp",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "19",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.InputCore"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "InputCore.TargetReferenceIsRebuiltFromPredictedNearestPoint",
+      "attributes": {
+        "name": "TargetReferenceIsRebuiltFromPredictedNearestPoint",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "20",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.InputCore"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "InputCore.PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture",
+      "attributes": {
+        "name": "PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "21",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.InputCore"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "SourceTime.ReceiveAgeAndPhysicalLagAreIndependent",
+      "attributes": {
+        "name": "ReceiveAgeAndPhysicalLagAreIndependent",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "26",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.SourceTime"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "SourceTime.LagAndFutureLimitsAreInclusive",
+      "attributes": {
+        "name": "LagAndFutureLimitsAreInclusive",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "32",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.SourceTime"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "SourceTime.PhysicalNowExtrapolatesClockToCommitAtOneToOne",
+      "attributes": {
+        "name": "PhysicalNowExtrapolatesClockToCommitAtOneToOne",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "39",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.SourceTime"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "SourceTime.OnlyMixedStateUsesImuPhysicalAge",
+      "attributes": {
+        "name": "OnlyMixedStateUsesImuPhysicalAge",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "45",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.SourceTime"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "SourceTime.InvalidChronologyAndExtrapolationOverflowAreRejected",
+      "attributes": {
+        "name": "InvalidChronologyAndExtrapolationOverflowAreRejected",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "52",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.SourceTime"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "ClockWindow.HighRateClockRetainsRequiredDurationAtFiniteCapacity",
+      "attributes": {
+        "name": "HighRateClockRetainsRequiredDurationAtFiniteCapacity",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "60",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.919",
+        "classname": "usv_research_safety_cpp.ClockWindow"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "ClockWindow.DurationAndRealtimeRatioBoundariesAreInclusive",
+      "attributes": {
+        "name": "DurationAndRealtimeRatioBoundariesAreInclusive",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "71",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.920",
+        "classname": "usv_research_safety_cpp.ClockWindow"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "ClockWindow.RepeatedSimulationTimeCannotKeepPreviousValidRatio",
+      "attributes": {
+        "name": "RepeatedSimulationTimeCannotKeepPreviousValidRatio",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "81",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.920",
+        "classname": "usv_research_safety_cpp.ClockWindow"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "ClockWindow.ReceiveGapRemovesStaleValidityAndNeedsNewCoverage",
+      "attributes": {
+        "name": "ReceiveGapRemovesStaleValidityAndNeedsNewCoverage",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "88",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.920",
+        "classname": "usv_research_safety_cpp.ClockWindow"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "ClockWindow.ResetBackwardJumpAndDuplicateReceiveRequireFreshWindow",
+      "attributes": {
+        "name": "ResetBackwardJumpAndDuplicateReceiveRequireFreshWindow",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "95",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.920",
+        "classname": "usv_research_safety_cpp.ClockWindow"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "ClockWindow.InvalidInputsAndBurstsCannotClaimEstablishedAlignment",
+      "attributes": {
+        "name": "InvalidInputsAndBurstsCannotClaimEstablishedAlignment",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "107",
+        "status": "run",
+        "result": "completed",
+        "time": "0.019",
+        "timestamp": "2026-10-07T20:13:15.920",
+        "classname": "usv_research_safety_cpp.ClockWindow"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PublicationHistory.SameValueRepetitionPreservesInputAssumption",
+      "attributes": {
+        "name": "SameValueRepetitionPreservesInputAssumption",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "127",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.939",
+        "classname": "usv_research_safety_cpp.PublicationHistory"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PublicationHistory.ChangedThenReturnedIsNotSameInputHistory",
+      "attributes": {
+        "name": "ChangedThenReturnedIsNotSameInputHistory",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "133",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.939",
+        "classname": "usv_research_safety_cpp.PublicationHistory"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PublicationHistory.MissingChannelOrSequenceCannotProveEquivalence",
+      "attributes": {
+        "name": "MissingChannelOrSequenceCannotProveEquivalence",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "139",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.939",
+        "classname": "usv_research_safety_cpp.PublicationHistory"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PublicationHistory.UnknownAndNonfinitePublicationsInvalidateProof",
+      "attributes": {
+        "name": "UnknownAndNonfinitePublicationsInvalidateProof",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "143",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.939",
+        "classname": "usv_research_safety_cpp.PublicationHistory"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PublicationHistory.WrongTimeAndOutOfOrderRecordsAreRejected",
+      "attributes": {
+        "name": "WrongTimeAndOutOfOrderRecordsAreRejected",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "147",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.939",
+        "classname": "usv_research_safety_cpp.PublicationHistory"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PublicationHistory.EvictedFreezeAnchorDoesNotAuthorizeCurrentValue",
+      "attributes": {
+        "name": "EvictedFreezeAnchorDoesNotAuthorizeCurrentValue",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp",
+        "line": "153",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.939",
+        "classname": "usv_research_safety_cpp.PublicationHistory"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.NoLeaseBeforeFirstValidReceipt",
+      "attributes": {
+        "name": "NoLeaseBeforeFirstValidReceipt",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "4",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.ExactDeadlineAllowed",
+      "attributes": {
+        "name": "ExactDeadlineAllowed",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "7",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.BeyondDeadlineTerminal",
+      "attributes": {
+        "name": "BeyondDeadlineTerminal",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "10",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.LateReceiptCannotHideExpiration",
+      "attributes": {
+        "name": "LateReceiptCannotHideExpiration",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "13",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.ExactDeadlineCanRenew",
+      "attributes": {
+        "name": "ExactDeadlineCanRenew",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "16",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.FreshReceiptExtends",
+      "attributes": {
+        "name": "FreshReceiptExtends",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "19",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.IgnoredReceiptDoesNotExtend",
+      "attributes": {
+        "name": "IgnoredReceiptDoesNotExtend",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "22",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.TerminalCannotResume",
+      "attributes": {
+        "name": "TerminalCannotResume",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "25",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.BackwardClockTerminal",
+      "attributes": {
+        "name": "BackwardClockTerminal",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "28",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.ZeroClockRejected",
+      "attributes": {
+        "name": "ZeroClockRejected",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "31",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.NegativeClockRejected",
+      "attributes": {
+        "name": "NegativeClockRejected",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "34",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.RejectTooShort",
+      "attributes": {
+        "name": "RejectTooShort",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "37",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.RejectUnbounded",
+      "attributes": {
+        "name": "RejectUnbounded",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "40",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "CapabilityLease.LongMonotonicUptimeSafe",
+      "attributes": {
+        "name": "LongMonotonicUptimeSafe",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_capability_lease.cpp",
+        "line": "43",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.217",
+        "classname": "usv_research_safety_cpp.CapabilityLease"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.DiagnosticModesRetainExplicitExecuteRejection",
+      "attributes": {
+        "name": "DiagnosticModesRetainExplicitExecuteRejection",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "8",
+        "status": "run",
+        "result": "completed",
+        "time": "0.001",
+        "timestamp": "2026-10-07T20:13:15.767",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.FormalPreFreezeHasIndependentResourceVersion",
+      "attributes": {
+        "name": "FormalPreFreezeHasIndependentResourceVersion",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "12",
+        "status": "run",
+        "result": "completed",
+        "time": "0.001",
+        "timestamp": "2026-10-07T20:13:15.768",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.FrozenSchemaCannotSelfAuthorizePhysicalStartup",
+      "attributes": {
+        "name": "FrozenSchemaCannotSelfAuthorizePhysicalStartup",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "17",
+        "status": "run",
+        "result": "completed",
+        "time": "0.001",
+        "timestamp": "2026-10-07T20:13:15.769",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.EveryTopLevelFieldIsRequired",
+      "attributes": {
+        "name": "EveryTopLevelFieldIsRequired",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "21",
+        "status": "run",
+        "result": "completed",
+        "time": "0.016",
+        "timestamp": "2026-10-07T20:13:15.771",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.UnknownOrMixedRevisionsReject",
+      "attributes": {
+        "name": "UnknownOrMixedRevisionsReject",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "23",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.787",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.BoolsFloatsAndInt64OverflowAreNotIntegerBounds",
+      "attributes": {
+        "name": "BoolsFloatsAndInt64OverflowAreNotIntegerBounds",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "27",
+        "status": "run",
+        "result": "completed",
+        "time": "0.024",
+        "timestamp": "2026-10-07T20:13:15.788",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.NonfiniteAndArrayShapeReject",
+      "attributes": {
+        "name": "NonfiniteAndArrayShapeReject",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "29",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.812",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.FixedNominalAndCommandProfileRejectDrift",
+      "attributes": {
+        "name": "FixedNominalAndCommandProfileRejectDrift",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "33",
+        "status": "run",
+        "result": "completed",
+        "time": "0.001",
+        "timestamp": "2026-10-07T20:13:15.813",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.FormalFlagsFaultsAndEvidenceMarkersAreChecked",
+      "attributes": {
+        "name": "FormalFlagsFaultsAndEvidenceMarkersAreChecked",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "36",
+        "status": "run",
+        "result": "completed",
+        "time": "0.001",
+        "timestamp": "2026-10-07T20:13:15.814",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.ResourceDomainPreservedWithoutClaimingCoverage",
+      "attributes": {
+        "name": "ResourceDomainPreservedWithoutClaimingCoverage",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "41",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.816",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.DuplicateKeysRejectAtAllObjectDepths",
+      "attributes": {
+        "name": "DuplicateKeysRejectAtAllObjectDepths",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "44",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.816",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "P1FullContract.EmptyOversizeAndInvalidNumericJsonReject",
+      "attributes": {
+        "name": "EmptyOversizeAndInvalidNumericJsonReject",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_full_contract.cpp",
+        "line": "48",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:15.817",
+        "classname": "usv_research_safety_cpp.P1FullContract"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PreparationBarrier.DisabledDefault",
+      "attributes": {
+        "name": "DisabledDefault",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp",
+        "line": "4",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.114",
+        "classname": "usv_research_safety_cpp.PreparationBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PreparationBarrier.ThirdTakeOnly",
+      "attributes": {
+        "name": "ThirdTakeOnly",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp",
+        "line": "8",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.114",
+        "classname": "usv_research_safety_cpp.PreparationBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PreparationBarrier.RejectNegative",
+      "attributes": {
+        "name": "RejectNegative",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp",
+        "line": "13",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.114",
+        "classname": "usv_research_safety_cpp.PreparationBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PreparationBarrier.RejectBeyondFiniteBound",
+      "attributes": {
+        "name": "RejectBeyondFiniteBound",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp",
+        "line": "16",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.114",
+        "classname": "usv_research_safety_cpp.PreparationBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PreparationBarrier.RejectExecute",
+      "attributes": {
+        "name": "RejectExecute",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp",
+        "line": "19",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.114",
+        "classname": "usv_research_safety_cpp.PreparationBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PreparationBarrier.RejectShadow",
+      "attributes": {
+        "name": "RejectShadow",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp",
+        "line": "22",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.114",
+        "classname": "usv_research_safety_cpp.PreparationBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "PreparationBarrier.RejectDisabledFaultContract",
+      "attributes": {
+        "name": "RejectDisabledFaultContract",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp",
+        "line": "25",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.114",
+        "classname": "usv_research_safety_cpp.PreparationBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.FixedNativeErrorBufferRequiresTerminatorWithinCapacity",
+      "attributes": {
+        "name": "FixedNativeErrorBufferRequiresTerminatorWithinCapacity",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "14",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.395",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.InstalledSerializationAtFullJobAndCandidateBoundary",
+      "attributes": {
+        "name": "InstalledSerializationAtFullJobAndCandidateBoundary",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "22",
+        "status": "run",
+        "result": "completed",
+        "time": "0.136",
+        "timestamp": "2026-10-07T20:13:16.395",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.ActualSizeMatchesSerializationAcrossPaddingAndHistory",
+      "attributes": {
+        "name": "ActualSizeMatchesSerializationAcrossPaddingAndHistory",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "28",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.532",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.EveryJobStringAllowsBoundaryAndRejectsOneByteOver",
+      "attributes": {
+        "name": "EveryJobStringAllowsBoundaryAndRejectsOneByteOver",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "31",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.532",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.EveryCandidateStringRejectsOverLimitBeforeCopy",
+      "attributes": {
+        "name": "EveryCandidateStringRejectsOverLimitBeforeCopy",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "36",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.532",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.EveryCapabilityStringRejectsOverLimit",
+      "attributes": {
+        "name": "EveryCapabilityStringRejectsOverLimit",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "40",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.532",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.Utf8ReasonUsesBytes",
+      "attributes": {
+        "name": "Utf8ReasonUsesBytes",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "43",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.532",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.HistoryUsesContractCapacityAndDoesNotReplaceShapeGate",
+      "attributes": {
+        "name": "HistoryUsesContractCapacityAndDoesNotReplaceShapeGate",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "48",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.532",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.ContractMustBeIntegralAndWithinHardCaps",
+      "attributes": {
+        "name": "ContractMustBeIntegralAndWithinHardCaps",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "52",
+        "status": "run",
+        "result": "completed",
+        "time": "0.005",
+        "timestamp": "2026-10-07T20:13:16.532",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected",
+      "attributes": {
+        "name": "ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "56",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.537",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.ContractPoliciesAreExact",
+      "attributes": {
+        "name": "ContractPoliciesAreExact",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "60",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.537",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.SmallerCacheDoesNotShrinkWireSchemaBudget",
+      "attributes": {
+        "name": "SmallerCacheDoesNotShrinkWireSchemaBudget",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "62",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.537",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.PathMetadataBoundaryAndCountRejection",
+      "attributes": {
+        "name": "PathMetadataBoundaryAndCountRejection",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "65",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.537",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.ProfileDimensionsLabelsAndDataBoundaries",
+      "attributes": {
+        "name": "ProfileDimensionsLabelsAndDataBoundaries",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "69",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.538",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "Resources.ExistingProducerLayoutsRemainAllowedIncludingClear",
+      "attributes": {
+        "name": "ExistingProducerLayoutsRemainAllowedIncludingClear",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp",
+        "line": "74",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.538",
+        "classname": "usv_research_safety_cpp.Resources"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "TickBarrier.DisabledInEveryMode",
+      "attributes": {
+        "name": "DisabledInEveryMode",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_tick_barrier.cpp",
+        "line": "4",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.313",
+        "classname": "usv_research_safety_cpp.TickBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "TickBarrier.DiagnosticModeAndFaultPermissionRequired",
+      "attributes": {
+        "name": "DiagnosticModeAndFaultPermissionRequired",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_tick_barrier.cpp",
+        "line": "10",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.313",
+        "classname": "usv_research_safety_cpp.TickBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "TickBarrier.FiniteInclusiveBounds",
+      "attributes": {
+        "name": "FiniteInclusiveBounds",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_tick_barrier.cpp",
+        "line": "15",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.313",
+        "classname": "usv_research_safety_cpp.TickBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "TickBarrier.OneShotOnThirdAttempt",
+      "attributes": {
+        "name": "OneShotOnThirdAttempt",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_tick_barrier.cpp",
+        "line": "23",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.313",
+        "classname": "usv_research_safety_cpp.TickBarrier"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "SchedulerBoundary.ExactAndAdjacentDueTicks",
+      "attributes": {
+        "name": "ExactAndAdjacentDueTicks",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_tick_barrier.cpp",
+        "line": "30",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.313",
+        "classname": "usv_research_safety_cpp.SchedulerBoundary"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "WorkerLiveness.RejectsNonpositive",
+      "attributes": {
+        "name": "RejectsNonpositive",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp",
+        "line": "19",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.015",
+        "classname": "usv_research_safety_cpp.WorkerLiveness"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "WorkerLiveness.RejectsOverflow",
+      "attributes": {
+        "name": "RejectsOverflow",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp",
+        "line": "23",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.015",
+        "classname": "usv_research_safety_cpp.WorkerLiveness"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "WorkerLiveness.RejectsMissingProcess",
+      "attributes": {
+        "name": "RejectsMissingProcess",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp",
+        "line": "24",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.015",
+        "classname": "usv_research_safety_cpp.WorkerLiveness"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "WorkerLiveness.AliveThenExited",
+      "attributes": {
+        "name": "AliveThenExited",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp",
+        "line": "25",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.015",
+        "classname": "usv_research_safety_cpp.WorkerLiveness"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "WorkerLiveness.KilledBeforeReaping",
+      "attributes": {
+        "name": "KilledBeforeReaping",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp",
+        "line": "26",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.015",
+        "classname": "usv_research_safety_cpp.WorkerLiveness"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    {
+      "identity": "WorkerLiveness.OldIdentityRemainsDead",
+      "attributes": {
+        "name": "OldIdentityRemainsDead",
+        "file": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp",
+        "line": "27",
+        "status": "run",
+        "result": "completed",
+        "time": "0.",
+        "timestamp": "2026-10-07T20:13:16.015",
+        "classname": "usv_research_safety_cpp.WorkerLiveness"
+      },
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    }
+  ],
+  "xml": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v14_cpp_xml_20261007/test_p1_admission.gtest.xml",
+      "sha256": "adf8ea00333c7f8f543164091a24140a74238d5ea9476ec6afe8976e3a8cdd81"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v14_cpp_xml_20261007/test_p1_capability_lease.gtest.xml",
+      "sha256": "e0718db1369831bda0258246d364829f9b4d200e29c2553624404f78202c1c50"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v14_cpp_xml_20261007/test_p1_full_contract.gtest.xml",
+      "sha256": "4a4c49475c819b00d6eaa6cd36996eab97f75abb96bea1d0af9859eb095e17c0"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v14_cpp_xml_20261007/test_p1_preparation_barrier.gtest.xml",
+      "sha256": "2af45b99c1b6856c590447168642703b66a8122e80abf528fbb542feddecd003"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v14_cpp_xml_20261007/test_p1_resources.gtest.xml",
+      "sha256": "21127b5d458e897018a4b6434593618e71f7292541b510ea516925e17ffeaae1"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v14_cpp_xml_20261007/test_p1_tick_barrier.gtest.xml",
+      "sha256": "1c1a98a0b5e351c2ecca02cb6745e4305a4aa4ce37980042010123b7446ac698"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v14_cpp_xml_20261007/test_p1_worker_liveness.gtest.xml",
+      "sha256": "2f7d960aa32d37133bd72622dd514fb2ec83b69d0c3e04cbdf94368411164956"
+    }
+  ],
+  "all_current_passed": true
+}

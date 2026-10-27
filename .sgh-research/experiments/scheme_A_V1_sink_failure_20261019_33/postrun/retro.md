@@ -1,0 +1,7 @@
+# 第33批复盘
+
+初始Native测试误用Witness.close；首编译失败完整保留，按实际close_after_join修复。原实际run在真实Applied之前arm，严格顺序门未过；未放宽门，在独立源码根将arm移到同一认证phase/Applied grant，单独预注册一次修复run后通过故障局部条件。没有同实现反复跑或启动/RTI调参。
+
+离线审计最初误要求Recorder自报stream_accounting=true，但该旧接口明确固定false；原字段保持，改为独立SQL/metadata和目标Source/CDR/GID核对。另一审计发现typed回调重新序列化646字节与wire648字节的区别；两个原SHA保存，以长度字段界定完整payload并独立核对身份，不改Raw或任意忽略内容。两次审计失败及版本均保留。
+
+Observer退出2是本次故障预期，正常关闭ACK/尾段门未闭合且保留false。后续应实现独立故障关闭适用合同，不能让已退出接收器满足正常尾段条件，也不能称M4/plant安全或P1完成。EDA指标不适用。

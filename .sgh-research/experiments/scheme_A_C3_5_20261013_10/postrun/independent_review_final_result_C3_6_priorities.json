@@ -1,0 +1,75 @@
+{
+  "actual_current_jobs": 14,
+  "all_checks_passed": true,
+  "all_reader_population": 424,
+  "checks": {
+    "actual_no_new_nodes_or_runtime_qualification": true,
+    "all_jobs_exact_integer_rc0_and_passed": true,
+    "all_phase_qualification_unsupported_false": true,
+    "all_phase_unknown_and_all_required_false": true,
+    "current_contract_actual_SHA_matches_result": true,
+    "declared_original_inputs_in_whole_reader_population": true,
+    "exact_14_registered_job_population": true,
+    "exact_all_14_qualification_flags_false": true,
+    "extra_reader_population_exact_generated_14_reports": true,
+    "independently_replayed_assessment_equals_result": true,
+    "registered_tool_dataset_result_key_argv": true,
+    "result_component_passed_exact_boolean": true
+  },
+  "contract": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/acceptance_contract_v3.json",
+    "sha256": "927e9f0776b8deee4c1b77e730409549eba0916df1061e8cd11b1583e73281af"
+  },
+  "current_result": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/result.json",
+    "sha256": "af1e4538720679f8bedc147cd08746cc18ecf44ee3b180773a56f87d5261c6aa"
+  },
+  "elapsed_ns": 7007803377,
+  "fixed_original_input_population": 410,
+  "generated_report_input_population": 14,
+  "next_C3.6_priorities": [
+    {
+      "exit": "事前选择freeze/validation/commit的anchor身份与更新政策；源链接覆盖非零、变更、旧job/candidate、左右unknown及close；原anchor门和ready150ms保持",
+      "order": 1,
+      "reason": "21次移动anchor拒绝与唯一关闭尾部shadow proposal没有提供非零regulator执行",
+      "work": "anchor执行与反馈契约"
+    },
+    {
+      "exit": "逐字段来源/选择理由/假设和域外处置；同boot command范围、HOLD/ramp/部分发布/close/恢复的状态表；MasterClock/plant/WCET unknown独立保留",
+      "order": 2,
+      "reason": "observed maxima不是WCET，formal execute policy尚not_run",
+      "work": "本版本有限工程时间/域/失效与关闭政策"
+    },
+    {
+      "exit": "确定实际非零输入、turn/profile/mixed来源、初态与typed配置，预登记原测量窗及全过程source/raw/storage/close；分开机械动态窗与R5压力和plant资格",
+      "order": 3,
+      "reason": "现只有4s原件与字段未选的recipe预声明",
+      "work": "current dynamic/turn/mixed具体recipe与20s有限shadow"
+    },
+    {
+      "exit": "按具体机制新注册正常零hooks与有限故障范围；保留首次DecisionEnqueue失效、资源/Worker终端、close失败和完整own进程尾部，不能以重复正常累积资格",
+      "order": 4,
+      "reason": "旧版本R5及normal/pre-arm关闭不覆盖统一版受影响路径",
+      "work": "当前统一源码的pressure/recovery/failed-close必要场景"
+    },
+    {
+      "exit": "运行前锁新作者source/bin/model/config/tools与候选规则；前项证据成立后用独立执行profile评定B4/M0b/B5，再后置M4唯一双路owner/实际非零与部分发布验证",
+      "order": 5,
+      "reason": "bounded acceptance contract本身不支持stage资格",
+      "work": "候选execute合同事前登记、阶段复判与最终B5/M0b冻结"
+    }
+  ],
+  "plan_compared": {
+    "path": "/home/trevor/MPC/scheme_A_C3_4_20261013_09/方案A_C3_5下一步实施计划_2026-10-13.md",
+    "status": "component acceptance and exact state/import/input closure now completed; execution policy/dynamic/current pressure/B5/M4 are the remaining independent gates"
+  },
+  "qualification_boundaries_accurate": true,
+  "schema": "scheme-A-C3.5-independent-final-result-C3.6-priorities/v1",
+  "scope": "read-only existing current v3 run/result plus pure dependency assessment; no code/contract/raw edits and no suite rerun",
+  "stage_statuses": {
+    "B4": "unknown",
+    "B5": "unknown",
+    "M0b": "unknown",
+    "M4": "unknown"
+  }
+}

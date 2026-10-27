@@ -1,0 +1,442 @@
+{
+  "v2_sha256": "8491a895408da752d0d3be37274d1e68e713c93d19a890b660aeef29b024da82",
+  "v3_sha256": "b70827f11c404a968aec8a1996b393d5a182a7aa910a35aefeb8f3a002d58756",
+  "baseline_id": "F3_20261004_quaternion_gate_01",
+  "seed": 20261004,
+  "driver_tolerances_unchanged": {
+    "ode": {
+      "atol": 1e-10,
+      "rtol": 1e-10
+    },
+    "step": {
+      "atol": 1e-09,
+      "rtol": 1e-09
+    },
+    "trajectory": {
+      "atol": 1e-08,
+      "rtol": 1e-08
+    }
+  },
+  "case_executions": 291,
+  "unique_numerical_inputs": 291,
+  "request_ids_including_defaults": 292,
+  "unique_modes": {
+    "ode": 135,
+    "step": 135,
+    "trajectory": 21
+  },
+  "duplicate_groups": [],
+  "modified_trajectory_controls": {
+    "rest_equal_forward_short_trajectory": {
+      "command_count": 50,
+      "control_sequence_sha256": "f7a4b12c73f6b97214d7d7a934a0727dbf0ce12f7649cc27e623f94a00a6f78a",
+      "constant_command_n": [
+        10.0,
+        10.0
+      ]
+    },
+    "rest_positive_yaw_short_trajectory": {
+      "command_count": 50,
+      "control_sequence_sha256": "b058655a1dbf8bf9a1fa72934f4f5cf1c08fcb74dca92309f7a0bf302cf3663d",
+      "constant_command_n": [
+        -3.0,
+        3.0
+      ]
+    }
+  },
+  "trajectory_control_hashes": {
+    "rest_zero_short_trajectory": "d75678384f152ec900387ad96d9d6b2d7f5e7a64b1f5b6c2ae57fbfa302c3cbb",
+    "rest_equal_forward_short_trajectory": "f7a4b12c73f6b97214d7d7a934a0727dbf0ce12f7649cc27e623f94a00a6f78a",
+    "rest_positive_yaw_short_trajectory": "b058655a1dbf8bf9a1fa72934f4f5cf1c08fcb74dca92309f7a0bf302cf3663d",
+    "mixed_positive_coupling_short_trajectory": "d75678384f152ec900387ad96d9d6b2d7f5e7a64b1f5b6c2ae57fbfa302c3cbb",
+    "plus_pi_below_short_trajectory": "d75678384f152ec900387ad96d9d6b2d7f5e7a64b1f5b6c2ae57fbfa302c3cbb",
+    "minus_pi_above_short_trajectory": "d75678384f152ec900387ad96d9d6b2d7f5e7a64b1f5b6c2ae57fbfa302c3cbb"
+  },
+  "local_stability_guard": {
+    "type": "real numeric model AST with unused YAML import excluded; not full-module parity run",
+    "source_sha256": "e4d3d77735ecb71c10aceb36e2365a1f7a9021d064998e18678b64e22abd9f23",
+    "numpy_version": "2.3.5",
+    "rows": [
+      {
+        "parameter_set": "runtime_effective",
+        "case_id": "rest_zero_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          8.050312750750514,
+          1.4500477844666642,
+          2.988481610559517,
+          1.200637355519408,
+          0.8524659249857828,
+          1.8247952413778112
+        ],
+        "final_state_6": [
+          8.050312750750514,
+          -1.4500477844666642,
+          2.2895715348691352,
+          -0.3418270928106366,
+          0.13881844833411888,
+          -1.8247952413778112
+        ]
+      },
+      {
+        "parameter_set": "runtime_effective",
+        "case_id": "rest_equal_forward_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          11.331696875960837,
+          0.0,
+          0.0,
+          1.2201520659362255,
+          0.0,
+          0.0
+        ],
+        "final_state_6": [
+          11.331696875960837,
+          0.0,
+          0.0,
+          1.2201520659362255,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "parameter_set": "runtime_effective",
+        "case_id": "rest_positive_yaw_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          0.11419527765575747,
+          0.07756363690294125,
+          3.1048678286935574,
+          0.01721701648895659,
+          0.03443578759895948,
+          0.4364995783219642
+        ],
+        "final_state_6": [
+          0.07070552368052414,
+          0.07756363690294125,
+          -2.567605914648979,
+          0.016590843013845738,
+          -0.03443578759895948,
+          0.4364995783219642
+        ]
+      },
+      {
+        "parameter_set": "runtime_effective",
+        "case_id": "mixed_positive_coupling_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          10.975616875030468,
+          6.037846865280165,
+          3.100047853760357,
+          1.204511775065583,
+          1.0406717354474015,
+          1.812722031171512
+        ],
+        "final_state_6": [
+          10.975616875030468,
+          5.922764175229215,
+          2.828401859810239,
+          -0.38430110936718814,
+          0.13507221354527996,
+          -1.812722031171512
+        ]
+      },
+      {
+        "parameter_set": "runtime_effective",
+        "case_id": "plus_pi_below_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          7.170131120975167,
+          2.051208239323318,
+          3.141592643589793,
+          1.2266256434222162,
+          0.5242933757504796,
+          1.8531811328665442
+        ],
+        "final_state_6": [
+          -7.170131120975167,
+          -2.051208239323318,
+          -3.117403126339969,
+          0.36875169488500326,
+          0.39090958236012235,
+          -1.8531811328665442
+        ]
+      },
+      {
+        "parameter_set": "runtime_effective",
+        "case_id": "minus_pi_above_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          7.170131079950995,
+          2.05120838272594,
+          3.141592643589793,
+          1.2266256434222162,
+          0.5242933757504796,
+          1.8531811328665442
+        ],
+        "final_state_6": [
+          -7.170131079950995,
+          -2.05120838272594,
+          -3.1174031063399683,
+          0.36875169488500326,
+          0.39090958236012235,
+          -1.8531811328665442
+        ]
+      },
+      {
+        "parameter_set": "identified_original_asymmetric",
+        "case_id": "rest_zero_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          8.037299591221146,
+          1.5413346069149483,
+          2.989700090119165,
+          1.2004663552158499,
+          0.8691044674413547,
+          1.7999083401583689
+        ],
+        "final_state_6": [
+          8.037299591221146,
+          -1.5413346069149483,
+          2.2820842414070737,
+          -0.3515109429675878,
+          0.12879278146846948,
+          -1.7999083401583689
+        ]
+      },
+      {
+        "parameter_set": "identified_original_asymmetric",
+        "case_id": "rest_equal_forward_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          11.331696875960837,
+          0.0,
+          0.0,
+          1.2201520659362255,
+          0.0,
+          0.0
+        ],
+        "final_state_6": [
+          11.331696875960837,
+          0.0,
+          0.0,
+          1.2201520659362255,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "parameter_set": "identified_original_asymmetric",
+        "case_id": "rest_positive_yaw_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          0.1031983895143983,
+          0.07024191314251715,
+          3.1061147081766305,
+          0.015591044177359443,
+          0.031187953786199502,
+          0.4369911724182337
+        ],
+        "final_state_6": [
+          0.06372900013265961,
+          0.07024191314251715,
+          -2.5656857824723267,
+          0.015022041983504852,
+          -0.031187953786199502,
+          0.4369911724182337
+        ]
+      },
+      {
+        "parameter_set": "identified_original_asymmetric",
+        "case_id": "mixed_positive_coupling_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          10.902466045102875,
+          6.104576947006937,
+          3.0643615545926766,
+          1.2059123379380186,
+          1.0280447944244389,
+          1.7887114114115625
+        ],
+        "final_state_6": [
+          10.902466045102875,
+          6.007313204151843,
+          2.86855438165739,
+          -0.38785405565526343,
+          0.12821328336304436,
+          -1.7887114114115625
+        ]
+      },
+      {
+        "parameter_set": "identified_original_asymmetric",
+        "case_id": "plus_pi_below_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          7.219672877267142,
+          2.237041539443768,
+          3.141592643589793,
+          1.2174732923489222,
+          0.5970736700547482,
+          1.8863851327146848
+        ],
+        "final_state_6": [
+          -7.219672877267142,
+          -2.237041539443768,
+          -2.954175999207484,
+          0.3751479029291224,
+          0.3751237735004434,
+          -1.8863851327146848
+        ]
+      },
+      {
+        "parameter_set": "identified_original_asymmetric",
+        "case_id": "minus_pi_above_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          7.219672832526308,
+          2.2370416838372282,
+          3.141592643589793,
+          1.2174732923489222,
+          0.5970736700547482,
+          1.8863851327146848
+        ],
+        "final_state_6": [
+          -7.219672832526308,
+          -2.2370416838372282,
+          -2.9541759792074833,
+          0.3751479029291224,
+          0.3751237735004434,
+          -1.8863851327146848
+        ]
+      },
+      {
+        "parameter_set": "synthetic_nonzero_cross_terms_software_only",
+        "case_id": "rest_zero_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          7.986328469939951,
+          1.9763781955892068,
+          2.9685818384743023,
+          1.1987518609428032,
+          0.9619209117253877,
+          2.267726321222481
+        ],
+        "final_state_6": [
+          7.986328469939951,
+          -1.9763781955892068,
+          1.661146568425001,
+          -0.2203845001901817,
+          -0.0372849485476294,
+          -2.267726321222481
+        ]
+      },
+      {
+        "parameter_set": "synthetic_nonzero_cross_terms_software_only",
+        "case_id": "rest_equal_forward_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          11.331696875960837,
+          0.0,
+          0.0,
+          1.2201520659362255,
+          0.0,
+          0.0
+        ],
+        "final_state_6": [
+          11.331696875960837,
+          0.0,
+          0.0,
+          1.2201520659362255,
+          0.0,
+          0.0
+        ]
+      },
+      {
+        "parameter_set": "synthetic_nonzero_cross_terms_software_only",
+        "case_id": "rest_positive_yaw_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          0.0961531276511547,
+          0.06439613583846907,
+          3.1354126276158327,
+          0.00894570832294583,
+          0.033226229611650816,
+          0.5485438604602654
+        ],
+        "final_state_6": [
+          0.02059383473310332,
+          0.06353353900740559,
+          -1.6023518268114827,
+          0.0066749126574601,
+          -0.033226229611650816,
+          0.5485438604602654
+        ]
+      },
+      {
+        "parameter_set": "synthetic_nonzero_cross_terms_software_only",
+        "case_id": "mixed_positive_coupling_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          10.939664929440486,
+          5.863996015150835,
+          3.114781660752677,
+          1.2063744355373756,
+          1.0651891068974906,
+          2.266821880718091
+        ],
+        "final_state_6": [
+          10.939664929440486,
+          5.755475183987755,
+          2.2991786864906447,
+          -0.2346438630409813,
+          -0.04168214484523556,
+          -2.266821880718091
+        ]
+      },
+      {
+        "parameter_set": "synthetic_nonzero_cross_terms_software_only",
+        "case_id": "plus_pi_below_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          7.083522451892614,
+          2.0390293556217425,
+          3.141592643589793,
+          1.2366540699750237,
+          0.47654722940551253,
+          2.3126048544822364
+        ],
+        "final_state_6": [
+          -7.083522451892614,
+          -2.0390293556217425,
+          2.663358127182968,
+          0.1798750416797675,
+          0.4581907445350466,
+          -2.3126048544822364
+        ]
+      },
+      {
+        "parameter_set": "synthetic_nonzero_cross_terms_software_only",
+        "case_id": "minus_pi_above_short_trajectory",
+        "all_outputs_finite": true,
+        "max_abs_state_components": [
+          7.083522411112028,
+          2.0390294972921943,
+          3.141592643589793,
+          1.2366540699750237,
+          0.47654722940551253,
+          2.3126048544822364
+        ],
+        "final_state_6": [
+          -7.083522411112028,
+          -2.0390294972921943,
+          2.663358147182968,
+          0.1798750416797675,
+          0.4581907445350466,
+          -2.3126048544822364
+        ]
+      }
+    ]
+  },
+  "full_F3_parity_executed_here": false,
+  "original_v2_unchanged": true
+}

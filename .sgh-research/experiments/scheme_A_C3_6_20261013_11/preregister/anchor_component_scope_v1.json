@@ -1,0 +1,64 @@
+{
+  "author": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_20261013_v12",
+  "closing_policy": "close revokes new job and channel-start permits; already-started calls may report their result; command facts retained; closed only after active result settlement",
+  "date": "2026-10-13",
+  "deferred": [
+    "runtime adapter/current endpoint ownership authentication",
+    "engineering time/domain/recovery/hold/ramp/partial publish integration policy",
+    "current dynamic20s/turn/mixed/stress/recovery/failed-close",
+    "B4/M0b/B5 immutable execution policy",
+    "M4 unique publisher takeover",
+    "F6/P1 model transaction and candidate consistency"
+  ],
+  "lifecycle": [
+    "preparing",
+    "open",
+    "faulted",
+    "closing",
+    "closed"
+  ],
+  "master_clock_hard_bound_ns": null,
+  "new_ROS_nodes": false,
+  "new_execute_or_Gazebo_or_hardware": false,
+  "no_recovery_in_same_session": true,
+  "numeric_policy": {
+    "T_ns": 200000000,
+    "command_max_n": 25,
+    "command_min_n": -25,
+    "engineering_guarantee": false,
+    "history_capacity": 256,
+    "normal_runtime_hooks": 0,
+    "origin": "N10 p1_admission.hpp and temporary diagnostic full contract",
+    "ready_ns": 150000000,
+    "rho_n_s": 80
+  },
+  "old_predicate_copy": {
+    "bytes": 8297,
+    "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_20261013_v12/vendor/p1_admission_N10.hpp",
+    "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/src/shadow/p1_admission.hpp",
+    "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+  },
+  "partial_policy": "success channel updates only its locally observed command; failed channel becomes unknown; unattempted channel retains prior fact; any incomplete pair stops new jobs until a new independently initialized session",
+  "plant_ack": "unknown",
+  "plant_hold_interval_ns": null,
+  "preregister_case_families": [
+    "nonzero complete pair",
+    "same-value consecutive republish",
+    "changed/change-return/gapped history rejection",
+    "owner/run/boot/config/epoch mismatch",
+    "frozen job/candidate/version identity and old candidate rejection",
+    "ready deadline equality/late, activation target, monotonic and overflow bounds",
+    "left/right unknown, partial publish and missing completion",
+    "close before activation/between calls/during pending local result",
+    "bounded history overflow",
+    "nonfinite/command/rate/type domain",
+    "diagnostic history acceptance separate from lifecycle/execute eligibility"
+  ],
+  "profile": "native-finite-command-anchor-component",
+  "research_conclusion": false,
+  "schema": "p1-C3.6-A-finite-command-anchor-scope/v1",
+  "scope": "new command owner/job/history/activation/local publish-result lifecycle component; source-linked historical N10 analysis; no actuator integration",
+  "selected_policy": "complete consecutive same-value command history, exact owner/run/boot/config/epoch and frozen job identity; no weakened anchor/ready gates",
+  "stage_qualified": false,
+  "worker_io_schedule_wcet_ns": null
+}

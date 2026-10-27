@@ -1,0 +1,17 @@
+{
+  "business24_diff_unchanged": true,
+  "copied_files": 959,
+  "document_QA": {
+    "issues": [],
+    "local_links": 25,
+    "passed": true
+  },
+  "frozen_pairs_verified_after": 355,
+  "old_MPC_files_modified": false,
+  "passed": true,
+  "regular_source_and_copy_bytes_verified": true,
+  "schema": "p1-C3.4-MPC-byte-readback/v1",
+  "special_entries_recorded_as_metadata": 2,
+  "special_originals_preserved": true,
+  "target_root": "/home/trevor/MPC/scheme_A_C3_4_20261013_09"
+}

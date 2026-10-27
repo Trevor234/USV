@@ -1,0 +1,9 @@
+{
+  "component_attempt": 2,
+  "actual_driver_run_started": false,
+  "failed_tests": 5,
+  "cause": "seeded Ready lacked required dual held history before reference refresh, correctly rejected as held_history_coverage_lost; positive tests expose fixture premise failure",
+  "correction": "bootstrap through actual receive_applied before marking seeded Ready; assert original eligible/worker/readiness health in every fixture; no production guard change",
+  "failed_build_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/build/pair_wakeup_observer_attempt02",
+  "stage_qualified": false
+}

@@ -206,7 +206,7 @@ private:
   std::string path_frame_ = "map";
   bool publish_predicted_ = true;
   int solver_hold_threshold_ = 5;
-  std::vector<std::string> allowed_fcu_modes_ = {"GUIDED"};
+  std::vector<std::string> allowed_fcu_modes_ = {"MANUAL"};
   double state_timeout_s_ = 5.0;
   double odom_timeout_s_ = 1.0;
   int reference_start_offset_ = 3;

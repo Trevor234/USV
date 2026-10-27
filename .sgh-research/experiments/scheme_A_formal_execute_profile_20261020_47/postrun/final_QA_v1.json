@@ -1,0 +1,80 @@
+{
+  "B5_contract_freeze_qualified": true,
+  "F6_qualified": false,
+  "GP_or_PPO_or_codegen_added": false,
+  "M0b_selected_engineering_freeze_qualified": true,
+  "M4_qualified": false,
+  "P1_qualified": false,
+  "actual_ROS_runs": 0,
+  "binding_cases": 24,
+  "binding_expected_refusals": 21,
+  "control_numeric_tuning_performed": false,
+  "current_MPC_delivery_verified_by_separate_receipt": true,
+  "entry_policy_cases": 92,
+  "first_entry_test_failure_preserved": true,
+  "formal_profile_and_policy_component_passed": true,
+  "freeze_condition_checks": 19,
+  "freeze_index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "frozen_artifact_bytes": 373401307,
+  "frozen_artifact_count": 4103,
+  "frozen_contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "full_1_2_turn_mixed_domain_claimed": false,
+  "generator_exact_outputs": 5,
+  "hard_realtime_claimed": false,
+  "historical_MPC_mirrors_whole_bytes_rechecked": false,
+  "historical_logical_bytes_rechecked": 6548663296,
+  "historical_recorded_paths_rechecked": 50790,
+  "immutable_frozen_package_verified": true,
+  "independent_final_audit_checks": 23,
+  "new_contract_pending_count": 0,
+  "new_profile_cases": 256,
+  "next_plan": "postrun/next_implementation_plan_v1.json",
+  "offline_compiled_probe_ELFs": 3,
+  "old_business_ELFs_rebuilt": 0,
+  "old_failures_and_pre_freeze_preserved": true,
+  "old_pre_freeze_pending_count": 8,
+  "old_raw_cases": 385,
+  "original_business_diff_bytes": 151961,
+  "passed": true,
+  "physical_API_calls": 0,
+  "physical_execute_release_enabled": false,
+  "plant_qualified": false,
+  "policy_sha256": "475d093f034165b94a09dde577a4462dc3c575752e25a99364d4ac699955918b",
+  "profile_contract_execute_qualified_field": true,
+  "profile_raw_parity_cases": 641,
+  "proofs": {
+    "postrun/frozen_package_verification_v1.json": {
+      "bytes": 708,
+      "sha256": "677be9d4b8a2409f2832fc580105350577710c70a308249be9c736a57f8b5fcd"
+    },
+    "postrun/independent_freeze_audit_v1.json": {
+      "bytes": 931234,
+      "sha256": "f32e75d6c8d2d4129c1df9e02b2019eb33fbab2db5a24b20ca86c0ac94a069a9"
+    },
+    "preflight/workspace_final_v1.json": {
+      "bytes": 23898980,
+      "sha256": "d005b061eaa3e5e09e08a26c28d40b7724900335bd34e16399c949a1f754a567"
+    },
+    "preflight/workspace_initial_v1.json": {
+      "bytes": 23814080,
+      "sha256": "740e8b346d6b92fb2ec8b5de0dfd4b00b566e433f103babfabac83179e3efa9c"
+    },
+    "verification/entry_policy_cases_v2.json": {
+      "bytes": 237560,
+      "sha256": "8cbcfd0ec1fb2614f291b57bfde2528b16a4cd543854bae139cd2f39dcc90402"
+    },
+    "verification/freeze_binding_cases_v1.json": {
+      "bytes": 24319,
+      "sha256": "8da06377b91747baa40ee2c91395cab124130cb47a8cfaf46b17e097cbfc89b6"
+    },
+    "verification/profile_parity_v1.json": {
+      "bytes": 712747,
+      "sha256": "fa96720f4ee009d21b31bdc2d1178fbd88d94822ff621b6e6da6e5def172e1fe"
+    }
+  },
+  "research_conclusion": false,
+  "schema": "SchemeA-formal-owned-profile-M0b-final-QA/v1",
+  "spec_sha256": "dca89c6559110290ece07e6102ee4f0bd28f38031f5dfe1702aaab81be45846f",
+  "stage_qualified": false,
+  "stage_qualified_scope": "overall P1; B5/M0b qualification is stated separately"
+}

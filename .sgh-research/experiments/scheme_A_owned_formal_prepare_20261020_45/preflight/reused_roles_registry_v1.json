@@ -1,0 +1,66 @@
+{
+  "recorder": {
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/build01/p1_owned_recorder",
+    "binary_sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "configure_rc": 0,
+    "elapsed_seconds": 55.68476000899682,
+    "execute_qualified": false,
+    "install_performed": false,
+    "native_binaries": {},
+    "node_launch_performed": false,
+    "parent_roles_verified_unchanged": true,
+    "passed": true,
+    "research_conclusion": false,
+    "role": "recorder",
+    "runtime_build_rc": 0,
+    "schema": "p1-C3.4-build/v1",
+    "source_bundle": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+      "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+    },
+    "stage_qualified": false
+  },
+  "worker": {
+    "Native_assertions": 22,
+    "Native_cases": 1,
+    "actual_compiler_dependencies": 1344,
+    "attempt": 1,
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/worker_author",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/build/v2_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+    "binary_sha256": "6ad949b4ce68db8d26d97d6409c2d710739750ec107bf0ee735edfbf63f11a58",
+    "codegen_performed": false,
+    "copied_legacy_hooks_unmodified": true,
+    "elapsed_seconds": 30.68852121103555,
+    "execute_qualified": false,
+    "install_performed": false,
+    "loader_libraries": 53,
+    "node_launch_performed": false,
+    "parent_binary_sha256": "1462e6be4ffec0079319cb6fb1aed8c3067df1065e9d167351092cd586e595f1",
+    "passed": true,
+    "primitive_helper": {
+      "bytes": 24124,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/build_activation_roles_v1.py",
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/build_activation_roles_v1.py",
+      "sha256": "f6f5e1c481fa72414ee2a20a8562ec2c5b9487865c9cd2df094599ddb4be09d8"
+    },
+    "recipe": {
+      "bytes": 4753,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/build_v2_worker_v1.py",
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/build_v2_worker_v1.py",
+      "sha256": "b35aa486be17375ae04474c314527a9af7bcf3fac3608775e67301383c1b6271"
+    },
+    "research_conclusion": false,
+    "role": "worker",
+    "schema": "V2-explicit-diagnostic-worker-build/v1",
+    "source_bundle": {
+      "files": 30,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/build/v2_worker_attempt01/source_bundle.json",
+      "sha256": "ec2fbfe28c644eef5142422ce2634a8cb1dc3eda507aff4665f66e67eaffa888"
+    },
+    "stage_qualified": false
+  }
+}

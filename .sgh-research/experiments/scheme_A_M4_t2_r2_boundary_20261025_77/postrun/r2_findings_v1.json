@@ -1,0 +1,15 @@
+{
+  "schema": "M4-T2-R2-findings-v77",
+  "recorded_at": "2026-10-25T13:00:07.552308+08:00",
+  "delivered": {
+    "scope_infrastructure": "m4_owned_runtime.hpp新增t2_boundary_scope→v4诊断合同分支;Worker在v4下自动arm boundary(现有机制);Regulator经diagnostic_profile进入诊断准入分支(现有W2 chain验证boundary channel)",
+    "preflight_extension": "w2_runtime_contract.py T2 boundary scope分支(v4合同SHA/fault=true/case限定T2B/boundary_release绑定Job2+ordinal1+有限wait budget);t2_action_contract.py新增T2_BOUNDARY_SCOPE常量",
+    "offline_validation": "正控(boundary scope+V4合同+boundary_release形状)通过;T2A case被boundary scope拒绝;ordinary scope不可声明fault"
+  },
+  "design_documented_not_yet_implemented": {
+    "driver_boundary_orchestration": "锚定失败于第二次补丁(driver_shutdown_request块锚点漂移);设计已完整记录,实现归下一批",
+    "sequence": "boundary_entered ACK→Fixture path action→Fixture receipt→Regulator path_version commit ACK→Driver 44-byte release frame→C入口guard→真实C调用→原Job候选→同Job以版本原因拒绝",
+    "constraints": "deadline=tick_origin+150ms不续期;Fixture receipt≠DDS到达→必须等Regulator path_version commit ACK;过期释放独立负控(actual_native=false+expired);不照搬W2两tick等待(400ms>deadline)"
+  },
+  "owned_runs": 0
+}

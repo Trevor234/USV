@@ -1,0 +1,23 @@
+# Publisher-side observation contract; no plant execution acknowledgement.
+string schema_version
+string run_id
+string producer_instance_id
+string baseline_id
+string config_hash
+uint64 sequence
+uint64 clock_epoch
+int64 sim_time_ns
+int64 clock_receive_steady_ns
+int64 clock_age_ns
+string clock_status
+string steady_clock_domain
+uint64 received_odom_sequence
+int64 odom_stamp_ns
+int64 receive_steady_ns
+int64 freeze_steady_ns
+string frame_id
+string child_frame_id
+float64[6] state_6
+bool valid
+string quality_reason
+string source_topic

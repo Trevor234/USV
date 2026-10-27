@@ -1,0 +1,29 @@
+{
+  "runtime_revision": 21,
+  "authored_files": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/patch_watchdog_observation_v12.py": "9d0fed8f18187d894eaeed03ac03137ad5b2b16af4f5de4181808d8f9ae6011b",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/run_no_output_calibration.py": "3ee7b93e7281adca1252edf7dffc67afe4f48a1744d1c4ce0661633effad2304",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/owned_process_supervisor.py": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/p1_contract_revision.py": "53f4aff5aedc98006b44a2bff409b5c70e0bc06cf47f110a8a8e37533cfa3a50",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/run_time_task_matrix.py": "ae9b460c293e4e722508f5b0ef8514c96fb8a6fef5a677758d72ac9203da9521",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_worker_fault_matrix.py": "951a56bcf1ef335f07aa8a3c5336caa8dab4b60b01ad4eea48551c91e6eaa3dc",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_contract_revision.py": "ccc2d9b8c57a09398396175336a22160c5ac2ba8ec3e25c612096640c2262a39",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_owned_process_supervisor.py": "dd61df35b1731f817124bdad12c6d3f78d3a6de9a942cd4cff3afe1dfcceaeec",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_check_p1_execution.py": "c3341fcf35d7001241836a3b533c024d7b5a6aae9d4bdcf0b0c09268a981d9ec",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/p1_payload_digest.py": "80969c86cbe72aa238c24503be9d5d69c257ff111a2cc0a5787f966b4af4b6c5",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_regulator_fault_matrix.py": "a51ab6c6947bac638f8f03e6dd40ea88f27209b1b0f42ecd12853dcb49c19283",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_time_task_matrix.py": "a6da6c065c026fbcb8e7b5087ceaf92b67e675fd9673c2796129d3a2aaba20ef",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/check_p1_execution.py": "557b60d6efa69f28e288b3078f4549654f3e65f4a68b5abeb8e61bed104fc3fa",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_watchdog_observation.py": "b268edd7d24f96475e949768228be1157218b6fb28c9727e08d7f5a6bfcfffeb",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/check_regulator_fault_matrix.py": "d50260927af8595cfcba387066c3151ffdbbfd5ac8e85004514c66081297e46c",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_publication_history.py": "7862cb5330332112042cc68c25981d31b80e6708710c97775d5ac527edbfc684",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_vrx_runtime_gates.py": "b6a56292ac934bb60b7fc6cb17f8db61718e86d131f05c280d05dc3330ca9e43",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/check_time_task_matrix.py": "c4c02f690b5dd67afda5263b97f9d4e0bb891673afc5791158fd75c1262cba7c",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/run_worker_fault_matrix.py": "3d38813af7fd9af79481434d940bdc98b456b971a77158603fdfb22b1c52d1f3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/run_regulator_fault_matrix.py": "0d8582698035d0dcc1b29596281112a570f3cea1d47cbf47e08d3333ef785d5c",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/run_p1_vrx_validation.py": "27e9eaa4e24b7a7fd4191f7892edf8929a2d4c0ccd0caeb14b56f8fc0c0e855b",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/test_fault_mechanisms.py": "e934fb8fc0e762f4751dae7beea0fdd806b5bb0fcb4d8782b33ddc63fb882d6a",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v21/check_worker_fault_matrix.py": "de46d02498b629997f3eca5d73933d70d7deebc89f6c923fb75d78929f34fc3e"
+  },
+  "production_change": false
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "p1-C3.10-foreign-Applied-contract-v2",
+  "topic": "/research/control/applied",
+  "ros_type": "usv_research_interfaces/msg/AppliedControl",
+  "packet_labels": [
+    "clone_zero_first",
+    "clone_nonzero",
+    "clone_zero_repeat"
+  ],
+  "max_packets": 3,
+  "max_cdr_bytes": 8192,
+  "nonzero_final_n": [
+    1.0,
+    -1.0
+  ],
+  "physical_publisher_endpoints": 0,
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "submission_alignment_bytes": 4,
+  "submission_padding_policy": "explicit-zero-fill-before-native-publish"
+}

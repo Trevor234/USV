@@ -1,0 +1,27 @@
+{
+  "schema": "C3.6-test-recipe-pins/v1",
+  "test_suites": [
+    "test_owned_peer_c36_v1",
+    "test_c36_runtime_adapter",
+    "test_c36_completion",
+    "test_c36_applied_boundaries",
+    "test_shadow_entry",
+    "test_enqueue_branch",
+    "test_d0_observation",
+    "test_atomic_observation",
+    "test_legacy_ready",
+    "test_c33_input_matrix",
+    "test_c34_lease_matrix"
+  ],
+  "component_native_timeout_per_target_s": 90,
+  "compile_budget_s": 600,
+  "normal_owned_domain": 122,
+  "native_domain": 121,
+  "runtime_recipe": "same frozen N10 roles; new observer;4s measurement; hooks0;prepare/total/close25/60/15s;localhost rmw_fastrtps_cpp",
+  "no_install_or_codegen": true,
+  "phase_qualified": false,
+  "pins": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/build_and_test_v2.py": "a21a0e8065890faa7d5a6abd2299350c09dd9f2914369d87d35738197e82950d",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/preregister/adapter_scope_v1.json": "961bdfdccd81ab0cc051655842406e25e5f2a384f54261bc62e9b2ba07312d35"
+  }
+}

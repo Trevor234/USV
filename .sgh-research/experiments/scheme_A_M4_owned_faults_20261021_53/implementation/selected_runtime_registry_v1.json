@@ -1,0 +1,47 @@
+{
+  "driver": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/author/owned_m4_fault_driver_v1.py",
+  "driver_tool_sha256": "cab011f15a773a5ec64d5c3ad5cbe680fd203f51d7a36b7682ea9dda7bb025a6",
+  "production_physical_release_enabled": false,
+  "regulator_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/author/observer/src/shadow/regulator_owned_execute.cpp",
+  "regulator_source_sha256": "94bbcb25c356c992111c1779d685bdb3da7dca2f5a0bf301d1f745ea4c2f9bf0",
+  "roles": {
+    "fixture": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/build/fault_attempt05/cmake_build/p1_m4_fixture_owned",
+      "binary_sha256": "a330e0143e71235ab3167e9d3e683e490c288bb79a936b1b0c4c0c9b226224f3",
+      "source_bundle": {
+        "files": 82,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/build/fault_attempt05/source_bundle.json",
+        "sha256": "3479053882ac5d851434ea5afa6ea2f4dd2e37869104cef332fa7297d6242d38"
+      }
+    },
+    "recorder": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/build01/p1_owned_recorder",
+      "binary_sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+      "source_bundle": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+        "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+      }
+    },
+    "regulator": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/build/fault_attempt05/cmake_build/p1_m4_regulator_owned",
+      "binary_sha256": "fb43fe195aed4f177437872086d2f5c55bff87293d141b3e776d1572e8ce47da",
+      "source_bundle": {
+        "files": 82,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/build/fault_attempt05/source_bundle.json",
+        "sha256": "3479053882ac5d851434ea5afa6ea2f4dd2e37869104cef332fa7297d6242d38"
+      }
+    },
+    "worker": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/build/fault_attempt05/cmake_build/p1_m4_worker_owned",
+      "binary_sha256": "a47d1cedb348f8497101e5a377be50e044e5748535d4952e04553266aff7bc9a",
+      "source_bundle": {
+        "files": 82,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/build/fault_attempt05/source_bundle.json",
+        "sha256": "3479053882ac5d851434ea5afa6ea2f4dd2e37869104cef332fa7297d6242d38"
+      }
+    }
+  },
+  "schema": "M4-owned-runtime-registry-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "source_scope": "owned local nominal .05 m/s component; not original F5 plant/reference identity qualification"
+}

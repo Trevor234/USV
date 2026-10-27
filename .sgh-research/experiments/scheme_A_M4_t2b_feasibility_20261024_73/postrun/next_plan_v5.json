@@ -1,0 +1,30 @@
+{
+  "schema": "M4-after-T1-review-minimum-plan-v73",
+  "recorded_at": "2026-10-24T22:12:47.504796+08:00",
+  "steps": [
+    {
+      "id": "S0/S1/S2/T2-A",
+      "status": "complete",
+      "task": "69/70/71/72批(T2-A条款全过)"
+    },
+    {
+      "id": "T2-B",
+      "status": "design_gate",
+      "task": "在途clear/replace场景族",
+      "feasibility": "evidence/t2b_inflight_window_v1.json: 在途窗口实测0.44-1.5ms; solve_active健康系统不可观测; 外部编排架构上不可命中",
+      "decision_required": "复用已认证有限boundary/release组件(计划原条款)——在认证原生边界保持目标Job→执行登记path动作→释放, 使旧代际结果在变更后到达并被拒; 需一个scoped设计批把边界保持集成进T2接口(普通scope复用W2机制或T2 scoped变体), 随后单次owned执行",
+      "alternative_registered": "ready_window变体可确定性触发并可跑, 但其冻结条款(stale拒绝)在结果后几何下无证据; 若跑须先修订条款形状以如实反映其证据范围"
+    },
+    {
+      "id": "T2-C",
+      "status": "planned",
+      "task": "Driver shutdown交错场景族(rev8登记T2C_v8, ready_window触发为确定性路径)"
+    },
+    {
+      "id": "T3→N3→F6→P1",
+      "status": "retained",
+      "task": "保留主线义务"
+    }
+  ],
+  "stage_qualified": false
+}

@@ -1,0 +1,14 @@
+{
+  "count": 1,
+  "files": [
+    {
+      "bytes": 300,
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_cold_start_20261018_27/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "1ec9935b64dd480e3b84ab3b8fa3227fa4a05e2cb4eafd482bf11d78b09f2d95",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_cold_start_20261018_27/intermediate_local_backup_v1/CURRENT.md"
+    }
+  ],
+  "remote_intermediate_not_available": true,
+  "schema": "owned-cold-initial-local-current-backup/v1"
+}

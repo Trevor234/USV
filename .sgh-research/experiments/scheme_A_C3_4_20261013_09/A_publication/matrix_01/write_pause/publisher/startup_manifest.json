@@ -1,0 +1,20 @@
+{
+  "baseline_id": "F5_20261005_atomic_freeze_01",
+  "binary_sha256": "b2d9e8e51b37531a6a664a11cce880d8f08905524f5af2f6d97ff18128029d44",
+  "boot_id": "b4f820cc-bcd4-4274-9a7f-45f7ad98c9a4",
+  "config_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "created_steady_ns": 80364970957391,
+  "derived_publisher": true,
+  "driver_process_graph_worker_evidence_verified_by_publisher": false,
+  "nominal_config_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "parent_baseline_manifest_sha256": "77737a5924f1bcd97996dee3c08e204a4a4c8fbf2f3716ff65d41fbc4bad6762",
+  "parent_mpc_node_source_sha256": "2f1b457ce9644d6ceff722e4ce328fa6a5de23a2cb94f8470c022e0bd70f2dd8",
+  "physical_output_state": "held",
+  "pid": 13,
+  "process_start_ticks": 8036496,
+  "producer_instance_id": "review-link-race-publisher:probe",
+  "run_id": "review-link-race-publisher",
+  "schema_version": "p1-D1-publisher-startup-v1",
+  "source_bundle_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "steady_clock_domain": "b4f820cc-bcd4-4274-9a7f-45f7ad98c9a4:steady_clock"
+}

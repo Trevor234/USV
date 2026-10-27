@@ -1,0 +1,208 @@
+{
+  "schema": "p0-nominal-parity-run/1",
+  "created_utc": "2026-10-04T12:16:52.772204+00:00",
+  "workspace": "/home/trevor/USV",
+  "output": "/home/trevor/USV/.sgh-research/experiments/p0_model_consistency_20261004_01/parity_results",
+  "baseline": "/home/trevor/USV/.sgh-research/baselines/F2_20261004_publisher_contract_01",
+  "fixture": "/home/trevor/USV/.sgh-research/experiments/p0_model_consistency_20261004_01/model_parity_fixtures_v2.json",
+  "fixture_sha256": "2d5d4395c298badfc5da538ba99712a581d29de38490ffdb26f5ea19351d1dc6",
+  "python_driver_sha256": "7a7fa4036055fb46da3ab74e377a76a896cba47367361d46703c4c276da67faa",
+  "cpp_driver_sha256": "e17b0e32c5a4d47bab6dbaa9d7a49bd9318676cf7dbfc5256ad58e14140af5ac",
+  "compiled_binary_sha256": "ad9ed4ebdfb8af57006fd2860b88ebbd420501be2283b5954cb87b1e3e4bbb1e",
+  "native_compiled_library_sha256": "fdfff478432c7764444642abe0d7824f426999c5dcce7c5942f739991252c500",
+  "source_identity_before": {
+    "baseline_id": "F2_20261004_publisher_contract_01",
+    "baseline_manifest_sha256": "6e967d07de4f4232977f7b8fca1d6f6e4582812ea0d6ac1273159566d0214b75",
+    "baseline_source_hashes_sha256": "c9d53c402a1e81e4b4033ea1b9e30b375ac7c5d739d264813fd917bd7caae667",
+    "baseline_installed_hashes_sha256": "203f5bc81e2ea8fa3f3a2cf541f7bb39207d10b9b74d3bb09164473b6bf70ab7",
+    "files": [
+      {
+        "path": "usv_rl/usv_rl/dynamics.py",
+        "actual_sha256": "e4d3d77735ecb71c10aceb36e2365a1f7a9021d064998e18678b64e22abd9f23",
+        "baseline_sha256": "e4d3d77735ecb71c10aceb36e2365a1f7a9021d064998e18678b64e22abd9f23",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/src/usv_model_dynamic.cpp",
+        "actual_sha256": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3",
+        "baseline_sha256": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/usv_model_dynamic.hpp",
+        "actual_sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a",
+        "baseline_sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/acados_solver_usv_dyn_nmpc.c",
+        "actual_sha256": "38c222d809dc15e362f423ed329f34156ac7e4b836227242407a684f814f9f30",
+        "baseline_sha256": "38c222d809dc15e362f423ed329f34156ac7e4b836227242407a684f814f9f30",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/acados_solver_usv_dyn_nmpc.h",
+        "actual_sha256": "bdac3caa7ee125812d485f87cdde272c5c90d6c10628a996c6fd6f7d75038114",
+        "baseline_sha256": "bdac3caa7ee125812d485f87cdde272c5c90d6c10628a996c6fd6f7d75038114",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_0_fun.c",
+        "actual_sha256": "d4d02b31983e37ed5ce32bf7ce6fa2cda6ed3506df7a1825841eb521b5b96424",
+        "baseline_sha256": "d4d02b31983e37ed5ce32bf7ce6fa2cda6ed3506df7a1825841eb521b5b96424",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_0_fun_jac_uxt_zt.c",
+        "actual_sha256": "14ec97780a20c0d946f76e795f1f69c0c99f1a12477b6062d0c5b5bc708a98d7",
+        "baseline_sha256": "14ec97780a20c0d946f76e795f1f69c0c99f1a12477b6062d0c5b5bc708a98d7",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_fun.c",
+        "actual_sha256": "4ba292e2a46724c3935c2ea9527500c3596ae0920a2eb8fe9304415c52f0495b",
+        "baseline_sha256": "4ba292e2a46724c3935c2ea9527500c3596ae0920a2eb8fe9304415c52f0495b",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_fun_jac_uxt_zt.c",
+        "actual_sha256": "2984f524b49cecf91f7e0ffac246ee78a3914f64cca9b4c7fa5d94c33e90ff03",
+        "baseline_sha256": "2984f524b49cecf91f7e0ffac246ee78a3914f64cca9b4c7fa5d94c33e90ff03",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_constraints/usv_dyn_nmpc_constraints.h",
+        "actual_sha256": "d5fe1da868dfbabffa160f83d82ce3d492d8c5e8e2cc091286a55fb43ee8999a",
+        "baseline_sha256": "d5fe1da868dfbabffa160f83d82ce3d492d8c5e8e2cc091286a55fb43ee8999a",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost.h",
+        "actual_sha256": "21ffc99e506d2e778e6d5c6e4f95c746f132f1d557d37522ae234f4d090bccbd",
+        "baseline_sha256": "21ffc99e506d2e778e6d5c6e4f95c746f132f1d557d37522ae234f4d090bccbd",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_0_fun.c",
+        "actual_sha256": "9791aa69c4f170b739bcf079bb7c49dedc1ef389dbe597e7dc8dfa1c40bc6044",
+        "baseline_sha256": "9791aa69c4f170b739bcf079bb7c49dedc1ef389dbe597e7dc8dfa1c40bc6044",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_0_fun_jac_ut_xt.c",
+        "actual_sha256": "7bfc077b8639b19db62fb53ca4d097e3db3a9be60c6ac6d32f528510663c4d3a",
+        "baseline_sha256": "7bfc077b8639b19db62fb53ca4d097e3db3a9be60c6ac6d32f528510663c4d3a",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_0_hess.c",
+        "actual_sha256": "0f4d3f47271dd1ea78e067121cec9d202572373977a41f3ba8713b5d8a5e2c71",
+        "baseline_sha256": "0f4d3f47271dd1ea78e067121cec9d202572373977a41f3ba8713b5d8a5e2c71",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_e_fun.c",
+        "actual_sha256": "18d156cef93b8883d28a1b8a8552dcb8c76d1795670f929bf1ae3de1f9986bea",
+        "baseline_sha256": "18d156cef93b8883d28a1b8a8552dcb8c76d1795670f929bf1ae3de1f9986bea",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_e_fun_jac_ut_xt.c",
+        "actual_sha256": "1eb492c29f743eb4ce354417a28e9760993f793b9aac22f15325e9a219156c98",
+        "baseline_sha256": "1eb492c29f743eb4ce354417a28e9760993f793b9aac22f15325e9a219156c98",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_e_hess.c",
+        "actual_sha256": "d3ef3825ce61da4406de30530181112f676b6c460ee277651b4c0f99c1bcc6c1",
+        "baseline_sha256": "d3ef3825ce61da4406de30530181112f676b6c460ee277651b4c0f99c1bcc6c1",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_fun.c",
+        "actual_sha256": "f3eebf78cb21592ddf1f82d3e19e536fdbcf10ba68c871d3f179f4048707195f",
+        "baseline_sha256": "f3eebf78cb21592ddf1f82d3e19e536fdbcf10ba68c871d3f179f4048707195f",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_fun_jac_ut_xt.c",
+        "actual_sha256": "8dedbe1ab590da309047b67ca660af708ed296608172e28f1210757a490daa08",
+        "baseline_sha256": "8dedbe1ab590da309047b67ca660af708ed296608172e28f1210757a490daa08",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_hess.c",
+        "actual_sha256": "ccb3399e16bea57b555c1453dc4e02608df955ddda92341c89cf4c37701fc11f",
+        "baseline_sha256": "ccb3399e16bea57b555c1453dc4e02608df955ddda92341c89cf4c37701fc11f",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_model/usv_dyn_nmpc_dyn_disc_phi_fun.c",
+        "actual_sha256": "a4a891ffd8b98c0c35be7ee23fca7817343bd6958f0b67e71785282a2f8e8504",
+        "baseline_sha256": "a4a891ffd8b98c0c35be7ee23fca7817343bd6958f0b67e71785282a2f8e8504",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_model/usv_dyn_nmpc_dyn_disc_phi_fun_jac.c",
+        "actual_sha256": "ae075e4f9ee34f86765fe7831b9675d2c10d6bf035a2c1157a3c7dbc92540188",
+        "baseline_sha256": "ae075e4f9ee34f86765fe7831b9675d2c10d6bf035a2c1157a3c7dbc92540188",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_model/usv_dyn_nmpc_model.h",
+        "actual_sha256": "d2471c85706deb72047df28521074d297a344053a56d90938f4f63046ab90682",
+        "baseline_sha256": "d2471c85706deb72047df28521074d297a344053a56d90938f4f63046ab90682",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_p_global_precompute_fun.c",
+        "actual_sha256": "d336c975054b3fa554f81b41d1307c221a7a18be3657e23cb73a6b164d3ba30d",
+        "baseline_sha256": "d336c975054b3fa554f81b41d1307c221a7a18be3657e23cb73a6b164d3ba30d",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_nmpc_p_global_precompute_fun.h",
+        "actual_sha256": "175b83c9d37263330d11e7c7828be067764b71cad69a3e5b71802031511ce770",
+        "baseline_sha256": "175b83c9d37263330d11e7c7828be067764b71cad69a3e5b71802031511ce770",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_ocp.json",
+        "actual_sha256": "a04ed491ff6751d0e482a2a6cd75e06297d8cd17fb7299ade4255fa9a7478aa9",
+        "baseline_sha256": "a04ed491ff6751d0e482a2a6cd75e06297d8cd17fb7299ade4255fa9a7478aa9",
+        "matches_baseline": true
+      },
+      {
+        "path": "usv_mpc_ws/install/usv_mpc_cpp/lib/usv_mpc_cpp/mpc_node",
+        "actual_sha256": "9076da86bc8fb1a14f404c6f0ab5af6fa28c78ca50cf6d38d5fbc498d770aab1",
+        "baseline_sha256": "9076da86bc8fb1a14f404c6f0ab5af6fa28c78ca50cf6d38d5fbc498d770aab1",
+        "matches_baseline": true,
+        "usage": "installed production binary identity only; independent CLI compiles actual nominal source"
+      }
+    ],
+    "frozen_source_identity_verified": true
+  },
+  "source_identity_stable": true,
+  "evidence_hashes": {
+    "dependency_versions.json": "ada729f118155fa9dd436a627e8fb69351ac74003c3049fa99f59c2e4adfb992",
+    "native_compiler_command.json": "6df0ec1a873ce7a61a0628d3b608a12d7784beaf80cff09176d10f94d6ff7587",
+    "native_abi_and_global_data.json": "80dd5f173becac9ceaaf7311bd9f341dcf525ffba5512ccafb6ffdee9f9435fe",
+    "results.json": "02317cc01b3c595822395d3337bb50cc0d661c072fb4662fbbd4c3c418de357c",
+    "defaults_difference.json": "8eab6e3dfff75685a3ef9f2e2331cdf110bf125d1a7b007f994f52d7570ac064",
+    "cpp_stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "case_results.jsonl": "aa85d66a16f99c262783087820665dc01a917e80c58a5831d79499a705a380d8",
+    "native_build_stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "actual_acados_discrete.so": "fdfff478432c7764444642abe0d7824f426999c5dcce7c5942f739991252c500",
+    "build_stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build_stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "nominal_cpp_cli": "ad9ed4ebdfb8af57006fd2860b88ebbd420501be2283b5954cb87b1e3e4bbb1e",
+    "cpp_requests.jsonl": "4d200dc0a28cdc33d6bae6183a481cc6e25c9c3ee2b4224596bc9c82cb879d5e",
+    "compiler_command.json": "e48e96ea2e15e6bc452d6d7c2a60a3c08acca14c88a390bfb566180d3d5c255d",
+    "source_identity_before.json": "3d9a699b0f1c29847082188dd96411bd89f8e5dd2ba8351ca1b647652826fb6a",
+    "native_build_stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cpp_stdout.jsonl": "c3dd26a36c8177d77e6a7754e8f0a34f7800282820b732268df26ada2ea4c384",
+    "source_identity_after.json": "3d9a699b0f1c29847082188dd96411bd89f8e5dd2ba8351ca1b647652826fb6a"
+  },
+  "production_files_written": false,
+  "new_codegen_generated": false
+}

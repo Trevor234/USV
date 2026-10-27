@@ -1,0 +1,26 @@
+{
+  "action_table": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_clock_freeze_owned_20261024_72/implementation/T2A_table_v11.json",
+  "action_table_sha256": "43e5e4c97322b6bf7737fd2d662fa90f9ce710a593eb01cb0e1e402a16a99e7c",
+  "audit_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_clock_freeze_owned_20261024_72/implementation/t2_author_rev8/audit_t2.py",
+    "sha256": "e01b38e1463a272a76ab14205480ceaa4a67ebc325d29d7bf82b1a367b31fd46"
+  },
+  "automatic_retries": 0,
+  "case": "T2A-clock-freeze",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "domain_id": 120,
+  "executed": false,
+  "fault_injection_enabled": false,
+  "freeze_revision": "table v11 = v10 retry; T2A_13 died in the 2s Fixture start discovery budget (bootstrap variance, no scenario consumed); single finite retry of the identical registered scenario.",
+  "max_seconds": 45,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_clock_freeze_owned_20261024_72/implementation/runs/T2A_14",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_clock_freeze_owned_20261024_72/implementation/t2_registry_v8.json",
+  "registry_sha256": "13b579f1ce3218418b9ea9f9577ab602a094b841e84606d2f66d8738da9d8bf4",
+  "run_id": "T2-T2A-14",
+  "schema": "M4-owned-t2-scenario-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

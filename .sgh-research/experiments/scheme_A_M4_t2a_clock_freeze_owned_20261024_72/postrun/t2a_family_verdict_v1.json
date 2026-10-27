@@ -1,0 +1,47 @@
+{
+  "schema": "M4-T2A-family-verdict-v72",
+  "recorded_at": "2026-10-24T21:31:47.547023+08:00",
+  "run": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_clock_freeze_owned_20261024_72/implementation/runs/T2A_14",
+  "registration": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_clock_freeze_owned_20261024_72/implementation/T2A_registration_v11.json",
+  "freeze_revision": "rev8 (bundle dcc879eb..., driver f52baedc...)",
+  "clause_checks": {
+    "receipt_accounting": true,
+    "accounting_detail": {
+      "receipts_complete": true,
+      "ordered": [
+        {
+          "action_id": "a1",
+          "executed_ns": 809886986974260,
+          "command_sha256": "65c9468b4b584d3dc622d1869a4818e0ab2d3f0710ae59d67df8d78009ce8016"
+        },
+        {
+          "action_id": "a2",
+          "executed_ns": 809887778926176,
+          "command_sha256": "74f7277d3c45df34d8c9250e0f4b4628ce05bccbf03e878dc261b4b3fc5ff54a"
+        }
+      ],
+      "regulator_rows_separate_stream": true
+    },
+    "hold_receipt_present": true,
+    "silent_hold_exceeds_receipt_stale": true,
+    "hold_minimum_respected": true,
+    "regulator_stream_observed_after_hold": true
+  },
+  "all_clauses_hold": true,
+  "observed_trail": {
+    "decisions": 13,
+    "accepted_activations_pre_hold": 5,
+    "stale_gated_ticks_during_hold": 4,
+    "schedule_reset_on_resume": true,
+    "owned_zero_close_after_resume": true,
+    "hold_ns_actual": 791951916,
+    "business_ready_observed": true
+  },
+  "regulator_exit": {
+    "returncode": 3,
+    "meaning": "close ok, witness observation incomplete per the normal-contract predicate; for a clock-freeze diagnostic this is the expected qualification outcome, the scenario evidence lives in the Source streams",
+    "REGULATOR_CLOSE_FLUSH_SUCCESS": true
+  },
+  "driver_passed_false_note": "the frozen Driver keeps the W-style close gate (regulator rc 0); the scenario verdict is the frozen audit over separated streams, which passes every clause",
+  "candidate_revival_check": "no accepted activation after the hold; the pause-resume invalidation held"
+}

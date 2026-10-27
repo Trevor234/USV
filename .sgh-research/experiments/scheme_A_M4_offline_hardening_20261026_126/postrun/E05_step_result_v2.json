@@ -1,0 +1,227 @@
+{
+  "step_id": "E05",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Authoritative serial/owner/consumption; raw public commit removed; snapshot captured under existing lock; actual Regulator compiled.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E05/attempt05",
+  "observed_facts": {
+    "header_pin": {
+      "bytes": 14293,
+      "sha256": "39ac3a5b30a3c5ffee381974bded71ed165c19502ecc3753207b9ff21c240f77"
+    },
+    "test_pin": {
+      "bytes": 22713,
+      "sha256": "575c280aea9ba682497bee1fca7e5e36192b9241d06a7ef51b2e274afde4f5c6"
+    },
+    "flags_pin": {
+      "bytes": 2893,
+      "sha256": "e2e68d77b017983a2ffa372ee7ae186fbf89af50e324881dc9d0bc2630705310"
+    },
+    "actual_call_site_compile_only": true,
+    "actual_owned_runtime": false
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "build.epoch",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-E1",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-E2",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-E3",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-E4",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-E5",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-E6",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-REPLAY-A",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-DUP-COMMIT",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-G5-RETRY",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-RETIRED-BINDING-V3",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-LEGAL-NEW-SCHEDULE",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-RETIRED-LEDGER",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-FOREIGN",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-SERIAL",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "EPV-SNAPSHOT",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "original_six_32_assertions",
+        "passed": true,
+        "detail": 32
+      },
+      {
+        "name": "mutation.prepared.generation",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_generation",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.generation",
+        "passed": true,
+        "detail": [
+          "e7_stale_generation_replay_rejected",
+          "e7_stale_counter_recorded"
+        ]
+      },
+      {
+        "name": "mutation.prepared.foreign",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_foreign",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.foreign",
+        "passed": true,
+        "detail": [
+          "foreign_instance_rejected",
+          "foreign_no_state_change",
+          "issuing_instance_still_accepts",
+          "recipient_own_credential_still_accepts"
+        ]
+      },
+      {
+        "name": "mutation.prepared.serial",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_serial",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.serial",
+        "passed": true,
+        "detail": [
+          "unissued_serial_rejected",
+          "forgeries_do_not_anchor",
+          "original_credential_survives_invalid_attempts"
+        ]
+      },
+      {
+        "name": "mutation.prepared.ledger",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_ledger",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.ledger",
+        "passed": true,
+        "detail": [
+          "e12_retired_A_refused",
+          "e12_refusal_is_the_retired_ledger_reason",
+          "e12_no_state_change_from_the_ledger_refusal"
+        ]
+      },
+      {
+        "name": "actual_regulator_compiles_with_only_credential_commit",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "actual_call_uses_captured_identity_and_token",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "frozen_epoch_unchanged",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    "implementation/author/observer/src/shadow/scoped_epoch_v1.hpp",
+    "implementation/author/observer/src/shadow/regulator_owned_execute.cpp",
+    "implementation/tests/test_scoped_epoch_v3.cpp",
+    "implementation/tests/run_e05_v2.py"
+  ],
+  "remaining_obligations": [
+    "No new owned runtime evidence; historical process failure retained."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

@@ -1,0 +1,549 @@
+{
+  "schema": "p0-f4-actual-config-isolation-comparison/1",
+  "passed": true,
+  "exit_code": 0,
+  "scope": "configuration isolation only",
+  "checks": [
+    {
+      "name": "three_distinct_actual_runs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "same_frozen_baseline_id",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nineteen_vehicle_keys",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "baseline_f3_default_mass",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "baseline_nominal_plant_effective_nineteen_equal",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "default_solver_and_physical_limits_25N",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plant_mass_nominal_nineteen_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plant_mass_nominal_solver_constraints_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plant_mass_nominal_effective_sha_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plant_mass_nominal_raw_source_sha_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plant_mass_only_one_effective_mass_change",
+      "passed": true,
+      "detail": {
+        "mass": {
+          "baseline": 14.2,
+          "probe": 17.04,
+          "baseline_present": true,
+          "probe_present": true
+        }
+      }
+    },
+    {
+      "name": "nominal_mass_only_one_effective_mass_change",
+      "passed": true,
+      "detail": {
+        "mass": {
+          "baseline": 14.2,
+          "probe": 17.04,
+          "baseline_present": true,
+          "probe_present": true
+        }
+      }
+    },
+    {
+      "name": "nominal_mass_nominal_identity_changes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nominal_mass_solver_constraints_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nominal_mass_plant_nineteen_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nominal_mass_plant_actuator_limits_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nominal_mass_plant_raw_source_sha_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "all_simulation_raw_source_sha_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nominal_mass_plant_mesh_sha_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nominal_mass_plant_sdf_equal_except_generated_mesh_uri_dir",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "nominal_mass_generated_geometry_unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "plant_mass_all_other_actual_controller_parameters_unchanged",
+      "passed": true,
+      "detail": {}
+    },
+    {
+      "name": "nominal_mass_actual_controller_diff_only_vehicle_mass",
+      "passed": true,
+      "detail": {
+        "vehicle.mass": {
+          "baseline": 14.2,
+          "probe": 17.04,
+          "baseline_present": true,
+          "probe_present": true
+        }
+      }
+    },
+    {
+      "name": "plant_mass_generated_mesh_changes_as_renderer_geometry_coupling",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "failures": [],
+  "actual_controller_comparison": {
+    "identity_fields_excluded_exactly": [
+      "research_run_id",
+      "research_output_dir",
+      "research_config_hash",
+      "research_nominal_config_hash"
+    ],
+    "excluded_actual_values_by_run": {
+      "p0_f4_config_baseline_20261005_02": {
+        "research_run_id": "p0_f4_config_baseline_20261005_02",
+        "research_output_dir": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_baseline_20261005_02/source",
+        "research_config_hash": "ac0caedf08d37731671d36b28e0170b0ebb9cb6c7b142a8054fa25cf09759601",
+        "research_nominal_config_hash": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84"
+      },
+      "p0_f4_config_plant_mass_20261005_01": {
+        "research_run_id": "p0_f4_config_plant_mass_20261005_01",
+        "research_output_dir": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_plant_mass_20261005_01/source",
+        "research_config_hash": "f7373fb8338abc42dbcbe6d5ace6ea9f6dfbb894321851f02bc69e3a3d6ba057",
+        "research_nominal_config_hash": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84"
+      },
+      "p0_f4_config_nominal_mass_20261005_01": {
+        "research_run_id": "p0_f4_config_nominal_mass_20261005_01",
+        "research_output_dir": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_nominal_mass_20261005_01/source",
+        "research_config_hash": "dab1cca43fcb03db4ddfbf4f96171a03121de351897724218c6865c8789f2872",
+        "research_nominal_config_hash": "939a3c14453045dd0c03886b1afb2db6acfb25dcc796eea578523aeb1486a672"
+      }
+    },
+    "plant_mass_differences_after_exclusions": {},
+    "nominal_mass_differences_after_exclusions": {
+      "vehicle.mass": {
+        "baseline": 14.2,
+        "probe": 17.04,
+        "baseline_present": true,
+        "probe_present": true
+      }
+    },
+    "intentional_nominal_parameter_change": {
+      "vehicle.mass": {
+        "from": 14.2,
+        "to": 17.04
+      }
+    }
+  },
+  "runs": {
+    "baseline": {
+      "experiment": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_baseline_20261005_02",
+      "run_id": "p0_f4_config_baseline_20261005_02",
+      "baseline_id": "F4_20261005_config_reference_01",
+      "actual_dump_stdout_sha256": "74e3e88e946553cf1550f9d5c5d5139f2ea11e6cbaa70e4315f32eb5d4313ef7",
+      "evidence_sha256": {
+        "config_sources.json": "0e4d4bdf9693b986b02c2071f86173d5e3ea033318928805c461a7a1046a98fb",
+        "config_runtime.json": "d80e03aaba3489fa6293bcdfe5b098fe2d9e7175adab7005348548f560712a19",
+        "topic_graph.json": "7aed47fc2b3967b063a06633f4632d80db9c2e68b1e505c9f9040d38347525db"
+      },
+      "geometry": {
+        "mass_kg": 14.2,
+        "waterline_beam_m": 0.3121789448404427,
+        "displacement_m3": 0.014199999999999999,
+        "yaw_inertia_at_com": 1.92552,
+        "com_m": [
+          0.12,
+          0.0,
+          0.0
+        ]
+      },
+      "model_identity": {
+        "raw_sdf_sha256": "24ef97ab1f614c52450fe300317d7c303254d39e3b4d48a1bf80108f213a13b4",
+        "normalized_sdf_sha256": "9b92221671d19c9f258c026665c6e00026de78ea8c23564840389f88622e5f4f",
+        "mesh_sha256_by_relative_path": {
+          "hull.dae": "e9eb222171a2b40dca491354958f04978659cd9ef56daba6c27c76ebafd015dc"
+        },
+        "mesh_uri_normalizations": [
+          {
+            "original_uri": "file:///home/trevor/USV/.sgh-research/experiments/p0_f4_config_baseline_20261005_02/model/hull.dae",
+            "normalized_uri": "file://__MODEL_OUTPUT__/hull.dae",
+            "mesh_relative_path": "hull.dae",
+            "mesh_sha256": "e9eb222171a2b40dca491354958f04978659cd9ef56daba6c27c76ebafd015dc"
+          }
+        ],
+        "normalization_rule": "replace contained generated mesh URI directory only; retain all other SDF text"
+      },
+      "runtime": {
+        "schema": "p0-independent-config-runtime/1",
+        "runtime_parameter_dump": {
+          "path": null,
+          "sha256": null,
+          "source": "caller mapping only; bind actual dump identity externally"
+        },
+        "config_sources_sha256": "0e4d4bdf9693b986b02c2071f86173d5e3ea033318928805c461a7a1046a98fb",
+        "controller_effective_vehicle": {
+          "mass": 14.2,
+          "Iz": 2.13,
+          "xg": 0.12,
+          "d_thruster": 0.25,
+          "Xu_dot": -2.0,
+          "Yv_dot": -8.0,
+          "Yr_dot": -0.1817725,
+          "Nv_dot": -0.1817725,
+          "Nr_dot": -3.41,
+          "Xu": -2.272063,
+          "Yv": -2.629019,
+          "Yr": 0.0,
+          "Nv": 0.0,
+          "Nr": -3.105,
+          "Xuu": -11.571784,
+          "Yvv": -0.05,
+          "Yrr": 0.0,
+          "Nvv": 0.0,
+          "Nrr": -0.71
+        },
+        "solver_input_constraints": {
+          "T_max": 25.0,
+          "T_min": -25.0,
+          "source": "nominal thruster magnitudes; independent of plant limits"
+        },
+        "plant_effective_vehicle": {
+          "mass": 14.2,
+          "Iz": 2.13,
+          "xg": 0.12,
+          "d_thruster": 0.25,
+          "Xu_dot": -2.0,
+          "Yv_dot": -8.0,
+          "Yr_dot": -0.1817725,
+          "Nv_dot": -0.1817725,
+          "Nr_dot": -3.41,
+          "Xu": -2.272063,
+          "Yv": -2.629019,
+          "Yr": 0.0,
+          "Nv": 0.0,
+          "Nr": -3.105,
+          "Xuu": -11.571784,
+          "Yvv": -0.05,
+          "Yrr": 0.0,
+          "Nvv": 0.0,
+          "Nrr": -0.71
+        },
+        "plant_actuator_command_limits": {
+          "max_N": 25.0,
+          "min_N": -25.0,
+          "source": "plant thruster input; generated SDF confirmation required"
+        },
+        "plant_projection": {
+          "added_mass_cross_policy": "symmetric_mean",
+          "source_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/config/vrx_model.yaml",
+          "source_sha256": "edcd9d129357651c8bc9c0ca9d081e91bc6467db5420fd88e305e3e77281093a"
+        },
+        "model_report_sha256": "61be91db8c0866029d83d1de5398de6d0dec018cd09ce7c2369d1c00f7dcf55a",
+        "plant_effective_yaml_sha256": "f94f67e1b99c5f4b9bbce18f1301188119d7800e9de6401b141b7e6e7d14d345",
+        "plant_sdf_sha256": "24ef97ab1f614c52450fe300317d7c303254d39e3b4d48a1bf80108f213a13b4",
+        "nominal_effective_yaml_sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+        "runtime_effective_verified": true,
+        "plant_generated_verified": true,
+        "plant_equivalence_proven": false,
+        "exact_execution_timing_available": false,
+        "gp_labels_ready": false
+      }
+    },
+    "plant_mass": {
+      "experiment": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_plant_mass_20261005_01",
+      "run_id": "p0_f4_config_plant_mass_20261005_01",
+      "baseline_id": "F4_20261005_config_reference_01",
+      "actual_dump_stdout_sha256": "fd96093df9c067e0fc40a49c788b31974dccce0e1ef9e0a888853b059e7a3883",
+      "evidence_sha256": {
+        "config_sources.json": "35e87e7ed7b5eac215501a89ccb6271bad7073645ab7bc7ae998c49a6be4701b",
+        "config_runtime.json": "cce57c99701fc705fe349a9f78d87164b34f80cb5da6be04d0ffe1da32749f67",
+        "topic_graph.json": "b114f56d9dd8416d1dd0ee2fea7fba288d45f9ba3e1b4b5512de15003b909819"
+      },
+      "geometry": {
+        "mass_kg": 17.04,
+        "waterline_beam_m": 0.3746147338085312,
+        "displacement_m3": 0.01704,
+        "yaw_inertia_at_com": 1.8846239999999999,
+        "com_m": [
+          0.12,
+          0.0,
+          0.0
+        ]
+      },
+      "model_identity": {
+        "raw_sdf_sha256": "6283a24636e3991098a10e51e5436485fdb404e77f6c16adc76dab7d66c2bc56",
+        "normalized_sdf_sha256": "7398667444faecda829de76d8b0232b71fd6a3a772b8674463b051dd146746c3",
+        "mesh_sha256_by_relative_path": {
+          "hull.dae": "ee89badaa674da3327f087b590dfab2c5f0c5d60bcf85e42be718c68d0eff649"
+        },
+        "mesh_uri_normalizations": [
+          {
+            "original_uri": "file:///home/trevor/USV/.sgh-research/experiments/p0_f4_config_plant_mass_20261005_01/model/hull.dae",
+            "normalized_uri": "file://__MODEL_OUTPUT__/hull.dae",
+            "mesh_relative_path": "hull.dae",
+            "mesh_sha256": "ee89badaa674da3327f087b590dfab2c5f0c5d60bcf85e42be718c68d0eff649"
+          }
+        ],
+        "normalization_rule": "replace contained generated mesh URI directory only; retain all other SDF text"
+      },
+      "runtime": {
+        "schema": "p0-independent-config-runtime/1",
+        "runtime_parameter_dump": {
+          "path": null,
+          "sha256": null,
+          "source": "caller mapping only; bind actual dump identity externally"
+        },
+        "config_sources_sha256": "35e87e7ed7b5eac215501a89ccb6271bad7073645ab7bc7ae998c49a6be4701b",
+        "controller_effective_vehicle": {
+          "mass": 14.2,
+          "Iz": 2.13,
+          "xg": 0.12,
+          "d_thruster": 0.25,
+          "Xu_dot": -2.0,
+          "Yv_dot": -8.0,
+          "Yr_dot": -0.1817725,
+          "Nv_dot": -0.1817725,
+          "Nr_dot": -3.41,
+          "Xu": -2.272063,
+          "Yv": -2.629019,
+          "Yr": 0.0,
+          "Nv": 0.0,
+          "Nr": -3.105,
+          "Xuu": -11.571784,
+          "Yvv": -0.05,
+          "Yrr": 0.0,
+          "Nvv": 0.0,
+          "Nrr": -0.71
+        },
+        "solver_input_constraints": {
+          "T_max": 25.0,
+          "T_min": -25.0,
+          "source": "nominal thruster magnitudes; independent of plant limits"
+        },
+        "plant_effective_vehicle": {
+          "mass": 17.04,
+          "Iz": 2.13,
+          "xg": 0.12,
+          "d_thruster": 0.25,
+          "Xu_dot": -2.0,
+          "Yv_dot": -8.0,
+          "Yr_dot": -0.1817725,
+          "Nv_dot": -0.1817725,
+          "Nr_dot": -3.41,
+          "Xu": -2.272063,
+          "Yv": -2.629019,
+          "Yr": 0.0,
+          "Nv": 0.0,
+          "Nr": -3.105,
+          "Xuu": -11.571784,
+          "Yvv": -0.05,
+          "Yrr": 0.0,
+          "Nvv": 0.0,
+          "Nrr": -0.71
+        },
+        "plant_actuator_command_limits": {
+          "max_N": 25.0,
+          "min_N": -25.0,
+          "source": "plant thruster input; generated SDF confirmation required"
+        },
+        "plant_projection": {
+          "added_mass_cross_policy": "symmetric_mean",
+          "source_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/config/vrx_model.yaml",
+          "source_sha256": "edcd9d129357651c8bc9c0ca9d081e91bc6467db5420fd88e305e3e77281093a"
+        },
+        "model_report_sha256": "f4fcdcf493f1a01a01d4e6b802399c223128c1710c366d417799a1bd8b12df47",
+        "plant_effective_yaml_sha256": "bfa5bb69c96d90485e833e1361712b348fc85066faeee5f938982d81d1c8fdb5",
+        "plant_sdf_sha256": "6283a24636e3991098a10e51e5436485fdb404e77f6c16adc76dab7d66c2bc56",
+        "nominal_effective_yaml_sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+        "runtime_effective_verified": true,
+        "plant_generated_verified": true,
+        "plant_equivalence_proven": false,
+        "exact_execution_timing_available": false,
+        "gp_labels_ready": false
+      }
+    },
+    "nominal_mass": {
+      "experiment": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_nominal_mass_20261005_01",
+      "run_id": "p0_f4_config_nominal_mass_20261005_01",
+      "baseline_id": "F4_20261005_config_reference_01",
+      "actual_dump_stdout_sha256": "3abb9dadabb9d3ad7fa2f88c672bdba30c5092b4811cdd704e6dc9788b45e7cb",
+      "evidence_sha256": {
+        "config_sources.json": "1febfd968060431d6496450ef307a4c6f7619bcd27fb509cdaa11075b0521b86",
+        "config_runtime.json": "e3c711bf2b8d37d45880df483bd1d70eb8276dea127e5f39d98d735ac2aab17b",
+        "topic_graph.json": "8a75aaa93ba04781317498c10365f764ac1b7500cd8ba9c028519e86ed170cca"
+      },
+      "geometry": {
+        "mass_kg": 14.2,
+        "waterline_beam_m": 0.3121789448404427,
+        "displacement_m3": 0.014199999999999999,
+        "yaw_inertia_at_com": 1.92552,
+        "com_m": [
+          0.12,
+          0.0,
+          0.0
+        ]
+      },
+      "model_identity": {
+        "raw_sdf_sha256": "99e19759a9a59d72f3a4a92d86a6e0952e0f4e365333b190b04d41017a57bcad",
+        "normalized_sdf_sha256": "9b92221671d19c9f258c026665c6e00026de78ea8c23564840389f88622e5f4f",
+        "mesh_sha256_by_relative_path": {
+          "hull.dae": "e9eb222171a2b40dca491354958f04978659cd9ef56daba6c27c76ebafd015dc"
+        },
+        "mesh_uri_normalizations": [
+          {
+            "original_uri": "file:///home/trevor/USV/.sgh-research/experiments/p0_f4_config_nominal_mass_20261005_01/model/hull.dae",
+            "normalized_uri": "file://__MODEL_OUTPUT__/hull.dae",
+            "mesh_relative_path": "hull.dae",
+            "mesh_sha256": "e9eb222171a2b40dca491354958f04978659cd9ef56daba6c27c76ebafd015dc"
+          }
+        ],
+        "normalization_rule": "replace contained generated mesh URI directory only; retain all other SDF text"
+      },
+      "runtime": {
+        "schema": "p0-independent-config-runtime/1",
+        "runtime_parameter_dump": {
+          "path": null,
+          "sha256": null,
+          "source": "caller mapping only; bind actual dump identity externally"
+        },
+        "config_sources_sha256": "1febfd968060431d6496450ef307a4c6f7619bcd27fb509cdaa11075b0521b86",
+        "controller_effective_vehicle": {
+          "mass": 17.04,
+          "Iz": 2.13,
+          "xg": 0.12,
+          "d_thruster": 0.25,
+          "Xu_dot": -2.0,
+          "Yv_dot": -8.0,
+          "Yr_dot": -0.1817725,
+          "Nv_dot": -0.1817725,
+          "Nr_dot": -3.41,
+          "Xu": -2.272063,
+          "Yv": -2.629019,
+          "Yr": 0.0,
+          "Nv": 0.0,
+          "Nr": -3.105,
+          "Xuu": -11.571784,
+          "Yvv": -0.05,
+          "Yrr": 0.0,
+          "Nvv": 0.0,
+          "Nrr": -0.71
+        },
+        "solver_input_constraints": {
+          "T_max": 25.0,
+          "T_min": -25.0,
+          "source": "nominal thruster magnitudes; independent of plant limits"
+        },
+        "plant_effective_vehicle": {
+          "mass": 14.2,
+          "Iz": 2.13,
+          "xg": 0.12,
+          "d_thruster": 0.25,
+          "Xu_dot": -2.0,
+          "Yv_dot": -8.0,
+          "Yr_dot": -0.1817725,
+          "Nv_dot": -0.1817725,
+          "Nr_dot": -3.41,
+          "Xu": -2.272063,
+          "Yv": -2.629019,
+          "Yr": 0.0,
+          "Nv": 0.0,
+          "Nr": -3.105,
+          "Xuu": -11.571784,
+          "Yvv": -0.05,
+          "Yrr": 0.0,
+          "Nvv": 0.0,
+          "Nrr": -0.71
+        },
+        "plant_actuator_command_limits": {
+          "max_N": 25.0,
+          "min_N": -25.0,
+          "source": "plant thruster input; generated SDF confirmation required"
+        },
+        "plant_projection": {
+          "added_mass_cross_policy": "symmetric_mean",
+          "source_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/config/vrx_model.yaml",
+          "source_sha256": "edcd9d129357651c8bc9c0ca9d081e91bc6467db5420fd88e305e3e77281093a"
+        },
+        "model_report_sha256": "46be32b883b7d30eaa662a8928acfdfcc5de6a853eb410c2cb5cfdc09350009e",
+        "plant_effective_yaml_sha256": "f94f67e1b99c5f4b9bbce18f1301188119d7800e9de6401b141b7e6e7d14d345",
+        "plant_sdf_sha256": "99e19759a9a59d72f3a4a92d86a6e0952e0f4e365333b190b04d41017a57bcad",
+        "nominal_effective_yaml_sha256": "939a3c14453045dd0c03886b1afb2db6acfb25dcc796eea578523aeb1486a672",
+        "runtime_effective_verified": true,
+        "plant_generated_verified": true,
+        "plant_equivalence_proven": false,
+        "exact_execution_timing_available": false,
+        "gp_labels_ready": false
+      }
+    }
+  },
+  "plant_probe_interpretation": {
+    "name": "plant mass configuration probe with coupled procedural geometry",
+    "renderer_source_fact": "hull_mesh derives waterline width from mass / density / unit-width submerged volume",
+    "actual_waterline_beam_ratio": 1.2,
+    "actual_mesh_sha_changed": true,
+    "formula_based_expected_ratio": 1.2,
+    "geometry_numbers_source": "actual generated model_report.json; configuration artifact, not measured motion",
+    "expected_ratio_is_not_substituted_for_actual_generated_geometry": true,
+    "not_a_pure_payload_step_performance_experiment": true
+  },
+  "plant_equivalence_proven": false,
+  "performance_improvement_proven": false,
+  "P1_complete": false,
+  "exact_execution_timing_available": false,
+  "gp_labels_ready": false
+}

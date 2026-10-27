@@ -1,0 +1,9 @@
+{
+  "schema": "C3.7-postrun-analysis-writer-pin/v1",
+  "writer_sha256": "20f6798131d64bb6a04bd8a90da3cda6ca4f2b498273a58922b0696209f9baab",
+  "checker_sha256": "bfca766206b1ea543ae9e5379d02dde53d477500ef63bc10a8b371526369426d",
+  "scope": "report serialization only; use unchanged prerun-v2 analysis predicates and snapshot requirements; own create-only output bound 8MiB, release MAX_JSON64KiB unchanged",
+  "reason": "original CLI full audit report exceeds release-intent 64KiB writer budget",
+  "profile_unchanged": "closed_shadow_observation",
+  "stage_qualified": false
+}

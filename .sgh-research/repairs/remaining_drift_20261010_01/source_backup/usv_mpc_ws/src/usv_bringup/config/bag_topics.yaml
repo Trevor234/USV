@@ -1,0 +1,18 @@
+# Core closed-loop topics recorded during real USV runs.
+# Message types, QoS, and semantics remain defined in topic_contract.yaml.
+# 2026-10-09: 加入 GPS 状态话题 (RTK 事后分析需要区分 Float/Fixed/单点段)。
+#   gpsstatus/gps1/raw = fix_type/eph/卫星数 (GPSRAW, ~1Hz)
+#   raw/fix            = 经纬度原值 (NavSatFix, ~1Hz, 需 best_effort QoS override)
+#   RTCM 差分原始流 (send_rtcm) 不录: 5Hz 高流量, 事后无法重放。
+topics:
+  - /mavros/local_position/odom
+  - /mavros/imu/data
+  - /mavros/state
+  - /mavros/rc/override
+  - /mpc/status
+  - /path/reference
+  - /path/reference_profile
+  - /usv/mission/waypoints_local
+  - /mpc/predicted_trajectory
+  - /mavros/gpsstatus/gps1/raw
+  - /mavros/global_position/raw/fix

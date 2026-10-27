@@ -1,0 +1,36 @@
+{
+  "actual_new_ROS_nodes": false,
+  "all_jobs_rc0_exact_passed": true,
+  "all_stage_qualifications_false": true,
+  "before_observed_population": 420,
+  "component_acceptance": true,
+  "contract_sha256": "6fb11afaf7c0372792ff78d2980c3b40605e16cce7b10e1c598843ea01940382",
+  "declared_closure_population": 405,
+  "declared_not_in_before": [],
+  "important_remaining_boundary": "direct aggregate closure misses three files mentioned in child reports; first semantic contract matrix is not independently fixed",
+  "job_count": 14,
+  "job_ids": [
+    "normal_owned",
+    "normal_atomic",
+    "normal_release",
+    "expired_release",
+    "config_domain",
+    "preparation_io",
+    "current_readiness",
+    "budget_scope",
+    "wire_invalid_foreign",
+    "wire_fatal",
+    "wire_instance",
+    "wire_expired",
+    "wire_duplicate",
+    "wire_no_valid"
+  ],
+  "phase_statuses": {
+    "B4": "unknown",
+    "B5": "unknown",
+    "M0b": "unknown",
+    "M4": "unknown"
+  },
+  "schema": "scheme-A-C3.5-independent-full-result-review/v1",
+  "scope": "read-only structural check of Root original 14-job output; no rerun"
+}

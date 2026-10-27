@@ -1,0 +1,22 @@
+--- F4/mpc_node.cpp
++++ formatted-atomic/mpc_node.cpp
+@@ -755,7 +755,18 @@
+   const bool observe_reference = reference_logging_enabled_ && research_ && research_->armed();
+   ResearchReference reference_event;
+   {
+-    std::lock_guard<std::mutex> lk(state_lock_);
++    // P1_ATOMIC_DYNAMIC_FREEZE_V1
++    std::unique_lock<std::mutex> lk(state_lock_);
++    const auto rechecked = can_solve_();
++    if (!rechecked.first) {
++      // Standby acquires the output lock and later the state lock; release first.
++      lk.unlock();
++      enter_standby_(rechecked.second);
++      if (research_ && research_->armed()) {
++        research_cycle_.rejection_reason = rechecked.second;
++      }
++      return;
++    }
+     current_state << x_, y_, normalize_angle(psi_), u_, v_, r_;
+     if (research_ && research_->armed()) {
+       research_cycle_.state_copy_steady_ns = research_steady_ns();

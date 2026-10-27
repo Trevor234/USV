@@ -1,0 +1,33 @@
+{
+  "patch_order": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/patches/01_pure_shared_packing.patch",
+      "pin": {
+        "bytes": 3585,
+        "sha256": "8d1fe6b5c88a95b5031cfa97359fe070c46a7d9d78fa7a8e57dfbd9a39017376"
+      }
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/patches/02_checked_initialization.patch",
+      "pin": {
+        "bytes": 3067,
+        "sha256": "0ea79ca9ea0d084a0a0d168bd1eb465006aad27a6344538fe00975339b6ab7aa"
+      }
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/patches/03_experimental_shared_headers_v2.patch",
+      "pin": {
+        "bytes": 4053,
+        "sha256": "7470366b71f3e0dce42422eeec20fd8cf4ec9687dc7ec48d5c8e021c739590cd"
+      }
+    }
+  ],
+  "production_patches_applied": false,
+  "private_apply_matches_checked_candidate": true,
+  "experimental_patch_scope": "component copy, include path uses checked_init headers",
+  "unchanged_solve_fallback_applied_reset_tail": true,
+  "unchanged_class_header": true,
+  "pure_packing_header_same_bytes_in_two_candidates": true,
+  "experimental_private_apply_exact": true,
+  "superseded_patch_retained": "patches/03_experimental_shared_headers.patch"
+}

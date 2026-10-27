@@ -1,0 +1,20 @@
+{
+  "Go_for_actual_DDS": false,
+  "added_fields": {
+    "reference_sampling_policy": "projected_profile_time_v1"
+  },
+  "changed_existing_fields": {
+    "diagnostic_contract_revision": {
+      "after": 6,
+      "before": 5
+    },
+    "reference_start_offset": {
+      "after": 0,
+      "before": 2
+    }
+  },
+  "new_contract_sha256": "45bc25fc471dfba9ac757ee0727770e0d447bce63cb2fca5ffba8cc12ad17d20",
+  "original_contract_sha256": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+  "spec_sha256": "2128eaa9211921463cf30b8680e55679b65159afeda7756acd10f8d8951c7273",
+  "unchanged_cost_model_constraints_guards": true
+}

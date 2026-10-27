@@ -1,0 +1,19 @@
+{
+  "B5_contract_freeze_qualified": true,
+  "F6_qualified": false,
+  "M0b_selected_engineering_freeze_qualified": true,
+  "M4_qualified": false,
+  "P1_qualified": false,
+  "artifact_bytes": 373401307,
+  "artifact_count": 4103,
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "elapsed_seconds": 1.0796146430075169,
+  "filesystem_locked": false,
+  "index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "passed": true,
+  "physical_execute_release_enabled": false,
+  "plant_qualified": false,
+  "profile_id": "P1_owned_nominal_execution_20261020_01",
+  "research_conclusion": false,
+  "schema": "P1-M0b-frozen-package-verification/v1"
+}

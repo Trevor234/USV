@@ -1,0 +1,14 @@
+{
+  "count": 1,
+  "files": [
+    {
+      "bytes": 308,
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "8cca371c4f5fe35f6d05f1d305a90fcac5b061983a16d01c63a568b37e009b89",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/intermediate_local_backup_v1/CURRENT.md"
+    }
+  ],
+  "remote_intermediate_not_available": true,
+  "schema": "activation-initial-local-current-backup/v1"
+}

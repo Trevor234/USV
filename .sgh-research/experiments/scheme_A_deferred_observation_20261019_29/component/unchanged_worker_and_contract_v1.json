@@ -1,0 +1,38 @@
+{
+  "schema": "deferred-observation-reuse/v1",
+  "worker_binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/build/activation_worker_attempt02/cmake_build/p1_solver_worker_owned_v2",
+  "worker_binary_sha256": "1462e6be4ffec0079319cb6fb1aed8c3067df1065e9d167351092cd586e595f1",
+  "worker_source_bundle": {
+    "files": 28,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/build/activation_worker_attempt02/source_bundle.json",
+    "sha256": "47ac315fce17370695d775a25b36c9c5fcf6a1509a07b049df78196ed2340f2b"
+  },
+  "worker_native_evidence_reused_not_rerun": {
+    "GTest_XML": [
+      {
+        "disabled": 0,
+        "errors": 0,
+        "failures": 0,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/build/activation_worker_attempt02/cmake_build/test_results/p1_D1_owned_worker/test_reference_cold_backend.gtest.xml",
+        "sha256": "11d2e3ae209ca3854b94899d141c480672a5a80d911c3b43e5b981a5955074f5",
+        "tests": 9
+      }
+    ],
+    "GTest_cases": 9,
+    "all_declared_native_targets_exercised": true,
+    "plain_checks": 103,
+    "plain_targets": {
+      "test_reference_worker_contract": {
+        "log_sha256": "a813c6b53c9ed42e501cf115a6da386a57f2fbeb8202f251c35a7bb3da723383",
+        "reported_checks": 103,
+        "returncode": 0
+      }
+    }
+  },
+  "contract_exact_parent_bytes": true,
+  "cold_start_policy_unchanged": true,
+  "model_and_generated_libraries_unchanged": true,
+  "only_Observer_rebuilt": true,
+  "stage_qualified": false,
+  "execute_qualified": false
+}

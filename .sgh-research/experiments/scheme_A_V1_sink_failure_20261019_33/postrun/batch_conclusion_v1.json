@@ -1,0 +1,29 @@
+{
+  "Native_build_attempts": 3,
+  "V1_fault_local_component_observed": true,
+  "execute_qualified": false,
+  "final_Native_assertions": 23,
+  "final_Native_cases": 3,
+  "first_build_failure": "test used Witness.close rather than close_after_join; original failure retained",
+  "first_close_errors": [
+    {
+      "action": "C3.8 owned close scenario",
+      "error": "ValueError('tail receiver exited before terminal capture')"
+    }
+  ],
+  "first_run_preregistered_case_passed": false,
+  "nonempty_pre_failure_slot_interleaving_proven": false,
+  "normal_final_version_close_qualified": false,
+  "real_runs": 2,
+  "repaired_close_errors": [
+    {
+      "action": "C3.8 owned close scenario",
+      "error": "ValueError('adapter close acknowledgement deadline/identity')"
+    }
+  ],
+  "repaired_run_preregistered_case_passed": true,
+  "research_conclusion": false,
+  "schema": "V1-batch-conclusion/v1",
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

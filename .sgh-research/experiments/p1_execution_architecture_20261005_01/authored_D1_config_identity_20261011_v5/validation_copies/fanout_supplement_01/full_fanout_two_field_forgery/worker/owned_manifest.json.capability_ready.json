@@ -1,0 +1,37 @@
+{
+  "boot_id": "d9ebbc36-acd7-46ac-a805-bfe3c9eedd39",
+  "capability_endpoint": {
+    "gid": [
+      1,
+      15,
+      151,
+      211,
+      170,
+      16,
+      63,
+      123,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      21,
+      3
+    ],
+    "kind": "publisher",
+    "topic": "/p1/worker_capability",
+    "type": "usv_research_interfaces/msg/WorkerCapability"
+  },
+  "capability_matched_subscribers": 3,
+  "checked_steady_ns": 73813821981106,
+  "contract_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+  "execute_qualified": false,
+  "fixture_only": true,
+  "owned_manifest_sha256": "9c1d3db1c17d20ef2c8e5626cf81ad89b38ba4a6ee2c46ad2c1e7c60538c3dfa",
+  "pid": 69802,
+  "process_start_ticks": 7381332,
+  "role": "worker",
+  "run_id": "owned_source_v4_01",
+  "schema": "p1-owned-native-capability-ready-v1"
+}

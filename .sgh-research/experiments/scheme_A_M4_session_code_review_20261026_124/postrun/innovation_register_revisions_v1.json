@@ -1,0 +1,17 @@
+{
+  "schema": "single-register-review-input-v124",
+  "register": "/home/trevor/USV/.sgh-research/research-innovations.md",
+  "proposed_only": true,
+  "register_modified": false,
+  "is_second_innovation_register": false,
+  "items": [
+    {"id": "I-2026-10-25-01", "retain": "finite scoped binding-change recovery and immutable-terminal Epoch composition", "revise": "remove model p_global transaction wording; full binding novelty rather than path/profile-only novelty; disclose pending Proposal-token gap"},
+    {"id": "I-2026-10-25-02", "retain": "real RNW3 silent-resume acceptance with paired writer mapping", "revise": "add cap and receive-latency assumptions, integer domain and out-of-domain outcome; not universal elimination of projected history regressions"},
+    {"id": "I-2026-10-25-03", "retain": "real C setter finite M0/M1 serial numeric diff0 and per-version warm books", "revise": "not native concurrent atomicity or arbitrary/full-state bitwise equivalence; qualify prepare/commit/owner and failure boundaries"},
+    {"id": "I-2026-10-25-04", "retain": "real finite process-group survivor evidence for the tested supervisor", "revise": "SIGTERM handler sets stop; main-loop close path forks; fd3..255 and unchecked fork failure are remaining implementation limits"},
+    {"id": "I-2026-10-26-05", "retain": "accepted markers and Job/sequence correlation improve on old event counts", "revise": "complete identity, causal ordering and required run gates still need implementation; do not describe the current reusable function as complete"},
+    {"id": "I-2026-10-25-06", "retain": "picked-blocked deterministic Q1d capacity+1 fact", "revise": "do not use it to validate Q2 payload identity; fix Q2 dangling capture and multiset coverage"}
+  ],
+  "academic_novelty_checked": false,
+  "derived_ideas_status": {"B0": "unimplemented", "methodology_paper_material": "unwritten"}
+}

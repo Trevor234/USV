@@ -1,0 +1,17 @@
+{
+  "schema": "scheme-A-C3.5-document-artifact-QA/v1",
+  "passed": true,
+  "documents": [
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/方案A_C3_5执行依赖合同与有界验证报告_2026-10-13.md",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/current-status.md",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/方案A_C3_6下一步实施计划_2026-10-13.md",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/readiness/方案A_C3_5_readiness独立合同与组件验证说明_2026-10-13.md",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/postrun/current_independent_review_v3.md",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/postrun/independent_review_final_result_C3_6_priorities.md"
+  ],
+  "local_links_checked": 40,
+  "missing_targets": [],
+  "readiness_fact_review": "152 files/28 records/9 imported helpers/69 Source and Storage, observer ordered subset, captured/current identities and nonqualification reviewed independently",
+  "reviewer_files_changed": false,
+  "source_and_contract_identity_changed_by_document_edit": false
+}

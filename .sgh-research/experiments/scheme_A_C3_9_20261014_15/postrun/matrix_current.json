@@ -1,0 +1,436 @@
+{
+  "actual_cases": {
+    "normal": {
+      "Witness_observation_complete": true,
+      "Witness_v2": {
+        "basis": {
+          "activation_reason_covers_all_worker_gates": false,
+          "activation_reason_dictionary": {
+            "0": "accepted",
+            "1": "shutdown",
+            "2": "run_unusable",
+            "3": "other_rejected"
+          },
+          "business_ready_observed": false,
+          "enabled": true,
+          "evaluation_profile": "closed_shadow_observation",
+          "execute_qualified": false,
+          "expected_log_overflow_mechanism_passed": false,
+          "issues": [
+            {
+              "category": "normal_business",
+              "code": "no_accepted_activation"
+            }
+          ],
+          "normal_business": false,
+          "normal_contract_complete": false,
+          "normal_contract_qualified": false,
+          "normal_contract_scope": "Witness records and first real accepted activation/BusinessReady consistency only; no control or phase qualification",
+          "observation_complete": true,
+          "passed": true,
+          "phase_qualified": false,
+          "phase_unknown_state_rows": 0,
+          "production_profile": "closed_shadow_observation",
+          "research_conclusion": false,
+          "schema": "p1-fixed-witness-check-v2",
+          "schema_valid": true,
+          "scope": "terminal_fixed_witness_integrity_only",
+          "source_join_verified": false,
+          "witness_complete": true
+        },
+        "business_ready_source_bound": false,
+        "counts": {
+          "activations": 20,
+          "attempts": 20,
+          "decisions": 42,
+          "jobs": 21,
+          "submits": 21,
+          "ticks": 42
+        },
+        "normal_business_contract_qualified": false,
+        "passed": true,
+        "profile": "closed_shadow_observation",
+        "unlogged_phase_callback_fact_scope": "phase POD integrity; accepted BusinessReady and terminal Close additionally bound to Source",
+        "whole_population_source_join": true,
+        "window_clipped": false
+      },
+      "Worker_callbacks": {
+        "candidate": {
+          "Source_flush_complete_monotonic_ns": 204163039393694,
+          "all_recorded_received": true,
+          "complete_received_population": true,
+          "expected_owned_gid": [
+            1,
+            15,
+            151,
+            211,
+            220,
+            213,
+            205,
+            210,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            20,
+            3
+          ],
+          "matched": 21,
+          "occurrence_assignment_semantics": "exact unique Job identity",
+          "packet_identity_available": true,
+          "received": 21,
+          "reception_window_close_monotonic_ns": 204163039342708,
+          "recorded": 21,
+          "recorded_not_observed": []
+        },
+        "capability": {
+          "Source_flush_complete_monotonic_ns": 204163039393694,
+          "all_recorded_received": false,
+          "complete_received_population": true,
+          "expected_owned_gid": [
+            1,
+            15,
+            151,
+            211,
+            220,
+            213,
+            205,
+            210,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            21,
+            3
+          ],
+          "matched": 47,
+          "occurrence_assignment_semantics": "full typed payload occurrence subset; identical Capability occurrences interchangeable; greedy storage ordinals are not unique packet identities",
+          "packet_identity_available": false,
+          "received": 47,
+          "reception_window_close_monotonic_ns": 204163039342708,
+          "recorded": 61,
+          "recorded_not_observed": [
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 24
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 25
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 26
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 27
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 28
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 29
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 30
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 31
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 32
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 33
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 34
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 35
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 0,
+              "job_id": null,
+              "payload_sha256": "e3c0a20b2a96113aaed6f3d194f40c508e2f2de9fc7b57cb5468b950d515d496",
+              "reason": "",
+              "storage_ordinal": 36
+            },
+            {
+              "active_job": 0,
+              "completed_jobs": 21,
+              "job_id": null,
+              "payload_sha256": "9d7f5b4477eb717fc8dbae76e6c00d43c7b0964db62d3a48fca0dcd314bac5af",
+              "reason": "",
+              "storage_ordinal": 61
+            }
+          ]
+        }
+      },
+      "Worker_publications": {
+        "Worker_Source_finished_ns": 204163242177488,
+        "all_subscriber_delivery_proven": false,
+        "candidates_published": 21,
+        "capability_published": 61,
+        "capability_recorded": 61,
+        "jobs_received": 21,
+        "passed": true
+      },
+      "component_passed": true,
+      "issues": [],
+      "normal_driver_passed": true,
+      "resource_cleanup_complete": true
+    },
+    "worker_post_exit": {
+      "Witness_observation_complete": true,
+      "Witness_v2": {
+        "basis": {
+          "activation_reason_covers_all_worker_gates": false,
+          "activation_reason_dictionary": {
+            "0": "accepted",
+            "1": "shutdown",
+            "2": "run_unusable",
+            "3": "other_rejected"
+          },
+          "business_ready_observed": false,
+          "enabled": true,
+          "evaluation_profile": "closed_shadow_observation",
+          "execute_qualified": false,
+          "expected_log_overflow_mechanism_passed": false,
+          "issues": [
+            {
+              "category": "normal_business",
+              "code": "no_accepted_activation"
+            }
+          ],
+          "normal_business": false,
+          "normal_contract_complete": false,
+          "normal_contract_qualified": false,
+          "normal_contract_scope": "Witness records and first real accepted activation/BusinessReady consistency only; no control or phase qualification",
+          "observation_complete": true,
+          "passed": true,
+          "phase_qualified": false,
+          "phase_unknown_state_rows": 0,
+          "production_profile": "closed_shadow_observation",
+          "research_conclusion": false,
+          "schema": "p1-fixed-witness-check-v2",
+          "schema_valid": true,
+          "scope": "terminal_fixed_witness_integrity_only",
+          "source_join_verified": false,
+          "witness_complete": true
+        },
+        "business_ready_source_bound": false,
+        "counts": {
+          "activations": 21,
+          "attempts": 21,
+          "decisions": 50,
+          "jobs": 22,
+          "submits": 22,
+          "ticks": 50
+        },
+        "normal_business_contract_qualified": false,
+        "passed": true,
+        "profile": "closed_shadow_observation",
+        "unlogged_phase_callback_fact_scope": "phase POD integrity; accepted BusinessReady and terminal Close additionally bound to Source",
+        "whole_population_source_join": true,
+        "window_clipped": false
+      },
+      "Worker_callbacks": {
+        "candidate": {
+          "Source_flush_complete_monotonic_ns": 204208173599816,
+          "all_recorded_received": null,
+          "complete_callback_counter_population": true,
+          "complete_received_CDR_population": false,
+          "expected_owned_gid": [
+            1,
+            15,
+            151,
+            211,
+            66,
+            215,
+            175,
+            219,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            20,
+            3
+          ],
+          "live_typed_received": 21,
+          "live_typed_storage_matched": 21,
+          "occurrence_assignment_semantics": "Only live full typed occurrences matched. Rejected early guards have no received CDR; remaining Storage ordinals cannot be assigned to those callbacks.",
+          "packet_identity_available": true,
+          "post_exit_early_rejected": [
+            {
+              "auth": "worker_process_exited",
+              "callback_sequence": 22,
+              "entry_ns": 204207555798661,
+              "processed_ns": 204207555815212
+            }
+          ],
+          "received": 22,
+          "reception_window_close_monotonic_ns": 204208173581706,
+          "recorded": 22,
+          "rejected_payload_identity_available": false,
+          "unassigned_Storage_ordinals": [
+            22
+          ]
+        },
+        "capability": {
+          "Source_flush_complete_monotonic_ns": 204208173599816,
+          "all_recorded_received": null,
+          "complete_callback_counter_population": true,
+          "complete_received_CDR_population": false,
+          "expected_owned_gid": [
+            1,
+            15,
+            151,
+            211,
+            66,
+            215,
+            175,
+            219,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            21,
+            3
+          ],
+          "live_typed_received": 48,
+          "live_typed_storage_matched": 48,
+          "occurrence_assignment_semantics": "Only live full typed occurrences matched. Rejected early guards have no received CDR; remaining Storage ordinals cannot be assigned to those callbacks.",
+          "packet_identity_available": false,
+          "post_exit_early_rejected": [
+            {
+              "auth": "worker_process_exited",
+              "callback_sequence": 49,
+              "entry_ns": 204207555764275,
+              "processed_ns": 204207555782245
+            }
+          ],
+          "received": 49,
+          "reception_window_close_monotonic_ns": 204208173581706,
+          "recorded": 50,
+          "rejected_payload_identity_available": false,
+          "unassigned_Storage_ordinals": [
+            49,
+            50
+          ]
+        }
+      },
+      "Worker_publications": {
+        "Worker_Source_finished_ns": 204207262406529,
+        "all_subscriber_delivery_proven": false,
+        "candidates_published": 22,
+        "capability_published": 50,
+        "capability_recorded": 50,
+        "jobs_received": 22,
+        "passed": true
+      },
+      "component_passed": true,
+      "issues": [],
+      "normal_driver_passed": true,
+      "resource_cleanup_complete": true
+    }
+  },
+  "build_attempt01_retained_failed": true,
+  "cleanup_failure_case": {
+    "Witness_observation_complete": true,
+    "actual_Accepted": 0,
+    "close_errors": [
+      {
+        "action": "C3.8 owned close scenario",
+        "error": "ValueError('actual Worker publications while paused absent; no fabricated queue fallback')"
+      }
+    ],
+    "component_scope": "Actual early Worker exit, actual native gate pause then publication precondition failure; complete registered fallback cleanup only. No normal or queued-interface/payload qualification.",
+    "driver_returncode": 2,
+    "error": "owned role exited early: worker",
+    "passed": true,
+    "stage_qualified": false
+  },
+  "default_build_rc": 0,
+  "execute_qualified": false,
+  "finite_checker_count": 40,
+  "native_count": 251,
+  "passed": true,
+  "qualifications": {
+    "B4": "unknown",
+    "B5": "unknown",
+    "F6": "unknown",
+    "M0b": "unknown",
+    "M4": "unknown",
+    "P1": "unknown"
+  },
+  "research_conclusion": false,
+  "schema": "C3.9-actual-matrix/v1",
+  "stage_qualified": false
+}

@@ -1,0 +1,137 @@
+{
+  "MPC_current_mirror_required_for_offline_local_numeric_run": false,
+  "MPC_current_mirror_unavailable": true,
+  "MPC_delivery_required_before_claiming_delivery": true,
+  "ROS_nodes_started": false,
+  "RTI_solves_performed": false,
+  "baseline_abs_tolerance": 1e-11,
+  "baseline_cases": [
+    "once__first_once",
+    "refined__first_refined"
+  ],
+  "cases": 10,
+  "cost_material_worsening_relative_fraction": 0.01,
+  "cost_nonworsening_abs_tolerance": 1e-10,
+  "execute_qualified": false,
+  "first_control_choices": 5,
+  "first_interval_speed_gain_tolerance_m_s": 1e-12,
+  "independent_abs_tolerance": 1e-11,
+  "input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/actual_first_control_input_v1.json",
+  "input_sha256": "24f23593c3134c8729e3f130c40fa217517acfb8c714495a3e98fd2e0293ec26",
+  "ordered_cases": [
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__first_once",
+      "first_control": [
+        0.3645576181771613,
+        0.36455761817717686
+      ],
+      "first_control_id": "first_once",
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__first_refined",
+      "first_control": [
+        0.36554863584879443,
+        0.36554863584879443
+      ],
+      "first_control_id": "first_refined",
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__n050",
+      "first_control": [
+        0.5,
+        0.5
+      ],
+      "first_control_id": "n050",
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__n100",
+      "first_control": [
+        1.0,
+        1.0
+      ],
+      "first_control_id": "n100",
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__n200",
+      "first_control": [
+        2.0,
+        2.0
+      ],
+      "first_control_id": "n200",
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__first_once",
+      "first_control": [
+        0.3645576181771613,
+        0.36455761817717686
+      ],
+      "first_control_id": "first_once",
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__first_refined",
+      "first_control": [
+        0.36554863584879443,
+        0.36554863584879443
+      ],
+      "first_control_id": "first_refined",
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__n050",
+      "first_control": [
+        0.5,
+        0.5
+      ],
+      "first_control_id": "n050",
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__n100",
+      "first_control": [
+        1.0,
+        1.0
+      ],
+      "first_control_id": "n100",
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__n200",
+      "first_control": [
+        2.0,
+        2.0
+      ],
+      "first_control_id": "n200",
+      "tail_id": "refined"
+    }
+  ],
+  "primary_job_id": 1,
+  "research_conclusion": false,
+  "schema": "scheme-A-first-control-preregistration/v1",
+  "source_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/delivery_verification.json": "6a634b922a6bed6cc8f32047d4eaec9d428f59836b14c21ce30ae1bcaf5030fc",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/documents/next_objective_mechanism_plan_v1.md": "a1901f1716cfd8b09bca856cce51d622d1fecc4622c7f5da7459a13e5b7635dc",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/postrun/final_QA_v1.json": "b7218e596383b16b8a2dfcaca5b631d5bfe7844d6989c8f4f83f8f1f28a56c41",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/postrun/startup_mechanism_audit_v2.json": "b27f0e6d88ed01dd121200d11b4fc02268ec1bfd4e42c70dbaf0dc7ff26e54b9",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/native_startup_v1.json": "e4f77f5618228d7df9dfbd3807d3a727f1fb7240a74480f8757a4dbfd3376ee0"
+  },
+  "stage_qualified": false,
+  "tail_count": 2,
+  "tail_reoptimization": false
+}

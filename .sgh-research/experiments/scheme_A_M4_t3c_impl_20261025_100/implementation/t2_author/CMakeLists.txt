@@ -1,0 +1,83 @@
+cmake_minimum_required(VERSION 3.16)
+project(p1_M4_owned_local_nominal LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rmw_fastrtps_shared_cpp REQUIRED)
+find_package(usv_mpc_cpp REQUIRED)
+find_package(usv_research_interfaces REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(rosgraph_msgs REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(Threads REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(ament_cmake_gtest REQUIRED)
+if(NOT DEFINED P1_OWNED_SOURCE_BUNDLE_SHA256 OR NOT DEFINED P1_DRIVER_TOOL_SHA256)
+ message(FATAL_ERROR "M4 exact source bundle and Driver source SHA required")
+endif()
+function(link_owned target)
+ target_include_directories(${target} PRIVATE common)
+ target_link_libraries(${target} OpenSSL::Crypto Threads::Threads nlohmann_json::nlohmann_json Eigen3::Eigen)
+ ament_target_dependencies(${target} rclcpp rmw_fastrtps_shared_cpp usv_research_interfaces nav_msgs sensor_msgs std_msgs rosgraph_msgs)
+ target_compile_definitions(${target} PRIVATE P1_OWNED_SOURCE_BUNDLE_SHA256="${P1_OWNED_SOURCE_BUNDLE_SHA256}" P1_DRIVER_TOOL_SHA256="${P1_DRIVER_TOOL_SHA256}")
+endfunction()
+add_executable(p1_m4_regulator_owned observer/src/shadow/regulator_owned_execute.cpp)
+target_include_directories(p1_m4_regulator_owned PRIVATE observer/src/shadow worker)
+target_link_libraries(p1_m4_regulator_owned usv_mpc_cpp::mpc_core_lib)
+link_owned(p1_m4_regulator_owned)
+add_executable(p1_m4_worker_owned worker/solver_worker_m4.cpp)
+target_include_directories(p1_m4_worker_owned PRIVATE worker)
+target_link_libraries(p1_m4_worker_owned usv_mpc_cpp::mpc_solver_lib)
+link_owned(p1_m4_worker_owned)
+set_target_properties(p1_m4_worker_owned PROPERTIES BUILD_RPATH "/home/trevor/acados/lib")
+add_executable(p1_m4_fixture_owned fixture/synthetic_source_m4.cpp common/usv_model_dynamic.cpp)
+target_include_directories(p1_m4_fixture_owned PRIVATE fixture)
+link_owned(p1_m4_fixture_owned)
+# T3 close-boundary variant (batch 100): identical to p1_m4_fixture_owned
+# except the signal behavior documented in its header comment. Used only by
+# the T3-C registered runs; ordinary runs keep the original target above.
+add_executable(p1_m4_fixture_t3_survivor fixture/synthetic_source_m4_t3_survivor.cpp common/usv_model_dynamic.cpp)
+target_include_directories(p1_m4_fixture_t3_survivor PRIVATE fixture)
+link_owned(p1_m4_fixture_t3_survivor)
+add_executable(test_m4_native_policy tests/test_m4_native_policy.cpp)
+target_include_directories(test_m4_native_policy PRIVATE observer/src/shadow)
+link_owned(test_m4_native_policy)
+add_executable(test_m4_recorder_process tests/test_m4_recorder_process.cpp)
+link_owned(test_m4_recorder_process)
+ament_add_gtest(test_m4_activation_alignment observer/tests/test_reference_activation_alignment.cpp TIMEOUT 60)
+target_include_directories(test_m4_activation_alignment PRIVATE observer/src/shadow worker)
+target_link_libraries(test_m4_activation_alignment usv_mpc_cpp::mpc_core_lib)
+link_owned(test_m4_activation_alignment)
+target_compile_definitions(test_m4_activation_alignment PRIVATE P1_REGULATOR_SOURCE="${CMAKE_CURRENT_SOURCE_DIR}/observer/src/shadow/regulator_owned_execute.cpp" P1_ACTIVATION_REPLAY_FILE="${CMAKE_CURRENT_SOURCE_DIR}/observer/tests/data/parent_activation_prefixes_v1.json")
+
+# W1: the v4 diagnostic profile must be reachable only through its own scope, and
+# the v3 frozen contract must keep its exact previous acceptance rules.
+ament_add_gtest(test_v4_diagnostic_contract tests/test_v4_diagnostic_contract.cpp TIMEOUT 60)
+target_include_directories(test_v4_diagnostic_contract PRIVATE common)
+target_link_libraries(test_v4_diagnostic_contract nlohmann_json::nlohmann_json)
+target_compile_definitions(test_v4_diagnostic_contract PRIVATE
+  P1_V4_CONTRACT="${P1_V4_CONTRACT_FILE}" P1_V3_CONTRACT="${P1_V3_CONTRACT_FILE}")
+
+# W2: the native-boundary decision, tested without ROS or a solve.
+ament_add_gtest(test_w2_native_boundary worker/test_w2_native_boundary.cpp TIMEOUT 60)
+target_include_directories(test_w2_native_boundary PRIVATE worker)
+target_link_libraries(test_w2_native_boundary nlohmann_json::nlohmann_json)
+link_owned(test_w2_native_boundary)
+
+# W2: entry contract (parameter whitelist and fd direction), no ROS needed.
+ament_add_gtest(test_w2_entry_contract worker/test_w2_entry_contract.cpp TIMEOUT 60)
+target_link_libraries(test_w2_entry_contract nlohmann_json::nlohmann_json)
+
+# W2: the same boundary driven through the real owned_cold::Backend seam.
+ament_add_gtest(test_w2_backend_wiring worker/test_w2_backend_wiring.cpp TIMEOUT 120)
+target_include_directories(test_w2_backend_wiring PRIVATE worker)
+target_link_libraries(test_w2_backend_wiring usv_mpc_cpp::mpc_solver_lib nlohmann_json::nlohmann_json)
+link_owned(test_w2_backend_wiring)
+set_target_properties(test_w2_backend_wiring PROPERTIES BUILD_RPATH "/home/trevor/acados/lib")
+target_link_options(test_w2_backend_wiring PRIVATE
+  "-Wl,--wrap=usv_dyn_nmpc_acados_update_params"
+  "-Wl,--wrap=usv_dyn_nmpc_acados_solve")

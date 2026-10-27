@@ -1,0 +1,42 @@
+{
+  "actual_clock_epoch_interleave_claimed": false,
+  "actual_input_race_required": true,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "diagnostic_wait_scheduling_observation_slack_ns": 5000000,
+  "driver_budget_seconds": 45,
+  "execute_qualified": false,
+  "loader": {
+    "bytes": 107456,
+    "sha256": "b0836635fa8f05b9474819d09797a774b7ba498e67c14831dbf92c6d70883cf1"
+  },
+  "max_raw_bytes": 134217728,
+  "measurement_seconds": 5,
+  "no_patched_Source_evidence": true,
+  "original_tick_jitter_ns": 20000000,
+  "policy": "await_actual_odom_once_before_commit_v1",
+  "research_conclusion": false,
+  "run_id": "v3_odom_01",
+  "runner": {
+    "bytes": 2524,
+    "sha256": "fe113f3d73b5442bcd486a89e0fcaa0706f0eff8cdbe99229e802a809e1755f3"
+  },
+  "selected_checker_negative_cases": [
+    "unchanged_observed_sequence",
+    "false_input_guard",
+    "third_attempt",
+    "capacity33",
+    "wrong_owned_GID",
+    "input_commit_before_snapshot",
+    "wait_budget_changed",
+    "false_prior_healthy_activation"
+  ],
+  "selected_plan": "A",
+  "source_changes_are_actual_owned_callbacks": true,
+  "source_lock": {
+    "bytes": 344348,
+    "sha256": "5c683d137fd495896e220b8980eb3f014298cc5f440a38ecc8743911d160f7ec"
+  },
+  "source_wait_budget_ns": 25000000,
+  "stage_qualified": false,
+  "verdict": "GO"
+}

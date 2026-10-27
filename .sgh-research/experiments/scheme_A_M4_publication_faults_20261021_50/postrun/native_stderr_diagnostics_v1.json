@@ -1,0 +1,24 @@
+{
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "SDK_localhost_compatibility_warnings": [
+    "[WARN] [1792561742.248733006] [rcl]: ROS_LOCALHOST_ONLY is deprecated but still honored if it is enabled. Use ROS_AUTOMATIC_DISCOVERY_RANGE and ROS_STATIC_PEERS instead.",
+    "[WARN] [1792561742.248751496] [rcl]: 'localhost_only' is enabled, 'automatic_discovery_range' and 'static_peers' will be ignored."
+  ],
+  "all_delegated_calls_succeeded_and_wire_matched": true,
+  "all_overwrite_emitters_at_declared_test_return_seam": true,
+  "attribution": "Existing SDK error state was overwritten by this test ELF error setter; this is the observed diagnostic cause. Generic type-support fallback as the original stale-state source is an inference, not a proven full provenance trace.",
+  "bytes": 4612,
+  "new_ROS_test_run": false,
+  "new_failure_text_and_emitter_proven": true,
+  "old_error_state_text": "Handle's typesupport identifier (rosidl_typesupport_cpp) is not supported by this library, at ./src/type_support_dispatch.hpp:114",
+  "old_typesupport_error_state_overwrite_diagnostics": 8,
+  "original_stale_state_full_provenance_proven": false,
+  "original_stderr_modified_or_filtered": false,
+  "passed": true,
+  "schema": "M4-private-test-native-stderr-complete-classification/v1",
+  "sha256": "8fd812e64f226e36f63685da80ea987414ccaa906d035d8704444b47015d12e9",
+  "source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_publication_faults_20261021_50/verification/component_run01/stderr.log",
+  "these_diagnostics_called_real_DDS_failures": false,
+  "unclassified_nonempty_stderr_lines": 0
+}

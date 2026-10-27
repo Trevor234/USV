@@ -1,0 +1,80 @@
+{
+  "51_old_test_qualification_transferred_to_new_source": false,
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "R1_or_R2_implemented_or_run_this_batch": false,
+  "absolute_local_file_links_checked": 44,
+  "current_complete_parallel_source_build_regression_qualified": false,
+  "document": {
+    "bytes": 53881,
+    "sha256": "6ce93666d3be646da64e890dda3d2bb153e47c3c9c7ff9e3d5ac2bab71f8e5f7"
+  },
+  "document_lines": 516,
+  "frozen47_actual_files_checked": 4103,
+  "frozen47_mismatches": 0,
+  "historical_51_baseline_initial_check_passed": true,
+  "live_parallel_sources_claimed_still_frozen_after_capture": false,
+  "main_document": "documents/方案A_主线进度_代码改动与后续实施详解_2026-10-21.md",
+  "missing_local_file_links": [],
+  "new_FCU_requests": 0,
+  "new_ROS_runs": 0,
+  "old_records_failed_runs_and_user_changes_overwritten": false,
+  "old_strict_workspace_final_check_passed": false,
+  "ordinary_production_release_enabled_by_this_batch": false,
+  "parallel_aware_archive_and_frozen_input_check_passed": true,
+  "parallel_snapshot_captured_UTC": "2026-10-21T12:34:29.640324+00:00",
+  "parallel_snapshot_regular_source_files": 20,
+  "passed": true,
+  "passed_scope": "document consistency, exact point-in-time parallel snapshot and selected sealed asset verification only",
+  "production_controller_source_changes_by_this_batch": 0,
+  "proofs": {
+    "CURRENT.md": {
+      "bytes": 2839,
+      "sha256": "7992ed306677c6526397335de4cf3465223418c4a0ba734fb9f39b1bf15af7ee"
+    },
+    "documents/方案A_主线进度_代码改动与后续实施详解_2026-10-21.md": {
+      "bytes": 53881,
+      "sha256": "6ce93666d3be646da64e890dda3d2bb153e47c3c9c7ff9e3d5ac2bab71f8e5f7"
+    },
+    "evidence/current_baseline_adoption_v1.json": {
+      "bytes": 11820,
+      "sha256": "3bc3de2f152a9951ccb847ba002b05554254cc807897ab5ecff453e8ec92530b"
+    },
+    "evidence/final_baseline_adoption_v1.json": {
+      "bytes": 1195,
+      "sha256": "f260e806f6bfef39fa502587bb167d2d163cd7e10a36508f2337e1f9b03fa862"
+    },
+    "evidence/independent_review_summary_v1.json": {
+      "bytes": 887,
+      "sha256": "07152490b906d72958f10f0d8658c53903e44d33c9391ffedf2118b5bb744076"
+    },
+    "evidence/parallel_aware_checkpoint_v2.json": {
+      "bytes": 4257,
+      "sha256": "305201201f2624e91eaaebf32676796299197e829edaa773b8fe6b067ca847b5"
+    },
+    "evidence/parallel_snapshot_v2/manifest.json": {
+      "bytes": 12073,
+      "sha256": "f1cf85550584824cd67a829cd7fb75ce7a2173b5ed5e6a6fbeeeef5f260c13f5"
+    },
+    "postrun/next_implementation_plan_v2.json": {
+      "bytes": 3109,
+      "sha256": "b7db35c4ce58394a1a972c9b77faa5a30f4785d79cdafbb3caea655f38e0dda3"
+    }
+  },
+  "research_conclusion": false,
+  "schema": "SchemeA-mainline-status-document-and-baseline-checkpoint-QA/v1",
+  "selected_sealed_archive_file_counts": {
+    "scheme_A_M4_publication_faults_20261021_50": 262,
+    "scheme_A_M4_recorder_bootstrap_20261021_49": 533,
+    "scheme_A_formal_execute_profile_20261020_47": 396,
+    "scheme_B_MANUAL_contract_20261021_51": 282
+  },
+  "snapshot_patch": {
+    "bytes": 24950,
+    "sha256": "af797f034828b2479fed96fa8ce2c16b00d1bd43e08b4da8e5be3faa9b4443d5"
+  },
+  "snapshot_tracked_changes": 16,
+  "snapshot_untracked_files_including_preexisting_zcodeignore": 4,
+  "strict_failure_preserved_and_explained_by_user_confirmed_parallel_work": true
+}

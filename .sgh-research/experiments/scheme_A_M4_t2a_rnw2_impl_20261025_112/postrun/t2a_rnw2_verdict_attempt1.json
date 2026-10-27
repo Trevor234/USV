@@ -1,0 +1,97 @@
+{
+  "batch": 112,
+  "checks": [
+    {
+      "detail": {
+        "fixture": {
+          "empty": true,
+          "rc": 0
+        },
+        "recorder": {
+          "empty": true,
+          "rc": 0
+        },
+        "regulator": {
+          "empty": true,
+          "rc": 0
+        },
+        "worker": {
+          "empty": true,
+          "rc": 0
+        }
+      },
+      "name": "healthy_close",
+      "passed": true
+    },
+    {
+      "detail": [
+        "fixture",
+        "worker",
+        "recorder",
+        "regulator"
+      ],
+      "name": "exactly_four_single_spawns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_restart_events",
+      "passed": true
+    },
+    {
+      "detail": {
+        "clock_epochs": [
+          0
+        ],
+        "generations": [
+          1
+        ]
+      },
+      "name": "two_generations_with_distinct_clock_epoch",
+      "passed": false
+    },
+    {
+      "detail": null,
+      "name": "single_scoped_open_after_pause_terminal",
+      "passed": false
+    },
+    {
+      "detail": {
+        "candidates_after_open": 0,
+        "jobs_after_open": [],
+        "publications_after_open": 0
+      },
+      "name": "resume_new_window_acceptance",
+      "passed": false
+    },
+    {
+      "detail": {
+        "count": 6
+      },
+      "name": "job_ids_strictly_monotonic",
+      "passed": true
+    },
+    {
+      "detail": {
+        "count": 0
+      },
+      "name": "no_epoch_terminal_rejection_after_open",
+      "passed": true
+    },
+    {
+      "detail": {
+        "count": 0
+      },
+      "name": "scoped_resubmit_fired",
+      "passed": false
+    }
+  ],
+  "driver_passed": true,
+  "driver_rc": 0,
+  "driver_stderr_tail": "",
+  "driver_stdout_tail": "{\"passed\": true, \"error\": null, \"elapsed_seconds\": 10.306363748037256, \"output\": \"/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/runs/T2A_RNW2\"}\n",
+  "elapsed_seconds": 10.721,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/runs/T2A_RNW2",
+  "passed": false,
+  "schema": "T2A-RNW2-run-verdict/v1"
+}

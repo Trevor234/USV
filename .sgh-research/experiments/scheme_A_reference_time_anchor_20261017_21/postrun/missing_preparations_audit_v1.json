@@ -1,0 +1,179 @@
+{
+  "ROS_nodes_started": false,
+  "actual_SQLite": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261018_v21r2/runs/task_time_r02_s005_01/recorder/bag/bag_0.db3": "e8aa11c5108a3a3980c0e48bac3aac3959f55afa86cdbb958d15e0a1de66806a"
+  },
+  "actual_checker": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/runs/s005_02/check_result.json",
+    "sha256": "841acb61cfbde5be07ddcead815866544138475075490b1208cbe4c4983816e4"
+  },
+  "actual_enqueue_call_sites": [
+    {
+      "line": 664,
+      "text": "else maybe_enqueue_controlled_locked(p1::monotonic_ns());"
+    },
+    {
+      "line": 699,
+      "text": "if(reason.empty())maybe_enqueue_controlled_locked(p1::monotonic_ns());"
+    }
+  ],
+  "actual_runtime_cpp": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261018_v21r2/observer/src/shadow/regulator_shadow_observer.cpp",
+    "sha256": "5cc5ec05367eef33239c9b5cc27cbd7cc676feb12901a21c6afc9bc7e3e3973f"
+  },
+  "audit_passed": true,
+  "client_date": "2026-10-18",
+  "conclusion": "All six interior missing Jobs share an accepted phase while profile is new and path is old; exact matching path follows before cutoff but the actual callback has no enqueue wakeup. The next tick expires that phase. No corresponding Job reaches Worker. This is an observed conditional retry omission; it does not quantify the isolated performance effect of repairing it.",
+  "events": [
+    {
+      "applied_sequence": 11,
+      "blocked_preparation_tick": 32,
+      "empty_tick": 33,
+      "matching_path_processed_ns": 258133515170638,
+      "matching_path_source_index": 869,
+      "next_tick_expired_previous": true,
+      "no_Job_target_tick": 33,
+      "old_path_stamp_ns": 103001537212,
+      "pair_recovered_after_phase_ms": 0.637832,
+      "phase_accepted": true,
+      "phase_decision_sequence": 33,
+      "phase_delivery_ms": 0.883658,
+      "phase_observed_ns": 258133514532806,
+      "phase_publish_from_planned_ms": 3.243597,
+      "phase_source_index": 868,
+      "profile_source_index": 867,
+      "profile_stamp_ns": 103501715287,
+      "remaining_original_deadline_after_recovery_ms": 145.234913
+    },
+    {
+      "applied_sequence": 16,
+      "blocked_preparation_tick": 37,
+      "empty_tick": 38,
+      "matching_path_processed_ns": 258134515518065,
+      "matching_path_source_index": 1110,
+      "next_tick_expired_previous": true,
+      "no_Job_target_tick": 38,
+      "old_path_stamp_ns": 104001615643,
+      "pair_recovered_after_phase_ms": 0.994343,
+      "phase_accepted": true,
+      "phase_decision_sequence": 38,
+      "phase_delivery_ms": 1.142557,
+      "phase_observed_ns": 258134514523722,
+      "phase_publish_from_planned_ms": 2.975614,
+      "phase_source_index": 1109,
+      "profile_source_index": 1108,
+      "profile_stamp_ns": 104501744427,
+      "remaining_original_deadline_after_recovery_ms": 144.887486
+    },
+    {
+      "applied_sequence": 31,
+      "blocked_preparation_tick": 52,
+      "empty_tick": 53,
+      "matching_path_processed_ns": 258137515178102,
+      "matching_path_source_index": 1852,
+      "next_tick_expired_previous": true,
+      "no_Job_target_tick": 53,
+      "old_path_stamp_ns": 107001888094,
+      "pair_recovered_after_phase_ms": 0.682571,
+      "phase_accepted": true,
+      "phase_decision_sequence": 53,
+      "phase_delivery_ms": 1.127832,
+      "phase_observed_ns": 258137514495531,
+      "phase_publish_from_planned_ms": 2.962148,
+      "phase_source_index": 1851,
+      "profile_source_index": 1850,
+      "profile_stamp_ns": 107500818491,
+      "remaining_original_deadline_after_recovery_ms": 145.227449
+    },
+    {
+      "applied_sequence": 51,
+      "blocked_preparation_tick": 72,
+      "empty_tick": 73,
+      "matching_path_processed_ns": 258141515475319,
+      "matching_path_source_index": 2840,
+      "next_tick_expired_previous": true,
+      "no_Job_target_tick": 73,
+      "old_path_stamp_ns": 110999869709,
+      "pair_recovered_after_phase_ms": 0.62677,
+      "phase_accepted": true,
+      "phase_decision_sequence": 73,
+      "phase_delivery_ms": 1.112474,
+      "phase_observed_ns": 258141514848549,
+      "phase_publish_from_planned_ms": 3.330524,
+      "phase_source_index": 2839,
+      "profile_source_index": 2838,
+      "profile_stamp_ns": 111500935712,
+      "remaining_original_deadline_after_recovery_ms": 144.930232
+    },
+    {
+      "applied_sequence": 56,
+      "blocked_preparation_tick": 77,
+      "empty_tick": 78,
+      "matching_path_processed_ns": 258142515659409,
+      "matching_path_source_index": 3081,
+      "next_tick_expired_previous": true,
+      "no_Job_target_tick": 78,
+      "old_path_stamp_ns": 112001740634,
+      "pair_recovered_after_phase_ms": 0.685173,
+      "phase_accepted": true,
+      "phase_decision_sequence": 78,
+      "phase_delivery_ms": 1.340035,
+      "phase_observed_ns": 258142514974236,
+      "phase_publish_from_planned_ms": 3.22865,
+      "phase_source_index": 3080,
+      "profile_source_index": 3079,
+      "profile_stamp_ns": 112501094231,
+      "remaining_original_deadline_after_recovery_ms": 144.746142
+    },
+    {
+      "applied_sequence": 81,
+      "blocked_preparation_tick": 102,
+      "empty_tick": 103,
+      "matching_path_processed_ns": 258147515673893,
+      "matching_path_source_index": 4315,
+      "next_tick_expired_previous": true,
+      "no_Job_target_tick": 103,
+      "old_path_stamp_ns": 117000203023,
+      "pair_recovered_after_phase_ms": 0.622036,
+      "phase_accepted": true,
+      "phase_decision_sequence": 103,
+      "phase_delivery_ms": 1.329028,
+      "phase_observed_ns": 258147515051857,
+      "phase_publish_from_planned_ms": 3.317278,
+      "phase_source_index": 4314,
+      "profile_source_index": 4313,
+      "profile_stamp_ns": 117501971758,
+      "remaining_original_deadline_after_recovery_ms": 144.731658
+    }
+  ],
+  "execute_qualified": false,
+  "guard_or_threshold_modified": false,
+  "initial_empty_ticks": [
+    24
+  ],
+  "interior_empty_ticks": [
+    33,
+    38,
+    53,
+    73,
+    78,
+    103
+  ],
+  "measurement_empty_ticks": [
+    24,
+    33,
+    38,
+    53,
+    73,
+    78,
+    103
+  ],
+  "overall_case_passed": false,
+  "post_hoc_diagnostic": true,
+  "raw_locked_paths_rechecked": 100,
+  "recipe_sha256": "23f8badb2948718b01469fe02ccace9f8bd13368df89b831da881b2e4ec412b6",
+  "research_conclusion": false,
+  "schema": "scheme-A-missing-reference-pair-wakeup-audit/v1",
+  "stage_qualified": false,
+  "unique_cause_of_RMSE_failure_proven": false
+}

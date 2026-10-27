@@ -1,0 +1,174 @@
+{
+  "batch_registered": 103,
+  "cases": [
+    {
+      "assertions": [
+        "frozen_epoch_terminal_after_binding_change",
+        "gen1_first_proposal_valid",
+        "gen1_first_commit",
+        "gen1_second_proposal_successive",
+        "gen1_second_commit",
+        "gen1_no_generation_events",
+        "terminal_after_binding_change_quiesce_cleared",
+        "gen2_first_proposal_valid_after_scoped_open",
+        "gen2_opened_single_event",
+        "gen2_proposal_anchor_binding_B",
+        "g5_cross_generation_job_monotonicity_enforced",
+        "gen2_first_commit_job5",
+        "gen2_anchor_after_commit",
+        "ledger_generation1_record_complete",
+        "gen2_active_not_terminal"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T2B-GEN-E1",
+      "design": "positive control: gen2 scoped open + ledger + G5",
+      "family": "T2B_GEN_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/tests/test_scoped_epoch_v1.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T2B-GEN-component/v1"
+    },
+    {
+      "assertions": [
+        "retired_binding_proposal_rejected",
+        "no_extra_generation_or_ledger_growth",
+        "anchor_never_rolled_back",
+        "current_generation_still_advances"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T2B-GEN-E2",
+      "design": "revival negative: retired binding never re-anchors",
+      "family": "T2B_GEN_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/tests/test_scoped_epoch_v1.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T2B-GEN-component/v1"
+    },
+    {
+      "assertions": [
+        "same_binding_republish_is_successive",
+        "same_binding_never_opens_generation",
+        "successive_commit_normal"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T2B-GEN-E3",
+      "design": "same-content republish never opens a generation",
+      "family": "T2B_GEN_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/tests/test_scoped_epoch_v1.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T2B-GEN-component/v1"
+    },
+    {
+      "assertions": [
+        "domain_rejected_with_frozen_reason",
+        "no_open_completed_on_domain_failure",
+        "terminal_generation_unchanged_after_domain_failure"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T2B-GEN-E4",
+      "design": "G4: frozen static domain rejects 101-point binding, no open",
+      "family": "T2B_GEN_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/tests/test_scoped_epoch_v1.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T2B-GEN-component/v1"
+    },
+    {
+      "assertions": [
+        "own_binding_reblocked_by_g3",
+        "no_open_for_own_binding",
+        "old_anchor_kept_terminal"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T2B-GEN-E5",
+      "design": "G3: own binding re-blocked, old anchor kept terminal",
+      "family": "T2B_GEN_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/tests/test_scoped_epoch_v1.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T2B-GEN-component/v1"
+    },
+    {
+      "assertions": [
+        "g2_blocks_without_quiesce",
+        "no_open_before_quiesce",
+        "quiesce_marker_authorizes_open",
+        "gen2_commit_after_g2_satisfied"
+      ],
+      "budget_seconds": 60,
+      "case_id": "T2B-GEN-E6",
+      "design": "G2: no quiesce -> no submission; marker authorizes open",
+      "family": "T2B_GEN_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/tests/test_scoped_epoch_v1.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "T2B-GEN-component/v1"
+    }
+  ],
+  "family_registered": "T2B-GEN-Stage1",
+  "fixed_parameters": {
+    "frozen_epoch_policy": "first_successful_job_submit_completion_target_sim_v1",
+    "jobs": [
+      1,
+      2,
+      5
+    ],
+    "max_generations_cap": 8,
+    "points": 201,
+    "policy": "scoped_generation_first_target_task_time_profile_v2",
+    "speed": 0.05,
+    "ts_ns": [
+      1000000000,
+      2000000000,
+      3000000000
+    ]
+  },
+  "governance": {
+    "auto_retry": 0,
+    "component_not_owned": "R74-07: component verification does not borrow owned qualification",
+    "failure_originals_preserved": true,
+    "pre_registration_required": true,
+    "single_finite_execution": true
+  },
+  "not_claimed": [
+    "owned qualification (Stage 2 is batch 104)",
+    "ordinary-scope behavior change",
+    "any stage qualification or research conclusion"
+  ],
+  "obligation_binding": {
+    "design": "experiments/scheme_A_M4_t2b_epoch_design_20261025_102/documents/\u65b9\u6848A_\u7b2c102\u6279_T2B\u65b0\u4ee3\u9645scoped_Epoch\u751f\u547d\u5468\u671f\u8bbe\u8ba1_2026-10-25.md",
+    "review": "R74-07 (batch 74 independent review)",
+    "status_source": "experiments/scheme_A_M4_g3_t2b_20261025_86/documents/\u65b9\u6848A_\u7b2c86\u6279_G3_T2B\u56de\u987e\u6027\u590d\u6838_2026-10-25.md (\u65b0\u4ee3\u9645\u6b63\u63a7\u672a\u8986\u76d6)"
+  },
+  "schema": "T3-case-registration/v1",
+  "tree_base": {
+    "binary_sha256": "cc7398bc68c46624e6ea6a84c6805de91647277ac8a6aefd5860a7650513faf0",
+    "bundle_sha256": "94776264a2ecae17ef01d25afeca0beed2c6ce93fc1ee2c6454af2a8b05d9a61",
+    "source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author"
+  }
+}

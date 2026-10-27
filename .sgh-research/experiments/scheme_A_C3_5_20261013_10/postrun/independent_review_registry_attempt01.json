@@ -1,0 +1,17 @@
+{
+  "all_registry_pins_fixed_actual_bytes_verified": true,
+  "inputs_before_after_unchanged": true,
+  "issues": [],
+  "raw_parent_population": 160,
+  "registered_all_original_parent_pins": true,
+  "registry": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/external_input_registry_v1.json",
+    "sha256": "4756038b43dd3fc318d5b6a7092d2f68e12cb191a541ebc9c6029abeeef3b181"
+  },
+  "registry_matches_checker_constant": true,
+  "registry_pin_population": 402,
+  "schema": "scheme-A-C3.5-independent-external-registry-review/v1",
+  "scope": "read-only original bytes/closure check; no ROS or native runtime launch",
+  "source_bin_parent_population": 193,
+  "verified_regular_nofollow_pin_bytes": 91607892
+}

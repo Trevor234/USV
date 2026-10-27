@@ -1,0 +1,174 @@
+{
+  "schema": "p1-ntrip-simulation-inactive-scope-v1",
+  "date": "2026-10-10",
+  "user_scope": "NTRIP configuration is retained for hardware; simulation does not use the service.",
+  "implementation": "Existing simulation entrypoints already satisfy this scope; no launch, config or remote file changes are necessary.",
+  "reviewed_simulation_entries": [
+    "sim.launch.py",
+    "vrx.launch.py",
+    "sitl.launch.py",
+    "p0_contract_recording.launch.py",
+    "p0_config_reference_recording.launch.py"
+  ],
+  "ntrip_not_loaded_by_reviewed_project_entries": true,
+  "vrx_helper_checked": true,
+  "external_vrx_simulation_function_checked": true,
+  "external_gazebo_and_monitor_runtime_tested": false,
+  "simulation_ntrip_network_connection_required": false,
+  "simulation_ntrip_feature_gate_required": false,
+  "actual_running_processes_checked": false,
+  "nodes_started_or_stopped": false,
+  "remote_files_written": false,
+  "launch_and_config_identity_stable_across_reads": true,
+  "real_use_ntrip_default": "true",
+  "real_use_ntrip_false_remains_supported": true,
+  "standalone_ntrip_entry_retained": true,
+  "retained_configs": [
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+      "sha256": "c9cd5286fa721ebab8aaf2a36f62495685272a63bf633f948e76d07cb1b3fac4",
+      "bytes": 757
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mavros_config.yaml",
+      "sha256": "7831d7004f83b376b751a4a361248b492457d1acd1da1bfafcc2a61cf1be3b09",
+      "bytes": 1024
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml",
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9",
+      "bytes": 2881
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_A.yaml",
+      "sha256": "1732b009c4f137d5c4efe844fc891726297e331760a11b329e8c7ee2c7c0b325",
+      "bytes": 1786
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml",
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9",
+      "bytes": 2881
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_vrx.yaml",
+      "sha256": "df426364e7512e8ba6dfc366d98c26d8510f041f15aac650dbbe82f40202e3ef",
+      "bytes": 2418
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml",
+      "sha256": "9bcb3421d2870f34fbbd1732e53642e58ebb74edb820b40c630f88280323cb7c",
+      "bytes": 1690
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml.example",
+      "sha256": "28c63248f189b647087b4a57e3c317ee5c7f48dd44dec907031540c0c8c0ec32",
+      "bytes": 1802
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_nominal_f3.yaml",
+      "sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+      "bytes": 610
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_plant_f3.yaml",
+      "sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35",
+      "bytes": 2942
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/path_config.yaml",
+      "sha256": "53086a2ed0cbc60a7670a2137ac1d6f589ed7c54c564f969cccd3654b15dcb3a",
+      "bytes": 2027
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/research_bag_topics.yaml",
+      "sha256": "46d9e54a99e95edea2804c1e981e3d8827f7b814ce3e12c715e4d42967037bdd",
+      "bytes": 1006
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "sha256": "6bcdb14ff6c682dc22896e194fe4d434655d7dc237678d1b8fd820868eb576a1",
+      "bytes": 589
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+      "sha256": "450c2a7af1bf797b046fc59de168421245de1cd0bff76439a0456a15f19dd548",
+      "bytes": 1671
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+      "sha256": "fdf66993763e1a4343cef9de99a50e370f55462d0eed4be82625af4d2db66f25",
+      "bytes": 7180
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params.yaml",
+      "sha256": "a96c5c62c4f9421d3e9fd9e267ae5da4432dea147597121cad23dc41f2e19428",
+      "bytes": 4268
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_A.yaml",
+      "sha256": "c5334585225d81810f2ecd24e4b064190c764a083db1455d6b2c69d5da2f0bb2",
+      "bytes": 2147
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_B.yaml",
+      "sha256": "9425eb3fd68b8b9392affbe41b7bd7f36c0b12e8656c230adcfc75305aa7600a",
+      "bytes": 4336
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_sim.yaml",
+      "sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35",
+      "bytes": 2942
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "sha256": "25c9620799f611e6f619d4af2d9ed555c3fb8341f398b637ca53711e69c273e2",
+      "bytes": 519
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "sha256": "4228677782ad0d17d2506c593043fb3680e066c3588730e92fb901ff9b7a3529",
+      "bytes": 851
+    }
+  ],
+  "retained_ntrip_assets": [
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/fix_qos_relay.py",
+      "sha256": "ca996d538cc8913eee9230960d3e77d20728b4c32de5aff78777a5e52807e559"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/setup.py",
+      "sha256": "44a1a2a48d05ccd578212c15b895051c28d403f7e7ac57b115a4000ed01ce36f"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/package.xml",
+      "sha256": "d43bbc7c3b8216bb7cdd4250ed3dc5461965faf1dfb60df6508e6b0175008469"
+    }
+  ],
+  "original_guard_replaced_or_relaxed": false,
+  "global_guard_retested_this_task": false,
+  "last_report_global_guard_passed": false,
+  "D1_qualified": false,
+  "drift_simulation_applicability": {
+    "10,18": "NTRIP parameter identities remain drifted, but these configs are not used by reviewed simulation entrypoints.",
+    "14,22": "NTRIP launch identities remain drifted, but the hardware NTRIP subgraph is not loaded by reviewed simulation entrypoints.",
+    "23": "setup.py is shared packaging and remains in scope; only its new relay entrypoint feature is unused in simulation."
+  },
+  "other_drift_exclusions_created": false,
+  "evidence": [
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/ntrip_simulation_disable_20261010_01/inspection_before.json",
+      "sha256": "f70f4bea9ab9bf794c436edd9caba053578fc82da1dd04e14481390b4891f9f0"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/ntrip_simulation_disable_20261010_01/helper_and_readback.json",
+      "sha256": "fae9028f639c6755fef221dd21f51c4d7a2871d1ae1542862a05304ea9e341b4"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/ntrip_simulation_disable_20261010_01/vrx_external_edge.json",
+      "sha256": "43a27cab631cd817c6c1df30e809151486a1b82eec7243ee70ffed685a8b3659"
+    }
+  ],
+  "original_report_sha256": "973d41ad8d3ba753d4031c784c96012b4b9232bca7886eaab755895731829fec",
+  "original_machine_audit_sha256": "b68aadb2110fe6ddf4d0712c1e46df6c7c3a979cecd5a11aabc97d2390056e29",
+  "static_review_only": true
+}

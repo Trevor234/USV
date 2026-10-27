@@ -1,6 +1,10 @@
 /**:
   ros__parameters:
     # Shared safety defaults for MAVROS-backed real/SITL launches.
+    # 注意: mpc_fcu_mode / auto_mode_switch 不在此文件设置——real.launch.py 与
+    # sitl.launch.py 都按 scheme 显式传入（A=GUIDED, B=MANUAL），会覆盖这里的
+    # 任何取值。直接 ros2 run 时使用 mode_manager_node 的代码默认值
+    # （MANUAL / false）。在此重复声明只会制造"改了却不生效"的假象。
     geofence_radius: 200.0
     geofence_center_x: 0.0
     geofence_center_y: 0.0

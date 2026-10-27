@@ -1,0 +1,30 @@
+{
+  "schema": "C3.6-adapter-failure-inventory/v1",
+  "client_date": "2026-10-14",
+  "failures": [
+    {
+      "kind": "source_review",
+      "original": "review/node_review_attempt01.json",
+      "status": "v1 four P2 fixed in v2; original 32 source snapshots and three binaries retained"
+    },
+    {
+      "kind": "compile_budget",
+      "original": "build/observer_attempt02/result.json",
+      "status": "failed returncode124 at600s; same source completed final target with independent180s budget; original build logs/metadata preserved"
+    },
+    {
+      "kind": "native_assertion",
+      "original": "component/native_attempt01/result.json",
+      "status": "172/173, failed stable-CDR-padding assertion; 10 passing suites retained, separate fully decoded typed fixture12 passed; original log/XML/source/bin preserved"
+    },
+    {
+      "kind": "normal_Witness_contract",
+      "original": "runs/positive01/check_result.json",
+      "status": "failed; all20 activations rejected; no BusinessReady; complete_flag_disagrees; original gate/result/raw audit flag retained, normalWitness remains unqualified"
+    }
+  ],
+  "old_expected_updated": false,
+  "old_failures_deleted": false,
+  "current_runtime_rebuilt_to_force_acceptance": false,
+  "postrun_observation_scope": "separate full raw observation consistency only; retrospective scope, no normal phase qualification"
+}

@@ -1,0 +1,130 @@
+{
+  "parent": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1",
+  "files": {
+    "publisher/lineage.json": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/lineage.json",
+      "sha256": "541590624928c1dcf69d17afcbd645f8c242e70b435eeb81ab62a12e684ecadd"
+    },
+    "publisher/implementation_notes.md": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/implementation_notes.md",
+      "sha256": "f78b3a99d217548253463420e2999d8b1e5146a5c8b8d0cba61f0728b6c9e908"
+    },
+    "publisher/CMakeLists.txt": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/CMakeLists.txt",
+      "sha256": "2eb7f2cc4ad757341d54c12ab92ee78b9b2e4c3c4d89c2259076f49417af4300"
+    },
+    "publisher/tests/test_publisher_startup.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/tests/test_publisher_startup.cpp",
+      "sha256": "6315050aa067587bbac50beb1586cd87416021706edce9240030b175afd69cd0"
+    },
+    "publisher/src/mpc_node_main.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/src/mpc_node_main.cpp",
+      "sha256": "43f95ae192e61f7e8433a33801a16bc9993ae6a47ae2d33306bdfe897bdd7cc8"
+    },
+    "publisher/src/mpc_node.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/src/mpc_node.cpp",
+      "sha256": "6fcd225da16536805dcc3d47b3ddc3d190cef0fba8ca586fc3ad88eb37b70226"
+    },
+    "publisher/include/usv_mpc_cpp/p1_startup_gate.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "sha256": "2406472fbc05b97e771c0d9545c92a5d843de4fe2a2bcfa4f57e5dc6b150907c"
+    },
+    "publisher/include/usv_mpc_cpp/mpc_node.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+      "sha256": "93fbc4b2dd6bc480a61abf400b79108a6cd2f3812889b72651e6f5cdf9d07ad2"
+    },
+    "publisher/include/usv_mpc_cpp/research_logger.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/include/usv_mpc_cpp/research_logger.hpp",
+      "sha256": "daa7147ba7335b5e28192fe1cc481bc02f9247b2ba1c5e9db30c7229fe4b9b25"
+    },
+    "observer/readiness_protocol.json": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/readiness_protocol.json",
+      "sha256": "a70bea748d02bb13aa04480f783d079661cc294caebc54ca7eff0fb2a1cfa5fc"
+    },
+    "observer/implementation_notes.md": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/implementation_notes.md",
+      "sha256": "1e27002b394d5a1ba3d2e88a80da5b6b19e45f222beddd180bccc41e8d2ad096"
+    },
+    "observer/CMakeLists.txt": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/CMakeLists.txt",
+      "sha256": "5e9c475179dff1abf9a3b9a53152c576bd67c312472c91078a13eb237d88e29c"
+    },
+    "observer/source_lineage.json": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/source_lineage.json",
+      "sha256": "2d1ce01d854bf434658bf37b533d5195cfeb079af50e8660ca5a9469d9e63ec0"
+    },
+    "observer/tests/test_enqueue_branch.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/tests/test_enqueue_branch.cpp",
+      "sha256": "9909f8892ef84891519842056d05afa4f984311e9976ff4801554e88932494bc"
+    },
+    "observer/tests/test_shadow_entry.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/tests/test_shadow_entry.cpp",
+      "sha256": "06a20fbd43e460774bcdfb1573b3a26ceec0f26f1dcb41bf0b7c759b3fe3e66d"
+    },
+    "observer/tests/test_legacy_ready.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/tests/test_legacy_ready.cpp",
+      "sha256": "c90c1a5d01d7aadeeab5f72fd92cb1e9c43a68c71a0b37ba0a3c9cfe866d2456"
+    },
+    "observer/tests/test_d0_observation.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/tests/test_d0_observation.cpp",
+      "sha256": "6c9e4606670f35ec5069f998769cf7fba7ffde9815fd5e740a4f5bf1f3ed5955"
+    },
+    "observer/src/shadow/p1_diag_sink.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_diag_sink.hpp",
+      "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79"
+    },
+    "observer/src/shadow/p1_capability_lease.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_capability_lease.hpp",
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c"
+    },
+    "observer/src/shadow/protocol.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/protocol.hpp",
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+    },
+    "observer/src/shadow/p1_worker_liveness.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_worker_liveness.hpp",
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28"
+    },
+    "observer/src/shadow/p1_full_contract.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_full_contract.hpp",
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea"
+    },
+    "observer/src/shadow/p1_witness.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_witness.hpp",
+      "sha256": "c114df7d6c587e389ebdacc7344536e7f00dca81cc8dea2d352dac4ada6d6a93"
+    },
+    "observer/src/shadow/p1_shadow_entry.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_shadow_entry.hpp",
+      "sha256": "e5f952cb29c9c975f584b1ce4be456a06c9e3dcac6d7435bed81fdaf1c9bae6b"
+    },
+    "observer/src/shadow/p1_clock_window.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_clock_window.hpp",
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc"
+    },
+    "observer/src/shadow/regulator_shadow_observer.cpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/regulator_shadow_observer.cpp",
+      "sha256": "a9f5418d5fb73e8621a8ce571466bc9a4fab0e1ce16427b1b6310e6903aba62d"
+    },
+    "observer/src/shadow/p1_d0_observation.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_d0_observation.hpp",
+      "sha256": "ad181ad4a510b8c7e0343d179ade689abef10eeaaeec69002b56068d74920527"
+    },
+    "observer/src/shadow/p1_admission.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_admission.hpp",
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+    },
+    "observer/src/shadow/p1_tick_barrier.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_tick_barrier.hpp",
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4"
+    },
+    "observer/src/shadow/p1_resources.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_resources.hpp",
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2"
+    },
+    "observer/src/shadow/p1_preparation_barrier.hpp": {
+      "parent_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_preparation_barrier.hpp",
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc"
+    }
+  },
+  "v1_unchanged": true
+}

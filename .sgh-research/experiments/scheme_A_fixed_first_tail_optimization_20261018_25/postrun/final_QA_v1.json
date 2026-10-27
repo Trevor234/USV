@@ -1,0 +1,1815 @@
+{
+  "MPC_delivery_verified_at_QA": false,
+  "MPC_destination_preparation_passed": false,
+  "all_24_iterations_checked": true,
+  "archive_integrity_passed": true,
+  "arms": [
+    {
+      "additional_first_equality": false,
+      "arm_id": "free_first",
+      "cost_components_final": {
+        "solver_NLP_cost_readback": false,
+        "stage_absolute_control_dt_scaled": 0.025023916597522303,
+        "stage_control_increment_dt_scaled": 0.014625243110238002,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.015518344952199973,
+        "stage_velocity_dt_scaled": 0.01055263624461935,
+        "terminal_state_not_dt_scaled": 6.184804744724358e-06,
+        "total": 0.06572632570932435
+      },
+      "cost_final": 0.06572632570932435,
+      "final_dynamic_defect": 2.7755575615628914e-17,
+      "final_initial_residual": 2.4520028804951245e-15,
+      "first_control_n": [
+        0.3655486358487944,
+        0.3655486358487944
+      ],
+      "last_iteration_all_U_max_delta_n": 1.1102230246251565e-16,
+      "last_iteration_feasible_cost_delta": 1.3877787807814457e-17,
+      "last_iteration_stable": true,
+      "maximum_first_equality_error_n": 0.0,
+      "position_at_dt_m": [
+        0.0008940192046692462,
+        0.0
+      ],
+      "surge_at_dt_m_s": 0.008896708332043654
+    },
+    {
+      "additional_first_equality": true,
+      "arm_id": "fixed_first_050",
+      "cost_components_final": {
+        "solver_NLP_cost_readback": false,
+        "stage_absolute_control_dt_scaled": 0.025427000279696334,
+        "stage_control_increment_dt_scaled": 0.022537140876825276,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.011992779640716595,
+        "stage_velocity_dt_scaled": 0.00916725649996533,
+        "terminal_state_not_dt_scaled": 1.0185646145477963e-05,
+        "total": 0.06913436294334901
+      },
+      "cost_final": 0.06913436294334901,
+      "final_dynamic_defect": 5.551115123125783e-17,
+      "final_initial_residual": 5.6945582866238365e-15,
+      "first_control_n": [
+        0.5,
+        0.5
+      ],
+      "last_iteration_all_U_max_delta_n": 4.510281037539698e-16,
+      "last_iteration_feasible_cost_delta": 0.0,
+      "last_iteration_stable": true,
+      "maximum_first_equality_error_n": 0.0,
+      "position_at_dt_m": [
+        0.001222750419737756,
+        0.0
+      ],
+      "surge_at_dt_m_s": 0.012167084819292002
+    }
+  ],
+  "author_freeze_sha256": "f50e93e05876b2eedabe339ffb95d434ed9dba0f5ec464d44f375acb14b10976",
+  "author_frozen_files": 7,
+  "batch_status": "offline_mechanism_complete_MPC_delivery_pending",
+  "blocked_research_gate": "parent_s005_RMSE",
+  "business_diff_sha256": "d901511293df5be4aecb988509e4c4107977dc7c05f042286869c36e0a239ba5",
+  "comparison": {
+    "cost_component_deltas": {
+      "stage_absolute_control_dt_scaled": 0.00040308368217403107,
+      "stage_control_increment_dt_scaled": 0.007911897766587274,
+      "stage_heading_dt_scaled": 0.0,
+      "stage_position_dt_scaled": -0.0035255653114833786,
+      "stage_velocity_dt_scaled": -0.0013853797446540198,
+      "terminal_state_not_dt_scaled": 4.000841400753605e-06,
+      "total": 0.0034080372340246634
+    },
+    "cost_premium": 0.0034080372340246634,
+    "cost_premium_relative_fraction": 0.051851935997407776,
+    "fixed_first_reoptimized_cost": 0.06913436294334901,
+    "fixed_tail_parent24_cost": 0.0843017152000855,
+    "free_cost": 0.06572632570932435,
+    "material_cost_premium": true,
+    "premium_reduction_fraction_from_tail_reoptimization": 0.8165294334355832,
+    "surge_at_dt_gain_m_s": 0.0032703764872483478,
+    "surge_at_dt_relative_gain": 0.36759398703330454
+  },
+  "delivery_status_authority": "delivery_verification.json, if exact copy and full readback later succeed",
+  "durable_journal_records": 28,
+  "execute_qualified": false,
+  "final_local_protection_sha256": "1ffb8650893a47e68058b3b4c487db32d538aa5b73bf0b36cac4eff6b0fc1160",
+  "fixed_file_count": 418,
+  "fixed_files": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/CURRENT.md": {
+      "bytes": 2466,
+      "sha256": "f19bcecf0c0b853f325e8316d1910497056f8ef5fb010f9e61da95561379cd37"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/author_snapshot/CMakeLists.txt": {
+      "bytes": 1267,
+      "sha256": "9958df530a2b9df3e426796f411b2b386d7906609b66593bf3914c467eca59fa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/author_snapshot/actual_fixed_first_input_v1.json": {
+      "bytes": 22064,
+      "sha256": "192a94253113f8ba8c2f7892bf83c7d6bceb20bcbf8f714b92bb334eb2b1a07c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/author_snapshot/common_replay.hpp": {
+      "bytes": 3111,
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/author_snapshot/fixed_first.hpp": {
+      "bytes": 1279,
+      "sha256": "83d7ef28bca31fd65277d54a17c0484a2cb602a10008691742d65b867fea29b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/author_snapshot/main.cpp": {
+      "bytes": 5194,
+      "sha256": "3046d8f54ac4b1893d062a22ec00a825650764d5b827ed483ff821044c629178"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/author_snapshot/raw_backend_v1.hpp": {
+      "bytes": 12736,
+      "sha256": "732a63984b933c911829da944d72bf1a6e47f0634dda6efcb4b29412f7519c61"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/author_snapshot/test_fixed.cpp": {
+      "bytes": 1391,
+      "sha256": "63327e006bc6b7d5bbed4d1665a5d661a69b69d636d04a3313d8f9cfaf25ef17"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/batch_status_final.json": {
+      "bytes": 2356,
+      "sha256": "e8f94f9f51e0d7672259a24bb4ce81004bbe4bf1d395d842222c994cbcd35999"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/actual_link_recipe.txt": {
+      "bytes": 563,
+      "sha256": "fb76d1653825d2189e5c1a34fef47faf7902bc0f512eb846ce51e100e8c1e898"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/AMENT_IGNORE": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeCache.txt": {
+      "bytes": 22378,
+      "sha256": "437eb00cc29da3369b32087458777dd1598b04f3d3acd5ee03270d59344be1ae"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeCCompiler.cmake": {
+      "bytes": 2525,
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake": {
+      "bytes": 5539,
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_C.bin": {
+      "bytes": 15968,
+      "sha256": "ba6646aa78bf3dd0a7997f89bcc1154630fcb86d28103e0bfcd5200b21f54c7c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_CXX.bin": {
+      "bytes": 15992,
+      "sha256": "879b5d31eac14d7b0ca6cd3b96320041ad8d87b538fea24a17e8707f0656bc96"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeSystem.cmake": {
+      "bytes": 398,
+      "sha256": "e6dd9890a5f68bed86fe6a79a06176a48a0d2a9c39c50313df0f1cdafe697e47"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdC/CMakeCCompilerId.c": {
+      "bytes": 27030,
+      "sha256": "9a95913d134b6c5dca36f23acb80765b86313bcfd8da754e5ceb2e259e954074"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdC/a.out": {
+      "bytes": 16088,
+      "sha256": "88aa2744b35746a2f6464f0d7f31c3991c8fdb255d08727ecfbf676478e051b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp": {
+      "bytes": 26804,
+      "sha256": "9b1ebe4919c111011dba043f743e42ada0f1e3804b211e42191d773e7043282c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/a.out": {
+      "bytes": 16096,
+      "sha256": "a3d366f5f634a9cc0d9340115704a2d978e930f75ce0aceac02d7177849a8a1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/CMakeConfigureLog.yaml": {
+      "bytes": 58344,
+      "sha256": "014a6c70b4cf2560e555c7d55b63998bce3fa301a9cf508766949821f42b995b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 839,
+      "sha256": "40b16b3795dbbbf0b92c727ce0d9c180bca4c5aa1ecf153db55d0887fcb3a365"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/CMakeRuleHashes.txt": {
+      "bytes": 104,
+      "sha256": "8881a0e980b1313f41f8d996aed1cfbf56837b6a8c9d7786f7aac1621b513b3b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/Makefile.cmake": {
+      "bytes": 14287,
+      "sha256": "8ee44b4d67cb93f1422bd6db223e87c995734a7c354be65c57e97cc4ee8af3a8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/Makefile2": {
+      "bytes": 13376,
+      "sha256": "07e4a2eefaf0688f1fcffcde5605773800d427963e034e42c80a5edfeb50f891"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/TargetDirectories.txt": {
+      "bytes": 1911,
+      "sha256": "256365df30caf3a94fa9be606d28d2907125cb2c41d5fae9e23161a83009400d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/cmake.check_cache": {
+      "bytes": 85,
+      "sha256": "a26189e394421da57f45706a07713c5720acd200a41711b0c0c590c3c63371c4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/build.make": {
+      "bytes": 3794,
+      "sha256": "1762ab2d4a9df25b2c6ff4664d92aa64a2ff61b80757de7cca9ea90870308d78"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/cmake_clean.cmake": {
+      "bytes": 240,
+      "sha256": "b7b35f2a97ab2085a3db7d47e6c4db753b1f59d72af9fedb9bfc97198b7a3983"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/compiler_depend.make": {
+      "bytes": 139,
+      "sha256": "49a93d20e9967e43348b02bc4bf00275eceaf14c12becea95b338c6b56dd7e67"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/compiler_depend.ts": {
+      "bytes": 133,
+      "sha256": "da4a3d44579541db0165d7b412ca5754ee17cd39929aea1130706e706ec20f97"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "aa67a169b0bba217aa0aa88a65346920c84c42447c36ba5f7ea65f422c1fe5d8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/DependInfo.cmake": {
+      "bytes": 836,
+      "sha256": "9aacf6ada82746afc4558eae8483754e4094f2b8a612c8222dca09cff0a85d8a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/build.make": {
+      "bytes": 6520,
+      "sha256": "823d79dc204255a49643ce9945b0ef6c7e7b5b5126d3d45860ce3539d2492356"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/cmake_clean.cmake": {
+      "bytes": 337,
+      "sha256": "5ea1f048d6b030e6c9da3f82db929502fa324939e6bc76a60fb50b26da063b7e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/compiler_depend.make": {
+      "bytes": 121,
+      "sha256": "a826c6937352a04d611f9dad4bbeaf4b38adb9b435ba52e7bea906850b5578f5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/compiler_depend.ts": {
+      "bytes": 125,
+      "sha256": "876c6fc11b56c85c189f65beb4cab6338cdb136809b3d5f5cefe5c55ad8d0934"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/depend.make": {
+      "bytes": 102,
+      "sha256": "a3dfa435e48b1ebfcd62f6acff8e86cff80a1cc726de905a4962c92e2f7d027b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/flags.make": {
+      "bytes": 771,
+      "sha256": "bd2f37928ca2b267932f95d0d3f56094d63d8b11a1e5a54abd77c0ac795bd44f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/link.txt": {
+      "bytes": 563,
+      "sha256": "fb76d1653825d2189e5c1a34fef47faf7902bc0f512eb846ce51e100e8c1e898"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/main.cpp.o": {
+      "bytes": 613344,
+      "sha256": "c1bea67305fb83316681c413bc39263245cb0656052a03d4ae26d600a186bc9f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/main.cpp.o.d": {
+      "bytes": 32901,
+      "sha256": "c79e63ec97f1d8766335e026e00ce88e6786d8e92bce9f8263892bb0d795dce8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/replay_fixed_first.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "a3194f88ef5ae65b7a30877bdb3f7ab384e043aa110d7219d72f1e666ac6246b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/DependInfo.cmake": {
+      "bytes": 850,
+      "sha256": "5120443da4b1a76f3b1d58d9c96f6caea59e402912ffd3944c8f2919296d58b7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/build.make": {
+      "bytes": 6562,
+      "sha256": "57c0b4d608d0aa3bf3f56285546f6d8a76d3c8003954ea46a92280a9ea3efce2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/cmake_clean.cmake": {
+      "bytes": 339,
+      "sha256": "4dbf66b8c58e8bbd290ab8100f85526dbd07a614246078e592c0d33278810479"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/compiler_depend.make": {
+      "bytes": 119,
+      "sha256": "01eb75771de99bedfcd0b4cfe1036df29105c367c1751b092d401fc2f6df0bf7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/compiler_depend.ts": {
+      "bytes": 123,
+      "sha256": "2fa0cbe97ad589398983c46533ce2a26dba2617a58c5974b9188dd27e9359941"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/depend.make": {
+      "bytes": 100,
+      "sha256": "0f6d18ceaec867dcf435952b678c38369f6f849eaa2245daae5a01c02f144fd2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/flags.make": {
+      "bytes": 914,
+      "sha256": "bfb3c6d8bc9613931e30a8b3e165b63e6a4d68586e2c6f5203248f223062cfab"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/link.txt": {
+      "bytes": 574,
+      "sha256": "3271f82f221176223415378a2650284a3780d0c3a565444f0e74078587c72009"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "d07ef668326a9a562e0a72f93d199267d5a0b8fb4172c2286a56a2cb5ef77dd0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/test_fixed.cpp.o": {
+      "bytes": 543824,
+      "sha256": "74133365f2a864d30903fbf92f689c47d6ed49a3131bd041b6877d21fc9683b4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/test_fixed_first.dir/test_fixed.cpp.o.d": {
+      "bytes": 35747,
+      "sha256": "9ad7fac39676b962884f757edff35f4e55eadbcd213f37c7dc458734e621a65c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/build.make": {
+      "bytes": 3167,
+      "sha256": "bca9f4179d83a9a04bb3f7d256be7288f43e95f17b5401b62f34685e736b81ad"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/cmake_clean.cmake": {
+      "bytes": 153,
+      "sha256": "e51440eea639df67acafb145cd82e07a0d47a18935f82ef48527ded743c08d36"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.make": {
+      "bytes": 119,
+      "sha256": "544b5020e80145b8265862c76a0811c3dd31a0820e2834b26038f646fa99c80b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.ts": {
+      "bytes": 113,
+      "sha256": "5f7329b918c868b9e2549e3175c8cab0d6c02deccfa5f2700ee294575108f150"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CTestConfiguration.ini": {
+      "bytes": 2667,
+      "sha256": "504f55192c4676c8d1b3cad4a538d8f6af542ff2d4d05a06fea181b1dcea3b33"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CTestCustom.cmake": {
+      "bytes": 104,
+      "sha256": "604987db904b472a78182f761db384fc8115f0ade6bb2cfed0d2242259f36bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/CTestTestfile.cmake": {
+      "bytes": 2383,
+      "sha256": "8efd10bf0cb2c44c31402c19d016c8de3cddb65620f6a2c1db86fb4ffe0b1eb2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/Makefile": {
+      "bytes": 9390,
+      "sha256": "1e6582e9b6a13cb1067f26134b8dac161fb6c24cf70c693378f59cf3a6190a94"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/ament_cmake_core/stamps/templates_2_cmake.py.stamp": {
+      "bytes": 3691,
+      "sha256": "696037d4de7b593bce6ca467480ee35076eb3efc49a94fa0af7e909fe0c96ebb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/ament_cmake_package_templates/templates.cmake": {
+      "bytes": 1984,
+      "sha256": "0bd4d2e887197f7f9771d2238eff41586d61b13acc51ce8748b36ebcf55753f3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake": {
+      "bytes": 2204,
+      "sha256": "ce27490a2822b8bf8b2476c8ca3301e5cbb7b96fdcf13bdebb82587a54104a05"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/cmake_install.cmake": {
+      "bytes": 2103,
+      "sha256": "a612ff9849c5105ec9992089587c0f78dca12ba82db5f3a8cc72651138ae6a98"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/compile_commands.json": {
+      "bytes": 3657,
+      "sha256": "20a68823aeb97722cd708cc42b099fa5f3cba2c4f1d47388b7c1ad2b5fdf5ae4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 735,
+      "sha256": "b0aab4142f5aacc844ec39b3d4879cb17c3d6010e03baa6e6d82bec2334cc8b1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/DependInfo.cmake": {
+      "bytes": 742,
+      "sha256": "41b9794eb597def843b1b9c9edb14c35ac7855090406ddb95c553abf7d77ec16"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/build.make": {
+      "bytes": 6399,
+      "sha256": "d80f0df251f4c2104bf952fec6131e983e77af180d146ba02e83c92b477686b4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean.cmake": {
+      "bytes": 296,
+      "sha256": "d1cc0f4bad79d663d6bb4514adc027f4c1c7fb62acfd5040f199eaa981d110b2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean_target.cmake": {
+      "bytes": 37,
+      "sha256": "2528443fca7dd9ef1497170c9300cef9535872d273af72b87f0b2e98e38c9271"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.make": {
+      "bytes": 108,
+      "sha256": "fdd7420efc3c3e7205cafdad1b80a3b1c7222218270db7736088a548d903d4ef"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.ts": {
+      "bytes": 112,
+      "sha256": "997af5bce432b38a2cddd748f433ccd7dc215f91117bb98bf1be692d5dbf7466"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/depend.make": {
+      "bytes": 89,
+      "sha256": "c4217b9fdea79fb317d5c87c2a9e36dceca849a044f58485eca7b013dd9c0a2b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/flags.make": {
+      "bytes": 348,
+      "sha256": "27be6279443a7659140077a129689bd0f7d085d4e058c819a7d6e012decdcb86"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/link.txt": {
+      "bytes": 95,
+      "sha256": "aea10c44f0f4c0e3e6bfae2c9b1a90b0a1aeb6461e1261bf3e5956459b69dc92"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "c06e644090b09d41eaddf59d10bcf03c6db6499eb51fa0d03e5128e5a165cc3c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o": {
+      "bytes": 904992,
+      "sha256": "90e4f754ca78538ac6459109570e87ceb3df6dbd3e17156420c3465b8e17bfca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o.d": {
+      "bytes": 20199,
+      "sha256": "aca881e3eccdc731ba0625c1f14d007422cfea16bea182b24d46385b51d7bedb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/DependInfo.cmake": {
+      "bytes": 755,
+      "sha256": "482c16cf40958ea2f2af8fbe328461afe1ffbec1a765f54218209f65d971b100"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/build.make": {
+      "bytes": 6628,
+      "sha256": "0a458d39e7fce3e6e4559c6a7302f93d319c51b701550d92c19360e29219949e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean.cmake": {
+      "bytes": 323,
+      "sha256": "3f59ad1556f8ce3686882d39a119717539f3de3bf194f157e19da63837499020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean_target.cmake": {
+      "bytes": 42,
+      "sha256": "6b477660f7857030e16f3db3360bfe208081383c64621ce00f653f368f15e61c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.make": {
+      "bytes": 113,
+      "sha256": "f1844edb147f0f25d7d0ff34e80a9030e9b97f7caef77fb55b7556888e8826db"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.ts": {
+      "bytes": 117,
+      "sha256": "5d4a42aa2b79e52ea1618f221c27d853ded01837e138ca0f3261036506b0b782"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/depend.make": {
+      "bytes": 94,
+      "sha256": "30c0a4b6d6407c7254abb6c8b2f184b459ea943c7905717f7c09e68820c57730"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/flags.make": {
+      "bytes": 288,
+      "sha256": "cb6466c030931c8c9266cfe4ccd5326ccfdca81d53f2333be3edabfb81f4d2d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/link.txt": {
+      "bytes": 109,
+      "sha256": "2245581bcd068a5f77b07899ba64d9b32d75c4e7a6e8cb0db787d0e480f8319a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "2c0c69e4af70b4caed2b8e1bd9f161f3ee9eb525d5f041631eee6d0661e5a02f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o": {
+      "bytes": 2136,
+      "sha256": "8befe0706e76f35ddca7d01ff02d24839299df23e25ceb2a71ecb12bb9602263"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o.d": {
+      "bytes": 16151,
+      "sha256": "369dcc30ea646e4b70cdf8d5ecf8dc250f455968a0b9bc43173756f34bc2249b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/CTestTestfile.cmake": {
+      "bytes": 378,
+      "sha256": "9e086ab83380be96a30205d3056d88b754910a7b937c0f0eb43625d471884d96"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/Makefile": {
+      "bytes": 9868,
+      "sha256": "d5fceaa39b120f8977f632b1b0511bfba9b43495b69490f5f120709b1ef1e89b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/cmake_install.cmake": {
+      "bytes": 1252,
+      "sha256": "16e5154d02c5c1b9970cfee51c66dde9a214c8a113ed98f78258809e39f4a554"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/libgtest.a": {
+      "bytes": 966810,
+      "sha256": "859e3b658193fb746dfdd31d03083e872a158e32c36ec8bf183e8c6930b0b671"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/gtest/libgtest_main.a": {
+      "bytes": 2278,
+      "sha256": "4a130629aef45dd8365f17a0b7987602f95aacff5563bd8ebc81017a4c9480e8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/replay_fixed_first": {
+      "bytes": 549984,
+      "sha256": "b5072d5e8ed0707fc66c7ef5eef84e6f122a1e5b4a4d84505a5370be5dcb16b5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/cmake_build/test_fixed_first": {
+      "bytes": 1011288,
+      "sha256": "ce6bdc6d3c2ceb66feb6751e781bf2b9a0ccdb1d9e406d0066875554cab1daa3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/compile_commands.json": {
+      "bytes": 3657,
+      "sha256": "20a68823aeb97722cd708cc42b099fa5f3cba2c4f1d47388b7c1ad2b5fdf5ae4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/compiler_dependency_pins.json": {
+      "bytes": 94204,
+      "sha256": "d698d318a1e5b9146f315d6a8a0428b7b38cc85da07d4e7d631f3f25cbdb3f5b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/configure.log": {
+      "bytes": 1418,
+      "sha256": "dc89016f66dae855092de1ae7e2eec49adcc61ed7bdfe13c5f92d68f9b8f87ed"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/configure.sh": {
+      "bytes": 1174,
+      "sha256": "b862bb3b422c85d652a4dc0d36f2fe508df972ae0f6f6b8d7968384411e0d49c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/default_build.log": {
+      "bytes": 624,
+      "sha256": "0ca7ec1418fb4e64c693033883b15c4afd31a15ab5bf60f1cf01c0014aacc0ec"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/default_build.sh": {
+      "bytes": 655,
+      "sha256": "6f66fe48a7b61d71fda7b79e2592f777014622751b1d3c599c5736f309241839"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0000_acados_backend.hpp": {
+      "bytes": 4391,
+      "sha256": "1d2b19d710391464c6833ca58b7162c501926c7bb02193737609b69bb41cfcca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0001_acados_solver_usv_dyn_nmpc.h": {
+      "bytes": 7452,
+      "sha256": "bdac3caa7ee125812d485f87cdde272c5c90d6c10628a996c6fd6f7d75038114"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0002_usv_dyn_nmpc_constraints.h": {
+      "bytes": 3210,
+      "sha256": "d5fe1da868dfbabffa160f83d82ce3d492d8c5e8e2cc091286a55fb43ee8999a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0003_usv_dyn_nmpc_cost.h": {
+      "bytes": 3986,
+      "sha256": "21ffc99e506d2e778e6d5c6e4f95c746f132f1d557d37522ae234f4d090bccbd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0004_usv_dyn_nmpc_model.h": {
+      "bytes": 2379,
+      "sha256": "d2471c85706deb72047df28521074d297a344053a56d90938f4f63046ab90682"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0005_usv_dyn_nmpc_p_global_precompute_fun.h": {
+      "bytes": 2060,
+      "sha256": "175b83c9d37263330d11e7c7828be067764b71cad69a3e5b71802031511ce770"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0006_casadi_backend.hpp": {
+      "bytes": 2826,
+      "sha256": "8cf8ffebd66d438836351460a3cb16815ef9ba847fe9ae946167dcb3bdffe489"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0007_mpc_node.hpp": {
+      "bytes": 10949,
+      "sha256": "536221d592aec0a2d91705f49ce3739f6706afdb8a0426e9a06e1a7a36fbbf72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0008_mpc_node.hpp.pre_reference_prediction_v1": {
+      "bytes": 10647,
+      "sha256": "2a19f008c009a63038b39810923ed958e534ea50d156631e08fe8e927865dfb2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0009_mpc_solver.hpp": {
+      "bytes": 4580,
+      "sha256": "a711527b8556bff8508a99bfcafedc055d81a9c5cddbe5a93f69144cb829dc83"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0010_p1_input_core.hpp": {
+      "bytes": 5795,
+      "sha256": "a626758cbce50acb69e19aa793f6d01f7e913fa92d0172e514a654481c0a0091"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0011_research_logger.hpp": {
+      "bytes": 9611,
+      "sha256": "90f9f7070eac3bf0ad516a034118444afeddfdb65cd91ccffac5d7617c30789a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0012_research_logger.hpp.pre_reference_prediction_v1": {
+      "bytes": 8134,
+      "sha256": "16a9431704b97132a3e9c50db5d953d0388bea612b57c960766fbd5e10581b6d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0013_usv_model_dynamic.hpp": {
+      "bytes": 3576,
+      "sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0014_utils.hpp": {
+      "bytes": 4838,
+      "sha256": "5a78abb9f6acd9851d96169a7bbb2044208b761c1d9d0100a0e68cfc68e27de3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0015_ament_cmake_export_dependencies-extras.cmake": {
+      "bytes": 3942,
+      "sha256": "a672adf07855ba598ec3ab5659d54e489242e928bc924bc97eabd67f91cdfdcc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0016_ament_cmake_export_targets-extras.cmake": {
+      "bytes": 975,
+      "sha256": "af392c7714144c33ab0dbba1f1d8ba9d2648c7a373ff40136e817d0f42d51892"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0017_p1_core_targetsExport-release.cmake": {
+      "bytes": 1979,
+      "sha256": "038fed658c5ad768bd5b25cf718bc4adc939a3ae21c66b91c2df526f1f0edd51"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0018_p1_core_targetsExport.cmake": {
+      "bytes": 5459,
+      "sha256": "81f954e46d7714a3a8ceb241e3e7cc323e6672bf6f6c76c3a3860f633001df2f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0019_usv_mpc_cppConfig-version.cmake": {
+      "bytes": 432,
+      "sha256": "5df7fb3481e154840dd6ac6d1b6eb53c81ed9cadd5e7a00398962383332be7ea"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0020_usv_mpc_cppConfig.cmake": {
+      "bytes": 1349,
+      "sha256": "1ebc247a6ab8c02ec6a489c5f716a11c223d4b8c30b98199c90c50654c18a2a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0021_libcodegen_lib.a": {
+      "bytes": 274422,
+      "sha256": "7431a9cbdd7b8a6d47719ceda2e44b977f2649fbcbb4592771dac99abd2a38dd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0022_libmpc_core_lib.a": {
+      "bytes": 32114,
+      "sha256": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0023_libmpc_solver_lib.a": {
+      "bytes": 212276,
+      "sha256": "5c4a8d70cc6812b36693a5b68cb13a7a812dae828f983b4446a5564ff996d5d1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0024_link.txt": {
+      "bytes": 6353,
+      "sha256": "5d143478a3e5b35ba8da92eebb3b163d3671534e4bae00bd8483269f91ca95d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0025_actual_startup_input_v1.json": {
+      "bytes": 1768728,
+      "sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0026_acados_backend.cpp": {
+      "bytes": 14296,
+      "sha256": "e5513cba1eb45024e2fb4b083b05ebd6ba8d8ced9f133a17f9c0ace3355f27c8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0027_regenerate_acados_codegen.py": {
+      "bytes": 14532,
+      "sha256": "775d271cc4f746b6eb2ebd1d3008636effedcf3af03daae694ea954985b2ead4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0028_usv_model_dynamic.cpp": {
+      "bytes": 3857,
+      "sha256": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0029_CMakeLists.txt": {
+      "bytes": 1070,
+      "sha256": "b4215ba177f52307eb74930a557bd038e4267b5e41a30f85fc52e53e19676950"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0030_gtest-assertion-result.h": {
+      "bytes": 8503,
+      "sha256": "d6562e22c316e831bfbc2cde3b158f06380a22e7e1c6c1e180689abee5c5b972"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0031_gtest-death-test.h": {
+      "bytes": 14910,
+      "sha256": "8decbb86ebbfa142fd78a83cfbeb4c5e73e98179058ce70fcc279935c497429a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0032_gtest-matchers.h": {
+      "bytes": 33067,
+      "sha256": "d637dd188944433c62d96a062f9b1adab851574c537d7021270c7a52a2759a90"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0033_gtest-message.h": {
+      "bytes": 9203,
+      "sha256": "f1c7bd4e0c02240e884deed25a2e0bfd04e5e0c3fd778a3b126cbb64531f65a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0034_gtest-param-test.h": {
+      "bytes": 24008,
+      "sha256": "1adb46e17e47fc2f40dc5b8e9acec4f01efa389a19bbea25d32aea28b94e32e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0035_gtest-printers.h": {
+      "bytes": 40511,
+      "sha256": "f3396ea55d577ee04f15a2b14b14b76edb8a84d385c831defd88cff8535bc273"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0036_gtest-spi.h": {
+      "bytes": 12843,
+      "sha256": "fc0bbebaeb211b81a2ec3df388e5e5f25a7c22e90186839854d2e5b26ce226e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0037_gtest-test-part.h": {
+      "bytes": 7164,
+      "sha256": "2279b9bfd08aff7c0f764a2716bde0d3a61dc12573687a2cff91256b17681bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0038_gtest-typed-test.h": {
+      "bytes": 15889,
+      "sha256": "d56313830bf30d6271d7c1f8ca57dc52d95a10b97e4ace6efa0f085ae519303a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0039_gtest.h": {
+      "bytes": 91459,
+      "sha256": "93da03ddf6d5b9bdf40ae4ded9939067c9ed0b6de93f787f7e8d187609b6b02d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0040_gtest_pred_impl.h": {
+      "bytes": 12783,
+      "sha256": "85e850e735a42ebb5f9a01a018708c1c0b9b7d83c94b14b7d5d29512c00b6ffd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0041_gtest_prod.h": {
+      "bytes": 2502,
+      "sha256": "3c6301ef533db8686e474dd5a0de4d98a31cbb630e2273f712472d1be25aa261"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0042_README.md": {
+      "bytes": 1269,
+      "sha256": "608ec5ac574a6e64e4fc2f4bce2cfc7ff753a04d6822d6ff96e43fff51c6ccc1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0043_gtest-port.h": {
+      "bytes": 1873,
+      "sha256": "5e06747c9e8b86e9d841fabd61c2f045b2bb1133716f127be4a963ced1c44e01"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0044_gtest-printers.h": {
+      "bytes": 2094,
+      "sha256": "b95afda2426e8c4f09c11d3296d522fb336b248c0da7e078388db4bb072c2166"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0045_gtest.h": {
+      "bytes": 1858,
+      "sha256": "21d20a1c64ea38c20c4b12337c261a1a18989d2a30710a83dfb5cd9a3bb3c55e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0046_gtest-death-test-internal.h": {
+      "bytes": 13929,
+      "sha256": "a70d1174ef668639c7af21764442f8e487b0fc70c237a70f90e3161a8e8262d6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0047_gtest-filepath.h": {
+      "bytes": 10339,
+      "sha256": "544ce95d2e1e4b7ae17ee170f482aaa09e17d0056999c4ce7e7a6097c3a755cf"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0048_gtest-internal.h": {
+      "bytes": 63416,
+      "sha256": "a33806c8e6ca5eb6f839b8e015bdf8eae848641035f9499834f9d402b823d5fe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0049_gtest-param-util.h": {
+      "bytes": 38172,
+      "sha256": "effa1b3e6a3554aae8fc82fbe88c1c3215f723bb3e2e444bf424f688c476a030"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0050_gtest-port-arch.h": {
+      "bytes": 4305,
+      "sha256": "37f6d5c70322ee5f4f84fafcb4e8e2f4bbf08a5afc64a6636cf6a9f45d442198"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0051_gtest-port.h": {
+      "bytes": 90033,
+      "sha256": "c22ef5c860dabc3e74225f3a54c2d7224375ad2dd2af619d3f8cbe7e917fc754"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0052_gtest-string.h": {
+      "bytes": 7323,
+      "sha256": "0cc08c746bceb2b101c61ffbc905c598eb62fee3c262c4585c21b10d8a3e6508"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0053_gtest-type-util.h": {
+      "bytes": 7349,
+      "sha256": "c1cf53463579025a7b25466e9680a778d74beff52d8a64b6e83fcb6dd99e4bb7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0054_gtest-all.cc": {
+      "bytes": 2201,
+      "sha256": "972d3016860f9aa6452e078cf77406290fb7003b66fd6c0744a030bd1c323606"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0055_gtest-assertion-result.cc": {
+      "bytes": 3009,
+      "sha256": "dbd2235676dcc0ef6409108a4041e05442fc6895735a5561d71151e6a14296bb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0056_gtest-death-test.cc": {
+      "bytes": 62742,
+      "sha256": "4a0a2dad0efbb61c4f7686ccd326e19d6e5633c98202f6878fa2d18c52f3329a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0057_gtest-filepath.cc": {
+      "bytes": 15732,
+      "sha256": "8eec3fa2a0e6617106a8d9bfedf3209b0a8cad02e2a17e76196807290e940f8c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0058_gtest-internal-inl.h": {
+      "bytes": 47929,
+      "sha256": "fce60f191b52108b5851f6aec51a6f14001e1a79fd302d48c8fdbb842f8fef1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0059_gtest-matchers.cc": {
+      "bytes": 3724,
+      "sha256": "e4ce9edf33493625353cc147a14caac14fdba7390d76166d101fa2fe9d16bbda"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0060_gtest-port.cc": {
+      "bytes": 47960,
+      "sha256": "6e6c0346e833a254e52544728b40fd0cced0b36431e9eed8f5e477e6f5fe1a23"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0061_gtest-printers.cc": {
+      "bytes": 18551,
+      "sha256": "bd14e45b5cb8df8be5944a0aaeb3739c533737a183ae4ed6627f5613eea1f6c9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0062_gtest-test-part.cc": {
+      "bytes": 4028,
+      "sha256": "b268314cbc718b485ff3e45fdeb5a1496bb8d87dadd5e824c558bf3b03e2dbf9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0063_gtest-typed-test.cc": {
+      "bytes": 3823,
+      "sha256": "b92e70b2d7ee3b86328162cbda269a28de4ce67f0e8d9beec5ec2c73a93ba006"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0064_gtest.cc": {
+      "bytes": 259551,
+      "sha256": "53470c00499b943b4f5c3e7b581ffda9c76f828f485f33e17471aa08e8b296ac"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0065_gtest_main.cc": {
+      "bytes": 2430,
+      "sha256": "3836c1ce7c4829c44a30f368d888ae3bed218437d61d102c50c0db4afca33b3f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0066_x86_64-linux-gnu-g++-13": {
+      "bytes": 1027128,
+      "sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0067_x86_64-linux-gnu-ar": {
+      "bytes": 55792,
+      "sha256": "6452af2eea333b8c65e1adb92964fc8f97863ab003fa13f9d12bff5345cd7dbe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/external_snapshot/0068_x86_64-linux-gnu-ranlib": {
+      "bytes": 55792,
+      "sha256": "60254978b8ee2c1b21b41d16a18a621dbbcc72e43eb2fa9f916818256c77e9ee"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/loader.log": {
+      "bytes": 943,
+      "sha256": "7ce880802dda17012eedd70d15719101a9bee77cce5f9f7eb1d4f9bb5a318be3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/loader.sh": {
+      "bytes": 659,
+      "sha256": "47d57d142776aadd1c0730620304b9451daa26e4708747a08a03249a0e42ee79"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/native.gtest.xml": {
+      "bytes": 1337,
+      "sha256": "7d065e148d78dc6d34943a1036891dce121952d0ccf840db439257429826c113"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/native.log": {
+      "bytes": 791,
+      "sha256": "f4e1e0a70cd36c361af351a64fdcbca5075b6995a6eb7667f8c80be1ae80ce5d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/native.sh": {
+      "bytes": 806,
+      "sha256": "de31062f93ce5ffc81535b95d5c2f8aedb46df001baeb34affd86bb1f2fa174d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/recipe.py.snapshot": {
+      "bytes": 7549,
+      "sha256": "78a71d26393f5c6dd8af3ac3c68a49784e020db480448a6395a7b8219955d759"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/result.json": {
+      "bytes": 2467,
+      "sha256": "34d95b1a5235578f80a65cbed0d8c995d73e6515ab61a83bfbf37fcfdc8331e3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/runtime_library_pins.json": {
+      "bytes": 3562,
+      "sha256": "534eb0fafcb2c2c9937d7a797edfcc215a7118ff786788b75de60d8f1c6ebcf2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_bundle.json": {
+      "bytes": 30929,
+      "sha256": "45db11919d7bda5774a39dfea83897e22c539bae2fe44b1d86480502e02263d5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_snapshot/CMakeLists.txt": {
+      "bytes": 1259,
+      "sha256": "cebaeaeb3001c358c4e7e8f96256145ac3a8c6c1781166d9dbc27a9684239264"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_snapshot/actual_fixed_first_input_v1.json": {
+      "bytes": 22064,
+      "sha256": "192a94253113f8ba8c2f7892bf83c7d6bceb20bcbf8f714b92bb334eb2b1a07c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_snapshot/common_replay.hpp": {
+      "bytes": 3111,
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_snapshot/fixed_first.hpp": {
+      "bytes": 1279,
+      "sha256": "83d7ef28bca31fd65277d54a17c0484a2cb602a10008691742d65b867fea29b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_snapshot/main.cpp": {
+      "bytes": 5194,
+      "sha256": "3046d8f54ac4b1893d062a22ec00a825650764d5b827ed483ff821044c629178"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_snapshot/raw_backend_v1.hpp": {
+      "bytes": 12736,
+      "sha256": "732a63984b933c911829da944d72bf1a6e47f0634dda6efcb4b29412f7519c61"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt01/source_snapshot/test_fixed.cpp": {
+      "bytes": 1391,
+      "sha256": "63327e006bc6b7d5bbed4d1665a5d661a69b69d636d04a3313d8f9cfaf25ef17"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/actual_link_recipe.txt": {
+      "bytes": 563,
+      "sha256": "fb76d1653825d2189e5c1a34fef47faf7902bc0f512eb846ce51e100e8c1e898"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/AMENT_IGNORE": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeCache.txt": {
+      "bytes": 22378,
+      "sha256": "9718cb4cc50506e752f3ee7d2a77461e6e27a1493589452c2f646195a365d6f8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeCCompiler.cmake": {
+      "bytes": 2525,
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake": {
+      "bytes": 5539,
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_C.bin": {
+      "bytes": 15968,
+      "sha256": "ba6646aa78bf3dd0a7997f89bcc1154630fcb86d28103e0bfcd5200b21f54c7c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_CXX.bin": {
+      "bytes": 15992,
+      "sha256": "879b5d31eac14d7b0ca6cd3b96320041ad8d87b538fea24a17e8707f0656bc96"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeSystem.cmake": {
+      "bytes": 398,
+      "sha256": "e6dd9890a5f68bed86fe6a79a06176a48a0d2a9c39c50313df0f1cdafe697e47"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdC/CMakeCCompilerId.c": {
+      "bytes": 27030,
+      "sha256": "9a95913d134b6c5dca36f23acb80765b86313bcfd8da754e5ceb2e259e954074"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdC/a.out": {
+      "bytes": 16088,
+      "sha256": "88aa2744b35746a2f6464f0d7f31c3991c8fdb255d08727ecfbf676478e051b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp": {
+      "bytes": 26804,
+      "sha256": "9b1ebe4919c111011dba043f743e42ada0f1e3804b211e42191d773e7043282c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/a.out": {
+      "bytes": 16096,
+      "sha256": "a3d366f5f634a9cc0d9340115704a2d978e930f75ce0aceac02d7177849a8a1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/CMakeConfigureLog.yaml": {
+      "bytes": 58344,
+      "sha256": "09ef28d8436f32c1bad37bed4def7738093b912b3e525309e60c5f765ea8ee0d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 839,
+      "sha256": "db5cc469ed5b802b924bae08691b60ebd5ef96f42c6f1e7d251d5924a922fbb4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/CMakeRuleHashes.txt": {
+      "bytes": 104,
+      "sha256": "1b1d7ad42f09642973f610a0d1efabe18c70aa44e94c5bde08296cd90a6f94cf"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/Makefile.cmake": {
+      "bytes": 14287,
+      "sha256": "8ee44b4d67cb93f1422bd6db223e87c995734a7c354be65c57e97cc4ee8af3a8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/Makefile2": {
+      "bytes": 13376,
+      "sha256": "d5d5a556b6753bf9f390000ab99fa22dc796ab7d587c26409ae3d15fd7d170e0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/TargetDirectories.txt": {
+      "bytes": 1911,
+      "sha256": "6dd7f2d93fe30ffa08d1c7e8f266a6ee4557fcb0731a39ec5efae0d4c33911b9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/cmake.check_cache": {
+      "bytes": 85,
+      "sha256": "a26189e394421da57f45706a07713c5720acd200a41711b0c0c590c3c63371c4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/build.make": {
+      "bytes": 3794,
+      "sha256": "d2173d446db95f6e0429312174a332e38da6fc7eefd870c8d2b01bbce11f9ba0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/cmake_clean.cmake": {
+      "bytes": 240,
+      "sha256": "b7b35f2a97ab2085a3db7d47e6c4db753b1f59d72af9fedb9bfc97198b7a3983"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/compiler_depend.make": {
+      "bytes": 139,
+      "sha256": "49a93d20e9967e43348b02bc4bf00275eceaf14c12becea95b338c6b56dd7e67"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/compiler_depend.ts": {
+      "bytes": 133,
+      "sha256": "da4a3d44579541db0165d7b412ca5754ee17cd39929aea1130706e706ec20f97"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/p1_fixed_first_tail_uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "aa67a169b0bba217aa0aa88a65346920c84c42447c36ba5f7ea65f422c1fe5d8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/DependInfo.cmake": {
+      "bytes": 836,
+      "sha256": "9aacf6ada82746afc4558eae8483754e4094f2b8a612c8222dca09cff0a85d8a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/build.make": {
+      "bytes": 6520,
+      "sha256": "11065d33aa21a904342e08a0fecc016d949c29e9f057edc3d34c0e5db01bb993"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/cmake_clean.cmake": {
+      "bytes": 337,
+      "sha256": "5ea1f048d6b030e6c9da3f82db929502fa324939e6bc76a60fb50b26da063b7e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/compiler_depend.make": {
+      "bytes": 121,
+      "sha256": "a826c6937352a04d611f9dad4bbeaf4b38adb9b435ba52e7bea906850b5578f5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/compiler_depend.ts": {
+      "bytes": 125,
+      "sha256": "876c6fc11b56c85c189f65beb4cab6338cdb136809b3d5f5cefe5c55ad8d0934"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/depend.make": {
+      "bytes": 102,
+      "sha256": "a3dfa435e48b1ebfcd62f6acff8e86cff80a1cc726de905a4962c92e2f7d027b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/flags.make": {
+      "bytes": 771,
+      "sha256": "3357c0f07744089788f1c449b4f22ccb8bc49ab0889f8ec958b82fa32dd91e7c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/link.txt": {
+      "bytes": 563,
+      "sha256": "fb76d1653825d2189e5c1a34fef47faf7902bc0f512eb846ce51e100e8c1e898"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/main.cpp.o": {
+      "bytes": 613344,
+      "sha256": "ab544cb58b586b25bfa71616da6b1610d2d0543159579867044a0ab5c24cbb15"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/main.cpp.o.d": {
+      "bytes": 32901,
+      "sha256": "c79e63ec97f1d8766335e026e00ce88e6786d8e92bce9f8263892bb0d795dce8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/replay_fixed_first.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "a3194f88ef5ae65b7a30877bdb3f7ab384e043aa110d7219d72f1e666ac6246b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/DependInfo.cmake": {
+      "bytes": 850,
+      "sha256": "5120443da4b1a76f3b1d58d9c96f6caea59e402912ffd3944c8f2919296d58b7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/build.make": {
+      "bytes": 6562,
+      "sha256": "c8f6c14226c86fc075340487aae7e8530efda9598f07b41759054abf9fa75644"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/cmake_clean.cmake": {
+      "bytes": 339,
+      "sha256": "4dbf66b8c58e8bbd290ab8100f85526dbd07a614246078e592c0d33278810479"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/compiler_depend.make": {
+      "bytes": 119,
+      "sha256": "01eb75771de99bedfcd0b4cfe1036df29105c367c1751b092d401fc2f6df0bf7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/compiler_depend.ts": {
+      "bytes": 123,
+      "sha256": "2fa0cbe97ad589398983c46533ce2a26dba2617a58c5974b9188dd27e9359941"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/depend.make": {
+      "bytes": 100,
+      "sha256": "0f6d18ceaec867dcf435952b678c38369f6f849eaa2245daae5a01c02f144fd2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/flags.make": {
+      "bytes": 914,
+      "sha256": "bfb3c6d8bc9613931e30a8b3e165b63e6a4d68586e2c6f5203248f223062cfab"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/link.txt": {
+      "bytes": 574,
+      "sha256": "3271f82f221176223415378a2650284a3780d0c3a565444f0e74078587c72009"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "d07ef668326a9a562e0a72f93d199267d5a0b8fb4172c2286a56a2cb5ef77dd0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/test_fixed.cpp.o": {
+      "bytes": 543824,
+      "sha256": "74133365f2a864d30903fbf92f689c47d6ed49a3131bd041b6877d21fc9683b4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/test_fixed_first.dir/test_fixed.cpp.o.d": {
+      "bytes": 35747,
+      "sha256": "9ad7fac39676b962884f757edff35f4e55eadbcd213f37c7dc458734e621a65c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/build.make": {
+      "bytes": 3167,
+      "sha256": "8090e16e7ec02c7cf1addd7f675ba8b7bb2e39fffa3c16a747653154e01648da"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/cmake_clean.cmake": {
+      "bytes": 153,
+      "sha256": "e51440eea639df67acafb145cd82e07a0d47a18935f82ef48527ded743c08d36"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.make": {
+      "bytes": 119,
+      "sha256": "544b5020e80145b8265862c76a0811c3dd31a0820e2834b26038f646fa99c80b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.ts": {
+      "bytes": 113,
+      "sha256": "5f7329b918c868b9e2549e3175c8cab0d6c02deccfa5f2700ee294575108f150"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CTestConfiguration.ini": {
+      "bytes": 2667,
+      "sha256": "30abe35d3fbaf3531826eb777d890a2728af32c6c23034f940c80c97a7d75b2d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CTestCustom.cmake": {
+      "bytes": 104,
+      "sha256": "604987db904b472a78182f761db384fc8115f0ade6bb2cfed0d2242259f36bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/CTestTestfile.cmake": {
+      "bytes": 2383,
+      "sha256": "48de422289d97b25896b80290bb8a2b4a53d7636697eee7560518032cabef030"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/Makefile": {
+      "bytes": 9390,
+      "sha256": "c59d1777e71588295879969b96ef6e61f542576770287c95705712cb52f94344"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/ament_cmake_core/stamps/templates_2_cmake.py.stamp": {
+      "bytes": 3691,
+      "sha256": "696037d4de7b593bce6ca467480ee35076eb3efc49a94fa0af7e909fe0c96ebb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/ament_cmake_package_templates/templates.cmake": {
+      "bytes": 1984,
+      "sha256": "0bd4d2e887197f7f9771d2238eff41586d61b13acc51ce8748b36ebcf55753f3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake": {
+      "bytes": 2204,
+      "sha256": "072a37e7721aeb32974cb74f16b007e2d2aaf4c8dae634127fa83f87f8aa3fed"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/cmake_install.cmake": {
+      "bytes": 2103,
+      "sha256": "d9541c2e37a1ea5020a1aac0d4a7f30ff69bd812605bed50955eac3f9bc19f00"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/compile_commands.json": {
+      "bytes": 3657,
+      "sha256": "09402690769ed015cf45ebee84cb0125c9cce89f5268dbf4ab314dc4ce53335d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 735,
+      "sha256": "4ae5ed6b04c7f1bb8928e0845ec2e6c789d06612af90d7f12dabbca3196aa9fb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/DependInfo.cmake": {
+      "bytes": 742,
+      "sha256": "41b9794eb597def843b1b9c9edb14c35ac7855090406ddb95c553abf7d77ec16"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/build.make": {
+      "bytes": 6399,
+      "sha256": "443e89f7e1989f3696e1d9fcf8c66128a059768e7623808431c98ac43ae5aaf9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean.cmake": {
+      "bytes": 296,
+      "sha256": "d1cc0f4bad79d663d6bb4514adc027f4c1c7fb62acfd5040f199eaa981d110b2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean_target.cmake": {
+      "bytes": 37,
+      "sha256": "2528443fca7dd9ef1497170c9300cef9535872d273af72b87f0b2e98e38c9271"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.make": {
+      "bytes": 108,
+      "sha256": "fdd7420efc3c3e7205cafdad1b80a3b1c7222218270db7736088a548d903d4ef"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.ts": {
+      "bytes": 112,
+      "sha256": "997af5bce432b38a2cddd748f433ccd7dc215f91117bb98bf1be692d5dbf7466"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/depend.make": {
+      "bytes": 89,
+      "sha256": "c4217b9fdea79fb317d5c87c2a9e36dceca849a044f58485eca7b013dd9c0a2b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/flags.make": {
+      "bytes": 348,
+      "sha256": "27be6279443a7659140077a129689bd0f7d085d4e058c819a7d6e012decdcb86"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/link.txt": {
+      "bytes": 95,
+      "sha256": "aea10c44f0f4c0e3e6bfae2c9b1a90b0a1aeb6461e1261bf3e5956459b69dc92"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "c06e644090b09d41eaddf59d10bcf03c6db6499eb51fa0d03e5128e5a165cc3c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o": {
+      "bytes": 904992,
+      "sha256": "90e4f754ca78538ac6459109570e87ceb3df6dbd3e17156420c3465b8e17bfca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o.d": {
+      "bytes": 20199,
+      "sha256": "aca881e3eccdc731ba0625c1f14d007422cfea16bea182b24d46385b51d7bedb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/DependInfo.cmake": {
+      "bytes": 755,
+      "sha256": "482c16cf40958ea2f2af8fbe328461afe1ffbec1a765f54218209f65d971b100"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/build.make": {
+      "bytes": 6628,
+      "sha256": "22f041c489b4c0ea8c3680cbfddd86107b3fafa7ceaee93058fa93243f8a1cc1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean.cmake": {
+      "bytes": 323,
+      "sha256": "3f59ad1556f8ce3686882d39a119717539f3de3bf194f157e19da63837499020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean_target.cmake": {
+      "bytes": 42,
+      "sha256": "6b477660f7857030e16f3db3360bfe208081383c64621ce00f653f368f15e61c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.make": {
+      "bytes": 113,
+      "sha256": "f1844edb147f0f25d7d0ff34e80a9030e9b97f7caef77fb55b7556888e8826db"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.ts": {
+      "bytes": 117,
+      "sha256": "5d4a42aa2b79e52ea1618f221c27d853ded01837e138ca0f3261036506b0b782"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/depend.make": {
+      "bytes": 94,
+      "sha256": "30c0a4b6d6407c7254abb6c8b2f184b459ea943c7905717f7c09e68820c57730"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/flags.make": {
+      "bytes": 288,
+      "sha256": "cb6466c030931c8c9266cfe4ccd5326ccfdca81d53f2333be3edabfb81f4d2d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/link.txt": {
+      "bytes": 109,
+      "sha256": "2245581bcd068a5f77b07899ba64d9b32d75c4e7a6e8cb0db787d0e480f8319a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "2c0c69e4af70b4caed2b8e1bd9f161f3ee9eb525d5f041631eee6d0661e5a02f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o": {
+      "bytes": 2136,
+      "sha256": "8befe0706e76f35ddca7d01ff02d24839299df23e25ceb2a71ecb12bb9602263"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o.d": {
+      "bytes": 16151,
+      "sha256": "369dcc30ea646e4b70cdf8d5ecf8dc250f455968a0b9bc43173756f34bc2249b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/CTestTestfile.cmake": {
+      "bytes": 378,
+      "sha256": "6636177e00ae3d49689d74f1f911811460ddca16f7b21e29c3debf81969289f4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/Makefile": {
+      "bytes": 9868,
+      "sha256": "4a536d2b04754aae77ba30f0fec8610795e8e9b212bb3002cdd08a61660ab0d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/cmake_install.cmake": {
+      "bytes": 1252,
+      "sha256": "16e5154d02c5c1b9970cfee51c66dde9a214c8a113ed98f78258809e39f4a554"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/libgtest.a": {
+      "bytes": 966810,
+      "sha256": "859e3b658193fb746dfdd31d03083e872a158e32c36ec8bf183e8c6930b0b671"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/gtest/libgtest_main.a": {
+      "bytes": 2278,
+      "sha256": "4a130629aef45dd8365f17a0b7987602f95aacff5563bd8ebc81017a4c9480e8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/replay_fixed_first": {
+      "bytes": 549984,
+      "sha256": "92fe1759000225dd10325f7d80de040a41059ec92baad0af5a677372f0bba470"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/cmake_build/test_fixed_first": {
+      "bytes": 1011288,
+      "sha256": "ce6bdc6d3c2ceb66feb6751e781bf2b9a0ccdb1d9e406d0066875554cab1daa3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/compile_commands.json": {
+      "bytes": 3657,
+      "sha256": "09402690769ed015cf45ebee84cb0125c9cce89f5268dbf4ab314dc4ce53335d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/compiler_dependency_pins.json": {
+      "bytes": 94204,
+      "sha256": "e080d0a4fab92ee1cf732fb6fbafcc6cc7929c836a78f9c3dae228250186f539"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/configure.log": {
+      "bytes": 1418,
+      "sha256": "4be9e124cd64ae21dad69654678bc72f083af29f475af4a748cd994e2c9bda33"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/configure.sh": {
+      "bytes": 1174,
+      "sha256": "a1c525010c56fdacfb0d0c22e33422ade73ea525d85377f6b21b7ebc49645f29"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/default_build.log": {
+      "bytes": 624,
+      "sha256": "a70468c39790aa43492ee780e3fa127b53531800f34d0a516d0b4aead7c205be"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/default_build.sh": {
+      "bytes": 655,
+      "sha256": "88794659b66834b7cbfe558bee9dff5c044429639d6b80e93671197ebf90a5c5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0000_acados_backend.hpp": {
+      "bytes": 4391,
+      "sha256": "1d2b19d710391464c6833ca58b7162c501926c7bb02193737609b69bb41cfcca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0001_acados_solver_usv_dyn_nmpc.h": {
+      "bytes": 7452,
+      "sha256": "bdac3caa7ee125812d485f87cdde272c5c90d6c10628a996c6fd6f7d75038114"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0002_usv_dyn_nmpc_constraints.h": {
+      "bytes": 3210,
+      "sha256": "d5fe1da868dfbabffa160f83d82ce3d492d8c5e8e2cc091286a55fb43ee8999a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0003_usv_dyn_nmpc_cost.h": {
+      "bytes": 3986,
+      "sha256": "21ffc99e506d2e778e6d5c6e4f95c746f132f1d557d37522ae234f4d090bccbd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0004_usv_dyn_nmpc_model.h": {
+      "bytes": 2379,
+      "sha256": "d2471c85706deb72047df28521074d297a344053a56d90938f4f63046ab90682"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0005_usv_dyn_nmpc_p_global_precompute_fun.h": {
+      "bytes": 2060,
+      "sha256": "175b83c9d37263330d11e7c7828be067764b71cad69a3e5b71802031511ce770"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0006_casadi_backend.hpp": {
+      "bytes": 2826,
+      "sha256": "8cf8ffebd66d438836351460a3cb16815ef9ba847fe9ae946167dcb3bdffe489"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0007_mpc_node.hpp": {
+      "bytes": 10949,
+      "sha256": "536221d592aec0a2d91705f49ce3739f6706afdb8a0426e9a06e1a7a36fbbf72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0008_mpc_node.hpp.pre_reference_prediction_v1": {
+      "bytes": 10647,
+      "sha256": "2a19f008c009a63038b39810923ed958e534ea50d156631e08fe8e927865dfb2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0009_mpc_solver.hpp": {
+      "bytes": 4580,
+      "sha256": "a711527b8556bff8508a99bfcafedc055d81a9c5cddbe5a93f69144cb829dc83"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0010_p1_input_core.hpp": {
+      "bytes": 5795,
+      "sha256": "a626758cbce50acb69e19aa793f6d01f7e913fa92d0172e514a654481c0a0091"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0011_research_logger.hpp": {
+      "bytes": 9611,
+      "sha256": "90f9f7070eac3bf0ad516a034118444afeddfdb65cd91ccffac5d7617c30789a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0012_research_logger.hpp.pre_reference_prediction_v1": {
+      "bytes": 8134,
+      "sha256": "16a9431704b97132a3e9c50db5d953d0388bea612b57c960766fbd5e10581b6d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0013_usv_model_dynamic.hpp": {
+      "bytes": 3576,
+      "sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0014_utils.hpp": {
+      "bytes": 4838,
+      "sha256": "5a78abb9f6acd9851d96169a7bbb2044208b761c1d9d0100a0e68cfc68e27de3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0015_ament_cmake_export_dependencies-extras.cmake": {
+      "bytes": 3942,
+      "sha256": "a672adf07855ba598ec3ab5659d54e489242e928bc924bc97eabd67f91cdfdcc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0016_ament_cmake_export_targets-extras.cmake": {
+      "bytes": 975,
+      "sha256": "af392c7714144c33ab0dbba1f1d8ba9d2648c7a373ff40136e817d0f42d51892"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0017_p1_core_targetsExport-release.cmake": {
+      "bytes": 1979,
+      "sha256": "038fed658c5ad768bd5b25cf718bc4adc939a3ae21c66b91c2df526f1f0edd51"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0018_p1_core_targetsExport.cmake": {
+      "bytes": 5459,
+      "sha256": "81f954e46d7714a3a8ceb241e3e7cc323e6672bf6f6c76c3a3860f633001df2f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0019_usv_mpc_cppConfig-version.cmake": {
+      "bytes": 432,
+      "sha256": "5df7fb3481e154840dd6ac6d1b6eb53c81ed9cadd5e7a00398962383332be7ea"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0020_usv_mpc_cppConfig.cmake": {
+      "bytes": 1349,
+      "sha256": "1ebc247a6ab8c02ec6a489c5f716a11c223d4b8c30b98199c90c50654c18a2a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0021_libcodegen_lib.a": {
+      "bytes": 274422,
+      "sha256": "7431a9cbdd7b8a6d47719ceda2e44b977f2649fbcbb4592771dac99abd2a38dd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0022_libmpc_core_lib.a": {
+      "bytes": 32114,
+      "sha256": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0023_libmpc_solver_lib.a": {
+      "bytes": 212276,
+      "sha256": "5c4a8d70cc6812b36693a5b68cb13a7a812dae828f983b4446a5564ff996d5d1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0024_link.txt": {
+      "bytes": 6353,
+      "sha256": "5d143478a3e5b35ba8da92eebb3b163d3671534e4bae00bd8483269f91ca95d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0025_actual_startup_input_v1.json": {
+      "bytes": 1768728,
+      "sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0026_acados_backend.cpp": {
+      "bytes": 14296,
+      "sha256": "e5513cba1eb45024e2fb4b083b05ebd6ba8d8ced9f133a17f9c0ace3355f27c8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0027_regenerate_acados_codegen.py": {
+      "bytes": 14532,
+      "sha256": "775d271cc4f746b6eb2ebd1d3008636effedcf3af03daae694ea954985b2ead4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0028_usv_model_dynamic.cpp": {
+      "bytes": 3857,
+      "sha256": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0029_CMakeLists.txt": {
+      "bytes": 1070,
+      "sha256": "b4215ba177f52307eb74930a557bd038e4267b5e41a30f85fc52e53e19676950"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0030_gtest-assertion-result.h": {
+      "bytes": 8503,
+      "sha256": "d6562e22c316e831bfbc2cde3b158f06380a22e7e1c6c1e180689abee5c5b972"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0031_gtest-death-test.h": {
+      "bytes": 14910,
+      "sha256": "8decbb86ebbfa142fd78a83cfbeb4c5e73e98179058ce70fcc279935c497429a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0032_gtest-matchers.h": {
+      "bytes": 33067,
+      "sha256": "d637dd188944433c62d96a062f9b1adab851574c537d7021270c7a52a2759a90"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0033_gtest-message.h": {
+      "bytes": 9203,
+      "sha256": "f1c7bd4e0c02240e884deed25a2e0bfd04e5e0c3fd778a3b126cbb64531f65a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0034_gtest-param-test.h": {
+      "bytes": 24008,
+      "sha256": "1adb46e17e47fc2f40dc5b8e9acec4f01efa389a19bbea25d32aea28b94e32e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0035_gtest-printers.h": {
+      "bytes": 40511,
+      "sha256": "f3396ea55d577ee04f15a2b14b14b76edb8a84d385c831defd88cff8535bc273"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0036_gtest-spi.h": {
+      "bytes": 12843,
+      "sha256": "fc0bbebaeb211b81a2ec3df388e5e5f25a7c22e90186839854d2e5b26ce226e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0037_gtest-test-part.h": {
+      "bytes": 7164,
+      "sha256": "2279b9bfd08aff7c0f764a2716bde0d3a61dc12573687a2cff91256b17681bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0038_gtest-typed-test.h": {
+      "bytes": 15889,
+      "sha256": "d56313830bf30d6271d7c1f8ca57dc52d95a10b97e4ace6efa0f085ae519303a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0039_gtest.h": {
+      "bytes": 91459,
+      "sha256": "93da03ddf6d5b9bdf40ae4ded9939067c9ed0b6de93f787f7e8d187609b6b02d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0040_gtest_pred_impl.h": {
+      "bytes": 12783,
+      "sha256": "85e850e735a42ebb5f9a01a018708c1c0b9b7d83c94b14b7d5d29512c00b6ffd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0041_gtest_prod.h": {
+      "bytes": 2502,
+      "sha256": "3c6301ef533db8686e474dd5a0de4d98a31cbb630e2273f712472d1be25aa261"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0042_README.md": {
+      "bytes": 1269,
+      "sha256": "608ec5ac574a6e64e4fc2f4bce2cfc7ff753a04d6822d6ff96e43fff51c6ccc1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0043_gtest-port.h": {
+      "bytes": 1873,
+      "sha256": "5e06747c9e8b86e9d841fabd61c2f045b2bb1133716f127be4a963ced1c44e01"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0044_gtest-printers.h": {
+      "bytes": 2094,
+      "sha256": "b95afda2426e8c4f09c11d3296d522fb336b248c0da7e078388db4bb072c2166"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0045_gtest.h": {
+      "bytes": 1858,
+      "sha256": "21d20a1c64ea38c20c4b12337c261a1a18989d2a30710a83dfb5cd9a3bb3c55e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0046_gtest-death-test-internal.h": {
+      "bytes": 13929,
+      "sha256": "a70d1174ef668639c7af21764442f8e487b0fc70c237a70f90e3161a8e8262d6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0047_gtest-filepath.h": {
+      "bytes": 10339,
+      "sha256": "544ce95d2e1e4b7ae17ee170f482aaa09e17d0056999c4ce7e7a6097c3a755cf"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0048_gtest-internal.h": {
+      "bytes": 63416,
+      "sha256": "a33806c8e6ca5eb6f839b8e015bdf8eae848641035f9499834f9d402b823d5fe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0049_gtest-param-util.h": {
+      "bytes": 38172,
+      "sha256": "effa1b3e6a3554aae8fc82fbe88c1c3215f723bb3e2e444bf424f688c476a030"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0050_gtest-port-arch.h": {
+      "bytes": 4305,
+      "sha256": "37f6d5c70322ee5f4f84fafcb4e8e2f4bbf08a5afc64a6636cf6a9f45d442198"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0051_gtest-port.h": {
+      "bytes": 90033,
+      "sha256": "c22ef5c860dabc3e74225f3a54c2d7224375ad2dd2af619d3f8cbe7e917fc754"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0052_gtest-string.h": {
+      "bytes": 7323,
+      "sha256": "0cc08c746bceb2b101c61ffbc905c598eb62fee3c262c4585c21b10d8a3e6508"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0053_gtest-type-util.h": {
+      "bytes": 7349,
+      "sha256": "c1cf53463579025a7b25466e9680a778d74beff52d8a64b6e83fcb6dd99e4bb7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0054_gtest-all.cc": {
+      "bytes": 2201,
+      "sha256": "972d3016860f9aa6452e078cf77406290fb7003b66fd6c0744a030bd1c323606"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0055_gtest-assertion-result.cc": {
+      "bytes": 3009,
+      "sha256": "dbd2235676dcc0ef6409108a4041e05442fc6895735a5561d71151e6a14296bb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0056_gtest-death-test.cc": {
+      "bytes": 62742,
+      "sha256": "4a0a2dad0efbb61c4f7686ccd326e19d6e5633c98202f6878fa2d18c52f3329a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0057_gtest-filepath.cc": {
+      "bytes": 15732,
+      "sha256": "8eec3fa2a0e6617106a8d9bfedf3209b0a8cad02e2a17e76196807290e940f8c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0058_gtest-internal-inl.h": {
+      "bytes": 47929,
+      "sha256": "fce60f191b52108b5851f6aec51a6f14001e1a79fd302d48c8fdbb842f8fef1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0059_gtest-matchers.cc": {
+      "bytes": 3724,
+      "sha256": "e4ce9edf33493625353cc147a14caac14fdba7390d76166d101fa2fe9d16bbda"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0060_gtest-port.cc": {
+      "bytes": 47960,
+      "sha256": "6e6c0346e833a254e52544728b40fd0cced0b36431e9eed8f5e477e6f5fe1a23"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0061_gtest-printers.cc": {
+      "bytes": 18551,
+      "sha256": "bd14e45b5cb8df8be5944a0aaeb3739c533737a183ae4ed6627f5613eea1f6c9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0062_gtest-test-part.cc": {
+      "bytes": 4028,
+      "sha256": "b268314cbc718b485ff3e45fdeb5a1496bb8d87dadd5e824c558bf3b03e2dbf9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0063_gtest-typed-test.cc": {
+      "bytes": 3823,
+      "sha256": "b92e70b2d7ee3b86328162cbda269a28de4ce67f0e8d9beec5ec2c73a93ba006"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0064_gtest.cc": {
+      "bytes": 259551,
+      "sha256": "53470c00499b943b4f5c3e7b581ffda9c76f828f485f33e17471aa08e8b296ac"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0065_gtest_main.cc": {
+      "bytes": 2430,
+      "sha256": "3836c1ce7c4829c44a30f368d888ae3bed218437d61d102c50c0db4afca33b3f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0066_x86_64-linux-gnu-g++-13": {
+      "bytes": 1027128,
+      "sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0067_x86_64-linux-gnu-ar": {
+      "bytes": 55792,
+      "sha256": "6452af2eea333b8c65e1adb92964fc8f97863ab003fa13f9d12bff5345cd7dbe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/external_snapshot/0068_x86_64-linux-gnu-ranlib": {
+      "bytes": 55792,
+      "sha256": "60254978b8ee2c1b21b41d16a18a621dbbcc72e43eb2fa9f916818256c77e9ee"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/loader.log": {
+      "bytes": 943,
+      "sha256": "238e6086fd6b1d05e7bffc484fbefdbcc5a5ee074ef3ddef504519feadcccafd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/loader.sh": {
+      "bytes": 659,
+      "sha256": "f765603af98ef72f59d5a4cc5337553026c970bdd8af40b0393e8d8ef20fae4c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/native.gtest.xml": {
+      "bytes": 1337,
+      "sha256": "13463e9e25d90d544df45c369dff14cbb703ff63cc750898e22f1007591146eb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/native.log": {
+      "bytes": 791,
+      "sha256": "4e6edb2d3ed459910f6877c103c0a008a93029cd7122dec7f269e5d052b4fffc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/native.sh": {
+      "bytes": 806,
+      "sha256": "66a326f16751a70d57d495bd0990bc8fb907259688e7b07667d3ae9dc9696b93"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/recipe.py.snapshot": {
+      "bytes": 7549,
+      "sha256": "78a71d26393f5c6dd8af3ac3c68a49784e020db480448a6395a7b8219955d759"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/result.json": {
+      "bytes": 2465,
+      "sha256": "eabb881d125f3a200ee2316e368c355317be5fad469b20fd52ae38d2724c6e18"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/runtime_library_pins.json": {
+      "bytes": 3562,
+      "sha256": "534eb0fafcb2c2c9937d7a797edfcc215a7118ff786788b75de60d8f1c6ebcf2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_bundle.json": {
+      "bytes": 30929,
+      "sha256": "293c9b31b091d9dac426c938f1fbbedb69b047e44d57a9757c660e1b385a5889"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_snapshot/CMakeLists.txt": {
+      "bytes": 1267,
+      "sha256": "9958df530a2b9df3e426796f411b2b386d7906609b66593bf3914c467eca59fa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_snapshot/actual_fixed_first_input_v1.json": {
+      "bytes": 22064,
+      "sha256": "192a94253113f8ba8c2f7892bf83c7d6bceb20bcbf8f714b92bb334eb2b1a07c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_snapshot/common_replay.hpp": {
+      "bytes": 3111,
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_snapshot/fixed_first.hpp": {
+      "bytes": 1279,
+      "sha256": "83d7ef28bca31fd65277d54a17c0484a2cb602a10008691742d65b867fea29b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_snapshot/main.cpp": {
+      "bytes": 5194,
+      "sha256": "3046d8f54ac4b1893d062a22ec00a825650764d5b827ed483ff821044c629178"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_snapshot/raw_backend_v1.hpp": {
+      "bytes": 12736,
+      "sha256": "732a63984b933c911829da944d72bf1a6e47f0634dda6efcb4b29412f7519c61"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/replay_attempt02/source_snapshot/test_fixed.cpp": {
+      "bytes": 1391,
+      "sha256": "63327e006bc6b7d5bbed4d1665a5d661a69b69d636d04a3313d8f9cfaf25ef17"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/build/solver_build_v1.py": {
+      "bytes": 7549,
+      "sha256": "78a71d26393f5c6dd8af3ac3c68a49784e020db480448a6395a7b8219955d759"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/component/source_annotation_correction_v1.json": {
+      "bytes": 680,
+      "sha256": "41acb7070b3224b89b628418065f428eb865c5da0d4f5464ae12d7ec9f3a3aa2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/component/source_rebuild_comparison_v1.json": {
+      "bytes": 397,
+      "sha256": "a6455359b5a64965f033462ad550e18bdc613f101d3381c0d253c0279adad2b9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/documents/next_causal_cold_start_candidate_plan_v1.md": {
+      "bytes": 4146,
+      "sha256": "2472aecb196dfd20c98b7c063350c50405eb1eca8280445d458483f7da9ad389"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/documents/\u65b9\u6848A_\u56fa\u5b9a\u9996\u63a7\u4e0e\u5c3e\u90e8\u9002\u5e94_\u7ed3\u679c\u4e0e\u4e0b\u4e00\u6b65_2026-10-18.md": {
+      "bytes": 9405,
+      "sha256": "237deff75ee0d9b774557c3dff14c1c1fe1862cdfc65c90eb08d5fe38298c9f1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/finalize_fixed_first_v1.py": {
+      "bytes": 13522,
+      "sha256": "3480dbeb24b615feaf5155389712a27b0e77d37ccddcf2630354bd7c2d1641c5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/intermediate_local_backup_v1/CURRENT.md": {
+      "bytes": 338,
+      "sha256": "a081798d40ca01574e6d1532ebc6bdef3648f3ad3b47e571d8a31ec9e21f432f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/author_freeze_v1.json": {
+      "bytes": 3586,
+      "sha256": "f50e93e05876b2eedabe339ffb95d434ed9dba0f5ec464d44f375acb14b10976"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/fixed_first_audit_v1.json": {
+      "bytes": 8066,
+      "sha256": "d53418ec8b2ef8dbe4453026e112a2be3db62b688bf734d0b70c7a107c775ca0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/fixed_first_audit_v2.json": {
+      "bytes": 8066,
+      "sha256": "076c664cd1f1d7504ec50d37d6078bc859eb5e638c5b4d52957f1d76237e0ea2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/independent_model_v1.py": {
+      "bytes": 2153,
+      "sha256": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/intermediate_local_backup_v1.json": {
+      "bytes": 574,
+      "sha256": "0f7675ce6eb9a31d510d8611ee4e70ed58da2935e3496357bd307aa07854113e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/verify_fixed_first_v1.py": {
+      "bytes": 11244,
+      "sha256": "e893341f9eead75261262a5ffae14688295c5d17247ec04fe94ecaad4a35635d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/verify_fixed_first_v2.py": {
+      "bytes": 11244,
+      "sha256": "f6ac628395d8e67ed297f2197b14cb047b8303ee779848617486445be336c62b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preflight/MPC_delivery_preparation_v1.json": {
+      "bytes": 1043,
+      "sha256": "dcb2ff5e28257f426be548e0f9edc40c5b5354b22142929e7632822808ed4b8c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preflight/preflight_reflection_fixed_first_v1.md": {
+      "bytes": 2042,
+      "sha256": "3d3ca7cc2aaca942644586f83a93fc35f83657e053590e4a58a17cbe8049aa2e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preflight/prepare_MPC_destination_v1.py": {
+      "bytes": 1139,
+      "sha256": "e8c7521e91513f2ff05a517fec9bfb4a6a236a73141f08b30fcff8a8334457ea"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preflight/workspace_final_local_v1.json": {
+      "bytes": 21296811,
+      "sha256": "1ffb8650893a47e68058b3b4c487db32d538aa5b73bf0b36cac4eff6b0fc1160"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preflight/workspace_initial_local_v1.json": {
+      "bytes": 21292722,
+      "sha256": "c3b56d848de43431e822fc8c26648db540b6b19b5190a59d4eabee79b822152b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preregister/fixed_first_v1.json": {
+      "bytes": 3003,
+      "sha256": "913a4db313f9c6328cc853f0908c3ca23985311dc3fe8666cf4df069646431f1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preregister/offline_invocation_lock_v1.json": {
+      "bytes": 121080,
+      "sha256": "78e9089f13868cfbbd8ea65c7d287e0d1434d9e1d5371f6578ac13d3afedbce6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preregister/offline_invocation_lock_v2.json": {
+      "bytes": 121080,
+      "sha256": "495b33b450b3c51ff3d3ef480e831ad3029b48c1cb51f360c9ddde8d7e5e0b62"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/protection_local_v1.py": {
+      "bytes": 76737,
+      "sha256": "8573855c3bacbfa751059c50a8c60b149a2d523efadc2069ba838d71b057e6b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v1.json": {
+      "bytes": 485028,
+      "sha256": "88f614f9eb9f712e0af8fb5dbbc6cbae716e959432d01791994927935eb7eda8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v1.json.journal.jsonl": {
+      "bytes": 283241,
+      "sha256": "47c7a896f4189f46e27fe66bc79be564c25513bbc63150afe2123ab6177e7e8d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v1.log": {
+      "bytes": 400,
+      "sha256": "8ed026b34a3fa4cb3ac3d60b895f528fbd85ba24c3456dd9601fc2168d6941dd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v1.sh": {
+      "bytes": 969,
+      "sha256": "4c743f2ecba76940d043c93ef372880a65a8bcc234d455f5ae123b1b6689ff82"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v2.json": {
+      "bytes": 485028,
+      "sha256": "b9527a06506858903c6dce2a6ba7ac638adce0e91a7ec90592b3447458ebe5c2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v2.json.journal.jsonl": {
+      "bytes": 283241,
+      "sha256": "17852a8b32f3c5395d57826e897a78f9b4181da68fffbe6a4e3671750345b019"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v2.log": {
+      "bytes": 400,
+      "sha256": "07951f2806455c5e25ceb2a46b18e00da0e53c00b577e5b7b5b7e8a26c213376"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v2.sh": {
+      "bytes": 969,
+      "sha256": "19ce9f2ef890ac5e7db04a457928a4b9aa652bf01387f036af2c7562bb71c0eb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/offline_invocation_v1.json": {
+      "bytes": 661,
+      "sha256": "e036739513d41ee05d35710bdccd519083719bb70b17901e35afa2f2895305fa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/offline_invocation_v2.json": {
+      "bytes": 661,
+      "sha256": "1632ce6e75b7d15193ff0caf0155a5a6091957a744fac9b7988a2db97baa91d2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/run_offline_v1.py": {
+      "bytes": 4782,
+      "sha256": "efdeeac474e55fc14bd16fbc25c0ba265116b9cc111cd34ea8b68c1f76c4a08f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/run_offline_v2.py": {
+      "bytes": 4785,
+      "sha256": "4ef0c3d41f312b3630401a0e90eaa25b690ec3d19bd432e395a70567c982f638"
+    }
+  },
+  "independent_audit_sha256": "076c664cd1f1d7504ec50d37d6078bc859eb5e638c5b4d52957f1d76237e0ea2",
+  "initial_local_protection_sha256": "c3b56d848de43431e822fc8c26648db540b6b19b5190a59d4eabee79b822152b",
+  "legacy_actual_jobs": 102,
+  "local_old_asset_bytes": 4033238611,
+  "local_old_asset_paths": 35246,
+  "native_GTest_cases": 3,
+  "native_result_sha256": "b9527a06506858903c6dce2a6ba7ac638adce0e91a7ec90592b3447458ebe5c2",
+  "negative_audit_boundaries": 5,
+  "new_closed_loop_performance_qualified": false,
+  "new_closed_loop_run": false,
+  "offline_mechanism_complete": true,
+  "original_RMSE_failure_preserved": true,
+  "original_real_launch_exception": [
+    {
+      "current_live_file_edited_or_restored_by_this_batch": false,
+      "current_pin": {
+        "bytes": 15602,
+        "mode": 436,
+        "sha256": "f7d6f8a66ef834148da1a17aa71a93b86fca4f2a0ef5e0029f6aa4d039549b43"
+      },
+      "diff_bytes": 515,
+      "diff_sha256": "96cdf76e50289c687c36de0afcd159969de7b9c4ce624ab98a78eabf6a452d16",
+      "historical_recovery_snapshot_written_at_resume": true,
+      "old_bytes_retained_in_original_Git_HEAD": true,
+      "old_pin": {
+        "bytes": 15682,
+        "mode": 436,
+        "sha256": "a4d0dd480bbcd3518c0d9ad40c34db86123fb7a772135dd44ac03d04e7a2420e"
+      },
+      "origin": "unknown; present before resumed turn",
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py"
+    }
+  ],
+  "passed": true,
+  "passed_semantics": "local archive integrity, actual/default-mode component equivalence and two registered offline arms; no runtime/closed-loop or remote-mirror qualification",
+  "preregistration_sha256": "913a4db313f9c6328cc853f0908c3ca23985311dc3fe8666cf4df069646431f1",
+  "remote_MPC_expected_paths_deferred": 24125,
+  "remote_MPC_mirrors_currently_verified": false,
+  "research_conclusion": false,
+  "schema": "fixed-first-tail-local-QA/v1",
+  "source_rebuild_numerically_identical": true,
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

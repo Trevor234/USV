@@ -1,0 +1,21 @@
+{
+  "schema": "M4-T2C-COMPLETE-v91",
+  "recorded_at": "2026-10-25T18:48:30.344039+08:00",
+  "result": "ALL CHECKS PASS — T2-C scenario family fully validated",
+  "audit": "PASSED=True, failing=NONE",
+  "key_checks": {
+    "ordering_clause_holds": true,
+    "target_guard_present": true,
+    "stopping_observed": true,
+    "receipt_accounting": true,
+    "output_accounting": true,
+    "closure_gate": true,
+    "witness_gate": true,
+    "stored_gate": true
+  },
+  "fix_chain": [
+    "stop block no cleanup (keep admission+candidate)",
+    "receipt dedup by action_id"
+  ],
+  "owned_runs": 1
+}

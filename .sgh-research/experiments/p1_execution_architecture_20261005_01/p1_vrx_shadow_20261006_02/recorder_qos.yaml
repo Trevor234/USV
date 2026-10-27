@@ -1,0 +1,90 @@
+/clock:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: best_effort
+/mpc/predicted_trajectory:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/mpc/status:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/p1/execution_decision:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/p1/solve_candidate:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/p1/solve_job:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/p1/stop:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/p1/worker_capability:
+  depth: 1024
+  durability: transient_local
+  history: keep_last
+  reliability: reliable
+/path/reference:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/path/reference_profile:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/research/control/applied:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/research/cycle_timing:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/research/reference_prediction:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/research/state_snapshot:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/wamv/sensors/imu/imu/data:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: best_effort
+/wamv/sensors/position/ground_truth_odometry:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: best_effort
+/wamv/thrusters/left/thrust:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable
+/wamv/thrusters/right/thrust:
+  depth: 1024
+  durability: volatile
+  history: keep_last
+  reliability: reliable

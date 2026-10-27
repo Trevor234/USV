@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="6" time="0.309" timestamp="2026-10-21T19:35:39.892358" hostname="trevor-Vostro-5880-China-HDD-Protection"><testcase classname="test.test_fcu_mode_contract" name="test_dynamic_rc_yaml_uses_manual[mpc_params.yaml]" time="0.003" /><testcase classname="test.test_fcu_mode_contract" name="test_dynamic_rc_yaml_uses_manual[mpc_params_B.yaml]" time="0.003" /><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[A-GUIDED-real.launch.py]" time="0.045"><failure message="AssertionError: assert 'GUIDED' == ['GUIDED']">launch_name = 'real.launch.py', scheme = 'A', target = 'GUIDED'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        description = module.generate_launch_description()
+        context = LaunchContext()
+        context.launch_configurations["scheme"] = scheme
+        for entity in description.entities:
+            if isinstance(entity, DeclareLaunchArgument):
+                entity.execute(context)
+        selected = {}
+        for node in nodes(description.entities):
+            executable = perform_substitutions(context, normalize_to_list_of_substitutions(node.node_executable))
+            if executable not in {"mpc_node", "mode_manager_node"}:
+                continue
+            # Normalized parameter storage is inspected; Node.execute is never called.
+            effective = {}
+            for item in evaluate_parameters(context, node._Node__parameters):
+                if isinstance(item, dict):
+                    effective.update(item)
+                else:
+                    effective.update(yaml.safe_load(Path(item).read_text())["/**"]["ros__parameters"])
+            selected[executable] = effective
+&gt;       assert selected["mpc_node"]["allowed_fcu_modes"] == [target]
+E       AssertionError: assert 'GUIDED' == ['GUIDED']
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:57: AssertionError</failure></testcase><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[A-GUIDED-sitl.launch.py]" time="0.014"><failure message="AssertionError: assert ('MANUAL',) == ['GUIDED']&#10;  At index 0 diff: 'MANUAL' != 'GUIDED'&#10;  Use -v to get more diff">launch_name = 'sitl.launch.py', scheme = 'A', target = 'GUIDED'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        description = module.generate_launch_description()
+        context = LaunchContext()
+        context.launch_configurations["scheme"] = scheme
+        for entity in description.entities:
+            if isinstance(entity, DeclareLaunchArgument):
+                entity.execute(context)
+        selected = {}
+        for node in nodes(description.entities):
+            executable = perform_substitutions(context, normalize_to_list_of_substitutions(node.node_executable))
+            if executable not in {"mpc_node", "mode_manager_node"}:
+                continue
+            # Normalized parameter storage is inspected; Node.execute is never called.
+            effective = {}
+            for item in evaluate_parameters(context, node._Node__parameters):
+                if isinstance(item, dict):
+                    effective.update(item)
+                else:
+                    effective.update(yaml.safe_load(Path(item).read_text())["/**"]["ros__parameters"])
+            selected[executable] = effective
+&gt;       assert selected["mpc_node"]["allowed_fcu_modes"] == [target]
+E       AssertionError: assert ('MANUAL',) == ['GUIDED']
+E         At index 0 diff: 'MANUAL' != 'GUIDED'
+E         Use -v to get more diff
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:57: AssertionError</failure></testcase><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[B-MANUAL-real.launch.py]" time="0.012"><failure message="AssertionError: assert 'MANUAL' == ['MANUAL']">launch_name = 'real.launch.py', scheme = 'B', target = 'MANUAL'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        description = module.generate_launch_description()
+        context = LaunchContext()
+        context.launch_configurations["scheme"] = scheme
+        for entity in description.entities:
+            if isinstance(entity, DeclareLaunchArgument):
+                entity.execute(context)
+        selected = {}
+        for node in nodes(description.entities):
+            executable = perform_substitutions(context, normalize_to_list_of_substitutions(node.node_executable))
+            if executable not in {"mpc_node", "mode_manager_node"}:
+                continue
+            # Normalized parameter storage is inspected; Node.execute is never called.
+            effective = {}
+            for item in evaluate_parameters(context, node._Node__parameters):
+                if isinstance(item, dict):
+                    effective.update(item)
+                else:
+                    effective.update(yaml.safe_load(Path(item).read_text())["/**"]["ros__parameters"])
+            selected[executable] = effective
+&gt;       assert selected["mpc_node"]["allowed_fcu_modes"] == [target]
+E       AssertionError: assert 'MANUAL' == ['MANUAL']
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:57: AssertionError</failure></testcase><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[B-MANUAL-sitl.launch.py]" time="0.015"><failure message="AssertionError: assert ('MANUAL',) == ['MANUAL']&#10;  Use -v to get more diff">launch_name = 'sitl.launch.py', scheme = 'B', target = 'MANUAL'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        description = module.generate_launch_description()
+        context = LaunchContext()
+        context.launch_configurations["scheme"] = scheme
+        for entity in description.entities:
+            if isinstance(entity, DeclareLaunchArgument):
+                entity.execute(context)
+        selected = {}
+        for node in nodes(description.entities):
+            executable = perform_substitutions(context, normalize_to_list_of_substitutions(node.node_executable))
+            if executable not in {"mpc_node", "mode_manager_node"}:
+                continue
+            # Normalized parameter storage is inspected; Node.execute is never called.
+            effective = {}
+            for item in evaluate_parameters(context, node._Node__parameters):
+                if isinstance(item, dict):
+                    effective.update(item)
+                else:
+                    effective.update(yaml.safe_load(Path(item).read_text())["/**"]["ros__parameters"])
+            selected[executable] = effective
+&gt;       assert selected["mpc_node"]["allowed_fcu_modes"] == [target]
+E       AssertionError: assert ('MANUAL',) == ['MANUAL']
+E         Use -v to get more diff
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:57: AssertionError</failure></testcase></testsuite></testsuites>

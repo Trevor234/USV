@@ -1,0 +1,300 @@
+{
+  "schema": "scheme-A-handoff-publication-v1",
+  "utc": "2026-10-10T08:04:40.468255+00:00",
+  "root": "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01",
+  "files_written": [
+    {
+      "path": "方案A_UbuntuCodex交接与全面推进计划_2026-10-10.md",
+      "bytes": 37342,
+      "sha256": "296cc1b3149d2bfe0c33f43d38ed642abf0ba12ad32e79e31b0055d4d0782cf6"
+    },
+    {
+      "path": "source_docs/USV_三次修复汇总_2026-10-03.md",
+      "bytes": 27808,
+      "sha256": "92b2c391ebcb8fa6d8139af8eab1d8fbfe0f9866e4495331cd514c659a125c30"
+    },
+    {
+      "path": "source_docs/P0_冻结基线与最小数据契约_实施与验收报告_2026-10-04.md",
+      "bytes": 23294,
+      "sha256": "93fda1a044898bcc530191fa32c54f1c69efcfaad6bd0159859bf7508f341039"
+    },
+    {
+      "path": "source_docs/P0_模型与参考一致性核验及四元数门禁修复_2026-10-04.md",
+      "bytes": 17523,
+      "sha256": "79b9696db955b631e10463accbc7d4229745b9b73bd648268cb385a927f12654"
+    },
+    {
+      "path": "source_docs/P0_配置独立与实际参考预测观测_实施与验收_2026-10-05.md",
+      "bytes": 22393,
+      "sha256": "679ef1937de1de8c58ecf7b7ddffc871592539b22388f1b95db6d9ed5670995a"
+    },
+    {
+      "path": "source_docs/P1_求解资格与输入原子冻结_最小修复及验收_2026-10-05.md",
+      "bytes": 21442,
+      "sha256": "1857fe1ffd9b2bb62fe0b018b6f61e6977bdf22376f2b87c3c10ed3f0eb364f1"
+    },
+    {
+      "path": "source_docs/P1_时间与候选接纳契约及独立执行架构_最小实施计划_2026-10-05.md",
+      "bytes": 79145,
+      "sha256": "372051418da9b8363fefee2c57210257849b297de6e4346133352cb8ff63d75d"
+    },
+    {
+      "path": "source_docs/P1_独立执行架构_实施进展与验收记录_2026-10-06.md",
+      "bytes": 93807,
+      "sha256": "faddcec77cc245c34a371a8125a1b9cd7513765fd99686d309dc7f8f2f94f219"
+    },
+    {
+      "path": "source_docs/P1_M2_范围与证据矩阵审查及最小闭合计划_2026-10-06.md",
+      "bytes": 48501,
+      "sha256": "4c7e512003adbca5e603ad00f73210d634c002adcf2d9f711176856c70c35298"
+    },
+    {
+      "path": "source_docs/P1_资源合同与输送分账_实施与验收_2026-10-07.md",
+      "bytes": 30126,
+      "sha256": "3265fd004a6a7114a30c7da7be8788f643174f9f374959646d22ec5af8d61cba"
+    },
+    {
+      "path": "source_docs/P1_M0b_参数来源与政策表及最小校准计划_2026-10-07.md",
+      "bytes": 111659,
+      "sha256": "eeb02bcf744cfedf4224d9ea3134d73a133b86fa1685a3da1a9a01656d915e22"
+    },
+    {
+      "path": "source_docs/P1_M0b_B0_正式合同校验_实施与验收_2026-10-07.md",
+      "bytes": 12969,
+      "sha256": "71a5017ad2fdd4bdda1805bb9baf8de31aba5ea3093a77ad9f421f33f5ba7ebe"
+    },
+    {
+      "path": "source_docs/P1_M0b_B1_独立诊断副本与固定审计_实施与验收_2026-10-08.md",
+      "bytes": 11515,
+      "sha256": "b4d1efddf03982ded6269037b7ac9d97088ea206b7f70c4a39f5f40a1b04b985"
+    },
+    {
+      "path": "source_docs/P1_M0b_C0_正常无输出对照_实施与验收_2026-10-08.md",
+      "bytes": 12442,
+      "sha256": "496ac6758413a3822b79e2cf2f7c77fed9a36c45c55c05d0c71b68c0b59fd495"
+    },
+    {
+      "path": "source_docs/P1_M0b_R5_日志压力机制_实施与验收_2026-10-08.md",
+      "bytes": 15397,
+      "sha256": "1c0252934ef55d95947c66c57d78ac3398ab78fe64902dcc9e80a37d050471fb"
+    },
+    {
+      "path": "source_docs/P1_M0b_Decision入队失败即时失效_修复与验收_2026-10-08.md",
+      "bytes": 12001,
+      "sha256": "fe7e183a340b2bc2c301c234894a629b3c05b001a7761ae44429271afcebf240"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_参数来源与版本适用审查_2026-10-09.md",
+      "bytes": 13116,
+      "sha256": "8309d71c8e87d4a1e9096bc0b28f54c9c857448d3fd3ca67896699b261e21768"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_参数来源与冻结决策_2026-10-09.json",
+      "bytes": 415280,
+      "sha256": "1481839f0d8b5a1b92aeb4e54bf2a341b722156089d85e4dd7fbbfabbce3a423"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_D0_来源观察_实施与验收_2026-10-09.md",
+      "bytes": 11023,
+      "sha256": "f002d9f284cfeb3e44b32b40c84401ce4cdad43732a6b68eda031493591ec405"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_D1_前置核验与隔离入口_实施与验收_2026-10-09.md",
+      "bytes": 14347,
+      "sha256": "4c21e2d67b5bca055bd82e575ea21193f9101479778b7ef9d9499fcdd3dd27f1"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_D1_工况与严格shadow链_最小计划_2026-10-09.md",
+      "bytes": 8082,
+      "sha256": "046063cbfb643d8f04d203d933e504cedfad35722d9bd4da362ef9e5123f1687"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_D1_冻结参考与严格检查器_实施与验收_2026-10-09.md",
+      "bytes": 8894,
+      "sha256": "52c8b01dce2273e833e9cc5878ca0f656bdcaced113d1abbc4d15f048dd3d9eb"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_D1_启动握手组件_实施与验收_2026-10-09.md",
+      "bytes": 7482,
+      "sha256": "c894ba3810600cdf0f8cf3031928085a7f7774caa440e2ce40409b4c2205b281"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_D1_启动握手组件_状态_2026-10-09.json",
+      "bytes": 12333,
+      "sha256": "3957e16c7004cac99ba2504c125d51c0fb4fcca46a582c7dbf4012275b9999c6"
+    },
+    {
+      "path": "source_docs/P1_M0b_B4_D1_owned端点与配置认证_最小计划_2026-10-09.md",
+      "bytes": 4262,
+      "sha256": "3d11aa70f1cfa7a5cc7a79c7c0970d209fa2aa1b4ec77cac19f5a2dd3cfb5c91"
+    },
+    {
+      "path": "source_docs/P1_剩余环境差异_最小修复与验证记录_2026-10-10.md",
+      "bytes": 18351,
+      "sha256": "a91bd4f7ab9169961fc68e7041001f97c265b9a37d80de8041ec1b4beebf6170"
+    },
+    {
+      "path": "source_docs/P1_剩余环境差异_修复审计_2026-10-10.json",
+      "bytes": 24610,
+      "sha256": "f06604fab6187d17de6911ca3d9e22d14589dcc2198c6bd98f2756a2bafa72b2"
+    },
+    {
+      "path": "source_docs/P1_共享辅助资产版本锁_2026-10-10.json",
+      "bytes": 52496,
+      "sha256": "1016674dda427dba0b20ecfc31cb56500552300b26e7d330ea6f5c8ef3226d35"
+    },
+    {
+      "path": "source_docs/P1_环境25项差异_原因与影响审计_2026-10-10.md",
+      "bytes": 20644,
+      "sha256": "dc6fd5a53749cbfeddc16d2c5de9a029e22d8b798d76ac07b04fbf2dcdfa43bc"
+    },
+    {
+      "path": "source_docs/P1_仿真NTRIP不使用与实机配置保留_2026-10-10.md",
+      "bytes": 5006,
+      "sha256": "8cee94fcca094dd205fef38f6669ecd45a912175449fb33fe1476b3b5d474e47"
+    },
+    {
+      "path": "source_docs/P1_仿真NTRIP适用范围_2026-10-10.json",
+      "bytes": 7778,
+      "sha256": "a8d9ba1225999aaf2eb7142a939219dac335de8ce22f58ea65a7343e6ef9d45b"
+    },
+    {
+      "path": "source_docs/首选A_现有ROS平台可行性与实施方案_2026-10-03.md",
+      "bytes": 116508,
+      "sha256": "9a60751ac2d099729d84cd2f54861c18cefdc0cbe4dff564aa8408700d6d103e"
+    },
+    {
+      "path": "source_docs/已读文献创新筛选_2026-10-02.md",
+      "bytes": 28636,
+      "sha256": "beb3f655bcf6321a66d1296317f2971b4171647af93ca6ee3eab2aed7c3fe2f7"
+    },
+    {
+      "path": "source_docs/创新验证实验设计_2026-10-02.md",
+      "bytes": 17254,
+      "sha256": "96f1bee660fbdc37d3f499f2a07cc64cc352be06e2645fbc172c429155bd5fc4"
+    },
+    {
+      "path": "source_docs/创新查新依据_2026-10-02.md",
+      "bytes": 16064,
+      "sha256": "50630210ed8b70d3bde709342ba676df02983622e03c4cee437ad530e46b05d7"
+    },
+    {
+      "path": "source_docs/research-innovations.md",
+      "bytes": 27592,
+      "sha256": "6a40ddf4994927408218e3453c25c94738639df5c16c2c343adc3e884403a52f"
+    },
+    {
+      "path": "source_docs/startup_handshake_build_manifest_v1.json",
+      "bytes": 2282,
+      "sha256": "765aa9270024820eaa150fb173a6cbae4055079f42cdf5bfad7fd123866bd733"
+    },
+    {
+      "path": "source_docs/scoped_assets_close_result.json",
+      "bytes": 4716,
+      "sha256": "ecbb7fdaf6c63df1b4edcc304aa8125fb882589be8e5854b8f558792996f4eb3"
+    },
+    {
+      "path": "source_docs/remote_handoff_inventory.json",
+      "bytes": 14728,
+      "sha256": "7adf82b72d5a718223a947f01519fa15b86699b239d4fc15d6c650928dbbaa21"
+    },
+    {
+      "path": "source_docs/remote_continuation_assets.json",
+      "bytes": 3991,
+      "sha256": "f01109800ff59dea09abf358d980bfd4f187edb7c448ad0d89592da63d373c2b"
+    },
+    {
+      "path": "skill_reference/sgh-research/SKILL.md",
+      "bytes": 13146,
+      "sha256": "d21e0f1d1ca42caeb976b1d2c328b4325b2abb65fc5260d740bbdd066e1b47b1"
+    },
+    {
+      "path": "skill_reference/sgh-experiment-design/SKILL.md",
+      "bytes": 13753,
+      "sha256": "c558320d53b5fa60bcf8386f9aeb354a70756ebb73132be0ef9810fc536899b8"
+    },
+    {
+      "path": "skill_reference/control-preflight-reflect/SKILL.md",
+      "bytes": 1717,
+      "sha256": "94410853b518f376dd4f36ffbf01354c7f3d34a9125db4ff41d33ae14a2953f3"
+    },
+    {
+      "path": "skill_reference/control-theory-veto/SKILL.md",
+      "bytes": 2661,
+      "sha256": "f965efab5aae70c1ca6e010277833aa3c6595a922ab98c41b5dc3d02f48150cc"
+    },
+    {
+      "path": "skill_reference/control-postrun-retro/SKILL.md",
+      "bytes": 2708,
+      "sha256": "7f7ea33d0d2e720602245e2d70e96c905924a23bc449bc61e860388a27114b13"
+    },
+    {
+      "path": "skill_reference/sgh-research/references/research-workflows.md",
+      "bytes": 9222,
+      "sha256": "b65afc623222e7d2db8f0e36c71c4c620099d57c4a9b684f157078430d9ebf54"
+    },
+    {
+      "path": "handoff_manifest.json",
+      "bytes": 21398,
+      "sha256": "c7ae86b57030d87aeb06e4c13cbb421c87cc5a3b4f57cfc1a29d32334027b17a"
+    }
+  ],
+  "identity_guards": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/D1_prerequisite_closed_assets_20261009.json",
+      "sha256": "27df4957d21c29a9d724bc97a1221f0fee814d99d53f9f7be041b1e23a7124a0"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/SIM_SHARED_SUPPORT_20261010_01.json",
+      "sha256": "1016674dda427dba0b20ecfc31cb56500552300b26e7d330ea6f5c8ef3226d35"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/support_checker/check_support_assets.py",
+      "sha256": "0700d7b3cb0e0b2f1eba0155bffe80f195a2cff0ea568b1426dcbcdcd90254ea"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/build/p1_F5_held_publisher",
+      "sha256": "21019c23823f8f8f86d856e66158ef73ff784c56cb6822ec69cf7faf632189d4"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/build/p1_regulator_shadow_observer_ready_v1",
+      "sha256": "58e72a003782aa783f78e81cebf12260c378a7dcfa21f7de254415aa8b183bd6"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/src/mpc_node.cpp",
+      "sha256": "6fcd225da16536805dcc3d47b3ddc3d190cef0fba8ca586fc3ad88eb37b70226"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "sha256": "2406472fbc05b97e771c0d9545c92a5d843de4fe2a2bcfa4f57e5dc6b150907c"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/regulator_shadow_observer.cpp",
+      "sha256": "a9f5418d5fb73e8621a8ce571466bc9a4fab0e1ce16427b1b6310e6903aba62d"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/src/shadow/p1_shadow_entry.hpp",
+      "sha256": "e5f952cb29c9c975f584b1ce4be456a06c9e3dcac6d7435bed81fdaf1c9bae6b"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/readiness_protocol.json",
+      "sha256": "a70bea748d02bb13aa04480f783d079661cc294caebc54ca7eff0fb2a1cfa5fc"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/owned_release.py",
+      "sha256": "689faf811493d97f4d09670d201a544d94577df2031b9e6d37d136feac3e4f8c"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/test_owned_release.py",
+      "sha256": "cfbf769cf9ff15b8f3f672c7ac1945fd271c2a51ce0af72b65300c1140c0191f"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/startup_handshake_scoped_closed_assets_20261009.json",
+      "sha256": "5606551d69a441d220b0d734fdb2897b08e10732b0622a5b383f0d939748d6a4"
+    }
+  ],
+  "manifest_sha256": "c7ae86b57030d87aeb06e4c13cbb421c87cc5a3b4f57cfc1a29d32334027b17a",
+  "nodes_started": false,
+  "project_code_or_baselines_modified": false,
+  "execute_qualified": false
+}

@@ -3,6 +3,10 @@
     # --- General MPC Settings (Flat) ---
     # 此工作目录仅 NMPC (动力学)
     control_mode: "dynamic"     # "dynamic" (跑 NMPC) 或 "idle" (在线不解算);此工作目录仅支持这两值
+    # 实船方案 B: NMPC 经 RC 覆写进入 MANUAL 的 steering/throttle 输入链。
+    output_mode: "rc_override"
+    require_fcu_state: true
+    allowed_fcu_modes: ["MANUAL"]
     mpc_dt: 0.2                 # MPC time step (s) — 5 Hz control loop
     horizon: 20                  # Prediction horizon steps
     publish_predicted: true      # Publish MPC predicted trajectory

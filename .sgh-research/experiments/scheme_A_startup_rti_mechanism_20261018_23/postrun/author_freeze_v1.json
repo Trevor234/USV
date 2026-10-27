@@ -1,0 +1,51 @@
+{
+  "all_sources_runs_failed_attempts_and_raw_Storage_preserved": true,
+  "bytes": 1790179,
+  "count": 6,
+  "directories": [],
+  "files": [
+    {
+      "bytes": 1261,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/CMakeLists.txt",
+      "relative_path": "CMakeLists.txt",
+      "sha256": "a2e4c045056dff19507b87a9e00e2832186af96efbae929d7c5a8c24e6b2d844",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/author_snapshot/CMakeLists.txt"
+    },
+    {
+      "bytes": 1768728,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json",
+      "relative_path": "actual_startup_input_v1.json",
+      "sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/author_snapshot/actual_startup_input_v1.json"
+    },
+    {
+      "bytes": 3111,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/common_replay.hpp",
+      "relative_path": "common_replay.hpp",
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/author_snapshot/common_replay.hpp"
+    },
+    {
+      "bytes": 3117,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/main.cpp",
+      "relative_path": "main.cpp",
+      "sha256": "27c3769a0b04aac7bc3f2add5585b721bccd03d9cb68b955179750c9fb284594",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/author_snapshot/main.cpp"
+    },
+    {
+      "bytes": 10909,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/raw_backend_v1.hpp",
+      "relative_path": "raw_backend_v1.hpp",
+      "sha256": "9e32ff80f47e3affa8495461011e9945e08e960d54a6f7691ad43135432142f6",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/author_snapshot/raw_backend_v1.hpp"
+    },
+    {
+      "bytes": 3053,
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/test_startup.cpp",
+      "relative_path": "test_startup.cpp",
+      "sha256": "3450d180b4b79771ea4d2a331221083a2702f3526d9b58eb2adad0f8c40701b5",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/author_snapshot/test_startup.cpp"
+    }
+  ],
+  "schema": "startup-rti-mechanism-author-freeze/v1"
+}

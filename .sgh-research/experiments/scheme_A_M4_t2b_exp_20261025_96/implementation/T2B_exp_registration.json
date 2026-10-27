@@ -1,0 +1,33 @@
+{
+  "action_table": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_exp_20261025_96/implementation/T2B_exp_table.json",
+  "action_table_sha256": "5d2dfbdbfcfe1727ae0d02e80dedc579d4d28dfc0629664eabf3411a0e0a13e1",
+  "audit_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_g4c_fix_20261025_91/implementation/t2_author/audit_t2.py",
+    "sha256": "d749b54bfade5683f8fc14230871a2e3081efc1f451fbda7e26f42e780bbef87"
+  },
+  "automatic_retries": 0,
+  "boundary_release": {
+    "job_id": 2,
+    "nonce": 1749532001,
+    "ordinal": 1,
+    "wait_budget_ns": 2000000000
+  },
+  "case": "T2B-inflight-clear-replace",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "domain_id": 120,
+  "executed": false,
+  "fault_injection_enabled": true,
+  "max_seconds": 45,
+  "negative_control": true,
+  "note": "delay_ms=200 ensures boundary expires before release; expected disposition=expired native=false",
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_g4c_fix_20261025_91/implementation/runs/T2B_EXP",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_g4c_fix_20261025_91/implementation/t2_registry.json",
+  "registry_sha256": "dbbd24c86e4862f41bbeb7516065e5f92d01f3dda1b0a05379c355a717422ec8",
+  "run_id": "T2-T2B-EXP",
+  "schema": "M4-owned-t2-scenario-run-v1",
+  "scope": "M4_owned_t2_boundary_diagnostic_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

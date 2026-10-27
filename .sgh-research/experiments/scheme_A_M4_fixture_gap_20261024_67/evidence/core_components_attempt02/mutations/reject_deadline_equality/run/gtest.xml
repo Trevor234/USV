@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="58" failures="5" disabled="0" errors="0" time="0.015" timestamp="2026-10-24T11:56:59.622" name="AllTests">
+  <testsuite name="Deadline" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="EqualityRegistrationSurvivesEitherCutoffOrder" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="8" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Deadline">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Expected equality of these values:&#x0A;  a.register_ready(t,1,t.deadline,t.version)&#x0A;    Which is: &quot;late&quot;&#x0A;  &quot;&quot;&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Expected equality of these values:
+  a.register_ready(t,1,t.deadline,t.version)
+    Which is: "late"
+  ""
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Value of: a.finalize_ready(t.id,t.deadline)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Value of: a.finalize_ready(t.id,t.deadline)
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Value of: a.cutoff(t.deadline+1)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Value of: a.cutoff(t.deadline+1)
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Value of: a.take(2,t.target_ns)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Value of: a.take(2,t.target_ns)
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Expected equality of these values:&#x0A;  a.register_ready(t,1,t.deadline,t.version)&#x0A;    Which is: &quot;late&quot;&#x0A;  &quot;&quot;&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Expected equality of these values:
+  a.register_ready(t,1,t.deadline,t.version)
+    Which is: "late"
+  ""
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Value of: a.finalize_ready(t.id,t.deadline)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Value of: a.finalize_ready(t.id,t.deadline)
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Value of: a.cutoff(t.deadline+1)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Value of: a.cutoff(t.deadline+1)
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8&#x0A;Value of: a.take(2,t.target_ns)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:8
+Value of: a.take(2,t.target_ns)
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="BeforeAndAfterHaveDifferentResults" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="9" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Deadline">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:9&#x0A;Expected equality of these values:&#x0A;  a.register_ready(t,1,t.deadline+d,t.version)&#x0A;    Which is: &quot;late&quot;&#x0A;  d&lt;=0?&quot;&quot;:&quot;late&quot;&#x0A;    Which is: &quot;&quot;&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:9
+Expected equality of these values:
+  a.register_ready(t,1,t.deadline+d,t.version)
+    Which is: "late"
+  d<=0?"":"late"
+    Which is: ""
+]]></failure>
+    </testcase>
+    <testcase name="RegistrationCompletionAfterDeadlineRetractsSlot" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="23" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Deadline" />
+  </testsuite>
+  <testsuite name="Admission" tests="3" failures="2" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="WrongTargetDuplicateAndVersion" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="10" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Admission">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:10&#x0A;Expected equality of these values:&#x0A;  a.register_ready(t,1,t.deadline,t.version)&#x0A;    Which is: &quot;late&quot;&#x0A;  &quot;&quot;&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:10
+Expected equality of these values:
+  a.register_ready(t,1,t.deadline,t.version)
+    Which is: "late"
+  ""
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:10&#x0A;Expected equality of these values:&#x0A;  a.register_ready(t,1,t.deadline,t.version)&#x0A;    Which is: &quot;late&quot;&#x0A;  &quot;duplicate&quot;&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:10
+Expected equality of these values:
+  a.register_ready(t,1,t.deadline,t.version)
+    Which is: "late"
+  "duplicate"
+]]></failure>
+    </testcase>
+    <testcase name="ClearBetweenCutoffAndActivationInvalidates" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="11" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Admission">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:11&#x0A;Expected equality of these values:&#x0A;  a.register_ready(t,1,t.deadline,t.version)&#x0A;    Which is: &quot;late&quot;&#x0A;  &quot;&quot;&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp:11
+Expected equality of these values:
+  a.register_ready(t,1,t.deadline,t.version)
+    Which is: "late"
+  ""
+]]></failure>
+    </testcase>
+    <testcase name="FixedCapacityAndMissedTickNeverRollsForward" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="12" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Admission" />
+  </testsuite>
+  <testsuite name="Activation" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="SourceSequenceDoesNotReplaceStateAndVersionGate" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="13" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Activation" />
+  </testsuite>
+  <testsuite name="Anchor" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="14" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Anchor" />
+  </testsuite>
+  <testsuite name="Command" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="AmplitudeAndActualSteadySpacing" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="15" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Command" />
+  </testsuite>
+  <testsuite name="Fallback" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="FifthMissRampsAndNeverInstantlyDropsLargeThrust" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="16" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="Fallback" />
+  </testsuite>
+  <testsuite name="InputCore" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="EligibilityPreservesF5ReasonPriority" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="17" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="InputCore" />
+    <testcase name="NumericAndMixedRate" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="18" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="InputCore" />
+    <testcase name="MappingMatchesDeclaredPhysicalClamp" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="19" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="InputCore" />
+    <testcase name="TargetReferenceIsRebuiltFromPredictedNearestPoint" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="20" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="InputCore" />
+    <testcase name="PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="21" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="InputCore" />
+  </testsuite>
+  <testsuite name="SourceTime" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.622">
+    <testcase name="ReceiveAgeAndPhysicalLagAreIndependent" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="26" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="SourceTime" />
+    <testcase name="LagAndFutureLimitsAreInclusive" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="32" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="SourceTime" />
+    <testcase name="PhysicalNowExtrapolatesClockToCommitAtOneToOne" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="39" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="SourceTime" />
+    <testcase name="OnlyMixedStateUsesImuPhysicalAge" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="45" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="SourceTime" />
+    <testcase name="InvalidChronologyAndExtrapolationOverflowAreRejected" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="52" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="SourceTime" />
+  </testsuite>
+  <testsuite name="ClockWindow" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.015" timestamp="2026-10-24T11:56:59.622">
+    <testcase name="HighRateClockRetainsRequiredDurationAtFiniteCapacity" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.622" classname="ClockWindow" />
+    <testcase name="DurationAndRealtimeRatioBoundariesAreInclusive" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="71" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.623" classname="ClockWindow" />
+    <testcase name="RepeatedSimulationTimeCannotKeepPreviousValidRatio" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="81" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.623" classname="ClockWindow" />
+    <testcase name="ReceiveGapRemovesStaleValidityAndNeedsNewCoverage" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="88" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.623" classname="ClockWindow" />
+    <testcase name="ResetBackwardJumpAndDuplicateReceiveRequireFreshWindow" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.623" classname="ClockWindow" />
+    <testcase name="InvalidInputsAndBurstsCannotClaimEstablishedAlignment" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="107" status="run" result="completed" time="0.014" timestamp="2026-10-24T11:56:59.623" classname="ClockWindow" />
+  </testsuite>
+  <testsuite name="PublicationHistory" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.637">
+    <testcase name="SameValueRepetitionPreservesInputAssumption" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="127" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="PublicationHistory" />
+    <testcase name="ChangedThenReturnedIsNotSameInputHistory" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="133" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="PublicationHistory" />
+    <testcase name="MissingChannelOrSequenceCannotProveEquivalence" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="139" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="PublicationHistory" />
+    <testcase name="UnknownAndNonfinitePublicationsInvalidateProof" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="143" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="PublicationHistory" />
+    <testcase name="WrongTimeAndOutOfOrderRecordsAreRejected" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="147" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="PublicationHistory" />
+    <testcase name="EvictedFreezeAnchorDoesNotAuthorizeCurrentValue" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_admission.cpp" line="153" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="PublicationHistory" />
+  </testsuite>
+  <testsuite name="CapabilityLease" tests="14" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.637">
+    <testcase name="NoLeaseBeforeFirstValidReceipt" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="4" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="ExactDeadlineAllowed" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="7" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="BeyondDeadlineTerminal" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="10" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="LateReceiptCannotHideExpiration" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="13" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="ExactDeadlineCanRenew" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="16" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="FreshReceiptExtends" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="19" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="IgnoredReceiptDoesNotExtend" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="22" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="TerminalCannotResume" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="25" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="BackwardClockTerminal" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="28" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="ZeroClockRejected" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="31" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="NegativeClockRejected" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="34" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="RejectTooShort" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="37" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.637" classname="CapabilityLease" />
+    <testcase name="RejectUnbounded" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="CapabilityLease" />
+    <testcase name="LongMonotonicUptimeSafe" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_capability_lease.cpp" line="43" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="CapabilityLease" />
+  </testsuite>
+  <testsuite name="TickBarrier" tests="4" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.638">
+    <testcase name="DisabledInEveryMode" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_tick_barrier.cpp" line="4" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="TickBarrier" />
+    <testcase name="DiagnosticModeAndFaultPermissionRequired" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_tick_barrier.cpp" line="10" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="TickBarrier" />
+    <testcase name="FiniteInclusiveBounds" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_tick_barrier.cpp" line="15" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="TickBarrier" />
+    <testcase name="OneShotOnThirdAttempt" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_tick_barrier.cpp" line="23" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="TickBarrier" />
+  </testsuite>
+  <testsuite name="SchedulerBoundary" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.638">
+    <testcase name="ExactAndAdjacentDueTicks" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/test_p1_tick_barrier.cpp" line="30" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="SchedulerBoundary" />
+  </testsuite>
+  <testsuite name="DeadlineMatrix" tests="7" failures="1" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-24T11:56:59.638">
+    <testcase name="Ready50msKeepsOriginal200msTarget" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp" line="30" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="DeadlineMatrix" />
+    <testcase name="Ready150msEqualityIsAllowed" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp" line="31" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="DeadlineMatrix">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp:15&#x0A;Expected equality of these values:&#x0A;  reason&#x0A;    Which is: &quot;late&quot;&#x0A;  expected?&quot;&quot;:&quot;late&quot;&#x0A;    Which is: &quot;&quot;&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp:15
+Expected equality of these values:
+  reason
+    Which is: "late"
+  expected?"":"late"
+    Which is: ""
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp:17&#x0A;Value of: admission.finalize_ready(t.id,t.origin+offset)&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp:17
+Value of: admission.finalize_ready(t.id,t.origin+offset)
+  Actual: false
+Expected: true
+]]></failure>
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp:20&#x0A;Value of: accepted&#x0A;  Actual: false&#x0A;Expected: true&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp:20
+Value of: accepted
+  Actual: false
+Expected: true
+]]></failure>
+    </testcase>
+    <testcase name="Ready150msPlusOneNanosecondIsLate" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp" line="32" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="DeadlineMatrix" />
+    <testcase name="Ready250msIsNotRescheduled" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp" line="33" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="DeadlineMatrix" />
+    <testcase name="Ready400msIsNotRescheduled" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp" line="34" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="DeadlineMatrix" />
+    <testcase name="ExtendingDeadlineIsAContractFailure" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp" line="35" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="DeadlineMatrix" />
+    <testcase name="ExtendingTargetIsAContractFailure" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/test_deadline_matrix.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-10-24T11:56:59.638" classname="DeadlineMatrix" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,38 @@
+{
+  "schema": "M4-T2-R2-driver-findings-v78",
+  "recorded_at": "2026-10-25T13:05:17.340232+08:00",
+  "driver_boundary_orchestration": {
+    "patches": 9,
+    "verified_paths": [
+      "boundary_pipe_open",
+      "pass_fds_to_worker",
+      "boundary_entered_observation",
+      "path_version_commit_observation",
+      "release_frame_44bytes",
+      "pipe_close_in_finally",
+      "dynamic_scope_and_contract",
+      "fixture_start_scope_dynamic",
+      "common_params_dynamic"
+    ],
+    "sequence": "pipe open→Worker spawn(inherit read end)→w2_boundary_entered→path action→Fixture receipt→Regulator path_version commit→44-byte release frame→pipe close",
+    "constraints": "deadline=tick_origin+150ms不续期;Fixture receipt≠DDS到达→等Regulator path_version ACK;过期释放为独立负控"
+  },
+  "scope_infrastructure": "from batch 77 tree (m4_owned_runtime.hpp t2_boundary_scope→v4诊断合同;preflight boundary分支)",
+  "rev11": {
+    "bundle": "51ca3d42425ed4275adefcc87bf79d8fb91e3300aff150f038466a4c237e5422",
+    "driver": "935cd6b8f7d2faa290c920210b0be32e6476719f8ef733da11fe44b927716818",
+    "roles": {
+      "worker": "b74e2ce015cd573aefd9f02c9badac2867930e4f043a9cff0ccd1e634498e239",
+      "regulator": "e009217ba66a4fd4f8cdc2692b815a9508b6b52932eec9f0d875f4bac1ed7e03",
+      "fixture": "85df7c952506eeb52bc854412db81910e01e71250e04e636ae4e00f06b84c12c",
+      "recorder": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002"
+    },
+    "delta_vs_rev10": [
+      "common/m4_owned_runtime.hpp",
+      "t2_action_contract.py",
+      "t2_scenario_driver_v1.py",
+      "w2_runtime_contract.py"
+    ]
+  },
+  "owned_runs": 0
+}

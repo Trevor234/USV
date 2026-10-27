@@ -1,0 +1,21 @@
+{
+  "EDA_route_STA_WNS_PPA": "not applicable",
+  "experiences": [
+    "prepare before business",
+    "strict actual Applied before arm",
+    "failed Source is not normal",
+    "raw failure retention",
+    "command evidence separate from plant"
+  ],
+  "next": "ordinary receipt lease immediate stop and necessary current fresh-identity recovery then B4 closure",
+  "next_confidence": "medium",
+  "next_cost": "low",
+  "next_impact": "high",
+  "next_risk": "low",
+  "next_stop_condition": "any trigger identity causal dispatch cleanup or storage failure",
+  "primary_mechanism": "insufficient_evidence resolved for one current gated V1 combination",
+  "research_conclusion": false,
+  "same_V1_rerun_justified": false,
+  "selected_hypothesis_passed": true,
+  "stage_qualified": false
+}

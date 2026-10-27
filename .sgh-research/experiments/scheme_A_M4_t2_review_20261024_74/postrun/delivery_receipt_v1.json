@@ -1,0 +1,39 @@
+{
+  "schema": "M4-T2-review-delivery-receipt-v74",
+  "recorded_at": "2026-10-24T23:04:09.861498+08:00",
+  "source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_review_20261024_74",
+  "mirror": "/home/trevor/MPC/scheme_A_M4_t2_review_20261024_74",
+  "payload_files": 88,
+  "payload_bytes": 1026924,
+  "population_manifest": {
+    "bytes": 16101,
+    "sha256": "06bf9a0bd62c879e4d4ee0bc450edc433c9fb31f277e7b51ed47a23e488b0492"
+  },
+  "excluded_build_files": [
+    "evidence/independent_replay01/boundary/build/epoch_probe",
+    "evidence/independent_replay01/clock/build/replay_anchor"
+  ],
+  "readback_rounds": [
+    {
+      "round": 1,
+      "population_exact": true,
+      "mismatches": [],
+      "files_read": 89
+    },
+    {
+      "round": 2,
+      "population_exact": true,
+      "mismatches": [],
+      "files_read": 89
+    }
+  ],
+  "exact_population": true,
+  "delivered_files_including_manifest_and_receipt": 90,
+  "qualification_unchanged": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

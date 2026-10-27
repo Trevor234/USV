@@ -1,0 +1,533 @@
+{
+  "step_id": "E02",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Full-typed Stored population and complete Worker/Job/Decision/API evidence; earlier v2 acceptance was insufficient.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E02/attempt06",
+  "observed_facts": {
+    "full_field_counts": {
+      "SolveJob": 44,
+      "SolveCandidate": 14,
+      "ExecutionDecision": 57,
+      "AppliedControl": 39
+    },
+    "stored_population": {
+      "SolveJob": 36,
+      "SolveCandidate": 36,
+      "ExecutionDecision": 47,
+      "AppliedControl": 47
+    },
+    "actual_RNW3_R4": {
+      "job_id": 7,
+      "sequence": 18,
+      "actual_C_calls": 1,
+      "times": [
+        905134028122209,
+        905134028768466,
+        905134028861298,
+        905134029297925,
+        905134030508909,
+        905134227255418,
+        905134227271586,
+        905134227365382,
+        905134227366870,
+        905134227375936,
+        905134227403089,
+        905134227464803
+      ]
+    },
+    "run_accepted": true,
+    "type_support_files": {
+      "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/_rclpy_pybind11.cpython-312-x86_64-linux-gnu.so": {
+        "bytes": 1224080,
+        "sha256": "1693241b31637bfe6055ca492133ee3ad74173e5b8a8f318c2c8d6d4c9d26f05"
+      },
+      "/opt/ros/jazzy/lib/python3.12/site-packages/rclpy/serialization.py": {
+        "bytes": 1604,
+        "sha256": "87a380a8c45fd0d4b56349fa73dd13ec2c082d8ab76a9be0fffbe9c65d698b54"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/__init__.py": {
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_applied_control.py": {
+        "bytes": 41622,
+        "sha256": "edf7ebd8f083367f48e84166be6f82acc8388740f09b68fc09861d3579dc8a94"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_cycle_timing.py": {
+        "bytes": 31545,
+        "sha256": "2c53bb5260a0a778f9957e0e7dc609158cd6f0f4282c24c939a1fc316bceca8c"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_execution_decision.py": {
+        "bytes": 73234,
+        "sha256": "a34017702dd888245f8a98e59e0def886ff212d0d6fadd5e9e28f1a451b1e929"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_reference_prediction.py": {
+        "bytes": 59157,
+        "sha256": "3a00f2afe0626a32858aa0c9796a14af661a73d16e2f710c1e59e93f26a6e8c2"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_solve_candidate.py": {
+        "bytes": 21192,
+        "sha256": "084dd0dbb15207538320b6733072d939e05cedaa24fe95b57140ac619369bdb6"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_solve_job.py": {
+        "bytes": 54838,
+        "sha256": "13344554aa9a7a98858ac33df59276c3bea1a7b408a48e313e783d26e8530db0"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_state_snapshot.py": {
+        "bytes": 22820,
+        "sha256": "4ae40e11de377b7e235a4239eadd5a403eab8a5b2821c1f9c443d312ea5ca330"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/_worker_capability.py": {
+        "bytes": 19427,
+        "sha256": "564dd82f11d961ca8d489e16336550bbbf840ef3fefa22ea388bfe4cf5b16e05"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/msg/__init__.py": {
+        "bytes": 688,
+        "sha256": "28777bbeb9f14479dee1f1731827f2395e23e295e15866030a5c8d21a839af0a"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages/usv_research_interfaces/usv_research_interfaces_s__rosidl_typesupport_c.so": {
+        "bytes": 29912,
+        "sha256": "f1eee8182320671b780fe7454a4a57ed0df993b4d09da3dd74d5ac84b5566c1b"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_generator_c.so": {
+        "bytes": 185296,
+        "sha256": "6c58c758420099f1aca6e0f70d6fb39c22094b4004f65792056520c5558d63c5"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_generator_py.so": {
+        "bytes": 287368,
+        "sha256": "07056dbc38e1e71df32cd8e0b6eea5cb1d730f94fcc8a4ce8b12d9da13bb9404"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_typesupport_c.so": {
+        "bytes": 33248,
+        "sha256": "07eb774b3774a77f21bf7e62e8ba07652b403b4b6d83cbd15853d5b40f52c7b6"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_typesupport_cpp.so": {
+        "bytes": 39848,
+        "sha256": "cbcec13d312b0b6dada73d29a1621ceca9ae832a1fd85d43770aaeecd7f31a4c"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_typesupport_fastrtps_c.so": {
+        "bytes": 233192,
+        "sha256": "4b38dac4bf80102a04326de39d36d02b15881040d334960bd74392c5baccaba1"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_typesupport_fastrtps_cpp.so": {
+        "bytes": 257352,
+        "sha256": "78df2972a313b4585e44a9f877dfea7f0560778da13995b97f61bf2bfa5fe79d"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_typesupport_introspection_c.so": {
+        "bytes": 167552,
+        "sha256": "63d2a76fd696e70d73062a3b3b22862c8850f2cff8de2b9cd06f5b8d831bf83c"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_typesupport_introspection_cpp.so": {
+        "bytes": 255448,
+        "sha256": "60aa22209817ab54571218d68fadae1220cb4d077995eeef4880b5ebdc41172e"
+      }
+    },
+    "audit_source_pin": {
+      "bytes": 15205,
+      "sha256": "dcfabc5e14cb2275c232e083c5fe1de3786e572d4b07462a1c1d5a6d77e7a8ee"
+    }
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "full_native_CDR_decoder",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "both_Source_streams_parse",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "RNW3_full_Source_Worker_Stored_accept",
+        "passed": true,
+        "detail": [
+          {
+            "gate": "Source.parse",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "legacy_mandatory_gates",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "Worker.Source",
+            "passed": true,
+            "detail": {
+              "rows": 272
+            }
+          },
+          {
+            "gate": "R4.complete_identity_time_and_API",
+            "passed": true,
+            "detail": {
+              "job_id": 7,
+              "sequence": 18,
+              "actual_C_calls": 1,
+              "times": [
+                905134028122209,
+                905134028768466,
+                905134028861298,
+                905134029297925,
+                905134030508909,
+                905134227255418,
+                905134227271586,
+                905134227365382,
+                905134227366870,
+                905134227375936,
+                905134227403089,
+                905134227464803
+              ]
+            }
+          },
+          {
+            "gate": "Source.Worker.witness.close",
+            "passed": true,
+            "detail": true
+          },
+          {
+            "gate": "Stored.full_control_streams",
+            "passed": true,
+            "detail": {
+              "populations": {
+                "SolveJob": 36,
+                "SolveCandidate": 36,
+                "ExecutionDecision": 47,
+                "AppliedControl": 47
+              },
+              "Applied_source_vs_Stored_raw_digest_equal_count": 0,
+              "digest_scope": "Source digest is a typed reserialization; raw bytes are not asserted equal. All 39 fields are recomputed from frozen emitter semantics and Source."
+            }
+          }
+        ]
+      },
+      {
+        "name": "RNW3_exact_Job7_seq18_real_C",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "full_Job_reference_echo",
+        "passed": true,
+        "detail": {
+          "gate": "R4.complete_identity_time_and_API",
+          "passed": false,
+          "reason": "complete_job_echo",
+          "coverage": "covered_rejection"
+        }
+      },
+      {
+        "name": "right_API_time",
+        "passed": true,
+        "detail": {
+          "gate": "R4.complete_identity_time_and_API",
+          "passed": false,
+          "reason": "both_channel_API_times",
+          "coverage": "covered_rejection"
+        }
+      },
+      {
+        "name": "actual_C_marker_zero",
+        "passed": true,
+        "detail": {
+          "gate": "R4.complete_identity_time_and_API",
+          "passed": false,
+          "reason": "actual_C_entry",
+          "coverage": "covered_rejection"
+        }
+      },
+      {
+        "name": "worker_time_reversal",
+        "passed": true,
+        "detail": {
+          "gate": "R4.complete_identity_time_and_API",
+          "passed": false,
+          "reason": "full_logical_time_order",
+          "coverage": "covered_rejection"
+        }
+      },
+      {
+        "name": "duplicate_API",
+        "passed": true,
+        "detail": {
+          "gate": "R4.complete_identity_time_and_API",
+          "passed": false,
+          "reason": "population.owned_API_pair",
+          "coverage": "covered_rejection"
+        }
+      },
+      {
+        "name": "Stored_full_reference",
+        "passed": true,
+        "detail": {
+          "gate": "Stored.full_control_streams",
+          "passed": false,
+          "reason": "Stored_full_Job",
+          "coverage": "covered_rejection"
+        }
+      },
+      {
+        "name": "missing_Stored_blocks_complete_accept",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "missing_Worker",
+        "passed": true,
+        "detail": [
+          {
+            "gate": "Source.parse",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "legacy_mandatory_gates",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "Worker.Source",
+            "passed": false,
+            "reason": "FileNotFoundError: [Errno 2] No such file or directory: '/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E02/attempt06/fixtures/missing_Worker/worker/source.jsonl'",
+            "coverage": "not_covered_or_parse_error"
+          }
+        ]
+      },
+      {
+        "name": "missing_witness",
+        "passed": true,
+        "detail": [
+          {
+            "gate": "Source.parse",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "legacy_mandatory_gates",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "Worker.Source",
+            "passed": true,
+            "detail": {
+              "rows": 272
+            }
+          },
+          {
+            "gate": "R4.complete_identity_time_and_API",
+            "passed": true,
+            "detail": {
+              "job_id": 7,
+              "sequence": 18,
+              "actual_C_calls": 1,
+              "times": [
+                905134028122209,
+                905134028768466,
+                905134028861298,
+                905134029297925,
+                905134030508909,
+                905134227255418,
+                905134227271586,
+                905134227365382,
+                905134227366870,
+                905134227375936,
+                905134227403089,
+                905134227464803
+              ]
+            }
+          },
+          {
+            "gate": "Source.Worker.witness.close",
+            "passed": false,
+            "reason": "FileNotFoundError: [Errno 2] No such file or directory: '/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E02/attempt06/fixtures/missing_witness/regulator/witness.json'",
+            "coverage": "not_covered_or_parse_error"
+          },
+          {
+            "gate": "Stored.full_control_streams",
+            "passed": true,
+            "detail": {
+              "populations": {
+                "SolveJob": 36,
+                "SolveCandidate": 36,
+                "ExecutionDecision": 47,
+                "AppliedControl": 47
+              },
+              "Applied_source_vs_Stored_raw_digest_equal_count": 0,
+              "digest_scope": "Source digest is a typed reserialization; raw bytes are not asserted equal. All 39 fields are recomputed from frozen emitter semantics and Source."
+            }
+          }
+        ]
+      },
+      {
+        "name": "missing_close",
+        "passed": true,
+        "detail": [
+          {
+            "gate": "Source.parse",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "legacy_mandatory_gates",
+            "passed": false,
+            "reason": "close.evidence_present,close.events_parse_clean,close.four_exact_roles_closed,close.exactly_one_spawn_per_role,close.no_restart_events",
+            "coverage": "covered_rejection"
+          },
+          {
+            "gate": "Worker.Source",
+            "passed": true,
+            "detail": {
+              "rows": 272
+            }
+          },
+          {
+            "gate": "R4.complete_identity_time_and_API",
+            "passed": true,
+            "detail": {
+              "job_id": 7,
+              "sequence": 18,
+              "actual_C_calls": 1,
+              "times": [
+                905134028122209,
+                905134028768466,
+                905134028861298,
+                905134029297925,
+                905134030508909,
+                905134227255418,
+                905134227271586,
+                905134227365382,
+                905134227366870,
+                905134227375936,
+                905134227403089,
+                905134227464803
+              ]
+            }
+          },
+          {
+            "gate": "Source.Worker.witness.close",
+            "passed": true,
+            "detail": true
+          },
+          {
+            "gate": "Stored.full_control_streams",
+            "passed": true,
+            "detail": {
+              "populations": {
+                "SolveJob": 36,
+                "SolveCandidate": 36,
+                "ExecutionDecision": 47,
+                "AppliedControl": 47
+              },
+              "Applied_source_vs_Stored_raw_digest_equal_count": 0,
+              "digest_scope": "Source digest is a typed reserialization; raw bytes are not asserted equal. All 39 fields are recomputed from frozen emitter semantics and Source."
+            }
+          }
+        ]
+      },
+      {
+        "name": "legal_Source_file_order_independent",
+        "passed": true,
+        "detail": [
+          {
+            "gate": "Source.parse",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "legacy_mandatory_gates",
+            "passed": true,
+            "detail": null
+          },
+          {
+            "gate": "Worker.Source",
+            "passed": true,
+            "detail": {
+              "rows": 272
+            }
+          },
+          {
+            "gate": "R4.complete_identity_time_and_API",
+            "passed": true,
+            "detail": {
+              "job_id": 7,
+              "sequence": 18,
+              "actual_C_calls": 1,
+              "times": [
+                905134028122209,
+                905134028768466,
+                905134028861298,
+                905134029297925,
+                905134030508909,
+                905134227255418,
+                905134227271586,
+                905134227365382,
+                905134227366870,
+                905134227375936,
+                905134227403089,
+                905134227464803
+              ]
+            }
+          },
+          {
+            "gate": "Source.Worker.witness.close",
+            "passed": true,
+            "detail": true
+          },
+          {
+            "gate": "Stored.full_control_streams",
+            "passed": true,
+            "detail": {
+              "populations": {
+                "SolveJob": 36,
+                "SolveCandidate": 36,
+                "ExecutionDecision": 47,
+                "AppliedControl": 47
+              },
+              "Applied_source_vs_Stored_raw_digest_equal_count": 0,
+              "digest_scope": "Source digest is a typed reserialization; raw bytes are not asserted equal. All 39 fields are recomputed from frozen emitter semantics and Source."
+            }
+          }
+        ]
+      },
+      {
+        "name": "historical_no_open_T2A_RNW2",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "historical_no_open_T2A_RNW2_attempt1",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    "implementation/audit/rnw_audit_v3.py",
+    "implementation/audit/stored_control_reader_v1.py",
+    "implementation/tests/run_rnw_full.py"
+  ],
+  "remaining_obligations": [
+    "No claim of byte-identical Source typed CDR vs raw Stored CDR; full fields are independently reconciled.",
+    "Old in-flight candidate rejection remains not_covered where absent."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

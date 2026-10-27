@@ -1,0 +1,72 @@
+{
+  "schema": "plan126-E05-step-result-v1",
+  "step_id": "E05",
+  "status": "PASS",
+  "attempt": "attempt03",
+  "title": "修ScopedEpoch Proposal身份与退役ledger负控",
+  "issue_addressed": "F124-05",
+  "observed_facts": {
+    "cases_passed": 12,
+    "cases_registered": 12,
+    "duplicate_commit_rejected": true,
+    "frozen_header_sha_unchanged": true,
+    "g5_retry_preserved": true,
+    "mutant_ledger_caught_on_named_assertion": true,
+    "mutant_token_caught_on_named_assertion": true,
+    "original_six_assertion_total": 32,
+    "original_six_still_pass": true,
+    "schedule_only_binding_allowed": true,
+    "stale_replay_rejected": true
+  },
+  "run_accepted": {
+    "accepted": true,
+    "basis": "12/12 cases; both mutants caught on their named assertions; frozen header sha unchanged"
+  },
+  "coverage": {
+    "duplicate_commit": "covered — EPV-DUP-COMMIT",
+    "failure_does_not_consume_token": "covered — EPV-G5-RETRY (batch-103 behaviour kept)",
+    "original_six_semantics": "covered — 32 assertions unchanged",
+    "proposal_identity_gate": "covered — generation, consumed, binding gates with named reasons",
+    "regulator_wiring_execution": "not_covered — compile/run of the Regulator is out of scope for this offline step; the API it calls is unchanged",
+    "retired_binding": "covered — EPV-RETIRED-BINDING + EPV-E5 ledger path",
+    "stale_generation_replay": "covered — EPV-REPLAY-A"
+  },
+  "stage_qualified": false,
+  "qualification": {
+    "F6": false,
+    "M4": false,
+    "P1": false,
+    "hard_realtime": false,
+    "plant": false
+  },
+  "changed_files": [
+    {
+      "path": "implementation/author/observer/src/shadow/scoped_epoch_v1.hpp",
+      "reason": "ProposalToken + ProbeResult + mint()/token_rejection()/commit(ScopedProposal&); consumption on success only; retired-ledger loop reports a distinct reason",
+      "derived_from": "B103 implementation/t2_author/observer/src/shadow/scoped_epoch_v1.hpp"
+    },
+    {
+      "path": "implementation/tests/test_scoped_epoch_v2.cpp",
+      "reason": "original 6 cases kept verbatim (32 assertions) + 6 new identity/ledger cases"
+    },
+    {
+      "path": "implementation/run_e05.py",
+      "reason": "registration-first runner with named-assertion mutant verdicts"
+    }
+  ],
+  "original_files_touched": 0,
+  "frozen_header_sha": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3",
+  "design_decisions": {
+    "token_consumed_only_on_success": "a guard-rejected commit (e.g. G5 job monotonicity) leaves the token usable, preserving the batch-103 EPV-E1 behaviour where the same proposal is retried with a valid job id",
+    "mint_after_propose": "proposed_generation is recorded AFTER proposal, because try_open advances generation_ during a scoped open; recording it before stamped gen-1 tokens on a gen-2 proposal",
+    "distinct_ledger_reason": "the retired-ledger guard now says scoped_open_binding_retired instead of sharing scoped_open_binding_not_new with the active-anchor check, so it is independently falsifiable",
+    "untokened_commit_kept": "the plain commit(Proposal) overload remains for single-critical-section callers and the original 6 cases; crossing a lock boundary requires the tokened overload"
+  },
+  "real_defect_found_by_my_own_mutant": "the first mutant attempt proved the ledger guard was unreachable-by-test, the same defect F124-05 reports; fixed by the distinct reason + dedicated case",
+  "remaining_obligations": [
+    "E06—E12 NOT_STARTED",
+    "the Regulator call site was NOT compiled (needs the ROS include set) and NOT run; the wrapper change is additive so the existing call still binds to commit(Proposal)",
+    "regulator wiring is not validated end to end offline"
+  ],
+  "next_step": "E06"
+}

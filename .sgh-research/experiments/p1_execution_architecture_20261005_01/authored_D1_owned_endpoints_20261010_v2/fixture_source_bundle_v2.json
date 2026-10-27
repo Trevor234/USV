@@ -1,0 +1,22 @@
+{
+  "execute_qualified": false,
+  "files": {
+    "common/p1_owned_identity.hpp": {
+      "bytes": 12960,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/common/p1_owned_identity.hpp",
+      "sha256": "6f00343b146a8856680b8f30916dc5311d1ca93b9a91236c1ea98ec26f6275b9"
+    },
+    "fixture/CMakeLists.txt": {
+      "bytes": 1119,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/fixture/CMakeLists.txt",
+      "sha256": "2fd4c8bcc1ddfa29259cd172b3826ade098a7f47a630a34635172f8cf117a712"
+    },
+    "fixture/synthetic_source.cpp": {
+      "bytes": 4727,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/fixture/synthetic_source.cpp",
+      "sha256": "065bf79a21e8173d5f91eb3f60b061279164179a4508adc052f7445e518378e0"
+    }
+  },
+  "role": "fixture",
+  "schema": "p1-owned-role-source-bundle-v2"
+}

@@ -1,0 +1,21 @@
+{
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "frozen_epoch_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/src/shadow/task_time_profile_v1.hpp",
+  "frozen_epoch_source_sha256": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3",
+  "frozen_epoch_unchanged": true,
+  "math_library": "libmpc_core_lib.a from usv_mpc_ws install (headers+lib pinned by include/lib path)",
+  "physical_production_release": false,
+  "ros_context": false,
+  "schema": "T2B-GEN-native-registry/v1",
+  "scope": "T2B_GEN_component_v1",
+  "scoped_wrapper_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/src/shadow/scoped_epoch_v1.hpp",
+  "scoped_wrapper_source_sha256": "f39ec510a7f30cae39306c4889db986e1f21815e6a4879a9578186c57f472d5f",
+  "source_bundle": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/evidence/freeze/source_bundle.json",
+    "sha256": "94776264a2ecae17ef01d25afeca0beed2c6ce93fc1ee2c6454af2a8b05d9a61"
+  },
+  "test_binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/build_t2bgen/test_scoped_epoch_v1",
+  "test_binary_sha256": "cc7398bc68c46624e6ea6a84c6805de91647277ac8a6aefd5860a7650513faf0",
+  "test_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/tests/test_scoped_epoch_v1.cpp",
+  "test_source_sha256": "6792092b24f3913959178e115427d9f2463b7024610ea110428878892bde5733"
+}

@@ -1,0 +1,57 @@
+// Finite diagnostic gate protocol tests; no DDS/owner/plant claim.
+#include <gtest/gtest.h>
+#include "c38_diagnostic_gate.hpp"
+using Json=c38::Json;
+static c38::Identity identity(){return {"run","boot",123,456,std::string(64,'a'),std::string(64,'b')};}
+static Json request(const char* action="pause",int64_t ns=1000){return {{"schema","p1-C3.8-applied-gate-v1"},{"action",action},{"run_id","run"},{"boot_id","boot"},{"driver_pid",123},{"driver_start_ticks",456},{"driver_tool_sha256",std::string(64,'a')},{"owner_manifest_sha256",std::string(64,'b')},{"issued_ns",ns},{"seq",std::string(action)=="pause"?1:2},{"stage_qualified",false}};}
+TEST(C38Gate, OrderedPauseResumeCompletes){c38::DiagnosticGate g(identity());g.validate_pause(request().dump(),1100);g.pause_applied(1200);g.validate_resume(request("resume",1300).dump(),1400);g.resume_applied(1500);
+EXPECT_EQ(g.state(),c38::State::resumed);
+EXPECT_FALSE(g.expired(9999999999));}
+TEST(C38Gate, WrongBindingsNeverPause){for(const char* k:{"run_id","boot_id","driver_tool_sha256","owner_manifest_sha256","schema","action"}){c38::DiagnosticGate g(identity());auto r=request();r[k]="foreign";
+EXPECT_ANY_THROW(g.validate_pause(r.dump(),1100));
+EXPECT_EQ(g.state(),c38::State::open);}}
+TEST(C38Gate, ProcessStartAndPIDExact){for(const char* k:{"driver_pid","driver_start_ticks"}){c38::DiagnosticGate g(identity());auto r=request();r[k]=999;
+EXPECT_ANY_THROW(g.validate_pause(r.dump(),1100));}}
+TEST(C38Gate, StrictFieldTypesAndPopulation){for(const char* k:{"driver_pid","driver_start_ticks","issued_ns","seq","stage_qualified"}){c38::DiagnosticGate g(identity());auto r=request();r[k]="0";
+EXPECT_ANY_THROW(g.validate_pause(r.dump(),1100));}c38::DiagnosticGate g(identity());auto r=request();r["extra"]=true;
+EXPECT_ANY_THROW(g.validate_pause(r.dump(),1100));r=request();r.erase("run_id");
+EXPECT_ANY_THROW(g.validate_pause(r.dump(),1100));}
+TEST(C38Gate, NoQualificationAndSequenceOverride){c38::DiagnosticGate g(identity());auto r=request();r["stage_qualified"]=true;
+EXPECT_ANY_THROW(g.validate_pause(r.dump(),1100));r=request();r["seq"]=2;
+EXPECT_ANY_THROW(g.validate_pause(r.dump(),1100));}
+TEST(C38Gate, MalformedDuplicateAndByteBounds){c38::DiagnosticGate g(identity());
+EXPECT_ANY_THROW(g.validate_pause("{",1100));auto raw=request().dump();raw.pop_back();raw+=",\"seq\":1}";
+EXPECT_ANY_THROW(g.validate_pause(raw,1100));
+EXPECT_ANY_THROW(g.validate_pause(std::string(8193,'x'),1100));}
+TEST(C38Gate, FreshnessExactTTLAndFuture){c38::DiagnosticGate g(identity());
+EXPECT_ANY_THROW(g.validate_pause(request("pause",1200).dump(),1100));
+EXPECT_ANY_THROW(g.validate_pause(request("pause",1).dump(),c38::gate_ttl_ns+2));g.validate_pause(request("pause",1).dump(),c38::gate_ttl_ns+1);}
+TEST(C38Gate, ResumeBeforePauseAndReplayRejected){c38::DiagnosticGate g(identity());
+EXPECT_ANY_THROW(g.validate_resume(request("resume").dump(),1100));g.validate_pause(request().dump(),1100);
+EXPECT_ANY_THROW(g.validate_pause(request().dump(),1100));g.pause_applied(1200);
+EXPECT_ANY_THROW(g.validate_resume(request("resume",1100).dump(),1300));g.validate_resume(request("resume",1300).dump(),1400);g.resume_applied(1500);
+EXPECT_ANY_THROW(g.validate_resume(request("resume",1600).dump(),1700));}
+TEST(C38Gate, TimeoutExactBoundaryResumesOnlyOnce){c38::DiagnosticGate g(identity());g.validate_pause(request().dump(),1100);g.pause_applied(1200);
+EXPECT_FALSE(g.expired(1200+c38::gate_ttl_ns-1));
+EXPECT_TRUE(g.expired(1200+c38::gate_ttl_ns));
+EXPECT_ANY_THROW(g.validate_resume(request("resume",1300).dump(),1200+c38::gate_ttl_ns));g.timeout_applied(1200+c38::gate_ttl_ns);
+EXPECT_EQ(g.state(),c38::State::timed_out);
+EXPECT_ANY_THROW(g.timeout_applied(1201+c38::gate_ttl_ns));}
+TEST(C38Gate, CompletionOrderingAndAbandonValidation){c38::DiagnosticGate g(identity());
+EXPECT_ANY_THROW(g.pause_applied(1200));g.validate_pause(request().dump(),1100);
+EXPECT_ANY_THROW(g.pause_applied(1099));g.abandon_validation();
+EXPECT_EQ(g.state(),c38::State::open);g.validate_pause(request().dump(),1100);g.pause_applied(1200);g.validate_resume(request("resume",1300).dump(),1400);
+EXPECT_ANY_THROW(g.resume_applied(1399));g.abandon_validation();
+EXPECT_EQ(g.state(),c38::State::paused);}
+TEST(C38Gate, ModeDomainAndNoPathsInNormal){
+EXPECT_NO_THROW(c38::validate_mode_paths("none","",""));
+EXPECT_NO_THROW(c38::validate_mode_paths("suppress-close-poll","",""));
+EXPECT_ANY_THROW(c38::validate_mode_paths("execute","",""));
+EXPECT_ANY_THROW(c38::validate_mode_paths("none","/tmp/x","/tmp/y"));
+EXPECT_ANY_THROW(c38::validate_mode_paths("applied-gate","relative","/tmp/z"));}
+TEST(C38Gate, WorkerGateRequiresSameFreshExplicitPathPolicy){
+const auto tag=std::string("/tmp/c39_worker_gate_")+std::to_string(::getpid());
+EXPECT_NO_THROW(c38::validate_mode_paths("worker-gate",tag+"_pause.json",tag+"_resume.json"));
+EXPECT_ANY_THROW(c38::validate_mode_paths("worker-gate","",""));
+EXPECT_ANY_THROW(c38::validate_mode_paths("worker-gate","relative",tag+"_resume.json"));
+EXPECT_ANY_THROW(c38::validate_mode_paths("worker-gate",tag+"_pause.json",tag+"_pause.json"));}

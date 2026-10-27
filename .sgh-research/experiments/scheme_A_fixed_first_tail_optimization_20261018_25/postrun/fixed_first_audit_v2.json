@@ -1,0 +1,168 @@
+{
+  "MPC_delivery_complete": false,
+  "all_24_iterations_checked": true,
+  "arms": [
+    {
+      "additional_first_equality": false,
+      "arm_id": "free_first",
+      "cost_components_final": {
+        "solver_NLP_cost_readback": false,
+        "stage_absolute_control_dt_scaled": 0.025023916597522303,
+        "stage_control_increment_dt_scaled": 0.014625243110238002,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.015518344952199973,
+        "stage_velocity_dt_scaled": 0.01055263624461935,
+        "terminal_state_not_dt_scaled": 6.184804744724358e-06,
+        "total": 0.06572632570932435
+      },
+      "cost_final": 0.06572632570932435,
+      "final_dynamic_defect": 2.7755575615628914e-17,
+      "final_initial_residual": 2.4520028804951245e-15,
+      "first_control_n": [
+        0.3655486358487944,
+        0.3655486358487944
+      ],
+      "last_iteration_all_U_max_delta_n": 1.1102230246251565e-16,
+      "last_iteration_feasible_cost_delta": 1.3877787807814457e-17,
+      "last_iteration_stable": true,
+      "maximum_first_equality_error_n": 0.0,
+      "position_at_dt_m": [
+        0.0008940192046692462,
+        0.0
+      ],
+      "surge_at_dt_m_s": 0.008896708332043654
+    },
+    {
+      "additional_first_equality": true,
+      "arm_id": "fixed_first_050",
+      "cost_components_final": {
+        "solver_NLP_cost_readback": false,
+        "stage_absolute_control_dt_scaled": 0.025427000279696334,
+        "stage_control_increment_dt_scaled": 0.022537140876825276,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.011992779640716595,
+        "stage_velocity_dt_scaled": 0.00916725649996533,
+        "terminal_state_not_dt_scaled": 1.0185646145477963e-05,
+        "total": 0.06913436294334901
+      },
+      "cost_final": 0.06913436294334901,
+      "final_dynamic_defect": 5.551115123125783e-17,
+      "final_initial_residual": 5.6945582866238365e-15,
+      "first_control_n": [
+        0.5,
+        0.5
+      ],
+      "last_iteration_all_U_max_delta_n": 4.510281037539698e-16,
+      "last_iteration_feasible_cost_delta": 0.0,
+      "last_iteration_stable": true,
+      "maximum_first_equality_error_n": 0.0,
+      "position_at_dt_m": [
+        0.001222750419737756,
+        0.0
+      ],
+      "surge_at_dt_m_s": 0.012167084819292002
+    }
+  ],
+  "comparison": {
+    "cost_component_deltas": {
+      "stage_absolute_control_dt_scaled": 0.00040308368217403107,
+      "stage_control_increment_dt_scaled": 0.007911897766587274,
+      "stage_heading_dt_scaled": 0.0,
+      "stage_position_dt_scaled": -0.0035255653114833786,
+      "stage_velocity_dt_scaled": -0.0013853797446540198,
+      "terminal_state_not_dt_scaled": 4.000841400753605e-06,
+      "total": 0.0034080372340246634
+    },
+    "cost_premium": 0.0034080372340246634,
+    "cost_premium_relative_fraction": 0.051851935997407776,
+    "fixed_first_reoptimized_cost": 0.06913436294334901,
+    "fixed_tail_parent24_cost": 0.0843017152000855,
+    "free_cost": 0.06572632570932435,
+    "material_cost_premium": true,
+    "premium_reduction_fraction_from_tail_reoptimization": 0.8165294334355832,
+    "surge_at_dt_gain_m_s": 0.0032703764872483478,
+    "surge_at_dt_relative_gain": 0.36759398703330454
+  },
+  "execute_qualified": false,
+  "independent_cost_max_abs_error": 3.122502256758253e-17,
+  "independent_rollout_max_abs_error": 8.326672684688674e-17,
+  "independent_seed_max_abs_error": 1.3877787807814457e-16,
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_fixed_first_tail_optimization_20261018_v25/actual_fixed_first_input_v1.json": "192a94253113f8ba8c2f7892bf83c7d6bceb20bcbf8f714b92bb334eb2b1a07c",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/independent_model_v1.py": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/verify_fixed_first_v2.py": "f6ac628395d8e67ed297f2197b14cb047b8303ee779848617486445be336c62b",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preregister/fixed_first_v1.json": "913a4db313f9c6328cc853f0908c3ca23985311dc3fe8666cf4df069646431f1",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preregister/offline_invocation_lock_v2.json": "495b33b450b3c51ff3d3ef480e831ad3029b48c1cb51f360c9ddde8d7e5e0b62",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v2.json": "b9527a06506858903c6dce2a6ba7ac638adce0e91a7ec90592b3447458ebe5c2",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/offline_invocation_v2.json": "1632ce6e75b7d15193ff0caf0155a5a6091957a744fac9b7988a2db97baa91d2"
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_fixed_first_tail_optimization_20261018_v25/actual_fixed_first_input_v1.json": "192a94253113f8ba8c2f7892bf83c7d6bceb20bcbf8f714b92bb334eb2b1a07c",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/independent_model_v1.py": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/verify_fixed_first_v2.py": "f6ac628395d8e67ed297f2197b14cb047b8303ee779848617486445be336c62b",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preregister/fixed_first_v1.json": "913a4db313f9c6328cc853f0908c3ca23985311dc3fe8666cf4df069646431f1",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/preregister/offline_invocation_lock_v2.json": "495b33b450b3c51ff3d3ef480e831ad3029b48c1cb51f360c9ddde8d7e5e0b62",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v2.json": "b9527a06506858903c6dce2a6ba7ac638adce0e91a7ec90592b3447458ebe5c2",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/offline_invocation_v2.json": "1632ce6e75b7d15193ff0caf0155a5a6091957a744fac9b7988a2db97baa91d2"
+  },
+  "journal_records": 28,
+  "journal_sha256": "17852a8b32f3c5395d57826e897a78f9b4181da68fffbe6a4e3671750345b019",
+  "legacy_baseline": {
+    "jobs": 102,
+    "public_vs_actual": {
+      "U": 0.0,
+      "X": 0.0,
+      "control": 0.0
+    },
+    "public_vs_raw_shift": {
+      "U": 0.0,
+      "X": 0.0,
+      "control": 0.0
+    },
+    "raw_shift_vs_actual": {
+      "U": 0.0,
+      "X": 0.0,
+      "control": 0.0
+    }
+  },
+  "maximum_control_increment_n": 0.5,
+  "maximum_initial_residual": 6.289065142494535e-15,
+  "maximum_previous_control_memory_residual": 2.538558259909021e-17,
+  "negative_audit_boundaries": [
+    {
+      "name": "wrong_cost",
+      "reason": "independent objective failed",
+      "rejected": true
+    },
+    {
+      "name": "wrong_rollout",
+      "reason": "independent nonlinear rollout failed",
+      "rejected": true
+    },
+    {
+      "name": "hidden_changed_feasible_set",
+      "reason": "status or changed feasible set misrepresented",
+      "rejected": true
+    },
+    {
+      "name": "false_equality_diagnostic",
+      "reason": "first equality diagnostic mismatch",
+      "rejected": true
+    },
+    {
+      "name": "unearned_KKT_claim",
+      "reason": "unearned solver claim",
+      "rejected": true
+    }
+  ],
+  "new_closed_loop_performance_qualified": false,
+  "passed": true,
+  "research_conclusion": false,
+  "schema": "scheme-A-fixed-first-tail-independent-audit/v1",
+  "seeded_free_baseline_errors": {
+    "U_max_abs_error": 3.400058012914542e-16,
+    "X_max_abs_error": 3.469446951953614e-17,
+    "feasible_cost_abs_error": 1.3877787807814457e-17
+  },
+  "stage_qualified": false
+}

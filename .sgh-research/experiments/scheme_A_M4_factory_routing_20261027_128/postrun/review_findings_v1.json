@@ -1,0 +1,42 @@
+{
+  "review_scope": "Batch127 checked initialization through the actual factory in standalone Casadi-off/on configurations",
+  "resolved": [
+    {
+      "id": "R128-01",
+      "finding": "Checked Acados nonfinite-parameter rejection was bypassed by successful Casadi construction",
+      "resolution": "Isolated shared-packing finite admission before the dynamic factory catch block",
+      "production_landed": false
+    },
+    {
+      "id": "R128-02",
+      "finding": "Explicit Casadi factory admitted the same nonfinite model parameters",
+      "resolution": "Same admission function before direct Casadi construction; actual finite fallback retained",
+      "production_landed": false
+    }
+  ],
+  "open": [
+    {
+      "id": "R128-03",
+      "finding": "Factory comments describe missing-shared-library fallback, but ELF hard-depends on libacados",
+      "next": "Clarify documentation and review full production build/environment separately; no loader redesign in this package"
+    },
+    {
+      "id": "R127-01",
+      "finding": "Generated native setter still ignores some internal precompute return values",
+      "next": "Keep reported-status and internal-native-failure obligations distinct"
+    },
+    {
+      "id": "R127-05",
+      "finding": "Actual owned RawBackend still has separate packing/setter logic",
+      "next": "Next isolated shared-header reuse and cold/native policy regression package"
+    },
+    {
+      "id": "R127-03-04",
+      "finding": "Worker unique owner lifecycle and full model/reference activation contract remain open",
+      "next": "Proceed only after RawBackend component evidence, then scoped lifecycle and identity design"
+    }
+  ],
+  "component_result": "Registered factory admission/routing matrix complete",
+  "complete_ROS_build_qualified": false,
+  "qualification": {"M4": false, "F6": false, "P1": false, "plant": false, "hard_realtime": false}
+}

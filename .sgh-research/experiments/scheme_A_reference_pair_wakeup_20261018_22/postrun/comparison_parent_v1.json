@@ -1,0 +1,319 @@
+{
+  "RMSE_new_over_parent": 0.9425584373878958,
+  "ROS_nodes_started": false,
+  "audit_passed": true,
+  "cases": [
+    {
+      "SSE_fraction_first2s": 0.8934522229323291,
+      "SSE_fraction_first5s": 0.9998645764657281,
+      "accepted": 94,
+      "actual_SQLite": {
+        "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261018_v21r2/runs/task_time_r02_s005_01/recorder/bag/bag_0.db3": "e8aa11c5108a3a3980c0e48bac3aac3959f55afa86cdbb958d15e0a1de66806a"
+      },
+      "actual_jobs": 96,
+      "all_stored_sensor_rows_checked": 1214,
+      "attempts": 94,
+      "case": "T_before",
+      "command_is_force_measurement": false,
+      "first_actual_accepted_command_after_Ready_s": 0.359828945,
+      "first_actual_accepted_command_n": [
+        0.3645576181771613,
+        0.36455761817717686
+      ],
+      "gate_metrics": {
+        "RMSE_limit_m_s": 0.007392495755251466,
+        "RMSE_passed": false,
+        "all_evidence_populations_checked_before_windowed_metrics": true,
+        "end_driver_requested_ns": 258152070221194,
+        "last5s_mean_passed": true,
+        "last5s_mean_surge_m_s": 0.05000000173550423,
+        "last5s_relative_mean_error": 3.471008452882174e-08,
+        "last5s_relative_mean_error_limit": 0.05,
+        "last5s_sensor_count": 250,
+        "last5s_start_ns": 258147070221194,
+        "measured_surge_RMSE_m_s": 0.009797744269962098,
+        "measurement_sensor_count": 1015,
+        "parent_fixed_RMSE_m_s": 0.014784991510502932,
+        "parent_metrics_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/postrun/ladder_metrics_v1.json",
+        "parent_metrics_sha256": "612d3b84dd8065967bbeb6c6222f6ffb186c716624833d2add43afc6cead5831",
+        "passed": false,
+        "research_conclusion": false,
+        "shutdown_tail_used_for_performance": false,
+        "stage_qualified": false,
+        "start_ready_ns": 258131753361618,
+        "window_semantics": "Source target time, actual Odom-body surge; Ready inclusive to driver close request exclusive; shutdown tail excluded"
+      },
+      "locked_raw_paths": 100,
+      "maximum_surge_m_s": 0.06472005598104168,
+      "measurement_seconds": 20.316859576,
+      "original_issues": [
+        {
+          "code": "longitudinal_20s_all_candidates_accepted_90_consecutive_18s_coverage"
+        },
+        {
+          "code": "projected_preregistered_whole_measurement_RMSE_halved_parent",
+          "limit": 0.007392495755251466,
+          "observed": 0.009797744269962098
+        }
+      ],
+      "overall_case_passed": false,
+      "position_error": {
+        "epoch_semantics": "both runs use their declared actual first-submit epoch",
+        "excluded_pre_epoch_samples": 17,
+        "first_job_id": 1,
+        "first_target_sim_ns": 102098097148,
+        "initial_profile_t0": 0.0,
+        "last5s_signed_target_minus_actual_x_m": {
+          "RMSE": 5.4399760984482337e-05,
+          "last": -5.440123401068142e-05,
+          "maximum": -5.4392591558594106e-05,
+          "mean": -5.4399760923876e-05,
+          "minimum": -5.4401520768965206e-05,
+          "samples": 250
+        },
+        "signed_target_minus_actual_x_m": {
+          "RMSE": 0.006243887326138726,
+          "last": -5.440123401068142e-05,
+          "maximum": 0.02387138527697835,
+          "mean": 0.00207788645806552,
+          "minimum": -0.0008353719056395648,
+          "samples": 998
+        }
+      },
+      "raw_SHA_map_digest": "5b4a13e712207d9b4bd10b514d1117e7a1777c9c5673b0012790c5fe5a17f3ae",
+      "report_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/runs/s005_02/check_result.json",
+      "report_sha256": "841acb61cfbde5be07ddcead815866544138475075490b1208cbe4c4983816e4",
+      "role_returncodes": {
+        "observer": 0,
+        "publisher": 0,
+        "recorder": 0,
+        "synthetic_source": 0,
+        "worker": 0
+      },
+      "segments": [
+        {
+          "RMSE": 0.04078635608233763,
+          "label": "0_to_1s",
+          "last": -0.015041772241948102,
+          "maximum": -0.015041772241948102,
+          "mean": -0.0390668387424718,
+          "minimum": -0.05,
+          "sample_SSE_fraction": 0.853653402138872,
+          "samples": 50
+        },
+        {
+          "RMSE": 0.008806619265151132,
+          "label": "1_to_2s",
+          "last": 0.013199573014570906,
+          "maximum": 0.013199573014570906,
+          "mean": 0.0035235226896591816,
+          "minimum": -0.014074325456077431,
+          "sample_SSE_fraction": 0.03979882079345707,
+          "samples": 50
+        },
+        {
+          "RMSE": 0.008313990342614774,
+          "label": "2_to_5s",
+          "last": -0.0002918465333449499,
+          "maximum": 0.014720055981041674,
+          "mean": 0.006324724233855152,
+          "minimum": -0.0002918465333449499,
+          "sample_SSE_fraction": 0.10641235353339913,
+          "samples": 150
+        },
+        {
+          "RMSE": 0.00022973195834314928,
+          "label": "5_to_10s",
+          "last": 7.0074067500328074e-06,
+          "maximum": 1.2968043515575178e-05,
+          "mean": -0.00014765820397048644,
+          "minimum": -0.0004629295285469223,
+          "sample_SSE_fraction": 0.00013541432096377313,
+          "samples": 250
+        },
+        {
+          "RMSE": 1.8405325853077511e-06,
+          "label": "10s_to_last5",
+          "last": 3.6615656201499647e-09,
+          "maximum": 6.8708440730883e-06,
+          "mean": 7.505840960272224e-07,
+          "minimum": -2.1226629933618346e-07,
+          "sample_SSE_fraction": 9.213288137598997e-09,
+          "samples": 265
+        },
+        {
+          "RMSE": 2.7861751086049544e-09,
+          "label": "last5",
+          "last": -8.433508058569572e-11,
+          "maximum": 5.570901843998666e-09,
+          "mean": 1.735504223693285e-09,
+          "minimum": -1.9528190869921858e-10,
+          "sample_SSE_fraction": 1.9917672300500224e-14,
+          "samples": 250
+        }
+      ],
+      "settled_5percent_until_close_s": 3.939968599,
+      "whole_SSE": 0.09743572967126875
+    },
+    {
+      "SSE_fraction_first2s": 0.9009668838534566,
+      "SSE_fraction_first5s": 0.9999524086824529,
+      "accepted": 100,
+      "actual_SQLite": {
+        "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22/runs/pair_wakeup_s005_01/recorder/bag/bag_0.db3": "e286c5bd5ecca059bd4e1e9e2ba85028d476ae1ad126c1ca7d187e77bf9ce00a"
+      },
+      "actual_jobs": 102,
+      "all_stored_sensor_rows_checked": 1167,
+      "attempts": 100,
+      "case": "T_retry",
+      "command_is_force_measurement": false,
+      "first_actual_accepted_command_after_Ready_s": 0.278423407,
+      "first_actual_accepted_command_n": [
+        0.3645576181771613,
+        0.36455761817717686
+      ],
+      "gate_metrics": {
+        "RMSE_limit_m_s": 0.007392495755251466,
+        "RMSE_passed": false,
+        "all_evidence_populations_checked_before_windowed_metrics": true,
+        "end_driver_requested_ns": 259938798186063,
+        "last5s_mean_passed": true,
+        "last5s_mean_surge_m_s": 0.05000000052408624,
+        "last5s_relative_mean_error": 1.048172479367615e-08,
+        "last5s_relative_mean_error_limit": 0.05,
+        "last5s_sensor_count": 250,
+        "last5s_start_ns": 259933798186063,
+        "measured_surge_RMSE_m_s": 0.009234946529021685,
+        "measurement_sensor_count": 1013,
+        "parent_fixed_RMSE_m_s": 0.014784991510502932,
+        "parent_metrics_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/postrun/ladder_metrics_v1.json",
+        "parent_metrics_sha256": "612d3b84dd8065967bbeb6c6222f6ffb186c716624833d2add43afc6cead5831",
+        "passed": false,
+        "research_conclusion": false,
+        "shutdown_tail_used_for_performance": false,
+        "stage_qualified": false,
+        "start_ready_ns": 259918531169124,
+        "window_semantics": "Source target time, actual Odom-body surge; Ready inclusive to driver close request exclusive; shutdown tail excluded"
+      },
+      "locked_raw_paths": 100,
+      "maximum_surge_m_s": 0.06359795738961987,
+      "measurement_seconds": 20.267016939,
+      "original_issues": [
+        {
+          "code": "projected_preregistered_whole_measurement_RMSE_halved_parent",
+          "limit": 0.007392495755251466,
+          "observed": 0.009234946529021685
+        }
+      ],
+      "overall_case_passed": false,
+      "position_error": {
+        "epoch_semantics": "both runs use their declared actual first-submit epoch",
+        "excluded_pre_epoch_samples": 13,
+        "first_job_id": 1,
+        "first_target_sim_ns": 101896924507,
+        "initial_profile_t0": 0.0,
+        "last5s_signed_target_minus_actual_x_m": {
+          "RMSE": 5.439985025398628e-05,
+          "last": -5.440124742994712e-05,
+          "maximum": -5.4396980291748775e-05,
+          "mean": -5.439985023109051e-05,
+          "minimum": -5.440128134681643e-05,
+          "samples": 250
+        },
+        "signed_target_minus_actual_x_m": {
+          "RMSE": 0.006321383016696897,
+          "last": -5.440124742994712e-05,
+          "maximum": 0.02395762709987177,
+          "mean": 0.0021958127239450637,
+          "minimum": -0.0004837426512057097,
+          "samples": 1000
+        }
+      },
+      "raw_SHA_map_digest": "c31717d6ed0691df66f3f7ff4c82726c76c02684276a2ea8621bcf6ca6471150",
+      "report_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/runs/s005_01/check_result.json",
+      "report_sha256": "37c9e4b2a0cf171425153c94b43aa932a97e840543bf9311f9e093951a27fc82",
+      "role_returncodes": {
+        "observer": 0,
+        "publisher": 0,
+        "recorder": 0,
+        "synthetic_source": 0,
+        "worker": 0
+      },
+      "segments": [
+        {
+          "RMSE": 0.03843939778996911,
+          "label": "0_to_1s",
+          "last": -0.011011748644501697,
+          "maximum": -0.011011748644501697,
+          "mean": -0.03610882928959453,
+          "minimum": -0.05,
+          "sample_SSE_fraction": 0.8551551961714978,
+          "samples": 50
+        },
+        {
+          "RMSE": 0.008896972564533156,
+          "label": "1_to_2s",
+          "last": 0.013317837242279612,
+          "maximum": 0.013317837242279612,
+          "mean": 0.005520029284042587,
+          "minimum": -0.010067664402150109,
+          "sample_SSE_fraction": 0.04581168768195881,
+          "samples": 50
+        },
+        {
+          "RMSE": 0.00755056278831799,
+          "label": "2_to_5s",
+          "last": 4.8773252530144584e-05,
+          "maximum": 0.013597957389619872,
+          "mean": 0.005908413880388099,
+          "minimum": 4.8773252530144584e-05,
+          "sample_SSE_fraction": 0.09898552482899628,
+          "samples": 150
+        },
+        {
+          "RMSE": 0.0001282359335549163,
+          "label": "5_to_10s",
+          "last": 4.342077523901422e-06,
+          "maximum": 2.9511797362394288e-05,
+          "mean": -8.635243980527169e-05,
+          "minimum": -0.0002571589890835585,
+          "sample_SSE_fraction": 4.7586226623647306e-05,
+          "samples": 250
+        },
+        {
+          "RMSE": 1.2931804776662187e-06,
+          "label": "10s_to_last5",
+          "last": -7.496686701968791e-09,
+          "maximum": 4.276354455115539e-06,
+          "mean": 6.010226918809576e-07,
+          "minimum": -1.1669652485307713e-07,
+          "sample_SSE_fraction": 5.090914604358928e-09,
+          "samples": 263
+        },
+        {
+          "RMSE": 1.754416149620161e-09,
+          "label": "last5",
+          "last": -5.27380153436674e-11,
+          "maximum": 2.513831767747554e-09,
+          "mean": 5.240862386290957e-10,
+          "minimum": -7.015798539344864e-09,
+          "sample_SSE_fraction": 8.90690921609884e-15,
+          "samples": 250
+        }
+      ],
+      "settled_5percent_until_close_s": 3.97786957,
+      "whole_SSE": 0.08639293248001022
+    }
+  ],
+  "client_date": "2026-10-18",
+  "diagnostic_windows": "Ready inclusive to actual driver close request exclusive; exact same six startup/terminal segments as parent audit; position only post first target; no shutdown tail",
+  "execute_qualified": false,
+  "last_position_gap_new_over_parent": 1.0000002466720828,
+  "paired_or_same_latency_trial": false,
+  "performance_gate_replaced": false,
+  "recipe_sha256": "5950ec8ac388dd6f308cceba5b4b2709edbbc059e92831be52573f95c68f4918",
+  "research_conclusion": false,
+  "schema": "scheme-A-reference-pair-retry-comparison/v1",
+  "scope": "one frozen T run before retry and one T run with reference completion retry; identical numeric contract and static .05m/s nominal model, separate startup/runtime phases; finite observation only",
+  "stage_qualified": false
+}

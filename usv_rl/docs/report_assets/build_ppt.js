@@ -296,7 +296,7 @@ function srcLine(s, text, y) {
   ]));
   s.addTable(ct, { x: 7.2, y: 1.65, w: 5.6, colW: [3.3, 2.3], fontSize: 12.5, fontFace: FONT, color: TEXT, border: { pt: 0.5, color: BORDER }, rowH: 0.52, valign: "middle", margin: 0.08 });
   s.addText("VecNormalize: 观测/奖励运行归一化, 统计全程延续, 部署随 ONNX 一并带走", { x: 7.2, y: 6.1, w: 5.6, h: 0.6, fontSize: 12, fontFace: FONT, color: MUTED, margin: 0 });
-  srcLine(s, "configs/ppo.yaml · train.py · models/v5/s4_dr/train_meta.json (wall 2281.5 s)");
+  srcLine(s, "configs/ppo.yaml · train.py · artifacts/rl_models/v5/s4_dr/train_meta.json (wall 2281.5 s)");
   s.addNotes("PPO一句话: 概率比裁剪让每次策略更新保守, GAE算优势。配置是标准连续控制配方: 大缓冲区求稳, 学习率线性退火。整个训练只要38分钟墙钟, 16环境并行, 这是纯Python动力学便宜的地方, 也是敢于五轮迭代的前提。");
 })();
 
@@ -363,7 +363,7 @@ function srcLine(s, text, y) {
     { text: "v1–v3 成功率恒为 0 — 自尽/倒车/悬停永远到不了终点", options: { bullet: bu(), breakLine: true } },
     { text: "v4/v5 在三次课程切换处 (1M/3M/6M) 可见瞬时跌落再恢复; v5→下一页看质量指标", options: { bullet: bu() } },
   ], { x: M, y: 6.62, w: 12.33, h: 0.5, fontSize: 12, fontFace: FONT, color: TEXT, margin: 0, paraSpaceAfter: 3 });
-  srcLine(s, "usv_rl/runs/{v1..v5} TensorBoard rollout/success_rate (308 采样点/版本, 4 阶段合并)", 7.12);
+  srcLine(s, "artifacts/rl_runs/{v1..v5} TensorBoard rollout/success_rate (308 采样点/版本, 4 阶段合并)", 7.12);
   s.addNotes("这是主叙事图。绿线v5四十万步就在简单场景学会完成, 三次凹陷正好对应课程切换, 最后加DR短暂跌落再恢复。灰紫红线贴零——不是没收敛, 是被reward hacking卡死, 任务根本完成不了。");
 })();
 
@@ -592,7 +592,7 @@ function srcLine(s, text, y) {
   const rows = [
     ["v5 结果表 (成功率/CTE/航向)", "usv_rl/README.md 「训练成果」; 汇报前以 evaluate.py 50 eps 重跑复现一致"],
     ["能耗 / 平滑 (×3 / ×15.7)", "本次复现评估 eval_los_50eps.txt / eval_ppo_v5_50eps.txt"],
-    ["训练曲线 / v3 ep_len", "usv_rl/runs/{v1..v5} TensorBoard (fig_curves.py 解析, 308 点/版本)"],
+    ["训练曲线 / v3 ep_len", "artifacts/rl_runs/{v1..v5} TensorBoard (fig_curves.py 解析, 308 点/版本)"],
     ["轨迹复演", "fig_trajectory.py, 训练环境 seed 9999, DR off (非 VRX bag)"],
     ["ONNX 单位 bug 数字", ".sgh-research/experiments/v5_scaling_fix_20261003/ + manifest"],
     ["奖励权重 / 观测维数 / 配置", "configs/env.yaml / env 源码:124 / configs/ppo.yaml"],

@@ -1,0 +1,14 @@
+{
+  "count": 1,
+  "files": [
+    {
+      "bytes": 324,
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "df2c227af36769e7d25df7a6bae3e97bd5a373073373366ab74453d5cf1a4b6e",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/intermediate_local_backup_v1/CURRENT.md"
+    }
+  ],
+  "remote_intermediate_not_available": true,
+  "schema": "first-control-initial-local-current-backup/v1"
+}

@@ -1,0 +1,65 @@
+{
+  "schema": "plan126-E02-step-result-v1",
+  "step_id": "E02",
+  "status": "PASS",
+  "attempt": "attempt03",
+  "title": "修RNW纯审计：身份、时间、必要门分开",
+  "issue_addressed": "F124-02",
+  "observed_facts": {
+    "cases_total": 10,
+    "legal_variants_not_false_rejected": 2,
+    "old112_runs_rejected": true,
+    "r4_counterexamples_failed_as_required": 11,
+    "r4_counterexamples_total": 11,
+    "rnw3_job": 7,
+    "rnw3_r4_observed": true,
+    "rnw3_run_accepted": true,
+    "rnw3_sequence": 18
+  },
+  "run_accepted": {
+    "accepted": true,
+    "basis": "RNW3 R4 observed AND run_accepted with 16/16 acceptance gates pass; 12 counterexamples all rejected; 2 legal variants not false-rejected"
+  },
+  "coverage": {
+    "identity_and_time_counterexamples": "covered — 9 R4 variants",
+    "old_candidate_disposition": "not_covered — recorded, tolerated, never counted as rejection",
+    "r4_positive_fact": "covered — RNW3 Job7/seq18 with full identity echo and logical time",
+    "run_acceptance_gating": "covered — 16 acceptance gates, absence/not_covered/fail all block",
+    "run_level_missing_evidence": "covered — 4 fixtures",
+    "worker_and_stored_chain": "partial — worker source is not read by this audit; the required-worker gate is expressed through the R4 echo"
+  },
+  "stage_qualified": false,
+  "qualification": {
+    "F6": false,
+    "M4": false,
+    "P1": false,
+    "hard_realtime": false,
+    "plant": false
+  },
+  "changed_files": [
+    {
+      "path": "implementation/audit/rnw_audit_v2.py",
+      "reason": "four-dimension split; full identity echo; logical-time causality; 16 acceptance gates; named duplicate rejection",
+      "derived_from": "B117 implementation/rnw_audit_v1.py"
+    },
+    {
+      "path": "implementation/run_e02.py",
+      "reason": "fail-closed matrix driver with private fixtures"
+    }
+  ],
+  "original_files_touched": 0,
+  "design_decisions": {
+    "four_dimensions": "r4_observed / run_accepted / coverage / stage_qualified are separate keys; there is no merged `passed`",
+    "acceptance_rule": "every gate in ACCEPTANCE_GATES must be in state pass; absent == not_covered == fail == blocker",
+    "why_not_intersect_echo_fields": "an intersection would silently stop checking a field the moment one source drops it; fields are declared per comparison and a missing one is a coverage gap",
+    "why_not_line_order": "the real RNW3 Source writes API/Applied BEFORE the final Decision line; causality uses submit_commit_ns < ready_commit_ns < activation_commit_ns <= api_left_start",
+    "old_candidates": "absence yields coverage=not_applicable_absent and never blocks and never counts as rejection"
+  },
+  "real_audit_gap_found_during_testing": "the original R4 accepted a stream with two candidate_registration rows for the same job id; a named duplicate rejection was added",
+  "remaining_obligations": [
+    "E03—E12 NOT_STARTED",
+    "worker Source and Stored evidence are not parsed by this audit; the audit reads regulator Source + driver close evidence only",
+    "run acceptance here is an offline evidence judgement, not stage qualification"
+  ],
+  "next_step": "E03"
+}

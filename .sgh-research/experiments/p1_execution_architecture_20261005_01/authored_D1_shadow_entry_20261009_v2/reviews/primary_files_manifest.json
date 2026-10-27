@@ -1,0 +1,229 @@
+{
+  "schema": "p1-D1-primary-byte-preservation-manifest-v1",
+  "source_packages": {
+    "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\existing_domain_primary_v2.json": {
+      "sha256": "0dd9cebb687783d07b5a790fb4219a3e174d41bd5be21009d2dfa1be4a220145",
+      "bytes": 17704034
+    },
+    "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\existing_metadata_verification.json": {
+      "sha256": "a29336ca44a900789a3042aa44a3e875aeb0ad19571a9d3241914d16a7b9eb86",
+      "bytes": 90447
+    },
+    "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\local_source_index.json": {
+      "sha256": "cb0539bfe40d2a3bceeb107716348347403e059ee2f7699b24ce7e32605c7460",
+      "bytes": 58488
+    }
+  },
+  "entries": [
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_baseline_20261005_02/run_context.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\001.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 11543,
+      "sha256": "ee5137ba49711252fccb34e61e487ec5d73800f17fa5dc7a564aa1de94c33695",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_baseline_20261005_02/source/session_summary.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\002.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 1593,
+      "sha256": "7451d819347a111cef35b68276105744adbbdc4d8bfb27d4e1c96a8cd8945a50",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_baseline_20261005_02/reference_reports/reference_observation_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\003.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 72467,
+      "sha256": "7b245ab5c3a4b2f22b93eb6a5fe6b9f2509616211eb41cdc8308828cc0e9961e",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_baseline_20261005_02/reports_initial/interval_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\004.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 334471,
+      "sha256": "d67ba36eafbdc8f223ba038343ad5083dfa618b240d85da0c9260381ee2a0598",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_plant_mass_20261005_01/run_context.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\005.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 11630,
+      "sha256": "87de86f42179060ec66183f53cf6638cb248cb2ae2d1f0c27dce388f16c0937d",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_plant_mass_20261005_01/source/session_summary.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\006.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 1597,
+      "sha256": "e417c19247bf06fc98667dc2bf325fe8c5279ecd87bfc967167e5dd7940b8ef9",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_plant_mass_20261005_01/reference_reports/reference_observation_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\007.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 75518,
+      "sha256": "aae754fbc47b379534f090016dff56ab85d3732fe760e98e37148cc9bb693d22",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_plant_mass_20261005_01/reports_initial/interval_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\008.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 335898,
+      "sha256": "a0acc35935748d6f7b72a96e9d2a4f5d8e35e09cae23ccfd7e4395abd3cd9117",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_nominal_mass_20261005_01/run_context.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\009.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 11655,
+      "sha256": "77ed8c930af80cf42d933fbf867fc97b4f2895b1179d2de76aa62e3c27e922da",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_nominal_mass_20261005_01/source/session_summary.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\010.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 1601,
+      "sha256": "43573d69c3d908d37e0da2673c975b826935722613365fdd26df4ece25d0a328",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_nominal_mass_20261005_01/reference_reports/reference_observation_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\011.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 74840,
+      "sha256": "2f15db845fbf781998669b29ef923c27d3c3c6088be6e0796895b047718ee742",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p0_f4_config_nominal_mass_20261005_01/reports_initial/interval_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\012.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 338127,
+      "sha256": "db9158454e13c25e97272f369fbb6669028b6933afe2442177d8693771dbe5b9",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p1_f5_atomic_baseline_20261005_02/run_context.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\013.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 12113,
+      "sha256": "2286e7e33aa294ade5365e1ae9327212316666f0dbb6645cc2ed619a2f29818f",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p1_f5_atomic_baseline_20261005_02/source/session_summary.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\014.json",
+      "category": "run context/session/JSONL primary",
+      "bytes": 1590,
+      "sha256": "efa249c586423f5f96f5af4abbca965f16dc91b905b9f4fd1ad67a24ffcc53a3",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p1_f5_atomic_baseline_20261005_02/reference_reports/reference_observation_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\015.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 65009,
+      "sha256": "572d38483f96721ffcaeb515368daeb8854929f3008329fd619c19db95592282",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/.sgh-research/experiments/p1_f5_atomic_baseline_20261005_02/reports_initial/interval_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\016.jsonl",
+      "category": "run context/session/JSONL primary",
+      "bytes": 333785,
+      "sha256": "6e8edfb5e3d65cf5b9d16e2e9aa94c58a0daa1ef4c11a82f83b8bb70f0796b5c",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/data/sim_bags/p0_f4_config_baseline_20261005_02/metadata.yaml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\017.yaml",
+      "category": "raw bag metadata",
+      "bytes": 10474,
+      "sha256": "7ac31515c6d9a21e2166b0ce80df03e61e8b71efa03e07eafd20459c841b0982",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/data/sim_bags/p0_f4_config_plant_mass_20261005_01/metadata.yaml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\018.yaml",
+      "category": "raw bag metadata",
+      "bytes": 10478,
+      "sha256": "4620f0c7e7b927f15a1aadfa9ec770be21843d31f04153e5068c51af4f48a73e",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/data/sim_bags/p0_f4_config_nominal_mass_20261005_01/metadata.yaml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\019.yaml",
+      "category": "raw bag metadata",
+      "bytes": 10482,
+      "sha256": "ef29f9891b92825beb9eaa9f0aa4b530dd827045a6d974022c0a13a53e4e7c53",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/data/sim_bags/p1_f5_atomic_baseline_20261005_02/metadata.yaml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\020.yaml",
+      "category": "raw bag metadata",
+      "bytes": 10474,
+      "sha256": "a6ef6233015a82695b5b1404fb2c4dc219bb267e513e47087c23f5b590b51617",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/data/sim_bags/vrx_twin_circle_007_fixed/metadata.yaml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\021.yaml",
+      "category": "raw bag metadata",
+      "bytes": 6617,
+      "sha256": "3dfebb2be36579fd5e0ef0c7782c0a0669cb595ab929341be972ae4fb832c3aa",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/data/sim_bags/vrx_scheme_b_circle_001/metadata.yaml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\022.yaml",
+      "category": "raw bag metadata",
+      "bytes": 5847,
+      "sha256": "4442d75fc7a6d99f0f3a0cf7ae49f9a95e5ab4a44a41feb37285cc3e0230eb1a",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    },
+    {
+      "remote_source_path": "/home/trevor/USV/data/sim_bags/scheme_b_straight_001/metadata.yaml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\domain_analysis\\primary_files\\023.yaml",
+      "category": "raw bag metadata",
+      "bytes": 8812,
+      "sha256": "963ed3a48f88a2105436fae6f78a93d6b61d03a665673db9d2ef51dd94bd11da",
+      "expected_bytes_match": true,
+      "expected_sha256_match": true
+    }
+  ],
+  "all_bytes_and_hashes_verified": true,
+  "metadata_total_and_topics_verified": true,
+  "qualification": false
+}

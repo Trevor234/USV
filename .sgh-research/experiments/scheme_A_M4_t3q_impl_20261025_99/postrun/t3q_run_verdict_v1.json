@@ -1,0 +1,63 @@
+{
+  "auto_retry": 0,
+  "batch": 99,
+  "cases": [
+    {
+      "budget_seconds": 60,
+      "case": "T3-Q1d",
+      "elapsed_seconds": 0.006,
+      "passed": true,
+      "rc": 0,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/runs/T3-Q1d/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T3-Q1d passed=true assertions=14\n",
+      "timed_out": false
+    },
+    {
+      "budget_seconds": 60,
+      "case": "T3-Q1r",
+      "elapsed_seconds": 1.07,
+      "passed": false,
+      "rc": 0,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/runs/T3-Q1r/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T3-Q1r passed=true assertions=14\n",
+      "timed_out": false
+    },
+    {
+      "budget_seconds": 60,
+      "case": "T3-Q2",
+      "elapsed_seconds": 1.07,
+      "passed": false,
+      "rc": 0,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/runs/T3-Q2/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T3-Q2 passed=true assertions=14\n",
+      "timed_out": false
+    },
+    {
+      "budget_seconds": 60,
+      "case": "T3-Q3",
+      "elapsed_seconds": 1.073,
+      "passed": false,
+      "rc": 0,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/runs/T3-Q3/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T3-Q3 passed=true assertions=16\n",
+      "timed_out": false
+    },
+    {
+      "budget_seconds": 60,
+      "case": "T3-Q4",
+      "elapsed_seconds": 0.004,
+      "passed": true,
+      "rc": 0,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/runs/T3-Q4/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T3-Q4 passed=true assertions=8\n",
+      "timed_out": false
+    }
+  ],
+  "passed": false,
+  "schema": "T3-queue-run-verdict/v1"
+}

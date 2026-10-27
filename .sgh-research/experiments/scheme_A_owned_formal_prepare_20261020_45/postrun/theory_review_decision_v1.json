@@ -1,0 +1,28 @@
+{
+  "assumption_table": [
+    {
+      "assumption": "formal84/fault=false can prepare on actual owned endpoints without legacyApplied",
+      "evidence": "two actual runs + independent audits; current revision resource checks21 and constructor26",
+      "status": "verified bounded preparation component"
+    },
+    {
+      "assumption": "typed reserialization hash equals bag wire hash",
+      "evidence": "raw diagnostics retained; fields/explicit padding analysis",
+      "status": "rejected assumption; all typed fields and exact input accounting verified independently"
+    }
+  ],
+  "blocking_reasons": [
+    "Prepare-only has noJob/Decision/activation/Witness; fullRegulator execution is a separate condition.",
+    "OriginalD1 domain/final-policy/version evidence and B5/M0b freeze requirements still need their explicit difference matrix."
+  ],
+  "experience_risks": [
+    "Resource-domain lower-capacity entry needed a concrete versioned repair; runs01 and02 kept separately.",
+    "Repeated preparation or arbitraryraw mutation expansion would add no evidence for the remaining originalfreeze conditions."
+  ],
+  "override_policy": "NO-GO requires explicit user override; no override used",
+  "research_conclusion": false,
+  "safe_next_step": "Follow originalhandoffS5: close this component and build final-version D1/B4/B5/M0b freeze difference matrix.",
+  "schema": "formal-prepare-postrun-theory-review-v1",
+  "stage_qualified": false,
+  "verdict": "CONDITIONAL"
+}

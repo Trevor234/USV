@@ -1,0 +1,7 @@
+# D1 entry v1 有限构建结果
+
+configure返回0。compile返回2；日志显示生产runtime已链接，但新test_shadow_entry编译失败，三target测试均未执行（0个，不计通过）。失败原目录保留，旧3322项父守卫无漂移、host无遗留控制器/Gazebo、本次owned进程清理完整。
+
+原因为test_shadow_entry.cpp第79行包含两个EXPECT_NO_THROW，Jazzy提供的GTest宏用源行号生成label，产生重复gtest_label_testnothrow_79。主要证据为entry_v1_failure/build_supervision/compile.console.log，SHA256 82478179bd6fc005d31d5f61f2cf12116fc79af8b6a3dfe107a53c7920d88649。不是runtime控制逻辑或模式门失效的证据。
+
+具体修订仅把该测试断言分成不同源行；新本地entry_v2及远端authored_D1_shadow_entry_20261009_v2，原entry/v1完全保留。41case及runtime source SHA保持，不能将已link runtime当完整构建/测试通过。无D1动态采集或执行资格。

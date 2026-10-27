@@ -1,0 +1,106 @@
+{
+  "all_hashes_and_precise_pass_keys_match": true,
+  "reports_unchanged": true,
+  "rows": [
+    {
+      "exact_boolean_passed": true,
+      "id": "normal_owned",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/normal_owned.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "normal_atomic",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/normal_atomic.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "normal_release",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/normal_release.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "expired_release",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/expired_release.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "config_domain",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/config_domain.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "preparation_io",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/preparation_io.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "current_readiness",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/current_readiness.json",
+      "result_key": "component_suite_passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "budget_scope",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/budget_scope.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "wire_invalid_foreign",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/wire_invalid_foreign.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "wire_fatal",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/wire_fatal.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "wire_instance",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/wire_instance.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "wire_expired",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/wire_expired.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "wire_duplicate",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/wire_duplicate.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    },
+    {
+      "exact_boolean_passed": true,
+      "id": "wire_no_valid",
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/wire_no_valid.json",
+      "result_key": "passed",
+      "sha256_matches_actual_current_root_reader": true
+    }
+  ],
+  "schema": "scheme-A-C3.5-independent-actual-final-subreport-review/v1",
+  "scope": "read-only actual 14 current generated reports; no rerun"
+}

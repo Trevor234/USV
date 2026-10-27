@@ -1,0 +1,100 @@
+{
+  "all_semantic_cases_expected": true,
+  "basis": {
+    "Master_Clock_WCET_plant_hold_unknown_are_not_zero": true,
+    "component_true_cannot_qualify_stages": true,
+    "current_profile": "frozen-N10-synthetic-shadow-components",
+    "execution_policy_dynamic_anchor_pressure_recovery_close_dependencies_remain_independent": true
+  },
+  "complete_fixed_original_inputs_verified": true,
+  "current_contract": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/acceptance_contract_v3.json",
+    "sha256": "927e9f0776b8deee4c1b77e730409549eba0916df1061e8cd11b1583e73281af"
+  },
+  "date": "2026-10-13",
+  "fixed_inputs_including_preregister_and_current_contract": 410,
+  "identity_population": 212,
+  "new_ROS_nodes_launched_by_reviewer": false,
+  "old_expected_or_runtime_assets_changed_by_reviewer": false,
+  "prior_full_v2_run": {
+    "all_exact_rc0_and_passed": true,
+    "contract_sha256": "8a82a48a2b3b94eb496b742be4ebc912579d72203c9fb0a51f9c4d444bce7530",
+    "jobs": 14,
+    "passed": true,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt02/result.json",
+    "qualification_flags_all_false": true,
+    "v2_job_evidence_does_not_by_itself_claim_full_v3_execution": true
+  },
+  "prior_review_findings_resolved": true,
+  "reader_verified_bytes": 91888711,
+  "reader_verified_population": 410,
+  "record_population": 196,
+  "remaining_P1_P2_findings": [],
+  "schema": "scheme-A-C3.5-current-independent-review/v3",
+  "scope": "read-only final source/contract semantic validation and fixed original input bytes; no new runtime; historical 14-job execution reported separately",
+  "semantic_cases": [
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "v3_registered_original"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: complete_registered_identity_population_required",
+      "expected_acceptance": false,
+      "name": "old_empty_identity_and_record"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: complete_component_dependency_set_required",
+      "expected_acceptance": false,
+      "name": "old_required_component_subset"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: registered_phase_dependency_matrix_required",
+      "expected_acceptance": false,
+      "name": "old_phase_dependency_weakening"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: registered_rule_adapters_required",
+      "expected_acceptance": false,
+      "name": "old_budget_adapters_removed"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: registered_deferred_conditions_required",
+      "expected_acceptance": false,
+      "name": "old_deferred_population_removed"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: registered_execution_preregister_required",
+      "expected_acceptance": false,
+      "name": "v2_preregister_redirect"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: registered_job_dataset_arguments_differ",
+      "expected_acceptance": false,
+      "name": "registered_job_dataset_redirect"
+    }
+  ],
+  "source_pins": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/acceptance_core_v1.py",
+      "sha256": "9ff60cc3840b3a8b8998c4ed4db5b26897450697f3cc1999da4784d62cdef76a"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/check_acceptance_v1.py",
+      "sha256": "4e6cc87286da6b88a7457bd4c4360930fcdee3e095591ec22ae1babdeb1312fa"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/generate_acceptance_contract_v1.py",
+      "sha256": "c01cbc371ef2fc1111bcf266dcbda9bcb6f4423e03654f2b2e031af85b4a8c7b"
+    }
+  ],
+  "stage_support": []
+}

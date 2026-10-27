@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author/prepare_pair_wakeup_v1.py"
+      ],
+      "expected_accept": true,
+      "valid_native_script_slot": true,
+      "passed": true
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author/prepare_pair_wakeup_v1.py"
+      ],
+      "expected_accept": false,
+      "valid_native_script_slot": false,
+      "passed": true
+    }
+  ],
+  "Native_source_unchanged": true,
+  "stage_qualified": false
+}

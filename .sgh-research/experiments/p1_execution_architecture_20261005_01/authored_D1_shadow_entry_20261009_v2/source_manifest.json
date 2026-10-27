@@ -1,0 +1,169 @@
+{
+  "schema": "p1-D1-shadow-entry-local-source-manifest-v1",
+  "date": "2026-10-09",
+  "status": "v2_format_fix_created_native_build_and_tests_pending",
+  "entry_root": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\entry_v2",
+  "runtime_target": "p1_regulator_shadow_observer",
+  "runtime_test_macros": [],
+  "test_targets": [
+    {
+      "target": "test_shadow_entry",
+      "declared_cases": 23,
+      "classification": "new source-linked",
+      "test_tu_macro": "P1_SHADOW_ENTRY_TEST",
+      "case_names": [
+        "ActualConstructorRejectsExecuteNoOutputAndUnknownBeforeFiles",
+        "CompleteDiag5CapabilityFlagAndZeroPolicyRemainCompatible",
+        "EachOfFiveNonzeroHooksIsRejectedByActualConstructor",
+        "WitnessDisabledRejectedByActualConstructor",
+        "IncompleteWitnessIdentityCannotOpenSource",
+        "FreshPathsAreMandatoryAndMustNotAliasIdentity",
+        "LegacyPinMustBeCompleteAndCanonicalForThisBoot",
+        "ZeroLoggerPolicyCannotBeArmed",
+        "ExactLegacyPairAdmitsBothRealChannels",
+        "ForeignRunAndEmptyProducerDoNotSelfLearn",
+        "SchemaConfigAndDomainRequireExactIdentity",
+        "RejectionEvidenceTruncatesEveryUntrustedString",
+        "ProducerSwitchUsesUniformTerminalAndPreservesBeforeEvidence",
+        "MissingAndOneSidedHistoryNeverCreateSyntheticPrediction",
+        "BothChannelsMustCoverAcceptedOdometryStamp",
+        "DuplicateAndOldSequenceCannotRewriteHistory",
+        "SequenceGapInvalidatesSlotsAndStartsOnlyObservedPair",
+        "TopAndBothChannelEpochsMustMatch",
+        "PartialPublicationClearsBothChannelsAndPending",
+        "FutureNonmonotonicAndCrossChannelPublishTimesAreRejected",
+        "GlobalAndWithinPairSimReversalCannotLeavePartialAnchor",
+        "ConsecutiveSameValueHistoryPassesButChangeThenReturnFails",
+        "CapacityEvictionCannotInventFrozenHistoryEndpoint"
+      ]
+    },
+    {
+      "target": "test_d0_observation",
+      "declared_cases": 8,
+      "classification": "inherited D0 bytes linked against new entry source",
+      "test_tu_macro": "P1_ENQUEUE_BRANCH_TEST"
+    },
+    {
+      "target": "test_enqueue_branch",
+      "declared_cases": 10,
+      "classification": "inherited diagnostic enqueue bytes linked against new entry source",
+      "test_tu_macro": "P1_ENQUEUE_BRANCH_TEST",
+      "target_macro": "P1_DIAGNOSTIC_TEST"
+    }
+  ],
+  "declared_new_cases": 23,
+  "declared_inherited_cases": 18,
+  "declared_total_cases": 41,
+  "files": {
+    "CMakeLists.txt": {
+      "bytes": 1591,
+      "sha256": "e660bbfa5fa2efeec7d07a51eed98610fb3830c02229b0b608df9e44e6e93e22"
+    },
+    "implementation_notes.md": {
+      "bytes": 5575,
+      "sha256": "607cb1959c64e9b2821c6dbc919ae14d0c33d6b912f4c2cb2412b383f88788d1"
+    },
+    "source_lineage.json": {
+      "bytes": 10148,
+      "sha256": "cc0a1807d86d056c3c81eb4524237650ef303090831e5f0ac8a2e4ff4745df01"
+    },
+    "src/shadow/p1_admission.hpp": {
+      "bytes": 8297,
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+    },
+    "src/shadow/p1_capability_lease.hpp": {
+      "bytes": 1020,
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c"
+    },
+    "src/shadow/p1_clock_window.hpp": {
+      "bytes": 1902,
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc"
+    },
+    "src/shadow/p1_d0_observation.hpp": {
+      "bytes": 3595,
+      "sha256": "ad181ad4a510b8c7e0343d179ade689abef10eeaaeec69002b56068d74920527"
+    },
+    "src/shadow/p1_diag_sink.hpp": {
+      "bytes": 5305,
+      "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79"
+    },
+    "src/shadow/p1_full_contract.hpp": {
+      "bytes": 11798,
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea"
+    },
+    "src/shadow/p1_preparation_barrier.hpp": {
+      "bytes": 723,
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc"
+    },
+    "src/shadow/p1_resources.hpp": {
+      "bytes": 13624,
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2"
+    },
+    "src/shadow/p1_shadow_entry.hpp": {
+      "bytes": 7538,
+      "sha256": "f69347571a02e815b479fc52e3d4fe8ecaa284e9d2c7a7e2bd11b022fc7e403e"
+    },
+    "src/shadow/p1_tick_barrier.hpp": {
+      "bytes": 708,
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4"
+    },
+    "src/shadow/p1_witness.hpp": {
+      "bytes": 24118,
+      "sha256": "c114df7d6c587e389ebdacc7344536e7f00dca81cc8dea2d352dac4ada6d6a93"
+    },
+    "src/shadow/p1_worker_liveness.hpp": {
+      "bytes": 1227,
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28"
+    },
+    "src/shadow/protocol.hpp": {
+      "bytes": 6581,
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+    },
+    "src/shadow/regulator_shadow_observer.cpp": {
+      "bytes": 64332,
+      "sha256": "c5b3b1f419d0835b06851f332b49f2f1eb43fa766dae19f85999de74aaf05452"
+    },
+    "tests/test_d0_observation.cpp": {
+      "bytes": 6402,
+      "sha256": "6c9e4606670f35ec5069f998769cf7fba7ffde9815fd5e740a4f5bf1f3ed5955"
+    },
+    "tests/test_enqueue_branch.cpp": {
+      "bytes": 8704,
+      "sha256": "9909f8892ef84891519842056d05afa4f984311e9976ff4801554e88932494bc"
+    },
+    "tests/test_shadow_entry.cpp": {
+      "bytes": 19441,
+      "sha256": "06a20fbd43e460774bcdfb1573b3a26ceec0f26f1dcb41bf0b7c759b3fe3e66d"
+    },
+    "v2_format_fix.md": {
+      "bytes": 1420,
+      "sha256": "451ad07bf78f53d3a572015a356121da9cdcfecc41e2f0c3172227264af8c87d"
+    }
+  },
+  "no_install": true,
+  "old_default_workspace_changed": false,
+  "formal_idl_changed": false,
+  "witness_layout_changed": false,
+  "contract_changed": false,
+  "compile_or_tests_run_by_author": false,
+  "binary_sha256": null,
+  "D1_dynamic_launch_go": false,
+  "version_specific_repair": {
+    "schema": "p1-D1-shadow-entry-v2-format-fix-v1",
+    "parent_root": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\entry",
+    "parent_manifest_sha256": "3ef66a9147cbee0ea1f4a3296e876ec50922d6e9ca72a8f8047e667994c47226",
+    "failure_log_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\entry_v1_failure\\build_supervision\\compile.console.log",
+    "failure_log_sha256": "82478179bd6fc005d31d5f61f2cf12116fc79af8b6a3dfe107a53c7920d88649",
+    "v1_compile_returncode": 2,
+    "v1_tests_executed": 0,
+    "fix": "two EXPECT_NO_THROW assertions in one existing case placed on separate source lines",
+    "test_source_v1_sha256": "c4eeeb68d4cdba314a20f3e7f89067e5b1a223764fe60d1561b118c08f7bca9e",
+    "test_source_v2_sha256": "06a20fbd43e460774bcdfb1573b3a26ceec0f26f1dcb41bf0b7c759b3fe3e66d",
+    "non_whitespace_test_source_identical": true,
+    "runtime_source_identical": true,
+    "runtime_source_sha256": "c5b3b1f419d0835b06851f332b49f2f1eb43fa766dae19f85999de74aaf05452",
+    "v2_compile_or_test_executed": false,
+    "declared_cases": 41,
+    "D1_dynamic_launch_go": false
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema": "atomic-typed-fixture-source-delivery/v1",
+  "original_source_sha256": "2d2949f02e0d30c1db23a54218648dd29eaa863c8c9cbc614b8cecd387778e75",
+  "new_source": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/component_fix/test_atomic_observation_typed_v1.cpp",
+    "sha256": "2dc6079420fc2e0979d841aaf09efe89e32ddbd6db035ddf3b5d55dc5d21a773",
+    "bytes": 21753
+  },
+  "unchanged_original_v2_files_checked": 34,
+  "all_original_v2_files_unchanged": true,
+  "tests": 12,
+  "other_11_tests_source_byte_identical": true,
+  "reviewer_compiled_or_ran_fixture": false,
+  "runtime_modified": false,
+  "qualification": {
+    "stage": false,
+    "execute": false,
+    "research": false
+  }
+}

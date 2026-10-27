@@ -1,0 +1,25 @@
+{
+  "schema": "p1-C3.4-B-prereg/v1",
+  "created_monotonic_ns": 80022051749925,
+  "scope": "exact field domains and finite JSON; offline tests only; no ROS runtime",
+  "source": "authored_D1_C3_4_20261013_v10",
+  "files_owned": [
+    "check_release_observation_v1.py",
+    "owned_auth.py",
+    "strict_types_v1.py",
+    "test_strict_types_v1.py"
+  ],
+  "expected": [
+    "honest N9 positive/expired analyze compatibility",
+    "reject complete analyze freshness count true",
+    "reject complete analyze unarmed counters false",
+    "reject bool/float/string/null/negative/overflow integer fields",
+    "reject NaN/Infinity/1e309",
+    "nullable fields retain actual short-circuit nulls",
+    "canonical double scalar/arrays finite and bool type rejected",
+    "ambiguous IO remains failed input"
+  ],
+  "qualification_upgrade": false,
+  "historical_inputs_read_only": true,
+  "failure_evidence_preserved": true
+}

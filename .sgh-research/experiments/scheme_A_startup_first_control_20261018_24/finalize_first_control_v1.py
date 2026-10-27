@@ -1,0 +1,136 @@
+#!/usr/bin/env python3
+"""Seal the local fixed-tail study and separately append exact MPC delivery.
+
+Local QA does not verify unavailable historical network mirrors. Inventory
+includes QA and all retained failures, excludes itself and any later successful
+delivery receipt. Network copy refuses any different existing destination file.
+"""
+from pathlib import Path
+import argparse,hashlib,importlib.util,json,os,shutil,stat,sys
+sys.dont_write_bytecode=True
+D=Path(__file__).resolve().parent
+N=D.parent/'p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24'
+M=Path('/home/trevor/MPC')/D.name
+METADATA={'archive_inventory_v1.json','delivery_verification.json'}
+
+def require(value,reason):
+ if not value:raise RuntimeError(reason)
+def sha(path):
+ h=hashlib.sha256()
+ with Path(path).open('rb') as f:
+  for b in iter(lambda:f.read(1048576),b''):h.update(b)
+ return h.hexdigest()
+def load(path):return json.loads(Path(path).read_text())
+def write(path,value):
+ raw=(json.dumps(value,indent=2,sort_keys=True,allow_nan=False)+'\n').encode()
+ with Path(path).open('xb') as f:f.write(raw);f.flush();os.fsync(f.fileno())
+ require(Path(path).read_bytes()==raw,'metadata_readback:'+str(path))
+def population(root):
+ require(root.is_dir() and not root.is_symlink(),'regular_root:'+str(root))
+ paths=list(root.rglob('*'));require(not any(p.is_symlink() for p in paths),'archive_symlink:'+str(root))
+ require(all(p.is_file() or p.is_dir() for p in paths),'archive_special_file:'+str(root))
+ return sorted(p for p in paths if p.is_file()),sorted(str(p.relative_to(root)) for p in paths if p.is_dir())
+def files(root):return population(root)[0]
+def copy_exact(source,destination):
+ source=Path(source);destination=Path(destination);before=sha(source);mode=stat.S_IMODE(source.stat().st_mode)
+ destination.parent.mkdir(parents=True,exist_ok=True)
+ with destination.open('xb') as target:
+  with source.open('rb') as original:shutil.copyfileobj(original,target,1024*1024)
+  target.flush();os.fsync(target.fileno())
+ os.chmod(destination,mode&0o777)
+ require(sha(source)==before==sha(destination),'copy_changed:'+str(source));return before
+
+def preserve_intermediate():
+ record=D/'postrun/intermediate_local_backup_v1.json';root=D/'intermediate_local_backup_v1'
+ if record.exists():
+  data=load(record)
+  for r in data['files']:require(sha(r['snapshot'])==r['sha256'],'local_intermediate_backup_changed')
+  return data
+ root.mkdir(exist_ok=False);source=D/'CURRENT.md';target=root/'CURRENT.md';digest=copy_exact(source,target)
+ data=dict(schema='first-control-initial-local-current-backup/v1',count=1,files=[dict(relative_path='CURRENT.md',original=str(source),snapshot=str(target),sha256=digest,bytes=source.stat().st_size)],remote_intermediate_not_available=True)
+ write(record,data);return data
+
+def freeze():
+ preserve_intermediate();root=D/'author_snapshot';root.mkdir(exist_ok=False);original,directories=population(N);rows=[]
+ for rel in directories:(root/rel).mkdir(parents=True,exist_ok=True)
+ for source in original:
+  rel=source.relative_to(N);target=root/rel;digest=copy_exact(source,target)
+  rows.append({'relative_path':str(rel),'original':str(source),'snapshot':str(target),'sha256':digest,'bytes':source.stat().st_size})
+ after,afterdirs=population(N);snap,snapdirs=population(root)
+ require(after==original and afterdirs==directories,'author_population_changed_during_freeze')
+ require({str(p.relative_to(root)) for p in snap}=={r['relative_path'] for r in rows} and snapdirs==directories,'author_snapshot_population')
+ write(D/'postrun/author_freeze_v1.json',{'schema':'first-control-fixed-tail-author-freeze/v1','count':len(rows),'bytes':sum(r['bytes'] for r in rows),'files':rows,'directories':directories,'all_sources_runs_failed_attempts_and_raw_Storage_preserved':True})
+ print(json.dumps({'author_files_frozen':len(rows),'author_bytes':sum(r['bytes'] for r in rows)}))
+
+def qa():
+ initial_path=D/'preflight/workspace_initial_local_v1.json';final_path=D/'preflight/workspace_final_local_v1.json'
+ initial=load(initial_path);final=load(final_path)
+ for p in [initial,final]:
+  require(p['passed'] and p['protection']['full_local_current_byte_sha_recheck'] and p['protection']['MPC_mirror_current_bytes_verified'] is False,'local_scope_with_remote_deferred')
+  require(p['protection']['unique_raw_files_reread']==34838 and p['protection']['logical_bytes_streamed']==3976884716,'complete_local_old_asset_scope')
+  require(p['protection']['parent_D22_RMSE_failure_preserved'] and p['protection']['local_D23_archive_files']==413,'frozen_parent_failure_and_mechanism')
+ spec=importlib.util.spec_from_file_location('close_workspace24',D/'protection_local_v1.py');helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
+ current=helper.workspace();require(helper.projection(current)==helper.projection(final['workspace_after']),'workspace_projection_changed_since_final_proof')
+ frozen=load(D/'postrun/author_freeze_v1.json');original,dirs=population(N);snap,snapdirs=population(D/'author_snapshot')
+ require(frozen['count']==len(original)==6 and dirs==snapdirs==frozen['directories'],'author_exact_population')
+ require({str(p) for p in original}=={r['original'] for r in frozen['files']} and {str(p) for p in snap}=={r['snapshot'] for r in frozen['files']},'author_exact_snapshot')
+ for r in frozen['files']:require(sha(r['original'])==r['sha256']==sha(r['snapshot']),'author_frozen_bytes')
+ build=load(D/'build/replay_attempt02/result.json');audit=load(D/'postrun/first_control_audit_v1.json');inv=load(D/'replay/offline_invocation_v1.json');lock=load(D/'preregister/offline_invocation_lock_v1.json');pre=load(D/'preregister/first_control_v1.json')
+ require(build['passed'] and build['native_tests']==dict(tests=4,failures=0,errors=0,disabled=0),'four_native_component_checks')
+ require(audit['passed'] and audit['all_ten_exact_registered_cases_checked'] and len(audit['cases'])==10 and len(audit['negative_audit_boundaries'])==5 and all(r['rejected'] for r in audit['negative_audit_boundaries']),'independent_ten_case_audit')
+ require(audit['independent_rollout_max_abs_error']<=pre['independent_abs_tolerance'] and audit['independent_cost_max_abs_error']<=pre['independent_abs_tolerance'],'independent_numeric_tolerances')
+ require(inv['passed'] and inv['input_closure_unchanged'] and inv['lock_sha256']==sha(D/'preregister/offline_invocation_lock_v1.json'),'before_after_closure_binding')
+ for path,h in lock['files'].items():require(sha(path)==h,'locked_input_changed:'+path)
+ for path,target in lock['aliases'].items():require(str(Path(path).resolve(strict=True))==target,'locked_alias_changed:'+path)
+ require(audit['input_sha256_before']==audit['input_sha256_after'],'audit_read_only')
+ for path,h in audit['input_sha256_after'].items():require(sha(path)==h,'audit_input_changed:'+path)
+ require(load(D/'build/replay_attempt01/result.json')['passed'] is False,'build_failure_retained')
+ require((D/'documents/方案A_首拍控制与固定尾序列探针_结果与下一步_2026-10-18.md').is_file() and (D/'documents/next_fixed_first_tail_optimization_plan_v1.md').is_file(),'result_and_next_plan')
+ availability=load(D/'preflight/MPC_delivery_preparation_v1.json')
+ fixed={str(p):dict(sha256=sha(p),bytes=p.stat().st_size) for p in files(D)}
+ q=dict(schema='first-control-fixed-tail-local-QA/v1',passed=True,passed_semantics='local archive integrity and ten registered offline numeric probes only; remote mirrors and delivery not verified',archive_integrity_passed=True,offline_probes_complete=True,all_ten_registered_probes_complete=True,original_RMSE_failure_preserved=True,new_closed_loop_run=False,new_closed_loop_performance_qualified=False,all_material_pulses_faster_and_cost_worse=audit['all_material_pulses_faster_and_cost_worse'],faster_nonworsening_cases=audit['all_faster_nonworsening_cases'],native_GTest_cases=4,auditor_negative_boundaries=5,author_frozen_files=frozen['count'],author_freeze_sha256=sha(D/'postrun/author_freeze_v1.json'),local_old_asset_paths=34838,local_old_asset_bytes=3976884716,remote_MPC_mirrors_currently_verified=False,remote_MPC_expected_paths_deferred=len(final['protection']['remote_mirror_expectations_preserved_not_read']),MPC_delivery_verified_at_QA=False,MPC_destination_preparation_passed=availability['passed'],delivery_status_authority='delivery_verification.json, if a later exact copy and full readback succeed',batch_status='offline_probes_complete_MPC_delivery_pending',blocked_research_gate='parent_s005_RMSE',initial_local_protection_sha256=sha(initial_path),final_local_protection_sha256=sha(final_path),preregistration_sha256=sha(D/'preregister/first_control_v1.json'),native_result_sha256=sha(D/'replay/native_first_control_v1.json'),independent_audit_sha256=sha(D/'postrun/first_control_audit_v1.json'),fixed_files=fixed,fixed_file_count=len(fixed),business_diff_sha256=current['business_diff_sha256'],original_real_launch_exception=final['protection']['explicit_live_original_path_exceptions'],stage_qualified=False,execute_qualified=False,true_plant_qualified=False,research_conclusion=False)
+ write(D/'postrun/final_QA_v1.json',q);print(json.dumps({k:q[k] for k in ['archive_integrity_passed','offline_probes_complete','MPC_delivery_verified_at_QA','fixed_file_count','batch_status']}))
+
+def verify_fixed(q):
+ for p,r in q['fixed_files'].items():require(sha(p)==r['sha256'] and Path(p).stat().st_size==r['bytes'],'fixed_local_QA_changed:'+p)
+
+def verify_local_inventory():
+ inv=load(D/'archive_inventory_v1.json');q=load(D/'postrun/final_QA_v1.json');verify_fixed(q)
+ expected={r['relative_path'] for r in inv['files']}|{'archive_inventory_v1.json'}
+ if (D/'delivery_verification.json').exists():expected.add('delivery_verification.json')
+ population_now,dirs=population(D);require({str(p.relative_to(D)) for p in population_now}==expected and dirs==inv['directories'],'sealed_local_population')
+ for row in inv['files']:require(sha(D/row['relative_path'])==row['sha256'] and (D/row['relative_path']).stat().st_size==row['bytes'],'sealed_local_byte_identity')
+ return inv,q
+
+def seal():
+ q=load(D/'postrun/final_QA_v1.json');require(q['archive_integrity_passed'],'local_QA');verify_fixed(q)
+ current,dirs=population(D);expected=set(q['fixed_files'])|{str(D/'postrun/final_QA_v1.json')}
+ require({str(p) for p in current}==expected,'no_unreviewed_local_files')
+ inv=dict(schema='first-control-fixed-tail-archive-inventory/v1',files=[dict(relative_path=str(p.relative_to(D)),sha256=sha(p),bytes=p.stat().st_size) for p in current],directories=dirs,metadata_rule='inventory excludes itself and optional later successful delivery receipt; pending network state is not delivery',offline_probes_complete=True,MPC_delivery_verified_when_inventory_sealed=False,stage_qualified=False,execute_qualified=False,research_conclusion=False)
+ write(D/'archive_inventory_v1.json',inv);verify_local_inventory();print(json.dumps(dict(local_archive_sealed=True,local_regular_files=len(current)+1,bytes=sum(r['bytes'] for r in inv['files']),MPC_delivery_complete=False,inventory_sha256=sha(D/'archive_inventory_v1.json'))))
+
+def deliver():
+ inv,q=verify_local_inventory();receiptpath=D/'delivery_verification.json';M.mkdir(exist_ok=True)
+ current,_=population(M);data_expected={r['relative_path'] for r in inv['files']}|{'archive_inventory_v1.json'}
+ allowed=data_expected|{'delivery_verification.json'};require({str(p.relative_to(M)) for p in current}<=allowed,'unexpected_destination_file')
+ for directory in inv['directories']:(M/directory).mkdir(parents=True,exist_ok=True)
+ for rel in sorted(data_expected):
+  src=D/rel;dst=M/rel
+  if dst.exists():require(sha(src)==sha(dst),'existing_destination_differs:'+rel)
+  else:copy_exact(src,dst)
+ for rel in data_expected:require(sha(D/rel)==sha(M/rel),'complete_remote_readback:'+rel)
+ receipt=dict(schema='first-control-fixed-tail-MPC-delivery/v1',passed=True,source=str(D),destination=str(M),archive_inventory_sha256=sha(D/'archive_inventory_v1.json'),final_QA_sha256=sha(D/'postrun/final_QA_v1.json'),author_freeze_sha256=sha(D/'postrun/author_freeze_v1.json'),full_byte_readback=True,full_second_SHA_readback=True,complete_population_equal=True,final_regular_files_per_root=len(inv['files'])+2,current_batch_MPC_delivery_complete=True,historical_MPC_mirrors_revalidated=False,offline_probes_complete=True,stage_qualified=False,execute_qualified=False,research_conclusion=False)
+ if receiptpath.exists():require(load(receiptpath)==receipt,'existing_delivery_receipt_changed')
+ else:write(receiptpath,receipt)
+ if (M/receiptpath.name).exists():require(sha(M/receiptpath.name)==sha(receiptpath),'remote_receipt_differs')
+ else:copy_exact(receiptpath,M/receiptpath.name)
+ local,dirs=population(D);remote,remote_dirs=population(M);require({str(p.relative_to(D)) for p in local}=={str(p.relative_to(M)) for p in remote} and dirs==remote_dirs,'final_exact_population')
+ for path in local:require(sha(path)==sha(M/path.relative_to(D)),'final_metadata_inclusive_readback')
+ print(json.dumps(dict(passed=True,files=len(local),destination=str(M),receipt_sha256=sha(receiptpath))))
+
+if __name__=='__main__':
+ parser=argparse.ArgumentParser();parser.add_argument('mode',choices=['freeze','qa','seal','verify','deliver']);a=parser.parse_args()
+ try:{'freeze':freeze,'qa':qa,'seal':seal,'verify':verify_local_inventory,'deliver':deliver}[a.mode]()
+ except (OSError,RuntimeError) as error:
+  print(json.dumps(dict(passed=False,operation=a.mode,error=str(error),error_number=getattr(error,'errno',None),local_archive_preserved=True,MPC_delivery_complete=False),ensure_ascii=False));raise SystemExit(2)
+

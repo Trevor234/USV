@@ -1,0 +1,339 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "api_pairs": {
+    "max_gap_ns": [
+      200030543,
+      200033390
+    ],
+    "max_rate_n_s": [
+      2.5003628901680646,
+      2.5003882602890575
+    ],
+    "max_span_ns": 54182,
+    "pairs": 12
+  },
+  "case": "W1",
+  "claim": "watchdog must not fire; heartbeat must stay live through the stall",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "declared_exceptions": [],
+  "driver_cross_check": {
+    "agree": [],
+    "disagree": []
+  },
+  "fallback_policy_recomputed": [
+    {
+      "age_since_accepted_ns": 200001952,
+      "observed": "hold",
+      "required": "hold",
+      "tick": 3
+    },
+    {
+      "age_since_accepted_ns": 399995012,
+      "observed": "hold",
+      "required": "hold",
+      "tick": 4
+    },
+    {
+      "age_since_accepted_ns": 599998600,
+      "observed": "hold",
+      "required": "hold",
+      "tick": 5
+    },
+    {
+      "age_since_accepted_ns": 800014933,
+      "observed": "ramp_zero",
+      "required": "ramp_zero",
+      "tick": 6
+    },
+    {
+      "age_since_accepted_ns": 1000045583,
+      "observed": "ramp_zero",
+      "required": "ramp_zero",
+      "tick": 7
+    },
+    {
+      "age_since_accepted_ns": 1200001202,
+      "observed": "ramp_zero",
+      "required": "ramp_zero",
+      "tick": 8
+    },
+    {
+      "age_since_accepted_ns": 1400011621,
+      "observed": "ramp_zero",
+      "required": "ramp_zero",
+      "tick": 9
+    },
+    {
+      "age_since_accepted_ns": 1600012052,
+      "observed": "ramp_zero",
+      "required": "ramp_zero",
+      "tick": 10
+    }
+  ],
+  "heartbeat": {
+    "capability_attempts": 16,
+    "regulator_admissions": 14,
+    "worst_heartbeat_gap_ns": 200578272
+  },
+  "job_ledger": {
+    "1": {
+      "kind": "delivered",
+      "replaced_by": null,
+      "solved": true,
+      "target_tick": 2,
+      "worker_received": true
+    },
+    "2": {
+      "kind": "expired",
+      "replaced_by": null,
+      "solved": false,
+      "target_tick": 3,
+      "worker_received": true
+    },
+    "3": {
+      "kind": "replaced",
+      "replaced_by": 4,
+      "solved": false,
+      "target_tick": 4,
+      "worker_received": true
+    },
+    "4": {
+      "kind": "replaced",
+      "replaced_by": 5,
+      "solved": false,
+      "target_tick": 5,
+      "worker_received": true
+    },
+    "5": {
+      "kind": "replaced",
+      "replaced_by": 6,
+      "solved": false,
+      "target_tick": 6,
+      "worker_received": true
+    },
+    "6": {
+      "kind": "replaced",
+      "replaced_by": 7,
+      "solved": false,
+      "target_tick": 7,
+      "worker_received": true
+    },
+    "7": {
+      "kind": "expired",
+      "replaced_by": null,
+      "solved": false,
+      "target_tick": 8,
+      "worker_received": true
+    }
+  },
+  "mutations_rejected": [
+    "forged_exit_code",
+    "decision_claims_qualified",
+    "duplicate_stored_job",
+    "ghost_publish_result",
+    "raw_time_tampered_flags_false",
+    "silent_hold_ramp",
+    "second_hook_invocation"
+  ],
+  "passed": true,
+  "recorder_fixture": {
+    "fixture_published_counts": {
+      "/clock": 143,
+      "/path/reference": 6,
+      "/path/reference_profile": 6,
+      "/wamv/sensors/imu/imu/data": 143,
+      "/wamv/sensors/position/ground_truth_odometry": 143
+    },
+    "recorder_clean": true
+  },
+  "registration": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/W1_registration_v1.json",
+  "registration_sha256": "9ba450f52fede9061f6420e29ab2e5c82559ee560a8b126820eb3f10a3046014",
+  "research_conclusion": false,
+  "role_exit_codes": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 0,
+    "worker": 0
+  },
+  "role_signals": {
+    "fixture": [
+      "SIGINT"
+    ],
+    "recorder": [
+      "SIGINT"
+    ],
+    "regulator": [],
+    "worker": [
+      "SIGINT"
+    ]
+  },
+  "run_id": "M4_diagnostic_W1_20261022_05",
+  "schema": "M4-owned-diagnostic-audit-v1",
+  "scope": "M4_owned_diagnostic_worker_only_v1",
+  "shutdown": {
+    "grace_exceeded": false,
+    "zero_target_published": true
+  },
+  "target_tick_decisions": {
+    "0": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "unknown_anchor"
+    },
+    "1": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "no_candidate"
+    },
+    "10": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "worker_unusable"
+    },
+    "11": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "shutdown"
+    },
+    "2": {
+      "accepted": true,
+      "control_source": "candidate",
+      "job": 1,
+      "job_id_field": 1,
+      "kind": "delivered",
+      "reason": ""
+    },
+    "3": {
+      "accepted": false,
+      "control_source": "hold",
+      "job": 2,
+      "job_id_field": 0,
+      "kind": "expired",
+      "reason": "no_candidate"
+    },
+    "4": {
+      "accepted": false,
+      "control_source": "hold",
+      "job": 3,
+      "job_id_field": 0,
+      "kind": "replaced",
+      "reason": "no_candidate"
+    },
+    "5": {
+      "accepted": false,
+      "control_source": "hold",
+      "job": 4,
+      "job_id_field": 0,
+      "kind": "replaced",
+      "reason": "no_candidate"
+    },
+    "6": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": 5,
+      "job_id_field": 0,
+      "kind": "replaced",
+      "reason": "no_candidate"
+    },
+    "7": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": 6,
+      "job_id_field": 0,
+      "kind": "replaced",
+      "reason": "no_candidate"
+    },
+    "8": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": 7,
+      "job_id_field": 0,
+      "kind": "expired",
+      "reason": "worker_unusable"
+    },
+    "9": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "worker_unusable"
+    }
+  },
+  "transition": {
+    "processed_ns": 607971331374677,
+    "reason": "active_watchdog",
+    "transition": true,
+    "unprovable_here": [
+      "that the watchdog, and not the lease, fired is shown by lease_age(check_ns - last valid commit) staying under the lease timeout"
+    ],
+    "watchdog_rows": 4
+  },
+  "typed": {
+    "applied": 12,
+    "candidates": 1,
+    "decisions": 12,
+    "jobs": 7,
+    "pairs": 12,
+    "published_candidates": 1,
+    "stored_counts": {
+      "/clock": 143,
+      "/p1/execution_decision": 12,
+      "/p1/solve_candidate": 1,
+      "/p1/solve_job": 7,
+      "/p1/worker_capability": 16,
+      "/path/reference": 6,
+      "/path/reference_profile": 6,
+      "/research/control/applied": 12,
+      "/wamv/sensors/imu/imu/data": 143,
+      "/wamv/sensors/position/ground_truth_odometry": 143,
+      "/wamv/thrusters/left/thrust": 12,
+      "/wamv/thrusters/right/thrust": 12
+    }
+  },
+  "unprovable_here": [
+    "a signal list of [] is consistent with both a clean exit and a close that happened before the Driver sampled; only the exit code distinguishes them",
+    "that the stall is NOT a native C hang follows from actual_native_invoked=false and the sleep site preceding solve_owned(), not from timing",
+    "the capability DDS payloads themselves are checked by the wire reconciliation, not by these summary counters"
+  ],
+  "wire": {
+    "extra_capabilities": 1,
+    "observed": 512,
+    "stored": 513
+  },
+  "witness": {
+    "observation_complete": true,
+    "regulator_rows_generated": 528
+  },
+  "worker_accounting": {
+    "delivered": 1,
+    "dropped": 0,
+    "final_completed": 1,
+    "generated": 1,
+    "published": 1,
+    "unprovable_here": [
+      "the capability DDS payloads themselves are checked by the wire reconciliation, not by these summary counters"
+    ]
+  },
+  "worker_hooks": {
+    "hooks": {
+      "controlled_pre_native_barrier": 0,
+      "diagnostic_candidate_dropped": 0,
+      "diagnostic_v2_pre_native_enter": 1,
+      "terminal_exception": 0,
+      "terminal_numerical_failure": 0
+    },
+    "stall_duration_ms": 1700,
+    "stall_duration_ns": 1700079212,
+    "stall_enter_ns": 607970132167379,
+    "stall_release_ns": 607971832246591,
+    "stopping_at_release": false,
+    "unprovable_here": [
+      "that the stall is NOT a native C hang follows from actual_native_invoked=false and the sleep site preceding solve_owned(), not from timing"
+    ]
+  }
+}

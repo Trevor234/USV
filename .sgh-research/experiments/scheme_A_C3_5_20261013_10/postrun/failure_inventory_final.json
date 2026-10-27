@@ -1,0 +1,59 @@
+{
+  "attempts": [
+    {
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/postrun/independent_review_semantic_attempt01.json",
+      "original_jobs_passed": 14,
+      "resolution": "fixed exact registry/population/matrix in v2; v3 final revalidated",
+      "scope": "acceptance-v1",
+      "validation_defect": "coherently re-pinned contract could weaken input and dependency population"
+    },
+    {
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/postrun/independent_review_semantic_attempt02.json",
+      "original_jobs_passed": 14,
+      "resolution": "fixed precise scope path/SHA/bytes in v3",
+      "scope": "acceptance-v2",
+      "validation_defect": "preregister could be rebound to another valid pin"
+    },
+    {
+      "classification": "test and implementation assumptions confused completed missing-file read with uncompleted read",
+      "evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/budget_scope/tests_attempt01.log",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/budget_scope/tests_attempt02.log"
+      ],
+      "resolution": "read_completed/present/receipt separated; snapshots and early logs retained; final35 tests passed",
+      "scope": "budget-tests-attempt01-02"
+    },
+    {
+      "historical_compatibility_result_overwritten": false,
+      "inventory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/readiness/failure_inventory_v1.json",
+      "scope": "readiness"
+    },
+    {
+      "contract_copy_negative_cases": 18,
+      "passed": true,
+      "prior_sources_contracts_results_deleted": false,
+      "readiness_coherent_negative_cases": 14,
+      "result": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/acceptance/full_attempt03/result.json",
+      "scope": "final-current"
+    }
+  ],
+  "prior_failed_evidence_preserved": true,
+  "qualifications": {
+    "B4": false,
+    "B5": false,
+    "C3_general": false,
+    "D1": false,
+    "F6": false,
+    "M0b": false,
+    "M4": false,
+    "P1": false,
+    "dynamic_20s_R5": false,
+    "execute": false,
+    "mixed_turn": false,
+    "research_conclusion": false,
+    "strict_full_chain": false,
+    "true_master_clock": false
+  },
+  "schema": "scheme-A-C3.5-final-attempt-inventory/v1",
+  "semantic_counterexamples_are_validator_findings_not_failed_original_jobs": true
+}

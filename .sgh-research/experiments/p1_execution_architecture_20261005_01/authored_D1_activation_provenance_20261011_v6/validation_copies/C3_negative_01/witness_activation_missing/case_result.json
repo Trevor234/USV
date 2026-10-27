@@ -1,0 +1,6 @@
+{
+  "case": "witness_activation_missing",
+  "expected_code": "whole_actual_activation_population",
+  "passed": false,
+  "harness_or_parser_failure": "StopIteration: "
+}

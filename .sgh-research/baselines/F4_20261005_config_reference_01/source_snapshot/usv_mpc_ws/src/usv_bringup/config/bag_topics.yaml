@@ -1,0 +1,12 @@
+# Core closed-loop topics recorded during real USV runs.
+# Message types, QoS, and semantics remain defined in topic_contract.yaml.
+topics:
+  - /mavros/local_position/odom
+  - /mavros/imu/data
+  - /mavros/state
+  - /mavros/rc/override
+  - /mpc/status
+  - /path/reference
+  - /path/reference_profile
+  - /usv/mission/waypoints_local
+  - /mpc/predicted_trajectory

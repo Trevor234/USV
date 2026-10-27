@@ -74,6 +74,14 @@ if(BUILD_TESTING)
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   )
   target_link_libraries(test_safety_monitor safety_monitor_lib)
+
+  ament_add_gtest(test_mode_manager_contract
+    test/test_mode_manager_contract.cpp src/mode_manager_node.cpp TIMEOUT 30)
+  target_include_directories(test_mode_manager_contract PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+  target_link_libraries(test_mode_manager_contract safety_monitor_lib)
+  ament_target_dependencies(test_mode_manager_contract
+    rclcpp std_msgs nav_msgs sensor_msgs geometry_msgs mavros_msgs nlohmann_json)
 endif()
 
 ament_package()

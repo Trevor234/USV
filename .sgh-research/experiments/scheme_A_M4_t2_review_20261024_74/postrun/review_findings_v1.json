@@ -1,0 +1,124 @@
+{
+  "schema": "M4-T2-review-v74",
+  "findings": [
+    {
+      "id": "R74-01",
+      "priority": 1,
+      "kind": "runtime_output_accounting",
+      "claim": "T2A_14 seq12 successful per-side API calls are absent from API/Applied ledgers; anchor disagreement requests shutdown",
+      "source": "observer/src/shadow/regulator_owned_execute.cpp",
+      "lines": [
+        843,
+        952,
+        963,
+        1221,
+        1224
+      ],
+      "evidence": "evidence/independent_replay01/clock/validator.stdout"
+    },
+    {
+      "id": "R74-02",
+      "priority": 1,
+      "kind": "witness_structure",
+      "claim": "pause schedule generation is assigned to an old tick before the next iteration resets tick; same-generation witness tick9->0 fails",
+      "source": "observer/src/shadow/regulator_owned_execute.cpp",
+      "lines": [
+        1094,
+        1101,
+        1104
+      ],
+      "evidence": "evidence/independent_replay01/clock/validator.stdout"
+    },
+    {
+      "id": "R74-03",
+      "priority": 1,
+      "kind": "audit_false_accept",
+      "claim": "T2A audit accepts removal of scenario semantics; T2C accepts missing guard and post-request acceptance",
+      "source": "audit_t2.py",
+      "lines": [
+        58,
+        75,
+        105,
+        113
+      ],
+      "evidence": "evidence/independent_replay01/contract/bad_cli.stdout"
+    },
+    {
+      "id": "R74-04",
+      "priority": 1,
+      "kind": "driver_entry_failure",
+      "claim": "B/C trigger evidence lacks phase/source_role; command validation rejects it before execution",
+      "source": "t2_scenario_driver_v1.py",
+      "lines": [
+        308,
+        315,
+        328,
+        332,
+        365
+      ],
+      "evidence": "evidence/independent_replay01/contract/results.json"
+    },
+    {
+      "id": "R74-05",
+      "priority": 2,
+      "kind": "command_receipt_binding",
+      "claim": "receipt verification accepts wrong command SHA, wrong target Job and foreign extra action; Fixture action-order validation differs from Python",
+      "source": "t2_action_contract.py",
+      "lines": [
+        223,
+        251
+      ],
+      "fixture_source": "fixture/synthetic_source_m4.cpp",
+      "fixture_lines": [
+        133,
+        143
+      ],
+      "evidence": "evidence/independent_replay01/contract/results.json",
+      "scope": "receipt counterexamples executable; Fixture order discrepancy by source inspection"
+    },
+    {
+      "id": "R74-06",
+      "priority": 2,
+      "kind": "measurement_and_inference",
+      "claim": "18 snapshots plus 18 result records are not 36 active_job observations; measured windows and scheduling inference need narrower labels",
+      "evidence": "evidence/independent_replay01/boundary/measurements.json"
+    },
+    {
+      "id": "R74-07",
+      "priority": 2,
+      "kind": "epoch_lifecycle",
+      "claim": "after active Epoch binding change, both 101- and 201-point references fail epoch_terminal before population checks",
+      "evidence": "evidence/independent_replay01/boundary/epoch_probe.stdout"
+    },
+    {
+      "id": "R74-08",
+      "priority": 2,
+      "kind": "counter_scope",
+      "claim": "Fixture reports 154 model steps as clock publications although silent suppresses 39; actual transport and Stored both have 115",
+      "source": "fixture/synthetic_source_m4.cpp",
+      "lines": [
+        82,
+        235,
+        240
+      ],
+      "evidence": "evidence/independent_replay01/clock/validator.stdout"
+    }
+  ],
+  "review_reproductions_complete": true,
+  "production_fixes_implemented": false,
+  "owned_runs_this_batch": 0,
+  "status": {
+    "S1_component_supplement": "retained_finite_pass",
+    "S2_rev8_identity": "retained_hash_match_implementation_gaps_open",
+    "T2A_14_observation": "partial_valid_trace_runtime_and_audit_failures",
+    "T2A_all_clauses_accepted": false,
+    "T2B": "design_and_protocol_repair_required",
+    "T2C_rev8_executable": false,
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "production_B_mode": "MANUAL+RC override"
+}

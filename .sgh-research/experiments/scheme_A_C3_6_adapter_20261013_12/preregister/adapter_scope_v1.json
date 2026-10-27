@@ -1,0 +1,39 @@
+{
+  "B4_M0b_B5_M4_qualified": false,
+  "actuator_regulator_publish": false,
+  "authorized_post_exit_shutdown_zero_tail_window_ns": 2000000000,
+  "continuous_DDS_unique_owner": "unknown",
+  "current_dynamic20s": "not_run",
+  "date": "2026-10-13",
+  "driver_close_ack_budget_ns": 1000000000,
+  "fixed_runtime": {
+    "T_ns": 200000000,
+    "close_ns": 15000000000,
+    "measurement_ns": 4000000000,
+    "normal_hooks": 0,
+    "prepare_ns": 25000000000,
+    "ready_ns": 150000000,
+    "release_ns": 3000000000,
+    "total_ns": 60000000000
+  },
+  "native_tests": [
+    "previous guard suites",
+    "new full snapshot import/slot cancel/schedule/shadow-consume bridge",
+    "real DDS same payload foreign GID and coherent peer manifest/process negatives"
+  ],
+  "new_execute_enabled": false,
+  "new_poll_period_ns": 20000000,
+  "new_supported_close_evidence": "supervisor driver_close_request, observer acknowledgement, authenticated last tail facts; owner intent, session, cleanup, endpoint absence separate",
+  "numeric_origin": "20ms polling is new bounded adapter observation choice;1s acknowledgement within unchanged15s close budget;2s retained tail bound from N10 fixture tail proof",
+  "physical_plant_ack": "unknown",
+  "planned_owned_cases": [
+    "positive new observer4s with complete owned/source/transport/Storage/close tail",
+    "bounded authenticated source-linked Applied foreign DataWriter test"
+  ],
+  "policy": "exact full frozen Job+prediction import, authenticated Applied GID+pidfd, existing state/clock/lease/resource and echo guards, observation-only consume, per-stage pending cancellation",
+  "post_pin_exec_continuity": "unknown",
+  "research_conclusion": false,
+  "runtime_scope": "new source-linked owned shadow observer; reused frozen N10 Publisher/Worker/synthetic/Recorder",
+  "schema": "p1-C3.6-shadow-runtime-adapter-preregister/v1",
+  "stage_qualified": false
+}

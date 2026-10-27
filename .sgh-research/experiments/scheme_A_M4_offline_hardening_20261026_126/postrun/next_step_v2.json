@@ -1,0 +1,19 @@
+{
+  "functional_execution_complete": false,
+  "contract_acceptance": "FAIL_STOP_HISTORICAL_PROCESS",
+  "next_recommended_task": "Independent review of model-transaction shared packing/setter and single-owner interface; produce a concrete per-candidate integration diff.",
+  "not_authorized_by_this_closeout": [
+    "production landing",
+    "new owned run",
+    "GP acquisition",
+    "plant or RT execution"
+  ],
+  "process_finding_cannot_be_erased_by_retries": true,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

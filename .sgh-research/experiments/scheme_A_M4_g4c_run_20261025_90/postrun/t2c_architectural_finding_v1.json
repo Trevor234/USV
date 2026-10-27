@@ -1,0 +1,13 @@
+{
+  "schema": "M4-T2C-architectural-finding-v90",
+  "recorded_at": "2026-10-25T18:31:48.006433+08:00",
+  "finding": "Regulator\u4efb\u4f55\u505c\u6b62\u8def\u5f84\u5728tick\u5f00\u5934\u68c0\u67e5stop_requested\u2192invalidate\u6e05\u9664admission\u2192guard\u770b\u4e0d\u5230\u76ee\u6807Job",
+  "evidence": "seq4 job=0 reason=shutdown (job2 ticket cleared)",
+  "fix_options": [
+    "A:\u505c\u6b62\u4e0d\u6e05\u9664admission\u4ec5\u8bbestopping",
+    "B:\u76ee\u6807\u7279\u5b9ainterleave scope",
+    "C:\u91cd\u5b9a\u4e49\u573a\u666f\u8bed\u4e49"
+  ],
+  "recommendation": "Option A",
+  "owned_runs": 1
+}

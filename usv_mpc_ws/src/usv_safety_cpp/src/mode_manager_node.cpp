@@ -33,6 +33,7 @@
 #include <functional>
 #include <iomanip>
 #include <sstream>
+#include <stdexcept>
 
 #include <nlohmann/json.hpp>
 #include <rclcpp/qos.hpp>
@@ -111,7 +112,8 @@ ModeManagerNode::ModeManagerNode()
 void ModeManagerNode::declare_parameters_()
 {
   this->declare_parameter("auto_arm", false);
-  this->declare_parameter("auto_mode_switch", true);
+  this->declare_parameter("auto_mode_switch", false);
+  this->declare_parameter("mpc_fcu_mode", std::string("MANUAL"));
   this->declare_parameter("geofence_radius", 200.0);
   this->declare_parameter("geofence_center_x", 0.0);
   this->declare_parameter("geofence_center_y", 0.0);
@@ -126,7 +128,7 @@ void ModeManagerNode::declare_parameters_()
   // 不触发 RTL —— 缺失遥测导致的意外 RTL 本身就是危险。
   this->declare_parameter("battery_timeout_s", 10.0);
   // 人工接管冷却: 检测到 FCU 模式被外部改变后, 该时长内 auto_mode_switch
-  // 不拉回 GUIDED。failsafe RTL 不受此限制。
+  // 不自动拉回配置的 MPC 控制模式。failsafe 不受此限制。
   this->declare_parameter("manual_takeover_cooldown_s", 10.0);
   // FAILSAFE RTL 重发上限: 达到后停止指令洪水 (链路断/飞控拒绝时无限
   // 重发毫无意义), 保持 failsafe 状态并节流告警, 等待人工介入。
@@ -146,6 +148,10 @@ void ModeManagerNode::declare_parameters_()
 // ── 加载配置 ─────────────────────────────────────────────
 void ModeManagerNode::load_config_()
 {
+  mpc_fcu_mode_ = this->get_parameter("mpc_fcu_mode").as_string();
+  if (mpc_fcu_mode_ != "MANUAL" && mpc_fcu_mode_ != "GUIDED") {
+    throw std::invalid_argument("mpc_fcu_mode must be MANUAL (B) or GUIDED (kinematic A)");
+  }
   safety_config_.geofence_radius_m = this->get_parameter("geofence_radius").as_double();
   safety_config_.geofence_center_x = this->get_parameter("geofence_center_x").as_double();
   safety_config_.geofence_center_y = this->get_parameter("geofence_center_y").as_double();
@@ -287,9 +293,9 @@ void ModeManagerNode::monitor_loop_()
   }
 
   // ── /mpc/status 新鲜度看门狗 ──
-  // MPC 节点在 ACTIVE/HOLD 期间死亡时,mpc_state_ 冻结在最后值,而 FCU 会
-  // 锁存最后一条速度指令(GUIDED 无 setpoint 超时)——这正是必须触发
-  // failsafe 的场景。未解锁时不武装(码头调试),与 odom 看门狗同一策略。
+  // MPC 在 ACTIVE/HOLD 期间死亡时，上层状态可能停留在最后值。
+  // FCU 对 RC/速度指令的超时取决于消息、固件和参数，不能代替上层看门狗。
+  // 未解锁时不武装(码头调试)，与 odom 看门狗同一策略。
   if (armed_ && (mpc_state_ == "ACTIVE" || mpc_state_ == "HOLD")) {
     if (safety_.check_mpc_status_timeout(now)) {
       double dt = now - last_mpc_status_time_;
@@ -359,28 +365,28 @@ void ModeManagerNode::monitor_loop_()
   rtl_attempts_ = 0;
 
   // ── 自动模式切换 ──
-  // 触发条件: armed 且不在 GUIDED,且 MPC 有意愿解算 ——
+  // 触发条件: armed 且不在配置的控制模式，且 MPC 有意愿解算 ——
   //   (1) 当前正在成功解算(legacy 行为),或
-  //   (2) MPC 因 wrong_mode 进入 STANDBY(没切到 GUIDED 之前永远不会
-  //       success,需要由 mode_manager 主动切过去打破死锁)
-  // 人工接管冷却: 模式刚被改变(如操作手切 MANUAL)后的冷却期内不拉回;
+  //   (2) MPC 因 wrong_mode 进入 STANDBY。
+  // B 的目标为 MANUAL；运动学 A 由 launch 显式配置 GUIDED。
+  // 人工接管冷却: 模式刚被外部改变后的冷却期内不拉回;
   // failsafe RTL 在上方已 return, 不受冷却影响。
   bool auto_switch = this->get_parameter("auto_mode_switch").as_bool();
   bool in_takeover_cooldown =
     (now - last_mode_change_) < takeover_cooldown_s_;
-  if (in_takeover_cooldown && current_mavros_mode_ != "GUIDED") {
+  if (in_takeover_cooldown && current_mavros_mode_ != mpc_fcu_mode_) {
     RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
-                         "人工接管冷却期内, 暂停自动切回 GUIDED");
+                         "人工接管冷却期内, 暂停自动切回 %s", mpc_fcu_mode_.c_str());
   }
   if (!in_takeover_cooldown && auto_switch && armed_ &&
-    current_mavros_mode_ != "GUIDED")
+    current_mavros_mode_ != mpc_fcu_mode_)
   {
-    bool needs_guided =
+    bool needs_control_mode =
       mpc_ok_ ||
       (mpc_state_ == "STANDBY" &&
       mpc_standby_reason_.rfind("wrong_mode", 0) == 0);
-    if (needs_guided) {
-      switch_mode_("GUIDED");
+    if (needs_control_mode) {
+      switch_mode_(mpc_fcu_mode_);
     }
   }
 

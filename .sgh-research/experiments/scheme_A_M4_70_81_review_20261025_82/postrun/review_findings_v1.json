@@ -1,0 +1,152 @@
+{
+  "schema": "M4-70-81-independent-review-v82",
+  "review_work_complete": true,
+  "production_fixes_implemented": false,
+  "owned_runs_this_batch": 0,
+  "findings": [
+    {
+      "id": "R82-01",
+      "priority": 1,
+      "title": "audit identity and reused freeze paths",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/audit_t2.py",
+      "lines": [
+        219
+      ],
+      "evidence": "evidence/replay01/boundary/pinned_audit_cli.stdout"
+    },
+    {
+      "id": "R82-02",
+      "priority": 1,
+      "title": "boundary/deadline/native and full-stream evidence omitted from audit",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/audit_t2.py",
+      "lines": [
+        60,
+        79,
+        113,
+        208
+      ],
+      "evidence": "evidence/replay01/boundary/audit_probe_results.json"
+    },
+    {
+      "id": "R82-03",
+      "priority": 1,
+      "title": "arbitrary path_version accepted as release ACK",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/t2_scenario_driver_v1.py",
+      "lines": [
+        333,
+        382
+      ],
+      "evidence": "evidence/replay01/boundary/driver_release_probe_results.json"
+    },
+    {
+      "id": "R82-04",
+      "priority": 1,
+      "title": "C activation and stopping timestamps incorrect, target guard not yet proven observable",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/audit_t2.py",
+      "lines": [
+        247,
+        249,
+        258,
+        265
+      ],
+      "evidence": "evidence/replay01/protocol/probe_result.json"
+    },
+    {
+      "id": "R82-05",
+      "priority": 2,
+      "title": "command bytes, complete receipt trigger and independent Fixture gate not fully bound",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/t2_action_contract.py",
+      "lines": [
+        253,
+        258
+      ],
+      "evidence": "evidence/replay01/protocol/fixture_gate_probe_result.json"
+    },
+    {
+      "id": "R82-06",
+      "priority": 2,
+      "title": "applied_emitted hardcoded despite caught publication failure",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/observer/src/shadow/regulator_owned_execute.cpp",
+      "lines": [
+        1235,
+        1245,
+        1272
+      ],
+      "evidence": "evidence/replay01/runtime/pair_controlflow_probe.json"
+    },
+    {
+      "id": "R82-07",
+      "priority": 2,
+      "title": "target seq2 ledger regression assertions select first Applied/divergence",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r1_runtime_20261024_76/implementation/r1_harness/tests/test_current_candidate_reference_clock.cpp",
+      "lines": [
+        837,
+        875
+      ],
+      "evidence": "documents/方案A_第82批_70至81批代码复审与下一步实施计划_2026-10-25.md"
+    },
+    {
+      "id": "R82-08",
+      "priority": 2,
+      "title": "queued trigger scope and inflight/family/latency claims need narrower semantics",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/t2_action_contract.py",
+      "lines": [
+        53
+      ],
+      "evidence": "evidence/replay01/boundary/timeline_evidence.json"
+    },
+    {
+      "id": "R82-09",
+      "priority": 2,
+      "title": "claimed new Worker flush not supported by identical retained sources; clock attempt scope misleading",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/worker/solver_worker_m4.cpp",
+      "lines": [
+        134,
+        181
+      ],
+      "evidence": "documents/方案A_第82批_70至81批代码复审与下一步实施计划_2026-10-25.md"
+    },
+    {
+      "id": "R82-10",
+      "priority": 2,
+      "title": "A legal silent/new-schedule cases rejected and missing positive evidence accepted",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/audit_t2.py",
+      "lines": [
+        169,
+        205
+      ],
+      "evidence": "evidence/replay01/protocol/probe_t2a_predicates_result.json"
+    }
+  ],
+  "positive_progress": {
+    "P01_seven_timeline_checks": {
+      "original_deadline_150ms": true,
+      "full_job_echo_identical": true,
+      "real_held_order": true,
+      "native_one_real_C_call": true,
+      "allowed_not_expired": true,
+      "same_job_version_mismatch": true,
+      "four_clean_closures": true
+    },
+    "P01_API_Source_Stored_complete": true,
+    "R0_offline_tests_rerun": 19,
+    "R1_retained_component_tests": 34,
+    "P01_exact_source_population_recovered": 103
+  },
+  "formal_audit": {
+    "registered_tool_pin_matches_current": false,
+    "registered_tool_checks_passed": 12,
+    "registered_tool_checks_total": 13,
+    "registered_tool_passed": false,
+    "modified_unregistered_tool_passed": true
+  },
+  "qualification": {
+    "T2B_full_family": false,
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "production_B_mode": "MANUAL+RC override"
+}

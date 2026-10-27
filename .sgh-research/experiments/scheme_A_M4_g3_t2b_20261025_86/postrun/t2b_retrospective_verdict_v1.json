@@ -1,0 +1,36 @@
+{
+  "schema": "M4-T2B-retrospective-verdict-v86",
+  "recorded_at": "2026-10-25T17:45:23.536554+08:00",
+  "audit": "G1 evidence-consuming audit (batch 84, t2_author_g1)",
+  "result": "25/25 checks pass, 0 failures, passed=true",
+  "new_worker_stream_checks": [
+    "worker_source_present",
+    "original_job_submitted",
+    "worker_received_target",
+    "boundary_entered_for_target",
+    "boundary_disposition_allowed",
+    "actual_native_invoked",
+    "c_call_completed",
+    "same_job_identity",
+    "rejection_job_identity"
+  ],
+  "new_timing_checks": [
+    "timely_within_deadline",
+    "generation_strictly_advanced"
+  ],
+  "note": "RETROSPECTIVE independent observation review; not a pre-registered pass under the original audit",
+  "p01_observation_confirmed": {
+    "timely_replace_old_job_rejection": "CONFIRMED under stricter gates",
+    "boundary_disposition": "allowed",
+    "actual_native_invoked": true,
+    "rejection_reason": "version_mismatch",
+    "all_within_150ms_deadline": true
+  },
+  "family_differences": {
+    "clear_coverage": "NOT covered by single replace result",
+    "new_generation_positive": "NOT covered; requires scoped Epoch lifecycle design (R74-07)",
+    "expired_negative_control": "NOT covered; requires separate run with release after deadline",
+    "note": "These are listed as remaining obligations, not hidden under a complete-closure label"
+  },
+  "owned_runs": 0
+}

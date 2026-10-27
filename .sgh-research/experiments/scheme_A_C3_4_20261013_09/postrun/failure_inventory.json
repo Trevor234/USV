@@ -1,0 +1,70 @@
+{
+  "schema": "p1-C3.4-preserved-failure-inventory/v1",
+  "failures": [
+    {
+      "id": "F01",
+      "category": "audit harness",
+      "evidence": "preflight/preserved_assets.json",
+      "actual": "declared directory symlinks treated as regular-file hash",
+      "resolution": "correct file/directory handling; fresh attempt02/03 passed"
+    },
+    {
+      "id": "F02",
+      "category": "B overlay harness",
+      "evidence": "B_types/full_analyze_overlays_attempt01.log",
+      "actual": "output report filename collided with preserved overlay result.json",
+      "resolution": "fresh output names/attempts preserved; final attempt03 passed"
+    },
+    {
+      "id": "F03",
+      "category": "D receipt harness",
+      "evidence": "D_IO/receipt_fsync_fault_01_harness_failure.log",
+      "actual": "wrong final_freshness field key; stdout not persisted",
+      "resolution": "missing stdout not backfilled; fresh02 correct schema persisted/pass"
+    },
+    {
+      "id": "F04",
+      "category": "build budget",
+      "evidence": "build/observer01/result.json",
+      "actual": "aggregate native build command timed out rc124 after300s; runtime success",
+      "resolution": "old result retained; incomplete native targets completed under separate180s command budgets"
+    },
+    {
+      "id": "F05",
+      "category": "wire prototype compile",
+      "evidence": "build/observer02/c34_lease_wire_component.log",
+      "actual": "unique_ptr cannot pass to executor add_node/remove_node",
+      "resolution": "original role bundle and prototype preserved; corrected independent derivative uses NodeBaseInterface"
+    },
+    {
+      "id": "F06",
+      "category": "wire derivative build harness",
+      "evidence": "C_lease/build_wire_v2/compile.log",
+      "actual": "missing original test include directory",
+      "resolution": "fresh v3 compile/link passed with explicit include path"
+    },
+    {
+      "id": "F07",
+      "category": "root orchestration guard",
+      "evidence": "tool output only; no fabricated saved stdout",
+      "actual": "attempted completion/native runner before confirming observer02 passed; guard rejected, no node run",
+      "resolution": "observer03 explicit runtime/native/independent-wire lineage verified"
+    },
+    {
+      "id": "F08",
+      "category": "root reporting harness",
+      "evidence": "tool output only; no fabricated saved stdout",
+      "actual": "read accepted_activations outside Witness counters; KeyError",
+      "resolution": "observed_results reads actual counters; accepted proposal values verified from Source"
+    },
+    {
+      "id": "F09",
+      "category": "archive preparation guard",
+      "evidence": "tool output and postrun/staged_document_QA.json; MPC was not written",
+      "actual": "regular-file-only archive guard rejected preserved symlink test evidence",
+      "resolution": "special entries retained in USV; archive exact metadata without dereference/FIFO read; regular bytes copied/read back"
+    }
+  ],
+  "expected_negative_IO_cases_are_not_unexplained_failures": true,
+  "historical_receipt_timeout_root_cause": "unknown"
+}

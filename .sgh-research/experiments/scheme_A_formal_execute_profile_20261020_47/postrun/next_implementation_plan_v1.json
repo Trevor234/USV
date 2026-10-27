@@ -1,0 +1,69 @@
+{
+  "F6_qualified": false,
+  "M4_qualified": false,
+  "P1_qualified": false,
+  "automatic_next_ROS_run_registered": false,
+  "based_on_freeze_index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "current_step_closed": "B5/M0b selected finite engineering contract and policy freeze",
+  "do_not_repeat": [
+    "batch45 prepared formal four-role source",
+    "batch46 current five-ELF normal20s source",
+    "old39-42 faults without affected-code reason"
+  ],
+  "frozen_contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "physical_execute_release_enabled": false,
+  "research_conclusion": false,
+  "schema": "P1-after-M0b-next-M4-implementation-plan/v1",
+  "steps": [
+    {
+      "action": "derive current Observer39 admission/tick + formal owned identity/config preparation + frozen47 entry policy; regulator becomes sole SolveJob/Decision/Applied and dual thrust owner; old Publisher absent; adapt only affected Worker/Fixture/Recorder interfaces",
+      "gate": "exact v3 profile/mode/resource typing; disabled ordinary production release; explicit isolated nominal M4 entry and owned gate before any API; no fake bootstrap anchor or legacy Applied authority",
+      "id": "M4-owned-runtime-entry",
+      "order": 1,
+      "required_binding": "new immutable source/bin/config/run/boot/GID manifest references parent frozen index+contract; existing calibration ELFs are not execute owner proof"
+    },
+    {
+      "action": "review exact F5/current nominal/plant/reference asset mapping and new code differences; rerun affected deterministic ownership, source/task/admission, fallback/partial/close and config regressions only",
+      "gate": "source fixtures 0.05m/s calibrated subset explicitly identified; source/plant/reference differences cannot be named original full M4 qualification; no new threshold, weights, model, GP or RTI tuning",
+      "id": "M4-affected-tests-and-assets",
+      "order": 2
+    },
+    {
+      "action": "preregister new four-role owned local nominal run without legacy Publisher; begin immediate real zero bootstrap and fixed T200ms heartbeat, then normal solver jobs; collect complete 20s Source/Raw/Witness/Stored and full API stream",
+      "budget": {
+        "automatic_retries": 0,
+        "source_window_ns": 20000000000,
+        "whole_driver_wall_ns": 45000000000
+      },
+      "gate": "first actual zero pair has rho unavailable, later per-side successful start anchors; full startup/business/fallback/shutdown gap<=240ms, span<=5ms, jitter<=20ms; all expected close outcomes retained",
+      "id": "M4-first-isolated-normal",
+      "order": 3
+    },
+    {
+      "action": "after normal pass, register original nine-group fault matrix cases for the exact new runtime; use each appropriate deterministic or actual controlled trigger and exact exception flags",
+      "gate": "new runtime output branch cannot inherit old calibration identity; no extra unexplained loss/timeout/partial; native block and late delivery stay distinct; no production flag flip to hide test scope",
+      "id": "M4-original-fault-confirmation",
+      "order": 4
+    },
+    {
+      "action": "under sole execution chain prepare two finite immutable numeric M0/M1 capsules, atomic model+plan commit, old/mixed rejection, saved plan immutability and separate warmstart",
+      "gate": "NX8/NU2/N20/NP6/NP_GLOBAL30 layout and fixed numerical setter path; no new codegen, GP or PPO",
+      "id": "F6-known-model-transaction",
+      "order": 5
+    },
+    {
+      "action": "review original time/version/ownership/normal-fault/known-model obligations and complete source/bin/config/record bindings; freeze F6 and report actual P1 result",
+      "gate": "M4 normal success alone does not close faults/model transaction; no half-RMSE tuning or P2 full collision certificate added as new P1 gate",
+      "id": "P1-original-joint-review",
+      "order": 6
+    }
+  ],
+  "stop_conditions": [
+    "old/new physical owners overlap",
+    "frozen index/contract or live run/boot/proc/GID/effective config mismatch",
+    "invalid/late/wrong-target/old-task candidate becomes normal output",
+    "unknown or partial output relabeled known success",
+    "full stream timing/source/recording budget exceeded without predeclared exception",
+    "cleanup_failed or old owned group not empty"
+  ]
+}

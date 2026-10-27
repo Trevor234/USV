@@ -1,0 +1,91 @@
+{
+  "schema": "RNW-policy-design-review-v115",
+  "review_work_complete": true,
+  "findings": [
+    {
+      "id": "R115-01",
+      "priority": 1,
+      "title": "cross-attempt and cross-domain comparison does not prove a raw clock backstep",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_policy_design_20261025_114/documents/方案A_第114批_resume过渡政策设计_2026-10-25.md",
+      "evidence": "evidence/replay01/clock/clock_evidence_v1.json"
+    },
+    {
+      "id": "R115-02",
+      "priority": 1,
+      "title": "synchronous engineering-history reset reproduces the signature; L630-only fix misses this path",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/t2_author/observer/src/shadow/regulator_owned_execute.cpp",
+      "lines": [
+        844,
+        967,
+        968,
+        1248
+      ],
+      "evidence": "evidence/replay01/clock/replay_verification_v1.json"
+    },
+    {
+      "id": "R115-03",
+      "priority": 1,
+      "title": "actual OutputAuthority has no change_version; shadow API preserves facts and rejects active/new epoch",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/t2_author/observer/src/shadow/owned_execution_policy_native_v1.hpp",
+      "lines": [
+        60,
+        96,
+        143
+      ],
+      "evidence": "evidence/replay01/policy/probe.stdout"
+    },
+    {
+      "id": "R115-04",
+      "priority": 1,
+      "title": "runner event-presence checks can accept failed Candidate and fallback as new-window acceptance",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/run_t2a_rnw2.py",
+      "evidence": "evidence/replay01/fixture/findings.json"
+    },
+    {
+      "id": "R115-05",
+      "priority": 1,
+      "title": "distinct clock_epoch assertion conflicts with monotonic B2 recovery via schedule change",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/run_t2a_rnw2.py",
+      "evidence": "evidence/replay01/fixture/findings.json"
+    },
+    {
+      "id": "R115-06",
+      "priority": 2,
+      "title": "B2 mapping must bind the actual last stamp to its writer target; hold command duration loses edge accounting",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/t2_author/fixture/synthetic_source_m4.cpp",
+      "evidence": "evidence/mapping_arithmetic_v1.json"
+    },
+    {
+      "id": "R115-07",
+      "priority": 2,
+      "title": "admission accepts missing hold, reversed action order and false clauses; new Fixture needs new exact pins",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/t2_author/t2b_gen_admission.py",
+      "evidence": "evidence/replay01/fixture/findings.json"
+    },
+    {
+      "id": "R115-08",
+      "priority": 2,
+      "title": "combined B0/B2, time-window exemptions and old M0 reuse require separate bounded claims",
+      "evidence": "documents/方案A_第115批_114设计独立复审与实施计划_2026-10-25.md"
+    }
+  ],
+  "new_policy_implemented": false,
+  "owned_runs_this_batch": 0,
+  "current_112_identity_matches": true,
+  "current_112_bundle_files": 106,
+  "verified_raw_clock_rows": 201,
+  "limits": [
+    "exact-method replay with simplified collaborators is not a full runtime branch observation",
+    "AST verdict replay never imported or executed the owned runner main/subprocess",
+    "counterfactual mapping arithmetic is not an implemented writer policy"
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "resume_NW": "not_covered",
+  "production_B_mode": "MANUAL+RC override"
+}

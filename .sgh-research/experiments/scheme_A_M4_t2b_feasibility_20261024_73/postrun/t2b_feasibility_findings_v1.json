@@ -1,0 +1,12 @@
+{
+  "schema": "M4-T2B-feasibility-findings-v73",
+  "recorded_at": "2026-10-24T22:12:47.520255+08:00",
+  "findings": [
+    "solve_active相位在健康系统不可观测: capability发布周期200ms, 6个job解算跨度实测0.44-1.5ms, 36条capability行active_job全为0(T2A_14 preserved stream)",
+    "owned在途窗口(submitted→result)亚毫秒, 低于Driver轮询(~1ms)+Fixture命令轮询(2ms)之和——外部编排触发在途动作架构上不可行, 非时序调参可解",
+    "ready_window触发确定性可用, 但stale拒绝条款需要旧代际candidate在变更后到达; 101点replace使新提交被policy拒绝, 该几何无此类candidate",
+    "在途语义的已有证明在组件级(70批RealSubmitBlockedByVersionChangeBeforeSubmit: version_changed_before_submit/stale version_mismatch/新代际正控)",
+    "确定性owned在途路径=计划原条款: 复用已认证W2式边界保持/释放组件(保持→动作→释放), 需scoped设计批集成"
+  ],
+  "no_owned_run_consumed": true
+}

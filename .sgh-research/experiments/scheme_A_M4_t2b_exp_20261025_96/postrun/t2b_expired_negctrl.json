@@ -1,0 +1,26 @@
+{
+  "schema": "M4-T2B-EXP-NEGCTRL-v96",
+  "recorded_at": "2026-10-25T19:03:51.274071+08:00",
+  "result": "expired negative control VERIFIED",
+  "boundary": {
+    "disposition": "expired",
+    "actual_native_invoked": false,
+    "job_id": 2
+  },
+  "contrast": {
+    "timely(P01)": {
+      "disposition": "allowed",
+      "native": true,
+      "candidate": true,
+      "rejection": "version_mismatch"
+    },
+    "expired(EXP)": {
+      "disposition": "expired",
+      "native": false,
+      "candidate": false,
+      "rejection": null
+    }
+  },
+  "proves": "expired\u2260timely (boundary correctly expires past deadline; no candidate; no version_mismatch)",
+  "owned_runs": 1
+}

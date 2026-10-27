@@ -1,0 +1,49 @@
+{
+  "CXX_builds": 0,
+  "actual_ROS_attempts": 3,
+  "actual_ordinary_dispatches": 0,
+  "actual_success_audit_or_its_raw_negative_checks_executed": false,
+  "actual_successful_ordinary_Worker_runs": 0,
+  "all_five_role_ELFs_reused": true,
+  "all_started_owned_groups_empty": true,
+  "component_negative_checks": 44,
+  "component_validation_passed": true,
+  "current_MPC_delivery_pending_at_QA": true,
+  "delivery_authority": "delivery_verification.json",
+  "execute_qualified": false,
+  "failure_audit_inputs_unchanged": 2551,
+  "failure_audit_pin": {
+    "bytes": 1076764,
+    "sha256": "e12b2aafca0c9dd8bfc8d046794b2fb886467ad0748d77b7ee0ed11911d564ab"
+  },
+  "frozen_Source_positive_causes": 2,
+  "next_runtime_startup_interface_implementation_pending": true,
+  "normal_final_role_combination_qualified": false,
+  "old_failures_and_current_failures_retained": true,
+  "old_local_bytes_rechecked": 5737501500,
+  "old_local_paths_rechecked": 45573,
+  "ordinary_actual_Worker_case_passed": false,
+  "ordinary_supervision_qualified": false,
+  "passed": true,
+  "passed_scope": "component evidence, faithful failure audit, source/asset preservation and archive integrity only",
+  "real_Linux_owned_child_cases": 2,
+  "real_child_authorization_context_seeded": true,
+  "research_conclusion": false,
+  "schema": "ordinary-supervision-component-and-failure-archive-QA/v1",
+  "source_locks_unchanged": [
+    {
+      "count": 1841,
+      "suffix": ""
+    },
+    {
+      "count": 1843,
+      "suffix": "_r2"
+    },
+    {
+      "count": 1845,
+      "suffix": "_r3"
+    }
+  ],
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

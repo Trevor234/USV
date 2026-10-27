@@ -1,0 +1,31 @@
+{
+  "schema": "p1-enqueue-fix-source-v1",
+  "files": {
+    "src\\ordinary\\regulator.cpp": {
+      "sha256": "7abfaf03722499bbe9d28da19d050404667682ff3918813d2133b98dadfd8477",
+      "bytes": 53200,
+      "parent_sha256": "1163a651580bde314e8b450d39213c1691187fbe977debe63a0366c6e027eb8c",
+      "fixed": true
+    },
+    "negative\\ordinary\\regulator.cpp": {
+      "sha256": "18ed3c31a6422b4386502938b6f74cdb9099797fcbaa7287f57ac18cf6eed579",
+      "bytes": 52948,
+      "parent_sha256": "1163a651580bde314e8b450d39213c1691187fbe977debe63a0366c6e027eb8c",
+      "fixed": false
+    },
+    "src\\diagnostic\\regulator_r5_diag.cpp": {
+      "sha256": "a38d563a52570f11da9e68b5743c6c1989b26e77508620358ad3e402bd0a8a3b",
+      "bytes": 60272,
+      "parent_sha256": "a67d65fdde95ff754ca26d0bffe93e12f2cfbce9d8943d6cf01047b499e34cdb",
+      "fixed": true
+    },
+    "negative\\diagnostic\\regulator_r5_diag.cpp": {
+      "sha256": "a5b63e8e055e7e2da8dedf81fd899705c255b39831b4759c8d1fd0f31d6c83f5",
+      "bytes": 59840,
+      "parent_sha256": "a67d65fdde95ff754ca26d0bffe93e12f2cfbce9d8943d6cf01047b499e34cdb",
+      "fixed": false
+    }
+  },
+  "negative_adaptation": "same tail extraction/test constructor; original failure body retained byte-for-byte",
+  "runtime_test_hook": false
+}

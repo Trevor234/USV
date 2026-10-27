@@ -1,0 +1,49 @@
+{
+  "CXX_builds": 0,
+  "Source_lock_sha256": "ef48b5d2b8046312efead8cce6db75c2007dc2f4e7e944fdbcb68b75573ffe30",
+  "actual_contract_waits_ns": {
+    "kill_postcheck_ns": 1000000000,
+    "term_grace_ns": 1000000000,
+    "worker_grace_ns": 500000000
+  },
+  "authenticated_to_SIGINT_budget_ns": 100000000,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "close_budget_ns": 15000000000,
+  "created_ns": 385587842608116,
+  "deadline_ns": 150000000,
+  "diagnostic_SIGSTOP_only_after_actual_authenticated_terminal": true,
+  "domain": 196,
+  "execute_qualified": false,
+  "expected_Worker_normal_Source_qualified": false,
+  "expected_Worker_returncode": -9,
+  "expected_signal_sequence": [
+    19,
+    2,
+    15,
+    9
+  ],
+  "force_pause_is_not_native_C_hang": true,
+  "loader_environment_sha256": "509d6288e85f9e8feeb6bb23ca0ad22cc0f6f30befd86ad363e475a272c62f5c",
+  "localhost": true,
+  "max_tick_gap_engineering_ns": 240000000,
+  "native_C_hang_proven": false,
+  "notification_budget_ns": 250000000,
+  "observation_budget_ns": 8000000000,
+  "overall_budget_ns": 45000000000,
+  "period_ns": 200000000,
+  "research_conclusion": false,
+  "runner_sha256": "80f710fd6807a41198a3eb2ead7f1827a5699601380340b8b36ec7667d5dc82b",
+  "runs": [
+    {
+      "case": "active",
+      "run_id": "v2_supervision_01"
+    }
+  ],
+  "schema": "Source-supervisor-preregistration/v1",
+  "source_lock_sha256": "ef48b5d2b8046312efead8cce6db75c2007dc2f4e7e944fdbcb68b75573ffe30",
+  "stage_qualified": false,
+  "tick_jitter_engineering_ns": 20000000,
+  "universal_Source_notification_bound_proven": false,
+  "verdict": "GO",
+  "wait_observation_slack_ns": 100000000
+}

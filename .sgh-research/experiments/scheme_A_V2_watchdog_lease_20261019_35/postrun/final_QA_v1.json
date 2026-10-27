@@ -1,0 +1,74 @@
+{
+  "CXX_builds": 1,
+  "Native_assertions": 22,
+  "V2_scoped_minimal_cases_complete": true,
+  "actual_launches": 4,
+  "actual_suffix_negative_checks": 8,
+  "all_original_V2_stage_claims_complete": false,
+  "audits": [
+    {
+      "bytes": 834529,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/postrun/v2_lease_r3_audit_v1.json",
+      "sections": {
+        "Stored_Fixture_actual_command_chain": true,
+        "Worker_terminal_reception_close_protocol": true,
+        "fault_local_component": true,
+        "identity_configuration_owned_cleanup": true
+      },
+      "sha256": "ab27e591beb96fd27bc4f3d537a9e7b4206cfa5c656bbdd810e952e86fe12a39"
+    },
+    {
+      "bytes": 833287,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/postrun/v2_active_r3_audit_v1.json",
+      "sections": {
+        "Stored_Fixture_actual_command_chain": true,
+        "Worker_terminal_reception_close_protocol": true,
+        "fault_local_component": true,
+        "identity_configuration_owned_cleanup": true
+      },
+      "sha256": "9b51df501f4079500b11eeca0d27c89de44c9dced7d5e2fd5f8480c915f9d29d"
+    }
+  ],
+  "causal_close_component_checks": 10,
+  "current_MPC_delivery_pending_at_QA": true,
+  "delivery_authority": "delivery_verification.json",
+  "execute_qualified": false,
+  "final_profile_passed_runs": 2,
+  "native_C_hang_qualified": false,
+  "new_run_prefix_recovery_observed": true,
+  "normal_business_results_remain_false": true,
+  "normal_final_unified_version_qualified": false,
+  "old_local_bytes_rechecked": 5440520275,
+  "old_local_paths_rechecked": 43359,
+  "old_normal_failures_and_source_versions_preserved": true,
+  "passed": true,
+  "passed_scope": "two selected V2 fault-local/owned/Stored reception diagnostic chains plus archive integrity",
+  "released_runs": 3,
+  "research_conclusion": false,
+  "schema": "SchemeA-V2-final-QA/v1",
+  "selected_Worker_ELF_sha256": "6ad949b4ce68db8d26d97d6409c2d710739750ec107bf0ee735edfbf63f11a58",
+  "source_locks": [
+    {
+      "bytes": 330077,
+      "files": 1711,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/preflight/prerun_source_lock_v1.json",
+      "sha256": "a8f346dd0594b36224cfe9909e2985e3ee67bc11e2130cdf754a931f611c22ad"
+    },
+    {
+      "bytes": 335338,
+      "files": 1739,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/preflight/prerun_source_lock_r2_v1.json",
+      "sha256": "ab4dddc893d89842832a19ac10652a53ebff14ab20a49650f437e6e0760f5a4c"
+    },
+    {
+      "bytes": 385976,
+      "files": 1946,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/preflight/prerun_source_lock_r3_v1.json",
+      "sha256": "699eef59f009f6e99dd063a53a5d210492649ed9d0b8de21cd2926bd5c4c7a6e"
+    }
+  ],
+  "stage_qualified": false,
+  "time_boundary_checks": 12,
+  "true_plant_qualified": false,
+  "watchdog_TERM_KILL_bound_qualified": false
+}

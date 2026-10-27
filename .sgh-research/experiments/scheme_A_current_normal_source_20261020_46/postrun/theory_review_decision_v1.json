@@ -1,0 +1,34 @@
+{
+  "assumption_table": [
+    {
+      "assumption": "short39–42 slices can be replaced with one current normal continuous window",
+      "evidence": "normal_source20s_03;7-section audit;20.002935074s;101 moving/nonzero anchor Jobs;5901Stored",
+      "status": "verified selected nominal component"
+    },
+    {
+      "assumption": "full no_output business is a separate mandatoryM0b prior stage",
+      "evidence": "originalP1 §7 M0b explicitly permits shadow OR no_output independent calibration",
+      "status": "rejected extra requirement; remove it"
+    },
+    {
+      "assumption": "legacyDriver argv and terminal Source read defaults fit a longer normal runner",
+      "evidence": "attempts01/02 failed; ABI and bounded-reader repairs; attempts03 and targeted checks passed",
+      "status": "false assumptions corrected without changing Native/control gates"
+    }
+  ],
+  "blocking_reasons": [
+    "Actual normal-source20s and version binding now passed; immutable B5/M0b commit has not occurred.",
+    "Formal execute source/soleowner/bootstrap policy and exact profile/entry semantics still need a concrete declaration; legacy startup stream fails240ms."
+  ],
+  "experience_risks": [
+    "Do not relabel observer/source tool refusals as NMPC algorithm failure.",
+    "Do not repeatedly collect the already closed normal20s window.",
+    "Do not promote two observed mixed Jobs into a general domain or clip startup API gaps."
+  ],
+  "override_policy": "NO-GO requires explicit user override; no override used",
+  "research_conclusion": false,
+  "safe_next_step": "Use assembled candidate ledger to implement/lock formal execute profile policies and immutable freeze; no extra full no_output long-run gate.",
+  "schema": "current-normal-source-postrun-theory-v1",
+  "stage_qualified": false,
+  "verdict": "CONDITIONAL"
+}

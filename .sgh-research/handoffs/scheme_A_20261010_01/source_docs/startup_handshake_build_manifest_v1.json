@@ -1,0 +1,33 @@
+{
+  "build_input_manifest_sha256": "ced2c149cbe3411d7e0047ec488aa2b296a59708de6a0de232de716c120f3ed5",
+  "build_primary_sha256": "73bf77644be119027d29622f60390fe18d3acad2e252b7e6364cdb7700570b4d",
+  "checker_assets": {
+    "bag_checker_sha256": "69ffc2faf7e987e75caed0c0456d14a9544d93dbe3a44eaa66858c717d460094",
+    "handshake_validation_sha256": "11f3dcd8c5965aa4516d72f63225c5d1934465e61e5a751c321c14bb128d31aa",
+    "reader_sha256": "1223eb4e8acfbc9e48d7bebe02e8166a95da5abfba666094149a8a02b23b260a",
+    "source_checker_sha256": "705217499ff5da5e90a936552af6f0dbc3acd1ade67e447298249c399c38780f"
+  },
+  "derived": {
+    "logger_source_sha256": "daa7147ba7335b5e28192fe1cc481bc02f9247b2ba1c5e9db30c7229fe4b9b25",
+    "observer_binary_sha256": "58e72a003782aa783f78e81cebf12260c378a7dcfa21f7de254415aa8b183bd6",
+    "observer_source_sha256": "a9f5418d5fb73e8621a8ce571466bc9a4fab0e1ce16427b1b6310e6903aba62d",
+    "publisher_binary_sha256": "21019c23823f8f8f86d856e66158ef73ff784c56cb6822ec69cf7faf632189d4",
+    "publisher_source_sha256": "6fcd225da16536805dcc3d47b3ddc3d190cef0fba8ca586fc3ad88eb37b70226",
+    "readiness_header_sha256": "e5f952cb29c9c975f584b1ce4be456a06c9e3dcac6d7435bed81fdaf1c9bae6b"
+  },
+  "execute_qualified": false,
+  "parents": {
+    "contract_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+    "logger_source_sha256": "90f9f7070eac3bf0ad516a034118444afeddfdb65cd91ccffac5d7617c30789a",
+    "observer_binary_sha256": "94c505677b105e148ecec34769c92f6983feac8316877e0a6d32a9e737be7416",
+    "observer_source_sha256": "c5b3b1f419d0835b06851f332b49f2f1eb43fa766dae19f85999de74aaf05452",
+    "publisher_binary_sha256": "bc753aa81d27e16e7df2570539e6bc66d34a3bc973afbee18fbf232ea85d41bc",
+    "publisher_source_sha256": "2f1b457ce9644d6ceff722e4ce328fa6a5de23a2cb94f8470c022e0bd70f2dd8",
+    "worker_binary_sha256": "dd7d253b420aff8283a4869ae804e5f49fcb76c3357829c5c6c12f020324c35c"
+  },
+  "physical_release_qualified": false,
+  "publisher_source_bundle_sha256": "74529ed49df7a37ca912d6b9813b4c5a6b0526d10de9ccb59131ee28b5bd1626",
+  "readiness_header_path": "observer/src/shadow/p1_shadow_entry.hpp",
+  "schema": "p1-D1-startup-handshake-build-manifest-v1",
+  "version": "D1_startup_handshake_v1"
+}

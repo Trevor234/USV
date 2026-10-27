@@ -1,0 +1,17 @@
+{
+  "run_id": "ordinary_active_01",
+  "case": "active",
+  "returncode": 2,
+  "started_ns": 425581074184798,
+  "finished_ns": 425604432884990,
+  "elapsed_ns": 23358700192,
+  "external_timeout_triggered": false,
+  "inputs_unchanged": true,
+  "source_lock": {
+    "bytes": 354273,
+    "sha256": "5742a7e4ea4baec01751a59cb8b8ef648bc54b02acb3785a7d2913d4bdee9f96"
+  },
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

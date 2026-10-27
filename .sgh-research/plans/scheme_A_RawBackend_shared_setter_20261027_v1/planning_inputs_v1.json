@@ -1,0 +1,138 @@
+{
+  "recorded_at": "2026-10-27T15:39:31.560169+08:00",
+  "kind": "read_only_planning_snapshot_not_execution_freeze",
+  "files": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/raw_backend_v1.hpp": {
+      "bytes": 15284,
+      "sha256": "2e1f2f0d1f3a393ec1e944462b9490a258eb8cdfa6103144816b8a8fbf13aa8f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/owned_cold_backend.hpp": {
+      "bytes": 11285,
+      "sha256": "4746895a0367caba189dffbd6391adfb7603ba5f4c033ec22dc21c441f9a8128"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/solver_worker_m4.cpp": {
+      "bytes": 32922,
+      "sha256": "d4e2cd2cc2db7c68fa928dcc2012130e890e3370f88ffba796eb2cfc894468a8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/common_replay.hpp": {
+      "bytes": 3111,
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/cold_backend_test_inputs_v1.json": {
+      "bytes": 522,
+      "sha256": "1493c01439dd536ded4eba02dc78a3a4945c77ada2b881f28049ce99f1dd88ff"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/test_reference_cold_backend.cpp": {
+      "bytes": 6316,
+      "sha256": "608fd7752f368ae5b1d21ac736f7fc92b03f8fdd2abf1a4a70d0efc777ce50c9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/test_w2_backend_wiring.cpp": {
+      "bytes": 18254,
+      "sha256": "62e368c21380f126572f4cb53f33567001c36a3ef470aa8b166718089861f94c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/test_w2_native_boundary.cpp": {
+      "bytes": 11934,
+      "sha256": "8706c0c778d6b4e7fb0a1825a14c0303da2e4e9fb95f233a2395ba688255b392"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/tests/test_m4_native_policy.cpp": {
+      "bytes": 7114,
+      "sha256": "5adf70985ee53d3d7ef3c494ff4ff05945b159114e28a112d0ec820354f677bd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/CMakeLists.txt": {
+      "bytes": 4719,
+      "sha256": "66a508d5213cff833b978b62853ea40dc6bd1603c3007b2b76347aa8cbda17ed"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/implementation/checked_init/include/usv_mpc_cpp/p_global_pack.hpp": {
+      "bytes": 1200,
+      "sha256": "a62fe3af593349e1b16e3beff7f3a6ea65dc35cf316ff94f4e5735bfe8ca48cb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/implementation/checked_init/include/usv_mpc_cpp/p_global_apply.hpp": {
+      "bytes": 1819,
+      "sha256": "3b5cc16dce2f277367e61c4e598b707b646e83339ed5b5eb985549097bfd343d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/implementation/baseline/acados_generated/acados_solver_usv_dyn_nmpc.c": {
+      "bytes": 39243,
+      "sha256": "38c222d809dc15e362f423ed329f34156ac7e4b836227242407a684f814f9f30"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_factory_routing_20261027_128/postrun/next_plan_v1.json": {
+      "bytes": 2434,
+      "sha256": "a460d39c844bb7a037d29f64bf5c28ae7e08ab3de7410ff655edfc7cc67db2f9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_factory_routing_20261027_128/postrun/review_findings_v1.json": {
+      "bytes": 1901,
+      "sha256": "5927cf13bac714c210b2d44f99c72faeb0fdc569cb0fb301443d149ebaec61d9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_factory_routing_20261027_128/evidence/final_verification_v1.json": {
+      "bytes": 5585,
+      "sha256": "9097d10ceb2ea9ef5e11ccf94eca5a5f84bc3cb361bb74239ae8136a217089f9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_factory_routing_20261027_128/evidence/delivery_receipt_readback_v1.json": {
+      "bytes": 185191,
+      "sha256": "7cde403251b9710f633d99553bfac4acdebfce26780df0964fd6dfdeecda7edf"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json": {
+      "bytes": 1768728,
+      "sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/native_causal_cold_v1.json": {
+      "bytes": 124460,
+      "sha256": "64a94b463f5eaacca2703646e44065e4a4a91cd347e74eb4ddc8c4c4d30af514"
+    }
+  },
+  "test_declarations": {
+    "test_reference_cold_backend.cpp": {
+      "declared_count": 9,
+      "names": [
+        "OwnedCold.DefaultAdapterReplaysAll102ActualJobs",
+        "OwnedCold.CurrentJobOnlyFourCallsMatchSealedCausalCandidate",
+        "OwnedCold.InvalidIdentityDoesNotConsumeColdOpportunity",
+        "OwnedCold.LateJobDoesNotConsumeColdOpportunity",
+        "OwnedCold.DuplicateRejectedAndNextJobRemainsOneFreeCall",
+        "OwnedCold.ResetAndGenerationChangeDoNotRearmPolicy",
+        "OwnedCold.ActualWithdrawalPreservesOneShiftedWarmCache",
+        "OwnedCold.EveryInternalFailureIsTerminalWithoutFallback",
+        "OwnedCold.OutsideRegisteredDomainKeepsOriginalFreeBehavior"
+      ]
+    },
+    "test_w2_backend_wiring.cpp": {
+      "declared_count": 13,
+      "names": [
+        "W2Backend.TimelyReleaseOnTheTargetBoundaryEntersTheNativeCall",
+        "W2Backend.ReleaseAfterTheJobDeadlineNeverStartsTheNativeCall",
+        "W2Backend.ReleaseExactlyAtTheDeadlineIsStillAllowed",
+        "W2Backend.StopRaisedDuringPreparationBlocksTheNativeCall",
+        "W2Backend.DeadlineCrossedDuringPreparationBlocksTheNativeCall",
+        "W2Backend.ANonTargetJobStillObeysStopAndDeadline",
+        "W2Backend.ANonTargetJobStillObeysItsOwnDeadline",
+        "W2Backend.ARefusedGuardStillPublishesTheBoundaryFact",
+        "W2Backend.TargetExpiryDuringPreparationRefreshesTheRecord",
+        "W2Backend.ActualCFailureRetainsEntryFact",
+        "W2Backend.StopWhileHeldKeepsTheTargetJobOutOfTheNativeCall",
+        "W2Backend.TheExistingBeforeCallHookStillRunsAndCanBlockTheSolve",
+        "W2Backend.NonMatchingCallIsNotTreatedAsARejection"
+      ]
+    },
+    "test_w2_native_boundary.cpp": {
+      "declared_count": 15,
+      "names": [
+        "W2Boundary.UnarmedProfileIsAllowedAndReportsItself",
+        "W2Boundary.RegisteredCallWithTimelyReleaseIsAllowed",
+        "W2Boundary.ReleasedButPastTheJobDeadlineIsExpiredNotAllowed",
+        "W2Boundary.ReleaseAtExactlyTheDeadlineIsAllowed",
+        "W2Boundary.WaitWindowExhaustionIsWaitFailedAndNeverCalls",
+        "W2Boundary.StopDuringTheWaitIsStoppedAndNeverCalls",
+        "W2Boundary.StopSetBeforeTheGateStartsIsStopped",
+        "W2Boundary.StopRaisedBetweenTheGatesFinalCheckAndTheGuardIsHonoured",
+        "W2Boundary.AnotherJobWithTheSameOrdinalIsNotHeld",
+        "W2Boundary.AnotherOrdinalIsNotHeld",
+        "W2Boundary.AnotherJobIsNotHeld",
+        "W2Boundary.OnlyOneCallIsEverHeld",
+        "W2Boundary.NativeEntryIsRecordedOnlyWhenMarked",
+        "W2Boundary.RecordIsSerialisableWithEveryDecisionField",
+        "W2Boundary.EveryDispositionHasADistinctName"
+      ]
+    }
+  },
+  "fixture_pins_verified": true,
+  "not_execution_result": true
+}

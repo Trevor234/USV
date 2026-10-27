@@ -1,0 +1,17 @@
+{
+  "run_id": "fresh_after_lease_01",
+  "case": "post lease41 fresh identity two healthy jobs and original normal resource close",
+  "returncode": 0,
+  "started_ns": 443816815998981,
+  "finished_ns": 443830954166176,
+  "elapsed_ns": 14138167195,
+  "external_timeout_triggered": false,
+  "inputs_unchanged": true,
+  "source_lock": {
+    "bytes": 461956,
+    "sha256": "04f30f82de3fa60a79d863eb6fd56c7985cdeb5220e91705aeb675ab10379038"
+  },
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

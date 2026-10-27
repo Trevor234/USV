@@ -1,0 +1,237 @@
+{
+  "M4_F6_P1_qualified": false,
+  "commands": [
+    {
+      "argv": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/test_deadline_control",
+        "--gtest_output=xml:/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/verification/run01/test_deadline_control.xml"
+      ],
+      "counts": {
+        "disabled": 0,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 18
+      },
+      "elapsed_seconds": 2.4192525011021644,
+      "name": "test_deadline_control",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/test_mode_manager_contract",
+        "--gtest_output=xml:/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/verification/run01/test_mode_manager_contract.xml"
+      ],
+      "counts": {
+        "disabled": 0,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "tests": 6
+      },
+      "elapsed_seconds": 0.9664246590109542,
+      "name": "test_mode_manager_contract",
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py",
+        "--junitxml=/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/verification/run01/launch_parameters.xml",
+        "-o",
+        "cache_dir=/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/verification/run01/pytest_cache"
+      ],
+      "counts": {
+        "disabled": 0,
+        "errors": 0,
+        "failures": 4,
+        "skipped": 0,
+        "tests": 6
+      },
+      "elapsed_seconds": 1.3664159938925877,
+      "name": "launch_parameters",
+      "returncode": 1
+    }
+  ],
+  "counts": {
+    "launch_parameters": {
+      "disabled": 0,
+      "errors": 0,
+      "failures": 4,
+      "skipped": 0,
+      "tests": 6
+    },
+    "test_deadline_control": {
+      "disabled": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 18
+    },
+    "test_mode_manager_contract": {
+      "disabled": 0,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "tests": 6
+    }
+  },
+  "input_after": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/corrected_mode_manager_node": {
+      "bytes": 3011000,
+      "sha256": "e36f705416486253c72f52ac207be3405f69f1863b24e91055b3f36cd959971b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/corrected_mpc_node": {
+      "bytes": 4560952,
+      "sha256": "33fb59bb27b0e020de9d0efe7723f74fd4f5383efd99d94f18be0bb5e1c0a824"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/test_deadline_control": {
+      "bytes": 6630624,
+      "sha256": "6fc4a0b393e6c31479bbbc80cdfef0735d7a72d86f4102acba8756b34dfbeca8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/test_mode_manager_contract": {
+      "bytes": 3730904,
+      "sha256": "f87313b888922897d2ceef4d8aa386a6ea399374f41927cb1dca0ed6744ebca5"
+    },
+    "/home/trevor/USV/docs/scheme_B_manual_rc_contract.md": {
+      "bytes": 1876,
+      "sha256": "54be4c9dab2a4e5e6a34d7153e3aea363abf87c01cb258c5bf152ebed10415fd"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml": {
+      "bytes": 3063,
+      "sha256": "2e287728d8c6f7e82c286f6ae892bdf39ff07d28366819065af6d1fef3b26068"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml": {
+      "bytes": 3063,
+      "sha256": "2e287728d8c6f7e82c286f6ae892bdf39ff07d28366819065af6d1fef3b26068"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml": {
+      "bytes": 1612,
+      "sha256": "dd2201ee9c2c46e23abcb8599a7c27c6b4ff32ab2da3fcb09e4da60834a772c3"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py": {
+      "bytes": 15891,
+      "sha256": "e023e535222d15686964b0e6e382b44cfbd50e01b231835e17476b8bbb7cfb3b"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py": {
+      "bytes": 8033,
+      "sha256": "78f2297e04973bd4b9c167e080f55e3a2047e3ae0ae4420b93168be075210485"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py": {
+      "bytes": 2766,
+      "sha256": "752b8d3d889752c5bfa211a66f89c5f44a0850c90a763fd1d3c20281e650c0fc"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp": {
+      "bytes": 10949,
+      "sha256": "2254051f84f9bbe4d3b9e2d0cf219ad9b6312b24f847201718fabc2ec324fc0c"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp": {
+      "bytes": 51077,
+      "sha256": "44f808eb8355312155241ec3e12739b77aaa0e2184f056b1ce7d8d421d905b6e"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp": {
+      "bytes": 24292,
+      "sha256": "1a5cd0dac51f33ab59d4e40eb302c148a11f62f735b2e739f45cb6b52558dc1d"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/CMakeLists.txt": {
+      "bytes": 3068,
+      "sha256": "3ac9215ac2f6e7b30d4bc4d8a7bf36473bfb89b1ae161026aa43c168478a30b3"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/include/usv_safety_cpp/mode_manager_node.hpp": {
+      "bytes": 6106,
+      "sha256": "f9612f4181a7eb3f1a509a7e0796bd84d85a52e66df7d29aa7bc3da814a69e23"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/src/mode_manager_node.cpp": {
+      "bytes": 21492,
+      "sha256": "e20b05320dc37ba8576fcfbcc5b9063590f5d9bc9d921cb9dfe1f499b0e4b244"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/test/test_mode_manager_contract.cpp": {
+      "bytes": 4963,
+      "sha256": "4c982f2ed28ebaa6b52434bf107d7335ddafe6a0f1ef3e2c4d0e30c545efdc2e"
+    }
+  },
+  "input_before": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/corrected_mode_manager_node": {
+      "bytes": 3011000,
+      "sha256": "e36f705416486253c72f52ac207be3405f69f1863b24e91055b3f36cd959971b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/corrected_mpc_node": {
+      "bytes": 4560952,
+      "sha256": "33fb59bb27b0e020de9d0efe7723f74fd4f5383efd99d94f18be0bb5e1c0a824"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/test_deadline_control": {
+      "bytes": 6630624,
+      "sha256": "6fc4a0b393e6c31479bbbc80cdfef0735d7a72d86f4102acba8756b34dfbeca8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_B_MANUAL_contract_20261021_51/build/attempt01/cmake_build/test_mode_manager_contract": {
+      "bytes": 3730904,
+      "sha256": "f87313b888922897d2ceef4d8aa386a6ea399374f41927cb1dca0ed6744ebca5"
+    },
+    "/home/trevor/USV/docs/scheme_B_manual_rc_contract.md": {
+      "bytes": 1876,
+      "sha256": "54be4c9dab2a4e5e6a34d7153e3aea363abf87c01cb258c5bf152ebed10415fd"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml": {
+      "bytes": 3063,
+      "sha256": "2e287728d8c6f7e82c286f6ae892bdf39ff07d28366819065af6d1fef3b26068"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml": {
+      "bytes": 3063,
+      "sha256": "2e287728d8c6f7e82c286f6ae892bdf39ff07d28366819065af6d1fef3b26068"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml": {
+      "bytes": 1612,
+      "sha256": "dd2201ee9c2c46e23abcb8599a7c27c6b4ff32ab2da3fcb09e4da60834a772c3"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py": {
+      "bytes": 15891,
+      "sha256": "e023e535222d15686964b0e6e382b44cfbd50e01b231835e17476b8bbb7cfb3b"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py": {
+      "bytes": 8033,
+      "sha256": "78f2297e04973bd4b9c167e080f55e3a2047e3ae0ae4420b93168be075210485"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py": {
+      "bytes": 2766,
+      "sha256": "752b8d3d889752c5bfa211a66f89c5f44a0850c90a763fd1d3c20281e650c0fc"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp": {
+      "bytes": 10949,
+      "sha256": "2254051f84f9bbe4d3b9e2d0cf219ad9b6312b24f847201718fabc2ec324fc0c"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp": {
+      "bytes": 51077,
+      "sha256": "44f808eb8355312155241ec3e12739b77aaa0e2184f056b1ce7d8d421d905b6e"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp": {
+      "bytes": 24292,
+      "sha256": "1a5cd0dac51f33ab59d4e40eb302c148a11f62f735b2e739f45cb6b52558dc1d"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/CMakeLists.txt": {
+      "bytes": 3068,
+      "sha256": "3ac9215ac2f6e7b30d4bc4d8a7bf36473bfb89b1ae161026aa43c168478a30b3"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/include/usv_safety_cpp/mode_manager_node.hpp": {
+      "bytes": 6106,
+      "sha256": "f9612f4181a7eb3f1a509a7e0796bd84d85a52e66df7d29aa7bc3da814a69e23"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/src/mode_manager_node.cpp": {
+      "bytes": 21492,
+      "sha256": "e20b05320dc37ba8576fcfbcc5b9063590f5d9bc9d921cb9dfe1f499b0e4b244"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_safety_cpp/test/test_mode_manager_contract.cpp": {
+      "bytes": 4963,
+      "sha256": "4c982f2ed28ebaa6b52434bf107d7335ddafe6a0f1ef3e2c4d0e30c545efdc2e"
+    }
+  },
+  "passed": false,
+  "private_mock_mode_requests_only": true,
+  "production_install_replaced": false,
+  "real_FCU_requests": 0,
+  "real_ship_acceptance": false,
+  "schema": "SchemeB-MANUAL-contract-affected-verification/v1"
+}

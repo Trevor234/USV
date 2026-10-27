@@ -1,0 +1,25 @@
+schema_version: p0-contract-recording-v1
+scheme: B
+event_semantics: publisher_command
+storage_id: mcap
+recorder_use_sim_time: true
+qos_policy: recorder_adapts_to_discovered_publishers
+topics:
+  /wamv/sensors/position/ground_truth_odometry: nav_msgs/msg/Odometry
+  /wamv/sensors/imu/imu/data: sensor_msgs/msg/Imu
+  /clock: rosgraph_msgs/msg/Clock
+  /path/reference: nav_msgs/msg/Path
+  /path/reference_profile: std_msgs/msg/Float64MultiArray
+  /wamv/thrusters/left/thrust: std_msgs/msg/Float64
+  /wamv/thrusters/right/thrust: std_msgs/msg/Float64
+  /mpc/status: std_msgs/msg/String
+  /mpc/predicted_trajectory: nav_msgs/msg/Path
+  /research/state_snapshot: usv_research_interfaces/msg/StateSnapshot
+  /research/control/applied: usv_research_interfaces/msg/AppliedControl
+  /research/cycle_timing: usv_research_interfaces/msg/CycleTiming
+limits:
+  plant_acceptance_observed: false
+  force_measured: false
+  execution_atomicity_proven: false
+  exact_execution_timing_available: false
+  gp_labels_ready: false

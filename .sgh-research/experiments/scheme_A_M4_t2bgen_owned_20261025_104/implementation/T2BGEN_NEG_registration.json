@@ -1,0 +1,26 @@
+{
+  "action_table": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/T2BGEN_NEG_table.json",
+  "action_table_sha256": "1afe37158d5863a0e5f703e0782e95204ebdc7cf2de33f8bf506e15b27129a41",
+  "audit_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/t2_author/audit_t2.py",
+    "sha256": "d749b54bfade5683f8fc14230871a2e3081efc1f451fbda7e26f42e780bbef87"
+  },
+  "automatic_retries": 0,
+  "case": "T2B-gen-negative-control",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "domain_id": 120,
+  "executed": false,
+  "fault_injection_enabled": false,
+  "max_seconds": 45,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/runs/T2BGEN_NEG",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/t2bgen_registry.json",
+  "registry_sha256": "6dd7caffb38911b2f71b909f7c11d8929487a3fe899e817437fc67943f10f10d",
+  "run_id": "T3-T2BGEN-NEG",
+  "schema": "M4-owned-t2bgen-scenario-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "t2bgen_note": "negative control: no binding change, single generation, healthy close",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

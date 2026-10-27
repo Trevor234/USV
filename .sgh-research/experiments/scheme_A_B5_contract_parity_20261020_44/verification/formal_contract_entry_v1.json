@@ -1,0 +1,246 @@
+{
+  "actual_file_operations": true,
+  "case_count": 25,
+  "cases": [
+    {
+      "accepted": true,
+      "expected_accept": true,
+      "name": "valid_pre_freeze",
+      "passed": true,
+      "reason": ""
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "changed_bytes",
+      "passed": true,
+      "reason": "preparation contract SHA-256 mismatch"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "diagnostic_not_formal",
+      "passed": true,
+      "reason": "preparation entry accepts only formal pre-freeze"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "Frozen_cannot_promote_prepare",
+      "passed": true,
+      "reason": "preparation entry accepts only formal pre-freeze"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "duplicate_raw",
+      "passed": true,
+      "reason": "duplicate JSON key: execution_contract_revision"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "empty",
+      "passed": true,
+      "reason": "bounded regular contract file required"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "oversized",
+      "passed": true,
+      "reason": "bounded regular contract file required"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "symlink_leaf",
+      "passed": true,
+      "reason": "[Errno 40] Too many levels of symbolic links: 'symlink.json'"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "symlink_parent",
+      "passed": true,
+      "reason": "[Errno 20] Not a directory: 'linked_parent'"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "fifo_nonblocking_reject",
+      "passed": true,
+      "reason": "bounded regular contract file required"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "directory",
+      "passed": true,
+      "reason": "bounded regular contract file required"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "relative_path",
+      "passed": true,
+      "reason": "absolute normalized path required"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "parent_traversal",
+      "passed": true,
+      "reason": "absolute normalized path required"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "mode_'shadow'",
+      "passed": true,
+      "reason": "formal preparation entry requires no_output"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "mode_'execute'",
+      "passed": true,
+      "reason": "formal preparation entry requires no_output"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "mode_''",
+      "passed": true,
+      "reason": "formal preparation entry requires no_output"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "mode_None",
+      "passed": true,
+      "reason": "formal preparation entry requires no_output"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "mode_False",
+      "passed": true,
+      "reason": "formal preparation entry requires no_output"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "expected_sha_None",
+      "passed": true,
+      "reason": "explicit expected SHA-256 required for preparation entry"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "expected_sha_False",
+      "passed": true,
+      "reason": "explicit expected SHA-256 required for preparation entry"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "expected_sha_'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'",
+      "passed": true,
+      "reason": "explicit expected SHA-256 required for preparation entry"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "expected_sha_'gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg'",
+      "passed": true,
+      "reason": "explicit expected SHA-256 required for preparation entry"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "expected_sha_'fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'",
+      "passed": true,
+      "reason": "explicit expected SHA-256 required for preparation entry"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "expected_sha_'fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'",
+      "passed": true,
+      "reason": "explicit expected SHA-256 required for preparation entry"
+    },
+    {
+      "accepted": false,
+      "expected_accept": false,
+      "name": "expected_sha_'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'",
+      "passed": true,
+      "reason": "preparation contract SHA-256 mismatch"
+    }
+  ],
+  "execute_qualified": false,
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/current_diag_contract_v1.json": {
+      "bytes": 4265,
+      "sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/current_pre_freeze_contract_v1.json": {
+      "bytes": 4407,
+      "sha256": "1faedd4bbf7338ffbd3bc1f9b049285e58d7c3605816d416ac2b83fbfd5365fb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/python/formal_prepare_contract.py": {
+      "bytes": 3529,
+      "sha256": "cb8e84bb439f545b06ea71b03e40b11d2e95f79ab9a440cb2caea8f6b7947861"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/python/p1_contract_spec_v1.json": {
+      "bytes": 6943,
+      "sha256": "317ec56f9c1211b9d8adc5dc727e2a20c1f281afd2047efafecbac797c46d798"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/python/p1_full_contract.py": {
+      "bytes": 8626,
+      "sha256": "9f50c9b5fd5253f3d710ad302c54723c53066fdb23212791abce53dd5ed3e04e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/verification/formal_contract_entry_v1.py": {
+      "bytes": 4279,
+      "sha256": "eb001a3394fc8ca83780d62b6c2fb29562992155926db6ab50752a9d3f5abeab"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/verification/frozen_shape_for_entry_cases_v1.json": {
+      "bytes": 3630,
+      "sha256": "db58fe37488f24220c013551cbee7a590ca0a1ef7bbd9667d18aecb5bd8806e0"
+    }
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/current_diag_contract_v1.json": {
+      "bytes": 4265,
+      "sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/current_pre_freeze_contract_v1.json": {
+      "bytes": 4407,
+      "sha256": "1faedd4bbf7338ffbd3bc1f9b049285e58d7c3605816d416ac2b83fbfd5365fb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/python/formal_prepare_contract.py": {
+      "bytes": 3529,
+      "sha256": "cb8e84bb439f545b06ea71b03e40b11d2e95f79ab9a440cb2caea8f6b7947861"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/python/p1_contract_spec_v1.json": {
+      "bytes": 6943,
+      "sha256": "317ec56f9c1211b9d8adc5dc727e2a20c1f281afd2047efafecbac797c46d798"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/python/p1_full_contract.py": {
+      "bytes": 8626,
+      "sha256": "9f50c9b5fd5253f3d710ad302c54723c53066fdb23212791abce53dd5ed3e04e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/verification/formal_contract_entry_v1.py": {
+      "bytes": 4279,
+      "sha256": "eb001a3394fc8ca83780d62b6c2fb29562992155926db6ab50752a9d3f5abeab"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/verification/frozen_shape_for_entry_cases_v1.json": {
+      "bytes": 3630,
+      "sha256": "db58fe37488f24220c013551cbee7a590ca0a1ef7bbd9667d18aecb5bd8806e0"
+    }
+  },
+  "owned_ROS_runtime": false,
+  "passed": true,
+  "schema": "B5-formal-preparation-file-entry/v1",
+  "stage_qualified": false
+}

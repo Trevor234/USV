@@ -1,0 +1,36 @@
+{
+  "schema": "M4-after-T2-independent-review-plan-v77",
+  "recorded_at": "2026-10-25T13:00:07.552536+08:00",
+  "steps": [
+    {
+      "id": "74镜像/R0/R1",
+      "status": "complete"
+    },
+    {
+      "id": "R2-scope",
+      "status": "complete",
+      "task": "T2 boundary scope infrastructure + preflight + offline validation"
+    },
+    {
+      "id": "R2-driver",
+      "status": "next",
+      "task": "Driver boundary orchestration implementation + component smoke test + freeze rev11",
+      "sequence": "文档记录于r2_findings;需一个聚焦批完成"
+    },
+    {
+      "id": "T2-B boundary owned",
+      "status": "after_R2_driver",
+      "task": "单次有限及时在途case;过期释放独立负控"
+    },
+    {
+      "id": "T2-C",
+      "status": "after_R2_driver",
+      "task": "R0已修;rev8登记需重新指向rev11身份"
+    },
+    {
+      "id": "T2-A补证/T3/N3/F6/P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

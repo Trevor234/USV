@@ -1,0 +1,98 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "case": "R3",
+  "case_summary": {
+    "lease": {
+      "lease_elapsed_ns": 792385879,
+      "lease_timeout_ns": 600000000,
+      "watchdog_ns": 1000000000
+    },
+    "pairs_after_transition": {
+      "fallback": 3,
+      "shutdown": 1
+    },
+    "pairs_before_transition": {
+      "accepted": 2,
+      "bootstrap": 1,
+      "fallback": 2,
+      "waiting": 1
+    },
+    "post_transition": {
+      "late_accepted_candidates": 0,
+      "late_jobs": 0
+    },
+    "transition_reason": "worker_capability_expired"
+  },
+  "declared_exceptions": [],
+  "input_continuity": 39,
+  "max_tick_start_jitter_ns": 685474,
+  "mutation_rejections": [
+    "exit_code_fabricated",
+    "applied_command_tampered:TypeError",
+    "raw_time_tampered_flags_false",
+    "duplicate_stored_message:TypeError",
+    "undeclared_source_loss"
+  ],
+  "pair_stream": {
+    "max_gap_ns": [
+      200126446,
+      200123783
+    ],
+    "max_rate_n_s": [
+      2.6968349020790345,
+      2.6970142992094726
+    ],
+    "max_span_ns": 103403
+  },
+  "passed": true,
+  "recorder_and_fixture": {
+    "fixture_normal_end": true,
+    "recorder_clean": true
+  },
+  "registration_discrepancies": [],
+  "research_conclusion": false,
+  "role_exit_codes": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 0,
+    "worker": 0
+  },
+  "run_id": "M4_owned_fault_20261021_53_R3",
+  "schema": "M4-owned-fault-audit-v2",
+  "shutdown": {
+    "shutdown_grace_exceeded": false,
+    "zero_target_published": true
+  },
+  "source_and_witness": {
+    "regulator_dropped": 0,
+    "witness_observation_complete": true
+  },
+  "typed_equality": {
+    "applied": 10,
+    "candidates": 2,
+    "decisions": 10,
+    "jobs": 5,
+    "pairs": 10,
+    "stored_counts": {
+      "/clock": 126,
+      "/p1/execution_decision": 10,
+      "/p1/solve_candidate": 2,
+      "/p1/solve_job": 5,
+      "/p1/worker_capability": 10,
+      "/path/reference": 6,
+      "/path/reference_profile": 6,
+      "/research/control/applied": 10,
+      "/wamv/sensors/imu/imu/data": 126,
+      "/wamv/sensors/position/ground_truth_odometry": 126,
+      "/wamv/thrusters/left/thrust": 10,
+      "/wamv/thrusters/right/thrust": 10
+    }
+  },
+  "wire_transport": {
+    "extra": 1,
+    "observed": 446,
+    "stored": 447
+  }
+}

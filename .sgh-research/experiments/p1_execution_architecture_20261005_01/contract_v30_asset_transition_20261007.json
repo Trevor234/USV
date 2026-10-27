@@ -1,0 +1,54 @@
+{
+  "schema": "p1-B0-asset-transition-v1",
+  "old_manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_prelaunch_assets_20261007.json",
+  "old_manifest_sha256": "d2a4b4d348fe30c05118e83fc057c591781c40a44379b4f8d952e5dfe5931a98",
+  "old_count": 1196,
+  "declared_changes": [
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_regulator",
+      "before": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258",
+      "after": "db2ec8facfc5a60199368f93589955f805eb855332280b7fd6902f90c635562f"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_solver_worker",
+      "before": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26",
+      "after": "dd7d253b420aff8283a4869ae804e5f49fcb76c3357829c5c6c12f020324c35c"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/CMakeLists.txt",
+      "before": "96943d1c07f0a846805fb4d8239a8f3b6686bb82f588a29f25a5ff082d6ffe19",
+      "after": "9bce508522b5d12d2f6cde7e40ce58daf43d243e9c1bd3f44188e3684435ec5f"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/p1_resources.hpp",
+      "before": "6df0fe47c5863e23df6cf6c5cc38e3644eaf971a869e929195a409d33e9b8a1a",
+      "after": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/protocol.hpp",
+      "before": "5cab0d978cb9ab3ebc08b649a7915e302b14a1723776750849ddda416c24457b",
+      "after": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/regulator.cpp",
+      "before": "77a7d3f5eec5d3717a3b91460bcd7fedece7246c5229cc1bb7a1cacd3c1cf8e1",
+      "after": "1163a651580bde314e8b450d39213c1691187fbe977debe63a0366c6e027eb8c"
+    }
+  ],
+  "new_manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v30_prelaunch_assets_20261007.json",
+  "new_manifest_sha256": "957031f1bf27216fdf67f32e64230321d3876a9ea039e37b99f90cbced46a901",
+  "new_count": 1845,
+  "verification": {
+    "manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/contract_v30_prelaunch_assets_20261007.json",
+    "manifest_sha256": "957031f1bf27216fdf67f32e64230321d3876a9ea039e37b99f90cbced46a901",
+    "count": 1845,
+    "drift": []
+  },
+  "host_after": {
+    "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+    "monotonic_ns": 1156330898253880,
+    "existing_controller_gazebo_count": 0,
+    "unreadable_cmdline_count": 0
+  },
+  "physical_release_enabled": false
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "C3.6-typed-fixture-correction-preregister/v1",
+  "client_date": "2026-10-14",
+  "first_suite": "172/173; one invalid stable-CDR-padding assertion",
+  "change": "separate typed fixture, original runtime/source bundle and failed test remain unchanged",
+  "criterion": "decode entire Candidate fields; canonical full payload distinguishes signed-zero and every existing field mutation; each record CDR independently checks hash/size",
+  "compile_budget_s": 180,
+  "run_budget_s": 60,
+  "phase_qualified": false,
+  "helper_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/compile_typed_fixture_v1.py": "98f50bfdb27ed22e776e67bd040617b3c953ccbd81b02c2eafeed57a2cf06987",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/run_owned_positive_v1.py": "da440d9b4ee0bfe2ec2074bea578802692cfa9d78c020e24aeea90615576fa68"
+  }
+}

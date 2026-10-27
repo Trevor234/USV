@@ -1,0 +1,119 @@
+{
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "all_groups_require_a_new_long_ROS_run": false,
+  "existing_source_linked_tests_are_scoped_component_evidence_only": true,
+  "first_next_focus": "publication_exit and bootstrap/full-recorder-ready affected paths",
+  "groups": [
+    {
+      "acceptance": "same reused core; exact declared future-reference semantics; no hidden writer",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "compatibility_input",
+      "required_cases": [
+        "F5 source/reference/mapping qualified old regression and logging off/on",
+        "new target-reference independent fixture, no implicit physical writer"
+      ]
+    },
+    {
+      "acceptance": "complete absolute 150ms cutoff equality allowed, strict-after cutoff; target remains origin+200ms; no deadline extension or late activation",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "time_boundaries",
+      "required_cases": [
+        "50/150/250/400ms; ready before/equal/after deadline",
+        "early ready, wrong target, delayed tick"
+      ]
+    },
+    {
+      "acceptance": "multiple complete regulator ticks while worker blocked; active/pending/ready bounded; one backend only; delivery delay not called native block",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "native_block_and_delivery",
+      "required_cases": [
+        "worker held at native boundary until independent release",
+        "separate result delivery delay/drop"
+      ]
+    },
+    {
+      "acceptance": "invalid selection or normal output count=0; each candidate consumed at most once; bounded slots and explicit reason",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "candidate_identity_shape",
+      "required_cases": [
+        "failed, invalid shape, NaN, duplicate, old/reordered IDs",
+        "foreign producer/boot/version"
+      ]
+    },
+    {
+      "acceptance": "semantic task generation only; old task rejected before activation; new odom does not unconditionally starve",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "task_reference",
+      "required_cases": [
+        "clear/single point before freeze, clear/replacement during solve",
+        "same content republish, path/profile mismatch, ordinary new odom"
+      ]
+    },
+    {
+      "acceptance": "separate receipt/sim ages, IMU only if mixed; selected tolerances; epoch/schedule invalidation; no cross-domain subtraction or resurrection",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "state_clock",
+      "required_cases": [
+        "source stale/future, mixed skew, activation mismatch",
+        "pause/resume/reset/jump and RTF band"
+      ]
+    },
+    {
+      "acceptance": "actual per-side history; H=600ms from last accepted activation; rho80 each actual interval; missing anchor unavailable; no instant-zero rate fiction",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "anchor_fallback",
+      "required_cases": [
+        "mid-interval change/same-value republish/different API intervals/missing history",
+        "five misses, HOLD equality/after, invalid bypass, unknown side"
+      ]
+    },
+    {
+      "acceptance": "sole new owner; both calls attempted; successful side irreversible; unknown failed side; finite cleanup attempt/no restart until old group empty; request/API/process/plant flags separate",
+      "batch49_evidence": [],
+      "batch49_status": "not fully qualified for this owned runtime",
+      "current_M4_qualified": false,
+      "id": "publication_exit",
+      "required_cases": [
+        "clear/shutdown before/after submit; left/right partial API outcomes",
+        "worker death, active watchdog, capability lease and cleanup failed"
+      ]
+    },
+    {
+      "acceptance": "normal source/Witness/raw/Stored accounting complete, full startup/business/fallback/shutdown API stream; fault flags follow declared exception, extra unexplained loss/error/overrun fails",
+      "batch49_evidence": [
+        "postrun/actual_normal_audit_v1.json"
+      ],
+      "batch49_status": "normal-owned-outlet component passed; controlled recording faults pending",
+      "current_M4_qualified": false,
+      "id": "actual_source_recording",
+      "required_cases": [
+        "new isolated normal straight0.05 then controlled faults",
+        "log queue pressure, source/emit/bag counts and before/after assets"
+      ]
+    }
+  ],
+  "new_controlled_fault_runs_this_batch": 0,
+  "normal_owned_outlet_component_qualified": true,
+  "old39_42_identity_or_qualification_transferred_to_new_owner": false,
+  "parent_matrix": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/M4_fault_matrix_v1.json",
+  "parent_matrix_pin": {
+    "bytes": 6332,
+    "sha256": "58c7eccb51eb463a3012de09b4e78d4f4397317025d5618be4cf798a9d0fbd74"
+  },
+  "schema": "M4-current-owned-runtime-original-fault-coverage/v1"
+}

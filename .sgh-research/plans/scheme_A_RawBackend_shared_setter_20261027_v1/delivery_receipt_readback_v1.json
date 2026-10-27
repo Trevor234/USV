@@ -1,0 +1,22 @@
+{
+  "kind": "planning_delivery_receipt_readback",
+  "rounds": [
+    {
+      "round": 1,
+      "files": 7,
+      "exact_population": true,
+      "mismatches": []
+    },
+    {
+      "round": 2,
+      "files": 7,
+      "exact_population": true,
+      "mismatches": []
+    }
+  ],
+  "mirror": "/home/trevor/MPC/scheme_A_RawBackend_shared_setter_20261027_v1",
+  "files_verified": 7,
+  "source_inputs_still_match": 19,
+  "receipt_included": true,
+  "implementation_started": false
+}

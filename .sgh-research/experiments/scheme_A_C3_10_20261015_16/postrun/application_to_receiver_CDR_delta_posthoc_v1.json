@@ -1,0 +1,40 @@
+{
+  "schema": "C3.10-posthoc-CDR-boundary-delta/v1",
+  "preregistered_before_run": false,
+  "qualification_granted": false,
+  "data": [
+    {
+      "packet_index": 1,
+      "source_bytes": 589,
+      "wire_bytes": 592,
+      "source_header": "000100000f000000",
+      "wire_header": "000100000f000000",
+      "different_shared_offsets": [],
+      "wire_trailing_hex": "000000",
+      "app_sha256": "8b0374d059836b335d37a9ebe226cab14eccae98b74ac81d3c0cff7cd0a41510",
+      "wire_sha256": "7bc3bbacbd3b945e154fb85432b4175ab278bb5bd9c94ca765ef5d5d3a8e55eb"
+    },
+    {
+      "packet_index": 2,
+      "source_bytes": 589,
+      "wire_bytes": 592,
+      "source_header": "000100000f000000",
+      "wire_header": "000100000f000000",
+      "different_shared_offsets": [],
+      "wire_trailing_hex": "000000",
+      "app_sha256": "916631636020ea4fae4fb51258d30d5ade5aa1abf6f56a91d85665785dcefcaf",
+      "wire_sha256": "cfdb691a751668f5bf1901f0a4ae9a7267a6ccb42dabb9721b86aca285544648"
+    },
+    {
+      "packet_index": 3,
+      "source_bytes": 589,
+      "wire_bytes": 592,
+      "source_header": "000100000f000000",
+      "wire_header": "000100000f000000",
+      "different_shared_offsets": [],
+      "wire_trailing_hex": "000000",
+      "app_sha256": "8b0374d059836b335d37a9ebe226cab14eccae98b74ac81d3c0cff7cd0a41510",
+      "wire_sha256": "7bc3bbacbd3b945e154fb85432b4175ab278bb5bd9c94ca765ef5d5d3a8e55eb"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "first_historical_attempt": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_20261013_11/historical/attempt01/failure.json",
+    "reason": "checker conflated Source check and Witness commit timestamps",
+    "resolution": "source-linked bounded order plus exact ready/activation joins",
+    "source_snapshot_sha256": "f67ed2803365ce7aa8b75fc8b1725aa704a6c59f7944628db924adbc73aea251",
+    "status": "failed"
+  },
+  "native_attempts": {
+    "attempt01": "44 passed before guard refinements",
+    "attempt02": "50 passed before strict native decoder refinement",
+    "attempt03": "50 passed, final native decoder12 also passed"
+  },
+  "old_evidence_overwritten": false,
+  "old_expected_updated": false
+}

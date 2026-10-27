@@ -1,0 +1,360 @@
+{
+  "schema": "current-cross-run-recovery-evidence-gap/v1",
+  "inventory_audit_passed": true,
+  "links": [
+    {
+      "from_batch": 39,
+      "to_batch": 40,
+      "old_all_owned_groups_closed_before_new_prepare": true,
+      "role_changes": {
+        "observer": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 692158,
+          "new_pid": 706375,
+          "old_start_ticks": 42849061,
+          "new_start_ticks": 43193102
+        },
+        "worker": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 692129,
+          "new_pid": 706353,
+          "old_start_ticks": 42849037,
+          "new_start_ticks": 43193081
+        },
+        "publisher": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 692062,
+          "new_pid": 706284,
+          "old_start_ticks": 42848953,
+          "new_start_ticks": 43193035
+        },
+        "synthetic_source": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 692112,
+          "new_pid": 706333,
+          "old_start_ticks": 42849018,
+          "new_start_ticks": 43193062
+        },
+        "recorder": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 692059,
+          "new_pid": 706280,
+          "old_start_ticks": 42848951,
+          "new_start_ticks": 43193033
+        }
+      },
+      "Worker_instance_changed": true,
+      "new_gate_and_healthy_accepted_prefix": true,
+      "delta_to_new_prepare_ns": 3426338349605
+    },
+    {
+      "from_batch": 40,
+      "to_batch": 41,
+      "old_all_owned_groups_closed_before_new_prepare": true,
+      "role_changes": {
+        "observer": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 706375,
+          "new_pid": 744946,
+          "old_start_ticks": 43193102,
+          "new_start_ticks": 44209707
+        },
+        "worker": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 706353,
+          "new_pid": 744923,
+          "old_start_ticks": 43193081,
+          "new_start_ticks": 44209683
+        },
+        "publisher": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 706284,
+          "new_pid": 744856,
+          "old_start_ticks": 43193035,
+          "new_start_ticks": 44209638
+        },
+        "synthetic_source": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 706333,
+          "new_pid": 744901,
+          "old_start_ticks": 43193062,
+          "new_start_ticks": 44209665
+        },
+        "recorder": {
+          "same_registered_ELF": true,
+          "same_source_bundle": true,
+          "old_pid": 706280,
+          "new_pid": 744853,
+          "old_start_ticks": 43193033,
+          "new_start_ticks": 44209636
+        }
+      },
+      "Worker_instance_changed": true,
+      "new_gate_and_healthy_accepted_prefix": true,
+      "delta_to_new_prepare_ns": 10152578607428
+    }
+  ],
+  "current_same_ELF_fresh_identity_start_after_active39_and_V1_40_observed": true,
+  "exact_lease41_then_new_run_observed": false,
+  "new_actual_runs_for_this_audit": 0,
+  "selected_following_lease_recovery_qualified": false,
+  "remaining_exact_fact": "if final V2 requires recovery specifically after current lease41: one fresh run after its fully closed owned groups, healthy new identity and finite normal resource close",
+  "no_old_run_revival_already_proven": true,
+  "do_not_rerun_active_V1_or_lease_stimulus": true,
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/postrun/business_ordinary_actual_audit_v1.json": {
+      "bytes": 756894,
+      "sha256": "733adf06356383fabe2ee379b92752fdff6a7cd5265c2bb3f02aa56622e2c847"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/result.json": {
+      "bytes": 24113,
+      "sha256": "5540a0e817a8f0b07f7e56992a20e4c0d0eae01b624be017a6b6c30d5891fe93"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/owned_process_ledger.jsonl": {
+      "bytes": 35490,
+      "sha256": "521948272e085097cf58cf9b1928b0771dc5420a7060290e8cebbd5672068ade"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/observer/source.jsonl": {
+      "bytes": 2924949,
+      "sha256": "e24d15c213cce5de59f6dfcea37250a24ff30c22e3933a642d6543fcf181edd8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/observer/witness.json": {
+      "bytes": 9921,
+      "sha256": "1720dc9769940976d60f03e6176ef0e1f4f328bffbed443fcc069aba4710e2fe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/observer/owned_manifest.json": {
+      "bytes": 29651,
+      "sha256": "194fef8359840d66f0ffe34355a819d384e991162d3bc421ee273592f9ae1cc7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/worker/owned_manifest.json": {
+      "bytes": 10528,
+      "sha256": "3c4be9184d2d43d989f884ed8331e4424dad29dafd3e992b4669a995fbcd3c43"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/publisher/owned_manifest.json": {
+      "bytes": 27104,
+      "sha256": "777a46d664c001251c05bfaa2679c074fa3898632567ab779dd00b9902689a3c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13705,
+      "sha256": "586e5c77521231d57c405e2b98b12209f6455d1bb66f605591a07f0e08fb1518"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/recorder/owned_manifest.json": {
+      "bytes": 9168,
+      "sha256": "1d9cf5080117cebec2902b21208a0f00fea87edec186e856780e813dfef374db"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/postrun/current_V1_actual_audit_v1.json": {
+      "bytes": 867612,
+      "sha256": "49bbd9148b0bfdb979f454e96fc420490b38268313718b3969cef00b2a78ecc0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/result.json": {
+      "bytes": 24554,
+      "sha256": "89a7744ed3e2945b9e4d31f1c3e8e63ac56a86731b4f4e0bc6269b306b2a6f7b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/owned_process_ledger.jsonl": {
+      "bytes": 30770,
+      "sha256": "686f0026966cda3fcfdacd76c191c359d6b1db083c0c852dfbcefc840a66aff3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/observer/source.jsonl": {
+      "bytes": 1733545,
+      "sha256": "db93252d80a639c44984ce66d1c74f821180317c05dc671ff7b450212bdaf509"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/observer/witness.json": {
+      "bytes": 5800,
+      "sha256": "7c5f3a33fc23da2e4b02152b4401bfdd55ed3684cb822d225f2aa6d6cf44880a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/observer/owned_manifest.json": {
+      "bytes": 30602,
+      "sha256": "2ef69f266dcdd0f700f0b1f68192d66d2d4f074b950b64a63c39558bdd1aaa34"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/worker/owned_manifest.json": {
+      "bytes": 10304,
+      "sha256": "4464be676ee736fe4d7c326dea1ae85ee0d06568652c75f5aaa2bf44a1b3f426"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/publisher/owned_manifest.json": {
+      "bytes": 27042,
+      "sha256": "d3f47a8a866d3dea11eea5893229d2bc895a46dd9bc7b4be7a0dc6e5c2f96891"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13636,
+      "sha256": "2361bb9a5b82b53385d3019b54ff4377e2f74f0f8316c2a702e1d8ee14377be3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/recorder/owned_manifest.json": {
+      "bytes": 9135,
+      "sha256": "67efb80a41942d6c373b4cdb06bbc0eb29e66047cec3edc0571c8003f802c39d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/postrun/ordinary_lease_actual_audit_v1.json": {
+      "bytes": 872511,
+      "sha256": "e2d6d742869e29878856c1edfe506a23a5c029dded4a0126f61241af70d70c17"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/result.json": {
+      "bytes": 29935,
+      "sha256": "b46fef3e543d7c412798e93396c299478e8e49da58a72af7f9571e6cadffdaf8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/owned_process_ledger.jsonl": {
+      "bytes": 35888,
+      "sha256": "07ed87019878c558a707ddb00ddeac5dc6c32ff59f0fd19b8036137849013b41"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/observer/source.jsonl": {
+      "bytes": 2709580,
+      "sha256": "30da5c098e8eb31896045bea5652a35fcfadd4b98e715f4aa36af4c9b38c40f5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/observer/witness.json": {
+      "bytes": 9041,
+      "sha256": "99176d94abe0dc92f8c71ad960cf8872d043cab0691b76950139f09f05800e4e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/observer/owned_manifest.json": {
+      "bytes": 30712,
+      "sha256": "b3791109d3bad1b3e69a9960bdcd2dc0836424cd089fb15fdf8b0ebae711aca7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/worker/owned_manifest.json": {
+      "bytes": 10214,
+      "sha256": "ae339ccc0aec964ac92a7fe340c102eb06322266b14fff87b640cb2ffa82e39e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/publisher/owned_manifest.json": {
+      "bytes": 26999,
+      "sha256": "94d8c988d73cf61bd62729c36128f60a9f5932d8f73ec635e46a84ad50cbd9fa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13485,
+      "sha256": "972ee3e545e9254814332abec68ceecdca0e31f2dcf3425cc3aeab22aded2d69"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/recorder/owned_manifest.json": {
+      "bytes": 9098,
+      "sha256": "af8fa31737009dea9b4edb389dccd42c117c08fb81a8cd978bd6191639b6cf9c"
+    }
+  },
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/postrun/business_ordinary_actual_audit_v1.json": {
+      "bytes": 756894,
+      "sha256": "733adf06356383fabe2ee379b92752fdff6a7cd5265c2bb3f02aa56622e2c847"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/result.json": {
+      "bytes": 24113,
+      "sha256": "5540a0e817a8f0b07f7e56992a20e4c0d0eae01b624be017a6b6c30d5891fe93"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/owned_process_ledger.jsonl": {
+      "bytes": 35490,
+      "sha256": "521948272e085097cf58cf9b1928b0771dc5420a7060290e8cebbd5672068ade"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/observer/source.jsonl": {
+      "bytes": 2924949,
+      "sha256": "e24d15c213cce5de59f6dfcea37250a24ff30c22e3933a642d6543fcf181edd8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/observer/witness.json": {
+      "bytes": 9921,
+      "sha256": "1720dc9769940976d60f03e6176ef0e1f4f328bffbed443fcc069aba4710e2fe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/observer/owned_manifest.json": {
+      "bytes": 29651,
+      "sha256": "194fef8359840d66f0ffe34355a819d384e991162d3bc421ee273592f9ae1cc7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/worker/owned_manifest.json": {
+      "bytes": 10528,
+      "sha256": "3c4be9184d2d43d989f884ed8331e4424dad29dafd3e992b4669a995fbcd3c43"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/publisher/owned_manifest.json": {
+      "bytes": 27104,
+      "sha256": "777a46d664c001251c05bfaa2679c074fa3898632567ab779dd00b9902689a3c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13705,
+      "sha256": "586e5c77521231d57c405e2b98b12209f6455d1bb66f605591a07f0e08fb1518"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/runs/business_active_01/recorder/owned_manifest.json": {
+      "bytes": 9168,
+      "sha256": "1d9cf5080117cebec2902b21208a0f00fea87edec186e856780e813dfef374db"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/postrun/current_V1_actual_audit_v1.json": {
+      "bytes": 867612,
+      "sha256": "49bbd9148b0bfdb979f454e96fc420490b38268313718b3969cef00b2a78ecc0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/result.json": {
+      "bytes": 24554,
+      "sha256": "89a7744ed3e2945b9e4d31f1c3e8e63ac56a86731b4f4e0bc6269b306b2a6f7b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/owned_process_ledger.jsonl": {
+      "bytes": 30770,
+      "sha256": "686f0026966cda3fcfdacd76c191c359d6b1db083c0c852dfbcefc840a66aff3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/observer/source.jsonl": {
+      "bytes": 1733545,
+      "sha256": "db93252d80a639c44984ce66d1c74f821180317c05dc671ff7b450212bdaf509"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/observer/witness.json": {
+      "bytes": 5800,
+      "sha256": "7c5f3a33fc23da2e4b02152b4401bfdd55ed3684cb822d225f2aa6d6cf44880a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/observer/owned_manifest.json": {
+      "bytes": 30602,
+      "sha256": "2ef69f266dcdd0f700f0b1f68192d66d2d4f074b950b64a63c39558bdd1aaa34"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/worker/owned_manifest.json": {
+      "bytes": 10304,
+      "sha256": "4464be676ee736fe4d7c326dea1ae85ee0d06568652c75f5aaa2bf44a1b3f426"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/publisher/owned_manifest.json": {
+      "bytes": 27042,
+      "sha256": "d3f47a8a866d3dea11eea5893229d2bc895a46dd9bc7b4be7a0dc6e5c2f96891"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13636,
+      "sha256": "2361bb9a5b82b53385d3019b54ff4377e2f74f0f8316c2a702e1d8ee14377be3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/author/runs/final_V1_01/recorder/owned_manifest.json": {
+      "bytes": 9135,
+      "sha256": "67efb80a41942d6c373b4cdb06bbc0eb29e66047cec3edc0571c8003f802c39d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/postrun/ordinary_lease_actual_audit_v1.json": {
+      "bytes": 872511,
+      "sha256": "e2d6d742869e29878856c1edfe506a23a5c029dded4a0126f61241af70d70c17"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/result.json": {
+      "bytes": 29935,
+      "sha256": "b46fef3e543d7c412798e93396c299478e8e49da58a72af7f9571e6cadffdaf8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/owned_process_ledger.jsonl": {
+      "bytes": 35888,
+      "sha256": "07ed87019878c558a707ddb00ddeac5dc6c32ff59f0fd19b8036137849013b41"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/observer/source.jsonl": {
+      "bytes": 2709580,
+      "sha256": "30da5c098e8eb31896045bea5652a35fcfadd4b98e715f4aa36af4c9b38c40f5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/observer/witness.json": {
+      "bytes": 9041,
+      "sha256": "99176d94abe0dc92f8c71ad960cf8872d043cab0691b76950139f09f05800e4e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/observer/owned_manifest.json": {
+      "bytes": 30712,
+      "sha256": "b3791109d3bad1b3e69a9960bdcd2dc0836424cd089fb15fdf8b0ebae711aca7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/worker/owned_manifest.json": {
+      "bytes": 10214,
+      "sha256": "ae339ccc0aec964ac92a7fe340c102eb06322266b14fff87b640cb2ffa82e39e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/publisher/owned_manifest.json": {
+      "bytes": 26999,
+      "sha256": "94d8c988d73cf61bd62729c36128f60a9f5932d8f73ec635e46a84ad50cbd9fa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13485,
+      "sha256": "972ee3e545e9254814332abec68ceecdca0e31f2dcf3425cc3aeab22aded2d69"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/author/runs/ordinary_lease_01/recorder/owned_manifest.json": {
+      "bytes": 9098,
+      "sha256": "af8fa31737009dea9b4edb389dccd42c117c08fb81a8cd978bd6191639b6cf9c"
+    }
+  },
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

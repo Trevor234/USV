@@ -1,0 +1,1 @@
+A_FIXED_MODULE = 2

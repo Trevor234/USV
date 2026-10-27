@@ -1,0 +1,36 @@
+{
+  "native_copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/native_negatives_rejected_02/coherent_duplicate_accepted_registration",
+  "input_sha256": {
+    "inputs.json": "ce5dc27cbe58a723d7d571dd5272818026dd3900aeca4ac06fa0aba281aaf495",
+    "result.json": "6dede09032878cffad8bab667ed6abcafed412d3beb6531d2cdedace4dd04fc6",
+    "topics.json": "412e36378b5ca4df5f653c7d8c831495d5ef0dec12dcac3b35f5ef3327e49d08",
+    "observer/source.jsonl": "c1d789b08f734c7c6681d8232ea7b83f3ae620552d4e354b36ed78c115cbc7af",
+    "worker/source.jsonl": "28a279531d6424bb7a2a3490eef8db983e21fe6827a1793401efc67e250c87ab",
+    "observer/witness.json": "cd1d6ef4d7330d25203872caa4d204a90944e59e848f5d00449c615d9495383e",
+    "synthetic_source/transport_source.jsonl": "99d01c9586a479b7f64b9f96ba749a9c5398de3ca8e33458045639646f3fa909",
+    "publisher/owned_manifest.json": "4fec63394604c8a880b5a833b687542b374871e1f0387f9a99235124d1436279",
+    "worker/owned_manifest.json": "00394bb5ef7b773096ab0dedf6a306671195739c0e91c1bac0e6ead0f24c4b7a",
+    "observer/owned_manifest.json": "749438e44d0e3e61b283e92cf91565a92b04c9776cf144fe11e520b2679251f4",
+    "synthetic_source/owned_manifest.json": "9cf1f1605a3d408b43009abe2b8962acec997b73d7d54477318280cc7e6b76bf",
+    "recorder/owned_manifest.json": "c63db653e53c9ffed61692a5343fed7039277668127f7587810d0220f2b1efc0",
+    "recorder/bag/bag_0.db3": "7c0285ed1a2ad001581c77e9e14d8b5d093d57987fbb0d3e0a49b5cc3d4bceb8",
+    "recorder/bag/metadata.yaml": "74a05dcd282cefdeba2dc70aa9547ea620dadc2694ae736fc86312e3fa351e3f"
+  },
+  "original_input_sha256": {
+    "inputs.json": "ce5dc27cbe58a723d7d571dd5272818026dd3900aeca4ac06fa0aba281aaf495",
+    "result.json": "6dede09032878cffad8bab667ed6abcafed412d3beb6531d2cdedace4dd04fc6",
+    "topics.json": "412e36378b5ca4df5f653c7d8c831495d5ef0dec12dcac3b35f5ef3327e49d08",
+    "observer/source.jsonl": "c7936dea77dadca3c7636898cd60e801cba0be04d80d61f74b2edc642d9a93df",
+    "worker/source.jsonl": "28a279531d6424bb7a2a3490eef8db983e21fe6827a1793401efc67e250c87ab",
+    "observer/witness.json": "cd1d6ef4d7330d25203872caa4d204a90944e59e848f5d00449c615d9495383e",
+    "synthetic_source/transport_source.jsonl": "99d01c9586a479b7f64b9f96ba749a9c5398de3ca8e33458045639646f3fa909",
+    "publisher/owned_manifest.json": "4fec63394604c8a880b5a833b687542b374871e1f0387f9a99235124d1436279",
+    "worker/owned_manifest.json": "00394bb5ef7b773096ab0dedf6a306671195739c0e91c1bac0e6ead0f24c4b7a",
+    "observer/owned_manifest.json": "749438e44d0e3e61b283e92cf91565a92b04c9776cf144fe11e520b2679251f4",
+    "synthetic_source/owned_manifest.json": "9cf1f1605a3d408b43009abe2b8962acec997b73d7d54477318280cc7e6b76bf",
+    "recorder/owned_manifest.json": "c63db653e53c9ffed61692a5343fed7039277668127f7587810d0220f2b1efc0",
+    "recorder/bag/bag_0.db3": "7c0285ed1a2ad001581c77e9e14d8b5d093d57987fbb0d3e0a49b5cc3d4bceb8",
+    "recorder/bag/metadata.yaml": "74a05dcd282cefdeba2dc70aa9547ea620dadc2694ae736fc86312e3fa351e3f"
+  },
+  "lock_semantics": "retrospective altered native-copy identity; not original authenticity"
+}

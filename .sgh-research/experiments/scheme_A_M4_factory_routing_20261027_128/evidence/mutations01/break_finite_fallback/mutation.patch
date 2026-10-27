@@ -1,0 +1,11 @@
+--- original
++++ break_finite_fallback
+@@ -77,7 +77,7 @@
+ 
+ #ifdef USV_MPC_HAS_CASADI
+   // 2. 回退 CasADi (仅当构建时 ABI 探针通过, 见 CMakeLists)
+-  return make_casadi_dynamic_mpc(params);
++  throw std::runtime_error("mutation_disabled_fallback");
+ #else
+   std::fprintf(stderr,
+                "[usv_mpc_cpp] CasADi fallback 未编译进本构建, 无可用求解器后端\n");

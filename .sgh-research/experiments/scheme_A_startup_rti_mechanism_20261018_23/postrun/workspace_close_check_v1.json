@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "full_final_proof_sha256": "25924d036627c9690c250ffc8c4035d129bcb164651763d05d5baf7372e0b2e6",
+  "checked_monotonic_ns": 276147554637034,
+  "business_diff_sha256": "d901511293df5be4aecb988509e4c4107977dc7c05f042286869c36e0a239ba5",
+  "business_diff_bytes": 151961,
+  "HEAD": "78999cf380c0b0dd7f545e4dc8103b7c4c2f7b15",
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "staged_all_diff_bytes": 0,
+  "workspace_projection_matches_full_final_proof": true,
+  "declared_real_launch_delta_still_exact": true,
+  "full_old_asset_stream_repeated": false,
+  "stage_qualified": false
+}

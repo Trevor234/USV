@@ -1,0 +1,17 @@
+{
+  "schema": "current-normal-source20s-launch-v1",
+  "run_id": "normal_source20s_02",
+  "returncode": 2,
+  "started_ns": 462946322836742,
+  "finished_ns": 462977203036578,
+  "elapsed_ns": 30880200199,
+  "inputs_unchanged": true,
+  "source_lock": {
+    "bytes": 547388,
+    "sha256": "8780a65c611109fd6d321ce391262f2b134265e5fa165cce483f4f2e6c328da2"
+  },
+  "external_timeout_triggered": false,
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

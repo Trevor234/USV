@@ -1,0 +1,22 @@
+{
+  "schema": "M4-G0-P01-corrected-verdict-v83",
+  "recorded_at": "2026-10-25T17:34:17.278618+08:00",
+  "p01_original_registered_audit": {
+    "result": "12/13, rc2, passed=false",
+    "registered_audit_sha256": "72644f6a7cc2c058d87b242e989e9364874877973d9d03341debd8660de03946",
+    "failing_check": "trigger_phase_is_inflight_or_ready (job_received not in allowed phases at registered version)",
+    "current_audit_sha256": "170bf7476522d605a071b58f7dc112108469b42fed83f604312582f711a17bd6",
+    "current_result": "13/13, rc0, passed=true",
+    "diff": "one line: allowed phases for T2-B trigger check gained job_received"
+  },
+  "p01_observation": {
+    "timely_replace_old_job_rejection": "ESTABLISHED",
+    "timeline": "job_received→boundary_entered→fixture_action→task3_commit→release→C_entry_guard→candidate_publish→version_mismatch_rejection, all within 150ms deadline",
+    "output_stored_integrity": "complete (Decision/API/Applied 1-29 continuous in both Source and Stored)"
+  },
+  "t2b_family_status": "NOT closed: clear/new-generation-positive/expired-negative-control remain",
+  "t2c_status": "not ready: C timing and target guard observability must be repaired first",
+  "t2a_status": "partial evidence retained; audit predicates need repair before re-evidence",
+  "m4_f6_p1_plant_hardrealtime": "all false",
+  "production_B": "MANUAL + RC override"
+}

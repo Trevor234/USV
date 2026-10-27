@@ -1,0 +1,29 @@
+{
+  "schema": "M4-G4C-status-v88",
+  "recorded_at": "2026-10-25T18:06:36.687213+08:00",
+  "offline_proof": "C positive control PASS (batch 87); negative controls verified (batch 84 17/17)",
+  "execution_attempts": 6,
+  "blocking_issues": [
+    {
+      "attempt": "run03",
+      "error": "Driver tool identity mismatch",
+      "cause": "driver file SHA changed after diagnostic_case fix; registry had old SHA"
+    },
+    {
+      "attempt": "run05",
+      "error": "recorder bundle mismatch",
+      "cause": "recorder role accidentally updated to new bundle; restored to 66th batch"
+    },
+    {
+      "attempt": "run06",
+      "error": "compiled Driver tool SHA",
+      "cause": "ELF baked old driver SHA; requires full re-freeze"
+    },
+    {
+      "freeze": "runs directory mismatch",
+      "cause": "freeze script registrations point to wrong runs dir; tree is in batch85 but script runs from batch87"
+    }
+  ],
+  "resolution": "re-freeze with correct TREE absolute path + correct RUNS directory; requires freeze script parameterization fix",
+  "owned_runs": 0
+}

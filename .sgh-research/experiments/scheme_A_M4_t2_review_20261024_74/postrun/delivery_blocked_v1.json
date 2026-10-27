@@ -1,0 +1,18 @@
+{
+  "schema": "M4-T2-review-delivery-pending-v74",
+  "review_complete": true,
+  "source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_review_20261024_74",
+  "intended_mirror": "/home/trevor/MPC/scheme_A_M4_t2_review_20261024_74",
+  "status": "permission_review_timed_out_twice_before_process_creation",
+  "attempts": [
+    {"exec_cell": "440", "outcome": "automatic approval review did not finish before its deadline"},
+    {"exec_cell": "443", "outcome": "one permitted retry; same deadline timeout"}
+  ],
+  "delivery_script_started": false,
+  "mirror_created": false,
+  "safety_rejection_asserted": false,
+  "review_and_evidence_available_in_source": true,
+  "next": "obtain effective system approval for the requested out-of-workspace MPC write; run create-only mirror and SHA readback",
+  "owned_runs": 0,
+  "qualification_unchanged": {"M4": false, "F6": false, "P1": false, "plant": false, "hard_realtime": false}
+}

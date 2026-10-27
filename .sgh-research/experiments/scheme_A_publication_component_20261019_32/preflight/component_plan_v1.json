@@ -1,0 +1,32 @@
+{
+  "schema": "publication-component-preflight/v1",
+  "started_monotonic_ns": 373636750653689,
+  "scope": "source-derived component and compile only",
+  "selected_plan": "A_extract_existing_publication_and_shutdown_result_semantics_reuse_fallback",
+  "alternatives": {
+    "B": "current observation-only CommandAnchor is not a ROS send-result collector",
+    "C": "new live execute/M4 experiment lacks prior final-version qualification"
+  },
+  "go_for_component_build": true,
+  "new_control_experiment_submitted": false,
+  "execute_enabled": false,
+  "physical_release_enabled": false,
+  "build_attempt_limit": 3,
+  "repair_limit": 2,
+  "component_wall_budget_s": 120,
+  "output_budget_bytes": 104857600,
+  "build_parallel_jobs": 2,
+  "required_cases": [
+    "both success",
+    "left success/right failure",
+    "left failure/right still attempted",
+    "per-side start anchors/rate/gap/span boundaries",
+    "unknown previous side",
+    "600ms hold expiration and no refresh by republish",
+    "five misses follow existing rate-limited fallback",
+    "shutdown request versus successful zero pair"
+  ],
+  "original_fallback_changed": false,
+  "stage_qualified": false,
+  "research_conclusion": false
+}

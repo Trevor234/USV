@@ -1,0 +1,13 @@
+{
+  "client_date": "2026-10-13",
+  "review_source_pins": 15,
+  "N9_frozen_pairs": 136,
+  "N9_pair_reads": 272,
+  "input_drift": [],
+  "business_diff_bytes": 151961,
+  "business_diff_sha256": "d901511293df5be4aecb988509e4c4107977dc7c05f042286869c36e0a239ba5",
+  "business24_matches_before": true,
+  "staged_diff_bytes": 0,
+  "older3864_guard_requalified": false,
+  "old_expected_updated": false
+}

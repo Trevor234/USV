@@ -1,0 +1,59 @@
+{
+  "schema": "p1-B0-cpp-deployment-v1",
+  "host_before": {
+    "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+    "monotonic_ns": 1155983297591805,
+    "existing_controller_gazebo_count": 0,
+    "unreadable_cmdline_count": 0
+  },
+  "guard_before": {
+    "manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_prelaunch_assets_20261007.json",
+    "manifest_sha256": "d2a4b4d348fe30c05118e83fc057c591781c40a44379b4f8d952e5dfe5931a98",
+    "count": 1196,
+    "drift": []
+  },
+  "old_binaries": {
+    "p1_solver_worker": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26",
+    "p1_regulator": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258"
+  },
+  "files": {
+    "protocol.hpp": {
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "bytes": 6581,
+      "old_sha256": "5cab0d978cb9ab3ebc08b649a7915e302b14a1723776750849ddda416c24457b"
+    },
+    "regulator.cpp": {
+      "sha256": "1163a651580bde314e8b450d39213c1691187fbe977debe63a0366c6e027eb8c",
+      "bytes": 51966,
+      "old_sha256": "77a7d3f5eec5d3717a3b91460bcd7fedece7246c5229cc1bb7a1cacd3c1cf8e1"
+    },
+    "p1_resources.hpp": {
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+      "bytes": 13624,
+      "old_sha256": "6df0fe47c5863e23df6cf6c5cc38e3644eaf971a869e929195a409d33e9b8a1a"
+    },
+    "CMakeLists.txt": {
+      "sha256": "9bce508522b5d12d2f6cde7e40ce58daf43d243e9c1bd3f44188e3684435ec5f",
+      "bytes": 3179,
+      "old_sha256": "96943d1c07f0a846805fb4d8239a8f3b6686bb82f588a29f25a5ff082d6ffe19"
+    },
+    "p1_full_contract.hpp": {
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea",
+      "bytes": 11798,
+      "old_sha256": null
+    },
+    "contract_validate_cli.cpp": {
+      "sha256": "2c651fca5e61fce7f1e10c39d8ebfb91a4cb5af6542cd5d3079964edd44f05e6",
+      "bytes": 595,
+      "old_sha256": null
+    },
+    "test_p1_full_contract.cpp": {
+      "sha256": "8366e881382fd9ea93a3f90d1fc144670f247c4a03c3eb28976bcc9f5bc0d69c",
+      "bytes": 4994,
+      "old_sha256": null
+    }
+  },
+  "backup": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/v13_before_contract_B0_20261007",
+  "source_archive": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v14_contract_20261007",
+  "physical_release_enabled": false
+}

@@ -1,0 +1,57 @@
+{
+  "CXX_builds": 0,
+  "V2_interface_plan_not_execution": true,
+  "actual_new_control_runs": 0,
+  "adapter_cases": 9,
+  "current_MPC_delivery_pending_at_QA": true,
+  "delivery_authority": "delivery_verification.json",
+  "execute_qualified": false,
+  "finalization_cases": 8,
+  "new_driver_executed_live": false,
+  "normal_close_qualified": false,
+  "old_asset_final_pin": {
+    "bytes": 22430308,
+    "sha256": "95954b262c1dbb4b6cc35b9d16e3c1f3504e6cf1cab3717a99e69d01f3b90793"
+  },
+  "old_asset_initial_pin": {
+    "bytes": 22423713,
+    "sha256": "0cdbe5cb60f044fe36738be97bf3aa8aa096c692e0e44aaeb4554f5594fd9f80"
+  },
+  "old_local_bytes_rechecked": 5382874541,
+  "old_local_paths_rechecked": 43114,
+  "original_V1_first_gate": false,
+  "original_V1_repaired_gate": true,
+  "original_normal_close_branch_byte_identical": true,
+  "original_normal_reports_both_false": true,
+  "passed": true,
+  "passed_scope": "archive integrity, existing-raw fault closure audit and offline driver/component checks",
+  "research_conclusion": false,
+  "retrospective_fault_close_cases": 2,
+  "schema": "SchemeA-batch34-final-offline-QA/v1",
+  "stage_qualified": false,
+  "targeted_rejected": 25,
+  "tested_source_pins": {
+    "audit_existing_runs_v1.py": {
+      "bytes": 7896,
+      "sha256": "dd30938613e584f0190ed2ec33ba2770a6da39ff421f71fafeb2d6c55aa406a8"
+    },
+    "author/fault_self_close_v1.py": {
+      "bytes": 15575,
+      "sha256": "689054039b2555456a63dca9d08dd8cadd82969e81c9adf122b1dca3795e7aa8"
+    },
+    "author/prepare_pair_wakeup_v1.py": {
+      "bytes": 59777,
+      "sha256": "68d6e149407c7e0a1b8efcbad3fbb33a6c8d396ff1ad13055fe9be731db4dbba"
+    },
+    "implementation/check_fault_self_close_v1.py": {
+      "bytes": 17170,
+      "sha256": "911d7e606e7b5c307446268e64f6fa99149b7d1e21d02250bfa0e7aced745762"
+    },
+    "test_fault_self_close_v1.py": {
+      "bytes": 15997,
+      "sha256": "bd64ee4d9547fe31265f56338ac748e2e12f56776802cf5cd38700246ecb0c46"
+    }
+  },
+  "true_plant_qualified": false,
+  "unchanged_copied_parent_files": 199
+}

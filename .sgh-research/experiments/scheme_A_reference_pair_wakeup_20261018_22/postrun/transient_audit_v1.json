@@ -1,0 +1,24 @@
+{
+  "RMSE_new_over_parent": 0.9425584373878958,
+  "actual_first2s_SSE": 0.07783717116347688,
+  "actual_positive_retry_branch_proven_in_this_wire_run": false,
+  "actual_total_SSE": 0.08639293248001022,
+  "allowed_total_SSE": 0.05535943040679929,
+  "audit_passed": true,
+  "first2s_over_whole_allowed_SSE": 1.4060327317586863,
+  "frozen_RMSE_limit_m_s": 0.007392495755251466,
+  "old_new_first_command_latency_s": [
+    0.359828945,
+    0.278423407
+  ],
+  "old_new_max_surge_m_s": [
+    0.06472005598104168,
+    0.06359795738961987
+  ],
+  "post_hoc_diagnostic": true,
+  "research_conclusion": false,
+  "schema": "scheme-A-reference-pair-wakeup-transient-audit/v1",
+  "sole_cause_of_RMSE_change_identified": false,
+  "stage_qualified": false,
+  "whole_RMSE_lower_bound_if_remaining_samples_perfect": 0.008765744327014746
+}

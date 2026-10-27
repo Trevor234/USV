@@ -1,0 +1,59 @@
+{
+  "M4_qualified": false,
+  "checks": {
+    "M4_obligations_separate_and_unqualified": true,
+    "all_84_fields_and_19_hydro_present": true,
+    "all_pending8_parameter_source_ids_present": true,
+    "both_offline_builds_and_selected_v2_entry_succeeded": true,
+    "current_normal20s_selected_component_complete": true,
+    "fault40_41_42_case_specific_evidence_retained": true,
+    "first_failed_entry_test_and_implementation_v1_retained": true,
+    "formal_prepare45_already_closed": true,
+    "matrix_and_timelines_registered_before_M4": true,
+    "new_256_profile_cases_and_92_entry_cases_passed": true,
+    "new_profile_only_four_declared_string_fields_changed": true,
+    "new_schema_or_control_numeric_tuning_absent": true,
+    "old_385_raw_cases_retained_and_passed": true,
+    "old_workspace_and_archives_preserved_before_work": true,
+    "original_M0b_allows_shadow_calibration_without_first_execute": true,
+    "physical_release_stays_false": true,
+    "same_source_generation_five_exact_outputs": true,
+    "selected_B4_eight_policy_sources_complete": true,
+    "startup_gap_failure_not_relabelled": true
+  },
+  "input_sha256": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B4_finite_scope_review_20261020_43/implementation/B4_selected_policy_review_v1.json": {
+      "bytes": 29643,
+      "sha256": "89a0b72bebe640e122ad32c147411d62e2122d246f8e069c1a9a0800e0d4930c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/implementation/B5_candidate_evidence_ledger_v1.json": {
+      "bytes": 11578,
+      "sha256": "548abe842359cb0a1ff779cbd4aea672432b62aea8bdb1b3bbccf1af30c7db95"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/prepare_freeze_artifacts_v1.py": {
+      "bytes": 14637,
+      "sha256": "26dcbd325de64efda7f6dbd0ed09abc3388e60d3c35056953f92c3c17e5d60ef"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/entry_policy_cases_v1.json": {
+      "bytes": 223906,
+      "sha256": "c037e3d0f5038faa43fed73203c89a7d98fc893a8b8a0e1eff4a88495bf7f97b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/entry_policy_cases_v2.json": {
+      "bytes": 237560,
+      "sha256": "8cbcfd0ec1fb2614f291b57bfde2528b16a4cd543854bae139cd2f39dcc90402"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/profile_parity_v1.json": {
+      "bytes": 712747,
+      "sha256": "fa96720f4ee009d21b31bdc2d1178fbd88d94822ff621b6e6da6e5def172e1fe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/reproduce_generation_v1.json": {
+      "bytes": 4986,
+      "sha256": "20258b6ba6a4bc855c6eef9092b7e358b09bada87be30a26e297f01fd570d510"
+    }
+  },
+  "passed": true,
+  "physical_execute_release_enabled": false,
+  "research_conclusion": false,
+  "schema": "P1-M0b-selected-engineering-freeze-conditions/v1",
+  "scope": "eligible for immutable engineering contract/policy submission; actual sealed index and package still require independent verification"
+}

@@ -1,0 +1,271 @@
+{
+  "cases": [
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "original_validate_contract",
+      "result": null
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "name": "empty_identity_and_record_pins",
+      "result": null
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "name": "component_required_subset",
+      "result": null
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "name": "phase_dependencies_component_only",
+      "result": null
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "name": "budget_rule_adapter_removed",
+      "result": null
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "name": "deferred_rules_population_removed",
+      "result": null
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": false,
+      "name": "failed_registered_job_excluded_component_and_phase_pass",
+      "result": {
+        "component_acceptance_passed": true,
+        "component_status": "passed",
+        "qualification_limit": "this contract profile accepts bounded frozen shadow components only; stage support requires a new execution contract",
+        "qualifications": {
+          "B4": false,
+          "B5": false,
+          "C3_general": false,
+          "D1": false,
+          "F6": false,
+          "M0b": false,
+          "M4": false,
+          "P1": false,
+          "dynamic_20s_R5": false,
+          "execute": false,
+          "mixed_turn": false,
+          "research_conclusion": false,
+          "strict_full_chain": false,
+          "true_master_clock": false
+        },
+        "stages": {
+          "B4": {
+            "all_required_passed": true,
+            "profile_supports_phase_qualification": false,
+            "qualified": false,
+            "required": [
+              "identity_closure"
+            ],
+            "status": "passed"
+          },
+          "B5": {
+            "all_required_passed": true,
+            "profile_supports_phase_qualification": false,
+            "qualified": false,
+            "required": [
+              "identity_closure"
+            ],
+            "status": "passed"
+          },
+          "M0b": {
+            "all_required_passed": true,
+            "profile_supports_phase_qualification": false,
+            "qualified": false,
+            "required": [
+              "identity_closure"
+            ],
+            "status": "passed"
+          },
+          "M4": {
+            "all_required_passed": true,
+            "profile_supports_phase_qualification": false,
+            "qualified": false,
+            "required": [
+              "identity_closure"
+            ],
+            "status": "passed"
+          }
+        }
+      }
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: registered_job_dataset_arguments_differ",
+      "expected_acceptance": false,
+      "name": "registered_job_dataset_tamper",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_True",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_False",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_1",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_0",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_None",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_[]",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_{}",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_'not-run'",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: exact_four_state_required",
+      "expected_acceptance": false,
+      "name": "four_state_reject_'Passed'",
+      "result": null
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "result_exact_bool_True",
+      "result": "passed"
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "result_exact_bool_False",
+      "result": "failed"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: checker_result_exact_boolean",
+      "expected_acceptance": false,
+      "name": "result_exact_bool_1",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: checker_result_exact_boolean",
+      "expected_acceptance": false,
+      "name": "result_exact_bool_0",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: checker_result_exact_boolean",
+      "expected_acceptance": false,
+      "name": "result_exact_bool_None",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: checker_result_exact_boolean",
+      "expected_acceptance": false,
+      "name": "result_exact_bool_'true'",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: subprocess_returncode_exact_integer",
+      "expected_acceptance": false,
+      "name": "returncode_exact_int_True",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: subprocess_returncode_exact_integer",
+      "expected_acceptance": false,
+      "name": "returncode_exact_int_False",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: subprocess_returncode_exact_integer",
+      "expected_acceptance": false,
+      "name": "returncode_exact_int_'0'",
+      "result": null
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: subprocess_returncode_exact_integer",
+      "expected_acceptance": false,
+      "name": "returncode_exact_int_None",
+      "result": null
+    }
+  ],
+  "contract": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/acceptance_contract_v1.json",
+    "sha256": "6fb11afaf7c0372792ff78d2980c3b40605e16cce7b10e1c598843ea01940382"
+  },
+  "schema": "scheme-A-C3.5-independent-semantic-review/v1",
+  "scope": "pure in-memory validate_contract/assess/report_result; no runtime or original input modification; no complete acceptance rerun",
+  "source_pins": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/acceptance_core_v1.py",
+      "sha256": "9ff60cc3840b3a8b8998c4ed4db5b26897450697f3cc1999da4784d62cdef76a"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/check_acceptance_v1.py",
+      "sha256": "4d859e00e19453645625d924c0dcb1dbd8b4a5d54584ac3a7753f3c25d8339d1"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/generate_acceptance_contract_v1.py",
+      "sha256": "c3cd010ade4cad2ea80ae8376eef01a5ce490b190780e92dbdb124c3fd6fd091"
+    }
+  ]
+}

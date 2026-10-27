@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="7" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-06T17:18:30.668" name="AllTests">
+  <testsuite name="PreparationBarrier" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-06T17:18:30.668">
+    <testcase name="DisabledDefault" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp" line="4" status="run" result="completed" time="0." timestamp="2026-10-06T17:18:30.668" classname="usv_research_safety_cpp.PreparationBarrier" />
+    <testcase name="ThirdTakeOnly" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp" line="8" status="run" result="completed" time="0." timestamp="2026-10-06T17:18:30.668" classname="usv_research_safety_cpp.PreparationBarrier" />
+    <testcase name="RejectNegative" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp" line="13" status="run" result="completed" time="0." timestamp="2026-10-06T17:18:30.668" classname="usv_research_safety_cpp.PreparationBarrier" />
+    <testcase name="RejectBeyondFiniteBound" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp" line="16" status="run" result="completed" time="0." timestamp="2026-10-06T17:18:30.668" classname="usv_research_safety_cpp.PreparationBarrier" />
+    <testcase name="RejectExecute" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp" line="19" status="run" result="completed" time="0." timestamp="2026-10-06T17:18:30.668" classname="usv_research_safety_cpp.PreparationBarrier" />
+    <testcase name="RejectShadow" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp" line="22" status="run" result="completed" time="0." timestamp="2026-10-06T17:18:30.668" classname="usv_research_safety_cpp.PreparationBarrier" />
+    <testcase name="RejectDisabledFaultContract" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_preparation_barrier.cpp" line="25" status="run" result="completed" time="0." timestamp="2026-10-06T17:18:30.668" classname="usv_research_safety_cpp.PreparationBarrier" />
+  </testsuite>
+</testsuites>

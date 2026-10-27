@@ -1,0 +1,41 @@
+{
+  "schema": "N4-N5-gate/v1",
+  "batch": 110,
+  "date": "2026-10-25",
+  "n4": {
+    "condition_source": "batch 67 next plan (N4)",
+    "conjunct_sequence_precondition_m4": "NOT_MET (M4 stage qualification false per batch 106 N3 adjudication)",
+    "conjunct_technical_content": {
+      "verdict": "COMPONENT_EVIDENCED",
+      "evidence": ["batch 108 run 6/6 (F6-1 bit-exact diff=0.0 vs production AcadosBackend)",
+                    "batch 109 audit 11/11 with production-library SHA baseline"],
+      "duties": {"setter_paths_NX8_NU2_N20_NP6_NPG30": "evidenced",
+                 "prepare_atomic_commit": "evidenced", "fixed_tick_activation": "evidenced",
+                 "stale_mixed_rejection": "evidenced", "independent_warm_start": "evidenced",
+                 "no_codegen_no_gp_ppo": "observed"},
+      "level_adequacy": "N4's object is a library-level mechanism; comparator is the unmodified production backend (bit-exact). Owned-level integration of the transaction layer is a separate promotion obligation, not part of 'verify the paths'.",
+      "boundary": "transaction layer NOT integrated into the production package"
+    },
+    "overall": "HELD (content on record; completion gated on the M4-prerequisite chain)"
+  },
+  "n5_p1_joint_acceptance": {
+    "condition_source": "batch 67 next plan (N5)",
+    "dimensions": {
+      "api_zero_request_and_returns": "shadow/owned-diagnostic evidence exists (50_publication16, 66_W2, T2-C); execute-level joint check not started",
+      "process_exit": "evidenced at owned-diagnostic level (T2-C, T3-C, 66_W2)",
+      "stored_recorder": "evidenced at owned-diagnostic level (49_normal, 66_W2)",
+      "plant_acceptance": "NO EVIDENCE — no plant run exists (plant=false since start); requires real vessel integration",
+      "hard_realtime": "NO EVIDENCE — requires RT platform (20ms engineering gate / real-time bound open since batch 47)"
+    },
+    "chain_gates": {"M4": false, "F6_overall": false, "execute": false},
+    "overall": "CANNOT START (resource/scope-level blockers: plant access, RT platform, GP phase)"
+  },
+  "remaining_critical_path": [
+    "M0b formal freeze / B5 remaining items -> M4 stage qualification",
+    "F6 GP phase (residual parameterization, frozen means, online update; 60x60s collection plan) + model/envelope/safety layering",
+    "execute qualification -> P1 joint acceptance (plant & hard-realtime adjudicated separately)"
+  ],
+  "session_batches": {"range": "98-110", "count": 13},
+  "qualification_status": {"M4": false, "F6": false, "P1": false, "plant": false,
+                            "hard_realtime": false, "production_B": "MANUAL + RC override"}
+}

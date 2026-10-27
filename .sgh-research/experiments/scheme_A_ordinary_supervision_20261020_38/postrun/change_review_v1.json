@@ -1,0 +1,45 @@
+{
+  "CXX_builds": 0,
+  "all_five_role_ELFs_reused": true,
+  "authors": {
+    "author": {
+      "CXX_auth_contract_Supervisor_equal": true,
+      "driver": {
+        "bytes": 64104,
+        "sha256": "82eeb9f179d5632cba76d10928282d44e629bf584d00f291b097e592baf1965e"
+      },
+      "ordinary_policy": {
+        "bytes": 11534,
+        "sha256": "1597d797f72796fce97cac31573aa0810e0762a22e99ea17067aae90ca8e584b"
+      }
+    },
+    "author_r2": {
+      "CXX_auth_contract_Supervisor_equal": true,
+      "driver": {
+        "bytes": 65346,
+        "sha256": "c03cc67f4221db2f621e70fbc606b973470d1da0a76e40aacc8580a528488e33"
+      },
+      "ordinary_policy": {
+        "bytes": 11534,
+        "sha256": "1597d797f72796fce97cac31573aa0810e0762a22e99ea17067aae90ca8e584b"
+      }
+    },
+    "author_r3": {
+      "CXX_auth_contract_Supervisor_equal": true,
+      "driver": {
+        "bytes": 65211,
+        "sha256": "29aa831232bc66817beb360d66e52b54f8baab5fe426121ff5b23593690e94d1"
+      },
+      "ordinary_policy": {
+        "bytes": 11534,
+        "sha256": "1597d797f72796fce97cac31573aa0810e0762a22e99ea17067aae90ca8e584b"
+      }
+    }
+  },
+  "ordinary_actual_Worker_case_passed": false,
+  "passed": true,
+  "passed_scope": "source/version preservation review only",
+  "research_conclusion": false,
+  "stage_qualified": false,
+  "unknown_Publisher_service_absence_mechanism_not_retroactively_proven": true
+}

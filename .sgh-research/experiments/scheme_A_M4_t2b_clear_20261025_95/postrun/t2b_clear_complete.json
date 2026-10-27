@@ -1,0 +1,16 @@
+{
+  "schema": "M4-T2B-CLEAR-v95",
+  "recorded_at": "2026-10-25T19:01:33.364850+08:00",
+  "result": "ALL 25 CHECKS PASS \u2014 T2-B clear coverage complete",
+  "boundary": "allowed",
+  "native": true,
+  "rejection": "version_mismatch",
+  "timely": true,
+  "t2b_coverage": {
+    "replace": "PASS(P01)",
+    "clear": "PASS(CLR, this batch)",
+    "new_gen": "remaining",
+    "expired": "remaining"
+  },
+  "owned_runs": 1
+}

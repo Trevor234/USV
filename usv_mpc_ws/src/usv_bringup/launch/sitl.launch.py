@@ -43,7 +43,7 @@ def generate_launch_description():
     )
     auto_mode_switch_arg = DeclareLaunchArgument(
         "auto_mode_switch", default_value="false",
-        description="Automatically switch the FCU to GUIDED. Keep false for Scheme B RC override tests.",
+        description="Automatically select the scheme's control mode: A=GUIDED, B=MANUAL. Default false.",
     )
 
     mavros_odom_topic_arg = DeclareLaunchArgument(
@@ -167,6 +167,9 @@ def generate_launch_description():
             {
                 "auto_arm": False,
                 "auto_mode_switch": auto_mode_switch,
+                "mpc_fcu_mode": PythonExpression([
+                    "'GUIDED' if '", scheme, "' == 'A' else 'MANUAL'"
+                ]),
                 "state_topic": mavros_state_topic,
                 "odom_topic": mavros_odom_topic,
                 "battery_topic": "/mavros/battery",

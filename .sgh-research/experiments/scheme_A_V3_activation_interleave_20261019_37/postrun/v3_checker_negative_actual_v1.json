@@ -1,0 +1,105 @@
+{
+  "actual_raw_unchanged": true,
+  "cases": [
+    {
+      "case": "unchanged_observed_sequence",
+      "reason": "actual odom sequence changed",
+      "rejected": true
+    },
+    {
+      "case": "false_input_guard",
+      "reason": "original first guard rejects stale snapshot",
+      "rejected": true
+    },
+    {
+      "case": "third_attempt",
+      "reason": "finite history and attempt bound",
+      "rejected": true
+    },
+    {
+      "case": "capacity33",
+      "reason": "history capacity",
+      "rejected": true
+    },
+    {
+      "case": "wrong_owned_GID",
+      "reason": "actual callback CDR and owned GID",
+      "rejected": true
+    },
+    {
+      "case": "input_commit_before_snapshot",
+      "reason": "actual callback mutation completed between snapshot and guard",
+      "rejected": true
+    },
+    {
+      "case": "wait_budget_changed",
+      "reason": "fixed explicit wait budget",
+      "rejected": true
+    },
+    {
+      "case": "false_prior_healthy_activation",
+      "reason": "one healthy accepted activation before arming",
+      "rejected": true
+    }
+  ],
+  "execute_qualified": false,
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/activation_interleave_audit_v1.py": {
+      "bytes": 5681,
+      "sha256": "c1c3206a628a995fadb5f7b49f850031cdcd6db25930a394562167017d4b144b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/pair_wakeup_contract_v1.json": {
+      "bytes": 4265,
+      "sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/runs/v3_odom_01/observer/source.jsonl": {
+      "bytes": 5375485,
+      "sha256": "dc11b357ef4cc3d0ac97ff728feb489681a08af1b59ff740aea2fd393e53954c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/runs/v3_odom_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13574,
+      "sha256": "96ce612a4c40075e182702fc6df64ed7cbdaa1ca7b624f09f44b025d34e5d6bb"
+    }
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/activation_interleave_audit_v1.py": {
+      "bytes": 5681,
+      "sha256": "c1c3206a628a995fadb5f7b49f850031cdcd6db25930a394562167017d4b144b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/pair_wakeup_contract_v1.json": {
+      "bytes": 4265,
+      "sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/runs/v3_odom_01/observer/source.jsonl": {
+      "bytes": 5375485,
+      "sha256": "dc11b357ef4cc3d0ac97ff728feb489681a08af1b59ff740aea2fd393e53954c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/runs/v3_odom_01/synthetic_source/owned_manifest.json": {
+      "bytes": 13574,
+      "sha256": "96ce612a4c40075e182702fc6df64ed7cbdaa1ca7b624f09f44b025d34e5d6bb"
+    }
+  },
+  "mutated_copies_only": true,
+  "passed": true,
+  "positive_actual": {
+    "accepted_after_final_guard": true,
+    "activation_jitter_ns": 8956596,
+    "actual_clock_epoch_interleave": false,
+    "actual_source_input_interleave": true,
+    "attempts": 2,
+    "callback_commit_ns": 386802689837215,
+    "callback_raw_cdr_sha256": "2d062e1a6ae05756f7d1debf6100c2de8df760b701d2afb34212f9b657720310",
+    "callback_sequence": 111,
+    "decision_sequence": 26,
+    "job_id": 2,
+    "passed": true,
+    "raw_odom_sequence": 110,
+    "reason": "",
+    "retry": true,
+    "stage_qualified": false,
+    "start_jitter_ns": 56196,
+    "wait_ns": 8820274
+  },
+  "research_conclusion": false,
+  "stage_qualified": false
+}

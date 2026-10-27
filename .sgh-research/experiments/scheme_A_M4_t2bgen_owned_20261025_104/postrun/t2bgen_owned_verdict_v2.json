@@ -1,0 +1,142 @@
+{
+  "batch": 104,
+  "cases": {
+    "T2BGEN_NEG": {
+      "driver_passed": true,
+      "ok": true,
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/runs/T2BGEN_NEG"
+    },
+    "T2BGEN_POS": {
+      "driver_passed": true,
+      "ok": true,
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/runs/T2BGEN_POS"
+    }
+  },
+  "checks": [
+    {
+      "detail": [
+        "fixture",
+        "worker",
+        "recorder",
+        "regulator"
+      ],
+      "name": "POS.exactly_four_single_spawns",
+      "passed": true
+    },
+    {
+      "detail": {
+        "fixture": 0,
+        "recorder": 0,
+        "regulator": 0,
+        "worker": 0
+      },
+      "name": "POS.roles_closed_clean",
+      "passed": true
+    },
+    {
+      "detail": {
+        "distinct_fingerprints": 2,
+        "points": [
+          201
+        ]
+      },
+      "name": "POS.replace_fingerprint_observed",
+      "passed": true
+    },
+    {
+      "detail": {
+        "seen": [
+          2,
+          4,
+          6
+        ]
+      },
+      "name": "POS.task_generation_bumped",
+      "passed": true
+    },
+    {
+      "detail": {
+        "generation": 2,
+        "previous_first_job_id": 1,
+        "previous_last_job_id": 2,
+        "previous_terminal_reason": "epoch_binding_changed"
+      },
+      "name": "POS.single_generation_opened",
+      "passed": true
+    },
+    {
+      "detail": {
+        "bindings": [
+          [
+            1,
+            2,
+            "a9cb3d549fff"
+          ],
+          [
+            2,
+            6,
+            "a9cb3d549fff"
+          ]
+        ]
+      },
+      "name": "POS.two_epoch_commits_distinct_binding_identity",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "POS.scoped_resubmit_after_open",
+      "passed": true
+    },
+    {
+      "detail": {
+        "ids": [
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "name": "POS.jobs_submitted_in_generation_2",
+      "passed": true
+    },
+    {
+      "detail": {
+        "count": 0
+      },
+      "name": "POS.no_epoch_unusable_after_open",
+      "passed": true
+    },
+    {
+      "detail": {
+        "fixture": 0,
+        "recorder": 0,
+        "regulator": 0,
+        "worker": 0
+      },
+      "name": "NEG.roles_closed_clean",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "NEG.no_generation_opened",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "NEG.single_generation_one_commit",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "NEG.no_fingerprint_change",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "schema": "T2B-GEN-owned-run-verdict/v2",
+  "v1_defect_record": "verdict_t2bgen_v2 header text"
+}

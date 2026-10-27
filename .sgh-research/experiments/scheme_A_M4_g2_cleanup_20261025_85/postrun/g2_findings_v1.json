@@ -1,0 +1,13 @@
+{
+  "schema": "M4-G2-findings-v85",
+  "recorded_at": "2026-10-25T17:42:31.631611+08:00",
+  "fixes": {
+    "emit_owned_applied": "返回bool(实际发布成功true/false);catch分支仍fail-closed",
+    "applied_emitted": "owned_pair_consistency_failed行引用last_applied_emitted_(实际值,非硬编码true)",
+    "clock_attempts_": "移入实际publish分支(非silent时才计数);silent步不增attempt",
+    "compile": "C++编译通过(regulator+fixture)"
+  },
+  "R82_06_resolved": "emit返回实际结果;发布失败不再算成功Applied",
+  "R82_09_resolved": "clock_attempts_只在实际调用publish时计数",
+  "owned_runs": 0
+}

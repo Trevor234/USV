@@ -1,0 +1,81 @@
+{
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "automatic_retries": 0,
+  "boundary": "four roles authenticated; full Recorder manifest bound in ready.json; Regulator ready.json written; grant.json absent",
+  "case": "R1-owned-pre-grant-cancel",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "declared_exceptions": [
+    "witness observation_complete=false is expected with zero ticks",
+    "regulator exit 3 is the documented audit-close code for zero ticks"
+  ],
+  "domain_id": 120,
+  "expected_exit": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 3,
+    "worker": 0
+  },
+  "expected_signals": {
+    "fixture": [
+      "SIGINT"
+    ],
+    "recorder": [
+      "SIGINT"
+    ],
+    "regulator": [],
+    "worker": [
+      "SIGINT"
+    ]
+  },
+  "fault_injection_enabled": false,
+  "forbidden_source_rows": [
+    "job",
+    "owned_API_pair",
+    "regulator_shutdown",
+    "owned_execute_grant_accepted",
+    "candidate_registration"
+  ],
+  "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+  "index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "max_seconds": 45,
+  "minimum_assertions": [
+    "no grant before stimulus",
+    "no API/Job/Decision",
+    "four groups empty",
+    "exact pre-registered exits"
+  ],
+  "old_normal_or_fault_qualifications_transferred": false,
+  "outer_timeout_seconds": 90,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/runs/owned_fault_R1_01",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/implementation/selected_runtime_registry_v1.json",
+  "registry_sha256": "80cebd754c88c22e35ab5f31843425c66c5673307653942f22454285f241ea3c",
+  "required_source_rows": [
+    "owned_execute_waiting",
+    "owned_prepare_ready",
+    "owned_prepare_closed_before_API",
+    "owned_reception_closed"
+  ],
+  "run_id": "M4_owned_fault_20261021_53_R1",
+  "schema": "M4-owned-fault-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "stimulus": {
+    "authenticated_before_send": [
+      "pid",
+      "process_start_ticks",
+      "exe",
+      "binary_sha256",
+      "argv",
+      "pgid",
+      "sid"
+    ],
+    "count": 1,
+    "sent_by": "driver",
+    "signal": "SIGINT",
+    "target": "regulator"
+  },
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

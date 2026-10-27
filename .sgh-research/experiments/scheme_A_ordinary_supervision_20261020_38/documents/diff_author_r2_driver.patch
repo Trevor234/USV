@@ -1,0 +1,68 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_supervision_20261020_38/author/prepare_pair_wakeup_v1.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_supervision_20261020_38/author_r2/prepare_pair_wakeup_v1.py
+@@ -70,7 +70,7 @@
+  params.update(research_baseline_id='CONTROLLED_PHASE_20261015_DIAGNOSTIC_01',controlled_phase_mode=a.controlled_case,controlled_observer_manifest_file=str(R/'observer/owned_manifest.json'),controlled_observer_binary_sha256=build['observer']['binary_sha256'],controlled_observer_source_bundle_sha256=pins['observer']['sha256'],controlled_observer_run_id=a.run_id)
+  expected['publisher']=dict(params)
+  close_order=['publisher','foreign','observer','worker','synthetic_source','recorder'] if a.c38_case=='foreign_after_close' else ['worker','publisher','observer','synthetic_source','recorder'] if a.c38_case=='worker_post_exit' else ['publisher','observer','worker','synthetic_source','recorder'] if a.close_order=='publisher-first' else ['observer','publisher','worker','synthetic_source','recorder']
+- inputs={'run_id':a.run_id,'mode':a.mode,'domain':a.domain,'tool_sha256':{s:sha(N/s) for s in snapshot_tools},'env':{k:os.environ.get(k) for k in ['RMW_IMPLEMENTATION','ROS_DOMAIN_ID','ROS_LOCALHOST_ONLY','ROS_AUTOMATIC_DISCOVERY_RANGE']},'contract':str(contract),'contract_sha256':ch,'topics_file':str(topicfile),'topics_sha256':th,'builds':build,'source_bundles':pins,'expected_parameters':expected,'measurement_seconds':5,'diagnostic_sink_fault_policy':'none','V2_case':a.v2_case,'V2_scope':'work_thread_pre_native_barrier_or_callback_receipt_lease; no native C hang or source freshness claim','close_order':close_order,'close_policy':a.close_order,'explicit_close_profile':a.close_profile,'sensor_start_is_separate_create_only_gate':True,'witness_validation_profile':'active_watchdog_then_ordinary_owned_stop','validation_recipe_revision':'V2-ordinary-Source-to-owned-stop-v1','supervision_profile':a.supervision_profile,'Worker_stop_waits_from_contract':{k:C[k] for k in ['worker_grace_ns','term_grace_ns','kill_postcheck_ns']},'driver_tool_name':'prepare_pair_wakeup_v1.py','reference_sampling_policy':'first_target_task_time_profile_v1','reference_epoch_policy':'first_successful_job_submit_completion_target_sim_v1','reference_speed_m_s':a.reference_speed,'ordered_stage':a.controlled_case,'c38_case':a.c38_case,'diagnostic_case':True}
++ inputs={'run_id':a.run_id,'mode':a.mode,'domain':a.domain,'tool_sha256':{s:sha(N/s) for s in snapshot_tools},'env':{k:os.environ.get(k) for k in ['RMW_IMPLEMENTATION','ROS_DOMAIN_ID','ROS_LOCALHOST_ONLY','ROS_AUTOMATIC_DISCOVERY_RANGE']},'contract':str(contract),'contract_sha256':ch,'topics_file':str(topicfile),'topics_sha256':th,'builds':build,'source_bundles':pins,'expected_parameters':expected,'measurement_seconds':5,'diagnostic_sink_fault_policy':'none','V2_case':a.v2_case,'V2_scope':'work_thread_pre_native_barrier_or_callback_receipt_lease; no native C hang or source freshness claim','close_order':close_order,'close_policy':a.close_order,'explicit_close_profile':a.close_profile,'sensor_start_is_separate_create_only_gate':True,'witness_validation_profile':'active_watchdog_then_ordinary_owned_stop','validation_recipe_revision':'V2-ordinary-stop-Observer-last-release-r2','supervision_profile':a.supervision_profile,'Worker_stop_waits_from_contract':{k:C[k] for k in ['worker_grace_ns','term_grace_ns','kill_postcheck_ns']},'driver_tool_name':'prepare_pair_wakeup_v1.py','reference_sampling_policy':'first_target_task_time_profile_v1','reference_epoch_policy':'first_successful_job_submit_completion_target_sim_v1','reference_speed_m_s':a.reference_speed,'ordered_stage':a.controlled_case,'c38_case':a.c38_case,'diagnostic_case':True}
+  if a.close_profile==FAULT_CLOSE_PROFILE:
+   inputs['close_order']=['observer','publisher','worker','synthetic_source','recorder']
+   inputs['close_policy']=FAULT_CLOSE_PROFILE
+@@ -177,6 +177,17 @@
+   gate_case=a.v2_case=='lease' or a.c38_case in ('queued_tail','late_tail','pre_request_tail','worker_post_exit')
+   op.update(diagnostic_c38_mode='worker-gate' if a.v2_case=='lease' or a.c38_case=='worker_post_exit' else 'applied-gate' if gate_case else 'suppress-close-poll' if a.c38_case=='ack_missing' else 'none',diagnostic_c38_pause_file=str(R/'c38_pause_request.json') if gate_case else '',diagnostic_c38_resume_file=str(R/'c38_resume_request.json') if gate_case else '')
+   expected['observer']={**defaults(),**op}
++  # Complete slow queries and sensor warmup before the Observer's 1s tick lead.
++  wait_for(lambda:manifest_paths['recorder'].exists(),'Recorder ready before Observer',5)
++  roles['recorder']=authenticate('recorder')
++  rclpy.init(args=[]);node=Node('p1_owned_fixture_driver',enable_rosout=False,start_parameter_services=False)
++  result['live_parameter_queries']={k:query_parameters(k) for k in ['publisher','worker','synthetic_source']}
++  pre_rows=rows(R/'synthetic_source/transport_source.jsonl')
++  require(not any(r['topic'] in physical or r['topic'] in ['/research/control/applied','/clock'] for r in pre_rows),'held output/sensor gate emitted before explicit start')
++  create_only_json(startfile,{'schema':'p1-synthetic-start-v1','run_id':a.run_id,'boot_id':sup.boot})
++  warm=time.monotonic()+1.1
++  while time.monotonic()<warm:bound();rclpy.spin_once(node,timeout_sec=.01)
++  observer_spawn_request_ns=time.monotonic_ns()
+   if a.mode!='late_observer':spawn('observer','observer',args_for(op))
+   if a.mode=='late_observer':wait_for(lambda:manifest_paths['observer'].exists(),'late observer actual endpoints',3)
+   wait_for(lambda:manifest_paths['observer'].exists() and manifest_paths['recorder'].exists(),'observer and Recorder owned endpoints',8)
+@@ -185,7 +196,6 @@
+   for name,hooks in [('worker',['test_delay_ms','test_native_block_ms']),('observer',['test_delay_ms','test_native_block_ms','test_prepare_block_ms','test_tick_block_ms','test_sink_pause_ms'])]:
+    # Explicit argv checks independently enforce zero integer hooks; JSON string values remain quoted.
+    argv=roles[name]['actual']['argv'];explicit_parameters(argv,{k:rosval(v) for k,v in (wp if name=='worker' else op).items() if k not in hooks},hooks)
+-  rclpy.init(args=[]);node=Node('p1_owned_fixture_driver',enable_rosout=False,start_parameter_services=False)
+   last_error=[None]
+   def complete_graph():
+    try:verify_owned_graph(graph(),roles,physical);last_error[0]=None;return True
+@@ -208,9 +218,9 @@
+   result['native_applied_reader_ready_sha256']=sha(ready_file)
+   capability_ready_file=Path(str(manifest_paths['worker'])+'.capability_ready.json')
+   wait_for(lambda:capability_ready_file.exists(),'native capability receivers match',5)
+-  result['live_parameter_queries']={k:query_parameters(k) for k in ['publisher','worker','observer','synthetic_source']}
++  result['live_parameter_queries']['observer']=query_parameters('observer')
+   require(not (R/'publisher/release_receipt.json').exists() and not release.exists(),'publisher unexpectedly released')
+-  pre_rows=rows(R/'synthetic_source/transport_source.jsonl');require(not any(r['topic'] in physical or r['topic'] in ['/research/control/applied','/clock'] for r in pre_rows),'held output/sensor gate emitted')
++  require(startfile.exists(),'explicit early sensor start missing')
+   # Independent malformed GID / PID-start identity negatives on a copy never reach release.
+   from copy import deepcopy
+   bad=deepcopy(roles);bad['publisher']['manifest']['endpoints'][0]['gid'][0]^=1
+@@ -258,14 +268,15 @@
+    result.update(expected_negative_rejection=True,expired_release_no_receipt=True)
+    if a.mode=='expired_release':result['rejection']='actual publisher refused expired release'
+    raise RuntimeError('expected negative: '+result['rejection'])
+-  create_only_json(startfile,{'schema':'p1-synthetic-start-v1','run_id':a.run_id,'boot_id':sup.boot})
+-  warm=time.monotonic()+1.1
+-  while time.monotonic()<warm:bound();rclpy.spin_once(node,timeout_sec=.01)
+   roles={k:authenticate(k) for k in roles}
+   for k,p in [('worker',R/'worker/source.jsonl'),('observer',R/'observer/source.jsonl'),('synthetic_source',R/'synthetic_source/transport_source.jsonl')]:source_fd_matches(roles[k],p)
++  release_begin_request_ns=time.monotonic_ns()
++  require(release_begin_request_ns-native['checked_steady_ns']<=650_000_000,'native-ready-to-release preparation exceeded preregistered 650ms guard')
++  create_only_json(R/'observer_last_release_guard.json',{'observer_spawn_request_ns':observer_spawn_request_ns,'release_request_ns':release_begin_request_ns,'native_reader_ready_ns':native['checked_steady_ns'],'elapsed_ns':release_begin_request_ns-native['checked_steady_ns'],'budget_ns':650_000_000,'earliest_first_tick_lower_bound_ns':native['checked_steady_ns']+1_000_000_000,'source_bound_universal_WCET_claimed':False})
+   result['release']=authorize_fixture_release(startup=startup,roles=roles,graph=graph(),physical_topics=physical,evidence_path=R/'preparation_evidence.json',release_path=release,native_reader_ready_path=ready_file,native_capability_ready_path=capability_ready_file,boot=sup.boot,prepare_start_ns=prepare_start,prepare_budget_ns=prepare_budget,driver_node='/p1_owned_fixture_driver',publication_observations=release_publications);released=True
+   wait_for(lambda:(R/'publisher/release_receipt.json').exists(),'publisher release receipt',3)
+   wait_for(lambda:any(r['type']=='legacy_ready' for r in rows(R/'observer/source.jsonl')),'actual legacy_ready',8)
++  wait_for(lambda:any(r.get('type')=='diagnostic_v2_pre_native_enter' for r in rows(R/'worker/source.jsonl')),'actual pre-native stimulus entered after healthy completed job',4,preparing=False)
+   result['supervision_bridge']=supervise_Worker(R,roles=roles,owned=owned,sup=sup,
+     authenticate=authenticate,source_fd_matches=source_fd_matches,contract=C,prepare_start_ns=prepare_start,
+     overall_deadline_ns=overall_deadline,spin=lambda t:rclpy.spin_once(node,timeout_sec=t),bound=bound,

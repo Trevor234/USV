@@ -1,0 +1,79 @@
+{
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "automatic_retries": 0,
+  "boundary": "first owned_API_pair with kind=accepted, returned=[true,true], command_invalid=false",
+  "case": "R3-owned-capability-lease-expiry",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "declared_exceptions": [
+    "witness normal_contract_qualified is not fault-aware"
+  ],
+  "domain_id": 120,
+  "expected_exit": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 0,
+    "worker": 0
+  },
+  "expected_signals": {
+    "fixture": [
+      "SIGINT"
+    ],
+    "recorder": [
+      "SIGINT"
+    ],
+    "regulator": [],
+    "worker": [
+      "SIGINT"
+    ]
+  },
+  "expected_transition_reason": "worker_capability_expired",
+  "fault_injection_enabled": false,
+  "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+  "index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "max_seconds": 45,
+  "minimum_assertions": [
+    "transition reason is worker_capability_expired",
+    "candidate and pending cleared at transition",
+    "post-expiry fallback ramp within rho/gap/span",
+    "worker resumed and exits 0",
+    "four groups empty"
+  ],
+  "observation_window": {
+    "max_after_stimulus_ns": 5000000000,
+    "min_post_transition_pairs": 1
+  },
+  "old_normal_or_fault_qualifications_transferred": false,
+  "outer_timeout_seconds": 90,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/runs/owned_fault_R3_01",
+  "production_physical_release_enabled": false,
+  "rationale": "SIGSTOP cannot satisfy the pidfd exit poll, so this isolates the 600 ms capability receipt lease from worker death. The 1 s active watchdog cannot fire first because unusable_locked() is idempotent and the lease check precedes it inside check_worker_locked().",
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/implementation/selected_runtime_registry_v1.json",
+  "registry_sha256": "80cebd754c88c22e35ab5f31843425c66c5673307653942f22454285f241ea3c",
+  "required_source_rows": [
+    "worker_unusable_transition",
+    "regulator_shutdown"
+  ],
+  "run_id": "M4_owned_fault_20261021_53_R3",
+  "schema": "M4-owned-fault-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "stimulus": {
+    "authenticated_before_send": [
+      "pid",
+      "process_start_ticks",
+      "exe",
+      "binary_sha256",
+      "argv",
+      "pgid",
+      "sid"
+    ],
+    "count": 1,
+    "resume": "SIGCONT after the Regulator goes terminal",
+    "sent_by": "driver",
+    "signal": "SIGSTOP",
+    "target": "worker"
+  },
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

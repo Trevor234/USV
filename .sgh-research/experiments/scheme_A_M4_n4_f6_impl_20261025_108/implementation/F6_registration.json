@@ -1,0 +1,173 @@
+{
+  "batch_registered": 108,
+  "cases": [
+    {
+      "assertions": [
+        "f6_1_setter_switch_equals_fresh_m1_instance",
+        "f6_1_warm_books_per_version"
+      ],
+      "budget_seconds": 120,
+      "case_id": "F6-1",
+      "design": "batch 107 design table",
+      "family": "F6_model_transaction_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/test_f6_model_transaction.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "F6-model-transaction/v1"
+    },
+    {
+      "assertions": [
+        "f6_2_solve_rejected_during_prepare",
+        "f6_2_no_half_applied_solve",
+        "f6_2_solve_after_commit_executes_exactly_once",
+        "f6_2_accounting"
+      ],
+      "budget_seconds": 120,
+      "case_id": "F6-2",
+      "design": "batch 107 design table",
+      "family": "F6_model_transaction_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/test_f6_model_transaction.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "F6-model-transaction/v1"
+    },
+    {
+      "assertions": [
+        "f6_3_m0_phase_matches_pure_m0",
+        "f6_3_m1_phase_matches_pure_m1",
+        "f6_3_clean_boundary_accounting"
+      ],
+      "budget_seconds": 120,
+      "case_id": "F6-3",
+      "design": "batch 107 design table",
+      "family": "F6_model_transaction_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/test_f6_model_transaction.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "F6-model-transaction/v1"
+    },
+    {
+      "assertions": [
+        "f6_4_stale_stamp_rejected",
+        "f6_4_unknown_generation_rejected",
+        "f6_4_version_content_immutable",
+        "f6_4_rejections_never_touch_solver",
+        "f6_4_state_unchanged_by_rejections"
+      ],
+      "budget_seconds": 120,
+      "case_id": "F6-4",
+      "design": "batch 107 design table",
+      "family": "F6_model_transaction_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/test_f6_model_transaction.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "F6-model-transaction/v1"
+    },
+    {
+      "assertions": [
+        "f6_5_phase1_lockstep",
+        "f6_5_back_on_m0",
+        "f6_5_m0_warm_restored_matches_paused_instance",
+        "f6_5_both_versions_keep_warm_books"
+      ],
+      "budget_seconds": 120,
+      "case_id": "F6-5",
+      "design": "batch 107 design table",
+      "family": "F6_model_transaction_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/test_f6_model_transaction.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "F6-model-transaction/v1"
+    },
+    {
+      "assertions": [
+        "f6_6_wrapper_matches_production_backend_tick_for_tick",
+        "f6_6_no_transaction_accounting"
+      ],
+      "budget_seconds": 120,
+      "case_id": "F6-6",
+      "design": "batch 107 design table",
+      "family": "F6_model_transaction_component",
+      "harness": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/test_f6_model_transaction.cpp",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "F6-model-transaction/v1"
+    }
+  ],
+  "family_registered": "F6-Stage1",
+  "fixed_parameters": {
+    "codegen": false,
+    "dimensions": {
+      "N": 20,
+      "NP": 6,
+      "NP_GLOBAL": 30,
+      "NU": 2,
+      "NX": 8
+    },
+    "gp_ppo": false,
+    "m1_perturbations": {
+      "Nr": [
+        -4.286144,
+        -4.4
+      ],
+      "Xu": [
+        -2.272063,
+        -2.4
+      ],
+      "mass": [
+        14.2,
+        15.0
+      ]
+    },
+    "ticks_phase1": 4,
+    "ticks_phase2": 4,
+    "tolerance": 1e-08
+  },
+  "governance": {
+    "auto_retry": 0,
+    "failure_originals_preserved": true,
+    "pre_registration_required": true,
+    "production_package_unmodified": true,
+    "single_finite_execution": true
+  },
+  "not_claimed": [
+    "F6 stage qualification (GP phase etc. remain)",
+    "production default change",
+    "any stage qualification or research conclusion"
+  ],
+  "obligation_binding": {
+    "design": "batch 107",
+    "f6": "\u9996\u9009A \u00a75.2 \u6709\u9650\u6a21\u578b/\u56fa\u5b9a\u504f\u7f6e\u9636\u6bb5",
+    "n4": "batch 67 next plan (N4)"
+  },
+  "schema": "T3-case-registration/v1",
+  "tree_base": {
+    "binary_sha256": "34c25a8df5ddc50f2259c9a9e9cf6d9977bbc7aec2e6c3ea38ae7a294c4ad00d",
+    "bundle_sha256": "ad244ec022e2b2d23cc90b28b9964db3536dd72e5913c37ddb76be75f587c13b",
+    "source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation"
+  }
+}

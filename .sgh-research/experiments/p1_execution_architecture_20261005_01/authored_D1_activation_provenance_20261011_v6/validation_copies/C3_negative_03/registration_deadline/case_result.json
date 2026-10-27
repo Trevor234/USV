@@ -1,0 +1,27 @@
+{
+  "case": "registration_deadline",
+  "expected_code": "original_registration_time",
+  "passed": true,
+  "observed_codes": [
+    "original_registration_time"
+  ],
+  "mutation": {
+    "coherent_stored_CDR_updates": [
+      {
+        "id": 313,
+        "topic": "/p1/solve_candidate"
+      },
+      {
+        "id": 314,
+        "topic": "/p1/solve_job"
+      }
+    ],
+    "source_files": [
+      "observer/source.jsonl",
+      "worker/source.jsonl",
+      "observer/witness.json"
+    ]
+  },
+  "report": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_provenance_20261011_v6/validation_copies/C3_negative_03/registration_deadline/C3_report.json",
+  "original_authenticity_qualified": false
+}

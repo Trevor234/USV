@@ -1,0 +1,242 @@
+{
+  "step_id": "E06",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "19 cases, 3 targeted mutations; explicit single-owner state and terminal FAULTED; real C entry observed with linker wrap.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E06/attempt01",
+  "observed_facts": {
+    "cases_registered": 19,
+    "libraries": {
+      "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libmpc_solver_lib.a": {
+        "bytes": 212276,
+        "sha256": "5c4a8d70cc6812b36693a5b68cb13a7a812dae828f983b4446a5564ff996d5d1"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libcodegen_lib.a": {
+        "bytes": 274422,
+        "sha256": "7431a9cbdd7b8a6d47719ceda2e44b977f2649fbcbb4592771dac99abd2a38dd"
+      },
+      "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libmpc_core_lib.a": {
+        "bytes": 32114,
+        "sha256": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020"
+      },
+      "/home/trevor/acados/lib/libacados.so": {
+        "bytes": 770800,
+        "sha256": "7501e3ef275bb90ebb9db2ed0f5fd42e0b5589973fbde5ffab3d2ff0c1232d75"
+      },
+      "/home/trevor/acados/lib/libblasfeo.so": {
+        "bytes": 2427104,
+        "sha256": "6c72737fb3697b470a20b93de10efd6aa914ec43cc643d7823c5607785501f91"
+      },
+      "/home/trevor/acados/lib/libhpipm.so": {
+        "bytes": 1807144,
+        "sha256": "71ae22c95291ba0de88855768f56b63fdf1b91ab9fd852550e81de186e1441fe"
+      }
+    },
+    "source": {
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/standalone/model/test_f6_model_transaction.cpp": {
+        "bytes": 12086,
+        "sha256": "3aaab39450bd6df9f7b1babcc8baaaf36546ff6c03189889348ef2a893c8f6f8"
+      },
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/standalone/model/test_f6_state_v2.cpp": {
+        "bytes": 6942,
+        "sha256": "5362054ae4b9ce552c2b5ea49d2c84cac30ef258d5a29bdae7b2bf71be997ce2"
+      },
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/standalone/model/model_transaction_v1.hpp": {
+        "bytes": 11543,
+        "sha256": "5821714ff41329e8e75eafc8a9873fd3b7c65dccf11cbd329c03e268dfcce081"
+      }
+    },
+    "real_C_entry_observer": "linker --wrap",
+    "scope": "single-owner finite model wrapper; current production source parity not claimed"
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "build.model_states",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6-1",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6-2",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6-3",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6-4",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6-5",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6-6",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-01-UNCOMMITTED",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-02-GEN-ZERO",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-03-STALE",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-04-NAN",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-05-IMMUTABLE",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-06-PREPARING",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-07-LEGAL",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-08-WRONG-THREAD",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-09-FAULTED-SET",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-10-FAULTED-RESET",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-11-ABORT-PREPARED",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-12-INPUT",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "F6V-13-API-EXCEPTION",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.prepared.uncommitted",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_uncommitted",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.uncommitted",
+        "passed": true,
+        "detail": [
+          "reject_model_not_committed"
+        ]
+      },
+      {
+        "name": "mutation.prepared.finite",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_finite",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.finite",
+        "passed": true,
+        "detail": [
+          "nan_model_refused",
+          "inf_model_refused",
+          "invalid_models_never_applied"
+        ]
+      },
+      {
+        "name": "mutation.prepared.reset",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_reset",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.reset",
+        "passed": true,
+        "detail": [
+          "injected_api_failure_refuses_commit",
+          "new_identity_not_published_after_failure",
+          "faulted_instance_has_no_recovery_bypass",
+          "reject_transaction_faulted",
+          "reject_transaction_faulted"
+        ]
+      },
+      {
+        "name": "pinned_installed_libraries_unchanged",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    "implementation/standalone/model/model_transaction_v1.hpp",
+    "implementation/standalone/model/test_f6_state_v2.cpp",
+    "implementation/tests/run_e06.py"
+  ],
+  "remaining_obligations": [
+    "Generated setter internal failures not propagated; adapters prove wrapper policy only.",
+    "Finite comparison vs pinned installed libraries; production integration and fallback parity deferred."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

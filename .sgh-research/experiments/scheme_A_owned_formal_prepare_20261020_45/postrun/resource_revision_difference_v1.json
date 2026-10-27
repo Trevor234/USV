@@ -1,0 +1,27 @@
+{
+  "Driver_code_bytes_unchanged": true,
+  "changed_files": 3,
+  "current_build": "native_formal_attempt04",
+  "old_run01_default_capacities2048_proof_kept": true,
+  "reason": "Role-specific21 point minimum; effective Path/Profile copy domains, no control parameter changes",
+  "same84_contract_bytes": true,
+  "schema": "formal-owned-resource-revision-difference/v1",
+  "source_changes": [
+    {
+      "after_sha256": "9cbd80380cd16696cdabe25eceec01d253667014b7854da4e1b0fb774921a81d",
+      "before_sha256": "6895f69d460894adf9ab65a4c9059a56a4de7ba72590d08b67180de88805037d",
+      "relative_path": "common/formal_owned_runtime.hpp"
+    },
+    {
+      "after_sha256": "c1cff078173b6bacfbd38ac647d251afe69ecdc8cd0e470b3d1baaf083027fc0",
+      "before_sha256": "2b899e455547ff14d25109124ed9c524586d560db131b5ef9494eea4bf42a5c7",
+      "relative_path": "native/formal_input_bounds_test.cpp"
+    },
+    {
+      "after_sha256": "bb5df018350e032f276d5721abadaace77fb336a8c814eff1efdb8c136665aad",
+      "before_sha256": "f62e81f9c8e0ea8b21db6ef2f76541e856b30d1f831e369783d04de5bdb2f681",
+      "relative_path": "native/formal_preparer.cpp"
+    }
+  ],
+  "stage_qualified": false
+}

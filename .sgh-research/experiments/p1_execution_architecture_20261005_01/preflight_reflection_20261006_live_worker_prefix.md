@@ -1,0 +1,11 @@
+# 能力观察器启动发现前缀：显式证据范围
+
+新v26 idle_stop_02同样mechanism_complete=true但总观察对账失败：actual40/observer30，差的10条内容均是初始idle、completed_jobs=0。独立读取bag接收时间，当前wall/mono偏差近似换算显示其在观察器第一次接收之前；此近似只用于调查，不能回填旧记录。v26停机尾段已接收最后一条能力消息。新旧两个failed记录保持原件与未通过门禁。
+
+错误前提：DDS动态发现下，即使观察订阅先建立、recorder先armed，也不能保证两个独立订阅从worker启动第一包起同时匹配。无序号v1按内容不能定位每一条重复包。原总相等门槛忽略启动发现范围；修正证据范围不得降低600ms/820ms故障机制判据，也不把旧failed改成passed。
+
+A：GO于runtime v27，只增加观察callback的CLOCK_REALTIME实际接收字段和只读MCAP接收戳读取。生产v11/worker8、IDL和revision4不变。新的能力观察门槛是ordered完整内容suffix相等；任何未观察前缀必须各自bag接收戳严格早于首次observer实际wall receipt且仅初始idle(active=0,pending=0,completed=0,nonfatal)。不容忍尾段/活动/完成/失败状态丢包。job/candidate/decision/input逐流对账、processed capability源内容subset实际bag、owned清理等原要求不改。
+
+B：11项反例测试检查前缀的时序/状态限制、尾段和内容丢失、extra receipt与缺时钟。新run03三场景，包含全部capabilities和首次接收实际wall时间；旧run01/02不通过新检查器，无追补字段或删除bag前缀。统计原始前缀数量与suffix数量。wall时间只作同主机录制观察范围对账，不改控制CLOCK_MONOTONIC租约；若wall发生无法解释的跳变或ordered对账失配就停止。禁止把内容相等写成每包来源/抗重放/源新鲜度。
+
+C：未观察初始前缀是明确的独立观察范围限制，raw本身仍完整保留。regulator订阅更晚，所有processed validation callback都要求完整内容在actual bag存在；不能说每条raw被调节器处理。失效/不恢复仍按真实本地验证提交CLOCK_MONOTONIC source+bag决定验证；execute不准入、M0b/M4/F6未完成。active_stop受控pre-native屏障与强杀worker闭合未知不变。此次修正是基于证据纠正前提，不是宣称原两份失败通过或补来源完整性。

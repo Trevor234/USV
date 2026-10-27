@@ -1,0 +1,14 @@
+{
+  "count": 1,
+  "files": [
+    {
+      "bytes": 313,
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_deferred_observation_20261019_29/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "eefd8b8db0ed30d8bcf6607e231c904854b385b558291089b8f2637363365f11",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_deferred_observation_20261019_29/intermediate_local_backup_v1/CURRENT.md"
+    }
+  ],
+  "remote_intermediate_not_available": true,
+  "schema": "deferred-initial-local-current-backup/v1"
+}

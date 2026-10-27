@@ -1,0 +1,18 @@
+{
+  "case": "validation_clock_selection",
+  "expected_code": "selected_clock_binding",
+  "passed": true,
+  "observed_codes": [
+    "selected_clock_binding"
+  ],
+  "mutation": {
+    "coherent_stored_CDR_updates": [],
+    "source_files": [
+      "observer/source.jsonl",
+      "worker/source.jsonl",
+      "observer/witness.json"
+    ]
+  },
+  "report": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_provenance_20261011_v6/validation_copies/C3_negative_02/validation_clock_selection/C3_report.json",
+  "original_authenticity_qualified": false
+}

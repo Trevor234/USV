@@ -1,0 +1,78 @@
+{
+  "step_id": "E08",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Finite real DiagSink sticky/after-drain test, source summary balance, C12/C3 historical logs and audit101 provenance.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E08/attempt01",
+  "observed_facts": {
+    "sink_business_implementation_modified": false,
+    "all_fd_cleanup": false,
+    "generic_restart_proof": false,
+    "source_summary_scope": "qualification remains failed after later enqueue succeeds"
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "build.sticky",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "T3V-STICKY-01",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "T3V-STICKY-02",
+        "passed": true,
+        "detail": {
+          "dropped": 1,
+          "emitted": 3,
+          "finished_ns": 961162653182178,
+          "generated": 4,
+          "normal_source_complete": false,
+          "type": "source_summary"
+        }
+      },
+      {
+        "name": "T3V-C12-REJUDGE",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "T3V-SURVIVOR-DOC",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "T3V-A101-PROVENANCE",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    "implementation/audit/t3_bounded_rejudge_v2.py",
+    "implementation/tests/test_sink_sticky_v2.cpp",
+    "implementation/tests/run_e08.py",
+    "documents/第126批_T3契约与有限证据范围_2026-10-26.md"
+  ],
+  "remaining_obligations": [
+    "Survivor general fd/fork-failure handling not changed or qualified."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

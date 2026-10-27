@@ -1,0 +1,1 @@
+F4 adds generated hull.dae to the named static source snapshot allowlist. Plant mass also changes waterline geometry through the existing renderer; these runs certify configuration-source isolation only, not a pure added-load performance perturbation. P1, plant ACK, exact execution and GP readiness remain unverified.

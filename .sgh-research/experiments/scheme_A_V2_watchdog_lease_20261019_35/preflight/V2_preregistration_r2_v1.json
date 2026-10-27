@@ -1,0 +1,49 @@
+{
+  "Sink_fault_disabled": true,
+  "active_barrier_ms": 1700,
+  "active_watchdog_ns": 1000000000,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "close_budget_ns": 15000000000,
+  "controlled_case": "C",
+  "created_ns": 383163997072079,
+  "deadline_ns": 150000000,
+  "domain": 196,
+  "each_case_must_preserve_first_reason_and_same_run_terminal": true,
+  "engineering_start_gap_limit_ns": 240000000,
+  "engineering_tick_jitter_limit_ns": 20000000,
+  "execute_qualified": false,
+  "external_guard_seconds": 55,
+  "gate_TTL_ns": 3500000000,
+  "lease_pause_target_ms": 900,
+  "loader_environment_sha256": "cc1149e3d54625258a0f0ffa3d07441c0fd2feb0fe7d1a2c8834f52146892157",
+  "localhost": true,
+  "native_C_hang_claimed": false,
+  "normal_business_status_expected": false,
+  "observation_budget_ns": 8000000000,
+  "ordinary_two_Worker_hooks_zero": true,
+  "overall_budget_ns": 45000000000,
+  "period_ns": 200000000,
+  "prepare_budget_ns": 20000000000,
+  "raw_budget_bytes": 134217728,
+  "reason_for_new_run_ids": "first run did not release; complete previous acados setup restored; all control sources/ELFs/gates fixed",
+  "receipt_timeout_ns": 600000000,
+  "reference_speed_m_s": 0.05,
+  "research_conclusion": false,
+  "runner_sha256": "a085207250942dd33c3edc607cac2c30e5085293929dc853038dd4b85f2a7cda",
+  "runs": [
+    {
+      "case": "lease",
+      "run_id": "v2_lease_r2_02"
+    },
+    {
+      "case": "active",
+      "run_id": "v2_active_r2_03"
+    }
+  ],
+  "schema": "V2-separate-watchdog-lease-preregistration/v1",
+  "source_lock_sha256": "ab4dddc893d89842832a19ac10652a53ebff14ab20a49650f437e6e0760f5a4c",
+  "source_packet_freshness_claimed": false,
+  "stage_qualified": false,
+  "true_plant_qualified": false,
+  "verdict": "GO"
+}

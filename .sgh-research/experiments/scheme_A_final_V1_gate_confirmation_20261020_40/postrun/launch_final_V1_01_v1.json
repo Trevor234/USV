@@ -1,0 +1,17 @@
+{
+  "run_id": "final_V1_01",
+  "case": "current gated V1 real queue rejection",
+  "returncode": 0,
+  "started_ns": 431929875530944,
+  "finished_ns": 431943914971144,
+  "elapsed_ns": 14039440200,
+  "external_timeout_triggered": false,
+  "inputs_unchanged": true,
+  "source_lock": {
+    "bytes": 400991,
+    "sha256": "ff2f4910bd9d16a01274d8d803bd7b83f9fd8e5a9e9480f013ef770de81d5eb4"
+  },
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

@@ -1,0 +1,28 @@
+{
+  "all_three_intermediate_files_preserved": true,
+  "count": 3,
+  "files": [
+    {
+      "bytes": 343,
+      "original": "/home/trevor/MPC/scheme_A_reference_pair_wakeup_20261018_22/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "ee2333e33995cc2b260a2dd047e9a72a61d55bcc0c90e5b841b217e45477e743",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/intermediate_MPC_backup_v1/CURRENT.md"
+    },
+    {
+      "bytes": 2171,
+      "original": "/home/trevor/MPC/scheme_A_reference_pair_wakeup_20261018_22/preflight/preflight_reflection_pair_wakeup_v1.md",
+      "relative_path": "preflight/preflight_reflection_pair_wakeup_v1.md",
+      "sha256": "309dd687987ebc4d50f1e15f3d8df97cda1caeaa89ece56f87c0a42ab3e9bc77",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/intermediate_MPC_backup_v1/preflight/preflight_reflection_pair_wakeup_v1.md"
+    },
+    {
+      "bytes": 60269,
+      "original": "/home/trevor/MPC/scheme_A_reference_pair_wakeup_20261018_22/protection_v1.py",
+      "relative_path": "protection_v1.py",
+      "sha256": "d74ca524d7f430ae864f7a5e22c537bacf3f32ee9994aeaca973f47334a27fd6",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/intermediate_MPC_backup_v1/protection_v1.py"
+    }
+  ],
+  "schema": "reference-pair-wakeup-intermediate-MPC-backup/v1"
+}

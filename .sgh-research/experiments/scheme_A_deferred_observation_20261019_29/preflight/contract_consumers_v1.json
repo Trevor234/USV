@@ -1,0 +1,15 @@
+{
+  "consumers": {
+    "checker": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72",
+    "driver": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72",
+    "producer": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72"
+  },
+  "contract_semantics_unchanged_from_batch28": true,
+  "diagnostic_revision": 10,
+  "execute_qualified": false,
+  "expected_contract_sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72",
+  "expected_spec_sha256": "317ec56f9c1211b9d8adc5dc727e2a20c1f281afd2047efafecbac797c46d798",
+  "passed": true,
+  "schema": "contract-consumers-preflight/v1",
+  "stage_qualified": false
+}

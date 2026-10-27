@@ -1,0 +1,25 @@
+/**:
+  ros__parameters:
+    thruster:
+      T_max_forward: 25.0
+      T_max_reverse: 25.0
+    vehicle:
+      Iz: 2.13
+      Nr: -3.105
+      Nr_dot: -3.41
+      Nrr: -0.71
+      Nv: 0.0
+      Nv_dot: -0.1817725
+      Nvv: 0.0
+      Xu: -2.272063
+      Xu_dot: -2.0
+      Xuu: -11.571784
+      Yr: 0.0
+      Yr_dot: -0.1817725
+      Yrr: 0.0
+      Yv: -2.629019
+      Yv_dot: -8.0
+      Yvv: -0.05
+      d_thruster: 0.25
+      mass: 17.04
+      xg: 0.12

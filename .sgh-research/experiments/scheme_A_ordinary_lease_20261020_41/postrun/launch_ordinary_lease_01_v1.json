@@ -1,0 +1,17 @@
+{
+  "run_id": "ordinary_lease_01",
+  "case": "ordinary receipt lease immediate stop",
+  "returncode": 0,
+  "started_ns": 442095884018459,
+  "finished_ns": 442108068884383,
+  "elapsed_ns": 12184865924,
+  "external_timeout_triggered": false,
+  "inputs_unchanged": true,
+  "source_lock": {
+    "bytes": 401614,
+    "sha256": "d934b542a1ed58e3a7bd6857170f27a030320d0487161e83f678f2cf70d005a2"
+  },
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

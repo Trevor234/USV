@@ -1,0 +1,13 @@
+{
+  "schema": "M4-G4-T2C-findings-v87",
+  "recorded_at": "2026-10-25T17:50:17.277330+08:00",
+  "offline_proof": {
+    "C_positive_control": "PASS — correct ordering (ready<request≤stop_tick_start<target_guard)",
+    "C_negative_activation_not_ready": "PASS — caught by G1 audit (batch 84 test)",
+    "audit_features": "activation_commit_ns(非ready)/tick_start_ns(非end_ns)/C去重/stored_gate/closure_gate",
+    "verified_in_batch_84": "test_activation_not_ready_for_accepted_after + test_synthetic_no_stored_rejected + test_group_not_empty_rejected"
+  },
+  "freeze_attempt": "bundle created; registrations failed on output path (runs dir mismatch); fix needed for next batch",
+  "owned_runs": 0,
+  "next": "fix freeze output paths → create T2C registration → execute single owned run"
+}

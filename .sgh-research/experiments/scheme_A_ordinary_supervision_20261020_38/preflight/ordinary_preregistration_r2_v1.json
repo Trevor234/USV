@@ -1,0 +1,63 @@
+{
+  "CXX_builds": 0,
+  "Observer_V1": "none",
+  "Observer_V3": "none/0",
+  "actual_ROS_run_limit": 1,
+  "actual_lease_ordinary_stop_claimed": false,
+  "all_five_role_ELFs_reused": true,
+  "authenticated_to_INT_budget_ns": 100000000,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "case": "active",
+  "checker_negative_cases": [
+    "unknown_cause",
+    "duplicate_dispatch",
+    "foreign_signal_group",
+    "injected_SIGSTOP",
+    "notification_budget_exceeded",
+    "inconsistent_wait_budget",
+    "Worker_summary_missing",
+    "new_submit_after_terminal",
+    "accepted_after_terminal",
+    "Source_inode_mismatch"
+  ],
+  "diagnostic_SIGSTOP_allowed": false,
+  "diagnostic_Worker_stimulus": "pre_native_once_after_completed_v1/1700ms",
+  "driver_budget_seconds": 45,
+  "execute_qualified": false,
+  "expected_selected_Worker_returncode": 0,
+  "expected_terminal_cause": "active_watchdog",
+  "first_run_failure_preserved": "postrun/first_run_failure_freeze_v1.json",
+  "first_tick_lower_bound_after_native_ready_ns": 1000000000,
+  "kill_signal_not_required": true,
+  "loader": {
+    "bytes": 107450,
+    "sha256": "b90ff4da7f4aafa4ba778608c87c35e6234ce8b9f94bca7877eb4172931943a8"
+  },
+  "max_raw_bytes": 134217728,
+  "native_C_hang_claimed": false,
+  "native_ready_to_release_begin_budget_ns": 650000000,
+  "normal_Worker_Source_required": true,
+  "notification_observation_budget_ns": 250000000,
+  "ordinary_healthy_Worker_profile": "none/0; fault enabled only for this selected stimulus",
+  "profile": "source-terminal-owned-stop-v1",
+  "research_conclusion": false,
+  "retry_changes_only": "Observer-last preparation; original policy, ELFs and deadline unchanged",
+  "run_id": "ordinary_active_r2_02",
+  "runner": {
+    "bytes": 2611,
+    "sha256": "c2975ccbd2c42339be66adb54a159876e2b4fbd4563d72450c5bfb8fcbe21f3b"
+  },
+  "selected_plan": "A",
+  "source_lock": {
+    "bytes": 355397,
+    "sha256": "e315ad959f155ebfa50c8c8720a2da2f5b58c9ffc30b9382ef05e42b47866337"
+  },
+  "stage_qualified": false,
+  "stop_waits_ns": {
+    "kill_postcheck": 1000000000,
+    "term_grace": 1000000000,
+    "worker_grace": 500000000
+  },
+  "verdict": "GO",
+  "wait_observation_slack_ns": 100000000
+}

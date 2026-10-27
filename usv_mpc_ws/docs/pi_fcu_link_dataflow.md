@@ -283,7 +283,7 @@ MPC 用它拿**比 odom 更灵敏的艏摇角速度**（odom 的 r 来自 EKF，
 | `mode` | 飞控模式字符串 | `"HOLD"`（等待任务） |
 | `system_status` | MAVLink 系统状态码 | `5`（critical? 实为 standby 相关枚举） |
 
-MPC 的 `allowed_fcu_modes=["GUIDED"]` 检查就落在 `mode` 字段上——模式不对时 STANDBY 原因显示 `wrong_mode(HOLD)`。
+MPC 的 `allowed_fcu_modes` 检查就落在 `mode` 字段上——模式不对时 STANDBY 原因显示 `wrong_mode(<实际模式>)`。取值按方案区分：**方案 A（运动学，速度 setpoint）为 `["GUIDED"]`；方案 B（动力学 NMPC，RC 覆写）为 `["MANUAL"]`**。B 的 RC 覆写只有在 MANUAL 下才经 ArduRover 的 pilot 输入链成为 steering/throttle 主控制；GUIDED 虽接收 RC 覆写消息，但其 guided 子模式按自身目标驱动，不会把覆写当作主控制。详见 [方案B MANUAL+RC覆写契约](scheme_B_manual_rc_contract.md)。
 
 ### 5.4 `mavros_msgs/WaypointList` + `geographic_msgs/GeoPointStamped`
 

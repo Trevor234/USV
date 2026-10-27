@@ -1,0 +1,32 @@
+{
+  "actual_constructor_diff_sha256": "4fe7533826ccdcb3aec9e2b8469f859333dae7f4328bfa4b8978a4710675ce3a",
+  "added_observer_files": [
+    "src/shadow/task_time_entry_contract_v1.hpp",
+    "tests/test_task_time_entry_contract_v1.cpp"
+  ],
+  "changed_existing_observer_files": [
+    "CMakeLists.txt",
+    "src/shadow/regulator_shadow_observer.cpp"
+  ],
+  "comparison": "revision01 failed startup to revision02",
+  "conclusion": "shared pure validator is called by actual constructor; exact diag7 sampling and epoch policy required; no objective/model/deadline/identity/admission relaxation",
+  "entry_native_tests": 20,
+  "exact_unchanged_runtime_contract_and_guards": {
+    "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+    "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+    "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+    "observer/src/shadow/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+    "observer/src/shadow/p1_full_contract.hpp": "3190bd773ba17308e6c78f7a53d48cb87d98417201d98be42e58baf8adb2287e",
+    "observer/src/shadow/p1_resources.hpp": "dbdabe76eb997ae64947746f3ffe99d431b9ff630045267ecf89a9b577cc3387",
+    "observer/src/shadow/task_time_profile_v1.hpp": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3",
+    "task_time_contract_v1.json": "e70beba368108d0e58d3ea2cc60ba34901166ab83c56892a3cd46a4725b51dee",
+    "worker/solver_worker.cpp": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e"
+  },
+  "execute_qualified": false,
+  "first_failed_release_preserved": true,
+  "removed_observer_files": [],
+  "research_conclusion": false,
+  "review_passed": true,
+  "schema": "scheme-A-task-time-revision02-diff-review/v1",
+  "stage_qualified": false
+}

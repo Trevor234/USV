@@ -1,0 +1,15 @@
+# 方案A当前状态：第33批（2026-10-19）
+
+V1真实队列故障局部条件已在修复版本观察通过。首run首次Applied比PauseArmed晚2.227552ms，严格门失败，原作者树/数据/报告不改；独立v33r2将arm移到首accepted Decision匹配的认证phase/Applied grant。修复run实际Applied早于arm0.663935ms，并有Stored/GID/认证回调关联。
+
+修复run11.931s，44既有项+468明确诊断记录填满容量512，Decision22(job2/tick21)真实拒绝。Witness记录同次stopping和失效；失败Decision未见于Stored或Owner，后续无新accepted activation或submit授权。槽位当时为空，未命中失败前非空槽交错。五个owned组均空，Observer因Source失败返回2，其余角色0，Recorder正常停止。
+
+正常关闭仍有独立失败：首run尾段接收器已退出，修复run关闭ACK deadline/identity未满足；normal passed=false保持。故障自关闭、Stored近零尾段及owned清理不能变成正常最终版关闭资格。Recorder自报stream_accounting=false不改，SQL/metadata及目标消息另行独立核对。
+
+最终版本Native三组/23断言通过；共三次构建，含测试误用Witness.close导致的首次失败，以及真实先后关系修复。两个raw run、所有审计失败/版本和两套作者树完整封存。数值合同不变，execute禁用，默认workspace/install及旧dirty/冻结资产不变。
+
+修复ELF SHA：697417883320e20d47470a17de1d787252ba988a8da5cde861c0342df862544d；source bundle SHA：9f19e32863ef7910800e43d2bceaf66d89aed94e205ba2ca61eec11e569b70ab。r2是诊断实现修订，不是模型generation切换。B4/B5/M0b/M4/F6/P1及execute/true_plant/research仍未整体合格。
+
+下步先用现有raw实现显式故障自关闭driver/检查分支，不让已退出Observer补发ACK或接收正常尾段；旧正常关闭门不放宽、不重判。然后V2分别验证native阻塞/active watchdog和能力receipt租约，V3后再复判最终统一版。无新缺口不重复V1实际run。
+
+MPC只写本批新归档。交付成功仅认delivery_verification.json；文件不存在时仍为待交付，存在且passed/二次SHA读回通过后表示完成。

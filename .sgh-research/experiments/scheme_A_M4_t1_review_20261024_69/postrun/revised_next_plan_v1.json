@@ -1,0 +1,103 @@
+{
+  "schema": "M4-after-T1-review-minimum-plan-v69",
+  "steps": [
+    {
+      "id": "S0",
+      "status": "complete",
+      "task": "修复观测器与runner失败门",
+      "evidence": [
+        "evidence/reviewed_t1/attempt01/verification_v1.json",
+        "evidence/verdict_tests/verification_v1.json",
+        "evidence/event_reader_tests/verification_v1.json"
+      ],
+      "done": "25/25及3个指定变异通过严格判定，17项Python判定测试和6项精确事件读取测试通过。"
+    },
+    {
+      "id": "S1",
+      "status": "next",
+      "task": "T1剩余小范围语义补证，保持Regulator源码原样",
+      "code_targets": [
+        "new derived tests through P1_REGULATOR_SOURCE",
+        "existing C33MatrixAccess / P1_C36_COMPLETION_TEST seams"
+      ],
+      "checks": [
+        "success=false与solver_invoked=false分别单独刺激并核对当前Job事件及明确拒绝原因；prediction_available=false单独消费门本69已补。",
+        "区分Job horizon/dt非法与原生预测结果shape；绑定既有生成端检查或固定尺寸构造性证据，必要时做受控原生结果组件，不要求新owned坏shape实验。",
+        "在真实prepare_loop/最终submit路径取得Job提交事实，再插入clear/shutdown，检查真实cancel或禁止提交，而非手工seed_echo代替提交。",
+        "对logical Job在途尚未ready的窗口注入reference变化，再提交旧结果并拒绝；新有效task的candidate/slot/activation做正控。",
+        "普通new odom后的候选要实际尝试激活，版本拒绝维度按冻结合同列清，避免只核eligible或测试名字。"
+      ],
+      "done": "更新23项覆盖为已证范围/仍需T2；不因计数25相同即宣称全覆盖。"
+    },
+    {
+      "id": "S2",
+      "status": "planned",
+      "task": "冻结T2动作表及阶段回执的最小接口",
+      "code_targets": [
+        "new owned author derived from frozen66, not component-placeholder ELF",
+        "fixture/synthetic_source_m4.cpp",
+        "owned_m4_diagnostic_driver_v1.py",
+        "w2_runtime_contract.py",
+        "Regulator diagnostic-case/parameter admission"
+      ],
+      "checks": [
+        "create-only动作表固定run/case/合同SHA、有限动作和触发Job/版本/阶段；既有Fixture writer执行，candidate伪造不进Fixture。",
+        "当前preflight和Regulator诊断case只认W1/W2/W3/W4，新增T2值须在入口、有效参数、manifest与审计同时消费；normal scope拒绝这些能力。",
+        "动作executed回执与Regulator callback/状态变更回执分开；按完整Job/版本/单调时间核对，不用测试flush_pad充当生产ACK。",
+        "先离线正反例验证错误case/hash/顺序/多动作/超时/重复回执；不放宽原150ms截止、600ms租约、1s watchdog或关闭预算。"
+      ],
+      "done": "三个场景族的时序和失败判据成为被代码消费的登记条款，再固定bundle/Driver/ELF/registry/registration和运行库。"
+    },
+    {
+      "id": "T2-A",
+      "status": "planned",
+      "task": "clock冻结/恢复场景族",
+      "checks": [
+        "优先明确持续投递相同clock stamp以保持receipt新鲜，与完全静默超过100ms的clock stale场景分别登记。",
+        "原>400ms pause、RTF无效与schedule失效逐事件核对；resume明确sim与odom/imu stamp、名义模型时间的映射。",
+        "要求旧候选不复活；若要声称恢复接纳，必须另有新窗口有效性和新Job接受证据。"
+      ],
+      "done": "发布→真实callback→pause/resume→epoch/schedule→候选处置链闭合；不把clock stale改名成单独pause证明。"
+    },
+    {
+      "id": "T2-B",
+      "status": "planned",
+      "task": "在途Job与ready窗口的clear/replace场景族",
+      "checks": [
+        "job_received只证明收到/排队；求解在途触发须确认同一Job已active或进入计算边界，且未生成或发布结果；candidate_received另标ready窗口。",
+        "必要时复用已认证有限boundary/release组件，动作和状态ACK后释放；原Job截止绝不延长，错过窗口按登记失败。",
+        "区分因旧task被拒与因过期/Worker终端而未产生候选；后者不能冒充前者。",
+        "clear与replace若不能在同一登记内独立归因，则拆子case；保留3个场景族，不提前保证恰好3次run。"
+      ],
+      "done": "每个目标Job有因果窗口、Fixture writer身份、raw输入/变更版本及唯一结果处置。"
+    },
+    {
+      "id": "T2-C",
+      "status": "planned",
+      "task": "Driver shutdown与ready/activation交错场景族",
+      "checks": [
+        "ready确认必须绑定目标Job及真实完成点；先确认当前异步Source文件是否能在窗口内可靠观测。",
+        "若文件可见性不足，再加仅诊断的有界ACK/gate；通知可非阻塞，等待不持共享业务锁，normal scope不放行。",
+        "独立核对ready_commit < request <= stopping_observed <= activation_guard；不采信最终reason=shutdown就推断交错发生。",
+        "API零请求/实际返回/Source flush/Recorder/进程退出各自对账，按登记信号和退出码处理。"
+      ],
+      "done": "停止请求确实早于目标激活guard，目标未接受，完整退出与存储证据成立。"
+    },
+    {
+      "id": "T3→N3→F6→P1",
+      "status": "retained",
+      "task": "保留主线剩余义务",
+      "checks": [
+        "cleanup_failed与旧group未空禁止restart、Source队列压力尚未覆盖；不被T2三场景族替代。",
+        "每个实际owned case先预检登记、单次有限执行、自动重试0、失败原件保留。",
+        "原九组联合复判后才按原合同推进有限M0/M1模型事务/F6，再P1；不新增C内部永久挂起/duplicate-release/plant前置。"
+      ],
+      "done": "组件、阶段资格和研究结论分别判定；生产B仍MANUAL＋RC覆写。"
+    }
+  ],
+  "stage_qualified": false,
+  "three_scenario_families_not_guaranteed_three_runs": true,
+  "original_T2_handoff_atoms": 5,
+  "other_original_wiring_atoms": 18,
+  "original_false_claim_other_atoms_19_corrected": true
+}

@@ -1,0 +1,42 @@
+{
+  "baseline_native251_rerun": false,
+  "cases": {
+    "foreign_after_close_v3": {
+      "Accepted": 0,
+      "Witness_BusinessReady": false,
+      "Witness_observation_complete": true,
+      "cleanup_roles": 6,
+      "component_passed": true,
+      "driver_passed": true,
+      "full_check_result_sha256": "688d6b49719bedb94475d89ac3aa670ab48f077185dfbd91510e9c27d09b9663",
+      "resource_cleanup_complete": true
+    },
+    "normal_v2": {
+      "Accepted": 0,
+      "Witness_BusinessReady": false,
+      "Witness_observation_complete": true,
+      "cleanup_roles": 5,
+      "component_passed": true,
+      "driver_passed": true,
+      "full_check_result_sha256": "280ef615e4318fe5aea49ef353a81e8c0c8cf77e9306b121d52631633da17dbe",
+      "resource_cleanup_complete": true
+    }
+  },
+  "execute_qualified": false,
+  "failed_first_foreign_check_retained": {
+    "issues": [
+      {
+        "code": "entire_foreign_Source_actual_GID_transport_wire_CDR_occurrence_population"
+      }
+    ],
+    "passed": false,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_10_20261015_16/runs/foreign_after_close/check_result.json",
+    "posthoc_qualification_granted": false
+  },
+  "finite_checker_count": 149,
+  "new_native_count": 27,
+  "passed": true,
+  "research_conclusion": false,
+  "schema": "C3.10-matrix/v1",
+  "stage_qualified": false
+}

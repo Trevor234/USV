@@ -1,0 +1,22 @@
+{
+  "acceptance_or_performance_gate_changed_after_failure": false,
+  "accepted": 101,
+  "batch_all_planned_cases_passed": false,
+  "candidate_activation_all_passed": true,
+  "driver_passed": true,
+  "full_RMSE": 0.008758759754530695,
+  "full_RMSE_limit": 0.007392495755251466,
+  "full_RMSE_passed": false,
+  "last5s_mean_passed": true,
+  "last5s_relative_mean_error": 0.0006840187406617626,
+  "observed_case": "s005",
+  "relative_RMSE_reduction": 0.40759115429260384,
+  "remaining_cases_not_run_by_fixed_gate": [
+    "s010",
+    "s030",
+    "s060"
+  ],
+  "research_conclusion": false,
+  "schema": "projected-first-gate-checkpoint/v1",
+  "stage_qualified": false
+}

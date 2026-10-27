@@ -1,0 +1,2081 @@
+diff --git a/usv_mpc_ws/docs/bag_recording.md b/usv_mpc_ws/docs/bag_recording.md
+index f7797fd..cc1e540 100644
+--- a/usv_mpc_ws/docs/bag_recording.md
++++ b/usv_mpc_ws/docs/bag_recording.md
+@@ -1,5 +1,7 @@
+ # ROS 2 数据记录（rosbag2 + MCAP）
+ 
++第 1–7 节描述 MAVROS 实机录包；VRX 仿真方案 C 的入口、话题与验收见第 8 节。两个入口的存储参数与话题清单分别生效。
++
+ 本方案记录无人艇核心控制闭环，用于复盘定位、IMU、飞控状态、MPC 输出、参考轨迹和求解器状态。默认写入外接 SSD `/mnt/usv_bags`，不会在 SSD 缺失时回退到 Pi5 的 SD 卡。
+ 
+ ## 1. 准备外接存储
+@@ -127,3 +129,143 @@ ros2 launch usv_bringup real.launch.py record:=true
+ ```
+ 
+ 保持 `armed=false`，运行约 30 秒后 Ctrl-C，再用 `ros2 bag info` 检查 MAVROS 和 MPC 状态消息。这样可在推进器不动作的情况下验证 SSD、QoS、MCAP 和 shutdown/finalize 流程。
++
++## 8. VRX 方案 C：PPO 已发布动作录包与验收
++
++VRX 使用 `usv_bringup vrx.launch.py`，必须显式指定 `scheme:=C record_bag:=true`。`record_bag` 默认仍为 `false`，录包输出位置由 `bag_dir` 和 `run_id` 决定。此入口保留原有 rosbag2 存储与记录时间选项；不能把第 3 节实机的 `config/bag_topics.yaml`、SSD 路径或 MCAP preset 当作 VRX 的有效配置。
++
++“已执行动作”在这里指 PPO 节点经过幅值与变化率限制后，向 VRX 发布的左右推力命令，单位 N。记录不是推进器实际产生的力，也没有 Gazebo 接收确认。状态中的 `tl_cmd_n/tr_cmd_n` 是请求推力；`tl_n/tr_n` 才对应左右推力话题。做动作统计时应选择后者。
++
++### 8.1 启动与正常停止
++
++以下脚本使用当前默认参考任务。需要其他任务时，将已核验的用户参考文件作为 `waypoints_file:=/absolute/path/to/waypoints.yaml` 参数传给 launch，并在运行上下文中保存实际参数。不要依赖一次性实验目录中的参考文件长期存在。
++
++```bash
++#!/usr/bin/env bash
++set -e
++source /opt/ros/jazzy/setup.bash
++source /home/trevor/USV/vrx_ws/install/setup.bash
++source /home/trevor/USV/usv_mpc_ws/install/setup.bash
++
++# 93 是示例；先确认此 domain 没有其他实验进程。
++export ROS_DOMAIN_ID=93
++export ROS_LOCALHOST_ONLY=1
++PPO_RUN_ID="rl_c_actions_$(date +%Y%m%d_%H%M%S)"
++export GZ_PARTITION="$PPO_RUN_ID"
++PPO_BAG_DIR=/home/trevor/USV/data/sim_bags
++PPO_MODEL=/home/trevor/USV/usv_rl/models/v5/s4_dr/policy_physical_n.onnx
++PPO_MANIFEST=/home/trevor/USV/usv_rl/models/v5/s4_dr/policy_physical_n.manifest.json
++PPO_EVIDENCE_DIR="/home/trevor/USV/.sgh-research/experiments/$PPO_RUN_ID"
++
++test -f "$PPO_MODEL"
++test -f "$PPO_MANIFEST"
++test ! -e "$PPO_BAG_DIR/$PPO_RUN_ID"
++test ! -e "$PPO_EVIDENCE_DIR"
++mkdir -p "$PPO_BAG_DIR"
++mkdir "$PPO_EVIDENCE_DIR"
++printf '%s\n' "$PPO_BAG_DIR/$PPO_RUN_ID" > "$PPO_EVIDENCE_DIR/bag_path.txt"
++sha256sum "$PPO_MODEL" "$PPO_MANIFEST" > "$PPO_EVIDENCE_DIR/model_sha256.txt"
++printf 'run_id=%s\nevidence_dir=%s\n' "$PPO_RUN_ID" "$PPO_EVIDENCE_DIR"
++
++ros2 launch usv_bringup vrx.launch.py \
++  scheme:=C headless:=true record_bag:=true \
++  bag_dir:="$PPO_BAG_DIR" run_id:="$PPO_RUN_ID" \
++  rl_model:="$PPO_MODEL"
++```
++
++保存为 Bash 脚本执行，`set -e` 会在模型、清单或 run_id 检查失败时停止。`run_id` 目录存在即换新名字，不向旧 bag 写入。使用当前有效的物理 N 模型和单位清单；旧 `policy.onnx` 带有已知缺少物理缩放的问题，不能因为它也能生成推力话题就认作正确单位的基线。
++
++先确认正在使用的 overlay：`ros2 pkg prefix usv_bringup` 应指向 `/home/trevor/USV/usv_mpc_ws/install/usv_bringup`。修改此 launch 后在 `/home/trevor/USV/usv_mpc_ws` 构建 `usv_bringup`，再 source 安装空间，检查安装侧 recorder 参数确有 `/clock`。
++
++录制开始后确认 recorder 已订阅下表中的话题。控制器的 9 秒启动延迟不能保证 DDS 发现已完成；启动日志中的订阅结果与录后解码检查都需要保留。烟测运行约 60 秒墙钟，目标至少 10 个 ACTIVE 控制拍并有非零命令；墙钟时长不等于仿真时长。使用 Ctrl-C 正常停止，等待 recorder 刷新缓存并写完 `metadata.yaml` 后验收，不用 `kill -9`。独立实验全部进程应使用相同的 ROS domain 与 Gazebo partition，停止后确认该实验进程已退出。
++
++### 8.2 必录话题
++
++| 默认话题 | ROS 类型 | 用途 |
++|---|---|---|
++| `/wamv/thrusters/left/thrust` | `std_msgs/msg/Float64` | 已发布左推力命令，N |
++| `/wamv/thrusters/right/thrust` | `std_msgs/msg/Float64` | 已发布右推力命令，N |
++| `/mpc/status` | `std_msgs/msg/String` | JSON 状态、请求推力与限幅后推力、PPO 身份 |
++| `/wamv/sensors/position/ground_truth_odometry` | `nav_msgs/msg/Odometry` | 观测状态及 Header 中的仿真时间 |
++| `/wamv/sensors/imu/imu/data` | `sensor_msgs/msg/Imu` | IMU 观测 |
++| `/path/reference` | `nav_msgs/msg/Path` | 采用的参考路径 |
++| `/path/reference_profile` | `std_msgs/msg/Float64MultiArray` | 参考速度与调度剖面 |
++| `/clock` | `rosgraph_msgs/msg/Clock` | 仿真时钟、暂停与重置诊断 |
++
++现有 `/mpc/predicted_trajectory` 继续保留在 recorder 列表中，但方案 C 不要求产生此话题，缺失或为空不会使 PPO 动作验收失败。左右推力、status、odom、IMU、path 和 profile 仍使用 launch 中的可配置话题参数；`/clock` 为当前 VRX 固定时钟话题。
++
++### 8.3 录后检查与两个 profile
++
++`scripts/check_ppo_bag.py` 按 metadata 中的 storage id 读取实际记录并反序列化。它不修改 bag 或 metadata；报告必须写在 bag 之外，不能用 `ros2 bag info` 的非零计数替代动作完整性检查。
++
++录制脚本会输出实际 `run_id` 和证据目录。脚本退出后其局部变量不会传回父终端；在验收终端按刚才打印的 run_id 设置变量，source 相同 ROS 环境，然后运行：
++
++```bash
++source /opt/ros/jazzy/setup.bash
++source /home/trevor/USV/usv_mpc_ws/install/setup.bash
++PPO_RUN_ID=替换为刚才输出的实际run_id
++PPO_BAG_DIR=/home/trevor/USV/data/sim_bags
++PPO_EVIDENCE_DIR="/home/trevor/USV/.sgh-research/experiments/$PPO_RUN_ID"
++
++ros2 bag info "$PPO_BAG_DIR/$PPO_RUN_ID"
++
++python3 /home/trevor/USV/usv_mpc_ws/scripts/check_ppo_bag.py \
++  "$PPO_BAG_DIR/$PPO_RUN_ID" \
++  --profile ppo-actions-v1 \
++  --match-window-ms 20 --value-tolerance-n 1e-5 \
++  --thrust-limit-n 25.0 \
++  --min-active 10 --require-nonzero-active \
++  --report "$PPO_EVIDENCE_DIR/acceptance.json"
++```
++
++- `ppo-actions-v1` 用于新 bag 正式验收：要求上表 8 个话题有实际可解码记录，验证方案 C 身份、左右发布与 status 一对一匹配，并检查 clock 与 odom 对控制区间的覆盖和可见时序空洞。
++- `legacy-actions` 用于历史 bag 的已发布动作流检查：允许缺 `/clock`，但会标明 `timing_incomplete`。此模式不能替代新 bag 正式验收，也不能弥补历史缺失动作。
++
++检查器先按 bag 接收时间和顺序逐路配对，匹配窗默认严格小于 20 ms，并必须小于半个名义控制周期；当前 `dynamic_dt=0.2 s`，因此该上界为 100 ms。匹配后再比较数值，默认允许误差 `1e-5 N`。它不会搜索相同数值补齐缺帧或重复使用相邻命令；未匹配、窗口内歧义、坏 JSON、缺字段、错误类型、NaN/Inf、发布值与 `tl_n/tr_n` 不一致都明确失败。待机零命令和开始/结束残帧也纳入检查，不能静默删除残帧后声明整包完整。
++
++`--thrust-limit-n` 依据本次有效执行配置与模型单位清单设置，示例为当前 v5 的 ±25 N；更换配置后应明确更新该参数。量程通过本身不能证明 ONNX 已正确缩放，验收仍需绑定模型和 manifest 的 SHA256。`--min-active 10 --require-nonzero-active` 是本次烟测的附加条件，避免一直 STANDBY 或全零运行被视为 PPO 动作链烟测成功；其他研究任务可以合法地产生全零动作，不应普遍禁止。
++
++历史正例的检查命令：
++
++```bash
++python3 /home/trevor/USV/usv_mpc_ws/scripts/check_ppo_bag.py \
++  /home/trevor/USV/.sgh-research/experiments/v5_scaling_fix_20261003/results/new_physical_n/new_physical_n \
++  --profile legacy-actions --thrust-limit-n 25.0 \
++  --report /home/trevor/USV/.sgh-research/experiments/ppo_bag_history_new_physical_n.json
++```
++
++退出码 `0` 表示所选 profile 通过；`2` 表示可读取但数据合同不合格；`1` 表示无法读取、依赖缺失或配置错误。新研究 bag 只有正式验收通过才纳入数据集。失败 bag 保留为诊断，修复原因后使用新 run_id 重新录制。
++
++### 8.4 话题重映射
++
++launch 与检查器必须使用同一组实际话题名。例如录制时传入 `left_thrust_topic:=/experiment/left_thrust right_thrust_topic:=/experiment/right_thrust mpc_status_topic:=/experiment/rl_status`，验收时相应传入：
++
++```bash
++python3 /home/trevor/USV/usv_mpc_ws/scripts/check_ppo_bag.py \
++  /absolute/path/to/bag --profile ppo-actions-v1 \
++  --left-topic /experiment/left_thrust \
++  --right-topic /experiment/right_thrust \
++  --status-topic /experiment/rl_status \
++  --thrust-limit-n 25.0 \
++  --report /absolute/path/outside_bag/acceptance.json
++```
++
++其余参数对应关系为 `odom_topic` → `--odom-topic`、`imu_topic` → `--imu-topic`、`path_topic` → `--path-topic`、`profile_topic` → `--profile-topic`。`--clock-topic` 默认 `/clock`；若外部记录入口更改时钟名，必须同步设置。不能因检查器仍使用默认值而把正确的重映射 bag 误判为漏录，也不能使用重复的话题名让左右命令共用一条流。
++
++### 8.5 时间与结论边界
++
++当前 Float64 没有 Header，status 也没有源序号或源时间戳。检查通过证明已记录发布流满足配对与数值合同；它不能证明每一个计划控制拍都被 recorder 录下。如果同一拍的左右推力与 status 三路共同缺失，配对仍可能通过。严格 profile 使用同一 clock 分段内最近的 clock 辅助检查连续 ACTIVE 间隔，大于 `1.5 × dynamic_dt` 的可见空洞会失败；当前周期对应 0.3 s。这仍不能保证识别所有共同掉拍，或区分控制器漏拍与 recorder 漏录。
++
++补录 `/clock` 可帮助诊断暂停、回退、重置与时序覆盖，但不能消除跨话题传输和接收延迟。严格 profile 对 clock 回退或控制区间无覆盖明确失败，不跨重置拼接样本。bag 的墙钟接收时间不能直接用作仿真动力学 Δt。本入口继续保留现有 recorder 时间模式，没有增加 `--use-sim-time`；该参数会改为使用最近收到的 clock 作为记录时间，并在首条 clock 前不写消息，属于不同时间合同，参见 [rosbag2 Jazzy 官方说明](https://github.com/ros2/rosbag2/tree/jazzy#simulation-time)。
++
++报告保留 `common_drop_identifiable=false`、`exact_execution_timing_available=false` 和 `gp_labels_ready=false`。通过动作验收不自动意味着精确 GP 标签可用、执行延迟已测得或控制性能已经改善。首选 A 后续如需精确持有输入与状态对齐，应另行建立联合动作事件及源时间/序号合同。
++
++### 8.6 历史 bag 分类与运行上下文
++
++- `data/sim_bags/rl_c_001` 只有参考路径、剖面、odom 和 IMU，缺少左右推力、status 和 clock；两种 profile 均应拒绝。保留原文件，外部报告标记 `action_recording_complete=false`、`gp_labels_ready=false`。它仍可做有边界的轨迹与观测分析，不能直接计算可靠的动作统计、限幅、控制努力或动力学残差标签。
++- 前次 `new_physical_n` bag 有已验证的动作记录，但未录 clock；`legacy-actions` 可以检查已记录流，正式 `ppo-actions-v1` 应因时钟缺失拒绝。
++- 前次 `old_diagnostic` 虽有动作记录，仍带已知物理缩放缺陷；只能保留为诊断对照。
++
++缺失的历史动作不能补零，不能把动力学逆算或重新运行策略得到的动作当成原实验的真实发布动作写回 bag。需要已发布输入的研究样本必须重新录制。
++
++在 bag 外的实验目录保存 `run_context.json` 或等效上下文文件，包括实际启动命令、解析后的话题名、模型与 manifest SHA256、Git HEAD 和未提交差异、有效车辆/控制参数与参考任务、ROS domain、Gazebo partition、recorder 时间模式、停止方式和检查器参数。建议同时保存 `ros2 pkg prefix usv_bringup`、recorder 订阅日志及验收 JSON，便于核验实际运行的 overlay。当前配置不能冒充历史训练配置；上下文中不要保存登录凭据。
+diff --git a/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py b/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py
+index d5b85fb..011c983 100644
+--- a/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py
++++ b/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py
+@@ -1,319 +1,331 @@
+-"""VRX Gazebo Sim + MPC Scheme B (C++ 动力学 NMPC) validation launch.
+-
+-MPC 节点为 usv_mpc_cpp (C++ NMPC, output_mode=vrx_thrust 直接发布推力),
+-船体和 MPC 共用 vehicle_config。生成的 SDF 使用 DART 原生附加质量；
+-非对称辨识交叉项的仿真处理记录在 effective_vehicle.yaml 中。
+-"""
+-
+-import os
+-
+-from ament_index_python.packages import get_package_share_directory
+-from launch import LaunchDescription
+-from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction
+-from launch.conditions import IfCondition
+-from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution, PythonExpression
+-from launch_ros.actions import Node
+-from launch_ros.parameter_descriptions import ParameterValue
+-from usv_simulation.vrx_spawn import launch_vrx
+-
+-
+-def generate_launch_description():
+-    bringup_share = get_package_share_directory("usv_bringup")
+-    simulation_share = get_package_share_directory("usv_simulation")
+-
+-    world_arg = DeclareLaunchArgument("world", default_value="sydney_regatta")
+-    headless_arg = DeclareLaunchArgument("headless", default_value="False")
+-    paused_arg = DeclareLaunchArgument("paused", default_value="False")
+-    vehicle_config_arg = DeclareLaunchArgument(
+-        "vehicle_config", default_value=os.path.join(bringup_share, "config", "usv_params_sim.yaml"),
+-        description="Identified parameters shared by the Gazebo boat and controller")
+-    simulation_config_arg = DeclareLaunchArgument(
+-        "simulation_config", default_value=os.path.join(simulation_share, "config", "vrx_model.yaml"))
+-    model_output_arg = DeclareLaunchArgument(
+-        "model_output_dir", default_value="", description="Generated SDF, mesh and effective YAML; default /tmp/usv_vrx_*")
+-    control_enabled_arg = DeclareLaunchArgument(
+-        "control_enabled", default_value="true", description="False for open-loop model checks")
+-    waypoints_file_arg = DeclareLaunchArgument("waypoints_file", default_value="")
+-    visualize_arg = DeclareLaunchArgument(
+-        "visualize",
+-        default_value="false",
+-        description="Start the matplotlib runtime visualizer",
+-    )
+-    scheme_arg = DeclareLaunchArgument(
+-        "scheme", default_value="B", choices=["A", "B", "C"],
+-        description="A=运动学 MPC(cmd_vel→推力转换) B=动力学 NMPC(直接推力) C=RL 策略(ONNX 推理)")
+-    rl_model_arg = DeclareLaunchArgument(
+-        "rl_model", default_value="",
+-        description="方案C 的 ONNX 策略路径（usv_rl.export_policy 导出）")
+-    record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
+-    bag_dir_arg = DeclareLaunchArgument(
+-        "bag_dir",
+-        default_value=PathJoinSubstitution([EnvironmentVariable("HOME"), "USV", "usv_vrx_logs"]),
+-        description="Directory for optional VRX rosbag recordings",
+-    )
+-    run_id_arg = DeclareLaunchArgument("run_id", default_value="vrx_scheme_b_run")
+-
+-    odom_topic_arg = DeclareLaunchArgument(
+-        "odom_topic", default_value="/wamv/sensors/position/ground_truth_odometry"
+-    )
+-    imu_topic_arg = DeclareLaunchArgument(
+-        "imu_topic", default_value="/wamv/sensors/imu/imu/data"
+-    )
+-    left_thrust_topic_arg = DeclareLaunchArgument(
+-        "left_thrust_topic", default_value="/wamv/thrusters/left/thrust"
+-    )
+-    right_thrust_topic_arg = DeclareLaunchArgument(
+-        "right_thrust_topic", default_value="/wamv/thrusters/right/thrust"
+-    )
+-    path_topic_arg = DeclareLaunchArgument("path_topic", default_value="/path/reference")
+-    profile_topic_arg = DeclareLaunchArgument(
+-        "profile_topic", default_value="/path/reference_profile"
+-    )
+-    mpc_status_topic_arg = DeclareLaunchArgument("mpc_status_topic", default_value="/mpc/status")
+-    predicted_trajectory_topic_arg = DeclareLaunchArgument(
+-        "predicted_trajectory_topic", default_value="/mpc/predicted_trajectory"
+-    )
+-    dynamic_waypoints_topic_arg = DeclareLaunchArgument(
+-        "dynamic_waypoints_topic", default_value="/usv/mission/waypoints_local"
+-    )
+-    path_frame_arg = DeclareLaunchArgument("path_frame", default_value="map")
+-
+-    waypoints_file = LaunchConfiguration("waypoints_file")
+-    visualize = LaunchConfiguration("visualize")
+-    record_bag = LaunchConfiguration("record_bag")
+-    bag_dir = LaunchConfiguration("bag_dir")
+-    run_id = LaunchConfiguration("run_id")
+-    scheme = LaunchConfiguration("scheme")
+-    odom_topic = LaunchConfiguration("odom_topic")
+-    imu_topic = LaunchConfiguration("imu_topic")
+-    left_thrust_topic = LaunchConfiguration("left_thrust_topic")
+-    right_thrust_topic = LaunchConfiguration("right_thrust_topic")
+-    path_topic = LaunchConfiguration("path_topic")
+-    profile_topic = LaunchConfiguration("profile_topic")
+-    mpc_status_topic = LaunchConfiguration("mpc_status_topic")
+-    predicted_trajectory_topic = LaunchConfiguration("predicted_trajectory_topic")
+-    dynamic_waypoints_topic = LaunchConfiguration("dynamic_waypoints_topic")
+-    path_frame = LaunchConfiguration("path_frame")
+-
+-    vrx = OpaqueFunction(function=launch_vrx)
+-
+-    mpc_params = os.path.join(bringup_share, "config", "mpc_params.yaml")
+-    mpc_params_a = os.path.join(bringup_share, "config", "mpc_params_A.yaml")
+-    usv_params_sim = LaunchConfiguration("effective_vehicle")
+-    mpc_overlay = os.path.join(bringup_share, "config", "mpc_params_vrx.yaml")
+-    path_params = os.path.join(bringup_share, "config", "path_config.yaml")
+-
+-    # ament_python does not automatically source arbitrary files installed in
+-    # share/<package>/environment. Make the acados runtime path explicit for
+-    # the Scheme B process so vrx.launch.py works in a clean sourced shell.
+-    acados_source = os.environ.get(
+-        "ACADOS_SOURCE_DIR", os.path.join(os.path.expanduser("~"), "acados")
+-    )
+-    current_library_path = os.environ.get("LD_LIBRARY_PATH", "")
+-    acados_library_path = os.path.join(acados_source, "lib")
+-    if current_library_path:
+-        acados_library_path += os.pathsep + current_library_path
+-    solver_environment = {
+-        "ACADOS_SOURCE_DIR": acados_source,
+-        "LD_LIBRARY_PATH": acados_library_path,
+-    }
+-
+-    planner_node = TimerAction(
+-        period=8.0,
+-        actions=[Node(
+-            package="usv_planning_cpp",
+-            executable="path_planner_node",
+-            name="path_planner_node",
+-            output="screen",
+-            condition=IfCondition(LaunchConfiguration("control_enabled")),
+-            parameters=[path_params, {
+-                "use_sim_time": True,
+-                "odom_topic": odom_topic,
+-                "path_topic": path_topic,
+-                "profile_topic": profile_topic,
+-                "dynamic_waypoints_topic": dynamic_waypoints_topic,
+-                "waypoints_file": waypoints_file,
+-            }],
+-        )],
+-    )
+-
+-    enabled = LaunchConfiguration("control_enabled")
+-    is_scheme_a = PythonExpression(["'", scheme, "' == 'A' and '", enabled, "'.lower() == 'true'"])
+-    is_scheme_b = PythonExpression(["'", scheme, "' == 'B' and '", enabled, "'.lower() == 'true'"])
+-    is_scheme_c = PythonExpression(["'", scheme, "' == 'C' and '", enabled, "'.lower() == 'true'"])
+-
+-    def plant_parameter(name):
+-        return ParameterValue(LaunchConfiguration("plant_" + name), value_type=float)
+-
+-    # 方案 B: 动力学 NMPC, 推力 1:1 直发 (现有路径)
+-    mpc_node_b = TimerAction(
+-        period=9.0,
+-        actions=[Node(
+-            package="usv_mpc_cpp",
+-            executable="mpc_node",
+-            name="mpc_controller_node",
+-            output="screen",
+-            condition=IfCondition(is_scheme_b),
+-            additional_env=solver_environment,
+-            parameters=[mpc_params, usv_params_sim, mpc_overlay, {
+-                "use_sim_time": True,
+-                "dynamic.T_max": plant_parameter("tmax"),
+-                "dynamic.T_min": plant_parameter("tmin"),
+-                "odom_topic": odom_topic,
+-                "imu_topic": imu_topic,
+-                "path_topic": path_topic,
+-                "profile_topic": profile_topic,
+-                "status_topic": mpc_status_topic,
+-                "predicted_trajectory_topic": predicted_trajectory_topic,
+-                "path_frame": path_frame,
+-                "vrx_left_thrust_topic": left_thrust_topic,
+-                "vrx_right_thrust_topic": right_thrust_topic,
+-            }],
+-        )],
+-    )
+-
+-    # 方案 A: 运动学 MPC (cmd_vel) + cmdvel→推力转换内环
+-    # (转换节点用辨识参数做逆模型: drag/yaw 前馈 + 速率反馈, 50Hz)
+-    kin_node = TimerAction(
+-        period=9.0,
+-        actions=[Node(
+-            package="usv_mpc_kinematic_cpp",
+-            executable="mpc_node",
+-            name="mpc_controller_node",
+-            output="screen",
+-            condition=IfCondition(is_scheme_a),
+-            parameters=[mpc_params_a, {
+-                "use_sim_time": True,
+-                "scheme": "A",
+-                "control_mode": "kinematic",
+-                "require_fcu_state": False,
+-                "odom_topic": odom_topic,
+-                "imu_topic": imu_topic,
+-                "path_topic": path_topic,
+-                "profile_topic": profile_topic,
+-                "status_topic": mpc_status_topic,
+-                "predicted_trajectory_topic": predicted_trajectory_topic,
+-                "path_frame": path_frame,
+-                "velocity_topic": "/usv/cmd_vel",
+-            }],
+-        ),
+-        Node(
+-            package="usv_simulation",
+-            executable="cmdvel_to_thrust",
+-            name="cmdvel_to_thrust",
+-            output="screen",
+-            condition=IfCondition(is_scheme_a),
+-            parameters=[{
+-                "cmd_vel_topic": "/usv/cmd_vel",
+-                "odom_topic": odom_topic,
+-                "left_thrust_topic": left_thrust_topic,
+-                "right_thrust_topic": right_thrust_topic,
+-                "use_sim_time": True,
+-                "d_thruster": plant_parameter("d"),
+-                "mass": plant_parameter("mass"), "iz_eff": plant_parameter("iz_eff"),
+-                "xu": plant_parameter("xu"), "xuu": plant_parameter("xuu"),
+-                "nr": plant_parameter("nr"), "nrr": plant_parameter("nrr"),
+-                "t_max": plant_parameter("inner_tmax"),
+-            }],
+-        )],
+-    )
+-
+-    # 方案 C: RL 策略 ONNX 推理（usv_rl_ros, 推力直发, 接口与方案 B 对齐）
+-    rl_node = TimerAction(
+-        period=9.0,
+-        actions=[Node(
+-            package="usv_rl_ros",
+-            executable="rl_policy_node",
+-            name="rl_policy_node",
+-            output="screen",
+-            condition=IfCondition(is_scheme_c),
+-            parameters=[{
+-                "use_sim_time": True,
+-                "model_path": LaunchConfiguration("rl_model"),
+-                "odom_topic": odom_topic,
+-                "imu_topic": imu_topic,
+-                "path_topic": path_topic,
+-                "profile_topic": profile_topic,
+-                "status_topic": mpc_status_topic,
+-                "left_thrust_topic": left_thrust_topic,
+-                "right_thrust_topic": right_thrust_topic,
+-                "control_rate_hz": 5.0,
+-                "t_max": plant_parameter("tmax"),
+-                "d_t_max": 80.0,
+-            }],
+-        )],
+-    )
+-
+-    visualizer_node = TimerAction(
+-        period=10.0,
+-        actions=[Node(
+-            package="usv_simulation",
+-            executable="visualizer",
+-            name="usv_visualizer",
+-            output="screen",
+-            condition=IfCondition(visualize),
+-            parameters=[{
+-                "use_sim_time": True,
+-                "odom_topic": odom_topic,
+-                "path_topic": path_topic,
+-                "predicted_trajectory_topic": predicted_trajectory_topic,
+-                "mission_waypoints_topic": dynamic_waypoints_topic,
+-                "mpc_status_topic": mpc_status_topic,
+-                "left_thrust_topic": left_thrust_topic,
+-                "right_thrust_topic": right_thrust_topic,
+-                # 方案 A 的 u/r 指令显示 (方案 B 不发布 cmd_vel, 显示 NO DATA)
+-                "cmd_vel_topic": "/usv/cmd_vel",
+-            }],
+-        )],
+-    )
+-
+-    bag_record = ExecuteProcess(
+-        cmd=[
+-            "ros2", "bag", "record",
+-            "-o", PathJoinSubstitution([bag_dir, run_id]),
+-            odom_topic,
+-            imu_topic,
+-            left_thrust_topic,
+-            right_thrust_topic,
+-            path_topic,
+-            profile_topic,
+-            mpc_status_topic,
+-            predicted_trajectory_topic,
+-        ],
+-        output="screen",
+-        condition=IfCondition(record_bag),
+-    )
+-
+-    return LaunchDescription([
+-        world_arg,
+-        headless_arg,
+-        paused_arg,
+-        vehicle_config_arg,
+-        simulation_config_arg,
+-        model_output_arg,
+-        control_enabled_arg,
+-        waypoints_file_arg,
+-        visualize_arg,
+-        record_bag_arg,
+-        bag_dir_arg,
+-        run_id_arg,
+-        odom_topic_arg,
+-        imu_topic_arg,
+-        left_thrust_topic_arg,
+-        right_thrust_topic_arg,
+-        path_topic_arg,
+-        profile_topic_arg,
+-        mpc_status_topic_arg,
+-        predicted_trajectory_topic_arg,
+-        dynamic_waypoints_topic_arg,
+-        path_frame_arg,
+-        vrx,
+-        scheme_arg,
+-        rl_model_arg,
+-        planner_node,
+-        mpc_node_b,
+-        kin_node,
+-        rl_node,
+-        visualizer_node,
+-        bag_record,
+-    ])
++"""VRX Gazebo Sim + MPC Scheme B (C++ 动力学 NMPC) validation launch.
++
++MPC 节点为 usv_mpc_cpp (C++ NMPC, output_mode=vrx_thrust 直接发布推力),
++船体和 MPC 共用 vehicle_config。生成的 SDF 使用 DART 原生附加质量；
++非对称辨识交叉项的仿真处理记录在 effective_vehicle.yaml 中。
++"""
++
++import os
++
++from ament_index_python.packages import get_package_share_directory
++from launch import LaunchDescription
++from launch.actions import DeclareLaunchArgument, ExecuteProcess, OpaqueFunction, TimerAction
++from launch.conditions import IfCondition
++from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PathJoinSubstitution, PythonExpression
++from launch_ros.actions import Node
++from launch_ros.parameter_descriptions import ParameterValue
++from usv_simulation.vrx_spawn import launch_vrx
++
++
++def generate_launch_description():
++    bringup_share = get_package_share_directory("usv_bringup")
++    simulation_share = get_package_share_directory("usv_simulation")
++
++    world_arg = DeclareLaunchArgument("world", default_value="sydney_regatta")
++    headless_arg = DeclareLaunchArgument("headless", default_value="False")
++    paused_arg = DeclareLaunchArgument("paused", default_value="False")
++    vehicle_config_arg = DeclareLaunchArgument(
++        "vehicle_config", default_value=os.path.join(bringup_share, "config", "usv_params_sim.yaml"),
++        description="Identified parameters shared by the Gazebo boat and controller")
++    simulation_config_arg = DeclareLaunchArgument(
++        "simulation_config", default_value=os.path.join(simulation_share, "config", "vrx_model.yaml"))
++    model_output_arg = DeclareLaunchArgument(
++        "model_output_dir", default_value="", description="Generated SDF, mesh and effective YAML; default /tmp/usv_vrx_*")
++    control_enabled_arg = DeclareLaunchArgument(
++        "control_enabled", default_value="true", description="False for open-loop model checks")
++    waypoints_file_arg = DeclareLaunchArgument("waypoints_file", default_value="")
++    visualize_arg = DeclareLaunchArgument(
++        "visualize",
++        default_value="false",
++        description="Start the matplotlib runtime visualizer",
++    )
++    scheme_arg = DeclareLaunchArgument(
++        "scheme", default_value="B", choices=["A", "B", "C"],
++        description="A=运动学 MPC(cmd_vel→推力转换) B=动力学 NMPC(直接推力) C=RL 策略(ONNX 推理)")
++    rl_model_arg = DeclareLaunchArgument(
++        "rl_model", default_value="",
++        description="方案C 的 ONNX 策略路径（usv_rl.export_policy 导出）")
++    record_bag_arg = DeclareLaunchArgument("record_bag", default_value="false")
++    bag_dir_arg = DeclareLaunchArgument(
++        "bag_dir",
++        default_value=PathJoinSubstitution([EnvironmentVariable("HOME"), "USV", "usv_vrx_logs"]),
++        description="Directory for optional VRX rosbag recordings",
++    )
++    run_id_arg = DeclareLaunchArgument("run_id", default_value="vrx_scheme_b_run")
++
++    research_defaults = {
++        'enable_research_logging': 'false', 'research_logging_armed': 'false',
++        'research_run_id': '', 'research_baseline_id': '', 'research_output_dir': '',
++        'research_config_hash': '', 'research_expected_pose_frame': '',
++        'research_expected_child_frame': '', 'research_frame_contract_verified': 'false',
++    }
++    research_args = [DeclareLaunchArgument(k, default_value=v) for k, v in research_defaults.items()]
++    research_parameters = {k: ParameterValue(LaunchConfiguration(k), value_type=bool if k in
++        ('enable_research_logging', 'research_logging_armed', 'research_frame_contract_verified') else str)
++        for k in research_defaults}
++
++    odom_topic_arg = DeclareLaunchArgument(
++        "odom_topic", default_value="/wamv/sensors/position/ground_truth_odometry"
++    )
++    imu_topic_arg = DeclareLaunchArgument(
++        "imu_topic", default_value="/wamv/sensors/imu/imu/data"
++    )
++    left_thrust_topic_arg = DeclareLaunchArgument(
++        "left_thrust_topic", default_value="/wamv/thrusters/left/thrust"
++    )
++    right_thrust_topic_arg = DeclareLaunchArgument(
++        "right_thrust_topic", default_value="/wamv/thrusters/right/thrust"
++    )
++    path_topic_arg = DeclareLaunchArgument("path_topic", default_value="/path/reference")
++    profile_topic_arg = DeclareLaunchArgument(
++        "profile_topic", default_value="/path/reference_profile"
++    )
++    mpc_status_topic_arg = DeclareLaunchArgument("mpc_status_topic", default_value="/mpc/status")
++    predicted_trajectory_topic_arg = DeclareLaunchArgument(
++        "predicted_trajectory_topic", default_value="/mpc/predicted_trajectory"
++    )
++    dynamic_waypoints_topic_arg = DeclareLaunchArgument(
++        "dynamic_waypoints_topic", default_value="/usv/mission/waypoints_local"
++    )
++    path_frame_arg = DeclareLaunchArgument("path_frame", default_value="map")
++
++    waypoints_file = LaunchConfiguration("waypoints_file")
++    visualize = LaunchConfiguration("visualize")
++    record_bag = LaunchConfiguration("record_bag")
++    bag_dir = LaunchConfiguration("bag_dir")
++    run_id = LaunchConfiguration("run_id")
++    scheme = LaunchConfiguration("scheme")
++    odom_topic = LaunchConfiguration("odom_topic")
++    imu_topic = LaunchConfiguration("imu_topic")
++    left_thrust_topic = LaunchConfiguration("left_thrust_topic")
++    right_thrust_topic = LaunchConfiguration("right_thrust_topic")
++    path_topic = LaunchConfiguration("path_topic")
++    profile_topic = LaunchConfiguration("profile_topic")
++    mpc_status_topic = LaunchConfiguration("mpc_status_topic")
++    predicted_trajectory_topic = LaunchConfiguration("predicted_trajectory_topic")
++    dynamic_waypoints_topic = LaunchConfiguration("dynamic_waypoints_topic")
++    path_frame = LaunchConfiguration("path_frame")
++
++    vrx = OpaqueFunction(function=launch_vrx)
++
++    mpc_params = os.path.join(bringup_share, "config", "mpc_params.yaml")
++    mpc_params_a = os.path.join(bringup_share, "config", "mpc_params_A.yaml")
++    usv_params_sim = LaunchConfiguration("effective_vehicle")
++    mpc_overlay = os.path.join(bringup_share, "config", "mpc_params_vrx.yaml")
++    path_params = os.path.join(bringup_share, "config", "path_config.yaml")
++
++    # ament_python does not automatically source arbitrary files installed in
++    # share/<package>/environment. Make the acados runtime path explicit for
++    # the Scheme B process so vrx.launch.py works in a clean sourced shell.
++    acados_source = os.environ.get(
++        "ACADOS_SOURCE_DIR", os.path.join(os.path.expanduser("~"), "acados")
++    )
++    current_library_path = os.environ.get("LD_LIBRARY_PATH", "")
++    acados_library_path = os.path.join(acados_source, "lib")
++    if current_library_path:
++        acados_library_path += os.pathsep + current_library_path
++    solver_environment = {
++        "ACADOS_SOURCE_DIR": acados_source,
++        "LD_LIBRARY_PATH": acados_library_path,
++    }
++
++    planner_node = TimerAction(
++        period=8.0,
++        actions=[Node(
++            package="usv_planning_cpp",
++            executable="path_planner_node",
++            name="path_planner_node",
++            output="screen",
++            condition=IfCondition(LaunchConfiguration("control_enabled")),
++            parameters=[path_params, {
++                "use_sim_time": True,
++                "odom_topic": odom_topic,
++                "path_topic": path_topic,
++                "profile_topic": profile_topic,
++                "dynamic_waypoints_topic": dynamic_waypoints_topic,
++                "waypoints_file": waypoints_file,
++            }],
++        )],
++    )
++
++    enabled = LaunchConfiguration("control_enabled")
++    is_scheme_a = PythonExpression(["'", scheme, "' == 'A' and '", enabled, "'.lower() == 'true'"])
++    is_scheme_b = PythonExpression(["'", scheme, "' == 'B' and '", enabled, "'.lower() == 'true'"])
++    is_scheme_c = PythonExpression(["'", scheme, "' == 'C' and '", enabled, "'.lower() == 'true'"])
++
++    def plant_parameter(name):
++        return ParameterValue(LaunchConfiguration("plant_" + name), value_type=float)
++
++    # 方案 B: 动力学 NMPC, 推力 1:1 直发 (现有路径)
++    mpc_node_b = TimerAction(
++        period=9.0,
++        actions=[Node(
++            package="usv_mpc_cpp",
++            executable="mpc_node",
++            name="mpc_controller_node",
++            output="screen",
++            condition=IfCondition(is_scheme_b),
++            additional_env=solver_environment,
++            parameters=[mpc_params, usv_params_sim, mpc_overlay, research_parameters, {
++                "use_sim_time": True,
++                "dynamic.T_max": plant_parameter("tmax"),
++                "dynamic.T_min": plant_parameter("tmin"),
++                "odom_topic": odom_topic,
++                "imu_topic": imu_topic,
++                "path_topic": path_topic,
++                "profile_topic": profile_topic,
++                "status_topic": mpc_status_topic,
++                "predicted_trajectory_topic": predicted_trajectory_topic,
++                "path_frame": path_frame,
++                "vrx_left_thrust_topic": left_thrust_topic,
++                "vrx_right_thrust_topic": right_thrust_topic,
++            }],
++        )],
++    )
++
++    # 方案 A: 运动学 MPC (cmd_vel) + cmdvel→推力转换内环
++    # (转换节点用辨识参数做逆模型: drag/yaw 前馈 + 速率反馈, 50Hz)
++    kin_node = TimerAction(
++        period=9.0,
++        actions=[Node(
++            package="usv_mpc_kinematic_cpp",
++            executable="mpc_node",
++            name="mpc_controller_node",
++            output="screen",
++            condition=IfCondition(is_scheme_a),
++            parameters=[mpc_params_a, {
++                "use_sim_time": True,
++                "scheme": "A",
++                "control_mode": "kinematic",
++                "require_fcu_state": False,
++                "odom_topic": odom_topic,
++                "imu_topic": imu_topic,
++                "path_topic": path_topic,
++                "profile_topic": profile_topic,
++                "status_topic": mpc_status_topic,
++                "predicted_trajectory_topic": predicted_trajectory_topic,
++                "path_frame": path_frame,
++                "velocity_topic": "/usv/cmd_vel",
++            }],
++        ),
++        Node(
++            package="usv_simulation",
++            executable="cmdvel_to_thrust",
++            name="cmdvel_to_thrust",
++            output="screen",
++            condition=IfCondition(is_scheme_a),
++            parameters=[{
++                "cmd_vel_topic": "/usv/cmd_vel",
++                "odom_topic": odom_topic,
++                "left_thrust_topic": left_thrust_topic,
++                "right_thrust_topic": right_thrust_topic,
++                "use_sim_time": True,
++                "d_thruster": plant_parameter("d"),
++                "mass": plant_parameter("mass"), "iz_eff": plant_parameter("iz_eff"),
++                "xu": plant_parameter("xu"), "xuu": plant_parameter("xuu"),
++                "nr": plant_parameter("nr"), "nrr": plant_parameter("nrr"),
++                "t_max": plant_parameter("inner_tmax"),
++            }],
++        )],
++    )
++
++    # 方案 C: RL 策略 ONNX 推理（usv_rl_ros, 推力直发, 接口与方案 B 对齐）
++    rl_node = TimerAction(
++        period=9.0,
++        actions=[Node(
++            package="usv_rl_ros",
++            executable="rl_policy_node",
++            name="rl_policy_node",
++            output="screen",
++            condition=IfCondition(is_scheme_c),
++            parameters=[{
++                "use_sim_time": True,
++                "model_path": LaunchConfiguration("rl_model"),
++                "odom_topic": odom_topic,
++                "imu_topic": imu_topic,
++                "path_topic": path_topic,
++                "profile_topic": profile_topic,
++                "status_topic": mpc_status_topic,
++                "left_thrust_topic": left_thrust_topic,
++                "right_thrust_topic": right_thrust_topic,
++                "control_rate_hz": 5.0,
++                "t_max": plant_parameter("tmax"),
++                "d_t_max": 80.0,
++            }],
++        )],
++    )
++
++    visualizer_node = TimerAction(
++        period=10.0,
++        actions=[Node(
++            package="usv_simulation",
++            executable="visualizer",
++            name="usv_visualizer",
++            output="screen",
++            condition=IfCondition(visualize),
++            parameters=[{
++                "use_sim_time": True,
++                "odom_topic": odom_topic,
++                "path_topic": path_topic,
++                "predicted_trajectory_topic": predicted_trajectory_topic,
++                "mission_waypoints_topic": dynamic_waypoints_topic,
++                "mpc_status_topic": mpc_status_topic,
++                "left_thrust_topic": left_thrust_topic,
++                "right_thrust_topic": right_thrust_topic,
++                # 方案 A 的 u/r 指令显示 (方案 B 不发布 cmd_vel, 显示 NO DATA)
++                "cmd_vel_topic": "/usv/cmd_vel",
++            }],
++        )],
++    )
++
++    bag_record = ExecuteProcess(
++        cmd=[
++            "ros2", "bag", "record",
++            "-o", PathJoinSubstitution([bag_dir, run_id]),
++            odom_topic,
++            imu_topic,
++            left_thrust_topic,
++            right_thrust_topic,
++            path_topic,
++            profile_topic,
++            mpc_status_topic,
++            predicted_trajectory_topic,
++            "/clock",
++        ],
++        output="screen",
++        condition=IfCondition(record_bag),
++    )
++
++    return LaunchDescription(research_args + [
++        world_arg,
++        headless_arg,
++        paused_arg,
++        vehicle_config_arg,
++        simulation_config_arg,
++        model_output_arg,
++        control_enabled_arg,
++        waypoints_file_arg,
++        visualize_arg,
++        record_bag_arg,
++        bag_dir_arg,
++        run_id_arg,
++        odom_topic_arg,
++        imu_topic_arg,
++        left_thrust_topic_arg,
++        right_thrust_topic_arg,
++        path_topic_arg,
++        profile_topic_arg,
++        mpc_status_topic_arg,
++        predicted_trajectory_topic_arg,
++        dynamic_waypoints_topic_arg,
++        path_frame_arg,
++        vrx,
++        scheme_arg,
++        rl_model_arg,
++        planner_node,
++        mpc_node_b,
++        kin_node,
++        rl_node,
++        visualizer_node,
++        bag_record,
++    ])
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt b/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt
+index 684c75e..d2ed75a 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt
++++ b/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt
+@@ -21,6 +21,8 @@ find_package(nav_msgs REQUIRED)
+ find_package(sensor_msgs REQUIRED)
+ find_package(mavros_msgs REQUIRED)
+ find_package(std_msgs REQUIRED)
++find_package(rosgraph_msgs REQUIRED)
++find_package(usv_research_interfaces REQUIRED)
+ find_package(nlohmann_json REQUIRED)
+ find_package(Eigen3 REQUIRED)
+ 
+@@ -198,6 +200,8 @@ ament_target_dependencies(mpc_node
+   mavros_msgs
+   std_msgs
+   nlohmann_json
++  rosgraph_msgs
++  usv_research_interfaces
+ )
+ 
+ # ── RPATH: 让运行时找到 acados/casadi/blasfeo/hpipm .so ──
+@@ -247,7 +251,38 @@ if(BUILD_TESTING)
+   )
+   target_link_libraries(test_mpc_core mpc_core_lib)
+ 
++  # Exercise the node's actual output mapping using an injected test solver.
++  ament_add_gtest(test_deadline_control
++    test/test_deadline_control.cpp src/mpc_node.cpp)
++  target_include_directories(test_deadline_control PRIVATE
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
++  )
++  target_link_libraries(test_deadline_control mpc_solver_lib)
++  ament_target_dependencies(test_deadline_control
++    rclcpp geometry_msgs nav_msgs sensor_msgs mavros_msgs std_msgs nlohmann_json rosgraph_msgs usv_research_interfaces)
++  set_target_properties(test_deadline_control PROPERTIES
++    BUILD_RPATH "${ACADOS_LIB_DIR};${CASADI_LIB_DIR}"
++  )
++  set_tests_properties(test_deadline_control PROPERTIES
++    ENVIRONMENT "LD_LIBRARY_PATH=${ACADOS_LIB_DIR}:${CASADI_LIB_DIR}:$ENV{LD_LIBRARY_PATH};ROS_DOMAIN_ID=88;ROS_LOCALHOST_ONLY=1"
++    TIMEOUT 60
++  )
++
+   # gtest: acados 后端冒烟 + K1/K2 运行时约束边界回归 (需 acados 运行时库)
++  ament_add_gtest(test_research_contract
++    test/test_research_contract.cpp src/mpc_node.cpp)
++  target_include_directories(test_research_contract PRIVATE
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
++  target_link_libraries(test_research_contract mpc_solver_lib)
++  ament_target_dependencies(test_research_contract
++    rclcpp geometry_msgs nav_msgs sensor_msgs mavros_msgs std_msgs nlohmann_json
++    rosgraph_msgs usv_research_interfaces)
++  set_target_properties(test_research_contract PROPERTIES
++    BUILD_RPATH "${ACADOS_LIB_DIR};${CASADI_LIB_DIR}")
++  set_tests_properties(test_research_contract PROPERTIES
++    ENVIRONMENT "LD_LIBRARY_PATH=${ACADOS_LIB_DIR}:${CASADI_LIB_DIR}:$ENV{LD_LIBRARY_PATH};ROS_DOMAIN_ID=89;ROS_LOCALHOST_ONLY=1"
++    TIMEOUT 120)
++
+   if(EXISTS "${ACADOS_LIB_DIR}/libacados.so")
+     ament_add_gtest(test_acados_solve test/test_acados_solve.cpp)
+     target_include_directories(test_acados_solve PRIVATE
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp b/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp
+index 0013860..3bcf3bf 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp
++++ b/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp
+@@ -35,6 +35,7 @@
+ #pragma once
+ 
+ #include <array>
++#include <atomic>
+ #include <memory>
+ #include <mutex>
+ #include <string>
+@@ -52,6 +53,8 @@
+ #include <std_msgs/msg/float64_multi_array.hpp>
+ #include <std_msgs/msg/string.hpp>
+ 
++#include <rosgraph_msgs/msg/clock.hpp>
++#include "usv_mpc_cpp/research_logger.hpp"
+ #include "usv_mpc_cpp/mpc_solver.hpp"
+ #include "usv_mpc_cpp/utils.hpp"
+ 
+@@ -67,6 +70,10 @@ public:
+   void safe_shutdown();
+ 
+ private:
++  // Tests inject a solver without exposing fault-injection ROS parameters.
++  friend class MpcControllerNodeTestAccess;
++  explicit MpcControllerNode(std::unique_ptr<DynamicMpc> solver);
++
+   // ── 初始化 ──────────────────────────────────────────
+   void declare_parameters_();
+   void load_config_();
+@@ -86,7 +93,8 @@ private:
+   std::pair<bool, std::string> can_solve_() const;
+   void enter_standby_(const std::string & reason);
+   void run_dynamic_mpc_();
+-  bool enforce_solve_deadline_(SolveInfo & info);
++  // Returns true when timing rejects the result (timeout or invalid timing).
++  bool enforce_solve_deadline_(SolveInfo & info, double solve_wall_time_ms);
+ 
+   // ── 输出 ────────────────────────────────────────────
+   Eigen::Vector2d thrust_to_rc_pwm_(
+@@ -101,13 +109,49 @@ private:
+   void publish_status_(
+     const SolveInfo & info, bool in_hold,
+     const Eigen::Vector2d & commanded_thrust,
+-    const Eigen::Vector2d & applied_thrust);
++    const Eigen::Vector2d & applied_thrust,
++    double solve_wall_time_ms, const char * control_source);
+   void publish_standby_status_(const std::string & reason);
+   void publish_predicted_trajectory_(const Eigen::MatrixXd & X_pred);
+ 
+   // ── 参考构建 ────────────────────────────────────────
+   Eigen::MatrixXd build_reference_(const Vector6d & current_state);
+ 
++  void research_clock_(const rosgraph_msgs::msg::Clock::SharedPtr msg);
++  template<class T> void research_time_(T & msg)
++  {
++    std::lock_guard<std::mutex> lock(research_clock_mutex_);
++    msg.sim_time_ns = observed_sim_ns_;
++    msg.clock_epoch = observed_epoch_;
++    msg.clock_receive_steady_ns = observed_clock_receive_ns_;
++    msg.clock_age_ns = observed_clock_receive_ns_ == 0 ? -1 :
++      research_steady_ns() - observed_clock_receive_ns_;
++    msg.clock_status = observed_clock_status_;
++  }
++  void research_state_(
++    const nav_msgs::msg::Odometry & msg, uint64_t received,
++    int64_t receive_ns, double yaw);
++  Eigen::Vector2d research_publish_(
++    const Eigen::Vector2d & requested,
++    const std_msgs::msg::Float64 & left, const std_msgs::msg::Float64 & right);
++  std::unique_ptr<ResearchLogger> research_;
++  rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr research_clock_sub_;
++  rclcpp::CallbackGroup::SharedPtr research_clock_group_;
++  std::mutex research_clock_mutex_;
++  int64_t observed_sim_ns_ = -1, observed_clock_receive_ns_ = 0;
++  uint64_t observed_epoch_ = 0;
++  std::string observed_clock_status_ = "not_received";
++  uint64_t received_odom_count_ = 0, received_imu_count_ = 0;
++  uint64_t accepted_odom_sequence_ = 0, accepted_imu_sequence_ = 0;
++  int64_t accepted_odom_stamp_ns_ = 0, accepted_imu_stamp_ns_ = 0;
++  bool r_from_imu_ = false;
++  uint64_t research_cycle_sequence_ = 0;
++  std::atomic<uint64_t> active_research_cycle_{0}, latest_applied_sequence_{0};
++  bool observed_previous_known_ = false;
++  std::array<double, 2> observed_previous_final_{};
++  ResearchCycle research_cycle_;
++  const char * research_control_source_ = "direct_call";
++
+   // ── 状态锁 (传感器回调与控制循环并发) ────────────────
+   std::mutex state_lock_;
+ 
+@@ -118,6 +162,15 @@ private:
+   double dyn_prediction_time_ = 0.0;
+   double dyn_T_max_ = 25.0;   // 缓存,热路径用
+   double dyn_T_min_ = -25.0;
++  // Cache the publication input separately from the mapped output: replaying
++  // applied thrust through the mapper would scale/map it a second time.
++  Eigen::Vector2d last_commanded_thrust_ = Eigen::Vector2d::Zero();
++  Eigen::Vector2d last_applied_thrust_ = Eigen::Vector2d::Zero();
++  bool has_last_command_ = false;
++  // Shutdown can run outside the timer's callback group. Serialize output and
++  // cache changes without holding this mutex across synchronous solve().
++  std::mutex control_output_mutex_;
++  std::atomic<bool> shutting_down_{false};
+ 
+   // ── 当前状态 ────────────────────────────────────────
+   double x_ = 0, y_ = 0, psi_ = 0, u_ = 0, v_ = 0, r_ = 0;
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/package.xml b/usv_mpc_ws/src/usv_mpc_cpp/package.xml
+index 24c0338..108c120 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/package.xml
++++ b/usv_mpc_ws/src/usv_mpc_cpp/package.xml
+@@ -15,6 +15,8 @@
+   <depend>sensor_msgs</depend>
+   <depend>mavros_msgs</depend>
+   <depend>std_msgs</depend>
++  <depend>rosgraph_msgs</depend>
++  <depend>usv_research_interfaces</depend>
+   <depend>nlohmann_json_schema_validator_vendor</depend>
+   <!-- Eigen3: Fossen 模型数值运算 (替代 numpy) -->
+   <build_depend>eigen</build_depend>
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp b/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp
+index f807d3a..42b3f5a 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp
++++ b/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp
+@@ -49,7 +49,12 @@ double steady_now()
+ }  // namespace
+ 
+ MpcControllerNode::MpcControllerNode()
+-: Node("mpc_controller_node")
++: MpcControllerNode(nullptr)
++{
++}
++
++MpcControllerNode::MpcControllerNode(std::unique_ptr<DynamicMpc> solver)
++: Node("mpc_controller_node"), mpc_(std::move(solver))
+ {
+   declare_parameters_();
+   load_config_();
+@@ -71,12 +76,130 @@ MpcControllerNode::MpcControllerNode()
+ 
+ MpcControllerNode::~MpcControllerNode()
+ {
+-  // safe_shutdown 由 main 在 rclpy::shutdown 前显式调用
++  if (research_) {research_->stop(false);}
++}
++
++void MpcControllerNode::research_clock_(const rosgraph_msgs::msg::Clock::SharedPtr msg)
++{
++  const int64_t value = int64_t(msg->clock.sec) * 1000000000LL + msg->clock.nanosec;
++  std::lock_guard<std::mutex> lock(research_clock_mutex_);
++  observed_clock_status_ = "observed";
++  if (observed_clock_receive_ns_ != 0) {
++    if (value < observed_sim_ns_) {
++      ++observed_epoch_; observed_clock_status_ = "reset";
++    } else if (value - observed_sim_ns_ > 5000000000LL) {
++      ++observed_epoch_; observed_clock_status_ = "jump";
++    } else if (value == observed_sim_ns_) {observed_clock_status_ = "paused";}
++  }
++  observed_sim_ns_ = value;
++  observed_clock_receive_ns_ = research_steady_ns();
++}
++
++void MpcControllerNode::research_state_(
++  const nav_msgs::msg::Odometry & msg,
++  uint64_t received, int64_t receive_ns, double yaw)
++{
++  if (!research_->armed()) {return;}
++  ResearchState s;
++  s.received_odom_sequence = received;
++  s.odom_stamp_ns = int64_t(msg.header.stamp.sec) * 1000000000LL + msg.header.stamp.nanosec;
++  s.receive_steady_ns = receive_ns;
++  s.freeze_steady_ns = research_steady_ns();
++  s.frame_id = msg.header.frame_id; s.child_frame_id = msg.child_frame_id;
++  s.source_topic = this->get_parameter("odom_topic").as_string();
++  s.state_6 = {msg.pose.pose.position.x, msg.pose.pose.position.y, yaw,
++    msg.twist.twist.linear.x, msg.twist.twist.linear.y, msg.twist.twist.angular.z};
++  s.valid = true;
++  for (double value : s.state_6) {
++    if (!std::isfinite(value)) {
++      s.valid = false;
++    }
++  }
++  const auto & q = msg.pose.pose.orientation;
++  const double norm2 = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
++  if (!std::isfinite(norm2) || norm2 < 1e-12) {s.valid = false;}
++  s.quality_reason = s.valid ? "valid_numeric" : "invalid_numeric_or_quaternion";
++  // Invalid raw values remain in original odom; flagged snapshots use finite
++  // placeholders so they cannot silently become training observations.
++  for (double & value : s.state_6) {
++    if (!std::isfinite(value)) {
++      value = 0.0;
++    }
++  }
++  if (!this->get_parameter("research_frame_contract_verified").as_bool() ||
++    s.frame_id != this->get_parameter("research_expected_pose_frame").as_string() ||
++    s.child_frame_id != this->get_parameter("research_expected_child_frame").as_string())
++  {
++    s.valid = false; s.quality_reason += ":frame_unverified_or_mismatch";
++  }
++  research_time_(s);
++  if (s.clock_status == "not_received") {s.valid = false; s.quality_reason += ":clock_missing";}
++  research_->enqueue(s, "state");
++}
++
++Eigen::Vector2d MpcControllerNode::research_publish_(
++  const Eigen::Vector2d & requested,
++  const std_msgs::msg::Float64 & left, const std_msgs::msg::Float64 & right)
++{
++  ResearchApplied event;
++  research_time_(event);
++  event.event_semantics = "publisher_command";
++  event.cycle_sequence = active_research_cycle_;
++  event.control_source = research_control_source_;
++  event.requested_known = true;
++  event.requested_n = {requested(0), requested(1)};
++  event.final_n = {left.data, right.data};
++  event.map_scale = vrx_thrust_scale_;
++  event.lower_n = std::max(dyn_T_min_, -vrx_thrust_cmd_max_);
++  event.upper_n = std::min(dyn_T_max_, vrx_thrust_cmd_max_);
++  event.previous_anchor_known = observed_previous_known_;
++  event.previous_final_n = observed_previous_final_;
++  event.left_publish_start_steady_ns = research_steady_ns();
++  ResearchApplied clock_at_left; research_time_(clock_at_left);
++  event.left_sim_time_ns = clock_at_left.sim_time_ns;
++  event.left_clock_epoch = clock_at_left.clock_epoch;
++  event.left_clock_age_ns = clock_at_left.clock_age_ns;
++  try {
++    vrx_left_pub_->publish(left);
++    event.left_publish_success = true;
++    event.left_publish_end_steady_ns = research_steady_ns();
++    event.right_publish_start_steady_ns = research_steady_ns();
++    ResearchApplied clock_at_right; research_time_(clock_at_right);
++    event.right_sim_time_ns = clock_at_right.sim_time_ns;
++    event.right_clock_epoch = clock_at_right.clock_epoch;
++    event.right_clock_age_ns = clock_at_right.clock_age_ns;
++    vrx_right_pub_->publish(right);
++    event.right_publish_success = true;
++    event.right_publish_end_steady_ns = research_steady_ns();
++  } catch (const std::exception & error) {
++    if (!event.left_publish_success) {
++      event.left_publish_end_steady_ns = research_steady_ns();
++    } else {
++      event.right_publish_end_steady_ns = research_steady_ns();
++    }
++    event.publish_error = error.what();
++    observed_previous_known_ = false;
++    latest_applied_sequence_ = research_->enqueue(event, "applied");
++    throw;
++  }
++  observed_previous_known_ = true;
++  observed_previous_final_ = event.final_n;
++  latest_applied_sequence_ = research_->enqueue(event, "applied");
++  return Eigen::Vector2d(left.data, right.data);
+ }
+ 
+ // ── 参数声明 (默认值与清理后的 mpc_params.yaml/usv_params.yaml 对齐) ──
+ void MpcControllerNode::declare_parameters_()
+ {
++  this->declare_parameter("enable_research_logging", false);
++  this->declare_parameter("research_logging_armed", false);
++  this->declare_parameter("research_run_id", std::string(""));
++  this->declare_parameter("research_baseline_id", std::string(""));
++  this->declare_parameter("research_output_dir", std::string(""));
++  this->declare_parameter("research_config_hash", std::string(""));
++  this->declare_parameter("research_expected_pose_frame", std::string(""));
++  this->declare_parameter("research_expected_child_frame", std::string(""));
++  this->declare_parameter("research_frame_contract_verified", false);
+   this->declare_parameter("control_mode", std::string("dynamic"));
+   this->declare_parameter("mpc_dt", 0.2);
+   this->declare_parameter("horizon", 20);
+@@ -297,7 +420,7 @@ void MpcControllerNode::init_mpc_solver_()
+   p.hydro.Nvv = this->get_parameter("vehicle.Nvv").as_double();
+   p.hydro.Nrr = this->get_parameter("vehicle.Nrr").as_double();
+ 
+-  mpc_ = make_dynamic_mpc(p);
++  if (!mpc_) {mpc_ = make_dynamic_mpc(p);}
+ }
+ 
+ void MpcControllerNode::init_state_()
+@@ -310,6 +433,9 @@ void MpcControllerNode::init_state_()
+   control_count_ = 0;
+   last_state_time_ = 0.0;
+   last_odom_time_ = 0.0;
++  last_commanded_thrust_.setZero();
++  last_applied_thrust_.setZero();
++  has_last_command_ = false;
+ }
+ 
+ void MpcControllerNode::init_pubsub_()
+@@ -348,14 +474,38 @@ void MpcControllerNode::init_pubsub_()
+       this->get_parameter("predicted_trajectory_topic").as_string(), 10);
+   status_pub_ = this->create_publisher<std_msgs::msg::String>(
+       this->get_parameter("status_topic").as_string(), 10);
++  if (this->get_parameter("enable_research_logging").as_bool()) {
++    if (output_mode_ != "vrx_thrust") {
++      throw std::runtime_error("P0 research observations require vrx_thrust mode");
++    }
++    research_ = std::make_unique<ResearchLogger>(*this,
++      this->get_parameter("research_output_dir").as_string(),
++      this->get_parameter("research_run_id").as_string(),
++      this->get_parameter("research_baseline_id").as_string(),
++      this->get_parameter("research_config_hash").as_string());
++    research_clock_group_ =
++      this->create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
++    auto clock_options = opts; clock_options.callback_group = research_clock_group_;
++    research_clock_sub_ = this->create_subscription<rosgraph_msgs::msg::Clock>(
++      "/clock", rclcpp::ClockQoS(),
++      std::bind(&MpcControllerNode::research_clock_, this, std::placeholders::_1), clock_options);
++  }
+ }
+ 
+ // ── 回调 ─────────────────────────────────────────────────
+ void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr msg)
+ {
++  const int64_t receive_ns = research_ ? research_steady_ns() : 0;
++  uint64_t received = 0;
++  if (research_) {
++    std::lock_guard<std::mutex> lk(state_lock_); received = ++received_odom_count_;
++  }
+   const auto & p = msg->pose.pose.position;
+   const auto & q = msg->pose.pose.orientation;
+   const auto & t = msg->twist.twist;
++  if (research_) {
++    research_state_(*msg, received, receive_ns, quaternion_to_yaw(q.x, q.y, q.z, q.w));
++  }
+   // NaN/Inf 门禁: 一个污染样本 (GPS 重定位/EKF 发散) 若进入状态,求解器可能
+   // 仍返回 status=0 的"成功"解,经 clamp/cast 变成任意 PWM 下发。直接丢弃。
+   if (!std::isfinite(p.x) || !std::isfinite(p.y) ||
+@@ -368,8 +518,15 @@ void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr
+                          "odom 含 NaN/Inf, 丢弃该样本");
+     return;
+   }
++  // Keep raw research records above, but never admit degenerate orientations.
++  const double quaternion_norm2 = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
++  if (!std::isfinite(quaternion_norm2) || quaternion_norm2 < 1e-12) {
++    RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
++                        "odom quaternion norm is invalid; dropping sample");
++    return;
++  }
+   double psi = quaternion_to_yaw(q.x, q.y, q.z, q.w);
+-  if (!std::isfinite(psi)) {  // 全零四元数等退化输入
++  if (!std::isfinite(psi)) {  // Final guard for the yaw calculation
+     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                          "odom 四元数退化, 丢弃该样本");
+     return;
+@@ -383,10 +540,20 @@ void MpcControllerNode::odom_callback_(const nav_msgs::msg::Odometry::SharedPtr
+   r_ = t.angular.z;
+   odom_received_ = true;
+   last_odom_time_ = steady_now();
++  if (research_) {
++    accepted_odom_sequence_ = received;
++    accepted_odom_stamp_ns_ = int64_t(msg->header.stamp.sec) * 1000000000LL +
++      msg->header.stamp.nanosec;
++    r_from_imu_ = false;
++  }
+ }
+ 
+ void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg)
+ {
++  uint64_t received = 0;
++  if (research_) {
++    std::lock_guard<std::mutex> lk(state_lock_); received = ++received_imu_count_;
++  }
+   double r = msg->angular_velocity.z;  // 直接陀螺仪角速度, 更灵敏
+   if (!std::isfinite(r)) {
+     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+@@ -396,6 +563,12 @@ void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg
+   std::lock_guard<std::mutex> lk(state_lock_);
+   r_ = r;
+   imu_received_ = true;
++  if (research_) {
++    accepted_imu_sequence_ = received;
++    accepted_imu_stamp_ns_ = int64_t(msg->header.stamp.sec) * 1000000000LL +
++      msg->header.stamp.nanosec;
++    r_from_imu_ = true;
++  }
+ }
+ 
+ void MpcControllerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr msg)
+@@ -477,12 +650,15 @@ std::pair<bool, std::string> MpcControllerNode::can_solve_() const
+ 
+ void MpcControllerNode::enter_standby_(const std::string & reason)
+ {
++  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
++  if (shutting_down_.load()) {return;}
+   bool transition = (prev_state_ != "STANDBY");
+   if (transition) {
+     solver_fail_count_ = 0;
+     if (mpc_) {mpc_->reset_warmstart();}
+     RCLCPP_INFO(this->get_logger(), "MPC → STANDBY: %s", reason.c_str());
+   }
++  research_control_source_ = "standby_release";
+   publish_zero_dynamic_output_();
+   prev_state_ = "STANDBY";
+   publish_standby_status_(reason);
+@@ -492,6 +668,16 @@ void MpcControllerNode::enter_standby_(const std::string & reason)
+ 
+ void MpcControllerNode::control_loop_()
+ {
++  if (research_ && this->get_parameter("research_logging_armed").as_bool()) {research_->arm();}
++  const bool observing = research_ && research_->armed();
++  if (observing) {
++    research_cycle_ = ResearchCycle();
++    research_cycle_.timer_entry_steady_ns = research_steady_ns();
++    research_cycle_.state_kind = "no_solve";
++    active_research_cycle_ = ++research_cycle_sequence_;
++    research_->cycle_started();
++    research_time_(research_cycle_);
++  }
+   std::pair<bool, std::string> cs;
+   bool armed; std::string mode;
+   {
+@@ -500,7 +686,17 @@ void MpcControllerNode::control_loop_()
+     armed = armed_;
+     mode = mode_;
+   }
+-  if (!cs.first) {enter_standby_(cs.second); return;}
++  if (!cs.first) {
++    enter_standby_(cs.second);
++    if (observing) {
++      research_cycle_.rejection_reason = cs.second;
++      research_cycle_.publish_end_steady_ns = research_steady_ns();
++      research_cycle_.applied_sequence = latest_applied_sequence_;
++      research_->enqueue(research_cycle_, "cycle");
++    }
++    active_research_cycle_ = 0;
++    return;
++  }
+ 
+   if (prev_state_ != "ACTIVE") {
+     RCLCPP_INFO(this->get_logger(), "MPC → ACTIVE: armed=%d, mode=%s", armed, mode.c_str());
+@@ -508,27 +704,60 @@ void MpcControllerNode::control_loop_()
+   }
+   prev_state_ = "ACTIVE";
+   run_dynamic_mpc_();
++  if (observing) {
++    research_cycle_.publish_end_steady_ns = research_steady_ns();
++    research_cycle_.applied_sequence = latest_applied_sequence_;
++    research_->enqueue(research_cycle_, "cycle");
++  }
++  active_research_cycle_ = 0;
+ }
+ 
+-bool MpcControllerNode::enforce_solve_deadline_(SolveInfo & info)
++bool MpcControllerNode::enforce_solve_deadline_(
++  SolveInfo & info, double solve_wall_time_ms)
+ {
+-  bool deadline_miss = max_solve_time_ms_ > 0.0 && info.solve_time_ms > max_solve_time_ms_;
++  if (!std::isfinite(solve_wall_time_ms) || solve_wall_time_ms < 0.0 ||
++    !std::isfinite(info.solve_time_ms) || info.solve_time_ms < 0.0 ||
++    !std::isfinite(max_solve_time_ms_))
++  {
++    info.success = false;
++    snprintf(info.error, sizeof(info.error),
++             "solve_timing_invalid: wall=%.1fms backend=%.1fms limit=%.1fms",
++             solve_wall_time_ms, info.solve_time_ms, max_solve_time_ms_);
++    return true;
++  }
++  const bool deadline_miss = max_solve_time_ms_ > 0.0 &&
++    (solve_wall_time_ms > max_solve_time_ms_ || info.solve_time_ms > max_solve_time_ms_);
+   if (deadline_miss) {
+     info.success = false;
+-    snprintf(info.error, sizeof(info.error), "solve_timeout: %.1fms > %.1fms",
+-             info.solve_time_ms, max_solve_time_ms_);
++    snprintf(info.error, sizeof(info.error),
++             "solve_timeout: wall=%.1fms backend=%.1fms limit=%.1fms",
++             solve_wall_time_ms, info.solve_time_ms, max_solve_time_ms_);
+   }
+   return deadline_miss;
+ }
+ 
+ void MpcControllerNode::run_dynamic_mpc_()
+ {
++  if (shutting_down_.load()) {return;}
+   Vector6d current_state;
+   Eigen::MatrixXd reference;
+   {
+     std::lock_guard<std::mutex> lk(state_lock_);
+     current_state << x_, y_, normalize_angle(psi_), u_, v_, r_;
++    if (research_ && research_->armed()) {
++      research_cycle_.state_copy_steady_ns = research_steady_ns();
++      std::copy(current_state.data(), current_state.data() + 6,
++          research_cycle_.controller_state_6.begin());
++      research_cycle_.received_odom_sequence = accepted_odom_sequence_;
++      research_cycle_.received_imu_sequence = r_from_imu_ ? accepted_imu_sequence_ : 0;
++      research_cycle_.odom_stamp_ns = accepted_odom_stamp_ns_;
++      research_cycle_.imu_stamp_ns = r_from_imu_ ? accepted_imu_stamp_ns_ : 0;
++      research_cycle_.state_kind = r_from_imu_ ? "controller_mixed" : "odom_atomic";
++    }
+     reference = build_reference_(current_state);
++    if (research_ && research_->armed()) {
++      research_cycle_.reference_ready_steady_ns = research_steady_ns();
++    }
+     // 航向偏差若超过 135 度 (例如遭遇强扰动反向): 重置热启动初值, 破坏倒车局部解记忆
+     if (reference.cols() > 0 &&
+       std::abs(normalize_angle(current_state(2) - reference(2, 0))) > (M_PI * 0.75))
+@@ -549,8 +778,36 @@ void MpcControllerNode::run_dynamic_mpc_()
+   X_pred:预测状态轨迹
+   U_pred:预测控制序列
+   */
++  // reset_warmstart() also clears the backend's previous-input anchor. Restore
++  // the published equivalent thrust after any pre-solve reset above.
++  {
++    std::lock_guard<std::mutex> output_lock(control_output_mutex_);
++    if (shutting_down_.load()) {return;}
++    if (has_last_command_) {mpc_->set_applied_control(last_applied_thrust_);}
++  }
++  if (research_ && research_->armed()) {
++    research_cycle_.solve_invoked = true;
++    research_cycle_.solve_start_steady_ns = research_steady_ns();
++  }
++  const auto solve_start = std::chrono::steady_clock::now();
+   auto [u_opt, info] = mpc_->solve(current_state, reference);
+-  enforce_solve_deadline_(info);
++  const double solve_wall_time_ms = std::chrono::duration<double, std::milli>(
++    std::chrono::steady_clock::now() - solve_start).count();
++  if (research_ && research_->armed()) {research_cycle_.solve_end_steady_ns = research_steady_ns();}
++  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
++  if (shutting_down_.load()) {return;}
++  const bool time_rejected = enforce_solve_deadline_(info, solve_wall_time_ms);
++  Eigen::Vector2d selected_command = u_opt;
++  const char * control_source = info.success ? "solver" : "backend_fallback";
++  if (time_rejected) {
++    // solve() may already have shifted the late candidate into its warm start.
++    // Reject that state as well as its first command; this is a post-return gate,
++    // not a watchdog capable of publishing while synchronous solve() is blocked.
++    mpc_->reset_warmstart();
++    selected_command = has_last_command_ ?
++      last_commanded_thrust_ : Eigen::Vector2d::Zero();
++    control_source = has_last_command_ ? "repeat_last_command" : "zero_no_history";
++  }
+ 
+   bool in_hold = false;
+   if (info.success) {
+@@ -564,8 +821,9 @@ void MpcControllerNode::run_dynamic_mpc_()
+     }
+     if (solver_fail_count_ >= solver_hold_threshold_) {
+       in_hold = true;
+-      u_opt.setZero();
+-      mpc_->reset_warmstart();
++      selected_command.setZero();
++      control_source = "hold_zero";
++      if (!time_rejected) {mpc_->reset_warmstart();}
+       if (solver_fail_count_ == solver_hold_threshold_) {
+         RCLCPP_ERROR(this->get_logger(),
+                      "NMPC HOLD 挂起：连续失败 %d 次，正在发布零推力并重置热启动",
+@@ -574,21 +832,34 @@ void MpcControllerNode::run_dynamic_mpc_()
+     }
+   }
+ 
+-  const Eigen::Vector2d applied_thrust = publish_dynamic_output_(u_opt);
++  research_control_source_ = control_source;
++  if (research_ && research_->armed()) {
++    research_cycle_.backend_time_ms = info.solve_time_ms;
++    research_cycle_.budget_ms = max_solve_time_ms_;
++    research_cycle_.success = info.success;
++    research_cycle_.deadline_miss = std::strncmp(info.error, "solve_timeout", 13) == 0;
++    research_cycle_.rejection_reason = info.success ? "" : info.error;
++  }
++  const Eigen::Vector2d applied_thrust = publish_dynamic_output_(selected_command);
+   // 求解器 solve() 内部先保存了计划首拍；这里用经过 RC/VRX 映射后真正
+   // 下发的等效推力覆盖，使下一拍 ΔT 代价和硬约束从执行输入出发。
+   mpc_->set_applied_control(applied_thrust);
+-  publish_status_(info, in_hold, u_opt, applied_thrust);
++  last_commanded_thrust_ = selected_command;
++  last_applied_thrust_ = applied_thrust;
++  has_last_command_ = true;
++  publish_status_(
++    info, in_hold, selected_command, applied_thrust, solve_wall_time_ms, control_source);
+ 
+   control_count_++;
+   if (control_count_ % 10 == 0) {
+     int steer = rc_pwm_center_, thr = rc_pwm_center_;
+-    // RC debug 与发布路径调用同一个纯映射函数，重算当前 u_opt。
+-    thrust_to_rc_pwm_(u_opt, steer, thr);
++    // RC debug uses the selected publication input, never the rejected candidate.
++    thrust_to_rc_pwm_(selected_command, steer, thr);
+     RCLCPP_INFO(this->get_logger(),
+                 "t=%.1fs  位置=(%.1f,%.1f)  计划推力=(%.1f,%.1f)N  "
+                 "下发等效推力=(%.1f,%.1f)N  RC(steer=%d, throttle=%d)  求解时间=%.0fms",
+-                control_count_ * mpc_dt_, x_, y_, u_opt(0), u_opt(1),
++                control_count_ * mpc_dt_, current_state(0), current_state(1),
++                selected_command(0), selected_command(1),
+                 applied_thrust(0), applied_thrust(1), steer, thr, info.solve_time_ms);
+   }
+ }
+@@ -641,6 +912,9 @@ Eigen::Vector2d MpcControllerNode::publish_dynamic_output_(
+ 
+ void MpcControllerNode::publish_zero_dynamic_output_()
+ {
++  has_last_command_ = false;
++  last_commanded_thrust_.setZero();
++  last_applied_thrust_.setZero();
+   if (output_mode_ == "vrx_thrust") {
+     release_vrx_thrust_();
+   } else {
+@@ -650,6 +924,7 @@ void MpcControllerNode::publish_zero_dynamic_output_()
+ 
+ void MpcControllerNode::release_rc_override_()
+ {
++  has_last_command_ = false;
+   // 全零 OverrideRCIn = 释放所有通道
+   rc_pub_->publish(mavros_msgs::msg::OverrideRCIn());
+ }
+@@ -664,6 +939,7 @@ Eigen::Vector2d MpcControllerNode::publish_vrx_thrust_(
+   const double upper = std::min(dyn_T_max_, vrx_thrust_cmd_max_);
+   left.data = std::clamp(thrust(0) * vrx_thrust_scale_, lower, upper);
+   right.data = std::clamp(thrust(1) * vrx_thrust_scale_, lower, upper);
++  if (research_ && research_->armed()) {return research_publish_(thrust, left, right);}
+   vrx_left_pub_->publish(left);
+   vrx_right_pub_->publish(right);
+   return Eigen::Vector2d(left.data, right.data);
+@@ -671,10 +947,14 @@ Eigen::Vector2d MpcControllerNode::publish_vrx_thrust_(
+ 
+ void MpcControllerNode::release_vrx_thrust_()
+ {
++  has_last_command_ = false;
+   // VRX thruster 无"释放通道"概念, 零推力即停船
+   std_msgs::msg::Float64 left, right;
+   left.data = 0.0;
+   right.data = 0.0;
++  if (research_ && research_->armed()) {
++    research_publish_(Eigen::Vector2d::Zero(), left, right); return;
++  }
+   vrx_left_pub_->publish(left);
+   vrx_right_pub_->publish(right);
+ }
+@@ -682,13 +962,16 @@ void MpcControllerNode::release_vrx_thrust_()
+ void MpcControllerNode::publish_status_(
+   const SolveInfo & info, bool in_hold,
+   const Eigen::Vector2d & commanded_thrust,
+-  const Eigen::Vector2d & applied_thrust)
++  const Eigen::Vector2d & applied_thrust,
++  double solve_wall_time_ms, const char * control_source)
+ {
+   nlohmann::json j;
+   j["state"] = in_hold ? "HOLD" : "ACTIVE";
+   j["success"] = info.success;
+   j["fail_count"] = solver_fail_count_;
+   j["solve_time_ms"] = info.solve_time_ms;
++  j["solve_wall_time_ms"] = solve_wall_time_ms;
++  j["control_source"] = control_source;
+   j["max_solve_time_ms"] = max_solve_time_ms_;
+   j["deadline_miss"] = (std::strncmp(info.error, "solve_timeout", 13) == 0);
+   j["hold"] = in_hold;
+@@ -740,6 +1023,8 @@ void MpcControllerNode::publish_standby_status_(const std::string & reason)
+   j["success"] = false;
+   j["fail_count"] = 0;
+   j["solve_time_ms"] = 0.0;
++  j["solve_wall_time_ms"] = 0.0;
++  j["control_source"] = "standby_release";
+   j["max_solve_time_ms"] = max_solve_time_ms_;
+   j["deadline_miss"] = false;
+   j["hold"] = false;
+@@ -866,9 +1151,15 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Vector6d & current_sta
+ 
+ void MpcControllerNode::safe_shutdown()
+ {
++  shutting_down_.store(true);
++  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
++  research_control_source_ = "shutdown_zero";
++  if (research_) {research_->interrupted_cycle(active_research_cycle_.load());}
++  active_research_cycle_ = 0;
+   publish_zero_dynamic_output_();
+   publish_standby_status_("node_shutdown");
+-  RCLCPP_INFO(this->get_logger(), "MPC 节点退出: 已发送安全停车指令");
++  if (research_) {research_->stop(true);}
++  RCLCPP_INFO(this->get_logger(), "MPC 节点退出: 已释放控制或发布零推力目标");
+ }
+ 
+ }  // namespace usv_mpc
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node_main.cpp b/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node_main.cpp
+index 97c3beb..2abbbd0 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node_main.cpp
++++ b/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node_main.cpp
+@@ -42,8 +42,20 @@ int main(int argc, char * argv[])
+ 
+   // SIGINT 时 rclcpp 信号处理器在 spin 返回前就触发 context shutdown;
+   // on_shutdown 回调是发布安全停车指令的最后时机 (此刻 context 仍可用)。
+-  node->get_node_base_interface()->get_context()->on_shutdown(
+-    [ptr = node.get()]() {ptr->safe_shutdown();});
++  const bool research_logging = node->get_parameter("enable_research_logging").as_bool();
++  auto stop = [ptr = node.get()]() {
++      try {
++        ptr->safe_shutdown();
++      } catch (const std::exception & error) {
++        fprintf(stderr, "safe_shutdown callback: %s\n", error.what());
++      }
++    };
++  if (research_logging) {
++    // Flush observations while the publisher context is still valid.
++    node->get_node_base_interface()->get_context()->add_pre_shutdown_callback(stop);
++  } else {
++    node->get_node_base_interface()->get_context()->on_shutdown(stop);
++  }
+ 
+   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(), 3);
+   executor.add_node(node);
+@@ -55,7 +67,7 @@ int main(int argc, char * argv[])
+   // 兜底: 非 SIGINT 退出 (异常等) 时 on_shutdown 未触发, 这里再发一次;
+   // 若 shutdown 已进行过, publish 会抛错, 捕获即可 (幂等, 重复发送无害)。
+   try {
+-    node->safe_shutdown();
++    if (!research_logging || rclcpp::ok()) {node->safe_shutdown();}
+   } catch (const std::exception & e) {
+     fprintf(stderr, "[mpc_node] safe_shutdown: %s\n", e.what());
+   }
+diff --git a/usv_mpc_ws/src/usv_rl_ros/usv_rl_ros/rl_policy_node.py b/usv_mpc_ws/src/usv_rl_ros/usv_rl_ros/rl_policy_node.py
+index 262e9a3..a410e4d 100644
+--- a/usv_mpc_ws/src/usv_rl_ros/usv_rl_ros/rl_policy_node.py
++++ b/usv_mpc_ws/src/usv_rl_ros/usv_rl_ros/rl_policy_node.py
+@@ -19,6 +19,7 @@
+ from __future__ import annotations
+ 
+ import json
++import hashlib
+ import math
+ from pathlib import Path
+ 
+@@ -49,9 +50,88 @@ def yaw_from_quaternion(q: Quaternion) -> float:
+     )
+ 
+ 
++def load_policy_contract(model_path: str | Path, t_max: float) -> dict:
++    """Validate the hash-bound physical-N deployment contract before inference."""
++    model_path = Path(model_path)
++    manifest_path = model_path.with_suffix(".manifest.json")
++    try:
++        contract = json.loads(manifest_path.read_text(encoding="utf-8"))
++    except (OSError, ValueError) as exc:
++        raise ValueError(f"cannot read policy manifest: {manifest_path}") from exc
++    if not isinstance(contract, dict):
++        raise ValueError("policy manifest must be a JSON object")
++    expected = {
++        "contract_version": 1, "output_unit": "N",
++        "action_order": ["T_L", "T_R"],
++        "input_name": "obs", "input_dim": 43,
++        "output_name": "thrust", "output_dim": 2,
++        "normalization_embedded": True,
++    }
++    for name, value in expected.items():
++        actual = contract.get(name)
++        # bool is an int in Python; reject it for dimensions/version.
++        if type(actual) is not type(value) or actual != value:
++            raise ValueError(f"invalid policy contract {name}: {actual!r}")
++    if not math.isfinite(t_max) or not math.isclose(t_max, 25.0, abs_tol=1e-6):
++        raise ValueError("this physical-N contract requires current t_max=25 N")
++    scale = contract.get("thrust_scale_n")
++    if (isinstance(scale, bool) or not isinstance(scale, (int, float))
++            or not math.isfinite(scale)
++            or not math.isclose(scale, 25.0, abs_tol=1e-6)):
++        raise ValueError("policy thrust_scale_n must be 25 N")
++    for name, value in (("physical_low_n", [-25.0, -25.0]),
++                        ("physical_high_n", [25.0, 25.0])):
++        actual = contract.get(name)
++        if (not isinstance(actual, list) or len(actual) != 2
++                or any(isinstance(v, bool) or not isinstance(v, (int, float))
++                       or not math.isfinite(v)
++                       or not math.isclose(v, ref, abs_tol=1e-6)
++                       for v, ref in zip(actual, value))):
++            raise ValueError(f"invalid policy contract {name}: {actual!r}")
++    actual_hash = hashlib.sha256(model_path.read_bytes()).hexdigest()
++    if contract.get("onnx_sha256") != actual_hash:
++        raise ValueError("policy ONNX SHA256 does not match manifest")
++    return contract
++
++
++def validate_policy_session(session, contract: dict) -> None:
++    """Check the real ORT interface and any declared graph unit metadata."""
++    for args, name, dim in ((session.get_inputs(), "obs", 43),
++                            (session.get_outputs(), "thrust", 2)):
++        if len(args) != 1:
++            raise ValueError(f"policy must have exactly one {name} tensor")
++        arg = args[0]
++        shape = arg.shape
++        if (arg.name != name or arg.type != "tensor(float)"
++                or not isinstance(shape, (tuple, list)) or len(shape) != 2
++                or shape[1] != dim
++                or not (shape[0] is None or isinstance(shape[0], str)
++                        or (type(shape[0]) is int and shape[0] == 1))):
++            raise ValueError(f"invalid policy tensor {name}: {arg.name}, {arg.type}, {shape}")
++    metadata = session.get_modelmeta().custom_metadata_map or {}
++    expected = {
++        "usv.contract_version": str(contract["contract_version"]),
++        "usv.output_unit": contract["output_unit"],
++        "usv.action_order": ",".join(contract["action_order"]),
++        "usv.input_dim": str(contract["input_dim"]),
++        "usv.output_dim": str(contract["output_dim"]),
++    }
++    for name, value in expected.items():
++        if name in metadata and metadata[name] != value:
++            raise ValueError(f"ONNX metadata disagrees with manifest: {name}")
++    if "usv.thrust_scale_n" in metadata:
++        try:
++            scale = float(metadata["usv.thrust_scale_n"])
++        except (TypeError, ValueError) as exc:
++            raise ValueError("invalid ONNX thrust scale metadata") from exc
++        if not math.isfinite(scale) or not math.isclose(
++                scale, contract["thrust_scale_n"], abs_tol=1e-6):
++            raise ValueError("ONNX thrust scale metadata disagrees with manifest")
++
++
+ class RlPolicyNode(Node):
+-    def __init__(self) -> None:
+-        super().__init__("rl_policy_node")
++    def __init__(self, *, parameter_overrides=None) -> None:
++        super().__init__("rl_policy_node", parameter_overrides=parameter_overrides)
+ 
+         self.declare_parameter("model_path", "")
+         self.declare_parameter("odom_topic", "/wamv/sensors/position/ground_truth_odometry")
+@@ -88,11 +168,20 @@ class RlPolicyNode(Node):
+ 
+         # ── 推理会话 ──
+         self.session = None
++        self.model_contract_invalid = False
+         if self.model_path and Path(self.model_path).exists():
+-            import onnxruntime as ort
+-            self.session = ort.InferenceSession(
+-                self.model_path, providers=["CPUExecutionProvider"])
+-            self.get_logger().info(f"加载策略: {self.model_path}")
++            try:
++                contract = load_policy_contract(self.model_path, self.t_max)
++                import onnxruntime as ort
++                candidate = ort.InferenceSession(
++                    self.model_path, providers=["CPUExecutionProvider"])
++                validate_policy_session(candidate, contract)
++                self.session = candidate
++                self.get_logger().info(f"加载物理N策略: {self.model_path}")
++            except Exception as exc:
++                self.model_contract_invalid = True
++                self.get_logger().error(
++                    f"策略合同无效: {exc} — 节点将保持 STANDBY 零推力")
+         else:
+             self.get_logger().error(
+                 f"模型不存在: '{self.model_path}' — 节点将保持 STANDBY 零推力")
+@@ -206,7 +295,8 @@ class RlPolicyNode(Node):
+     # ────────────────────────── 控制循环 ──────────────────────────
+     def _control_loop(self) -> None:
+         if not self.have_odom or self.ref_xs is None or self.session is None:
+-            reason = ("no_odom" if not self.have_odom else
++            reason = ("model_contract_invalid" if self.model_contract_invalid else
++                      "no_odom" if not self.have_odom else
+                       "no_path" if self.ref_xs is None else "model_missing")
+             self._publish_thrust(np.zeros(2))
+             self._publish_status(active=False, reason=reason, raw=np.zeros(2),
+diff --git a/usv_rl/usv_rl/export_policy.py b/usv_rl/usv_rl/export_policy.py
+index f044168..f0e929a 100644
+--- a/usv_rl/usv_rl/export_policy.py
++++ b/usv_rl/usv_rl/export_policy.py
+@@ -1,19 +1,26 @@
+-"""策略导出 ONNX — 部署侧 rl_policy_node 的推理资产。
++"""Export the v5 PPO policy with raw observations and physical thrust in N.
+ 
+-把 SB3 PPO 策略 + VecNormalize 观测归一化折叠成单个 ONNX 图：
+-    输入  raw_obs (float32, 43 维)   ← rl_policy_node 直接喂原始观测
+-    输出  thrust [T_L, T_R] (float32, 2 维, 已映射到 ±25 N 物理量纲)
++The checkpoint's action Box describes normalized actions, not physical limits.
++This export path requires the explicit deployment scale and paired, fixed
++VecNormalize statistics. Existing ONNX files are never overwritten.
+ 
+-内部: obs → (obs-mean)/sqrt(var+eps) → clip(±clip_obs) → MLP → 高斯均值
+-      → clip(±1) → 反缩放到动作空间（确定性推理，不采样）。
++Example::
+ 
+-用法:
+-    python -m usv_rl.export_policy --model models/v1/best/best_model.zip \
+-        --vecnorm models/v1/best/vecnormalize.pkl --out models/v1/policy.onnx
++    python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip \
++        --vecnorm models/v5/s4_dr/vecnormalize.pkl --thrust-scale-n 25.0 \
++        --verification-obs experiments/observations.npy
+ """
+ from __future__ import annotations
+ 
+ import argparse
++import hashlib
++import importlib.metadata
++import json
++import os
++import pickle
++import platform
++import shlex
++import tempfile
+ from pathlib import Path
+ 
+ import numpy as np
+@@ -21,19 +28,70 @@ import torch
+ import torch.nn as nn
+ 
+ 
++OBS_DIM = 43
++ACTION_DIM = 2
++VERIFY_TOLERANCE_N = 1e-3
++
++
++def _positive_finite(value: float, name: str) -> float:
++    value = float(value)
++    if not np.isfinite(value) or value <= 0:
++        raise ValueError(f"{name} must be finite and positive")
++    return value
++
++
++def _validate_spaces(model) -> None:
++    from gymnasium.spaces import Box
++
++    if not isinstance(model.observation_space, Box) or model.observation_space.shape != (OBS_DIM,):
++        raise ValueError("v5 export requires a 43-dimensional Box observation space")
++    space = model.action_space
++    if (not isinstance(space, Box) or space.shape != (ACTION_DIM,)
++            or not np.array_equal(space.low, [-1.0, -1.0])
++            or not np.array_equal(space.high, [1.0, 1.0])):
++        raise ValueError("v5 export requires a 2-dimensional normalized action Box [-1, 1]")
++    if getattr(model.policy, "squash_output", False):
++        raise ValueError("v5 export requires an unsquashed PPO mean policy")
++
++
++def _load_vecnormalize(path: Path):
++    if not path.is_file():
++        raise FileNotFoundError(f"paired VecNormalize statistics are required: {path}")
++    with path.open("rb") as stream:
++        vn = pickle.load(stream)
++    if getattr(vn, "norm_obs", None) is not True:
++        raise ValueError("this export path requires VecNormalize norm_obs=True")
++    if not callable(getattr(vn, "normalize_obs", None)):
++        raise ValueError("statistics must provide VecNormalize.normalize_obs")
++    rms = getattr(vn, "obs_rms", None)
++    mean = np.asarray(getattr(rms, "mean", None), dtype=np.float64)
++    var = np.asarray(getattr(rms, "var", None), dtype=np.float64)
++    if mean.shape != (OBS_DIM,) or var.shape != (OBS_DIM,):
++        raise ValueError("VecNormalize mean and variance must each have 43 entries")
++    if not np.isfinite(mean).all() or not np.isfinite(var).all() or (var < 0).any():
++        raise ValueError("VecNormalize statistics must be finite with nonnegative variance")
++    with np.errstate(over="ignore"):
++        if not np.isfinite(mean.astype(np.float32)).all() or not np.isfinite(var.astype(np.float32)).all():
++            raise ValueError("VecNormalize statistics must be representable as float32")
++    eps = _positive_finite(vn.epsilon, "VecNormalize epsilon")
++    clip_obs = _positive_finite(vn.clip_obs, "VecNormalize clip_obs")
++    if not np.isfinite(np.float32(eps)) or np.float32(eps) <= 0 or not np.isfinite(np.float32(clip_obs)):
++        raise ValueError("VecNormalize epsilon and clip_obs must be representable as float32")
++    vn.training = False
++    return vn, mean, var, eps, clip_obs
++
++
+ class DeterministicActor(nn.Module):
+-    """SB3 PPO 策略 + VecNormalize 观测归一化 + 动作反缩放的单图封装。"""
++    """Raw observation -> frozen normalization -> clipped mean -> physical N."""
+ 
+-    def __init__(self, policy, obs_mean, obs_var, act_low, act_high,
++    def __init__(self, policy, obs_mean, obs_var, *, thrust_scale_n: float,
+                  clip_obs: float = 10.0, eps: float = 1e-8) -> None:
+         super().__init__()
+-        # policy_net (含激活) + action_net（单层 Linear→均值头；无子模块，须整层加入）
+         layers = list(policy.mlp_extractor.policy_net.children()) + [policy.action_net]
+         self.net = nn.Sequential(*layers)
+         self.register_buffer("obs_mean", torch.as_tensor(obs_mean, dtype=torch.float32))
+         self.register_buffer("obs_var", torch.as_tensor(obs_var, dtype=torch.float32))
+-        self.register_buffer("act_low", torch.as_tensor(act_low, dtype=torch.float32))
+-        self.register_buffer("act_high", torch.as_tensor(act_high, dtype=torch.float32))
++        self.thrust_scale_n = _positive_finite(thrust_scale_n, "thrust_scale_n")
+         self.clip_obs = clip_obs
+         self.eps = eps
+ 
+@@ -41,92 +99,173 @@ class DeterministicActor(nn.Module):
+         norm = (obs - self.obs_mean) / torch.sqrt(self.obs_var + self.eps)
+         norm = torch.clamp(norm, -self.clip_obs, self.clip_obs)
+         mean = self.net(norm)
+-        # 动作空间归一化 [-1,1]：SB3 predict 输出 clip 后的归一化动作，
+-        # 这里折叠反缩放，使 ONNX 直接输出物理推力 N
+-        a01 = torch.clamp(mean, -1.0, 1.0)
+-        return self.act_low + (a01 + 1.0) * 0.5 * (self.act_high - self.act_low)
++        return torch.clamp(mean, -1.0, 1.0) * self.thrust_scale_n
+ 
+ 
+-def export(model_path: str, vecnorm_path: str, out_path: str, opset: int = 13) -> Path:
+-    from stable_baselines3 import PPO
++def _sha256(path: Path) -> str:
++    digest = hashlib.sha256()
++    with path.open("rb") as stream:
++        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
++            digest.update(chunk)
++    return digest.hexdigest()
+ 
+-    model = PPO.load(model_path, device="cpu")
+-    policy = model.policy
+-    policy.eval()
+-
+-    vn_path = Path(vecnorm_path)
+-    if vn_path.exists():
+-        import pickle
+-        with open(vn_path, "rb") as f:
+-            vn = pickle.load(f)
+-        obs_mean = np.asarray(vn.obs_rms.mean, dtype=np.float64)
+-        obs_var = np.asarray(vn.obs_rms.var, dtype=np.float64)
+-        clip_obs = float(vn.clip_obs)
+-    else:
+-        print(f"警告: {vn_path} 不存在，导出图将不含观测归一化（推理侧需自行归一化）")
+-        obs_space = model.observation_space
+-        obs_mean = np.zeros(obs_space.shape, dtype=np.float64)
+-        obs_var = np.ones(obs_space.shape, dtype=np.float64)
+-        clip_obs = 1e9
+-
+-    act_low = np.asarray(model.action_space.low, dtype=np.float32)
+-    act_high = np.asarray(model.action_space.high, dtype=np.float32)
+-
+-    actor = DeterministicActor(
+-        policy, obs_mean, obs_var, act_low, act_high, clip_obs=clip_obs
+-    )
+-    actor.eval()
+-
+-    obs_dim = int(np.prod(model.observation_space.shape))
+-    dummy = torch.zeros(1, obs_dim, dtype=torch.float32)
+-    out = Path(out_path)
+-    out.parent.mkdir(parents=True, exist_ok=True)
+-    torch.onnx.export(
+-        actor, dummy, str(out),
+-        input_names=["obs"], output_names=["thrust"],
+-        dynamic_axes={"obs": {0: "batch"}, "thrust": {0: "batch"}},
+-        opset_version=opset, do_constant_folding=True,
+-        dynamo=False,  # torch>=2.9 默认 dynamo 导出器，对 Sequential+buffer 折叠不稳定
+-    )
+-    _verify(actor, model, out, obs_dim, act_low, act_high)
+-    return out
++
++def _verification_observations(path: Path | None) -> np.ndarray:
++    if path is None:
++        return np.empty((0, OBS_DIM), dtype=np.float32)
++    observations = np.asarray(np.load(path, allow_pickle=False), dtype=np.float32)
++    if (observations.ndim != 2 or observations.shape[1] != OBS_DIM
++            or observations.shape[0] < 1 or not np.isfinite(observations).all()):
++        raise ValueError("verification observations must be finite with shape (N, 43), N >= 1")
++    return observations
+ 
+ 
+-def _verify(actor, sb3_model, out: Path, obs_dim: int, act_low, act_high) -> None:
+-    """导出后用 onnxruntime 与 SB3 predict 对拍（确定性模式）。"""
++def _verify(sb3_model, vn, out: Path, thrust_scale_n: float,
++            observed_inputs: np.ndarray) -> dict:
++    """Independent reference: saved VecNormalize API + SB3 deterministic predict.
++
++    Neither actor buffers nor its mapping function are used as the oracle.
++    Physical golden values are separately checked by test_export_scaling.py.
++    """
+     import onnxruntime as ort
+ 
+-    sess = ort.InferenceSession(str(out), providers=["CPUExecutionProvider"])
+-    rng = np.random.default_rng(0)
+-    max_diff = 0.0
+-    for _ in range(64):
+-        raw = rng.normal(0, 2.0, (1, obs_dim)).astype(np.float32)
+-        onnx_out = sess.run(["thrust"], {"obs": raw})[0]
+-
+-        # SB3 参考路径：手动归一化 → predict(deterministic=mean) → clip 后反缩放
+-        norm = np.clip(
+-            (raw - actor.obs_mean.numpy()) / np.sqrt(actor.obs_var.numpy() + 1e-8),
+-            -actor.clip_obs, actor.clip_obs,
+-        ).astype(np.float32)
+-        a01 = np.clip(sb3_model.predict(norm, deterministic=True)[0], -1.0, 1.0)
+-        torch_act = act_low + (a01 + 1.0) * 0.5 * (act_high - act_low)
+-        max_diff = max(max_diff, float(np.max(np.abs(onnx_out - torch_act))))
+-    print(f"ONNX 导出完成: {out}  (与 SB3 predict 最大差 {max_diff:.2e} N)")
+-    assert max_diff < 1e-3, f"ONNX 与 SB3 推理不一致: {max_diff}"
++    session = ort.InferenceSession(str(out), providers=["CPUExecutionProvider"])
++    synthetic = np.random.default_rng(0).normal(0, 2.0, (64, OBS_DIM)).astype(np.float32)
++    raw = np.concatenate((synthetic, observed_inputs), axis=0)
++    actual = session.run(["thrust"], {"obs": raw})[0]
++    normalized = vn.normalize_obs(raw.copy())
++    actions = np.asarray(sb3_model.predict(normalized, deterministic=True)[0])
++    expected_n = np.clip(actions, -1.0, 1.0) * thrust_scale_n
++    if (actual.shape != (len(raw), ACTION_DIM) or expected_n.shape != actual.shape
++            or not np.isfinite(actual).all() or not np.isfinite(expected_n).all()):
++        raise ValueError("ONNX/reference outputs must be finite with shape (N, 2)")
++    max_diff_n = float(np.max(np.abs(actual - expected_n)))
++    if max_diff_n > VERIFY_TOLERANCE_N:
++        raise ValueError(f"ONNX and independent SB3 reference differ by {max_diff_n:.6g} N")
++    return {"reference": "VecNormalize.normalize_obs + SB3.predict(deterministic=True)",
++            "synthetic_input_rows": 64, "observed_input_rows": len(observed_inputs),
++            "max_abs_error_n": max_diff_n, "tolerance_n": VERIFY_TOLERANCE_N}
++
++
++def _temporary_path(directory: Path, suffix: str) -> Path:
++    descriptor, name = tempfile.mkstemp(prefix=".policy-export-", suffix=suffix, dir=directory)
++    os.close(descriptor)
++    return Path(name)
++
++
++def export(model_path: str, vecnorm_path: str, out_path: str | None = None,
++           opset: int = 13, *, thrust_scale_n: float,
++           verification_obs_path: str | None = None) -> Path:
++    """Publish a new graph plus manifest after independent verification.
++
++    Exclusive same-directory links prevent replacement by concurrent exports.
++    Failure removes this call's temporary files and any partial publication.
++    """
++    scale = _positive_finite(thrust_scale_n, "thrust_scale_n")
++    if scale != 25.0:
++        raise ValueError("this v5 deployment contract requires thrust_scale_n=25.0")
++    model_source, vn_source = Path(model_path), Path(vecnorm_path)
++    out = Path(out_path) if out_path else model_source.parent / "policy_physical_n.onnx"
++    manifest_path = out.with_suffix(".manifest.json")
++    if out.exists() or manifest_path.exists():
++        raise FileExistsError(f"refusing to overwrite an existing output: {out} / {manifest_path}")
++    if not model_source.is_file():
++        raise FileNotFoundError(model_source)
++    # Hash before deserializing, then check again before publishing.
++    model_source_hash, vn_source_hash = _sha256(model_source), _sha256(vn_source)
++    vn, mean, var, eps, clip_obs = _load_vecnormalize(vn_source)
++    observations_path = Path(verification_obs_path) if verification_obs_path else None
++    observations_hash = _sha256(observations_path) if observations_path else None
++    observed_inputs = _verification_observations(observations_path)
++
++    from stable_baselines3 import PPO
++    import onnx
++
++    model = PPO.load(str(model_source), device="cpu")
++    _validate_spaces(model)
++    model.policy.eval()
++    actor = DeterministicActor(model.policy, mean, var, thrust_scale_n=scale,
++                               clip_obs=clip_obs, eps=eps).eval()
++    out.parent.mkdir(parents=True, exist_ok=True)
++    temporary_onnx = _temporary_path(out.parent, ".onnx")
++    temporary_manifest = None
++    published_onnx = False
++    published_manifest = False
++    try:
++        torch.onnx.export(
++            actor, torch.zeros(1, OBS_DIM, dtype=torch.float32), str(temporary_onnx),
++            input_names=["obs"], output_names=["thrust"],
++            dynamic_axes={"obs": {0: "batch"}, "thrust": {0: "batch"}},
++            opset_version=opset, do_constant_folding=True, dynamo=False,
++        )
++        graph = onnx.load(str(temporary_onnx))
++        onnx.helper.set_model_props(graph, {
++            "usv.contract_version": "1", "usv.output_unit": "N",
++            "usv.action_order": "T_L,T_R", "usv.input_dim": str(OBS_DIM),
++            "usv.output_dim": str(ACTION_DIM), "usv.thrust_scale_n": str(scale),
++        })
++        onnx.checker.check_model(graph, full_check=True)
++        onnx.save(graph, str(temporary_onnx))
++        verification = _verify(model, vn, temporary_onnx, scale, observed_inputs)
++        if _sha256(model_source) != model_source_hash or _sha256(vn_source) != vn_source_hash:
++            raise ValueError("source checkpoint/statistics changed during export")
++        if observations_path and _sha256(observations_path) != observations_hash:
++            raise ValueError("verification observations changed during export")
++        command = ["python", "-m", "usv_rl.export_policy", "--model", str(model_source),
++                   "--vecnorm", str(vn_source), "--thrust-scale-n", str(scale), "--out", str(out)]
++        if observations_path:
++            command += ["--verification-obs", str(observations_path)]
++        manifest = {
++            "contract_version": 1, "output_unit": "N", "action_order": ["T_L", "T_R"],
++            "input_name": "obs", "input_dim": OBS_DIM, "output_name": "thrust",
++            "output_dim": ACTION_DIM, "thrust_scale_n": scale,
++            "physical_low_n": [-scale, -scale], "physical_high_n": [scale, scale],
++            "normalization_embedded": True, "onnx_sha256": _sha256(temporary_onnx),
++            "source_model_path": str(model_source), "source_model_sha256": model_source_hash,
++            "source_vecnormalize_path": str(vn_source), "source_vecnormalize_sha256": vn_source_hash,
++            "normalization": {"norm_obs": True, "epsilon": eps, "clip_obs": clip_obs,
++                              "reference_training": False},
++            "verification": verification, "export_command": shlex.join(command),
++            "opset": opset, "versions": {"python": platform.python_version(), **{
++                name: importlib.metadata.version(name) for name in
++                ("numpy", "torch", "stable-baselines3", "onnx", "onnxruntime")}},
++        }
++        if observations_path:
++            manifest["verification_observations_sha256"] = observations_hash
++        temporary_manifest = _temporary_path(out.parent, ".manifest.json")
++        temporary_manifest.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",
++                                      encoding="utf-8")
++        os.link(temporary_onnx, out)
++        published_onnx = True
++        os.link(temporary_manifest, manifest_path)
++        published_manifest = True
++    except BaseException:
++        if published_manifest:
++            manifest_path.unlink(missing_ok=True)
++        if published_onnx:
++            out.unlink(missing_ok=True)
++        raise
++    finally:
++        temporary_onnx.unlink(missing_ok=True)
++        if temporary_manifest:
++            temporary_manifest.unlink(missing_ok=True)
++    print(f"ONNX exported: {out} (independent reference error {verification['max_abs_error_n']:.2e} N)")
++    return out
+ 
+ 
+ def main() -> None:
+-    parser = argparse.ArgumentParser(description="PPO 策略导出 ONNX（部署用）")
++    parser = argparse.ArgumentParser(description="Export v5 PPO ONNX with physical thrust in N")
+     parser.add_argument("--model", required=True)
+-    parser.add_argument("--vecnorm", default=None,
+-                        help="vecnormalize.pkl（默认取 model 同目录）")
+-    parser.add_argument("--out", default=None)
++    parser.add_argument("--vecnorm", help="paired VecNormalize pickle, defaults beside model")
++    parser.add_argument("--thrust-scale-n", required=True, type=float,
++                        help="explicit physical thrust scale in N (this contract: 25.0)")
++    parser.add_argument("--out", help="new output path, defaults to policy_physical_n.onnx")
++    parser.add_argument("--verification-obs", help="fixed real raw observations, NumPy (N, 43)")
+     args = parser.parse_args()
+-
+     model_path = Path(args.model)
+     vecnorm = args.vecnorm or str(model_path.parent / "vecnormalize.pkl")
+-    out = args.out or str(model_path.parent / "policy.onnx")
+-    export(str(model_path), vecnorm, out)
++    export(str(model_path), vecnorm, args.out, thrust_scale_n=args.thrust_scale_n,
++           verification_obs_path=args.verification_obs)
+ 
+ 
+ if __name__ == "__main__":

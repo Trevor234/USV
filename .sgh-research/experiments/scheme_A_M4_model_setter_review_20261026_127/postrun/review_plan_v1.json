@@ -1,0 +1,27 @@
+{
+  "scope": "isolated review candidates only; no production landing or ROS/owned",
+  "steps": [
+    "R0 baseline and fixed scope",
+    "R1 pure packing candidate and layout/differential controls",
+    "R2 checked setter/constructor candidate and explicit intended failure deltas",
+    "R3 experimental wrapper reuse of the same headers plus finite F6 regression",
+    "R4 owner/request/tick/error review contract and concrete split patches",
+    "R5 source protection, decision and MPC delivery"
+  ],
+  "candidate_files": [
+    "include/usv_mpc_cpp/p_global_pack.hpp",
+    "include/usv_mpc_cpp/p_global_apply.hpp",
+    "src/acados_backend.cpp"
+  ],
+  "no_public_hot_update_API": true,
+  "generated_C_unchanged": true,
+  "new_owned_runs": 0,
+  "production_B_mode": "MANUAL+RC override",
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

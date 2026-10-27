@@ -1,0 +1,100 @@
+{
+  "schema": "p1-cdr-plan-aligned-v2",
+  "run_id": "p1_cdr_receive_aligned_20261006_01",
+  "cases": [
+    {
+      "case_index": 0,
+      "topic": "/p1/solve_job",
+      "stage": "before",
+      "job_id": 900001,
+      "blob": "00_before.cdr",
+      "bytes": 1492,
+      "sha256": "dba7e5837480a6e86697ddc94e28bd80a5999163c03ff007006894bc0525d820",
+      "valid_control": true,
+      "offset_ns": 1000000000
+    },
+    {
+      "case_index": 1,
+      "topic": "/p1/solve_job",
+      "stage": "header4",
+      "job_id": 900002,
+      "blob": "01_header4.cdr",
+      "bytes": 4,
+      "sha256": "bf5e8ffa51a9e748985800c1d3d7f1a2a6ae7435136593ca8d9637e3f87c699c",
+      "valid_control": false,
+      "offset_ns": 1400000000
+    },
+    {
+      "case_index": 2,
+      "topic": "/p1/solve_job",
+      "stage": "tail_minus4",
+      "job_id": 900003,
+      "blob": "02_tail_minus4.cdr",
+      "bytes": 1488,
+      "sha256": "80b3daa496f217fa15f9f1441f340de74655dea2b932bcebb86af5f27b7b6d47",
+      "valid_control": false,
+      "offset_ns": 1800000000
+    },
+    {
+      "case_index": 3,
+      "topic": "/p1/solve_job",
+      "stage": "after",
+      "job_id": 900004,
+      "blob": "03_after.cdr",
+      "bytes": 1492,
+      "sha256": "a998c3ef12bc8dc614c7cf153854cd69f8416cd3978bdccd39c69fdff7b12d89",
+      "valid_control": true,
+      "offset_ns": 2200000000
+    },
+    {
+      "case_index": 4,
+      "topic": "/p1/solve_candidate",
+      "stage": "before",
+      "job_id": 900005,
+      "blob": "04_before.cdr",
+      "bytes": 2908,
+      "sha256": "7cd7201e82260db882098002a97e6391c66a540bf5225aa23f2495ea521a3d22",
+      "valid_control": true,
+      "offset_ns": 2600000000
+    },
+    {
+      "case_index": 5,
+      "topic": "/p1/solve_candidate",
+      "stage": "header4",
+      "job_id": 900006,
+      "blob": "05_header4.cdr",
+      "bytes": 4,
+      "sha256": "bf5e8ffa51a9e748985800c1d3d7f1a2a6ae7435136593ca8d9637e3f87c699c",
+      "valid_control": false,
+      "offset_ns": 3000000000
+    },
+    {
+      "case_index": 6,
+      "topic": "/p1/solve_candidate",
+      "stage": "tail_minus4",
+      "job_id": 900007,
+      "blob": "06_tail_minus4.cdr",
+      "bytes": 2904,
+      "sha256": "6fc4f508a17da5bfcd3b669047cef3884deb32b54577aeb0bb9d4ce2199aa362",
+      "valid_control": false,
+      "offset_ns": 3400000000
+    },
+    {
+      "case_index": 7,
+      "topic": "/p1/solve_candidate",
+      "stage": "after",
+      "job_id": 900008,
+      "blob": "07_after.cdr",
+      "bytes": 2908,
+      "sha256": "0271bd811aa03f50eb8cba4cd4aa2089e9e282f3908e3c3e732dfefcfcb5d10a",
+      "valid_control": true,
+      "offset_ns": 3800000000
+    }
+  ],
+  "sample_count": 8,
+  "external_observer_required": true,
+  "observer_depth": 64,
+  "production_reader_depth": 1,
+  "actual_plant": false,
+  "physical_endpoints": 0
+}

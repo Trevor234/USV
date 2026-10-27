@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="6" failures="0" disabled="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.271" name="AllTests">
+  <testsuite name="WorkerLiveness" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.271">
+    <testcase name="RejectsNonpositive" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp" line="19" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.271" classname="usv_research_safety_cpp.WorkerLiveness" />
+    <testcase name="RejectsOverflow" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp" line="23" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.271" classname="usv_research_safety_cpp.WorkerLiveness" />
+    <testcase name="RejectsMissingProcess" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp" line="24" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.271" classname="usv_research_safety_cpp.WorkerLiveness" />
+    <testcase name="AliveThenExited" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp" line="25" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.271" classname="usv_research_safety_cpp.WorkerLiveness" />
+    <testcase name="KilledBeforeReaping" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp" line="26" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.271" classname="usv_research_safety_cpp.WorkerLiveness" />
+    <testcase name="OldIdentityRemainsDead" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_worker_liveness.cpp" line="27" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.272" classname="usv_research_safety_cpp.WorkerLiveness" />
+  </testsuite>
+</testsuites>

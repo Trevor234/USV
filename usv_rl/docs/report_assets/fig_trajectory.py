@@ -16,6 +16,7 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import VecNormalize
 
 from usv_rl.baselines import LosController
+from usv_rl.paths import RL_MODELS
 from usv_rl.train import ROOT, make_env_fn
 
 OUT = Path(__file__).resolve().parent
@@ -27,8 +28,8 @@ plt.rcParams["axes.grid"] = True
 plt.rcParams["grid.alpha"] = 0.3
 plt.rcParams["font.size"] = 11
 
-MODEL = ROOT / "models" / "v5" / "s4_dr" / "model"
-VEC = ROOT / "models" / "v5" / "s4_dr" / "vecnormalize.pkl"
+MODEL = RL_MODELS / "v5" / "s4_dr" / "model"
+VEC = RL_MODELS / "v5" / "s4_dr" / "vecnormalize.pkl"
 SEED = 9999  # 与 evaluate.py 默认一致; 两个控制器用同一 env 种子 → 同一条参考路径
 
 

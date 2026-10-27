@@ -1,0 +1,12 @@
+{
+  "schema": "C3.7-build-native-recipe/v1",
+  "compiler_targets_have_180s_independent_budgets": true,
+  "concurrent_target_compiles": 2,
+  "native_per_target_budget_s": 90,
+  "native_domain": 131,
+  "normal_owned_domain": 132,
+  "builder_sha256": "2922271a163667cc53732a2d79d12611524c38660125e974200f718fce0f94fc",
+  "unchanged_run_budgets": true,
+  "test_only_child_safety": "registered posix_spawn PID, own process group, bounded exit/reap; no external process cleanup",
+  "stage_qualified": false
+}

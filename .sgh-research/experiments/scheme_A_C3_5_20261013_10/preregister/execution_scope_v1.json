@@ -1,0 +1,50 @@
+{
+  "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11",
+  "cases": [
+    "exact SHA/tool import closure",
+    "positive whole raw/storage reanalysis",
+    "expired gate/session zero output",
+    "finite abnormal wire replay",
+    "new readiness contract/current transitive imports",
+    "observed budgets and accepted-tail/anchor derivation",
+    "source/binary/record/typed/state coherent negative copies",
+    "unknown/missing/not_run phase qualification mutations"
+  ],
+  "date": "2026-10-13",
+  "execute": false,
+  "fixed_runtime_policy": {
+    "T_ns": 200000000,
+    "close_ns": 15000000000,
+    "normal_hooks": 0,
+    "overall_ns": 60000000000,
+    "prepare_ns": 25000000000,
+    "ready_ns": 150000000,
+    "release_ns": 3000000000
+  },
+  "new_ROS_node_launches": false,
+  "parent_source_manifest": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_4_20261013_09/final_frozen_snapshot/manifest.json",
+    "sha256": "8e30346fd19e88636f9d15b68fe0a55d27c6d78fc3fed8300570b85cba9da7a2"
+  },
+  "plant_Gazebo_hardware_launches": false,
+  "preserve": [
+    "N10 source/bin/raw/frozen manifests",
+    "old expected",
+    "old failed evidence",
+    "all business dirty changes",
+    "old MPC batches",
+    "historical shared-v2 tool SHA identities"
+  ],
+  "qualification_rule": "required dependencies must all be exactly passed; missing/unknown is never zero/true; current bounded fixture evidence does not independently qualify any future phase",
+  "research_conclusion": false,
+  "runtime_source_or_install_changes": false,
+  "schema": "scheme-A-C3.5-preregister/v1",
+  "scope": "new bounded-component acceptance contract, current readiness closure, observed budget/anchor/close policy; existing N10 original evidence reanalysis",
+  "stage_qualified": false,
+  "states": [
+    "passed",
+    "failed",
+    "unknown",
+    "not_run"
+  ]
+}

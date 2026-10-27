@@ -1,8 +1,8 @@
 """策略/基线评估与指标对比。
 
 用法:
-    python -m usv_rl.evaluate --model models/v0/best/best_model.zip \
-        --vecnorm models/v0/best/vecnormalize.pkl --episodes 50
+    python -m usv_rl.evaluate --model ../artifacts/rl_models/v5/s4_dr/model.zip \
+        --vecnorm ../artifacts/rl_models/v5/s4_dr/vecnormalize.pkl --episodes 50
     python -m usv_rl.evaluate --baseline los --episodes 50
 
 指标（逐步统计 + 逐 episode 统计）:

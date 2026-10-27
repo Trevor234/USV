@@ -1,0 +1,13 @@
+{
+  "schema": "M4-T2-ALL-FAMILIES-v92",
+  "recorded_at": "2026-10-25T18:55:28.627349+08:00",
+  "T2-A": "PASS(G5:clock freeze/resume,all applicable checks)",
+  "T2-B": "PASS(P01:timely replace version_mismatch,25/25 retrospective)",
+  "T2-C": "PASS(OPTA:target guard rejection+ordering,ALL CHECKS)",
+  "remaining": [
+    "T2-A same_stamp sub-case",
+    "T2-A resume new-window sub-case",
+    "T2-B clear/new-gen/expired diff",
+    "T3\u2192N3/M4\u2192F6\u2192P1"
+  ]
+}

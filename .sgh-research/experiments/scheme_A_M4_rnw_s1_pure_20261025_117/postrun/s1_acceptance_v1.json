@@ -1,0 +1,147 @@
+{
+  "schema": "S1-acceptance/v1",
+  "total": 18,
+  "passed": 18,
+  "results": [
+    {
+      "name": "audit.legal_positive_passes",
+      "passed": true,
+      "detail": {
+        "regulator_source_parse_clean": "covered",
+        "driver_events_parse_clean": "covered",
+        "four_roles_closed_clean": "covered",
+        "exactly_four_single_spawns": "covered",
+        "no_restart_events": "covered",
+        "driver_selfreport_recorded_only": "covered",
+        "pause_silence_exceeds_confirm_bound": "not_covered",
+        "raw_clock_monotonic": "not_covered",
+        "clock_epoch_unchanged_legal": "covered",
+        "schedule_transition_observed": "covered",
+        "single_generation_open": "covered",
+        "two_commits_distinct_binding_identity": "covered",
+        "r4_same_job_new_generation_acceptance": "covered",
+        "old_candidate_disposition": "not_applicable_absent",
+        "job_ids_strictly_monotonic": "covered"
+      }
+    },
+    {
+      "name": "audit.false_candidate_rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "audit.fallback_only_rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "audit.applied_only_rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "audit.partial_api_rejected",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "audit.attempt1_honest_not_covered",
+      "passed": true,
+      "detail": {
+        "scoped_generation_opened": "not_covered",
+        "r4_same_job_new_generation_acceptance": "not_covered",
+        "old_candidate_disposition": "not_covered"
+      }
+    },
+    {
+      "name": "audit.attempt2_honest_not_covered",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "audit.parse_error_distinct_failure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "admission.legal_table_passes",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "admission.missing_hold",
+      "passed": true,
+      "detail": [
+        "missing_hold",
+        "required_sequence_not_exact_prefix"
+      ]
+    },
+    {
+      "name": "admission.resume_before_hold",
+      "passed": true,
+      "detail": [
+        "resume_before_hold",
+        "action_order_not_declared",
+        "required_sequence_not_exact_prefix"
+      ]
+    },
+    {
+      "name": "admission.all_false_clauses",
+      "passed": true,
+      "detail": [
+        "clause_value:resume_requires_new_window",
+        "clause_value:old_candidate_must_not_revive",
+        "clause_value:pause_confirm_ns"
+      ]
+    },
+    {
+      "name": "admission.duplicate_action",
+      "passed": true,
+      "detail": [
+        "duplicate_action",
+        "trigger_domain:clock_resume"
+      ]
+    },
+    {
+      "name": "admission.wrong_order",
+      "passed": true,
+      "detail": [
+        "resume_before_hold",
+        "required_sequence_not_exact_prefix",
+        "trigger_delay_not_monotonic"
+      ]
+    },
+    {
+      "name": "admission.unregistered_action",
+      "passed": true,
+      "detail": [
+        "missing_resume",
+        "required_sequence_not_exact_prefix",
+        "unregistered_action:path_clear"
+      ]
+    },
+    {
+      "name": "admission.param_domain",
+      "passed": true,
+      "detail": [
+        "parameters_domain:clock_hold"
+      ]
+    },
+    {
+      "name": "admission.trigger_domain",
+      "passed": true,
+      "detail": [
+        "trigger_domain:clock_resume",
+        "trigger_delay_not_monotonic"
+      ]
+    },
+    {
+      "name": "admission.termination_window",
+      "passed": true,
+      "detail": [
+        "trigger_domain:driver_shutdown_request",
+        "trigger_delay_not_monotonic"
+      ]
+    }
+  ]
+}

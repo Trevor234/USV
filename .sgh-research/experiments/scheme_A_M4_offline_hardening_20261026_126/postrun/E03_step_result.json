@@ -1,0 +1,66 @@
+{
+  "schema": "plan126-E03-step-result-v1",
+  "step_id": "E03",
+  "status": "PASS",
+  "attempt": "attempt02",
+  "title": "让硬准入成为实际Driver启动前的唯一入口",
+  "issue_addressed": "F124-03",
+  "observed_facts": {
+    "driver_entry_cases_passed": 9,
+    "driver_entry_cases_total": 9,
+    "legal_table_admitted": true,
+    "max_popen_calls_observed": 0,
+    "rule_cases_passed": 9,
+    "rule_cases_total": 9,
+    "single_rule_module_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/audit/t2_rnw_admission_rules.py",
+    "single_rule_module_sha256": "a89bc38c78121d1295caf6aed2e1cd36c4718efefd8f84bd6905618ae87039c2"
+  },
+  "run_accepted": {
+    "accepted": true,
+    "basis": "9 rule cases and 9 Driver-entry cases pass; every negative case has popen_calls=0; freeze and Driver resolve to the same module object"
+  },
+  "coverage": {
+    "other_families": "unchanged — this module refuses to judge them",
+    "real_registry_pin_chain": "partial — fixtures use legal table identity but placeholder registry/topics pins, so the refusal is proven to come from the table rules rather than from an unrelated SHA mismatch",
+    "rnw_family_single_rule_source": "covered — Driver imports the same module the freeze helper uses",
+    "spawn_before_admission": "covered — Popen count 0 in every case",
+    "three_F124-03_counterexamples": "covered — all-false clauses, missing hold, resume-before-hold all named"
+  },
+  "stage_qualified": false,
+  "qualification": {
+    "F6": false,
+    "M4": false,
+    "P1": false,
+    "hard_realtime": false,
+    "plant": false
+  },
+  "changed_files": [
+    {
+      "path": "implementation/audit/t2_rnw_admission_rules.py",
+      "reason": "the single physical admission rule source for the RNW family; records its own path+sha",
+      "derived_from": "B117 implementation/rnw_admission_v2.py"
+    },
+    {
+      "path": "implementation/author/t2b_gen_admission.py",
+      "reason": "RNW family now delegates to the single rule source; the weak duplicate validate_table body for that family is no longer used",
+      "derived_from": "B119 implementation/t2_author/t2b_gen_admission.py"
+    },
+    {
+      "path": "implementation/run_e03.py",
+      "reason": "fail-closed matrix; proves zero spawn before admission"
+    }
+  ],
+  "original_files_touched": 0,
+  "design_decisions": {
+    "single_source_enforced_at_object_level": "importlib loads the same file into two module objects if asked twice; _hardened_rules() now reuses an already-loaded module with the same resolved path",
+    "weak_rule_body": "the RNW branch of the old validate_table returned early, so its weak per-action checks can no longer admit a table",
+    "other_families": "untouched; this module refuses to judge them and says so",
+    "clause_type_check": "pause_confirm_ns compares by value AND type so True cannot stand in for 400000000"
+  },
+  "remaining_obligations": [
+    "E04—E12 NOT_STARTED",
+    "the real registry/topics/ELF pin chain is exercised only with placeholder pins; the refusal in every fixture provably comes from the table rules",
+    "no owned run was performed, so a real registration was not re-run end to end"
+  ],
+  "next_step": "E04"
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="1" failures="0" disabled="0" errors="0" time="2.577" timestamp="2026-10-03T02:14:05.712" name="AllTests">
+  <testsuite name="DeadlineControl" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="2.571" timestamp="2026-10-03T02:14:05.717">
+    <testcase name="BlockingSolveWithShortBackendTimingCannotPublishItsCandidate" file="/home/trevor/USV/.sgh-research/experiments/nmpc_timeout_fix_20261003/results/vrx_fault/test_deadline_control_vrx.cpp" line="313" status="run" result="completed" time="2.571" timestamp="2026-10-03T02:14:05.717" classname="DeadlineControl" />
+  </testsuite>
+</testsuites>

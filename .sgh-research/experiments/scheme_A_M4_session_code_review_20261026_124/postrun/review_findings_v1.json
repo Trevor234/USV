@@ -1,0 +1,138 @@
+{
+  "schema": "schemeA-session-code-quality-review-v124",
+  "review_work_complete": true,
+  "production_fixes_implemented": false,
+  "owned_runs_this_review": 0,
+  "findings": [
+    {
+      "id": "F124-01",
+      "priority": 1,
+      "title": "Q2 dangling base capture and duplicated accepted event identities",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp",
+      "lines": [
+        99,
+        101
+      ],
+      "evidence": "evidence/replay01/t3/asan_probe.json"
+    },
+    {
+      "id": "F124-02",
+      "priority": 1,
+      "title": "R4-only top pass and incomplete full-identity/logical-time audit",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/rnw_audit_v1.py",
+      "lines": [
+        115,
+        154,
+        194,
+        202
+      ],
+      "evidence": "evidence/replay01/rnw/logical_time_probe.json"
+    },
+    {
+      "id": "F124-03",
+      "priority": 1,
+      "title": "hardened admission at freeze differs from real Driver pre-spawn entry",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/t2_author/t2b_gen_admission.py",
+      "lines": [
+        51,
+        90
+      ],
+      "evidence": "evidence/replay01/rnw/admission_probe_results.json"
+    },
+    {
+      "id": "F124-04",
+      "priority": 1,
+      "title": "audit clause argument inversion and tautological generation-based binding comparison",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_audit_20261025_105/implementation/audit_t2bgen.py",
+      "lines": [
+        74,
+        78,
+        122,
+        125
+      ],
+      "evidence": "evidence/replay01/epoch_model/audit_false_pass_result.json"
+    },
+    {
+      "id": "F124-05",
+      "priority": 2,
+      "title": "ScopedEpoch stale Proposal commit and uncovered inner retired-ledger guard",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/t2_author/observer/src/shadow/scoped_epoch_v1.hpp",
+      "lines": [
+        86,
+        92,
+        113,
+        116
+      ],
+      "evidence": "evidence/replay01/epoch_model/epoch_result.json"
+    },
+    {
+      "id": "F124-06",
+      "priority": 2,
+      "title": "model generation0 executes before commit; nonfinite registration accepted",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/model_transaction_v1.hpp",
+      "lines": [
+        68,
+        102,
+        171
+      ],
+      "evidence": "evidence/replay01/epoch_model/model_result.json"
+    },
+    {
+      "id": "F124-07",
+      "priority": 2,
+      "title": "serial finite transaction tests do not prove concurrent atomicity, mixed refs, fixed tick or full behavioral equivalence",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/model_transaction_v1.hpp",
+      "lines": [
+        80,
+        93,
+        95,
+        154
+      ],
+      "evidence": "documents/方案A_第124批_近期修改详解_代码质量复审与后续计划_2026-10-26.md"
+    },
+    {
+      "id": "F124-08",
+      "priority": 2,
+      "title": "B2 receive-latency and cap domain limits; unchecked signed arithmetic",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/t2_author/fixture/resume_stamp_mapping_v1.hpp",
+      "lines": [
+        13,
+        18,
+        38,
+        42
+      ],
+      "evidence": "evidence/replay01/rnw/mapping_overflow.stderr"
+    },
+    {
+      "id": "F124-09",
+      "priority": 2,
+      "title": "T3 sticky qualification, survivor and audit independence need bounded claims",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/src/shadow/p1_diag_sink.hpp",
+      "lines": [
+        37,
+        50
+      ],
+      "evidence": "evidence/replay01/t3/sticky_probe.json"
+    },
+    {
+      "id": "F124-10",
+      "priority": 2,
+      "title": "innovation register mixes mechanisms and overstates reusable/novel properties",
+      "file": "/home/trevor/USV/.sgh-research/research-innovations.md",
+      "lines": [],
+      "evidence": "documents/方案A_第124批_近期修改详解_代码质量复审与后续计划_2026-10-26.md"
+    }
+  ],
+  "severity_scope": "priorities apply to verification/reuse readiness; no claim that these probes demonstrate an existing boat fault",
+  "positive_progress_retained": "evidence/positive_progress_v1.json",
+  "current_stage_qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "single_innovation_register_edited": false,
+  "academic_novelty_checked": false,
+  "production_B_mode": "MANUAL+RC override"
+}

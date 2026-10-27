@@ -1,0 +1,110 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "case": "R2",
+  "case_summary": {
+    "lease": {
+      "lease_elapsed_ns": 334860254,
+      "lease_timeout_ns": 600000000,
+      "watchdog_ns": 1000000000
+    },
+    "pairs_after_transition": {
+      "fallback": 5,
+      "shutdown": 1
+    },
+    "pairs_before_transition": {
+      "accepted": 1,
+      "bootstrap": 1,
+      "waiting": 1
+    },
+    "post_transition": {
+      "late_accepted_candidates": 0,
+      "late_jobs": 0
+    },
+    "transition_reason": "worker_process_exited"
+  },
+  "declared_exceptions": [
+    "R2.worker.candidate_row_unflushed",
+    "R2.worker.capability_terminal_missing",
+    "R2.worker.worker_summary_missing"
+  ],
+  "input_continuity": 39,
+  "max_tick_start_jitter_ns": 733284,
+  "mutation_rejections": [
+    "exit_code_fabricated",
+    "applied_command_tampered:TypeError",
+    "raw_time_tampered_flags_false",
+    "duplicate_stored_message:TypeError",
+    "undeclared_source_loss"
+  ],
+  "pair_stream": {
+    "max_gap_ns": [
+      200040091,
+      200103388
+    ],
+    "max_rate_n_s": [
+      2.500631897177257,
+      2.500645629191773
+    ],
+    "max_span_ns": 108141
+  },
+  "passed": true,
+  "recorder_and_fixture": {
+    "fixture_normal_end": true,
+    "recorder_clean": true
+  },
+  "registration_discrepancies": [
+    {
+      "actual": [],
+      "reason": "driver-delivered stimulus is recorded by wait_close with an empty signal list; the registration text was not updated to match the driver semantics",
+      "registration_says": [
+        "SIGINT"
+      ],
+      "role": "regulator"
+    }
+  ],
+  "research_conclusion": false,
+  "role_exit_codes": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 0,
+    "worker": -9
+  },
+  "run_id": "M4_owned_fault_20261021_53_R2",
+  "schema": "M4-owned-fault-audit-v2",
+  "shutdown": {
+    "shutdown_grace_exceeded": false,
+    "zero_target_published": true
+  },
+  "source_and_witness": {
+    "regulator_dropped": 0,
+    "witness_observation_complete": true
+  },
+  "typed_equality": {
+    "applied": 9,
+    "candidates": 2,
+    "decisions": 9,
+    "jobs": 2,
+    "pairs": 9,
+    "stored_counts": {
+      "/clock": 115,
+      "/p1/execution_decision": 9,
+      "/p1/solve_candidate": 2,
+      "/p1/solve_job": 2,
+      "/p1/worker_capability": 5,
+      "/path/reference": 5,
+      "/path/reference_profile": 5,
+      "/research/control/applied": 9,
+      "/wamv/sensors/imu/imu/data": 115,
+      "/wamv/sensors/position/ground_truth_odometry": 115,
+      "/wamv/thrusters/left/thrust": 9,
+      "/wamv/thrusters/right/thrust": 9
+    }
+  },
+  "wire_transport": {
+    "extra": 0,
+    "observed": 400,
+    "stored": 400
+  }
+}

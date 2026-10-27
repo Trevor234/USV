@@ -1,0 +1,621 @@
+[
+  {
+    "actual_compiler_dependencies": 1669,
+    "actual_loader_libraries": 64,
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/p1_controlled_phase_publisher",
+    "binary_sha256": "8f10c7fe1ca70539f98326e66a8a9591bcea4d32a016f83f2a04fe29bb2a279a",
+    "build_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "compiled_source_bundle_pin_verified": true,
+    "configure_rc": 0,
+    "ctest_rc": 0,
+    "ctest_registered_tests": [
+      "test_controlled_phase_owner"
+    ],
+    "declared_native_targets": [
+      "test_controlled_phase_owner"
+    ],
+    "default_build_rc": 0,
+    "elapsed_seconds": 55.40701644100773,
+    "execute_qualified": false,
+    "finite_native": {
+      "GTest_XML": [
+        {
+          "disabled": 0,
+          "errors": 0,
+          "failures": 0,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/test_results/p1_controlled_phase_owner/test_controlled_phase_owner.gtest.xml",
+          "sha256": "a20433b5714a7641506e72042f3d700945b02de546bc694d1e814df5ef9e6e12",
+          "tests": 13
+        }
+      ],
+      "GTest_cases": 13,
+      "all_declared_native_targets_exercised": true,
+      "plain_checks": 0,
+      "plain_targets": {}
+    },
+    "install_performed": false,
+    "native_binaries": {
+      "test_controlled_phase_owner": {
+        "bytes": 916680,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/test_controlled_phase_owner",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/test_controlled_phase_owner",
+        "sha256": "7b2fccd9818a614b7044388d3ab00df9ed8d032f8a6f7ac24cf8aa73fc836bef"
+      }
+    },
+    "native_build_rc": 0,
+    "node_launch_performed": false,
+    "output_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03",
+    "parent_binary_sha256": "d3ac6bd4c61af36a3fa8bf503b2a3436f96e056ab1192c22b76e082e882bfc01",
+    "parent_roles_verified_unchanged": true,
+    "parent_source_bundle": {
+      "files": 9,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher_source_bundle_C3_4_v1.json",
+      "sha256": "41efe37c6bbb15f155ee99f8dfcf0f116a602fc43fecab2bb8bb8204c9177cab"
+    },
+    "parent_source_content_unchanged": true,
+    "passed": true,
+    "produced_target_pins": {
+      "p1_controlled_phase_publisher": {
+        "bytes": 5951288,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/p1_controlled_phase_publisher",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/p1_controlled_phase_publisher",
+        "sha256": "8f10c7fe1ca70539f98326e66a8a9591bcea4d32a016f83f2a04fe29bb2a279a"
+      },
+      "test_controlled_phase_owner": {
+        "bytes": 916680,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/test_controlled_phase_owner",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/test_controlled_phase_owner",
+        "sha256": "7b2fccd9818a614b7044388d3ab00df9ed8d032f8a6f7ac24cf8aa73fc836bef"
+      }
+    },
+    "recipe_sha256": "5b91ac06c16e696d28cd52d39f24a30117e54da5196e717640ab6604ade93e36",
+    "research_conclusion": false,
+    "role": "publisher",
+    "runtime_build_rc": 0,
+    "runtime_target": "p1_controlled_phase_publisher",
+    "schema": "ordered-controlled-role-build/v1",
+    "setup_helper_sha256": "391800763411ce2ee345e95e834589acd05f06a2ff71ddcade2fa2f5e6201107",
+    "source_bundle": {
+      "files": 18,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/source_bundle.json",
+      "sha256": "275ce043b1b0b3f068c8d8e5180b50ffa5adf2c68f5089be83586cf7c98cf453"
+    },
+    "source_content_sha256_after": {
+      "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+      "owner_common/controlled_protocol.hpp": "fae7a136fe96c9b317eeb7379156c47d9e04e7b0f89196323f4685f2874f7519",
+      "owner_common/exact_peer.hpp": "c4ba1286a90a78d9de8feb2a2f709ead61d6fa172ce636258fd4a9f0b1b9f32c",
+      "owner_common/nominal_history.hpp": "ce6020a3cb4dc9377aa4a0c31fb9d8fbe0b8062a5bf3a115492427a243e05a48",
+      "owner_common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "owner_common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "owner_common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "owner_common/usv_model_dynamic.cpp": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3",
+      "owner_common/usv_mpc_cpp/usv_model_dynamic.hpp": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a",
+      "publisher/CMakeLists.txt": "7865c4833c727e7861b2b227d029c2fae1174b8675659e318031658603fae86a",
+      "publisher/include/usv_mpc_cpp/mpc_node.hpp": "3be067c01266c68ac733acf26d6bd5d0104628c36725a35d338554b2c6887f66",
+      "publisher/include/usv_mpc_cpp/p1_startup_gate.hpp": "2d1ab3203206dcfa14e679d5c61abf5fc4c9ed969c5b9ef8e2cb6195223385bf",
+      "publisher/include/usv_mpc_cpp/research_logger.hpp": "247739b464eff037fb16a13c1a31c913da9ba47bbb06bda931feb6131df09408",
+      "publisher/src/controlled_owner.cpp": "0bf22fa63c91f68bad42da52fbaf94809ac5cf63c53d244427d81e8fb6e4ce61",
+      "publisher/src/mpc_node.cpp": "212cd4ca1ade3e5725e39e7fe7a3e1179134b1b8efec18c686c71ff947d5de3a",
+      "publisher/src/mpc_node_main.cpp": "48179c5f250bc3d04f439e5f3d44e37cb2200462772e5988a0403784f10bcb91",
+      "publisher/tests/test_controlled_phase_owner.cpp": "ad1fadae1107839f2c9073eca438b6242ab8d7a0202b8f3c905674dd5557cd17",
+      "publisher/tests/test_publisher_startup.cpp": "cee09c74aa74d7f6b8707fbc5a00367a0038f1b84f69098bd68d701750f078f8"
+    },
+    "source_content_sha256_before": {
+      "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+      "owner_common/controlled_protocol.hpp": "fae7a136fe96c9b317eeb7379156c47d9e04e7b0f89196323f4685f2874f7519",
+      "owner_common/exact_peer.hpp": "c4ba1286a90a78d9de8feb2a2f709ead61d6fa172ce636258fd4a9f0b1b9f32c",
+      "owner_common/nominal_history.hpp": "ce6020a3cb4dc9377aa4a0c31fb9d8fbe0b8062a5bf3a115492427a243e05a48",
+      "owner_common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "owner_common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "owner_common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "owner_common/usv_model_dynamic.cpp": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3",
+      "owner_common/usv_mpc_cpp/usv_model_dynamic.hpp": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a",
+      "publisher/CMakeLists.txt": "7865c4833c727e7861b2b227d029c2fae1174b8675659e318031658603fae86a",
+      "publisher/include/usv_mpc_cpp/mpc_node.hpp": "3be067c01266c68ac733acf26d6bd5d0104628c36725a35d338554b2c6887f66",
+      "publisher/include/usv_mpc_cpp/p1_startup_gate.hpp": "2d1ab3203206dcfa14e679d5c61abf5fc4c9ed969c5b9ef8e2cb6195223385bf",
+      "publisher/include/usv_mpc_cpp/research_logger.hpp": "247739b464eff037fb16a13c1a31c913da9ba47bbb06bda931feb6131df09408",
+      "publisher/src/controlled_owner.cpp": "0bf22fa63c91f68bad42da52fbaf94809ac5cf63c53d244427d81e8fb6e4ce61",
+      "publisher/src/mpc_node.cpp": "212cd4ca1ade3e5725e39e7fe7a3e1179134b1b8efec18c686c71ff947d5de3a",
+      "publisher/src/mpc_node_main.cpp": "48179c5f250bc3d04f439e5f3d44e37cb2200462772e5988a0403784f10bcb91",
+      "publisher/tests/test_controlled_phase_owner.cpp": "ad1fadae1107839f2c9073eca438b6242ab8d7a0202b8f3c905674dd5557cd17",
+      "publisher/tests/test_publisher_startup.cpp": "cee09c74aa74d7f6b8707fbc5a00367a0038f1b84f69098bd68d701750f078f8"
+    },
+    "source_content_unchanged": true,
+    "stage_qualified": false
+  },
+  {
+    "actual_compiler_dependencies": 1338,
+    "actual_loader_libraries": 53,
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261017_v21",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+    "binary_sha256": "0ab4501e46645a1bd9bf86510e2f0be31a1b716daeb0f83eaeed9644ffff636a",
+    "bootstrap_configure_before_static_input_freeze_only": true,
+    "bootstrap_configure_rc": 0,
+    "build_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "compiled_source_bundle_pin_verified": true,
+    "configure_rc": 0,
+    "ctest_rc": null,
+    "ctest_registered_tests": [],
+    "declared_native_targets": [
+      "test_reference_worker_contract"
+    ],
+    "default_build_rc": 0,
+    "elapsed_seconds": 41.8845624869864,
+    "execute_qualified": false,
+    "explicit_static_link_inputs_before": {
+      "archives": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/static_link_inputs_before.json",
+      "sha256": "7fd22d136f581f984b577904325b4f952b40f0d3e1b3d9a3fdd5c9362a619376"
+    },
+    "finite_native": {
+      "GTest_XML": [],
+      "GTest_cases": 0,
+      "all_declared_native_targets_exercised": true,
+      "plain_checks": 84,
+      "plain_targets": {
+        "test_reference_worker_contract": {
+          "log_sha256": "7c054e7ce8f702fd459e69521d31c2217cbefcb82dd7b5a964a56b654f477489",
+          "reported_checks": 84,
+          "returncode": 0
+        }
+      }
+    },
+    "install_performed": false,
+    "native_binaries": {
+      "test_reference_worker_contract": {
+        "bytes": 388120,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build/test_reference_worker_contract",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build/test_reference_worker_contract",
+        "sha256": "ff337fc1979cdd3e24ffb5a49e5dc8bf62d46f2088dcdf1cd2f45b2878be25b7"
+      }
+    },
+    "native_build_rc": 0,
+    "node_launch_performed": false,
+    "output_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01",
+    "parent_binary_sha256": "9964608d326130b6083b8d0164486e942483573afa2ddb9b8668ddd14233d341",
+    "parent_roles_verified_unchanged": true,
+    "parent_source_bundle": {
+      "files": 23,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/build/projected_worker_attempt01/source_bundle.json",
+      "sha256": "46be4ffe52270fc5be6d064079493b66c14741322e5f2fba537eea38dc0f6528"
+    },
+    "parent_source_content_unchanged": true,
+    "passed": true,
+    "produced_target_pins": {
+      "p1_solver_worker_owned_v2": {
+        "bytes": 2049952,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+        "sha256": "0ab4501e46645a1bd9bf86510e2f0be31a1b716daeb0f83eaeed9644ffff636a"
+      },
+      "test_reference_worker_contract": {
+        "bytes": 388120,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build/test_reference_worker_contract",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/cmake_build/test_reference_worker_contract",
+        "sha256": "ff337fc1979cdd3e24ffb5a49e5dc8bf62d46f2088dcdf1cd2f45b2878be25b7"
+      }
+    },
+    "recipe_sha256": "f751d959bf3cd1f2375f1d670e4a9dd4179ca5203242007be1e4e9c68098bc17",
+    "research_conclusion": false,
+    "role": "worker",
+    "runtime_build_rc": 0,
+    "runtime_target": "p1_solver_worker_owned_v2",
+    "schema": "reference-task-time-role-build/v1",
+    "setup_helper_sha256": "391800763411ce2ee345e95e834589acd05f06a2ff71ddcade2fa2f5e6201107",
+    "source_bundle": {
+      "files": 23,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_worker_attempt01/source_bundle.json",
+      "sha256": "2d9f37af30a96fcab34829b78936e657f7083c50a7ebd196a49cd045675a461d"
+    },
+    "source_content_sha256_after": {
+      "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+      "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+      "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+      "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+      "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+      "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9",
+      "reference_contract_test.cpp": "c8067d1ddb72dd8f39174689b47608e94f16501ce7f696ad5b54f62ea0d7f852",
+      "task_time_contract_v1.json": "e70beba368108d0e58d3ea2cc60ba34901166ab83c56892a3cd46a4725b51dee",
+      "worker/CMakeLists.txt": "948d3443d8f235a1b1f5df67e019792f3c035bd5a8fdea077e2940bd0a808e35",
+      "worker/capability_source_v4.hpp": "8ec9a3876b75861dbf462ee3ee7e59e9e2a284d48cea363f49613183dc1e5987",
+      "worker/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "worker/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "worker/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "worker/p1_full_contract.hpp": "3190bd773ba17308e6c78f7a53d48cb87d98417201d98be42e58baf8adb2287e",
+      "worker/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "worker/p1_resources.hpp": "dbdabe76eb997ae64947746f3ffe99d431b9ff630045267ecf89a9b577cc3387",
+      "worker/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "worker/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "worker/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "worker/solver_worker.cpp": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e"
+    },
+    "source_content_sha256_before": {
+      "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+      "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+      "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+      "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+      "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+      "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9",
+      "reference_contract_test.cpp": "c8067d1ddb72dd8f39174689b47608e94f16501ce7f696ad5b54f62ea0d7f852",
+      "task_time_contract_v1.json": "e70beba368108d0e58d3ea2cc60ba34901166ab83c56892a3cd46a4725b51dee",
+      "worker/CMakeLists.txt": "948d3443d8f235a1b1f5df67e019792f3c035bd5a8fdea077e2940bd0a808e35",
+      "worker/capability_source_v4.hpp": "8ec9a3876b75861dbf462ee3ee7e59e9e2a284d48cea363f49613183dc1e5987",
+      "worker/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "worker/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "worker/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "worker/p1_full_contract.hpp": "3190bd773ba17308e6c78f7a53d48cb87d98417201d98be42e58baf8adb2287e",
+      "worker/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "worker/p1_resources.hpp": "dbdabe76eb997ae64947746f3ffe99d431b9ff630045267ecf89a9b577cc3387",
+      "worker/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "worker/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "worker/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "worker/solver_worker.cpp": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e"
+    },
+    "source_content_unchanged": true,
+    "stage_qualified": false
+  },
+  {
+    "actual_compiler_dependencies": 1418,
+    "actual_loader_libraries": 54,
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/p1_controlled_phase_fixture",
+    "binary_sha256": "4071cf717c28181a0f4ead7d13813ae652224627ba3fe1f96d72bb16f6ba9ece",
+    "build_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "compiled_source_bundle_pin_verified": true,
+    "configure_rc": 0,
+    "ctest_rc": 0,
+    "ctest_registered_tests": [
+      "test_controlled_dynamic_fixture"
+    ],
+    "declared_native_targets": [
+      "test_controlled_dynamic_fixture"
+    ],
+    "default_build_rc": 0,
+    "elapsed_seconds": 28.1308443149901,
+    "execute_qualified": false,
+    "finite_native": {
+      "GTest_XML": [
+        {
+          "disabled": 0,
+          "errors": 0,
+          "failures": 0,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/test_results/p1_controlled_phase_fixture/test_controlled_dynamic_fixture.gtest.xml",
+          "sha256": "0d50dba1bffaeb2cf94bb35ca1977cfdf3f8edaa68be0f0771b92c36a33daf2a",
+          "tests": 16
+        }
+      ],
+      "GTest_cases": 16,
+      "all_declared_native_targets_exercised": true,
+      "plain_checks": 0,
+      "plain_targets": {}
+    },
+    "install_performed": false,
+    "native_binaries": {
+      "test_controlled_dynamic_fixture": {
+        "bytes": 986800,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/test_controlled_dynamic_fixture",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/test_controlled_dynamic_fixture",
+        "sha256": "b634b57e4407742c6ec73174cfd5b027221afa3226f9688ba810ea0f6c332783"
+      }
+    },
+    "native_build_rc": 0,
+    "node_launch_performed": false,
+    "output_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01",
+    "parent_binary_sha256": "1494c59218a3a8bbf308fd31a35a924a22032490f507fedc35fd3be6488b6f66",
+    "parent_roles_verified_unchanged": true,
+    "parent_source_bundle": {
+      "files": 13,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_fixture_attempt01/source_bundle.json",
+      "sha256": "324f09ead48137cbb2454859cfbac05d1269c5eeeda9455b6ecdcb2bf267f8db"
+    },
+    "parent_source_content_unchanged": true,
+    "passed": true,
+    "produced_target_pins": {
+      "p1_controlled_phase_fixture": {
+        "bytes": 1860120,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/p1_controlled_phase_fixture",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/p1_controlled_phase_fixture",
+        "sha256": "4071cf717c28181a0f4ead7d13813ae652224627ba3fe1f96d72bb16f6ba9ece"
+      },
+      "test_controlled_dynamic_fixture": {
+        "bytes": 986800,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/test_controlled_dynamic_fixture",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/test_controlled_dynamic_fixture",
+        "sha256": "b634b57e4407742c6ec73174cfd5b027221afa3226f9688ba810ea0f6c332783"
+      }
+    },
+    "recipe_sha256": "b751bc154745b574aa9c9806c55da390143f13148042b2d307f63d56cb81c1bc",
+    "research_conclusion": false,
+    "role": "fixture",
+    "runtime_build_rc": 0,
+    "runtime_target": "p1_controlled_phase_fixture",
+    "schema": "ordered-controlled-role-build/v1",
+    "setup_helper_sha256": "391800763411ce2ee345e95e834589acd05f06a2ff71ddcade2fa2f5e6201107",
+    "source_bundle": {
+      "files": 14,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/source_bundle.json",
+      "sha256": "9ae9f9a5a1ce37efe7a11e25947ea6ca643f8564095bf33ce95fddaaebd7cee9"
+    },
+    "source_content_sha256_after": {
+      "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+      "fixture/CMakeLists.txt": "da9469b3d48f388659c1f251f71a879a846d48a8211b90c65629c519bd909203",
+      "fixture/controlled_reference.hpp": "6b63d6b81c7e3cb65a1ed3d08d8dc9ee02e2c69fc7517259ecbe8a39de2ae004",
+      "fixture/full_replay_reference.hpp": "79f226689f7baf0f9ad2f91a1858fb489ec85f2ba47df8b9d637f72f1717058e",
+      "fixture/synthetic_source.cpp": "ec46e729ffdd87a1de0e772be095cf7d6143a28415190fb457f7182b25f2d699",
+      "fixture/test_controlled_dynamic_fixture.cpp": "67e5fc7dadbf6424d76fcc59d7c786772d3274c804392bd87c5411a2c442f72c",
+      "owner_common/controlled_protocol.hpp": "fae7a136fe96c9b317eeb7379156c47d9e04e7b0f89196323f4685f2874f7519",
+      "owner_common/exact_peer.hpp": "c4ba1286a90a78d9de8feb2a2f709ead61d6fa172ce636258fd4a9f0b1b9f32c",
+      "owner_common/nominal_history.hpp": "08b481745485cab9b33edd530d59bb6def769366dc4cefe6244c73fadef0e885",
+      "owner_common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "owner_common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "owner_common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "owner_common/usv_model_dynamic.cpp": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3",
+      "owner_common/usv_mpc_cpp/usv_model_dynamic.hpp": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "source_content_sha256_before": {
+      "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+      "fixture/CMakeLists.txt": "da9469b3d48f388659c1f251f71a879a846d48a8211b90c65629c519bd909203",
+      "fixture/controlled_reference.hpp": "6b63d6b81c7e3cb65a1ed3d08d8dc9ee02e2c69fc7517259ecbe8a39de2ae004",
+      "fixture/full_replay_reference.hpp": "79f226689f7baf0f9ad2f91a1858fb489ec85f2ba47df8b9d637f72f1717058e",
+      "fixture/synthetic_source.cpp": "ec46e729ffdd87a1de0e772be095cf7d6143a28415190fb457f7182b25f2d699",
+      "fixture/test_controlled_dynamic_fixture.cpp": "67e5fc7dadbf6424d76fcc59d7c786772d3274c804392bd87c5411a2c442f72c",
+      "owner_common/controlled_protocol.hpp": "fae7a136fe96c9b317eeb7379156c47d9e04e7b0f89196323f4685f2874f7519",
+      "owner_common/exact_peer.hpp": "c4ba1286a90a78d9de8feb2a2f709ead61d6fa172ce636258fd4a9f0b1b9f32c",
+      "owner_common/nominal_history.hpp": "08b481745485cab9b33edd530d59bb6def769366dc4cefe6244c73fadef0e885",
+      "owner_common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "owner_common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "owner_common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "owner_common/usv_model_dynamic.cpp": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3",
+      "owner_common/usv_mpc_cpp/usv_model_dynamic.hpp": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "source_content_unchanged": true,
+    "stage_qualified": false
+  },
+  {
+    "actual_compiler_dependencies": 1403,
+    "actual_loader_libraries": 54,
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261017_v21",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2",
+    "binary_sha256": "8ee9468ce992c58c09aedfb0a7c33b51f3bab59bf76eb45d80c952c95a6f0b2c",
+    "bootstrap_configure_before_static_input_freeze_only": true,
+    "bootstrap_configure_rc": 0,
+    "build_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "compiled_source_bundle_pin_verified": true,
+    "configure_rc": 0,
+    "ctest_rc": null,
+    "ctest_registered_tests": [],
+    "declared_native_targets": [
+      "test_controlled_phase",
+      "test_reference_observer_contract",
+      "test_reference_projected",
+      "test_reference_task_time"
+    ],
+    "default_build_rc": 0,
+    "elapsed_seconds": 83.0724025979871,
+    "execute_qualified": false,
+    "explicit_static_link_inputs_before": {
+      "archives": 2,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/static_link_inputs_before.json",
+      "sha256": "f0e814dcfcf6d21e8e909126ba48b3dc7c55ea57a1ce81788545eb24aa8e4a3a"
+    },
+    "finite_native": {
+      "GTest_XML": [],
+      "GTest_cases": 0,
+      "all_declared_native_targets_exercised": true,
+      "plain_checks": 303,
+      "plain_targets": {
+        "test_controlled_phase": {
+          "log_sha256": "293eff7e4b350f3e8cac436d69c47e8899ef27ca69b5e2b827c6161f6546f5ce",
+          "reported_checks": 45,
+          "returncode": 0
+        },
+        "test_reference_observer_contract": {
+          "log_sha256": "7c054e7ce8f702fd459e69521d31c2217cbefcb82dd7b5a964a56b654f477489",
+          "reported_checks": 84,
+          "returncode": 0
+        },
+        "test_reference_projected": {
+          "log_sha256": "be86908101cb0f62b52ccbade1a995de669f533fae4cde09676be59d9638e7aa",
+          "reported_checks": 96,
+          "returncode": 0
+        },
+        "test_reference_task_time": {
+          "log_sha256": "e205d7a1c554e9b4b887fd631a403195abe5ef7ea64efa9b56d38a2a94309488",
+          "reported_checks": 78,
+          "returncode": 0
+        }
+      }
+    },
+    "install_performed": false,
+    "native_binaries": {
+      "test_controlled_phase": {
+        "bytes": 92040,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_controlled_phase",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_controlled_phase",
+        "sha256": "25252a17ddb1bd6c3ee1d28bec15464bdbf47f5d3b5dd529431bcc1d6d1ca488"
+      },
+      "test_reference_observer_contract": {
+        "bytes": 445464,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_observer_contract",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_observer_contract",
+        "sha256": "361a22e0f62cd5741d01dbcccfaae0c0457fd98c15e8495878a01311b2d52bf8"
+      },
+      "test_reference_projected": {
+        "bytes": 59944,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_projected",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_projected",
+        "sha256": "bd40f6b7cf2872373ba9f0bc857396bb15d49ab6ea8b639c5c4e142922e6a535"
+      },
+      "test_reference_task_time": {
+        "bytes": 81608,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_task_time",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_task_time",
+        "sha256": "7f7b49367b58f4a1611dcbda86b4e4253bb67b587eaf754c70af27359a02a99a"
+      }
+    },
+    "native_build_rc": 0,
+    "node_launch_performed": false,
+    "output_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01",
+    "parent_binary_sha256": "6800ebbeb39c3c29533cde6c5f64d7947c342f25c06e6de364e172e29e7d90f4",
+    "parent_roles_verified_unchanged": true,
+    "parent_source_bundle": {
+      "files": 29,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/build/projected_observer_attempt01/source_bundle.json",
+      "sha256": "e50d0ae02c330f403fe5b3a98d247dd3128f3dd1ef35edabdb8aa6b726434ab0"
+    },
+    "parent_source_content_unchanged": true,
+    "passed": true,
+    "produced_target_pins": {
+      "p1_regulator_shadow_observer_owned_v2": {
+        "bytes": 7165896,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2",
+        "sha256": "8ee9468ce992c58c09aedfb0a7c33b51f3bab59bf76eb45d80c952c95a6f0b2c"
+      },
+      "test_controlled_phase": {
+        "bytes": 92040,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_controlled_phase",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_controlled_phase",
+        "sha256": "25252a17ddb1bd6c3ee1d28bec15464bdbf47f5d3b5dd529431bcc1d6d1ca488"
+      },
+      "test_reference_observer_contract": {
+        "bytes": 445464,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_observer_contract",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_observer_contract",
+        "sha256": "361a22e0f62cd5741d01dbcccfaae0c0457fd98c15e8495878a01311b2d52bf8"
+      },
+      "test_reference_projected": {
+        "bytes": 59944,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_projected",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_projected",
+        "sha256": "bd40f6b7cf2872373ba9f0bc857396bb15d49ab6ea8b639c5c4e142922e6a535"
+      },
+      "test_reference_task_time": {
+        "bytes": 81608,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_task_time",
+        "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/cmake_build/test_reference_task_time",
+        "sha256": "7f7b49367b58f4a1611dcbda86b4e4253bb67b587eaf754c70af27359a02a99a"
+      }
+    },
+    "recipe_sha256": "f751d959bf3cd1f2375f1d670e4a9dd4179ca5203242007be1e4e9c68098bc17",
+    "research_conclusion": false,
+    "role": "observer",
+    "runtime_build_rc": 0,
+    "runtime_target": "p1_regulator_shadow_observer_owned_v2",
+    "schema": "reference-task-time-role-build/v1",
+    "setup_helper_sha256": "391800763411ce2ee345e95e834589acd05f06a2ff71ddcade2fa2f5e6201107",
+    "source_bundle": {
+      "files": 31,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/build/task_time_observer_attempt01/source_bundle.json",
+      "sha256": "b76985ae5d400413a8827022b6be73955e39b3681f01bf48ca8b13e379dd7e13"
+    },
+    "source_content_sha256_after": {
+      "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+      "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+      "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+      "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+      "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "observer/CMakeLists.txt": "6ac3fbff1d326a2acb355aae407c91828bd18ca0b78044b8dffa47f433956f4e",
+      "observer/src/shadow/callback_raw_v4.hpp": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398",
+      "observer/src/shadow/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "observer/src/shadow/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "observer/src/shadow/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "observer/src/shadow/p1_d0_observation.hpp": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f",
+      "observer/src/shadow/p1_diag_sink.hpp": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79",
+      "observer/src/shadow/p1_full_contract.hpp": "3190bd773ba17308e6c78f7a53d48cb87d98417201d98be42e58baf8adb2287e",
+      "observer/src/shadow/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "observer/src/shadow/p1_resources.hpp": "dbdabe76eb997ae64947746f3ffe99d431b9ff630045267ecf89a9b577cc3387",
+      "observer/src/shadow/p1_shadow_entry.hpp": "a1048befecba1373fcb4fa13e4071450fad88f988f7442dde018fc833e429342",
+      "observer/src/shadow/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "observer/src/shadow/p1_witness.hpp": "6c0e71b3a1801ea7a1d6f23fa5a6c027d8c134b48d96bb8553c8855e8e02dd85",
+      "observer/src/shadow/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "observer/src/shadow/projected_profile_time_v1.hpp": "c7e2004804530826d9e5c0f4d2c2c2c5e6d2d5705443be293ab6f07969afa74b",
+      "observer/src/shadow/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "observer/src/shadow/regulator_shadow_observer.cpp": "f1dcec3cde0308eb97a7a2c7c035cadf654a577cf1869a258061cb45c4f4b455",
+      "observer/src/shadow/task_time_profile_v1.hpp": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3",
+      "observer/tests/test_projected_profile_time_v1.cpp": "4e016ff65c50463193da460423f952119f61f6c4aaa8736a1bf966aa3d35c1e4",
+      "observer/tests/test_task_time_profile_v1.cpp": "25209c032205713a3de776677104d265366b30d5fc8fd9eb0028a5ca5fc258e8",
+      "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+      "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9",
+      "reference_contract_test.cpp": "c8067d1ddb72dd8f39174689b47608e94f16501ce7f696ad5b54f62ea0d7f852",
+      "task_time_contract_v1.json": "e70beba368108d0e58d3ea2cc60ba34901166ab83c56892a3cd46a4725b51dee"
+    },
+    "source_content_sha256_before": {
+      "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+      "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+      "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+      "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+      "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+      "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+      "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+      "observer/CMakeLists.txt": "6ac3fbff1d326a2acb355aae407c91828bd18ca0b78044b8dffa47f433956f4e",
+      "observer/src/shadow/callback_raw_v4.hpp": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398",
+      "observer/src/shadow/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "observer/src/shadow/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "observer/src/shadow/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "observer/src/shadow/p1_d0_observation.hpp": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f",
+      "observer/src/shadow/p1_diag_sink.hpp": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79",
+      "observer/src/shadow/p1_full_contract.hpp": "3190bd773ba17308e6c78f7a53d48cb87d98417201d98be42e58baf8adb2287e",
+      "observer/src/shadow/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "observer/src/shadow/p1_resources.hpp": "dbdabe76eb997ae64947746f3ffe99d431b9ff630045267ecf89a9b577cc3387",
+      "observer/src/shadow/p1_shadow_entry.hpp": "a1048befecba1373fcb4fa13e4071450fad88f988f7442dde018fc833e429342",
+      "observer/src/shadow/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "observer/src/shadow/p1_witness.hpp": "6c0e71b3a1801ea7a1d6f23fa5a6c027d8c134b48d96bb8553c8855e8e02dd85",
+      "observer/src/shadow/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "observer/src/shadow/projected_profile_time_v1.hpp": "c7e2004804530826d9e5c0f4d2c2c2c5e6d2d5705443be293ab6f07969afa74b",
+      "observer/src/shadow/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "observer/src/shadow/regulator_shadow_observer.cpp": "f1dcec3cde0308eb97a7a2c7c035cadf654a577cf1869a258061cb45c4f4b455",
+      "observer/src/shadow/task_time_profile_v1.hpp": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3",
+      "observer/tests/test_projected_profile_time_v1.cpp": "4e016ff65c50463193da460423f952119f61f6c4aaa8736a1bf966aa3d35c1e4",
+      "observer/tests/test_task_time_profile_v1.cpp": "25209c032205713a3de776677104d265366b30d5fc8fd9eb0028a5ca5fc258e8",
+      "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+      "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9",
+      "reference_contract_test.cpp": "c8067d1ddb72dd8f39174689b47608e94f16501ce7f696ad5b54f62ea0d7f852",
+      "task_time_contract_v1.json": "e70beba368108d0e58d3ea2cc60ba34901166ab83c56892a3cd46a4725b51dee"
+    },
+    "source_content_unchanged": true,
+    "stage_qualified": false
+  },
+  {
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/build01/p1_owned_recorder",
+    "binary_sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "configure_rc": 0,
+    "elapsed_seconds": 55.68476000899682,
+    "execute_qualified": false,
+    "install_performed": false,
+    "native_binaries": {},
+    "node_launch_performed": false,
+    "parent_roles_verified_unchanged": true,
+    "passed": true,
+    "research_conclusion": false,
+    "role": "recorder",
+    "runtime_build_rc": 0,
+    "schema": "p1-C3.4-build/v1",
+    "source_bundle": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+      "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+    },
+    "stage_qualified": false
+  }
+]

@@ -1,0 +1,47 @@
+{
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "driver": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/author/owned_m4_diagnostic_driver_v1.py",
+  "driver_tool_sha256": "2b4920877b734983fc2129a234467a25741caa3a4fe319015984919bd8d514a8",
+  "evidence_marker": "d1a9f0e2b7c4a8536e0f2b9d4c7a1e5836b0d9f2c4a7e1b8369d0c5f2a8e4b71",
+  "execute_qualified": false,
+  "production_physical_release_enabled": false,
+  "regulator_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/author/observer/src/shadow/regulator_owned_execute.cpp",
+  "regulator_source_sha256": "eec82cc31f10bc1ca6c53cb20e477576b2d4fd025c90bbc90c5ce73b8e895d38",
+  "roles": {
+    "fixture": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/build/diagnostic_attempt12/cmake_build/p1_m4_fixture_owned",
+      "binary_sha256": "78bb5ea14fbbe117f41fe063aad330c76b2356febfa80914284974d12456139f",
+      "source_bundle": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/build/diagnostic_attempt12/source_bundle.json",
+        "sha256": "2ae41dba3d4b6f87596900d98f68b0f427e75dbfecb3b99b8f6a300f53d72142"
+      }
+    },
+    "recorder": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/build01/p1_owned_recorder",
+      "binary_sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+      "source_bundle": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+        "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+      }
+    },
+    "regulator": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/build/diagnostic_attempt12/cmake_build/p1_m4_regulator_owned",
+      "binary_sha256": "6f2b91c2d8f868ee537f8b6b884bac2707b61b2ba8599b9e2043e0add5727dff",
+      "source_bundle": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/build/diagnostic_attempt12/source_bundle.json",
+        "sha256": "2ae41dba3d4b6f87596900d98f68b0f427e75dbfecb3b99b8f6a300f53d72142"
+      }
+    },
+    "worker": {
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/build/diagnostic_attempt12/cmake_build/p1_m4_worker_owned",
+      "binary_sha256": "4ddd425515b9c078d1c95e691d7c2fbb7a589d9b4a5ab2a144e00b1c5b12ef6b",
+      "source_bundle": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/build/diagnostic_attempt12/source_bundle.json",
+        "sha256": "2ae41dba3d4b6f87596900d98f68b0f427e75dbfecb3b99b8f6a300f53d72142"
+      }
+    }
+  },
+  "schema": "M4-owned-diagnostic-registry/v1",
+  "scope": "M4_owned_diagnostic_worker_only_v1",
+  "source_scope": "W1 diagnostic: computation-thread stall only. No native C hang, no plant acceptance, no ordinary release."
+}

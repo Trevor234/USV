@@ -1,0 +1,220 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/observer/src/shadow/regulator_owned_execute.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_registration_20261023_63/implementation/w2_author/observer/src/shadow/regulator_owned_execute.cpp
+@@ -79,6 +79,12 @@
+     const auto contract_file=declare_parameter<std::string>("contract_file","");
+     const auto release_scope=declare_parameter<std::string>("m4_release_scope","");
+     diagnostic_case_=declare_parameter<std::string>("diagnostic_case","");
++    // The registered W2 target. -1/0 means "not registered for this run", which
++    // the W2 branch rejects rather than silently accepting any positive value.
++    w2_release_job_=declare_parameter<int64_t>("w2_release_job_id",-1);
++    w2_release_ordinal_=declare_parameter<int>("w2_release_ordinal",0);
++    w2_release_nonce_=declare_parameter<int>("w2_release_nonce",0);
++    w2_release_wait_ns_=declare_parameter<int64_t>("w2_release_wait_ns",0);
+     scope_=release_scope;
+     c_=m4_owned::contract(contract_file,hash_,mode_,scope_);
+     resources_=p1::resource_limits_from_contract(c_);boot_=p1::boot_id();nominal_=c_.at("nominal_hash");
+@@ -91,7 +97,7 @@
+     const auto source_file=declare_parameter<std::string>("source_file","");witness_file_=declare_parameter<std::string>("witness_file","");
+     p1_owned::require(declare_parameter<bool>("witness_enabled",false),"M4 Witness mandatory");
+     formal_owned::overrides(*this,{"run_id","contract_hash","contract_file","mode","m4_release_scope","output_dir","peer_pins_file","peer_pins_sha256",
+-      "diagnostic_source_file","diagnostic_source_sha256","diagnostic_binary_sha256","worker_binary_sha256","witness_worker_instance","source_file","witness_file","witness_enabled","diagnostic_case","use_sim_time"});
++      "diagnostic_source_file","diagnostic_source_sha256","diagnostic_binary_sha256","worker_binary_sha256","witness_worker_instance","source_file","witness_file","witness_enabled","diagnostic_case","w2_release_job_id","w2_release_ordinal","w2_release_nonce","w2_release_wait_ns","use_sim_time"});
+     p1_owned::require(!run_.empty()&&run_.size()<=96&&std::filesystem::path(own_output_dir_).is_absolute(),"M4 bounded run/output identity");
+     own_peer_pins_=formal_owned::read_pinned(peer_file,peer_hash);
+     own_driver_=formal_owned::driver_peer(own_peer_pins_.at("driver"),run_,hash_);
+@@ -158,6 +164,18 @@
+           ch.at("wait_budget_ns").get<int64_t>()>0&&
+           ch.at("wait_budget_ns").get<int64_t>()<=2000000000LL,
+           "M4 W2 wait budget must be bounded");
++        // Pin the reported channel to the values the Driver actually registered.
++        // Checking only "positive" would let a Worker that bound another Job,
++        // ordinal or nonce pass an admission whose stated job is authentication.
++        p1_owned::require(ch.at("job_id").get<int64_t>()==w2_release_job_,
++          "M4 W2 channel job_id does not match the registered target");
++        p1_owned::require(ch.at("ordinal").get<int>()==w2_release_ordinal_,
++          "M4 W2 channel ordinal does not match the registered target");
++        p1_owned::require(ch.at("nonce").is_number_integer()&&
++          ch.at("nonce").get<int>()==w2_release_nonce_,
++          "M4 W2 channel nonce does not match the registered target");
++        p1_owned::require(ch.at("wait_budget_ns").get<int64_t>()==w2_release_wait_ns_,
++          "M4 W2 channel wait budget does not match the registered target");
+       } else {
+         p1_owned::require(false,"M4 unknown diagnostic_case");
+       }
+@@ -1262,6 +1280,7 @@
+   p1::Json last_capability_=nullptr;std::string legacy_ready_pending_reason_="no_executor_callbacks";
+   task_time_reference::Epoch reference_epoch_;
+   p1::Json c_;usv_mpc::MpcParams params_;p1::Limits limits_;std::string run_,hash_,mode_,boot_,nominal_,scope_,diagnostic_case_,legacy_run_,legacy_producer_,worker_instance_,path_fingerprint_,profile_fingerprint_,recording_observer_;int64_t expected_worker_pid_=0;
++  int64_t w2_release_job_=-1,w2_release_wait_ns_=0;int w2_release_ordinal_=0,w2_release_nonce_=0;
+   std::unique_ptr<p1::WorkerLiveness> worker_liveness_;
+   std::unique_ptr<c37_owned::OwnedWorkerPeer> worker_peer_;
+   uint64_t worker_capability_received_=0,worker_candidate_received_=0;
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_registration_20261023_63/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
+@@ -79,6 +79,11 @@
+     bundle=read(bpin['path']);rows=bundle['files'];rows=rows.values() if type(rows) is dict else rows
+     for row in rows:assert all(pin(row['path'])[k]==row[k] for k in ['bytes','sha256'])
+     assert pin(record['binary'])['sha256']==record['binary_sha256']
++
++
++def _w2r_terminal(result):
++    """Terminal flag carried by the Worker's terminal rows, if any."""
++    return bool(result.get('w2_backend_terminal',False))
+ 
+ 
+ def peer_pin(path,m):
+@@ -358,6 +363,12 @@
+             'diagnostic_source_sha256':registry['regulator_source_sha256'],'diagnostic_binary_sha256':registry['roles']['regulator']['binary_sha256'],
+             'worker_binary_sha256':registry['roles']['worker']['binary_sha256'],'witness_worker_instance':wm['worker_instance'],
+             'source_file':str(out/'regulator/source.jsonl'),'witness_file':str(out/'regulator/witness.json'),'witness_enabled':True,'diagnostic_case':case}
++        if w2:
++            # The Regulator pins the reported channel against these values.
++            cp.update({'w2_release_job_id':int(w2['job_id']),
++                       'w2_release_ordinal':int(w2['ordinal']),
++                       'w2_release_nonce':int(w2['nonce']),
++                       'w2_release_wait_ns':int(w2['wait_budget_ns'])})
+         spawn('regulator',native(registry['roles']['regulator']['binary'],cp));cm,cpin=authenticate('regulator',out/'regulator/manifest.json',cp)
+         assert cm['role']=='p1_owned_execute_regulator' and cm['physical_publishers']==2 and cm['physical_API_calls_before_grant']==0
+         rm,rpin=authenticate('recorder',rp/'manifest.json')
+@@ -392,7 +403,10 @@
+         max_cap_age_while_stalled=0;cap_before_stall=None;cap_after_stall=None
+         renewals_during_stall=0;last_renewal_ns=None;late_candidates=0;dropped=0
+         dropped_job_id=None;dropped_target_tick=None;decision_ticks={};decisions={}
+-        jobs_by_id={};registered_job_ids=set();jobs_after_drop=0
++        jobs_by_id={};registered_job_ids=set();published_job_ids=set();jobs_after_drop=0
++        # Terminal evidence for the W2 end-state clauses, filled from the Worker.
++        w2_terminal_evidence={'active_cleared':False,'pending_discarded':False,
++                              'backend_terminal':False,'terminal_events':[]}
+         generated_at_drop=None;cap_window=[];cap_frame=[]
+         # W2 release state was hoisted above the try; only the run-specific
+         # counter is set here.
+@@ -418,6 +432,22 @@
+                           job_id=wrow.get('job_id'),ordinal=wrow.get('ordinal'),
+                           entered_ns=w2_entered_at,
+                           job_deadline_ns=wrow.get('job_deadline_ns'))
++                elif wt in ('terminal_exception','terminal_numerical_failure'):
++                    # BOTH terminal rows mean the Backend is unusable for this
++                    # run. Only `terminal_numerical_failure` carries an explicit
++                    # `policy` string; `terminal_exception` does not, so keying the
++                    # flag on `policy` would leave the W2 expiry path unflagged.
++                    w2_terminal_evidence['terminal_events'].append(
++                        {'type':wt,'job_id':wrow.get('job_id'),
++                         'reason':wrow.get('reason'),'policy':wrow.get('policy','')})
++                    w2_terminal_evidence['backend_terminal']=True
++                elif wt=='pending_discarded':
++                    w2_terminal_evidence['pending_discarded']=True
++                elif wt=='worker_summary':
++                    # The summary reports `fatal`, which is the terminal flag; the
++                    # capability stream then reports active_job=0.
++                    if wrow.get('fatal') is True:
++                        w2_terminal_evidence['backend_terminal']=True
+                 elif wt=='w2_boundary_result':
+                     w2_result=wrow
+                     event('w2_boundary_result_observed',
+@@ -434,6 +464,11 @@
+                     if dropped:jobs_after_drop+=1
+                 elif wt=='capability_publish_attempt':
+                     p=wrow['payload']
++                    # Terminal evidence: the Worker reports `fatal` and clears
++                    # `active_job` on the isolation path. Both are read from the
++                    # same payload, in the same branch the W4 accounting uses.
++                    if p.get('fatal') is True and p.get('active_job')==0:
++                        w2_terminal_evidence['active_cleared']=True
+                     if dropped and jobs_after_drop==0:
+                         # Capability rows emitted after the drop but BEFORE any
+                         # later Job arrived: this is the "no subsequent Job"
+@@ -527,6 +562,8 @@
+                     if transition_ns is not None:new_job_after=True
+                 elif t=='candidate_registration':
+                     registered_job_ids.add(row['job']['job_id'])
++                    if row.get('accepted_registration'):
++                        published_job_ids.add(row['job']['job_id'])
+                     if not row.get('accepted_registration'):
+                         lr=str(row.get('reason',''))
+                         if lr in ('late','wrong_tick','cutoff_closed'):late_candidates+=1
+@@ -535,7 +572,13 @@
+                 # W2 is complete when the release was written AND the Worker
+                 # reported the resulting disposition. Either without the other
+                 # is an unfinished stimulus, not a result.
+-                if w2_release_sent and w2_result is not None:break
++                # The boundary result arrives BEFORE the terminal rows on this
++                # path (the Worker records the refusal, then goes fatal). Breaking
++                # here would skip the terminal evidence the predicate requires.
++                if (w2_release_sent and w2_result is not None
++                        and w2_terminal_evidence['terminal_events']
++                        and w2_terminal_evidence['active_cleared']):
++                    break
+             elif case=='W4-result-delivery-drop':
+                 # W4: the Worker generates a Candidate and never publishes it.
+                 # The report must show WHAT the Regulator did with the missing
+@@ -765,7 +808,12 @@
+             # transition happened it must not predate the Worker's own verified
+             # expired fact, otherwise the run was unusable for a different reason.
+             iso_reason=reg.get('expected',{}).get('w2_isolation_reason','fatal_capability')
+-            expired_verified_ns=(result.get('w2_result') or {}).get('guard_ns')
++            _w2r=result.get('w2_result') or {}
++            # The Worker publishes the full boundary record under 'boundary'; the
++            # top level only repeats job_id/ordinal/disposition.
++            expired_verified_ns=((_w2r.get('boundary') or {}).get('guard_ns')
++                                 if isinstance(_w2r.get('boundary'),dict)
++                                 else _w2r.get('guard_ns'))
+             if result.get('transition_ns') is None:
+                 tr_ok=True
+             else:
+@@ -778,6 +826,25 @@
+             w2_no_watchdog=result.get('watchdog_ns') is None
+             w2r=result.get('w2_result') or {}
+             reg_job=int(w2['job_id']);reg_ord=int(w2['ordinal'])
++            # The remaining registration clauses are checked here rather than
++            # left as prose. Each reads evidence the run actually produced:
++            #   target_job_candidate_registered/published — the Regulator's
++            #     candidate_registration rows and the stored candidate set;
++            #   target_job_native_calls — the Worker's own boundary record;
++            #   active_job_cleared / pending_discard_required — the terminal
++            #     Source rows the Worker writes on the fatal path;
++            #   backend_terminal — the Backend's terminal flag on the Worker.
++            exp=reg.get('expected',{})
++            w2_target_registered=reg_job in registered_job_ids
++            w2_target_published=reg_job in published_job_ids
++            w2_native_calls=int((w2r.get('boundary') or {}).get('ordinal_at_call') or 0) \
++                if w2r.get('actual_native_invoked') else 0
++            # The Worker never writes `backend_terminal` on the boundary row; the
++            # terminal flag lives in the terminal rows and the Worker summary.
++            w2_backend_terminal=bool(w2_terminal_evidence.get('backend_terminal'))
++            result['w2_backend_terminal']=w2_backend_terminal
++            w2_active_cleared=bool(w2_terminal_evidence.get('active_cleared'))
++            w2_pending_discarded=bool(w2_terminal_evidence.get('pending_discarded'))
+             result['passed']=bool(
+                 result.get('W2_observed') is True
+                 and result.get('w2_boundary_entered') is True
+@@ -792,6 +859,12 @@
+                 and worker_rc==w2_exp['worker']
+                 and tr_ok
+                 and w2_no_watchdog
++                and w2_target_registered==bool(exp.get('target_job_candidate_registered',False))
++                and w2_target_published==bool(exp.get('target_job_candidate_published',False))
++                and w2_native_calls==int(exp.get('target_job_native_calls',0))
++                and w2_backend_terminal==bool(exp.get('backend_terminal',True))
++                and w2_active_cleared==bool(exp.get('active_job_cleared',True))
++                and (not exp.get('pending_discard_required') or w2_pending_discarded)
+                 and result.get('ramp_ok') is True
+                 and w2_common_ok)
+         elif case=='W4-result-delivery-drop':
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/worker/solver_worker_m4.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_registration_20261023_63/implementation/w2_author/worker/solver_worker_m4.cpp
+@@ -149,8 +149,14 @@
+   /// numbers the Driver passed: an fd integer is not an identity.
+   p1::Json w2_channel_manifest_()const{
+     if(w2_fd_<0)return p1::Json(nullptr);
++    // Report the *observed* facts, not constants. A literal here would keep
++    // advertising an armed read-only channel even if the gate were never
++    // constructed, which is precisely what the Regulator's admission trusts.
++    const bool gate_armed=bool(w2_gate_)&&bool(w2_boundary_);
++    const int flags=::fcntl(w2_fd_,F_GETFL);
++    const bool read_only=flags>=0&&(flags&O_ACCMODE)==O_RDONLY;
+     return {{"fd",w2_fd_},{"device",w2_channel_.device},{"inode",w2_channel_.inode},
+-            {"read_only",true},{"gate_armed",true},
++            {"read_only",read_only},{"gate_armed",gate_armed},
+             {"job_id",w2_boundary_cfg_.job_id},{"ordinal",w2_boundary_cfg_.ordinal},
+             {"nonce",w2_nonce},{"wait_budget_ns",w2_boundary_cfg_.wait_budget_ns}};
+   }

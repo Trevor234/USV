@@ -1,0 +1,42 @@
+{
+  "schema": "M4-after-T2-independent-review-plan-v75",
+  "recorded_at": "2026-10-24T23:36:04.656057+08:00",
+  "steps": [
+    {
+      "id": "74镜像",
+      "status": "complete",
+      "delivered_files": 90
+    },
+    {
+      "id": "R0",
+      "status": "complete",
+      "task": "修T2协议/Driver/审计",
+      "owned_runs": 0,
+      "evidence": [
+        "evidence/offline_tests/verification_v1.json",
+        "evidence/freeze_rev9/freeze_rev9_report_v1.json"
+      ]
+    },
+    {
+      "id": "R1",
+      "status": "next",
+      "task": "修调度/tick见证转移、跨pause历史与输出账本分离、异常记账不丢失、Fixture真实clock计数;组件级定向回归+新审计拒收T2A_14;重新冻结(rev10)",
+      "owned_runs": 0
+    },
+    {
+      "id": "R2",
+      "status": "after_R1",
+      "task": "T2 scoped诊断variant有限边界保持(按74批R2时序)"
+    },
+    {
+      "id": "T2-B/T2-C/T2-A补证",
+      "status": "after_R2",
+      "task": "单次有限执行,自动重试0"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

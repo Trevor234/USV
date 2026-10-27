@@ -1,0 +1,18 @@
+{
+  "schema": "M4-plan-v91",
+  "recorded_at": "2026-10-25T18:46:21.937042+08:00",
+  "steps": [
+    {
+      "id": "T2C",
+      "status": "BREAKTHROUGH"
+    },
+    {
+      "id": "infra",
+      "status": "next"
+    },
+    {
+      "id": "rest",
+      "status": "retained"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "automatic_retries": 0,
+  "boundary": "Worker completes one job, then blocks its computation thread for 1700 ms pre-native while the executor keeps publishing capability every 200 ms",
+  "case": "W1-work-stall-watchdog",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "declared_exceptions": [],
+  "domain_id": 120,
+  "expected": {
+    "capability_lease_stays_valid": true,
+    "exit_codes": {
+      "fixture": 0,
+      "recorder": 0,
+      "regulator": 0,
+      "worker": 0
+    },
+    "max_capability_age_while_stalled_ns": 600000000,
+    "signals": {
+      "fixture": [
+        "SIGINT"
+      ],
+      "recorder": [
+        "SIGINT"
+      ],
+      "regulator": [],
+      "worker": [
+        "SIGINT"
+      ]
+    },
+    "stall_ns": 1700000000,
+    "transition_reason": "active_watchdog",
+    "watchdog_ns": 1000000000
+  },
+  "fault_injection_enabled": true,
+  "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "index_sha256": "d1a9f0e2b7c4a8536e0f2b9d4c7a1e5836b0d9f2c4a7e1b8369d0c5f2a8e4b71",
+  "max_seconds": 45,
+  "old_normal_or_fault_qualifications_transferred": false,
+  "outer_timeout_seconds": 90,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/runs/W1_04",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/selected_runtime_registry_v1.json",
+  "registry_sha256": "c43e16c3ef6acabe113dcf1b384012dea3c6e4bdc4874f7c6e6a780e02be2910",
+  "run_id": "M4_diagnostic_W1_20261022_04",
+  "schema": "M4-owned-diagnostic-run-v1",
+  "scope": "M4_owned_diagnostic_worker_only_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

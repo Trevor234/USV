@@ -1,0 +1,13 @@
+{
+  "schema": "formal-preparation-declared-capacity-repair/v1",
+  "registered_ns": 461370375509222,
+  "observed_issue": "Generic spec accepts resource capacity below21; fixed21 source must reject it; copy bounds must use effective contract. Run01 used2048 and remains valid only for that configuration.",
+  "old_source_preserved": "author",
+  "new_source": "author_r2",
+  "work": "one additional source-locked native build;21 boundary checks;26 actual constructor refusals;one new prepare/close run for changed implementation",
+  "no_parameter_tuning": true,
+  "same_formal84_bytes": true,
+  "physical_execute_release_enabled": false,
+  "old_run_rerun_in_place": false,
+  "stage_qualified": false
+}

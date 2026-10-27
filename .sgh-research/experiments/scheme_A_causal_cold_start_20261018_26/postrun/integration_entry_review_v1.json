@@ -1,0 +1,16 @@
+{
+  "schema": "scheme-A-causal-cold-integration-entry-review/v1",
+  "read_only": true,
+  "source_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22/worker/solver_worker.cpp": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22/worker/p1_full_contract.hpp": "541d3dc8d946383562c14394e9bca540502abe655d814e803f37a41bebdb98e3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22/observer/src/shadow/task_time_entry_contract_v1.hpp": "a46a7f97e364bc1be18ea3724600efdb1cfcf88e89ee093b601265a5111ef5f6",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22/pair_wakeup_contract_v1.json": "a4c9d2754712d672a03de896fc639f327d2fb12fb356f72cccb21699fdfdf62f"
+  },
+  "worker_constructor": "worker/solver_worker.cpp:30 constructs AcadosBackend from verified contract",
+  "worker_native_entry": "worker/solver_worker.cpp:143-154 warm reset, actual anchor, target/ref, deadline guard and solve",
+  "worker_capability": "solver backend/N/dt used by capability and must stay acados/20/0.2 with separate authenticated policy identity",
+  "strict_entry": "observer task_time_entry_contract_v1.hpp requires revision8; worker full-contract header has exact baseline/keys",
+  "next_change_requires_shared_contract_update": true,
+  "runtime_modified": false
+}

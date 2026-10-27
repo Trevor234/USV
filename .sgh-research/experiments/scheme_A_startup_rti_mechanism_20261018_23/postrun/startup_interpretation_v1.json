@@ -1,0 +1,284 @@
+{
+  "control_horizon": [
+    {
+      "control_iteration12_n": [
+        0.36554863584879443,
+        0.36554863584879443
+      ],
+      "control_iteration1_n": [
+        0.3645576181771613,
+        0.36455761817717686
+      ],
+      "max_control_delta_n": 0.000991017671633121,
+      "stage": 0,
+      "time_s": 0.0
+    },
+    {
+      "control_iteration12_n": [
+        0.5048233543025229,
+        0.5048233543025229
+      ],
+      "control_iteration1_n": [
+        0.5019251992310856,
+        0.5019251992310836
+      ],
+      "max_control_delta_n": 0.0028981550714393123,
+      "stage": 1,
+      "time_s": 0.2
+    },
+    {
+      "control_iteration12_n": [
+        0.5188976756642754,
+        0.5188976756642754
+      ],
+      "control_iteration1_n": [
+        0.5131495125841234,
+        0.5131495125841198
+      ],
+      "max_control_delta_n": 0.005748163080155577,
+      "stage": 2,
+      "time_s": 0.4
+    },
+    {
+      "control_iteration12_n": [
+        0.4696912707313018,
+        0.4696912707313018
+      ],
+      "control_iteration1_n": [
+        0.4604857325155707,
+        0.4604857325155614
+      ],
+      "max_control_delta_n": 0.009205538215740383,
+      "stage": 3,
+      "time_s": 0.6000000000000001
+    },
+    {
+      "control_iteration12_n": [
+        0.39411709811844825,
+        0.3941170981184482
+      ],
+      "control_iteration1_n": [
+        0.3813233302117213,
+        0.3813233302117145
+      ],
+      "max_control_delta_n": 0.0127937679067337,
+      "stage": 4,
+      "time_s": 0.8
+    },
+    {
+      "control_iteration12_n": [
+        0.3132845303355426,
+        0.3132845303355426
+      ],
+      "control_iteration1_n": [
+        0.2972045949307117,
+        0.2972045949307172
+      ],
+      "max_control_delta_n": 0.01607993540483088,
+      "stage": 5,
+      "time_s": 1.0
+    },
+    {
+      "control_iteration12_n": [
+        0.2384491397310836,
+        0.2384491397310836
+      ],
+      "control_iteration1_n": [
+        0.21968140570510142,
+        0.21968140570508884
+      ],
+      "max_control_delta_n": 0.018767734025994742,
+      "stage": 6,
+      "time_s": 1.2000000000000002
+    },
+    {
+      "control_iteration12_n": [
+        0.17483698962721356,
+        0.17483698962721356
+      ],
+      "control_iteration1_n": [
+        0.1541221651781473,
+        0.1541221651781415
+      ],
+      "max_control_delta_n": 0.02071482444907205,
+      "stage": 7,
+      "time_s": 1.4000000000000001
+    },
+    {
+      "control_iteration12_n": [
+        0.12408830245286763,
+        0.12408830245286763
+      ],
+      "control_iteration1_n": [
+        0.10218143441226245,
+        0.1021814344122712
+      ],
+      "max_control_delta_n": 0.021906868040605182,
+      "stage": 8,
+      "time_s": 1.6
+    },
+    {
+      "control_iteration12_n": [
+        0.08580774613914686,
+        0.08580774613914686
+      ],
+      "control_iteration1_n": [
+        0.06339220621502174,
+        0.06339220621503061
+      ],
+      "max_control_delta_n": 0.022415539924125122,
+      "stage": 9,
+      "time_s": 1.8
+    },
+    {
+      "control_iteration12_n": [
+        0.058537754682890436,
+        0.058537754682890436
+      ],
+      "control_iteration1_n": [
+        0.036180197951225186,
+        0.03618019795123479
+      ],
+      "max_control_delta_n": 0.02235755673166525,
+      "stage": 10,
+      "time_s": 2.0
+    },
+    {
+      "control_iteration12_n": [
+        0.040359622974836036,
+        0.040359622974836036
+      ],
+      "control_iteration1_n": [
+        0.01849684251861956,
+        0.01849684251862351
+      ],
+      "max_control_delta_n": 0.021862780456216476,
+      "stage": 11,
+      "time_s": 2.2
+    },
+    {
+      "control_iteration12_n": [
+        0.029254994828969493,
+        0.029254994828969493
+      ],
+      "control_iteration1_n": [
+        0.008201450155621896,
+        0.00820145015562167
+      ],
+      "max_control_delta_n": 0.021053544673347822,
+      "stage": 12,
+      "time_s": 2.4000000000000004
+    },
+    {
+      "control_iteration12_n": [
+        0.02331422287788515,
+        0.02331422287788515
+      ],
+      "control_iteration1_n": [
+        0.003279958594417558,
+        0.003279958594413961
+      ],
+      "max_control_delta_n": 0.020034264283471187,
+      "stage": 13,
+      "time_s": 2.6
+    },
+    {
+      "control_iteration12_n": [
+        0.020848754466063043,
+        0.020848754466063043
+      ],
+      "control_iteration1_n": [
+        0.0019594402638786375,
+        0.0019594402638734377
+      ],
+      "max_control_delta_n": 0.018889314202189606,
+      "stage": 14,
+      "time_s": 2.8000000000000003
+    },
+    {
+      "control_iteration12_n": [
+        0.020446165988645324,
+        0.020446165988645324
+      ],
+      "control_iteration1_n": [
+        0.0027588710013578045,
+        0.0027588710013552076
+      ],
+      "max_control_delta_n": 0.017687294987290117,
+      "stage": 15,
+      "time_s": 3.0
+    },
+    {
+      "control_iteration12_n": [
+        0.020994889807764726,
+        0.020994889807764726
+      ],
+      "control_iteration1_n": [
+        0.004504318586485679,
+        0.004504318586484629
+      ],
+      "max_control_delta_n": 0.016490571221280097,
+      "stage": 16,
+      "time_s": 3.2
+    },
+    {
+      "control_iteration12_n": [
+        0.021698703282824378,
+        0.021698703282824378
+      ],
+      "control_iteration1_n": [
+        0.0063286494931131376,
+        0.0063286494931124775
+      ],
+      "max_control_delta_n": 0.015370053789711902,
+      "stage": 17,
+      "time_s": 3.4000000000000004
+    },
+    {
+      "control_iteration12_n": [
+        0.022097344989974614,
+        0.022097344989974614
+      ],
+      "control_iteration1_n": [
+        0.00767084321433899,
+        0.00767084321433869
+      ],
+      "max_control_delta_n": 0.014426501775635925,
+      "stage": 18,
+      "time_s": 3.6
+    },
+    {
+      "control_iteration12_n": [
+        0.02210857615368436,
+        0.02210857615368436
+      ],
+      "control_iteration1_n": [
+        0.00828735073028877,
+        0.008287350730288833
+      ],
+      "max_control_delta_n": 0.013821225423395592,
+      "stage": 19,
+      "time_s": 3.8000000000000003
+    }
+  ],
+  "execute_qualified": false,
+  "feasible_cost_relative_decrease": 0.25295088442948543,
+  "feasible_terminal_cost_iteration1": 0.0209002678922541,
+  "feasible_terminal_cost_iteration12": 6.184804744720495e-06,
+  "first_hold_nominal_surge_at_dt_iteration12_m_s": 0.008896708332043656,
+  "first_hold_nominal_surge_at_dt_iteration1_m_s": 0.008872599171742542,
+  "first_hold_nominal_surge_delta_m_s": 2.4109160301113985e-05,
+  "first_hold_scope": "Same actual state and anchor; original model RK4; only first returned U held for original dt=0.2s; not a new ROS or closed-loop run",
+  "first_hold_surge_delta_relative_to_reference": 0.0004821832060222797,
+  "full_control_horizon_max_delta_n": 0.022415539924125122,
+  "largest_changed_stage": 9,
+  "native_result_sha256": "e4f77f5618228d7df9dfbd3807d3a727f1fb7240a74480f8757a4dbfd3376ee0",
+  "one_step_initialization_is_sole_RMSE_cause_proven": false,
+  "primary_job": 1,
+  "primary_nearly_unchanged": false,
+  "repeated_RTI_closed_loop_improvement_proven": false,
+  "research_conclusion": false,
+  "runtime_policy_changed": false,
+  "schema": "scheme-A-startup-mechanism-interpretation/v1",
+  "stage_qualified": false
+}

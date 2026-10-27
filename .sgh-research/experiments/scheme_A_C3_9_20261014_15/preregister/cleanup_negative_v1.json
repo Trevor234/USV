@@ -1,0 +1,16 @@
+{
+  "case": "worker_early_exit",
+  "domain": 153,
+  "driver_source_unchanged_from_two_completed_cases": true,
+  "execute_qualified": false,
+  "expected_driver_returncode": 2,
+  "expected_partial_case_failure_retained": true,
+  "fault": "SIGINT only exact manifest/binary/pid/start/boot-bound owned Worker after native legacy_ready and release receipt, during 4s measurement",
+  "required_cleanup_roles": 5,
+  "research_conclusion": false,
+  "run_id": "owned_C39_worker_early_exit_01",
+  "schema": "C3.9-preregister-cleanup-negative/v1",
+  "scope": "driver exception-path cleanup only; no new physical or stage qualification",
+  "script_sha256": "c8577cb8100ea4b9647ece7b11c63675b72511d91ee88795f21c18e32cc13c98",
+  "stage_qualified": false
+}

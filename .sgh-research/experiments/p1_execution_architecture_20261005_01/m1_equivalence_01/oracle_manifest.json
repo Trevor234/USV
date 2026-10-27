@@ -1,0 +1,99 @@
+{
+  "schema": "p1-m1-private-f5-oracle-generation/1",
+  "inputs": {
+    "f5_backup": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/f5_pre_shared_core/mpc_node.cpp",
+      "sha256": "2f1b457ce9644d6ceff722e4ce328fa6a5de23a2cb94f8470c022e0bd70f2dd8"
+    },
+    "core_header": {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/p1_input_core.hpp",
+      "sha256": "a626758cbce50acb69e19aa793f6d01f7e913fa92d0172e514a654481c0a0091"
+    },
+    "core_source": {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/p1_input_core.cpp",
+      "sha256": "7f370996fdd5c4718a20d8871e77ce8ed82d49e0884f1939d2c0514bac77b1c2"
+    },
+    "model_source": {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/usv_model_dynamic.cpp",
+      "sha256": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3"
+    },
+    "utils_source": {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/utils.cpp",
+      "sha256": "7ea18aed61f0871fa178656f786a413ca24c4d3401352094447429c3e596d92a"
+    },
+    "model_header": {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/usv_model_dynamic.hpp",
+      "sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "utils_header": {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/utils.hpp",
+      "sha256": "5a78abb9f6acd9851d96169a7bbb2044208b761c1d9d0100a0e68cfc68e27de3"
+    },
+    "actual_legacy_wrapper": {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp",
+      "sha256": "c15f83484e498f2a6a5d6ba672e89493cb575f7bc31282e2b80d9be5995ef01a"
+    },
+    "public_fixture": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v3/evidence/test_shared_input_core.cpp",
+      "sha256": "3185be333ac24267211717a83c5d2a488a817663e75d615d48bbf7356e727e69"
+    }
+  },
+  "unchanged_after_generation": true,
+  "transforms": {
+    "metadata_fields": [
+      "configured_start_offset",
+      "effective_start_offset",
+      "horizon_steps",
+      "nearest_index",
+      "path_received_sequence",
+      "path_size",
+      "path_stamp_ns",
+      "prediction_dt",
+      "profile_received_sequence",
+      "profile_size",
+      "profile_stamp_known",
+      "profile_stamp_ns",
+      "profile_sync_reason",
+      "profile_synced",
+      "profile_t0",
+      "profile_t0_known",
+      "reference_mode",
+      "start_index"
+    ],
+    "extracted_functions": [
+      "build_reference_",
+      "can_solve_",
+      "odom_callback_ numeric excerpts",
+      "publish_vrx_thrust_ numeric prefix"
+    ],
+    "reference_transforms": [
+      "class/function binding",
+      "ROS message metadata type to same-field POD"
+    ],
+    "eligibility_transform": "deterministic fixture now_s replaces steady_now only",
+    "odom_transform": "void reject to bool false; diagnostics discarded; original predicates unchanged",
+    "mapping_transform": "scalar ROS message type to POD; original scale/clamp unchanged"
+  },
+  "outputs": {
+    "f5_input_oracle.hpp": "16c3cc1dc131d8002b8e43e471725cdb2201b756ee62f00ca81b61d1f8f190b3",
+    "test_shared_input_core.cpp": "3185be333ac24267211717a83c5d2a488a817663e75d615d48bbf7356e727e69"
+  },
+  "private_source_exported": false,
+  "package_source_modified": false,
+  "tests_run": false,
+  "reference_fixture_pairs": 600,
+  "shared_reference_calls_with_without_metadata": 1200,
+  "gtest_cases": 9,
+  "bounded_domain": {
+    "N": [
+      2,
+      20
+    ],
+    "dt_s": 0.2,
+    "path_points_max": 41,
+    "reference_input": "finite numeric path/profile; strictly increasing profile time when present",
+    "mapping": "finite ordered clamp bounds and finite commands/scales",
+    "propagation": "nonnegative source/target sim, sorted history, interval <=1 second"
+  },
+  "interpretation": "legacy math/source fixture equivalence and nominal analytic propagation only"
+}

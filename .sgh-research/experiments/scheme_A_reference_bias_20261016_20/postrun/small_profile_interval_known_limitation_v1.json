@@ -1,0 +1,79 @@
+{
+  "actual_velocity_bias_root_cause": false,
+  "all_frozen_sources_unchanged": true,
+  "binary_sha256": "10d96a973b62acafd559fc937a95f33d52a82eb442bcb4c84e95169e5dfdc2f7",
+  "candidate_valid": true,
+  "client_date": "2026-10-17",
+  "counterexample_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/component/small_profile_interval_counterexample_v2.cpp",
+  "current_preregistered_201point_dt02_fixture_domain": false,
+  "current_scope_decision": "restrict current projected qualification to preregistered 201-point .2 s fixture; no current source modification",
+  "demonstrated": true,
+  "first_attempt_preserved": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/build/small_interval_boundary_attempt01",
+    "reason": "harness fraction exact-equality produced false display verdict; actual values already show boundary",
+    "result_sha256": "0f6a46d3c13e38337bf8c9392f2f24a0ba53156e0113dc0bf48c802a9cbb2d79"
+  },
+  "first_profile_interval_s": 1e-12,
+  "fraction": 0.4999999999999999,
+  "future_generalization_requirement": "new version must explicitly reject small profile intervals or use a sampling method consistent with continuous projection; add this counterexample as a native regression",
+  "production_runtime_qualification": false,
+  "profile_t0": 4.999999999999999e-13,
+  "projection_x": 0.005,
+  "reference_x0": 0.0,
+  "sampler_threshold_lines": [
+    {
+      "line": 205,
+      "text": "  double a = (t_seg > 1e-9) ?"
+    }
+  ],
+  "schema": "small-profile-interval-counterexample/v1",
+  "segment": 0,
+  "source_and_threshold_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/observer/src/shadow/projected_profile_time_v1.hpp": {
+      "bytes": 3761,
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/observer/src/shadow/projected_profile_time_v1.hpp",
+      "sha256": "c7e2004804530826d9e5c0f4d2c2c2c5e6d2d5705443be293ab6f07969afa74b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/reference_probe/projected_profile_time_v1.hpp": {
+      "bytes": 3761,
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/reference_probe/projected_profile_time_v1.hpp",
+      "sha256": "c7e2004804530826d9e5c0f4d2c2c2c5e6d2d5705443be293ab6f07969afa74b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/component/small_profile_interval_counterexample_v2.cpp": {
+      "bytes": 1377,
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/component/small_profile_interval_counterexample_v2.cpp",
+      "sha256": "47cd7d43ebc38edf44fb9d25a6586b700b8f3a7625ec5339cdc048897c431dbb"
+    },
+    "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libmpc_core_lib.a": {
+      "bytes": 32114,
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libmpc_core_lib.a",
+      "sha256": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/p1_input_core.hpp": {
+      "bytes": 5795,
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/p1_input_core.hpp",
+      "sha256": "a626758cbce50acb69e19aa793f6d01f7e913fa92d0172e514a654481c0a0091"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/usv_model_dynamic.hpp": {
+      "bytes": 3576,
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/usv_model_dynamic.hpp",
+      "sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/utils.hpp": {
+      "bytes": 4838,
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/utils.hpp",
+      "sha256": "5a78abb9f6acd9851d96169a7bbb2044208b761c1d9d0100a0e68cfc68e27de3"
+    },
+    "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/utils.cpp": {
+      "bytes": 7787,
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/src/utils.cpp",
+      "sha256": "7ea18aed61f0871fa178656f786a413ca24c4d3401352094447429c3e596d92a"
+    },
+    "/usr/bin/c++": {
+      "bytes": 1027128,
+      "resolved_path": "/usr/bin/x86_64-linux-gnu-g++-13",
+      "sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769"
+    }
+  },
+  "stage_qualified": false
+}

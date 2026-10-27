@@ -1,0 +1,200 @@
+{
+  "RMSE_limit_m_s": 0.007392495755251466,
+  "ROS_nodes_started": false,
+  "actual_SQLite": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22/runs/pair_wakeup_s005_01/recorder/bag/bag_0.db3": "e286c5bd5ecca059bd4e1e9e2ba85028d476ae1ad126c1ca7d187e77bf9ce00a"
+  },
+  "actual_worker_kernel_solve_ms": 0.364745,
+  "allowed_total_sample_SSE": 0.05535943040679929,
+  "audit_passed": true,
+  "before_first_candidate_nominal_surge_zero": true,
+  "client_date": "2026-10-18",
+  "event_timeline": [
+    {
+      "after_Ready_ms": 0.0,
+      "monotonic_ns": 259918531169124,
+      "name": "Ready"
+    },
+    {
+      "after_Ready_ms": 80.097061,
+      "monotonic_ns": 259918611266185,
+      "name": "freeze"
+    },
+    {
+      "after_Ready_ms": 80.170987,
+      "monotonic_ns": 259918611340111,
+      "name": "submit_commit"
+    },
+    {
+      "after_Ready_ms": 80.57656,
+      "monotonic_ns": 259918611745684,
+      "name": "worker_received"
+    },
+    {
+      "after_Ready_ms": 80.643488,
+      "monotonic_ns": 259918611812612,
+      "name": "solve_start"
+    },
+    {
+      "after_Ready_ms": 81.027848,
+      "monotonic_ns": 259918612196972,
+      "name": "solve_end"
+    },
+    {
+      "after_Ready_ms": 81.537334,
+      "monotonic_ns": 259918612706458,
+      "name": "observer_ready_commit"
+    },
+    {
+      "after_Ready_ms": 275.950191,
+      "monotonic_ns": 259918807119315,
+      "name": "planned_target"
+    },
+    {
+      "after_Ready_ms": 276.052541,
+      "monotonic_ns": 259918807221665,
+      "name": "activation_commit"
+    },
+    {
+      "after_Ready_ms": 278.386803,
+      "monotonic_ns": 259918809555927,
+      "name": "first_left_call_start"
+    },
+    {
+      "after_Ready_ms": 278.423407,
+      "monotonic_ns": 259918809592531,
+      "name": "both_calls_returned"
+    }
+  ],
+  "exact_original_gate_reproduced": true,
+  "execute_qualified": false,
+  "first_actual_pair_n": [
+    0.3645576181771613,
+    0.36455761817717686
+  ],
+  "first_left_call_after_Ready_ms": 278.386803,
+  "frozen_RMSE_failure_changed": false,
+  "input_locked_paths": 100,
+  "job_id": 1,
+  "latency_or_kernel_time_is_WCET_proof": false,
+  "latency_segments": [
+    {
+      "duration_ms": 80.097061,
+      "duration_ns": 80097061,
+      "end_name": "freeze",
+      "start_name": "Ready"
+    },
+    {
+      "duration_ms": 0.073926,
+      "duration_ns": 73926,
+      "end_name": "submit_commit",
+      "start_name": "freeze"
+    },
+    {
+      "duration_ms": 0.405573,
+      "duration_ns": 405573,
+      "end_name": "worker_received",
+      "start_name": "submit_commit"
+    },
+    {
+      "duration_ms": 0.066928,
+      "duration_ns": 66928,
+      "end_name": "solve_start",
+      "start_name": "worker_received"
+    },
+    {
+      "duration_ms": 0.38436,
+      "duration_ns": 384360,
+      "end_name": "solve_end",
+      "start_name": "solve_start"
+    },
+    {
+      "duration_ms": 0.509486,
+      "duration_ns": 509486,
+      "end_name": "observer_ready_commit",
+      "start_name": "solve_end"
+    },
+    {
+      "duration_ms": 194.412857,
+      "duration_ns": 194412857,
+      "end_name": "planned_target",
+      "start_name": "observer_ready_commit"
+    },
+    {
+      "duration_ms": 0.10235,
+      "duration_ns": 102350,
+      "end_name": "activation_commit",
+      "start_name": "planned_target"
+    },
+    {
+      "duration_ms": 2.334262,
+      "duration_ns": 2334262,
+      "end_name": "first_left_call_start",
+      "start_name": "activation_commit"
+    },
+    {
+      "duration_ms": 0.036604,
+      "duration_ns": 36604,
+      "end_name": "both_calls_returned",
+      "start_name": "first_left_call_start"
+    }
+  ],
+  "native_call_elapsed_ms": 0.38436,
+  "original_check_sha256": "37c9e4b2a0cf171425153c94b43aa932a97e840543bf9311f9e093951a27fc82",
+  "physical_actuator_latency_claimed": false,
+  "preceding_stored_Applied_pairs_zero": true,
+  "preregistered_RMSE_m_s": 0.009234946529021685,
+  "ready_commit_to_planned_target_ms": 194.412857,
+  "recipe_sha256": "423bd03f9634a01de28b2d4d6773090c67bd6f7a7dcce8e50a3be28dfe24b681",
+  "research_conclusion": false,
+  "sample_error_partitions": [
+    {
+      "RMSE_m_s": 0.05,
+      "SSE": 0.03250000000000001,
+      "SSE_fraction_of_actual": 0.3761881796004543,
+      "SSE_fraction_of_allowed_total": 0.5870725143156157,
+      "maximum_abs_surge_m_s": 0.0,
+      "name": "before_first_candidate_call",
+      "samples": 13
+    },
+    {
+      "RMSE_m_s": 0.03344190813237838,
+      "SSE": 0.04137936512277409,
+      "SSE_fraction_of_actual": 0.47896701657104346,
+      "SSE_fraction_of_allowed_total": 0.7474673207203346,
+      "maximum_abs_surge_m_s": 0.038988251355498306,
+      "name": "first_call_to_1s",
+      "samples": 37
+    },
+    {
+      "RMSE_m_s": 0.008896972564533156,
+      "SSE": 0.0039578060407027835,
+      "SSE_fraction_of_actual": 0.04581168768195881,
+      "SSE_fraction_of_allowed_total": 0.07149289672273583,
+      "maximum_abs_surge_m_s": 0.06331783724227961,
+      "name": "1_to_2s",
+      "samples": 50
+    },
+    {
+      "RMSE_m_s": 0.00755056278831799,
+      "SSE": 0.00855164976304985,
+      "SSE_fraction_of_actual": 0.09898552482899628,
+      "SSE_fraction_of_allowed_total": 0.15447503162892964,
+      "maximum_abs_surge_m_s": 0.06359795738961987,
+      "name": "2_to_5s",
+      "samples": 150
+    },
+    {
+      "RMSE_m_s": 7.340754550591965e-05,
+      "SSE": 4.111553483486396e-06,
+      "SSE_fraction_of_actual": 4.759131754715857e-05,
+      "SSE_fraction_of_allowed_total": 7.427015511672265e-05,
+      "maximum_abs_surge_m_s": 0.0500295117973624,
+      "name": "after5s",
+      "samples": 763
+    }
+  ],
+  "schema": "scheme-A-startup-latency-and-error-partition/v1",
+  "stage_qualified": false,
+  "whole_sample_SSE": 0.08639293248001022
+}

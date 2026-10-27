@@ -1,0 +1,75 @@
+{
+  "OS_write_impossible_claimed": false,
+  "files": [
+    {
+      "bytes": 6332,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/M4_fault_matrix_v1.json",
+      "sha256": "58c7eccb51eb463a3012de09b4e78d4f4397317025d5618be4cf798a9d0fbd74"
+    },
+    {
+      "bytes": 5627,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/calibration_and_policy_assets_v1.json",
+      "sha256": "9c70699c689730840848df084fce3d6a7234d705e081cfce8809a0a5ab816feb"
+    },
+    {
+      "bytes": 4178,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/contract_template_without_evidence_marker_v1.json",
+      "sha256": "8f54345e2df3feb85aa2dde46077d7d0a3a4d54bf61a350128f7bc66a22ad85b"
+    },
+    {
+      "bytes": 3202,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_conditions_v1.json",
+      "sha256": "5cf5a6682f5e58ae985d10d1b0d52284b1f2ffe98c44a95b3e593f4e50ca4d5a"
+    },
+    {
+      "bytes": 1229059,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081"
+    },
+    {
+      "bytes": 990,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_submission_v1.json",
+      "sha256": "d6c5a44b68d1a7fa4c0f1b46fb52c73135d5cc5793deb1ca5de593173028ee0c"
+    },
+    {
+      "bytes": 8737,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/owned_execution_policy_v1.json",
+      "sha256": "475d093f034165b94a09dde577a4462dc3c575752e25a99364d4ac699955918b"
+    },
+    {
+      "bytes": 7654,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_contract_spec_v1.json",
+      "sha256": "dca89c6559110290ece07e6102ee4f0bd28f38031f5dfe1702aaab81be45846f"
+    },
+    {
+      "bytes": 4242,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+      "sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a"
+    },
+    {
+      "bytes": 25025,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/parameter_sources_v1.json",
+      "sha256": "eafdfe90b933ce952e291d53d1125983cb182dce0f1ed5326399695fea687bd6"
+    },
+    {
+      "bytes": 2224,
+      "mode": 292,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/timelines_and_truth_table_v1.json",
+      "sha256": "fb0e271217410d933c2e10c911464790fbabe70c09a44e61c4db1f683d19225a"
+    }
+  ],
+  "hash_bound_immutable_version": true,
+  "old_asset_modes_changed": false,
+  "schema": "P1-engineering-freeze-logical-and-read-only-seal/v1",
+  "server_durable_storage_claimed": false
+}

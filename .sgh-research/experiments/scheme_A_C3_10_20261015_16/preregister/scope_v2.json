@@ -1,0 +1,95 @@
+{
+  "SQLite_identical_rows": "multiplicity+transport ownedGID population only; no unique per identical row writer assignment",
+  "actual_cases": [
+    {
+      "case": "normal",
+      "domain": 161,
+      "roles": 5,
+      "run_id": "owned_C310_normal_01"
+    },
+    {
+      "case": "foreign_after_close",
+      "domain": 162,
+      "roles": 6,
+      "run_id": "owned_C310_foreign_after_close_01"
+    }
+  ],
+  "baseline": "scheme=B dynamic NMPC, frozen N10 four roles and N16 Observer",
+  "client_date": "2026-10-15",
+  "close_budget_seconds": 15,
+  "execute_qualified": false,
+  "finite_checker_expected": 80,
+  "foreign_emit_budget_ns": 5000000000,
+  "foreign_emit_freshness_ns": 3500000000,
+  "foreign_labels": [
+    "clone_zero_first",
+    "clone_nonzero",
+    "clone_zero_repeat"
+  ],
+  "foreign_nonzero_final_n": [
+    1.0,
+    -1.0
+  ],
+  "foreign_original_and_repeat_exact_CDR": true,
+  "foreign_packets": 3,
+  "foreign_sequence_collides_original_terminal": true,
+  "full_old_semantics_recomputed_once": true,
+  "helper_registry": "helper_pins_v2.json",
+  "historical_251_native": "reused exact N16 source/bin and sealed D15 evidence; no new run claim",
+  "later_raw_byte_checks": "full SHA per unique anchored file, old directory population, explicit legacy symlink resolution; no mtime/content cache",
+  "measurement_seconds": 4,
+  "new_initial_full_untracked_snapshot": "not saved at earliest capture; later complete snapshot stable except two newroots untracked lines",
+  "new_native_expected": 23,
+  "old_production_code_changed": false,
+  "overall_budget_seconds": 60,
+  "phase_qualifications": {
+    "B4": "unknown",
+    "B5": "unknown",
+    "F6": "unknown",
+    "M0b": "unknown",
+    "M4": "unknown",
+    "P1": "unknown"
+  },
+  "preflight": "preflight/workspace_initial_v3.json",
+  "prepare_budget_seconds": 25,
+  "protection_entry": "protection_v3.py",
+  "required_foreign_denial": "actual callback_foreign_gid, queued_terminal_tail=false, anchor unchanged, noJob/Accepted afterclose",
+  "research_conclusion": false,
+  "same_owner_nonzero_negative": "not run; current foreign has separate actual GID and no F5 authority",
+  "schema": "C3.10-preregister-scope/v2",
+  "selected_build_registry_sha256": "9e2b1cf07dbeeb742e1cfdbb2bb287948171f7442a6866eb9d636c369f4d0e91",
+  "source_bundles": {
+    "fixture": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture_source_bundle_C3_4_v1.json",
+      "sha256": "f092c4205f4fbf69cfba48fb4c8ebc4a5fe5882a74372ef18dd15cb1e707be71"
+    },
+    "foreign": {
+      "files": 7,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/foreign_source_bundle_C310_v2.json",
+      "sha256": "6bb69e146cee72c8fa4c7b95a08e48b0f9e144948035f2bba85f11281f5cd858"
+    },
+    "observer": {
+      "files": 44,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_9_20261014_v16/observer_source_bundle_C39_v2.json",
+      "sha256": "b1cbad440910521db0cb0784d270be172ddc9da0a960de0f944320ab786f74b6"
+    },
+    "publisher": {
+      "files": 9,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher_source_bundle_C3_4_v1.json",
+      "sha256": "41efe37c6bbb15f155ee99f8dfcf0f116a602fc43fecab2bb8bb8204c9177cab"
+    },
+    "recorder": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+      "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+    },
+    "worker": {
+      "files": 14,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker_source_bundle_C3_4_v1.json",
+      "sha256": "d7a13cc5133a290c6b2ca9354324a6dfc01d16f4fa77c8729634c1febddf4633"
+    }
+  },
+  "stage_qualified": false,
+  "wire_match": "new Source->transport->Storage SHA+ordered pertopic counts, actual GID; callback typed fullCDR payload, original template may have padding differences from original wire"
+}

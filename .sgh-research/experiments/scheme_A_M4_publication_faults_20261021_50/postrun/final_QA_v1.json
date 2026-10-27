@@ -1,0 +1,102 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "SDK_compatibility_warnings_retained": 2,
+  "WCET_qualified": false,
+  "actual_component_ROS_processes": 1,
+  "actual_test_returncode": 0,
+  "actuator_topic_publishers": 0,
+  "all_historical_original_paths_unchanged": false,
+  "all_stderr_lines_classified": true,
+  "audit_inputs_unchanged": 36,
+  "batch_deliverable_integrity_passed": true,
+  "evidence_checker_mutation_refusals": 4,
+  "external_signals_sent": 0,
+  "first_test_build_failure_and_original_source_preserved": true,
+  "injected_returns_called_actual_DDS_failures": false,
+  "new_M4_four_role_fault_runs": 0,
+  "new_control_codegen_or_install": false,
+  "normal49_component_preserved": true,
+  "old_error_state_overwrite_diagnostics_retained": 8,
+  "ordinary_production_release_enabled": false,
+  "original_stale_error_state_provenance_fully_proven": false,
+  "owned_test_group_empty": true,
+  "parent49_archive_files": 533,
+  "passed": true,
+  "plant_qualified": false,
+  "preexisting_path_exceptions_and_untracked_submodule_state_retained": true,
+  "private_API_and_wire_totals": {
+    "actual_private_control_rcl_entries": 56,
+    "delegated_Applied_calls": 27,
+    "delegated_control_calls": 43,
+    "independently_decoded_wire_messages": 70,
+    "injected_return_errors": 14,
+    "steps": 28
+  },
+  "production_ELFs_rebuilt_or_modified": false,
+  "production_Regulator_source_modified": false,
+  "proofs": {
+    "build/component_attempt01/build_manifest_v1.json": {
+      "bytes": 272562,
+      "sha256": "f7135fe090cdf0e0c450def88bd7f60ce4c28320a30bc79563c414059270b022"
+    },
+    "build/component_attempt02/build_manifest_v1.json": {
+      "bytes": 272877,
+      "sha256": "f7a1a092e80cb314b1df7cdb9abb2907dbe59540e1050f0a6825b2c776a67d4e"
+    },
+    "evidence/test_executor_interface_fix_v1.json": {
+      "bytes": 610,
+      "sha256": "ec5cbe1584ded7f8a4ce3495ae2180750a5172fcad0a0e526f3e9a683dd39fb1"
+    },
+    "postrun/M4_current_fault_coverage_v1.json": {
+      "bytes": 8294,
+      "sha256": "1c072e151065d14683e678e5117e9e2d17b1cd11df56ae27937b012181a244e9"
+    },
+    "postrun/native_stderr_diagnostics_v1.json": {
+      "bytes": 1615,
+      "sha256": "cb906f714b0da9910a9be1d9be1783e50fc02fceff23fcce3eb762d369395395"
+    },
+    "postrun/next_implementation_plan_v1.json": {
+      "bytes": 2390,
+      "sha256": "6b81b588e57a7e51b7276ffd906872b6c896bc337717da9327a875bcaf8cb599"
+    },
+    "postrun/publication_fault_audit_v1.json": {
+      "bytes": 27731,
+      "sha256": "72fba6e7a8c7b5661a87502a6ff718cb823cb14a7cf11df4e624db60b7c0fff3"
+    },
+    "preflight/component_registration_v1.json": {
+      "bytes": 281487,
+      "sha256": "e29148949c68ee0822343ac0084b8ab31107b10bdab89c8010e94e09c4e6f246"
+    },
+    "preflight/preflight_reflection_v1.md": {
+      "bytes": 3071,
+      "sha256": "f039ef9929dc0f728283e5cd442a20cbb2c2c2023e69a75c7e4d9232fb973068"
+    },
+    "preflight/workspace_final_v1.json": {
+      "bytes": 32380,
+      "sha256": "2c0482d0030cf8058313c8675594b67c351c8356ec7a6f5360aeb5e30774b4ae"
+    },
+    "preflight/workspace_initial_v1.json": {
+      "bytes": 32380,
+      "sha256": "1944e46ab2e6b5366c5a137e1f7e920a040a52b8150e7eeb66eabb8b784eabdb"
+    },
+    "verification/component_verification_v1.json": {
+      "bytes": 561656,
+      "sha256": "60338a5aee1632d726779bd800d75a8a646260b183d3b700e9bc21a9890db2b1"
+    }
+  },
+  "publication_exit_whole_group_qualified": false,
+  "qualification_scope": "exact49 Regulator methods; seeded readiness; private-topic return seam and actual successful wire only",
+  "research_conclusion": false,
+  "runtime_registered_inputs_unchanged": 1540,
+  "schema": "SchemeA-M4-publication-fault-source-component-integrity-QA/v1",
+  "source_linked_cases": 16,
+  "source_linked_publication_exit_component_qualified": true,
+  "source_thresholds_model_RTI_cost_tuned": false,
+  "source_v2_only_changes_Executor_NodeBaseInterface": true,
+  "stage_qualified": false,
+  "workspace_HEAD": "feb50823a07054879e3c6f8d437c02595ce26976",
+  "workspace_branch": "codex/scheme-c-rl",
+  "workspace_status_porcelain_retained": "## codex/scheme-c-rl...origin/codex/scheme-c-rl\n M ardurover-argus\n?? .zcodeignore\n"
+}

@@ -1,0 +1,28 @@
+{
+  "all_three_intermediate_files_preserved": true,
+  "count": 3,
+  "files": [
+    {
+      "bytes": 489,
+      "original": "/home/trevor/MPC/scheme_A_startup_rti_mechanism_20261018_23/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "8fdfe9efce912270bb73f5d6b5bfd563dc7e6069b761a3dd25a2ecef86a01b0a",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/intermediate_MPC_backup_v1/CURRENT.md"
+    },
+    {
+      "bytes": 2210,
+      "original": "/home/trevor/MPC/scheme_A_startup_rti_mechanism_20261018_23/preflight/preflight_reflection_startup_rti_v1.md",
+      "relative_path": "preflight/preflight_reflection_startup_rti_v1.md",
+      "sha256": "533f93ebb62369910c483c44b7b81095084954b7cd88f83d63d06110fa317bb2",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/intermediate_MPC_backup_v1/preflight/preflight_reflection_startup_rti_v1.md"
+    },
+    {
+      "bytes": 68175,
+      "original": "/home/trevor/MPC/scheme_A_startup_rti_mechanism_20261018_23/protection_v1.py",
+      "relative_path": "protection_v1.py",
+      "sha256": "c3bff1c747552f9ab747c5f20fa3d6ee351b1cfef6d2324b45c1cc96eb3cb443",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/intermediate_MPC_backup_v1/protection_v1.py"
+    }
+  ],
+  "schema": "startup-rti-mechanism-intermediate-MPC-backup/v1"
+}

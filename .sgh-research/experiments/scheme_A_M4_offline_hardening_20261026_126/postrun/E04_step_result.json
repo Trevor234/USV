@@ -1,0 +1,76 @@
+{
+  "schema": "plan126-E04-step-result-v1",
+  "step_id": "E04",
+  "status": "PASS",
+  "attempt": "attempt03",
+  "title": "修105审计的恒真比较并重判其有限结论",
+  "issue_addressed": "F124-04",
+  "observed_facts": {
+    "bundle_entry_tamper_detected": true,
+    "bundle_manifest_sha_blind_to_tamper": true,
+    "false_source_comparison_now_false": true,
+    "neg_no_generation_open": true,
+    "pos_task_2_to_6_detected": true,
+    "protected_original_untouched": true,
+    "provenance_split": {
+      "recomputed_from_primary_evidence": 20,
+      "references_harness_result": 2
+    },
+    "reaudit_clauses": 22,
+    "reaudit_passed": true,
+    "same_binding_not_different": true,
+    "strict_bool_enforced": true
+  },
+  "run_accepted": {
+    "accepted": true,
+    "basis": "8 clauses pass; 22-clause re-audit passes with provenance split 20 recomputed / 2 harness-referenced"
+  },
+  "coverage": {
+    "binding_comparison_excludes_generation_number": "covered",
+    "bundle_per_item_recompute": "covered — entry tamper caught, manifest sha proven blind",
+    "harness_referenced_claims": "labelled references_harness_result, not recomputed",
+    "keyword_only_strict_bool": "covered",
+    "old_20_20": "preserved — never rewritten; new result stored separately",
+    "real_pos_and_neg_rejudged": "covered",
+    "source_byte_comparison": "covered — false comparison yields false"
+  },
+  "stage_qualified": false,
+  "qualification": {
+    "F6": false,
+    "M4": false,
+    "P1": false,
+    "hard_realtime": false,
+    "plant": false
+  },
+  "changed_files": [
+    {
+      "path": "implementation/audit/audit_t2bgen_v2.py",
+      "reason": "keyword-only strict-bool clause log; real binding comparison excluding the generation number; per-entry bundle recompute with private-mirror redirection; provenance per clause",
+      "derived_from": "B105 implementation/audit_t2bgen.py"
+    },
+    {
+      "path": "implementation/run_e04.py",
+      "reason": "fail-closed re-judge matrix with private tamper mirror"
+    }
+  ],
+  "original_files_touched": 0,
+  "incident": {
+    "summary": "attempt01 wrote to a protected original (B103 t2_author/CMakeLists.txt) during the bundle tamper test and restored it immediately",
+    "rule_broken": "protected originals are read-only for the whole batch",
+    "containment": "verified byte-identical afterwards; E00 clause B reports 1355/1355 unchanged",
+    "fix": "tamper confined to a private mirror; audit API gained resolve_against + mirror_bundle",
+    "transparency": "logged in commands.json rather than omitted"
+  },
+  "design_decisions": {
+    "strict_bool": "ClauseLog.add is keyword-only and raises TypeError on any non-bool, so the batch-105 argument inversion cannot recur",
+    "binding_fields": "BINDING_FIELDS omits the generation NUMBER by construction; POS task2->6 is still detected through task_generation",
+    "bundle_items": "recompute_bundle walks the entries; the tamper test proves the manifest sha is blind to entry changes",
+    "provenance": "two harness-referenced clauses are labelled references_harness_result and explicitly denied independent-evidence status"
+  },
+  "remaining_obligations": [
+    "E05—E12 NOT_STARTED",
+    "the two harness-referenced clauses (driver_diff_admission_only, regulator_diff_scoped_only) remain unproven heuristics",
+    "a real owned run was not re-audited end to end"
+  ],
+  "next_step": "E05"
+}

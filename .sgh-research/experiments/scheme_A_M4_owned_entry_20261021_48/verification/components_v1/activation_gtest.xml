@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="38" failures="30" disabled="0" errors="0" time="0.022" timestamp="2026-10-21T11:34:27.141" name="AllTests">
+  <testsuite name="Activation" tests="30" failures="30" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-21T11:34:27.162">
+    <testcase name="All100HistoricalPrefixesAndIndependentPrediction" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="86" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="FutureLatestUsesOlderCausalOdom" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="90" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="LatestCausalCommitPreferred" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="91" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="FutureImuCannotEnterSelectedState" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="92" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="CausalMixedImuRetainsProvenance" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="93" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="MissingDualHistoryRejects" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="94" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="StaleOrFutureReceiptRejects" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="ForeignVersionRejects" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="96" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="InvalidationClearsAndImuAloneCannotReintroduceOldOdom" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="97" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="InvalidOdomDoesNotAppendOrAdvanceAcceptedSequence" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="98" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="StorageCapacityIsBounded" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="99" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="StableFirstCandidateAcceptedWithoutPhysicalPublish" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="100" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="OneOdomRaceRevalidatesExactlyOnce" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="101" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="OneImuRacePreservesOriginalImuSequenceCheck" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="102" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="RepeatedRaceRejectsAfterTwoAttempts" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="103" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="VersionRaceDoesNotRetryOrAccept" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="104" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="ShutdownDuringValidationDoesNotRetryOrAccept" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="105" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="OriginalJitterBudgetCannotBeExtendedForRetry" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="106" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="CommitRechecksOriginalSourceAge" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="107" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="RetryCannotBypassTargetSimSlack" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="108" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="LightweightGuardSnapshotPreservesSourceFields" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="109" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="ImuOdomBurstBeforeGuardUsesOneCompleteRetry" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="110" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="ImuThenOdomAcrossAttemptsRetainsOriginalRefusal" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="111" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="CapturedTraceSurvivesCallbacksAfterCommitAndPublishReturn" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="112" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="PostCommitFormattingDelayCannotRewriteOriginalVerdict" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="113" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="V3ActualCallbackThreadCanCompleteDuringWait" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="115" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="V3TimeoutDoesNotExtendOriginalJitterBudget" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="124" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="V3ActualClockRollbackInvalidatesHistoryAndCandidate" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="129" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="GateWaitingStillAdmitsActualOdomImuCallbacks" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="196" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+    <testcase name="ActualTickEntryWithoutGateOpenCannotPublishOrSubmit" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="200" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="Activation">
+      <failure message="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79&#x0A;Expected: (base) != (nullptr), actual: NULL vs (nullptr)&#x0A;" type=""><![CDATA[/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp:79
+Expected: (base) != (nullptr), actual: NULL vs (nullptr)
+]]></failure>
+    </testcase>
+  </testsuite>
+  <testsuite name="V3Entry" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-21T11:34:27.162">
+    <testcase name="ExplicitPolicyCannotEnableOutsideSelectedScope" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="135" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="V3Entry" />
+  </testsuite>
+  <testsuite name="BusinessGate" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0.002" timestamp="2026-10-21T11:34:27.162">
+    <testcase name="ValidBoundOneShotAndReplayRejected" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="154" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.162" classname="BusinessGate" />
+    <testcase name="EveryIdentityAndVersionMismatchRejected" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="159" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.163" classname="BusinessGate" />
+    <testcase name="TypedBoolUnknownAndOversizeReject" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="166" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.164" classname="BusinessGate" />
+    <testcase name="OriginalLivePrerequisitesAllRequired" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="172" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.164" classname="BusinessGate" />
+    <testcase name="FutureStaleAndDeadlineRejected" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="176" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.164" classname="BusinessGate" />
+    <testcase name="CancelledBeforeStartCannotOpen" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="183" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.164" classname="BusinessGate" />
+    <testcase name="PolicyScopeRequiresExplicitFreshPath" file="/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/author_r2/observer/tests/test_reference_activation_alignment.cpp" line="188" status="run" result="completed" time="0." timestamp="2026-10-21T11:34:27.164" classname="BusinessGate" />
+  </testsuite>
+</testsuites>

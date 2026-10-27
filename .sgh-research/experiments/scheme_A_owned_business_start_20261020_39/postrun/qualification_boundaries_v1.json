@@ -1,0 +1,18 @@
+{
+  "V1_current_final_combo_qualified": false,
+  "V2_full_recovery_case_completed": false,
+  "Witness_normal_contract_qualified": true,
+  "Witness_normal_contract_scope": "Witness records and first real accepted activation/BusinessReady consistency only; no control or phase qualification",
+  "Worker_Source_complete": true,
+  "actual_lease_ordinary_stop_qualified": false,
+  "all_terminal_causes_qualified": false,
+  "business_start_actual_case_passed": true,
+  "driver_normal_business_qualified": false,
+  "driver_passed": false,
+  "execute_qualified": false,
+  "native_C_hang_qualified": false,
+  "ordinary_actual_active_stop_case_passed": true,
+  "research_conclusion": false,
+  "stage_qualified": false,
+  "universal_notification_WCET_qualified": false
+}

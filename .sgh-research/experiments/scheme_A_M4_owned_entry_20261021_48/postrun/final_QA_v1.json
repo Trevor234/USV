@@ -1,0 +1,54 @@
+{
+  "B5_M0b_frozen_parent_preserved": true,
+  "F6_qualified": false,
+  "M4_normal_component_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "Regulator_started": false,
+  "actual_normal_run_passed": false,
+  "actual_registered_normal_runs": 1,
+  "actual_roles_spawned": 3,
+  "all_historical_original_paths_unchanged": false,
+  "batch_deliverable_integrity_passed": true,
+  "component_verification_passed": true,
+  "control_API_calls": 0,
+  "explicit_preexisting_path_changes": [
+    "two pre_reference_prediction_v1 backup headers absent; exact F5 content recovered in new batch",
+    ".gitignore changed by resumed committed HEAD; old bytes not fully recovered"
+  ],
+  "native_entry_refusals": 14,
+  "native_policy_cases": 52,
+  "ordinary_production_release_enabled": false,
+  "original24_now_committed_content_equal": true,
+  "owned_groups_empty": true,
+  "passed": true,
+  "proofs": {
+    "postrun/failed_start_audit_v1.json": {
+      "bytes": 379856,
+      "sha256": "1888371edef21bd221fa57a2f035e7f1e67e9b53413ddbdfddab9d064a9cf572"
+    },
+    "preflight/workspace_final_v3.json": {
+      "bytes": 7002061,
+      "sha256": "384292202267d94fa74136c21030bf54e23257a33aae53d9b3ef01159458645f"
+    },
+    "preflight/workspace_initial_v3.json": {
+      "bytes": 7002061,
+      "sha256": "0480032870eb411856ce2b907b78e9feb730d8bfeeb40c1cc04f2660fba0df2d"
+    },
+    "verification/component_verification_v3.json": {
+      "bytes": 14985,
+      "sha256": "31f8e2465259382525494bf1b5d35e984f14c32c09bea3a353d24cebc0052d01"
+    },
+    "verification/native_entry_rejections_v1.json": {
+      "bytes": 23894,
+      "sha256": "9aa40b6e8a4bc78b0f3ef38a07bcd82232766e397d74f713c39abdc8ad6c34d7"
+    }
+  },
+  "research_conclusion": false,
+  "same_registration_retried": false,
+  "schema": "SchemeA-M4-entry-batch-integrity-QA/v1",
+  "source_linked_GTest_cases": 38,
+  "source_thresholds_tuned": false,
+  "stage_qualified": false,
+  "workspace_resumed_HEAD": "feb50823a07054879e3c6f8d437c02595ce26976"
+}

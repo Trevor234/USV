@@ -1,0 +1,32 @@
+/**:
+  ros__parameters:
+    vehicle:
+      mass: 14.2
+      Iz: 2.13
+      xg: 0.12
+      d_thruster: 0.25
+      length: 1.2
+      beam: 0.6
+      draft: 0.1
+      height: 0.3
+      Xu_dot: -2.0
+      Yv_dot: -8.0
+      Yr_dot: -0.1817725
+      Nv_dot: -0.1817725
+      Nr_dot: -3.41
+      Xu: -2.272063
+      Yv: -2.629019
+      Yr: 0.0
+      Nv: 0.0
+      Nr: -3.105
+      Xuu: -11.571784
+      Yvv: -0.05
+      Yrr: 0.0
+      Nvv: 0.0
+      Nrr: -0.71
+    thruster:
+      pwm_min: 1000
+      pwm_center: 1500
+      pwm_max: 2000
+      T_max_forward: 25.0
+      T_max_reverse: 25.0

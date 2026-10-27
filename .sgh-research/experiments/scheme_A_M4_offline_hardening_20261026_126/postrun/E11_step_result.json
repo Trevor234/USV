@@ -1,0 +1,70 @@
+{
+  "step_id": "E11",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Three separate concrete review inputs; model shared-setter first, Epoch later; B2 infrastructure separately scoped.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E11/attempt01",
+  "observed_facts": {
+    "documents": {
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/documents/第126批_模型事务_单项集成评审输入_2026-10-26.md": {
+        "bytes": 4861,
+        "sha256": "fa0b2697cc962e1e4883035c78f34dd45f8dbf2ede972afe724092b9167f4777"
+      },
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/documents/第126批_Epoch生命周期_单项集成评审输入_2026-10-26.md": {
+        "bytes": 3938,
+        "sha256": "c92123480da40b3784141630926669d39220b501f9b3f34e3660f2cce56dc7c7"
+      },
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/documents/第126批_B2实验时钟_单项集成评审输入_2026-10-26.md": {
+        "bytes": 2938,
+        "sha256": "f074b70527807e405dfc767c6b11ae0d1b5eb25a159c93f27b7953c0b81d13b6"
+      }
+    },
+    "review_inputs_ready": true,
+    "integration_implemented": false,
+    "independent_review_approved": false
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "three_separate_inputs_exist",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "all_define_compatibility_negative_controls",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "all_declare_no_integration_yet",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "verification_schema": "batch126-offline-verification-v2",
+    "verification_reference": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E11/attempt01/verification.json",
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    "第126批_模型事务_单项集成评审输入_2026-10-26.md",
+    "第126批_Epoch生命周期_单项集成评审输入_2026-10-26.md",
+    "第126批_B2实验时钟_单项集成评审输入_2026-10-26.md"
+  ],
+  "remaining_obligations": [
+    "Actual integration not implemented or approved."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

@@ -1,0 +1,29 @@
+{
+  "Python_tests": 143,
+  "native_tests": 175,
+  "positive": {
+    "Source_decisions": 47,
+    "Witness_activations": 22,
+    "Witness_ticks": 47,
+    "accepted": 1,
+    "accepted_final_n": [
+      [
+        7.9533618859981265,
+        7.953361885998099
+      ]
+    ],
+    "publisher_Applied": 23,
+    "reasons": {
+      "": 1,
+      "anchor_mismatch": 21,
+      "legacy_not_ready": 23,
+      "no_candidate": 1,
+      "shutdown": 1
+    }
+  },
+  "research_conclusion": false,
+  "schema": "scheme-A-C3.4-observed-results/v1",
+  "wire_coherent_negatives": 12,
+  "wire_payloads": 15,
+  "wire_scenarios": 6
+}

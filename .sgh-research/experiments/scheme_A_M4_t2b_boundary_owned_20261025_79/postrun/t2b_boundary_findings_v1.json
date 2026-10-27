@@ -1,0 +1,13 @@
+{
+  "schema": "M4-T2B-boundary-findings-v79",
+  "recorded_at": "2026-10-25T13:21:44.530426+08:00",
+  "progress": {
+    "scope_chain": "contract validation PASSES",
+    "driver_dynamic": "m4_release_scope/contract_hash/scope dynamic",
+    "fixture_contract": "accepts v4 under t2_boundary_scope",
+    "fixture_peer": "FAILS: formal peer identity binding"
+  },
+  "blocking_issue": "fixture ExactPeer identity under t2_boundary_scope",
+  "attempts": 2,
+  "owned_runs": 2
+}

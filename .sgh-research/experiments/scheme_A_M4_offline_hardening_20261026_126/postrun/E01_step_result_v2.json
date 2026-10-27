@@ -1,0 +1,40 @@
+{
+  "step_id": "E01",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Five Q cases + ASAN/LSAN + actual reference-capture mutant; 350/303 historical duplicates retained; sanitizer run outside ptrace.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Q",
+  "observed_facts": {
+    "asan_clean_on_fixed_build": true,
+    "cases_passed": 5,
+    "cases_registered": 5,
+    "fixed_q2_identities_unique": true,
+    "mutation_caught_by_asan": true,
+    "old_T3-Q2_duplicates_detected": 303,
+    "old_T3-Q2_r2_duplicates_detected": 350,
+    "q1d_capacity_plus_one_preserved": true
+  },
+  "run_accepted": {
+    "accepted": true
+  },
+  "coverage": {
+    "checks": null,
+    "verification_schema": "plan126-E01-verification-v1",
+    "verification_reference": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Q/verification.json",
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [],
+  "remaining_obligations": [
+    "Historical E04 process failure prevents blanket OFFLINE_HARDENING_ACCEPTED."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

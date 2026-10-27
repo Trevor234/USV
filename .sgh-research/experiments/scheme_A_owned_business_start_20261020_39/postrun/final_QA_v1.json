@@ -1,0 +1,94 @@
+{
+  "CXX_build_attempts": 1,
+  "Native_cases": 38,
+  "Recorder_builtin_stream_accounting_claim": false,
+  "SIGSTOP_used": false,
+  "Stored_messages": 1300,
+  "TERM_KILL_paths_exercised_in_this_run": false,
+  "actual_ROS_runs": 1,
+  "actual_lease_ordinary_stop_qualified": false,
+  "actual_raw_copy_negatives": 16,
+  "actual_signal_sequence": [
+    2
+  ],
+  "all_five_roles_return0": true,
+  "all_terminal_causes_qualified": false,
+  "audit_inputs_unchanged": 1924,
+  "audit_pin": {
+    "bytes": 756894,
+    "sha256": "733adf06356383fabe2ee379b92752fdff6a7cd5265c2bb3f02aa56622e2c847"
+  },
+  "business_start_actual_case_passed": true,
+  "current_MPC_delivery_pending_at_QA": true,
+  "current_final_V1_and_full_recovery_qualified": false,
+  "delivery_authority": "delivery_verification.json",
+  "execute_qualified": false,
+  "four_parent_ELFs_reused": true,
+  "independent_SQL_metadata_verified": true,
+  "metrics": {
+    "gate": {
+      "actual_gated_start_confirmed": true,
+      "authorized_ns": 428499023972527,
+      "duplicate_create_rejected": true,
+      "execute_qualified": false,
+      "first_phase_decision_sequence": 1,
+      "first_phase_publish_delay_ns": 3386393,
+      "first_tick_planned_ns": 428500024147654,
+      "parameter_queries_completed_ns": 428496861670659,
+      "passed": true,
+      "prestart_callbacks_live": true,
+      "prestart_decisions": 0,
+      "prestart_jobs": 0,
+      "research_conclusion": false,
+      "stage_qualified": false
+    },
+    "stop": {
+      "SIGINT_to_group_empty_observed_ns": 521215710,
+      "Worker_normal_Source_complete": true,
+      "Worker_returncode": 0,
+      "actual_lease_ordinary_stop_case_completed": false,
+      "actual_signal_sequence": [
+        2
+      ],
+      "authenticated_to_SIGINT_start_ns": 41930878,
+      "blocked_job_id": 2,
+      "cause": "active_watchdog",
+      "contract_waits_ns": {
+        "kill_postcheck": 1000000000,
+        "term_grace": 1000000000,
+        "worker_grace": 500000000
+      },
+      "diagnostic_SIGSTOP_injected": false,
+      "max_start_or_activation_jitter_ns": 171947,
+      "max_tick_start_gap_ns": 200037447,
+      "native_C_hang_proven": false,
+      "notification_to_authenticated_ns": 144549690,
+      "ongoing_fallback_Decisions": 4,
+      "ordinary_active_stop_case_completed": true,
+      "passed": true,
+      "read_visibility_upper_observation_ns": 63494257,
+      "stage_qualified": false,
+      "terminal_to_SIGINT_start_ns": 186480568,
+      "terminal_to_Worker_cleanup_ns": 729590491,
+      "universal_notification_WCET_qualified": false,
+      "used_wait_stages": [
+        "natural",
+        "worker_grace"
+      ]
+    }
+  },
+  "new_Observer_ELF": true,
+  "normal_Worker_Source_complete": true,
+  "normal_business_qualified": false,
+  "old_batch38_three_failures_not_reclassified": true,
+  "old_local_bytes_rechecked": 5821736387,
+  "old_local_paths_rechecked": 46542,
+  "ordinary_active_stop_actual_case_passed": true,
+  "passed": true,
+  "passed_scope": "selected nominal shadow authenticated business start, ordinary actual active stop, data closure and archive integrity",
+  "prerun_inputs_unchanged": 1805,
+  "research_conclusion": false,
+  "schema": "owned-business-start-and-ordinary-active-final-QA/v1",
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

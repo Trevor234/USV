@@ -1,0 +1,1010 @@
+{
+  "schema": "sim-shared-support-asset-lock/v1",
+  "scope": "SIM_SHARED_SUPPORT",
+  "version": "SIM_SHARED_SUPPORT_20261010_01",
+  "metadata": {
+    "declared_utc": "2026-10-10T03:14:00.954673+00:00",
+    "purpose": "Explicit identity declaration after limited shared support repair tests",
+    "parent_lineage": "F5_20261005_atomic_freeze_01; preserved, not replaced",
+    "original_3864_manifest_sha256": "27df4957d21c29a9d724bc97a1221f0fee814d99d53f9f7be041b1e23a7124a0",
+    "original_guard_passed": false,
+    "original_guard_drift_count_after_repair": 26,
+    "deployment_result_sha256": "a09e36b71442ffca3f2d6119c655f6aac3b15b809d1b112406506d0476cdde65",
+    "not_full_simulation_dependency_lock": true,
+    "not_functional_or_release_acceptance": true,
+    "configuration_contents_exported": false,
+    "optional_not_installed": [
+      "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/ntrip_params.yaml.example"
+    ],
+    "checker_sha256": "0700d7b3cb0e0b2f1eba0155bffe80f195a2cff0ea568b1426dcbcdcd90254ea"
+  },
+  "assets": [
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/share/usv_bringup/hook/pythonpath_develop.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/share/usv_bringup/hook/pythonpath_develop.dsv",
+      "link_target": null,
+      "sha256": "54e885d89b90318e1c613bd6323e22e26c572670aceee623149784d38736acb2"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/share/usv_bringup/hook/pythonpath_develop.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/share/usv_bringup/hook/pythonpath_develop.sh",
+      "link_target": null,
+      "sha256": "fc26183382c6eb134a5e94e2de997fc5622226e089a96c454b342dc80018c1d9"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup",
+      "type": "symlink_directory",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup",
+      "sha256": null
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/PKG-INFO",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/PKG-INFO",
+      "link_target": null,
+      "sha256": "d0baa6cc13aed11a2981c34310da7ee532966ffada7c754abf2cbf383ed337c3"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/SOURCES.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/SOURCES.txt",
+      "link_target": null,
+      "sha256": "9ebca2395674a84fa0a59fe385e2560dd441c5a24694a1c9f45e78d651cec33d"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/dependency_links.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/dependency_links.txt",
+      "link_target": null,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/entry_points.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/entry_points.txt",
+      "link_target": null,
+      "sha256": "530fe0b4db4e77c08471f48d16967b90728fd1ff27272e67f6fdb65ab0a7ba06"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/requires.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/requires.txt",
+      "link_target": null,
+      "sha256": "4e34d3b17ef5dd1e34865d1d3245f1a40158ec9bc19ea6d3547423a3fb96e916"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/top_level.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/top_level.txt",
+      "link_target": null,
+      "sha256": "ee768884d645d1e202ef7e2fe57277d6df0085db8c4e34d84a04225031c611da"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/zip-safe",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info/zip-safe",
+      "link_target": null,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/__init__.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/__init__.py",
+      "link_target": null,
+      "sha256": "ce9a3f0908e838d0cf106415682df13079e580d91937a1068be5ae3d94cd4343"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/fix_qos_relay.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/fix_qos_relay.py",
+      "link_target": null,
+      "sha256": "ca996d538cc8913eee9230960d3e77d20728b4c32de5aff78777a5e52807e559"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/research_config_sources.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/research_config_sources.py",
+      "link_target": null,
+      "sha256": "2ca84993341269d39ad3a74f422d177ea0c76be73cda6343d8e66ab08c388c75"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/share/usv_simulation/hook/pythonpath_develop.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/share/usv_simulation/hook/pythonpath_develop.dsv",
+      "link_target": null,
+      "sha256": "a58086a1500a27124791fd803d494f17f92db4b1f21b3fa8e3ac4588de42e114"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/share/usv_simulation/hook/pythonpath_develop.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/share/usv_simulation/hook/pythonpath_develop.sh",
+      "link_target": null,
+      "sha256": "462444e647ed258243fa5147d2962d089693dfa58bab0978a94b1daf3d4ffb9f"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation",
+      "type": "symlink_directory",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation",
+      "sha256": null
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/PKG-INFO",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/PKG-INFO",
+      "link_target": null,
+      "sha256": "484215961ec6f5065a716b683cfa7406b7bb8134cb986788ab2a7cb1791a7154"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/SOURCES.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/SOURCES.txt",
+      "link_target": null,
+      "sha256": "af57db38d008441a49f81ca1d8fa871f61bd2958342d09ffb55123afce06b4db"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/dependency_links.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/dependency_links.txt",
+      "link_target": null,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/entry_points.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/entry_points.txt",
+      "link_target": null,
+      "sha256": "1c66aafb7aecbd618fe2d197885eb8ebf17d1f33624e9f59af14c4d07a9eab44"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/requires.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/requires.txt",
+      "link_target": null,
+      "sha256": "4e34d3b17ef5dd1e34865d1d3245f1a40158ec9bc19ea6d3547423a3fb96e916"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/top_level.txt",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/top_level.txt",
+      "link_target": null,
+      "sha256": "37d90633bbd8f9ca7cd6b6395a3eb033d497d96923e94eb8ace2a367e34d3192"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/zip-safe",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation.egg-info/zip-safe",
+      "link_target": null,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/__init__.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/__init__.py",
+      "link_target": null,
+      "sha256": "0c80e2ef49e94f8dd0efd035fd46713e5c8300ce15bf9be1cfbb89bfc0d183eb"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/telemetry_bridge.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/telemetry_bridge.py",
+      "link_target": null,
+      "sha256": "0455293cf5fdb46778f26063fb95e7c9f23312026b874492ec096ce0f2e23add"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/visualizer.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/visualizer.py",
+      "link_target": null,
+      "sha256": "298f5af2f447090f37f1d9c1e3a5e799f9c05e9c24e6a086f91ac2023ae86cb9"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/vrx_model.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/vrx_model.py",
+      "link_target": null,
+      "sha256": "f8ef7f8b0279f49f030aa3be37eb2f5e9454e7c191f3db088a6a3fe2e3f28da7"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/vrx_spawn.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/vrx_spawn.py",
+      "link_target": null,
+      "sha256": "fde5bee33b37a7c913650f5ef1e265c0a40177b9355088e8748b0958138da716"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/_local_setup_util_sh.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/_local_setup_util_sh.py",
+      "link_target": null,
+      "sha256": "3f6e8b7fae1039cdc824678256f56160cb425ac6fd4e17e441b98d5cefab9f57"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/local_setup.bash",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/local_setup.bash",
+      "link_target": null,
+      "sha256": "0e10d666bbf43cf559467b11b75cf6d26cf8d210e7f94e79dfe5a7dddb2fe91c"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/local_setup.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/local_setup.sh",
+      "link_target": null,
+      "sha256": "43d995da549edcf564c4ded59b64935b5b4bd5509587ef665e70cbeedb21e012"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/setup.bash",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/setup.bash",
+      "link_target": null,
+      "sha256": "d1552370ac06943878b92be07f1ff59443d00a60275f687ddd08683f1cff795f"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv-bringup.egg-link",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv-bringup.egg-link",
+      "link_target": null,
+      "sha256": "9b577e9887f47d62baacc4412d1b3976f1f9b75f54f8691288a00d7e147fe9b8"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/usv_bringup/fix_qos_relay",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/usv_bringup/fix_qos_relay",
+      "link_target": null,
+      "sha256": "cfd25699b7d40c4eed08dcfc19c75b4ef2b31e4480d719775175ebc3a440c006"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/ament_index/resource_index/packages/usv_bringup",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/resource/usv_bringup",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/resource/usv_bringup",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/bag_topics.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/bag_topics.yaml",
+      "sha256": "6d578021c7b74f93031a303212e9d1069066b62bbe3181c76a8570c01eafb157"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/mavros_config.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mavros_config.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/mavros_config.yaml",
+      "sha256": "7831d7004f83b376b751a4a361248b492457d1acd1da1bfafcc2a61cf1be3b09"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/mpc_params.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/mpc_params.yaml",
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/mpc_params_A.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_A.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/mpc_params_A.yaml",
+      "sha256": "1732b009c4f137d5c4efe844fc891726297e331760a11b329e8c7ee2c7c0b325"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/mpc_params_B.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/mpc_params_B.yaml",
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/mpc_params_vrx.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_vrx.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/mpc_params_vrx.yaml",
+      "sha256": "df426364e7512e8ba6dfc366d98c26d8510f041f15aac650dbbe82f40202e3ef"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/ntrip_params.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/ntrip_params.yaml",
+      "sha256": "9bcb3421d2870f34fbbd1732e53642e58ebb74edb820b40c630f88280323cb7c"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/p0_nominal_f3.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_nominal_f3.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/p0_nominal_f3.yaml",
+      "sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/p0_plant_f3.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_plant_f3.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/p0_plant_f3.yaml",
+      "sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/path_config.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/path_config.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/path_config.yaml",
+      "sha256": "53086a2ed0cbc60a7670a2137ac1d6f589ed7c54c564f969cccd3654b15dcb3a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/research_bag_topics.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/research_bag_topics.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/research_bag_topics.yaml",
+      "sha256": "46d9e54a99e95edea2804c1e981e3d8827f7b814ce3e12c715e4d42967037bdd"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "sha256": "234f3743cd61e2ca9a826872137b0e2a51643601785551f028e7e7f675227e08"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/safety_params.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/safety_params.yaml",
+      "sha256": "e97e63cb90fcbf9cb9e5bf9e5fbc61cd9985858381b432d205ee1ac616ebc018"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/topic_contract.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/topic_contract.yaml",
+      "sha256": "eb8cbf7bf7eb4689c0c446c5f4413e38e651e429b811495ca3281d4a9d85797a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/usv_params.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/usv_params.yaml",
+      "sha256": "a96c5c62c4f9421d3e9fd9e267ae5da4432dea147597121cad23dc41f2e19428"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/usv_params_A.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_A.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/usv_params_A.yaml",
+      "sha256": "c5334585225d81810f2ecd24e4b064190c764a083db1455d6b2c69d5da2f0bb2"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/usv_params_B.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_B.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/usv_params_B.yaml",
+      "sha256": "9425eb3fd68b8b9392affbe41b7bd7f36c0b12e8656c230adcfc75305aa7600a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/usv_params_sim.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_sim.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/usv_params_sim.yaml",
+      "sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/waypoints/sitl_square.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/sitl_square.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/waypoints/sitl_square.yaml",
+      "sha256": "84bf2a7d67d93d96e5d0a9b2c8224f183224745440e09db2934f5d877c6ce80a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/waypoints/vrx_b_circle.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_circle.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/waypoints/vrx_b_circle.yaml",
+      "sha256": "6d89acf959792d0f941ab798ae4cd890eebdb9f6aa3c086d7000ced756848ee1"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/waypoints/vrx_b_s_curve.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_s_curve.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/waypoints/vrx_b_s_curve.yaml",
+      "sha256": "b686540b8105fe1de2d01ec42f6671232c2f62f000fae58ed914168c24b8a53b"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/waypoints/vrx_b_straight.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_straight.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/waypoints/vrx_b_straight.yaml",
+      "sha256": "d7796ce9f963aceb54d0c428f721a0d6963ca35b303e5481bb44661f04e1241c"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/waypoints/vrx_b_turn.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_turn.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/waypoints/vrx_b_turn.yaml",
+      "sha256": "5b05eb8c19eb78144163653465a1f73d7cbb98dfb374cb9cc17918f8ec95950a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "sha256": "25c9620799f611e6f619d4af2d9ed555c3fb8341f398b637ca53711e69c273e2"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "sha256": "4228677782ad0d17d2506c593043fb3680e066c3588730e92fb901ff9b7a3529"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/environment/usv_mpc.sh",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/env-hooks/usv_mpc.sh",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/env-hooks/usv_mpc.sh",
+      "sha256": "8c21e2b8340d5ace7d533927bb463b3914a7d8afaa53a42f016efbaae2a0c8a7"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/ament_prefix_path.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/ament_prefix_path.dsv",
+      "link_target": null,
+      "sha256": "c4797d0a0670c70b4d3bcb5b7d47563635c7950595603f3af66f70af546ad57e"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/ament_prefix_path.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/ament_prefix_path.sh",
+      "link_target": null,
+      "sha256": "c07f082a166d9644cabb3237d58e59177e5830868363f0fc32b646e1fb5cb3a5"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/pythonpath.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/pythonpath.dsv",
+      "link_target": null,
+      "sha256": "070ebe43e03af540d1d1e1a820dcdba2b6fac511fcecc16664eea6fc0e9a6691"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/pythonpath.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/hook/pythonpath.sh",
+      "link_target": null,
+      "sha256": "15a6191c43b0d92b5c726b638e710e045a711c8683875cfdead77f9e759e27aa"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/mavros.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/mavros.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/mavros.launch.py",
+      "sha256": "33ef90c5116401ec5dd4f683b5c9f5ff9c8a1833d82eafb797b54c9ed8c6f3aa"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/ntrip.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/ntrip.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/ntrip.launch.py",
+      "sha256": "9935d2cd0ff3f3b7e9a19d072288ff06440a509ccf1a0197ba9228c6b345bc1a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/p0_config_reference_recording.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/p0_config_reference_recording.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/p0_config_reference_recording.launch.py",
+      "sha256": "7be1b5a0ef89a868d4f7b357e739b4463e4ac28e4dc8d9e69e945247b4997ed8"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/p0_contract_recording.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/p0_contract_recording.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/p0_contract_recording.launch.py",
+      "sha256": "039a161b07631e8e11ffdfc16476012369648d19a083e45b9b00c0df34d39b42"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/real.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/real.launch.py",
+      "sha256": "a4d0dd480bbcd3518c0d9ad40c34db86123fb7a772135dd44ac03d04e7a2420e"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/record.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/record.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/record.launch.py",
+      "sha256": "38a8f5464466a14ee6ce6426f23f5331cf2bb0ed6fc8cfc53f2532770e7cab15"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/sim.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sim.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/sim.launch.py",
+      "sha256": "8266702957f86b4d7bef2cdbc6d775ce18020df96381688798954fb13562df44"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/sitl.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/sitl.launch.py",
+      "sha256": "013dc2a519a495cabd73a54cbb383857c878797a4211000bb0e8550e52013006"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/vrx.launch.py",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/launch/vrx.launch.py",
+      "sha256": "26773f6bf8f0f8ae91223e2fb37be2284445bfe826371ad0a7cf9bf94d4a8dab"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.bash",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.bash",
+      "link_target": null,
+      "sha256": "5b01397ca462352eb8b50f98ab32cabedb8f707ad0aa9afa7a4f0bd88a9adab3"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.dsv",
+      "link_target": null,
+      "sha256": "5af0f84f6ac7269e0a102a8de8782e7c568d29da3ce2fdf64b59baa3890a8b48"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.sh",
+      "link_target": null,
+      "sha256": "42053dc7d1fb4659cf598463d61ad5549cf64305d6d1deb5674933d2dc7e80ba"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.xml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/package.xml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/package.xml",
+      "sha256": "d43bbc7c3b8216bb7cdd4250ed3dc5461965faf1dfb60df6508e6b0175008469"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/lib/python3.12/site-packages/usv-simulation.egg-link",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/lib/python3.12/site-packages/usv-simulation.egg-link",
+      "link_target": null,
+      "sha256": "e11ea67b792d64e35efe1c69a23fa51df338fe7ea9de9aa13295c70e147cf801"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/ament_index/resource_index/packages/usv_simulation",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/resource/usv_simulation",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/resource/usv_simulation",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/ament_prefix_path.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/ament_prefix_path.dsv",
+      "link_target": null,
+      "sha256": "c4797d0a0670c70b4d3bcb5b7d47563635c7950595603f3af66f70af546ad57e"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/ament_prefix_path.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/ament_prefix_path.sh",
+      "link_target": null,
+      "sha256": "c07f082a166d9644cabb3237d58e59177e5830868363f0fc32b646e1fb5cb3a5"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/pythonpath.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/pythonpath.dsv",
+      "link_target": null,
+      "sha256": "070ebe43e03af540d1d1e1a820dcdba2b6fac511fcecc16664eea6fc0e9a6691"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/pythonpath.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/hook/pythonpath.sh",
+      "link_target": null,
+      "sha256": "15a6191c43b0d92b5c726b638e710e045a711c8683875cfdead77f9e759e27aa"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/package.bash",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/package.bash",
+      "link_target": null,
+      "sha256": "897eb1671b3bfe1e6ab3d89edde7c11504d7b28611b706c75ae87664701c32ac"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/package.dsv",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/package.dsv",
+      "link_target": null,
+      "sha256": "420ca215862133e5c148f492871ac551372f6e934345be05d198a6ba051d60fd"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/package.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/package.sh",
+      "link_target": null,
+      "sha256": "2c35735128445df8e54086cbd419e4a86ab08aa362270533169439f101874f14"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/share/usv_simulation/package.xml",
+      "type": "symlink_file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/package.xml",
+      "link_target": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/package.xml",
+      "sha256": "5ae81a799e3bc1a7781e4b8ff937801af1bb594b2ca98fd3780c5fa78f19a975"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+      "link_target": null,
+      "sha256": "6d578021c7b74f93031a303212e9d1069066b62bbe3181c76a8570c01eafb157"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mavros_config.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mavros_config.yaml",
+      "link_target": null,
+      "sha256": "7831d7004f83b376b751a4a361248b492457d1acd1da1bfafcc2a61cf1be3b09"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml",
+      "link_target": null,
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_A.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_A.yaml",
+      "link_target": null,
+      "sha256": "1732b009c4f137d5c4efe844fc891726297e331760a11b329e8c7ee2c7c0b325"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml",
+      "link_target": null,
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_vrx.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_vrx.yaml",
+      "link_target": null,
+      "sha256": "df426364e7512e8ba6dfc366d98c26d8510f041f15aac650dbbe82f40202e3ef"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml",
+      "link_target": null,
+      "sha256": "9bcb3421d2870f34fbbd1732e53642e58ebb74edb820b40c630f88280323cb7c"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml.example",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml.example",
+      "link_target": null,
+      "sha256": "28c63248f189b647087b4a57e3c317ee5c7f48dd44dec907031540c0c8c0ec32"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_nominal_f3.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_nominal_f3.yaml",
+      "link_target": null,
+      "sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_plant_f3.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_plant_f3.yaml",
+      "link_target": null,
+      "sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/path_config.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/path_config.yaml",
+      "link_target": null,
+      "sha256": "53086a2ed0cbc60a7670a2137ac1d6f589ed7c54c564f969cccd3654b15dcb3a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/research_bag_topics.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/research_bag_topics.yaml",
+      "link_target": null,
+      "sha256": "46d9e54a99e95edea2804c1e981e3d8827f7b814ce3e12c715e4d42967037bdd"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "link_target": null,
+      "sha256": "234f3743cd61e2ca9a826872137b0e2a51643601785551f028e7e7f675227e08"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+      "link_target": null,
+      "sha256": "e97e63cb90fcbf9cb9e5bf9e5fbc61cd9985858381b432d205ee1ac616ebc018"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+      "link_target": null,
+      "sha256": "eb8cbf7bf7eb4689c0c446c5f4413e38e651e429b811495ca3281d4a9d85797a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params.yaml",
+      "link_target": null,
+      "sha256": "a96c5c62c4f9421d3e9fd9e267ae5da4432dea147597121cad23dc41f2e19428"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_A.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_A.yaml",
+      "link_target": null,
+      "sha256": "c5334585225d81810f2ecd24e4b064190c764a083db1455d6b2c69d5da2f0bb2"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_B.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_B.yaml",
+      "link_target": null,
+      "sha256": "9425eb3fd68b8b9392affbe41b7bd7f36c0b12e8656c230adcfc75305aa7600a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_sim.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_sim.yaml",
+      "link_target": null,
+      "sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/sitl_square.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/sitl_square.yaml",
+      "link_target": null,
+      "sha256": "84bf2a7d67d93d96e5d0a9b2c8224f183224745440e09db2934f5d877c6ce80a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_circle.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_circle.yaml",
+      "link_target": null,
+      "sha256": "6d89acf959792d0f941ab798ae4cd890eebdb9f6aa3c086d7000ced756848ee1"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_s_curve.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_s_curve.yaml",
+      "link_target": null,
+      "sha256": "b686540b8105fe1de2d01ec42f6671232c2f62f000fae58ed914168c24b8a53b"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_straight.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_straight.yaml",
+      "link_target": null,
+      "sha256": "d7796ce9f963aceb54d0c428f721a0d6963ca35b303e5481bb44661f04e1241c"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_turn.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_turn.yaml",
+      "link_target": null,
+      "sha256": "5b05eb8c19eb78144163653465a1f73d7cbb98dfb374cb9cc17918f8ec95950a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "link_target": null,
+      "sha256": "25c9620799f611e6f619d4af2d9ed555c3fb8341f398b637ca53711e69c273e2"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "link_target": null,
+      "sha256": "4228677782ad0d17d2506c593043fb3680e066c3588730e92fb901ff9b7a3529"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/env-hooks/usv_mpc.sh",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/env-hooks/usv_mpc.sh",
+      "link_target": null,
+      "sha256": "8c21e2b8340d5ace7d533927bb463b3914a7d8afaa53a42f016efbaae2a0c8a7"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/mavros.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/mavros.launch.py",
+      "link_target": null,
+      "sha256": "33ef90c5116401ec5dd4f683b5c9f5ff9c8a1833d82eafb797b54c9ed8c6f3aa"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/ntrip.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/ntrip.launch.py",
+      "link_target": null,
+      "sha256": "9935d2cd0ff3f3b7e9a19d072288ff06440a509ccf1a0197ba9228c6b345bc1a"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/p0_config_reference_recording.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/p0_config_reference_recording.launch.py",
+      "link_target": null,
+      "sha256": "7be1b5a0ef89a868d4f7b357e739b4463e4ac28e4dc8d9e69e945247b4997ed8"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/p0_contract_recording.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/p0_contract_recording.launch.py",
+      "link_target": null,
+      "sha256": "039a161b07631e8e11ffdfc16476012369648d19a083e45b9b00c0df34d39b42"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py",
+      "link_target": null,
+      "sha256": "a4d0dd480bbcd3518c0d9ad40c34db86123fb7a772135dd44ac03d04e7a2420e"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/record.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/record.launch.py",
+      "link_target": null,
+      "sha256": "38a8f5464466a14ee6ce6426f23f5331cf2bb0ed6fc8cfc53f2532770e7cab15"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sim.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sim.launch.py",
+      "link_target": null,
+      "sha256": "8266702957f86b4d7bef2cdbc6d775ce18020df96381688798954fb13562df44"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py",
+      "link_target": null,
+      "sha256": "013dc2a519a495cabd73a54cbb383857c878797a4211000bb0e8550e52013006"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py",
+      "link_target": null,
+      "sha256": "26773f6bf8f0f8ae91223e2fb37be2284445bfe826371ad0a7cf9bf94d4a8dab"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/package.xml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/package.xml",
+      "link_target": null,
+      "sha256": "d43bbc7c3b8216bb7cdd4250ed3dc5461965faf1dfb60df6508e6b0175008469"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/resource/usv_bringup",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/resource/usv_bringup",
+      "link_target": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/setup.cfg",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/setup.cfg",
+      "link_target": null,
+      "sha256": "c77c1f154dcd312bdb8afba5495b2d3b3176168cde9279c35aa798ec09b85beb"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/setup.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/setup.py",
+      "link_target": null,
+      "sha256": "44a1a2a48d05ccd578212c15b895051c28d403f7e7ac57b115a4000ed01ce36f"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/test/test_config_smoke.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/test/test_config_smoke.py",
+      "link_target": null,
+      "sha256": "6f8948040d937f32b4dcfce7fecc44553caf7c9935f5904465efbb2d1283d85f"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/__init__.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/__init__.py",
+      "link_target": null,
+      "sha256": "ce9a3f0908e838d0cf106415682df13079e580d91937a1068be5ae3d94cd4343"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/fix_qos_relay.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/fix_qos_relay.py",
+      "link_target": null,
+      "sha256": "ca996d538cc8913eee9230960d3e77d20728b4c32de5aff78777a5e52807e559"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/research_config_sources.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/research_config_sources.py",
+      "link_target": null,
+      "sha256": "2ca84993341269d39ad3a74f422d177ea0c76be73cda6343d8e66ab08c388c75"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/package.xml",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/package.xml",
+      "link_target": null,
+      "sha256": "5ae81a799e3bc1a7781e4b8ff937801af1bb594b2ca98fd3780c5fa78f19a975"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/resource/usv_simulation",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/resource/usv_simulation",
+      "link_target": null,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/setup.cfg",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/setup.cfg",
+      "link_target": null,
+      "sha256": "14ab7b49af5a190b9bc43df60fdbc75277e6a2918dda877afd50182d8af24ef0"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/setup.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/setup.py",
+      "link_target": null,
+      "sha256": "2cb8babcb4e93598508a849c0fc6bba5c3e27b8c4137da84e21dc1f02ec20f41"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/__init__.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/__init__.py",
+      "link_target": null,
+      "sha256": "0c80e2ef49e94f8dd0efd035fd46713e5c8300ce15bf9be1cfbb89bfc0d183eb"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/telemetry_bridge.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/telemetry_bridge.py",
+      "link_target": null,
+      "sha256": "0455293cf5fdb46778f26063fb95e7c9f23312026b874492ec096ce0f2e23add"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/visualizer.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/visualizer.py",
+      "link_target": null,
+      "sha256": "298f5af2f447090f37f1d9c1e3a5e799f9c05e9c24e6a086f91ac2023ae86cb9"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/vrx_model.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/vrx_model.py",
+      "link_target": null,
+      "sha256": "f8ef7f8b0279f49f030aa3be37eb2f5e9454e7c191f3db088a6a3fe2e3f28da7"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/vrx_spawn.py",
+      "type": "file",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/vrx_spawn.py",
+      "link_target": null,
+      "sha256": "fde5bee33b37a7c913650f5ef1e265c0a40177b9355088e8748b0958138da716"
+    }
+  ]
+}

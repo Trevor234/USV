@@ -1,0 +1,30 @@
+{
+  "schema": "M4-T1-S1-findings-v70",
+  "recorded_at": "2026-10-24T19:51:54.398189+08:00",
+  "s1_checks": [
+    "success=false and solver_invoked=false each isolated: solver_failed rejection with the accepted registration preserved (CandidateSuccessFalseAloneRejected, CandidateSolverNotInvokedAloneRejected)",
+    "Job horizon/dt metadata distinguished from native result shape; fixed 126/40/2 wire dimensions as constructive evidence (NativePredictionShapeFixedByConstruction)",
+    "REAL prepare_loop submission obtained: reference_epoch_committed -> job -> job_publish_result, and the real echo admits a result without seed_echo (RealPrepareLoopSubmitsJob)",
+    "shutdown/version-change insertion on the real submit path blocks submission with explicit reasons (RealSubmitBlockedByShutdownBeforeSubmit, RealSubmitBlockedByVersionChangeBeforeSubmit)",
+    "in-flight not-yet-ready window: stale result rejected with version_mismatch; new task generation registers, holds the slot and really activates (same case)",
+    "ordinary new odom followed by a REAL activation; task/config/schedule version dimensions reject explicitly (ReferenceOrdinaryNewOdomActivation)"
+  ],
+  "observed_real_submit_blocks": {
+    "RealSubmitBlockedByVersionChangeBeforeSubmit": [
+      "version_changed_before_submit"
+    ],
+    "RealSubmitBlockedByShutdownBeforeSubmit": [
+      "shutdown_before_submit"
+    ]
+  },
+  "test_design_note": "a rejected candidate submission leaves its seeded echo in jobs_; distinct job_ids are required for follow-up registrations (observed as job_echo_mismatch in attempt02, fixed in attempt03)",
+  "attempts": {
+    "failed_kept": [
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt01",
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt02",
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt03"
+    ],
+    "complete": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04"
+  },
+  "regulator_source_unchanged": true
+}

@@ -1,0 +1,171 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "api_pairs": {
+    "max_gap_ns": [
+      199940216,
+      199927761
+    ],
+    "max_rate_n_s": [
+      0.0,
+      0.0
+    ],
+    "max_span_ns": 43452,
+    "pairs": 3
+  },
+  "case": "W3",
+  "claim": "a late candidate is refused; nothing goes terminal",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "declared_exceptions": [],
+  "driver_cross_check": {
+    "agree": [],
+    "disagree": []
+  },
+  "fallback_policy_recomputed": [],
+  "heartbeat": {
+    "capability_attempts": 8,
+    "regulator_admissions": 5,
+    "worst_heartbeat_gap_ns": 200838897
+  },
+  "job_ledger": {
+    "1": {
+      "kind": "delivered",
+      "replaced_by": null,
+      "solved": true,
+      "target_tick": 2,
+      "worker_received": true
+    }
+  },
+  "mutations_rejected": [
+    "forged_exit_code",
+    "decision_claims_qualified",
+    "duplicate_stored_job",
+    "ghost_publish_result",
+    "raw_time_tampered_flags_false",
+    "silent_hold_ramp",
+    "second_hook_invocation"
+  ],
+  "passed": true,
+  "recorder_fixture": {
+    "fixture_published_counts": {
+      "/clock": 56,
+      "/path/reference": 3,
+      "/path/reference_profile": 3,
+      "/wamv/sensors/imu/imu/data": 56,
+      "/wamv/sensors/position/ground_truth_odometry": 56
+    },
+    "recorder_clean": true
+  },
+  "registration": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/W3_registration_v1.json",
+  "registration_sha256": "7ff37b9634cfe755dccc0f049a5fb2d2ecd4491918f52e8b25da6c58e96eb6ea",
+  "research_conclusion": false,
+  "role_exit_codes": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 0,
+    "worker": 0
+  },
+  "role_signals": {
+    "fixture": [
+      "SIGINT"
+    ],
+    "recorder": [
+      "SIGINT"
+    ],
+    "regulator": [],
+    "worker": [
+      "SIGINT"
+    ]
+  },
+  "run_id": "M4_diagnostic_W3_20261022_05",
+  "schema": "M4-owned-diagnostic-audit-v1",
+  "scope": "M4_owned_diagnostic_worker_only_v1",
+  "shutdown": {
+    "grace_exceeded": false,
+    "zero_target_published": true
+  },
+  "target_tick_decisions": {
+    "0": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "unknown_anchor"
+    },
+    "1": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "no_candidate"
+    },
+    "2": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": 1,
+      "job_id_field": 0,
+      "kind": "delivered",
+      "reason": "shutdown"
+    }
+  },
+  "transition": {
+    "transition": false
+  },
+  "typed": {
+    "applied": 3,
+    "candidates": 1,
+    "decisions": 3,
+    "jobs": 1,
+    "pairs": 3,
+    "published_candidates": 1,
+    "stored_counts": {
+      "/clock": 56,
+      "/p1/execution_decision": 3,
+      "/p1/solve_candidate": 1,
+      "/p1/solve_job": 1,
+      "/p1/worker_capability": 8,
+      "/path/reference": 3,
+      "/path/reference_profile": 3,
+      "/research/control/applied": 3,
+      "/wamv/sensors/imu/imu/data": 56,
+      "/wamv/sensors/position/ground_truth_odometry": 56,
+      "/wamv/thrusters/left/thrust": 3,
+      "/wamv/thrusters/right/thrust": 3
+    }
+  },
+  "unprovable_here": [
+    "a signal list of [] is consistent with both a clean exit and a close that happened before the Driver sampled; only the exit code distinguishes them",
+    "the capability DDS payloads themselves are checked by the wire reconciliation, not by these summary counters"
+  ],
+  "wire": {
+    "extra_capabilities": 1,
+    "observed": 195,
+    "stored": 196
+  },
+  "witness": {
+    "observation_complete": true,
+    "regulator_rows_generated": 180
+  },
+  "worker_accounting": {
+    "delivered": 1,
+    "dropped": 0,
+    "final_completed": 1,
+    "generated": 1,
+    "published": 1,
+    "unprovable_here": [
+      "the capability DDS payloads themselves are checked by the wire reconciliation, not by these summary counters"
+    ]
+  },
+  "worker_hooks": {
+    "hooks": {
+      "controlled_pre_native_barrier": 0,
+      "diagnostic_candidate_dropped": 0,
+      "diagnostic_v2_pre_native_enter": 0,
+      "terminal_exception": 0,
+      "terminal_numerical_failure": 0
+    },
+    "publish_delays_ns": [
+      170553932
+    ],
+    "solve_time_identity_preserved": true
+  }
+}

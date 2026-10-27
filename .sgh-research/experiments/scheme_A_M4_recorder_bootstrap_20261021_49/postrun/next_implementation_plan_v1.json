@@ -1,0 +1,43 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "automatic_next_ROS_run_registered": false,
+  "current_step_closed": "isolated nominal normal sole owned outlet component",
+  "do_not_repeat": [
+    "successful batch49 normal run",
+    "closed45/46 preparation or source calibration",
+    "old39-42 faults without affected-code reason",
+    "new full no_output business stage"
+  ],
+  "frozen_numbers_model_RTI_cost_thresholds_tuned": false,
+  "normal_run": "M4_owned_nominal_20261021_49_01",
+  "normal_run_repeated": false,
+  "ordinary_production_release_enabled": false,
+  "parent_contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "parent_index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "research_conclusion": false,
+  "schema": "M4-after-normal-current-faults-then-F6-P1/v1",
+  "steps": [
+    {
+      "action": "map original nine-group obligations to exact current source/bin and reused component evidence; register affected publication/exit and bootstrap/full-Recorder cases first",
+      "gate": "no parent archive edits; no fabricated middleware-failure claim from injected adapter returns",
+      "order": 1
+    },
+    {
+      "action": "complete current-runtime fault cases and F5/current source/reference applicability obligations with appropriate deterministic tests or actual controlled triggers",
+      "gate": "case-specific source/bin/input hashes and finite budgets before launch; automatic retries0; exact fault exception flags; retain all failures",
+      "order": 2
+    },
+    {
+      "action": "under sole execution chain prepare immutable finite numeric M0/M1, atomic model+plan commit at fixed tick, old/mixed rejection, saved-plan immutability and separate warmstart",
+      "gate": "existing NX8/NU2/N20/NP6/NP_GLOBAL30 numerical setters; no codegen/GP/PPO",
+      "order": 3
+    },
+    {
+      "action": "bind final version/config/run/source/record and affected regressions; freeze F6 and perform original P1 joint review",
+      "gate": "normal component does not qualify faults, model transaction or P1; no half-RMSE or P2-certificate gate added",
+      "order": 4
+    }
+  ]
+}

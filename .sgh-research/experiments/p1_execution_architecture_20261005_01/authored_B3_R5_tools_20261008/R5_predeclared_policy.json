@@ -1,0 +1,133 @@
+{
+  "schema": "p1-R5-predeclared-policy-v1",
+  "status": "frozen-before-run",
+  "run_id": "p1_R5_diag5_sink_pressure_20261008_01",
+  "mode": "no_output",
+  "declared_duration_ns": 15000000000,
+  "window_origin": "arm_publish_start_ns",
+  "log_capacity": 512,
+  "test_sink_pause_ms": 5000,
+  "C0_evidence_sha256": "53b74f6103c071e4fde0a6a93170d5c4ce8b8c0b1249b7201f945483c6d22132",
+  "C0_run_id": "p1_C0_diag5_normal_20261008_01",
+  "previous_closed_asset_manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/C0_closed_assets_20261008.json",
+  "previous_closed_asset_sha256": "5229f454ea62ca28a087c15b467f8e09b45ba58496b70b06b512ec5cd006f801",
+  "previous_closed_asset_count": 2521,
+  "paths": {
+    "diagnostic_bin": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/build/p1_regulator_r5_diag",
+    "diagnostic_source": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/regulator_r5_diag.cpp",
+    "worker_bin": "/home/trevor/USV/usv_mpc_ws/install/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_solver_worker",
+    "contract": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json"
+  },
+  "pins": {
+    "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+    "contract_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+    "diagnostic_source_sha256": "a67d65fdde95ff754ca26d0bffe93e12f2cfbce9d8943d6cf01047b499e34cdb",
+    "regulator_binary_sha256": "43c6cb4ec96e825e0a03701f5aa3044ec1ebadd4568f49190e53607738aa40ab",
+    "worker_binary_sha256": "dd7d253b420aff8283a4869ae804e5f49fcb76c3357829c5c6c12f020324c35c",
+    "runner_sha256": "9aebd5f57ad3f408f881ebae7f5650c7a388a04a28a5ee3ffad9c8590661d367",
+    "supervisor_sha256": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173",
+    "witness_checker_sha256": "fb13fe66b8f996f96bac72e96eaa6a1b1f21f27af19a8b62b2dac13bc273596f",
+    "base_checker_sha256": "469563fb55523e0202725fdc6fc18af446ece84b612c79ee85794e0288829262",
+    "mechanism_checker_sha256": "cef7bf29e2c52d422c9e101032bea205e50818abc4fe8f3f9f493627c4a275bc",
+    "independent_checker_sha256": "9053a8f592c9b01b06b7e5313a77f3be08e486b85412fc639cbf1104d5d046db"
+  },
+  "witness_enabled": true,
+  "hooks": {
+    "test_delay_ms": 0,
+    "test_native_block_ms": 0,
+    "test_prepare_block_ms": 0,
+    "test_tick_block_ms": 0
+  },
+  "limits": {
+    "native_prearm_min": 2,
+    "ticks_before_failure_min": 5,
+    "observation_max_ns": 220000000,
+    "tick_jitter_max_ns": 20000000,
+    "pause_max_ns": 5000000000,
+    "release_grace_max_ns": 2500000000,
+    "invalidation_max_after_stop_ns": 220000000
+  },
+  "response_rule": "latest_known_failed_false_before_first_sink_failure",
+  "invalidation_boundary": "first_invalidation_observed",
+  "shutdown_rule": "natural_failure_stopping_to_exit_or_logical_release_to_close",
+  "queue_overflow_proof": {
+    "kind": "pinned_capacity_rejection_branch_and_no_overcapacity_invariant",
+    "capacity": 512,
+    "sink_source_sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79",
+    "required_phase": {
+      "event_code": 3,
+      "observation_code": 5
+    },
+    "required_summary_dropped_positive": true,
+    "actual_depth_trace_available": false,
+    "max_depth_above_capacity_allowed": false
+  },
+  "prearm_rule": "two distinct complete native Job/Candidate/accepted Decision chains and matching actual typed accepted callbacks before single arm",
+  "source_loss_scope": "only original regulator Sink; preserve summary false/drop>0/RC2, old normal base and normal application ledger failures; no reconstructed source",
+  "independent_required_gates": [
+    "mechanism",
+    "worker_closed_native_source",
+    "actual_typed_bag_full_scan",
+    "raw_fixture_exact_recording",
+    "owned_lifecycle_and_cleanup",
+    "unmodified_inputs_and_tools",
+    "physical_endpoints_zero"
+  ],
+  "known_uncovered_branch": "DecisionEnqueue may stop and exit without invalidate_locked; R5 from TickStart cannot grant this other branch or formal freeze",
+  "recovery_expected_roles": {
+    "regulator": {
+      "exe": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/build/p1_regulator_r5_diag",
+      "sha256": "43c6cb4ec96e825e0a03701f5aa3044ec1ebadd4568f49190e53607738aa40ab"
+    },
+    "worker": {
+      "exe": "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker",
+      "sha256": "dd7d253b420aff8283a4869ae804e5f49fcb76c3357829c5c6c12f020324c35c"
+    },
+    "fixture": {
+      "exe": "/usr/bin/python3.12",
+      "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+    },
+    "recorder": {
+      "exe": "/usr/bin/python3.12",
+      "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+    }
+  },
+  "qualification": {
+    "R5_complete": false,
+    "M0b_formally_complete": false,
+    "M4_complete": false,
+    "F6_complete": false,
+    "P1_complete": false,
+    "normal_contract_complete": false,
+    "publisher_rate_verification_available": false,
+    "plant_acceptance_observed": false,
+    "execute_qualified": false
+  },
+  "new_tool_files": {
+    "run_R5_pressure.py": {
+      "sha256": "9aebd5f57ad3f408f881ebae7f5650c7a388a04a28a5ee3ffad9c8590661d367",
+      "bytes": 73613
+    },
+    "test_R5_pressure_runner.py": {
+      "sha256": "d849c7865e7e98a4698a1c1e771b65677ed01390edc7e19bb6bb28ec6465ecd7",
+      "bytes": 23204
+    },
+    "check_R5_mechanism.py": {
+      "sha256": "cef7bf29e2c52d422c9e101032bea205e50818abc4fe8f3f9f493627c4a275bc",
+      "bytes": 38882
+    },
+    "test_R5_mechanism.py": {
+      "sha256": "a375bd4f36f31e5c438a186a7e0999fa21cea74ebda85d217a18671cf8c6c298",
+      "bytes": 27135
+    },
+    "check_R5_independent.py": {
+      "sha256": "9053a8f592c9b01b06b7e5313a77f3be08e486b85412fc639cbf1104d5d046db",
+      "bytes": 21835
+    },
+    "test_R5_independent.py": {
+      "sha256": "e26635fd7b3df6b193aa3208d9a7f7e7cde92edc16de33bb9b2d4c00e6e985cf",
+      "bytes": 13337
+    }
+  },
+  "snapshot_semantics": "Submit authorization precedes commit/failed snapshot; no post-first-Stopping commit or stopping-true Submit/acceptedActivation. failed-true snapshot alone is not an authorization violation."
+}

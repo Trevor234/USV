@@ -1,0 +1,36 @@
+{
+  "schema": "M4-T2-R1-findings-v76",
+  "recorded_at": "2026-10-25T12:52:30.411699+08:00",
+  "regulator_source_sha_changed": {
+    "before": "dd03d7694b494d05fd4985db2c172c45658d7d938cebb723c084daaf6c43f6b5",
+    "after": "244c08a111834f694b1d40b24836b296cc421585a20762315c697f2318a508db",
+    "reason": "74 review R1: the scenarios exposed real implementation defects; the SHA invariant yields to proven fixes"
+  },
+  "fixes": {
+    "R74-02": "pause确认=单一调度转移(schedule bump+origin/tick重排+last_schedule原子执行);witness summary新增records_inconsistency定位字段(close后const扫描无法append,故在summary定位首个违反规则)",
+    "R74-01": "owned_pair_record重排:真实per-side API事实(owned_API_pair行)与Applied先于可能失败的一致性签收写入;分歧时记录owned_pair_consistency_failed(含双侧anchor)并把命令历史重锚到独立物理输出事实;异常路径不再丢失账本",
+    "R74-08": "Fixture独立clock_attempts_/clock_published_计数,silent分支不增;terminal与Recorder同口径"
+  },
+  "validation": {
+    "component_harness": "34/34(32项70批常规回归+seq12账本回归PairLedgerFactsSurviveDivergence+pause转移状态级冒烟)",
+    "detector_proof": "evidence/detector_proof_v1.json:同代际单调性谓词对真实T2A_14 witness捕获gen2 tick9->tick0(不放松一致性)",
+    "deferral": "合成harness无法在权威节奏/jitter策略下表达loop局部连续性几何;witness级连续性证明按计划归T2-A重跑(R3),新审计已gate该义务",
+    "fixture_counter": "154模型步/39静默步/115次clock发布口径在组件级由计数器语义保证(owned重跑复核)"
+  },
+  "rev10": {
+    "bundle": "1c8fb3175b7e832624e9d3e894259c32a43197d6149c5926052b3418f352193f",
+    "driver": "ce94bc2550e51719002a3004f100dffdd4bc1d967555065f292709e534b16345",
+    "roles": {
+      "worker": "61615bb36e37b4571ca6d64dfd898d5dcae4ca971cf7156ac9ac80e44eb788e4",
+      "regulator": "29460a374bab195a69a17d2605921eeadbd219368aa1c65f8bc92ba86cc20999",
+      "fixture": "fcdaf0b1792f900605050e9dfce4a5c32ea8017e8e34d8adf4fdc8bca3636ada",
+      "recorder": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002"
+    },
+    "delta_vs_rev9": [
+      "fixture/synthetic_source_m4.cpp",
+      "observer/src/shadow/p1_witness.hpp",
+      "observer/src/shadow/regulator_owned_execute.cpp"
+    ]
+  },
+  "owned_runs": 0
+}

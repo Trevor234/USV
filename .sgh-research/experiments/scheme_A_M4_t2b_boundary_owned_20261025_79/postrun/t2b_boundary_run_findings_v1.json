@@ -1,0 +1,29 @@
+{
+  "schema": "M4-T2B-boundary-run-findings-v79",
+  "recorded_at": "2026-10-25T13:46:05.696218+08:00",
+  "milestone": "T2 boundary scope identity chain FULLY WORKING in owned four-role execution",
+  "infrastructure": {
+    "scope": "t2_boundary_scope accepted by contract()/owner/grant checks",
+    "contract": "v4 diagnostic contract validated end-to-end",
+    "boundary_pipe": "opened, read end inherited by Worker, write end held by Driver",
+    "action_delivery": "path_replace commanded, Fixture executed, receipt written",
+    "roles_closed": {
+      "regulator": 0,
+      "fixture": 0,
+      "worker": 2,
+      "recorder": 0
+    },
+    "boundary_entered": 1,
+    "path_version_events": 14,
+    "receipts_complete": true
+  },
+  "scenario_semantics_open": {
+    "version_mismatch_rejections": 0,
+    "worker_exit_rc": 2,
+    "meaning": "W2 boundary isolation exit (expected after boundary expiry/release)",
+    "next_debug": "examine Worker source for boundary release→C call→candidate; examine Regulator source for candidate_registration of Job 2 to find where the version rejection occurs (or does not)"
+  },
+  "attempts": 9,
+  "owned_runs": 9,
+  "all_failures_preserved": true
+}

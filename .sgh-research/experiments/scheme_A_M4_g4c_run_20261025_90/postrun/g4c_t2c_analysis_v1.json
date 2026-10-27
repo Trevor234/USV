@@ -1,0 +1,13 @@
+{
+  "schema": "M4-G4C-T2C-analysis-v90",
+  "recorded_at": "2026-10-25T18:28:16.125136+08:00",
+  "audit_type_fix": "driver receipt type matched (t2_action_executed with executor=driver)",
+  "field_name_fix": "tick_start_ns\u2192start_ns in audit",
+  "scenario_finding": {
+    "issue": "shutdown fires BEFORE job=2 activation guard; guard sees job=0 (fallback) not job=2 (target)",
+    "82_review_prediction": "\u505c\u6b62\u592a\u65e9\u6e05\u6389\u7968\u636e\u2192guard\u4e0d\u89c1\u76ee\u6807Job",
+    "fix_direction": "delay shutdown until after job=2 ticket is taken (ready_window\u2192activation window); or use target-specific interleave mechanism",
+    "current_decisions": "seq1-3: job0/job0/job1accepted; seq4: job0 shutdown (job2 ticket already cleared)"
+  },
+  "owned_runs": 1
+}

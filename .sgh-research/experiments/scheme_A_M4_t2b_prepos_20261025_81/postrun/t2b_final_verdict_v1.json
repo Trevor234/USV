@@ -1,0 +1,21 @@
+{
+  "schema": "M4-T2B-final-verdict-v81",
+  "recorded_at": "2026-10-25T16:35:54.082727+08:00",
+  "run": "../scheme_A_M4_t2_r2_driver_20261025_78/implementation/runs/T2B_P01",
+  "registration": "implementation/T2B_prepos_registration.json",
+  "result": "PASSED — first complete T2-B boundary owned run",
+  "scenario_chain": {
+    "job_1": "accepted normally",
+    "job_2_received": "path_replace pre-positioned (job_received trigger, ~1ms before boundary)",
+    "boundary_entered": "Worker held at BeforeCall",
+    "path_committed": "task generation bumped",
+    "boundary_released": "disposition=allowed, native=True (C call happened)",
+    "candidate_job_2": "published with original Job echo",
+    "regulator_rejection": "job=2 accepted=False reason=version_mismatch",
+    "closure": "4/4 roles rc=0 group_empty"
+  },
+  "audit": "13/13 frozen clauses pass (fail-closed per-clause audit)",
+  "design": "job_received pre-positioning resolved the 200ms>150ms architectural constraint",
+  "freeze_revision": "rev12 (bundle d588fa48…)",
+  "owned_runs": 1
+}

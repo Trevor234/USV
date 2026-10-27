@@ -1,0 +1,85 @@
+{
+  "groups": [
+    {
+      "closed": false,
+      "current_selection": "每侧80N/s；实际publish-start锚点",
+      "evidence": "Publisher实用配置/受控命令及名义回放；Observer工程fallback代码",
+      "original_group": "rho_n_s",
+      "remaining": "新regulator M4每侧出口、unknown与部分发布前提仍待专门资格；当前为受控Publisher命令证据",
+      "original_remaining_at_batch31": "M4新出口实际每侧锚点/部分发布和零间隔边界未确认；不是推进器率限证明",
+      "current_evidence_update": "current controlled Publisher command chain: ±25N / 80N/s / actual API-start rate verified in batch41"
+    },
+    {
+      "closed": false,
+      "current_selection": "600ms；不因重发续命",
+      "evidence": "当前admission/fallback定义；原正常接纳记录",
+      "original_group": "hold_ns",
+      "remaining": "按选定最终配置汇合原hold组件及明确失效策略；M4实际出口与plant安全时长不继承",
+      "original_remaining_at_batch31": "无候选跨600ms边界、失效立即斜坡及连续5拍丢候选需精确版本确认；不是安全保持时长",
+      "current_evidence_update": "publication component batch32 and current fallback configuration reused; no new hold boundary injection"
+    },
+    {
+      "closed": false,
+      "current_selection": "六维[.25,.25,.15,.3,.2,.15]",
+      "evidence": "当前名义单run1192状态复算、101/101接纳；有限Native交错",
+      "original_group": "activation_tolerance",
+      "remaining": "冻结名义有限域及history32/recheck2边界；转弯/mixed/物理误差集合仍未知",
+      "original_remaining_at_batch31": "未校准物理误差集合；新历史32/重验2需按所选域确认；不覆盖转弯/mixed/plant",
+      "current_evidence_update": "Native38 current Observer lineage and batch37 nominal V3 actual history selection reused"
+    },
+    {
+      "closed": false,
+      "current_selection": "odom/IMU/clock 100ms；sim lag及mixed另列",
+      "evidence": "当前实际配置与来源核对；无噪声名义localhost",
+      "original_group": "source ages",
+      "remaining": "按选定域逐条登记旧/future/mixed/历史耗尽的已有拒绝证据及剩余差集；不新增泛化域",
+      "original_remaining_at_batch31": "最终域/旧源或future/mixed/历史耗尽的明确拒绝需确认；不得放宽250ms gap或1.2m/s速度门",
+      "current_evidence_update": "current full typed configuration and live gated callbacks; original age bounds unchanged"
+    },
+    {
+      "closed": false,
+      "current_selection": "RTF .95～1.05；pause400ms；20ms仅工程门",
+      "evidence": "同boot CLOCK_MONOTONIC及现有clock窗口定义",
+      "original_group": "RTF and pause",
+      "remaining": "最终政策登记epoch/pause/held-history失效依据；外推硬界及WCET不声称",
+      "original_remaining_at_batch31": "不是根时钟外推硬界/WCET；暂停/回退epoch/schedule/held history清理需确认",
+      "current_evidence_update": "same boot CLOCK_MONOTONIC and gated new tick origin; original RTF/pause policies reused"
+    },
+    {
+      "closed": false,
+      "current_selection": "jitter20ms/gap240ms/publish5ms；deadline150ms,T200ms",
+      "evidence": "合同、Observer代码与controlled Publisher实际API记录",
+      "original_group": "jitter/gap/publish",
+      "remaining": "shadow的物理输出分支仍不具备M4资格；工程观测不能冒充硬界",
+      "original_remaining_at_batch31": "Observer shadow publish早退；当前记录不能确认新regulator的双侧输出分支，M4单列",
+      "current_evidence_update": "batch41 gate interval6 decisions, jitter138442ns, gap200002088ns; Publisher API chain independently Stored"
+    },
+    {
+      "closed": false,
+      "current_selection": "watchdog1s；worker .5s/TERM1s/KILL后1s/内部close2.5s",
+      "evidence": "正常五角色exit0及原owned组身份检查",
+      "original_group": "watchdog and cleanup",
+      "remaining": "精确当前lease41之后的新run恢复尚未观测；当前39→40与40→41新身份链已有事实可复用",
+      "original_remaining_at_batch31": "最终版阻塞/日志失效/部分关闭、同run不重启和新run恢复未全闭合；不能把退出当真实零推力",
+      "current_evidence_update": "current ordinary active39, Sink fault40 and ordinary lease41 actual finite owned close all separately passed"
+    },
+    {
+      "closed": false,
+      "current_selection": "有效身份回调receipt租约600ms",
+      "evidence": "实际WorkerCapability/owned配置与验证回调",
+      "original_group": "worker capability validated callback receipt lease; no source packet sequence/send time",
+      "remaining": "源发送序号/发送时间仍缺，不能授予源包新鲜度；最终所选域和identity恢复限定需登记",
+      "original_remaining_at_batch31": "无源发送序号/新鲜度保证；租约超时后旧run不能复活，迟到心跳/结果拒绝需确认",
+      "current_evidence_update": "batch41 receipt age608425323ns; Source-causal ordinary dispatch; post-exit queued callback guard unchanged snapshots"
+    }
+  ],
+  "pending_original_groups_preserved": true,
+  "schema": "B4-current-evidence-progress/v1",
+  "stage_qualified": false,
+  "updated_through_batch": 41,
+  "registration_and_evidence_only": true,
+  "current_selected_ordinary_lease_case_passed": true,
+  "original_all_groups_closure_not_automatically_granted": true,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

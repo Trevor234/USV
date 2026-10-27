@@ -1,0 +1,22 @@
+{
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "future_trial_requires_new_source_version_and_registration": true,
+  "new_trial_budget": {
+    "automatic_retries": 0,
+    "source_window_seconds": 20,
+    "whole_driver_seconds": 45
+  },
+  "next_source_change": [
+    "Driver authenticates actual Recorder process/exe/argv and publishes process-only pin before manifest",
+    "Regulator verifies that owned process, then creates endpoints with API count0",
+    "Regulator and Driver independently bind actual full Recorder manifest/Reader GIDs after all Writers exist",
+    "only full Recorder/storage/typed-source readiness may authorize first API"
+  ],
+  "old_recorder_ELF_reused": true,
+  "research_conclusion": false,
+  "root_cause": "Recorder complete-manifest vs future Regulator Writer cyclic dependency",
+  "same_registration_retried": false,
+  "schema": "M4-recorder-lifecycle-minimal-fix-plan/v1",
+  "thresholds_contract_model_reference_unchanged": true
+}

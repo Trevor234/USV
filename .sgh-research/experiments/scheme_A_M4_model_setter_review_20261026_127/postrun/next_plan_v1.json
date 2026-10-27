@@ -1,0 +1,19 @@
+{
+  "next_steps": [
+    "Actual factory routing/build-mode tests for new constructor rejection",
+    "RawBackend common-header reuse draft and cold/native policy regression",
+    "Worker unique-owner lifecycle and immutable capability descriptor design",
+    "Model/reference identity and target-tick activation contract",
+    "Only then separately scoped landing/freeze/necessary owned evidence"
+  ],
+  "immediate_scope": "isolated component/interface work",
+  "automatic_production_landing": false,
+  "automatic_owned_runs": 0,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

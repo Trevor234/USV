@@ -1,0 +1,22 @@
+{
+  "run_p1_vrx_validation.py": {
+    "deployed_sha256": "50c8e81a9f0f105b5da88147211d7010aa6537afbbf6078fbb88020864c935c4",
+    "parent_version": "v9",
+    "bytes": 58768
+  },
+  "test_vrx_runtime_gates.py": {
+    "deployed_sha256": "05215febfc562b0c97ab4a978a91f58864bc1a13e32a96af18e89eda0c0b85e2",
+    "parent_version": "v9",
+    "bytes": 7271
+  },
+  "run_no_output_calibration.py": {
+    "deployed_sha256": "9a06623342c133f3f59225171b28808607aaaf7e402dff1a0193483da831b177",
+    "parent_version": "v9",
+    "bytes": 37727
+  },
+  "owned_process_supervisor.py": {
+    "deployed_sha256": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173",
+    "parent_version": "v9",
+    "bytes": 9875
+  }
+}

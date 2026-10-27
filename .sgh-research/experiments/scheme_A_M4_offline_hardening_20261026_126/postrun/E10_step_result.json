@@ -1,0 +1,61 @@
+{
+  "step_id": "E10",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Append-only corrections to all six register entries; preimage, SHA and diff retained; no novelty upgrade.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E10/attempt01",
+  "observed_facts": {
+    "register_before": {
+      "bytes": 4699,
+      "sha256": "be6466793683971b51704044f016bce5fee9e084d5953c435e42ab62df0a212e"
+    },
+    "register_after": {
+      "bytes": 10982,
+      "sha256": "cff048fcd7555d791fdb64c983ef64d9e0db3ffc87fe4af33b6a239fbcc0233f"
+    },
+    "appended_entries": 6,
+    "academic_novelty_checked": false
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "single_register_append_only",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "all_six_current_scopes_present",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "all_current_source_pointers_exist",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "verification_schema": "batch126-offline-verification-v2",
+    "verification_reference": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E10/attempt01/verification.json",
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    ".sgh-research/research-innovations.md"
+  ],
+  "remaining_obligations": [
+    "Historical claims remain visible as history; six current scope corrections supersede them."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

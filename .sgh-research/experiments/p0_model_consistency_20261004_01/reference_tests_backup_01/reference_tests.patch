@@ -1,0 +1,152 @@
+--- usv_mpc_ws/src/usv_mpc_cpp/test/test_research_contract.cpp
++++ usv_mpc_ws/src/usv_mpc_cpp/test/test_research_contract.cpp
+@@ -46,6 +46,37 @@
+ class MpcControllerNodeTestAccess
+ {
+ public:
++  // P0_REFERENCE_TEST_ACCESS_V1_BEGIN
++  static void reference_inputs(
++    MpcControllerNode & node,
++    const std::vector<std::array<double, 3>> & path,
++    const std::vector<std::array<double, 4>> & profile,
++    std::pair<int, int> path_stamp = {100, 0},
++    std::pair<int, int> profile_stamp = {100, 0}, int offset = 2)
++  {
++    std::lock_guard<std::mutex> lock(node.state_lock_);
++    node.reference_path_ = path;
++    node.ref_profile_ = profile;
++    node.reference_path_stamp_ = path_stamp;
++    node.ref_profile_stamp_ = profile_stamp;
++    node.reference_start_offset_ = offset;
++    node.cruise_speed_ = 0.6;
++    node.path_received_ = !path.empty();
++  }
++
++  static Eigen::MatrixXd reference_matrix(
++    MpcControllerNode & node, const Vector6d & state)
++  {
++    std::lock_guard<std::mutex> lock(node.state_lock_);
++    return node.build_reference_(state);
++  }
++
++  static bool reference_profile_synced(const MpcControllerNode & node)
++  {
++    return node.profile_synced_;
++  }
++  // P0_REFERENCE_TEST_ACCESS_V1_END
++
+   static std::shared_ptr<MpcControllerNode> make(std::unique_ptr<DynamicMpc> solver)
+   {
+     auto node = std::shared_ptr<MpcControllerNode>(new MpcControllerNode(std::move(solver)));
+@@ -600,4 +631,111 @@
+   std::printf("RESEARCH_OVERHEAD_OBSERVED %s\n", observed.dump().c_str());
+ }
+ 
++// P0_REFERENCE_REAL_FUNCTION_TESTS_V1_BEGIN
++// These fixtures call the node's actual private build_reference_ function.
++// They do not reconstruct or claim the unlogged reference used by an old bag.
++TEST_F(ResearchContract, ReferenceProfileUsesNearestOffsetAndReanchorsProfileTime)
++{
++  std::vector<std::array<double, 3>> path;
++  std::vector<std::array<double, 4>> profile;
++  for (int i = 0; i < 41; ++i) {
++    const double position = 0.5 * static_cast<double>(i);
++    path.push_back({position, 0.0, 0.0});
++    profile.push_back({0.8, 0.0, 0.0, 100.0 + position / 0.8});
++  }
++  MpcControllerNodeTestAccess::reference_inputs(*node_, path, profile);
++  usv_mpc::Vector6d state = usv_mpc::Vector6d::Zero();
++  // At x=0 and x=0.1 the nearest point is index 0; at x=0.3 it is index 1.
++  // With offset 2, output anchors move from path[2] to path[3]. Profile times
++  // are 101.25 and 101.875, so k=1 remains anchor + 0.8 * solver dt (0.2).
++  for (const auto & sample : std::vector<std::array<double, 2>>{
++      {0.0, 1.0}, {0.1, 1.0}, {0.3, 1.5}})
++  {
++    SCOPED_TRACE(sample[0]);
++    state(0) = sample[0];
++    const auto reference = MpcControllerNodeTestAccess::reference_matrix(*node_, state);
++    ASSERT_EQ(reference.rows(), 6);
++    ASSERT_EQ(reference.cols(), 3);  // ContractSolver N=2, dt=0.2.
++    EXPECT_TRUE(MpcControllerNodeTestAccess::reference_profile_synced(*node_));
++    for (int k = 0; k < reference.cols(); ++k) {
++      EXPECT_NEAR(reference(0, k), sample[1] + 0.16 * k, 1e-9);
++      EXPECT_DOUBLE_EQ(reference(1, k), 0.0);
++      EXPECT_DOUBLE_EQ(reference(3, k), 0.8);
++      EXPECT_DOUBLE_EQ(reference(4, k), 0.0);
++      EXPECT_DOUBLE_EQ(reference(5, k), 0.0);
++    }
++  }
++}
++
++TEST_F(ResearchContract, ReferenceStampOrLengthMismatchUsesCruiseFallback)
++{
++  std::vector<std::array<double, 3>> path;
++  std::vector<std::array<double, 4>> profile;
++  for (int i = 0; i < 41; ++i) {
++    const double position = 0.5 * static_cast<double>(i);
++    path.push_back({position, 0.0, 0.0});
++    profile.push_back({0.8, 0.0, 0.0, position / 0.8});
++  }
++  const usv_mpc::Vector6d state = usv_mpc::Vector6d::Zero();
++  for (int mismatch = 0; mismatch < 2; ++mismatch) {
++    SCOPED_TRACE(mismatch);
++    auto selected_profile = profile;
++    if (mismatch == 1) {selected_profile.pop_back();}
++    MpcControllerNodeTestAccess::reference_inputs(
++      *node_, path, selected_profile, {100, 0}, mismatch == 0 ?
++      std::pair<int, int>{101, 0} : std::pair<int, int>{100, 0});
++    const auto reference = MpcControllerNodeTestAccess::reference_matrix(*node_, state);
++    EXPECT_FALSE(MpcControllerNodeTestAccess::reference_profile_synced(*node_));
++    for (int k = 0; k < reference.cols(); ++k) {
++      EXPECT_NEAR(reference(0, k), 1.0 + 0.12 * k, 1e-9);
++      EXPECT_DOUBLE_EQ(reference(3, k), 0.6);
++      EXPECT_DOUBLE_EQ(reference(4, k), 0.0);
++    }
++  }
++}
++
++TEST_F(ResearchContract, ReferenceOffsetZeroStillAdvancesAtLeastOnePathPoint)
++{
++  std::vector<std::array<double, 3>> path;
++  std::vector<std::array<double, 4>> profile;
++  for (int i = 0; i < 41; ++i) {
++    const double position = 0.5 * static_cast<double>(i);
++    path.push_back({position, 0.0, 0.0});
++    profile.push_back({0.8, 0.0, 0.0, position / 0.8});
++  }
++  MpcControllerNodeTestAccess::reference_inputs(*node_, path, profile, {100, 0}, {100, 0}, 0);
++  const auto reference = MpcControllerNodeTestAccess::reference_matrix(
++    *node_, usv_mpc::Vector6d::Zero());
++  EXPECT_TRUE(MpcControllerNodeTestAccess::reference_profile_synced(*node_));
++  for (int k = 0; k < reference.cols(); ++k) {
++    EXPECT_NEAR(reference(0, k), 0.5 + 0.16 * k, 1e-9);
++    EXPECT_DOUBLE_EQ(reference(3, k), 0.8);
++  }
++}
++
++TEST_F(ResearchContract, ReferenceYawUnwrapRemainsContinuousAcrossPi)
++{
++  const double pi = std::acos(-1.0);
++  std::vector<std::array<double, 3>> path;
++  std::vector<std::array<double, 4>> profile;
++  for (int i = 0; i < 41; ++i) {
++    const double position = 0.5 * static_cast<double>(i);
++    path.push_back({position, 0.0, i <= 2 ? pi - 0.04 : -pi + 0.04});
++    profile.push_back({0.8, 0.0, 0.0, position / 0.8});
++  }
++  MpcControllerNodeTestAccess::reference_inputs(*node_, path, profile);
++  usv_mpc::Vector6d state = usv_mpc::Vector6d::Zero();
++  state(2) = -pi + 0.02;
++  const auto reference = MpcControllerNodeTestAccess::reference_matrix(*node_, state);
++  EXPECT_TRUE(MpcControllerNodeTestAccess::reference_profile_synced(*node_));
++  EXPECT_NEAR(reference(2, 0), -pi - 0.04, 1e-9);
++  for (int k = 1; k < reference.cols(); ++k) {
++    EXPECT_TRUE(std::isfinite(reference(2, k)));
++    EXPECT_LT(std::abs(reference(2, k) - reference(2, k - 1)), 0.2);
++    EXPECT_LT(std::abs(reference(2, k) - state(2)), 0.2);
++  }
++}
++// P0_REFERENCE_REAL_FUNCTION_TESTS_V1_END
++
++
+ }  // namespace

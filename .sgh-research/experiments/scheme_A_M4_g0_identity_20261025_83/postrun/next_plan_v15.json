@@ -1,0 +1,43 @@
+{
+  "schema": "M4-G0-plan-v83",
+  "recorded_at": "2026-10-25T17:34:17.278749+08:00",
+  "steps": [
+    {
+      "id": "G0",
+      "status": "complete",
+      "task": "identity stabilization + correct P01 labeling"
+    },
+    {
+      "id": "G1",
+      "status": "next",
+      "task": "evidence-consuming audit repair (Worker stream consumption, Driver version ACK binding, command bytes SHA, C timing, A predicates)",
+      "owned_runs": 0
+    },
+    {
+      "id": "G2",
+      "status": "after_G1",
+      "task": "R1 emit_owned_applied return + seq2 test + clock attempt scope",
+      "owned_runs": 0
+    },
+    {
+      "id": "G3/T2-B",
+      "status": "after_G1_G2",
+      "task": "retrospective P01 re-audit with new gates; clear/new-gen/expired differences"
+    },
+    {
+      "id": "G4/T2-C",
+      "status": "after_G1",
+      "task": "offline target guard proof + re-register + single owned"
+    },
+    {
+      "id": "G5/T2-A",
+      "status": "after_G1",
+      "task": "silent/same_stamp/resume coverage with repaired predicates"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

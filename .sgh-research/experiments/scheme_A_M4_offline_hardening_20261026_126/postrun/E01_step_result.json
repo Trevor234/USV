@@ -1,0 +1,125 @@
+{
+  "schema": "plan126-E01-step-result-v1",
+  "step_id": "E01",
+  "status": "PASS",
+  "attempt": "attempt02",
+  "title": "修Q2悬空捕获及逐事件记账",
+  "issue_addressed": "F124-01",
+  "observed_facts": {
+    "asan_clean_on_fixed_build": true,
+    "cases_passed": 5,
+    "cases_registered": 5,
+    "fixed_q2_identities_unique": true,
+    "mutation_caught_by_asan": true,
+    "old_T3-Q2_duplicates_detected": 303,
+    "old_T3-Q2_r2_duplicates_detected": 350,
+    "q1d_capacity_plus_one_preserved": true
+  },
+  "run_accepted": {
+    "accepted": true,
+    "basis": "5/5 registered cases exact assertion match; ASAN clean; mutation caught (stack-use-after-scope); originals byte-identical"
+  },
+  "coverage": {
+    "diag_sink_business_behaviour": "not_changed",
+    "fixed_acceptance_count_513": "not required and not enforced — the new cases assert multiset identity, not a fixed accepted count",
+    "old_q2_duplicate_ids": "covered — 350/303 detected without touching originals",
+    "q1d_regression": "covered",
+    "q2_dangling_capture": "covered — fixed and proven by ASAN + mutation",
+    "q2_identity_bookkeeping": "covered — per-producer identity and multiset reconciliation"
+  },
+  "stage_qualified": false,
+  "qualification": {
+    "F6": false,
+    "M4": false,
+    "P1": false,
+    "hard_realtime": false,
+    "plant": false
+  },
+  "changed_files": [
+    {
+      "path": "implementation/tests/test_t3_queue_pressure_v2.cpp",
+      "reason": "F124-01 fix: by-value producer base capture, explicit {producer_id,local_seq} identity, finite start gate, multiset reconciliation of accepted/published/disk",
+      "derived_from": "B99 implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp"
+    },
+    {
+      "path": "implementation/audit/t3_identity_audit.py",
+      "reason": "new identity auditor for raw event logs; states duplicates instead of collapsing them into set size"
+    },
+    {
+      "path": "implementation/run_e01.py",
+      "reason": "fail-closed runner + registration + retained-original negative controls"
+    }
+  ],
+  "original_files_touched": 0,
+  "originals_byte_identical": true,
+  "cases": [
+    {
+      "case": "Q2V-Q1d",
+      "passed": true,
+      "assertions": 17,
+      "exact": true
+    },
+    {
+      "case": "Q2V-Q1r",
+      "passed": true,
+      "assertions": 14,
+      "exact": true
+    },
+    {
+      "case": "Q2V-Q2",
+      "passed": true,
+      "assertions": 20,
+      "exact": true
+    },
+    {
+      "case": "Q2V-Q3",
+      "passed": true,
+      "assertions": 17,
+      "exact": true
+    },
+    {
+      "case": "Q2V-Q4",
+      "passed": true,
+      "assertions": 9,
+      "exact": true
+    }
+  ],
+  "positive_controls": [
+    "Q2V-Q1d",
+    "Q2V-Q1r",
+    "Q2V-Q2",
+    "Q2V-Q3",
+    "Q2V-Q4"
+  ],
+  "negative_controls": [
+    {
+      "case": "T3-Q2",
+      "expected_duplicates": 303,
+      "detected": 303
+    },
+    {
+      "case": "T3-Q2_r2",
+      "expected_duplicates": 350,
+      "detected": 350
+    }
+  ],
+  "mutation": {
+    "target": "by-value producer base capture",
+    "prepared": true,
+    "executed": true,
+    "caught_by": "ASAN stack-use-after-scope",
+    "build_failure_would_not_count": true
+  },
+  "attempt01_disposition": "FAIL_STOP due to a registration ORDER error in this batch's own runner (Q2V-Q1d list). The harness result was already passed=true with 513=capacity+1. Registration was corrected; no test or source code changed. attempt01 evidence retained.",
+  "failure_originals": [
+    "evidence/E01/attempt01/"
+  ],
+  "remaining_obligations": [
+    "E02—E12 NOT_STARTED",
+    "Q2 accepted count is no longer asserted as a fixed 513 for Q2 (identity multiset is the metric); Q1d keeps capacity+1"
+  ],
+  "assumptions": [
+    "the derived harness is a NEW file (…_v2.cpp); the B99 original stays untouched as the historical failing evidence"
+  ],
+  "next_step": "E02"
+}

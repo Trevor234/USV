@@ -1,0 +1,25 @@
+{
+  "action_table": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_g4c_run_20261025_90/implementation/T2C_table.json",
+  "action_table_sha256": "23139d9a359c77f79e45425286258a4894c54682b3bee0307609e61d28503a1b",
+  "audit_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_g4c_run_20261025_90/implementation/t2_author/audit_t2.py",
+    "sha256": "3eef706976bb5e30d2c681478f3fca5b7450a60273990f154440533aa5285304"
+  },
+  "automatic_retries": 0,
+  "case": "T2C-driver-shutdown-interleave",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "domain_id": 120,
+  "executed": false,
+  "fault_injection_enabled": false,
+  "max_seconds": 45,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_g4c_run_20261025_90/implementation/runs/T2C_G4C",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_g4c_run_20261025_90/implementation/t2_registry.json",
+  "registry_sha256": "be1b0711ff6a7159cdd39ecdd8ea9cd68d29e48c9f7a9f31fd37fdb9fd635136",
+  "run_id": "T2-T2C-G4C",
+  "schema": "M4-owned-t2-scenario-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

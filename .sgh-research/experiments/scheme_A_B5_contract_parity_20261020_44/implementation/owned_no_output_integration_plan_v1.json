@@ -1,0 +1,97 @@
+{
+  "B5_formal_freeze_completed": false,
+  "M0b_formal_qualified": false,
+  "M4_qualified": false,
+  "P1_qualified": false,
+  "actual_ROS_run_preregistered_by_this_plan": false,
+  "batch44_completed": [
+    "exact current81/diag10 spec recovered with SHA equal existing Native",
+    "Python/C++ same-source validator artifacts; 385 independently expected parity cases",
+    "formal no_output pre-freeze byte-source entry;25 real file cases",
+    "bounded prepare-close-only core;102 seeded permission/state cases"
+  ],
+  "current_existing_diagnostic_driver_still_sealed": true,
+  "do_not_add_as_new_P1_performance_gate": true,
+  "new_implementation_root": "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation",
+  "new_spec_not_installed_into_legacy_driver": true,
+  "next_steps": [
+    {
+      "implementation_boundary": [
+        "actual constructor loads84-field pre-freeze/fault=false/mode=no_output before endpoints",
+        "effective parameters frozen and actual process/exe/argv/source_fd/GID manifest created",
+        "NodeOptions disable automatic rosout/parameter-event publishers where compatible; explicit physical/job/Decision/Applied publisher count0",
+        "ready Context must be derived from actual owned receipts; never copy seeded test booleans",
+        "driver actual PID/start/exe/argv/tool SHA verified; bind run/boot/contract/spec/own-manifest/three peer-manifests",
+        "all create-only file operations use existing inspected safe native helper; deadline20s, grantTTL2s, capability lease600ms preserved"
+      ],
+      "order": 1,
+      "proof": "source-linked constructor and actual owned prepare/close run are required; gate core pass alone is insufficient",
+      "task": "实现新owned formal_no_output准备角色及新Driver，直接使用batch44 loader/gate；用新bundle/manifest身份，不修改sealed shadow Observer。"
+    },
+    {
+      "order": 2,
+      "proof": "source review confirmed currentFixture19 requires Publisher/Applied; it cannot be reused by renaming mode or faking Applied",
+      "roles": {
+        "fixture": "new source, publishes5 declared inputs and records actual transport; stationary_zero_equilibrium, no Applied subscription/publisher or dynamics driven by a pretend command",
+        "preparer": "new native role; reads clock/odom/IMU/path/profile/capability, starts no solver business",
+        "recorder": "reuse pinned C3.4 ELF with exact new topics and effective configuration if actual type/GID/prepare/close pass",
+        "worker": "reuse existing35 ELF only if its actual formal84/fault=false cold-start and effective hooks none/0 pass; current Native spec already exact; no claimed solved-job capability from idle preparation"
+      },
+      "task": "补一个无legacy依赖的合成Fixture；与Worker35、RecorderC3.4建立最小4角色准备图。"
+    },
+    {
+      "acceptance": [
+        "actual driver grant accepted once after real readiness",
+        "Source records waiting/prepared/closed with same live owned identities",
+        "0 SolveJob submissions,0 Decisions,0 Applied and0 physical thrust Writers/calls",
+        "all roles return/owned groups empty and Source/bag close complete; actual recording accounting required",
+        "old grant/wrong run/hash/version/replay rejected; if failures occur keep them"
+      ],
+      "not_qualified_by_this_run": [
+        "full no_output Regulator solve/activation",
+        "B5 execution freeze",
+        "M0b/M4/P1",
+        "actual command anchor or physical plant"
+      ],
+      "order": 3,
+      "preconditions": [
+        "prior preservation proof passed",
+        "independent constructor/source-linked negatives passed",
+        "fresh run/root and verified-isolated DDS domain",
+        "same84 bytes/hash/spec bound across role manifests, actual Worker cap fault=false",
+        "Recorder actual reader matching and authenticated Fixture inputs/reference pair",
+        "ready snapshot is actual immutable generation/version authority; source eligibility and lease checked at grant",
+        "no previous diagnostic Publisher process participates"
+      ],
+      "task": "实现完成后锁源并预注册一次有界实际owned no_output准备/关闭运行。"
+    },
+    {
+      "constraints": [
+        "do not promote a64hex marker or shape-only Frozen",
+        "pending8 strings in diagnostic/pre-freeze remain untouched until real freeze checklist closes",
+        "controlled-phase/task-time policies retained in current profile; prepare-only run does not exercise them; full Regulator no_output requires explicit source/reference/anchor semantics review and affected implementation checks",
+        "new no_output administrative readiness is not an extra trajectory/RMSE criterion",
+        "no automatic physical-release flag change"
+      ],
+      "order": 4,
+      "task": "按真实差集完成B5冻结条件：区分准备角色与完整Regulator no_output执行语义，只有实际产物/域/政策满足后才生成冻结证据hash。"
+    },
+    {
+      "P2_GP_PPO_or_full_collision_certificate_required_now": false,
+      "order": 5,
+      "proof": [
+        "M4:physical output owner/new-run sole outlet/per-side anchor/partial calls/hold-ramp5misses/shutdown/full-streamgap/timingAPI/source-domain/regressions",
+        "model transaction:actual known M0/M1 numeric model preparation,version+plan atomic commit,old/mixed reject,immutable stored plan,warm-start separation",
+        "P1 original safety/time/version obligations reviewed together; performance half-RMSE diagnostic not added as P1 gate"
+      ],
+      "task": "依序承接M4真实唯一Regulator输出、有限已知模型事务/F6与原始P1联合验收。"
+    }
+  ],
+  "ordered_dependency": true,
+  "physical_execute_release_enabled": false,
+  "requires_next_implementation_source_lock_before_ROS": true,
+  "research_conclusion": false,
+  "schema": "B5-owned-no-output-integration-work-package/v1",
+  "scope_of_preparer": "bounded prepare-close proof; no jobs, Decisions, Applied, physical publishers or synthetic command anchor",
+  "stage_qualified": false
+}

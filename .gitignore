@@ -11,9 +11,17 @@ logs/
 *.log
 *.tlog
 *.tlog.raw
+*.rlog
 *.BIN
 *.bin
 *.ulg
+
+# ROS bag storage (never commit recordings; see docs/USV_reorg_plan_v5.md §A)
+*.mcap
+*.db3
+
+# Numeric data products (parsed logs / identification datasets)
+*.npz
 
 # Downloaded packages and local scratch files
 *.deb
@@ -38,6 +46,12 @@ usv_mpc_ws/CMakeFiles/
 
 # Generated model validation artifacts
 usv_mpc_ws/artifacts/
+
+# Runtime artifacts: RL training outputs (rl_models/, rl_runs/).
+# Only artifacts/README.md is tracked; the rest is reproducible or machine-local.
+# 用 artifacts/* 而非 artifacts/，否则目录级忽略会让下面的 negation 失效。
+artifacts/*
+!artifacts/README.md
 
 # Editors and local tooling
 .vscode/

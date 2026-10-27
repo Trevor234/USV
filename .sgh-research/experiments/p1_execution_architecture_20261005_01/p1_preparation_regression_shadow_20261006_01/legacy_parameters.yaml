@@ -1,0 +1,103 @@
+/mpc_controller_node:
+  ros__parameters:
+    allowed_fcu_modes:
+    - GUIDED
+    control_mode: dynamic
+    cruise_speed: 0.6
+    dynamic:
+      Q:
+      - 20.0
+      - 20.0
+      - 50.0
+      - 8.0
+      - 1.0
+      - 8.0
+      Qf_scale: 8.0
+      R:
+      - 0.05
+      - 0.05
+      Rd:
+      - 0.2
+      - 0.2
+      T_max: 25.0
+      T_min: -25.0
+      dT_max: 80.0
+      dt: 0.2
+    enable_reference_prediction_logging: true
+    enable_research_logging: true
+    horizon: 20
+    imu_topic: /wamv/sensors/imu/imu/data
+    max_solve_time_ms: 200.0
+    mpc_dt: 0.2
+    odom_timeout_s: 2.0
+    odom_topic: /wamv/sensors/position/ground_truth_odometry
+    output_mode: vrx_thrust
+    path_frame: map
+    path_topic: /path/reference
+    predicted_trajectory_topic: /mpc/predicted_trajectory
+    profile_topic: /path/reference_profile
+    publish_predicted: true
+    qos_overrides:
+      /clock:
+        subscription:
+          depth: 1
+          durability: volatile
+          history: keep_last
+          reliability: best_effort
+      /parameter_events:
+        publisher:
+          depth: 1000
+          durability: volatile
+          history: keep_last
+          reliability: reliable
+    rc_override_topic: /mavros/rc/override
+    rc_pwm_center: 1500
+    rc_pwm_max: 1900
+    rc_pwm_min: 1100
+    rc_steering_channel: 0
+    rc_throttle_channel: 2
+    reference_start_offset: 2
+    require_fcu_state: false
+    research_baseline_id: F5_20261005_atomic_freeze_01
+    research_config_hash: ea45273e1d9643a3165e285a3bc3bffe9fc7726c51067b57e8ef55cbc9460ef7
+    research_expected_child_frame: wamv/base_link
+    research_expected_pose_frame: map
+    research_frame_contract_verified: true
+    research_logging_armed: false
+    research_nominal_config_hash: 78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84
+    research_output_dir: /home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_preparation_regression_shadow_20261006_01/legacy_source
+    research_run_id: p1_preparation_regression_shadow_20261006_01_legacy
+    solver_hold_threshold: 5
+    start_type_description_service: true
+    state_timeout_s: 0.0
+    state_topic: /mavros/state
+    status_topic: /mpc/status
+    steering_gain: 0.4
+    steering_sign: -1.0
+    throttle_gain: 0.75
+    throttle_sign: 1.0
+    use_sim_time: true
+    vehicle:
+      Iz: 2.13
+      Nr: -3.105
+      Nr_dot: -3.41
+      Nrr: -0.71
+      Nv: 0.0
+      Nv_dot: -0.1817725
+      Nvv: 0.0
+      Xu: -2.272063
+      Xu_dot: -2.0
+      Xuu: -11.571784
+      Yr: 0.0
+      Yr_dot: -0.1817725
+      Yrr: 0.0
+      Yv: -2.629019
+      Yv_dot: -8.0
+      Yvv: -0.05
+      d_thruster: 0.25
+      mass: 14.2
+      xg: 0.12
+    vrx_left_thrust_topic: /wamv/thrusters/left/thrust
+    vrx_right_thrust_topic: /wamv/thrusters/right/thrust
+    vrx_thrust_cmd_max: 100.0
+    vrx_thrust_scale: 1.0

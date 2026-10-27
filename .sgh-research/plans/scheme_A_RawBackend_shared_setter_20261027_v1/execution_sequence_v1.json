@@ -1,0 +1,124 @@
+{
+  "kind": "plan_not_executed",
+  "steps": [
+    {
+      "id": "P00",
+      "title": "固定输入、目录、白名单和预期结果",
+      "depends_on": [],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P01",
+      "title": "真实旧基线与构建接线核验",
+      "depends_on": [
+        "P00"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P02",
+      "title": "仅packing共享及原行为对照",
+      "depends_on": [
+        "P01"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P03",
+      "title": "已知构造阶段异常清理",
+      "depends_on": [
+        "P02"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P04",
+      "title": "checked setter接线",
+      "depends_on": [
+        "P03"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P05",
+      "title": "初始化及失败生命周期矩阵",
+      "depends_on": [
+        "P04"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P06",
+      "title": "cold/native/W2政策回归",
+      "depends_on": [
+        "P05"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P07",
+      "title": "定向变异",
+      "depends_on": [
+        "P06"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P08",
+      "title": "分项补丁与只读复核",
+      "depends_on": [
+        "P07"
+      ],
+      "execution_status": "NOT_STARTED"
+    },
+    {
+      "id": "P09",
+      "title": "保护、报告和MPC交付",
+      "depends_on": [
+        "P08"
+      ],
+      "execution_status": "NOT_STARTED"
+    }
+  ],
+  "patch_order": [
+    "01_raw_packing_only.patch",
+    "02_raw_known_constructor_cleanup.patch",
+    "03_raw_checked_initialization.patch"
+  ],
+  "functional_patch_file_scope": "Only new derived worker/raw_backend_v1.hpp; existing owned/Worker/guard policy unchanged",
+  "required_new_constructor_cases": [
+    "C01",
+    "C02",
+    "C03",
+    "C04",
+    "C05",
+    "C06",
+    "C07",
+    "C08",
+    "C09",
+    "C10",
+    "C11"
+  ],
+  "required_new_native_cases": [
+    "N01",
+    "N02",
+    "N03"
+  ],
+  "required_mutations": [
+    "M01",
+    "M02",
+    "M03",
+    "M04",
+    "M05",
+    "M06"
+  ],
+  "production_edits_authorized_by_this_plan": false,
+  "ROS_or_owned_runs_authorized_by_this_plan": false,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

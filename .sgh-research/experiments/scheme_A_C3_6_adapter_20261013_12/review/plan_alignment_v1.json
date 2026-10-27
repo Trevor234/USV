@@ -1,0 +1,592 @@
+{
+  "schema": "p1-C3.6-shadow-plan-alignment/v1",
+  "date": "2026-10-13",
+  "scope": "read-only source and plan alignment; current batch validation not predeclared",
+  "reviewed_at_utc": "2026-10-13T13:36:57.183029+00:00",
+  "observed_utc_ns": 1791898617183045644,
+  "parent_plan": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_20261013_11/方案A_C3_6A后续实施计划_2026-10-13.md",
+  "new_author": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13",
+  "new_batch": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12",
+  "read_only_source_audit": true,
+  "source_registry_sha256": "fce0d72eadf17972dabeea283e14b86b6c97ee9fa4c13bd4882614bfedec7557",
+  "source_roles": {
+    "fixture": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture_source_bundle_C3_4_v1.json",
+      "sha256": "f092c4205f4fbf69cfba48fb4c8ebc4a5fe5882a74372ef18dd15cb1e707be71",
+      "registry_pin_matches": true,
+      "all_actual_files_match": true,
+      "file_pins": {
+        "common/p1_create_only_atomic.hpp": {
+          "bytes": 2937,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_create_only_atomic.hpp",
+          "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+        },
+        "common/p1_owned_identity.hpp": {
+          "bytes": 12545,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_owned_identity.hpp",
+          "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+        },
+        "fixture/CMakeLists.txt": {
+          "bytes": 1119,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture/CMakeLists.txt",
+          "sha256": "2fd4c8bcc1ddfa29259cd172b3826ade098a7f47a630a34635172f8cf117a712"
+        },
+        "fixture/synthetic_source.cpp": {
+          "bytes": 7532,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture/synthetic_source.cpp",
+          "sha256": "73f48e2f151043f41e22054ebaa6c82ac366b90ad0e7a460a1643aaf6e4c4bd3"
+        }
+      }
+    },
+    "observer": {
+      "files": 34,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer_source_bundle_C36_v2.json",
+      "sha256": "82b4ce2c96882ef0772e0db494ea0b253ec96bdb7983f5fed7d20cd59d281db7",
+      "registry_pin_matches": true,
+      "all_actual_files_match": true,
+      "file_pins": {
+        "common/c36_runtime_adapter.hpp": {
+          "bytes": 4275,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/c36_runtime_adapter.hpp",
+          "sha256": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c"
+        },
+        "common/command_anchor_v2.hpp": {
+          "bytes": 15733,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/command_anchor_v2.hpp",
+          "sha256": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e"
+        },
+        "common/owned_peer_c36_v1.hpp": {
+          "bytes": 22381,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/owned_peer_c36_v1.hpp",
+          "sha256": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab"
+        },
+        "common/p1_create_only_atomic.hpp": {
+          "bytes": 2937,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/p1_create_only_atomic.hpp",
+          "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+        },
+        "common/p1_owned_identity.hpp": {
+          "bytes": 12545,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/p1_owned_identity.hpp",
+          "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+        },
+        "observer/CMakeLists.txt": {
+          "bytes": 3285,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/CMakeLists.txt",
+          "sha256": "bfcf5a33be7cf16549a28c151dddc72e8730f6de2f77fd5672e095b9a34ffe38"
+        },
+        "observer/src/shadow/callback_raw_v4.hpp": {
+          "bytes": 1931,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/callback_raw_v4.hpp",
+          "sha256": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398"
+        },
+        "observer/src/shadow/p1_admission.hpp": {
+          "bytes": 8297,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_admission.hpp",
+          "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+        },
+        "observer/src/shadow/p1_capability_lease.hpp": {
+          "bytes": 1020,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_capability_lease.hpp",
+          "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c"
+        },
+        "observer/src/shadow/p1_clock_window.hpp": {
+          "bytes": 1902,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_clock_window.hpp",
+          "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc"
+        },
+        "observer/src/shadow/p1_d0_observation.hpp": {
+          "bytes": 7522,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_d0_observation.hpp",
+          "sha256": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f"
+        },
+        "observer/src/shadow/p1_diag_sink.hpp": {
+          "bytes": 5305,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_diag_sink.hpp",
+          "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79"
+        },
+        "observer/src/shadow/p1_full_contract.hpp": {
+          "bytes": 11798,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_full_contract.hpp",
+          "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea"
+        },
+        "observer/src/shadow/p1_preparation_barrier.hpp": {
+          "bytes": 723,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_preparation_barrier.hpp",
+          "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc"
+        },
+        "observer/src/shadow/p1_resources.hpp": {
+          "bytes": 13624,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_resources.hpp",
+          "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2"
+        },
+        "observer/src/shadow/p1_shadow_entry.hpp": {
+          "bytes": 7551,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_shadow_entry.hpp",
+          "sha256": "e5f952cb29c9c975f584b1ce4be456a06c9e3dcac6d7435bed81fdaf1c9bae6b"
+        },
+        "observer/src/shadow/p1_tick_barrier.hpp": {
+          "bytes": 708,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_tick_barrier.hpp",
+          "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4"
+        },
+        "observer/src/shadow/p1_witness.hpp": {
+          "bytes": 24118,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_witness.hpp",
+          "sha256": "c114df7d6c587e389ebdacc7344536e7f00dca81cc8dea2d352dac4ada6d6a93"
+        },
+        "observer/src/shadow/p1_worker_liveness.hpp": {
+          "bytes": 1227,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/p1_worker_liveness.hpp",
+          "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28"
+        },
+        "observer/src/shadow/protocol.hpp": {
+          "bytes": 6581,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/protocol.hpp",
+          "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+        },
+        "observer/src/shadow/regulator_shadow_observer.cpp": {
+          "bytes": 102836,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/regulator_shadow_observer.cpp",
+          "sha256": "d8878e31394734d3f6609d3ebde01c005f7abb1dd0d45d1efb1c1be9da354650"
+        },
+        "observer/tests/c34_lease_access.hpp": {
+          "bytes": 2521,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/c34_lease_access.hpp",
+          "sha256": "c61676dcb6197c080a05759acc239f7d79a48e21b4024bb8070e14a5e92a2da9"
+        },
+        "observer/tests/c34_lease_wire.cpp": {
+          "bytes": 9023,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/c34_lease_wire.cpp",
+          "sha256": "6740d965ba2c4993a880e00af72ac1a5b919f2eb4f691fdf99b32f442c796a68"
+        },
+        "observer/tests/test_atomic_observation.cpp": {
+          "bytes": 17779,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_atomic_observation.cpp",
+          "sha256": "2d2949f02e0d30c1db23a54218648dd29eaa863c8c9cbc614b8cecd387778e75"
+        },
+        "observer/tests/test_c33_input_matrix.cpp": {
+          "bytes": 30820,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_c33_input_matrix.cpp",
+          "sha256": "a01308182f5a2c53e65d1374e3e9850346f719a2686a19c5e5d90d771991749f"
+        },
+        "observer/tests/test_c34_lease_matrix.cpp": {
+          "bytes": 3332,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_c34_lease_matrix.cpp",
+          "sha256": "2995291ba69fca6ed27da43288a814d6b878546cea5ce64352c1f97490ddf402"
+        },
+        "observer/tests/test_c36_completion.cpp": {
+          "bytes": 6524,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_c36_completion.cpp",
+          "sha256": "ae6af82cf6ea545d87ac743776f5d399633ed096ab62340fa7616b90eaf323af"
+        },
+        "observer/tests/test_d0_observation.cpp": {
+          "bytes": 6402,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_d0_observation.cpp",
+          "sha256": "6c9e4606670f35ec5069f998769cf7fba7ffde9815fd5e740a4f5bf1f3ed5955"
+        },
+        "observer/tests/test_enqueue_branch.cpp": {
+          "bytes": 8704,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_enqueue_branch.cpp",
+          "sha256": "9909f8892ef84891519842056d05afa4f984311e9976ff4801554e88932494bc"
+        },
+        "observer/tests/test_legacy_ready.cpp": {
+          "bytes": 17124,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_legacy_ready.cpp",
+          "sha256": "c90c1a5d01d7aadeeab5f72fd92cb1e9c43a68c71a0b37ba0a3c9cfe866d2456"
+        },
+        "observer/tests/test_shadow_entry.cpp": {
+          "bytes": 19441,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/tests/test_shadow_entry.cpp",
+          "sha256": "66064b802b53a30521b87308fd0ce40a28546da29736c5266024722115d5f18a"
+        },
+        "tests/test_c36_applied_boundary_v1.cpp": {
+          "bytes": 13686,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/tests/test_c36_applied_boundary_v1.cpp",
+          "sha256": "835a7f2274f3c131f70ea640ba8024f69b2480ca8459f0844fda9454a585c042"
+        },
+        "tests/test_c36_runtime_adapter.cpp": {
+          "bytes": 6605,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/tests/test_c36_runtime_adapter.cpp",
+          "sha256": "14e0895febc21015fd411ac1d9a1d70af14ba95bfc2a7c952cbdaf89adb84bd4"
+        },
+        "tests/test_owned_peer_c36_v1.cpp": {
+          "bytes": 14472,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/tests/test_owned_peer_c36_v1.cpp",
+          "sha256": "b7bbb97d96fd35f85072eb4240c5dc255f1fd9184f2296678179b577eb76e171"
+        }
+      }
+    },
+    "publisher": {
+      "files": 9,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher_source_bundle_C3_4_v1.json",
+      "sha256": "41efe37c6bbb15f155ee99f8dfcf0f116a602fc43fecab2bb8bb8204c9177cab",
+      "registry_pin_matches": true,
+      "all_actual_files_match": true,
+      "file_pins": {
+        "common/p1_create_only_atomic.hpp": {
+          "bytes": 2937,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_create_only_atomic.hpp",
+          "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+        },
+        "common/p1_owned_identity.hpp": {
+          "bytes": 12545,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_owned_identity.hpp",
+          "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+        },
+        "publisher/CMakeLists.txt": {
+          "bytes": 6009,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/CMakeLists.txt",
+          "sha256": "f222bd5164251bab0a4f32de67186f8205e4e98ad378c2e22db294ffa1e4919c"
+        },
+        "publisher/include/usv_mpc_cpp/mpc_node.hpp": {
+          "bytes": 11771,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+          "sha256": "59e710623e4ae75b5dd00adaaf6de6cf4655f3651ac4091099d8f7c73eec9e59"
+        },
+        "publisher/include/usv_mpc_cpp/p1_startup_gate.hpp": {
+          "bytes": 24668,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+          "sha256": "4f79b1278a9a314c7fc78271380a646a363fa7ef5a3cf8ce8b14df2053337ab6"
+        },
+        "publisher/include/usv_mpc_cpp/research_logger.hpp": {
+          "bytes": 10857,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/include/usv_mpc_cpp/research_logger.hpp",
+          "sha256": "01755d675ea0ab8295918df14308e7e41157888b4f3cecfea35df3c73ab90661"
+        },
+        "publisher/src/mpc_node.cpp": {
+          "bytes": 61671,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/src/mpc_node.cpp",
+          "sha256": "c3b985ad4a2f1ad6a95a2855803ca4cea882c7b4cca49ae22df70e9607c44d4b"
+        },
+        "publisher/src/mpc_node_main.cpp": {
+          "bytes": 3200,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/src/mpc_node_main.cpp",
+          "sha256": "d87aa820c2e047c2c2a0b64720684803986cef8b89eb1135ae83ca8b6d4156ed"
+        },
+        "publisher/tests/test_publisher_startup.cpp": {
+          "bytes": 48838,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/tests/test_publisher_startup.cpp",
+          "sha256": "cee09c74aa74d7f6b8707fbc5a00367a0038f1b84f69098bd68d701750f078f8"
+        }
+      }
+    },
+    "recorder": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+      "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08",
+      "registry_pin_matches": true,
+      "all_actual_files_match": true,
+      "file_pins": {
+        "common/p1_create_only_atomic.hpp": {
+          "bytes": 2937,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_create_only_atomic.hpp",
+          "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+        },
+        "common/p1_owned_identity.hpp": {
+          "bytes": 12545,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_owned_identity.hpp",
+          "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+        },
+        "recorder/CMakeLists.txt": {
+          "bytes": 1203,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/CMakeLists.txt",
+          "sha256": "eee4c30c9fd3f68bec8a5e74b26f81b5967fcd520705caccfe9520874d95e248"
+        },
+        "recorder/src/owned_recorder.cpp": {
+          "bytes": 13567,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/src/owned_recorder.cpp",
+          "sha256": "1142ff4c2fda7b25daa4bd95217beb2baf43f69fe5752532708a37d2d70bf3a6"
+        }
+      }
+    },
+    "worker": {
+      "files": 14,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker_source_bundle_C3_4_v1.json",
+      "sha256": "d7a13cc5133a290c6b2ca9354324a6dfc01d16f4fa77c8729634c1febddf4633",
+      "registry_pin_matches": true,
+      "all_actual_files_match": true,
+      "file_pins": {
+        "common/p1_create_only_atomic.hpp": {
+          "bytes": 2937,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_create_only_atomic.hpp",
+          "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+        },
+        "common/p1_owned_identity.hpp": {
+          "bytes": 12545,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/common/p1_owned_identity.hpp",
+          "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+        },
+        "worker/CMakeLists.txt": {
+          "bytes": 1187,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/CMakeLists.txt",
+          "sha256": "c5423dc4bc317323966578f1ac8ab23f027da1cb68b19445f7b53eed12cf4947"
+        },
+        "worker/capability_source_v4.hpp": {
+          "bytes": 1716,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/capability_source_v4.hpp",
+          "sha256": "8ec9a3876b75861dbf462ee3ee7e59e9e2a284d48cea363f49613183dc1e5987"
+        },
+        "worker/p1_admission.hpp": {
+          "bytes": 8297,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_admission.hpp",
+          "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+        },
+        "worker/p1_capability_lease.hpp": {
+          "bytes": 1020,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_capability_lease.hpp",
+          "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c"
+        },
+        "worker/p1_clock_window.hpp": {
+          "bytes": 1902,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_clock_window.hpp",
+          "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc"
+        },
+        "worker/p1_full_contract.hpp": {
+          "bytes": 11798,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_full_contract.hpp",
+          "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea"
+        },
+        "worker/p1_preparation_barrier.hpp": {
+          "bytes": 723,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_preparation_barrier.hpp",
+          "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc"
+        },
+        "worker/p1_resources.hpp": {
+          "bytes": 13624,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_resources.hpp",
+          "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2"
+        },
+        "worker/p1_tick_barrier.hpp": {
+          "bytes": 708,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_tick_barrier.hpp",
+          "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4"
+        },
+        "worker/p1_worker_liveness.hpp": {
+          "bytes": 1227,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/p1_worker_liveness.hpp",
+          "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28"
+        },
+        "worker/protocol.hpp": {
+          "bytes": 6581,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/protocol.hpp",
+          "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+        },
+        "worker/solver_worker.cpp": {
+          "bytes": 20595,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/solver_worker.cpp",
+          "sha256": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e"
+        }
+      }
+    }
+  },
+  "reused_binaries": {
+    "publisher": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/build01/p1_F5_held_publisher",
+      "sha256": "d3ac6bd4c61af36a3fa8bf503b2a3436f96e056ab1192c22b76e082e882bfc01",
+      "declared_sha256": "d3ac6bd4c61af36a3fa8bf503b2a3436f96e056ab1192c22b76e082e882bfc01",
+      "pin_matches": true,
+      "source": "unchanged N10 role"
+    },
+    "worker": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/build01/p1_solver_worker_owned_v2",
+      "sha256": "7b8015a889adff7652a76008078eacea0b1a039d3abb00cbb706ae799317be9a",
+      "declared_sha256": "7b8015a889adff7652a76008078eacea0b1a039d3abb00cbb706ae799317be9a",
+      "pin_matches": true,
+      "source": "unchanged N10 role"
+    },
+    "fixture": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture/build01/p1_synthetic_source",
+      "sha256": "88338bf5b9a5531b9fce2e2954267b59fef05aad4b9c1e987509b6499d746c32",
+      "declared_sha256": "88338bf5b9a5531b9fce2e2954267b59fef05aad4b9c1e987509b6499d746c32",
+      "pin_matches": true,
+      "source": "unchanged N10 role"
+    },
+    "recorder": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/build01/p1_owned_recorder",
+      "sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+      "declared_sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+      "pin_matches": true,
+      "source": "unchanged N10 role"
+    }
+  },
+  "config_sources": {
+    "contract": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json",
+      "sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+      "fixed_expected_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+      "effective_runtime_assertion": "Worker/Observer owned contract config equals complete contract; each supported role live typed params equal declared expected and canonical digest"
+    },
+    "publisher_parameter_origin": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/vrx_shadow_fixed_f5_preflight_20261006_01.json",
+      "sha256": "ea46e852aa9bf01259548d2cea74f305dac8da579fca42a7b4cd405c29c17fa3",
+      "key": "f5_actual_parameters",
+      "new_run_overrides": [
+        "research_run_id",
+        "research_output_dir",
+        "p1_release_file",
+        "p1_owned_contract_sha256"
+      ]
+    },
+    "new_observer_parameters": [
+      "adapter_peer_pins_file",
+      "adapter_peer_pins_sha256",
+      "adapter_driver_close_file"
+    ],
+    "actual_current_runtime_config_validation": "pending_current_batch_results"
+  },
+  "current_build_manifest_exists_at_review": false,
+  "v2_binary_exists_at_review": true,
+  "v2_build_native_and_owned_run_status": "pending_current_batch_results",
+  "alignment": [
+    {
+      "parent_step": 1,
+      "status": "partial implementation in source; current validation pending",
+      "implemented": [
+        "same decision mutex integration",
+        "exact full frozen Job and nonzero prediction import",
+        "observation-only ready/cutoff/consume and slot cancellation",
+        "Applied exact callback GID plus pinned process pidfd",
+        "strict typed peer binding and config digest",
+        "driver request and ack separate from tail/session/cleanup/endpoint facts"
+      ],
+      "deferred": [
+        "Worker callback DataWriter GID authentication",
+        "owner-origin close-intent record",
+        "continuous endpoint absence/uniqueness",
+        "actual per-channel execution result adapter"
+      ]
+    },
+    {
+      "parent_step": 2,
+      "status": "observation-only shadow bridge implemented; actual IO boundary deferred",
+      "reason": "inspect_consume does not activate a publish transaction; no new actuator publisher or publish calls",
+      "policy_compatibility": "N13 observes only old whole-pair accepted Applied; N12 per-channel success/failed/unattempted policy is not yet the actual executor policy"
+    },
+    {
+      "parent_step": 3,
+      "status": "diagnostic numeric origins and new observation bounds registered; final engineering domain deferred",
+      "registered": {
+        "T_ns": 200000000,
+        "ready_ns": 150000000,
+        "command_domain_n": [
+          -25,
+          25
+        ],
+        "rho_n_s": 80,
+        "close_observation_period_ns": 20000000,
+        "driver_ack_budget_ns": 1000000000,
+        "terminal_tail_ns": 2000000000
+      },
+      "warning": "observed runtime maxima and polling budgets are not WCET or calibrated plant limits"
+    },
+    {
+      "parent_step": 4,
+      "status": "new bounded4s owned shadow planned;20s/turnmixed/pressure/recovery/failedclose deferred",
+      "measurement_ns": 4000000000,
+      "normal_hooks": 0,
+      "runtime_result": "pending_current_batch_results"
+    },
+    {
+      "parent_step": 5,
+      "status": "separate stage reevaluation remains deferred",
+      "qualifications": {
+        "B4": false,
+        "M0b": false,
+        "B5": false,
+        "M4": false,
+        "D1": false,
+        "strict_full_chain": false,
+        "F6": false,
+        "P1": false,
+        "execute": false,
+        "research_conclusion": false
+      }
+    }
+  ],
+  "scope_distinctions": {
+    "Applied_runtime_policy": "whole-pair assessment precedes adapter observation; partial failure does not enter native per-channel observe",
+    "native_component_partial_policy": "succeeded channel updates observed command; failed channel unknown; unattempted retains prior fact; incomplete pair denies new jobs",
+    "Worker_callbacks": "existing capability payload/PIDfd/lease and full Job echo guards retained; no new exact MessageInfo GID binding",
+    "driver_close": "authenticated supervisor request observed before supervisor SIGINT; no owner-intent claim",
+    "component_close": "local adapter close after own join; owner endpoints remain separately unknown",
+    "queued_exited_owner_tail": "only exact pinned GID, authenticated driver closing, actual finite complete successful dual shutdown_zero with bounded time; remains dead owner and grants no new jobs",
+    "resource_scope": "finite application text limits before CDR serialization; DDS deserialization and universal scheduling bounds remain unproved"
+  },
+  "unknown": [
+    "owner_close_intent",
+    "owner_endpoints_exited_at_adapter_close",
+    "continuous_DDS_unique_owner",
+    "post_pin_exec_continuity",
+    "current_unified_runtime_execution_contract",
+    "MasterClock",
+    "plant_acceptance",
+    "plant_hold_interval",
+    "full_schedule_WCET",
+    "engineering_calibrated_domain_budget",
+    "actual_per_channel_executor"
+  ],
+  "not_run": [
+    "current_dynamic20s",
+    "current_turn_mixed",
+    "current_unified_version_pressure",
+    "current_unified_version_recovery",
+    "current_unified_version_failed_close"
+  ],
+  "native_failed_close_vs_actual_current_failed_close": "local component rejected-close semantics may be tested; actual unified runtime failed-close not_run",
+  "new_nonzero_IO": "not_enabled",
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false,
+  "no_unfinished_dependency_blocks_this_bounded_component_batch": true,
+  "next_order": [
+    {
+      "order": 1,
+      "action": "complete current v2 native guards/actual DDS peer negatives/4s owned shadow and independent full-population check; pin final source binary helper config; preserve all unsuccessful attempts and archive new batch SHA readback"
+    },
+    {
+      "order": 2,
+      "action": "authenticate Worker Candidate and Capability callback MessageInfo GID with owned Worker pins and strict payload/resource/lease gates; exact-same-payload foreign Writer negatives"
+    },
+    {
+      "order": 3,
+      "action": "preregister finite domain/time/rho/gap/hold/ramp/publish-budget and same-session recovery/failed-close policies; identify unknown external dependencies and exact stage requirement"
+    },
+    {
+      "order": 4,
+      "action": "implement source-linked per-channel permit/call/result/no-call adapter and owner close-intent/session/cleanup/endpoint evidence; align native per-channel facts with whole-pair runtime policy; first unit/controlled shadow integration only"
+    },
+    {
+      "order": 5,
+      "action": "lock complete typed nonzero20s and turn/mixed recipes; reseal source/bin/config/helper; run normal hooks0 plus same-version pressure/recovery/failed-close with real and coherent-negative populations"
+    },
+    {
+      "order": 6,
+      "action": "rejudge B4/M0b/B5 separately from exact evidence and immutable contract; only then a separate M4 execute version proves continuous F5 owner/endpoint exit and regulator unique two-channel output, real nonzero/partial IO and rho/gap/budget; F6/P1 and research strong comparisons remain later"
+    }
+  ],
+  "reviewed_file_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_20261013_11/方案A_C3_6A后续实施计划_2026-10-13.md": "a0d026f3eb1ebe15c47defaaaf217b978818bdfd7b43db7d85d83381f8a29d78",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_20261013_11/preregister/anchor_component_scope_v1.json": "eba63e69e4ad8d74ed8373151a1cd383eab7f79560977f195464196be73e96a0",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_20261013_11/batch_status_final.json": "b329b47fc674b8e88bb3adb4f0a90962c32a8eb7f60aaae75b5abfbee3e658f9",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/preregister/adapter_scope_v1.json": "961bdfdccd81ab0cc051655842406e25e5f2a384f54261bc62e9b2ba07312d35",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/current-status.md": "c2270c2519414195170e87f1926e286a8f33cc926046bade5671f4b0262ef8a5",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/preflight/workspace_initial.json": "2f2fc519ee0b3a87b7b332e37ee36f3fa117cf8342c383cfcb9e4cb21eb61e7a",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/review/root_repair_intent_v1.json": "ffabf93ccf7394e93ef95f54a1e6404348a423a2e46adbbf87105cd6b83961a2",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/review/owner_endpoint_binding_v1.md": "7036e160d30f91e1d1a97a321dbc2195f1b50fceefe0fb92b220b301c47a398b",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_6_adapter_20261013_12/review/checker_scope_v1.md": "514a464018936e1c16149f754a104e0f7cce6cc32ce591720fc232c2d29be072",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/observer/src/shadow/regulator_shadow_observer.cpp": "d8878e31394734d3f6609d3ebde01c005f7abb1dd0d45d1efb1c1be9da354650",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/prepare_fixture.py": "5faaac37734f1db5bfaa72549f1cd66725150de7ee507a7c73d48c4df901a280",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/source_bundles_current.json": "fce0d72eadf17972dabeea283e14b86b6c97ee9fa4c13bd4882614bfedec7557",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/reused_role_source_bundles.json": "1079f90fa91ef998df1fa90d81eff7a5734ed4745bfa2ac1eaa060de74a1e1d5",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/reused_role_build_manifest.json": "3875a898da73c96a2edec2e3cc464f49b44cabfc165b9b0c4a347dc8be145ab9",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/tests/test_c36_runtime_adapter.cpp": "14e0895febc21015fd411ac1d9a1d70af14ba95bfc2a7c952cbdaf89adb84bd4",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_6_adapter_20261013_v13/tests/test_owned_peer_c36_v1.cpp": "b7bbb97d96fd35f85072eb4240c5dc255f1fd9184f2296678179b577eb76e171",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/vrx_shadow_fixed_f5_preflight_20261006_01.json": "ea46e852aa9bf01259548d2cea74f305dac8da579fca42a7b4cd405c29c17fa3"
+  }
+}

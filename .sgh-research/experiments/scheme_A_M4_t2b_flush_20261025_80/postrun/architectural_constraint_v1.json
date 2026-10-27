@@ -1,0 +1,25 @@
+{
+  "schema": "M4-T2B-architectural-constraint-v80",
+  "recorded_at": "2026-10-25T16:24:28.054280+08:00",
+  "measurement": {
+    "boundary_entered→trigger_evaluation": 140.2,
+    "trigger_evaluation→command_write": 52.3,
+    "command_write→path_version_commit": 6.6,
+    "path_version→boundary_release": 0.07,
+    "total": 199.2,
+    "job_deadline": 150.0
+  },
+  "bottleneck_breakdown": {
+    "python_loop_overhead": "~140ms per observation iteration (3 SourceCursor file reads + 4 process polls)",
+    "fsync_command_write": "~52ms (temp file + fsync + renameat2 + directory fsync)",
+    "action_execution": "~7ms (Fixture publish + Regulator path_version) — fast"
+  },
+  "conclusion": "External Driver file-based orchestration CANNOT achieve the timely case within 150ms. This is an architectural constraint (Python loop + fsync I/O), not a single bug.",
+  "fix_options": [
+    "A: Pre-position action on job_received trigger (~1ms before boundary, path committed by entry)",
+    "B: In-process trigger (Worker executes path action itself via DDS)",
+    "C: Real-time signal file (not JSONL, minimal I/O)",
+    "D: Relax to accept expired case as valid T2-B evidence (controversial)"
+  ],
+  "recommendation": "Option A: job_received trigger with boundary_entered as the in-flight PROOF (not trigger). The path change is pre-positioned; boundary_entered proves the Job was held; release proves the C call happened after the path change; the Regulator rejection proves version mismatch. This preserves all semantic requirements while eliminating the timing constraint."
+}

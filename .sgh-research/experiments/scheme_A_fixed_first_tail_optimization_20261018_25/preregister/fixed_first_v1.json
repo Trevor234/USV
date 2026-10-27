@@ -1,0 +1,43 @@
+{
+  "actual_baseline_input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json",
+  "actual_baseline_input_sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+  "additional_first_equality_is_changed_feasible_set": true,
+  "baseline_max_U_X_abs_error": 1e-09,
+  "baseline_max_feasible_cost_abs_error": 1e-11,
+  "contract_sha256": "a4c9d2754712d672a03de896fc639f327d2fb12fb356f72cccb21699fdfdf62f",
+  "execute_qualified": false,
+  "final_dynamic_defect_abs_tolerance": 1e-08,
+  "fixed_first_control_n": [
+    0.5,
+    0.5
+  ],
+  "fixed_first_equality_abs_tolerance_n": 1e-10,
+  "independent_abs_tolerance": 1e-11,
+  "input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_fixed_first_tail_optimization_20261018_v25/actual_fixed_first_input_v1.json",
+  "input_sha256": "192a94253113f8ba8c2f7892bf83c7d6bceb20bcbf8f714b92bb334eb2b1a07c",
+  "iteration_count_must_not_expand": true,
+  "last_iteration_stability_control_abs_n": 1e-08,
+  "last_iteration_stability_cost_abs": 1e-10,
+  "material_cost_premium_relative_fraction": 0.01,
+  "ordered_arms": [
+    "free_first",
+    "fixed_first_050"
+  ],
+  "original_RMSE_gate_unchanged": true,
+  "physical_ROS_or_DDS_run": false,
+  "repeat_count": 12,
+  "research_conclusion": false,
+  "runtime_code_changed": false,
+  "schema": "scheme-A-fixed-first-tail-preregistration/v1",
+  "source_24_MPC_delivery_pending": true,
+  "source_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/archive_inventory_v1.json": "64b528df3ad20ae12cfdc431f8d825c47975d66425daf754df00f4282f6d2c9a",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/documents/next_fixed_first_tail_optimization_plan_v1.md": "f8620d61ace78259d2f32bba9d4c39c441f8395102933160dfb737162c5ec4aa",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/final_QA_v1.json": "0938e9fc9397680502e606cd181745d1b72f13f2d2b6ffe4a6be0686b059403f",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/first_control_audit_v1.json": "d4519ae492e00ccdb45496bfa5bc153e2336db3d15571c6cd4b338163d64313b",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/native_first_control_v1.json": "5955bd8a382eb3598d318a290e5704ff5650d07ba09af13b30b633e6f75ba27f",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/native_startup_v1.json": "e4f77f5618228d7df9dfbd3807d3a727f1fb7240a74480f8757a4dbfd3376ee0"
+  },
+  "stage_qualified": false
+}

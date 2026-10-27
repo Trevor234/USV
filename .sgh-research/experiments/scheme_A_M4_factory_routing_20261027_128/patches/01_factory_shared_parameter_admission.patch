@@ -1,0 +1,42 @@
+--- a/src/mpc_solver.cpp
++++ b/src/mpc_solver.cpp
+@@ -30,6 +30,9 @@
+ #include "usv_mpc_cpp/mpc_solver.hpp"
+ 
+ #include <cstdio>
++#include <algorithm>
++#include <cmath>
++#include "usv_mpc_cpp/p_global_pack.hpp"
+ #include <stdexcept>
+ 
+ #include "usv_mpc_cpp/acados_backend.hpp"
+@@ -40,15 +43,29 @@
+ namespace usv_mpc
+ {
+ 
++namespace
++{
++void validate_model_parameters(const MpcParams & params)
++{
++  const auto values = p_global::pack(params);
++  if (!std::all_of(values.begin(), values.end(), [](double x) { return std::isfinite(x); })) {
++    throw std::invalid_argument("MPC p_global parameters must be finite");
++  }
++}
++}  // namespace
++
++
+ #ifdef USV_MPC_HAS_CASADI
+ std::unique_ptr<DynamicMpc> make_casadi_dynamic_mpc(const MpcParams & params)
+ {
++  validate_model_parameters(params);
+   return std::make_unique<CasadiBackend>(params);
+ }
+ #endif
+ 
+ std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams & params)
+ {
++  validate_model_parameters(params);
+   // 1. 尝试 acados (codegen 已 vendored 并静态链接进本包)
+   try {
+     return std::make_unique<AcadosBackend>(params);

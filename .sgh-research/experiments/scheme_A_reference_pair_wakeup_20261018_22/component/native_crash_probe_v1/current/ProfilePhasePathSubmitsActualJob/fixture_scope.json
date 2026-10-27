@@ -1,0 +1,11 @@
+{
+  "MessageInfo_seeded_from_actual_DataWriter_GID": true,
+  "actual_DDS_delivery_claimed": false,
+  "actual_Regulator_source_included": true,
+  "actual_path_profile_Applied_phase_enqueue_prepare_functions": true,
+  "actual_process_manifest_pidfd_checked": true,
+  "actuator_writers": 0,
+  "execute_qualified": false,
+  "stage_qualified": false,
+  "worker_RTF_readiness_explicitly_seeded": true
+}

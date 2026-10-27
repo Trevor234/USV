@@ -1,0 +1,24 @@
+{
+  "case": "coherent_final_command",
+  "expected_code": "original_output_command",
+  "passed": true,
+  "observed_codes": [
+    "complete_transport_storage_cdr_sequence_differs",
+    "original_output_command"
+  ],
+  "mutation": {
+    "coherent_stored_CDR_updates": [
+      {
+        "id": 1424,
+        "topic": "/p1/execution_decision"
+      }
+    ],
+    "source_files": [
+      "observer/source.jsonl",
+      "worker/source.jsonl",
+      "observer/witness.json"
+    ]
+  },
+  "report": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_provenance_20261011_v6/validation_copies/C3_negative_01/coherent_final_command/C3_report.json",
+  "original_authenticity_qualified": false
+}

@@ -1,0 +1,20 @@
+{
+  "case": "final_odom_receive",
+  "expected_code": "selected_odom_binding",
+  "passed": true,
+  "observed_codes": [
+    "canonical_final_input_binding",
+    "final_actual_source_ages",
+    "selected_odom_binding"
+  ],
+  "mutation": {
+    "coherent_stored_CDR_updates": [],
+    "source_files": [
+      "observer/source.jsonl",
+      "worker/source.jsonl",
+      "observer/witness.json"
+    ]
+  },
+  "report": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_provenance_20261011_v6/validation_copies/C3_negative_03/final_odom_receive/C3_report.json",
+  "original_authenticity_qualified": false
+}

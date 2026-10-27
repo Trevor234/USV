@@ -1,0 +1,10 @@
+{
+  "schema": "C3.7-witness-fixture-identical-binary-reuse/v1",
+  "passed": true,
+  "source_Witness_unchanged": true,
+  "current_producer_sha256": "8e9423318851048bc176a9d7ee8c74618866d7ecd81666530f795ba6744831aa",
+  "previous_producer_sha256": "8e9423318851048bc176a9d7ee8c74618866d7ecd81666530f795ba6744831aa",
+  "prior_fixture_cases": 19,
+  "prior_evaluations": 36,
+  "stage_qualified": false
+}

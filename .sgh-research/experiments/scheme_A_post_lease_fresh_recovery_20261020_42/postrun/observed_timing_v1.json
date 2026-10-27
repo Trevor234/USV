@@ -1,0 +1,9 @@
+{
+  "max_start_or_activation_jitter_ns": 153864,
+  "max_start_gap_ns": 200040679,
+  "skipped_ticks": 0,
+  "Source_jobs": 4,
+  "Source_candidates": 4,
+  "Source_Decisions": 7,
+  "Witness_accepted_activations": 3
+}

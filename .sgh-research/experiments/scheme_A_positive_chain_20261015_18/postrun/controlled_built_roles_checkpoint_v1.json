@@ -1,0 +1,298 @@
+{
+  "A2_B_C_run": false,
+  "built_roles": [
+    {
+      "actual_compiler_dependencies": 1399,
+      "actual_loader_libraries": 54,
+      "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase",
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2",
+      "binary_sha256": "56debd5de9435cf742fa0e05eef0d5c306e16d1903e7c20cc4e0af8cc99c21c0",
+      "build_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build",
+      "build_rc": 0,
+      "codegen_performed": false,
+      "compiled_source_bundle_pin_verified": true,
+      "configure_rc": 0,
+      "ctest_rc": null,
+      "ctest_registered_tests": [],
+      "declared_native_targets": [
+        "test_controlled_phase",
+        "test_controlled_contract"
+      ],
+      "default_build_rc": 0,
+      "elapsed_seconds": 81.6169397420017,
+      "execute_qualified": false,
+      "finite_native": {
+        "GTest_XML": [],
+        "GTest_cases": 0,
+        "all_declared_native_targets_exercised": true,
+        "plain_checks": 65,
+        "plain_targets": {
+          "test_controlled_contract": {
+            "log_sha256": "2946066bcd7136d2fcd7774d229ce84e7238f2a96532cd1739a79bbbe9fa4877",
+            "reported_checks": 20,
+            "returncode": 0
+          },
+          "test_controlled_phase": {
+            "log_sha256": "293eff7e4b350f3e8cac436d69c47e8899ef27ca69b5e2b827c6161f6546f5ce",
+            "reported_checks": 45,
+            "returncode": 0
+          }
+        }
+      },
+      "install_performed": false,
+      "native_binaries": {
+        "test_controlled_contract": {
+          "bytes": 400112,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_contract",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_contract",
+          "sha256": "42a0331b11c1ce17dc684ba218dcf7254e276bdda305a8deaa98dd60b107f305"
+        },
+        "test_controlled_phase": {
+          "bytes": 92040,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_phase",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_phase",
+          "sha256": "25252a17ddb1bd6c3ee1d28bec15464bdbf47f5d3b5dd529431bcc1d6d1ca488"
+        }
+      },
+      "native_build_rc": 0,
+      "node_launch_performed": false,
+      "output_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01",
+      "parent_binary_sha256": "beeac6b6357e68a9a425a7cabbae31f55ead72bc315db24ae331c88511b6c80d",
+      "parent_roles_verified_unchanged": true,
+      "parent_source_bundle": {
+        "files": 44,
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_9_20261014_v16/observer_source_bundle_C39_v2.json",
+        "sha256": "b1cbad440910521db0cb0784d270be172ddc9da0a960de0f944320ab786f74b6"
+      },
+      "parent_source_content_unchanged": true,
+      "passed": true,
+      "produced_target_pins": {
+        "p1_regulator_shadow_observer_owned_v2": {
+          "bytes": 7125960,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2",
+          "sha256": "56debd5de9435cf742fa0e05eef0d5c306e16d1903e7c20cc4e0af8cc99c21c0"
+        },
+        "test_controlled_contract": {
+          "bytes": 400112,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_contract",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_contract",
+          "sha256": "42a0331b11c1ce17dc684ba218dcf7254e276bdda305a8deaa98dd60b107f305"
+        },
+        "test_controlled_phase": {
+          "bytes": 92040,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_phase",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/cmake_build/test_controlled_phase",
+          "sha256": "25252a17ddb1bd6c3ee1d28bec15464bdbf47f5d3b5dd529431bcc1d6d1ca488"
+        }
+      },
+      "recipe_sha256": "5b91ac06c16e696d28cd52d39f24a30117e54da5196e717640ab6604ade93e36",
+      "research_conclusion": false,
+      "role": "observer",
+      "runtime_build_rc": 0,
+      "runtime_target": "p1_regulator_shadow_observer_owned_v2",
+      "schema": "ordered-controlled-role-build/v1",
+      "setup_helper_sha256": "391800763411ce2ee345e95e834589acd05f06a2ff71ddcade2fa2f5e6201107",
+      "source_bundle": {
+        "files": 27,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_observer_attempt01/source_bundle.json",
+        "sha256": "00012e0c7528d73dc852d365e7aea16600ff5a2b8afbc8cf03d1854b9e6d739b"
+      },
+      "source_content_sha256_after": {
+        "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+        "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+        "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+        "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+        "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+        "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+        "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+        "controlled_contract_test.cpp": "398ed38bc6e5d0499e02a1e179c49e3aa85dbf8bf34587ef69d69d5094f063bd",
+        "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+        "observer/CMakeLists.txt": "8c8f3f54598e06cba3e9af2deaef3dc3f96a3288c1166b18de67807148d97b07",
+        "observer/src/shadow/callback_raw_v4.hpp": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398",
+        "observer/src/shadow/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+        "observer/src/shadow/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+        "observer/src/shadow/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+        "observer/src/shadow/p1_d0_observation.hpp": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f",
+        "observer/src/shadow/p1_diag_sink.hpp": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79",
+        "observer/src/shadow/p1_full_contract.hpp": "ac56f6c6b1c25a9d9960fbf041841c04c6db7aeab95dee2e4982f240596daa50",
+        "observer/src/shadow/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+        "observer/src/shadow/p1_resources.hpp": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+        "observer/src/shadow/p1_shadow_entry.hpp": "a1048befecba1373fcb4fa13e4071450fad88f988f7442dde018fc833e429342",
+        "observer/src/shadow/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+        "observer/src/shadow/p1_witness.hpp": "6c0e71b3a1801ea7a1d6f23fa5a6c027d8c134b48d96bb8553c8855e8e02dd85",
+        "observer/src/shadow/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+        "observer/src/shadow/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+        "observer/src/shadow/regulator_shadow_observer.cpp": "644b1d3bedf64d44afdc1f30a4c3f6800b625aab4684e176b3afab0e00476e02",
+        "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+        "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9"
+      },
+      "source_content_sha256_before": {
+        "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+        "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+        "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+        "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+        "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+        "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+        "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+        "controlled_contract_test.cpp": "398ed38bc6e5d0499e02a1e179c49e3aa85dbf8bf34587ef69d69d5094f063bd",
+        "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+        "observer/CMakeLists.txt": "8c8f3f54598e06cba3e9af2deaef3dc3f96a3288c1166b18de67807148d97b07",
+        "observer/src/shadow/callback_raw_v4.hpp": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398",
+        "observer/src/shadow/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+        "observer/src/shadow/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+        "observer/src/shadow/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+        "observer/src/shadow/p1_d0_observation.hpp": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f",
+        "observer/src/shadow/p1_diag_sink.hpp": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79",
+        "observer/src/shadow/p1_full_contract.hpp": "ac56f6c6b1c25a9d9960fbf041841c04c6db7aeab95dee2e4982f240596daa50",
+        "observer/src/shadow/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+        "observer/src/shadow/p1_resources.hpp": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+        "observer/src/shadow/p1_shadow_entry.hpp": "a1048befecba1373fcb4fa13e4071450fad88f988f7442dde018fc833e429342",
+        "observer/src/shadow/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+        "observer/src/shadow/p1_witness.hpp": "6c0e71b3a1801ea7a1d6f23fa5a6c027d8c134b48d96bb8553c8855e8e02dd85",
+        "observer/src/shadow/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+        "observer/src/shadow/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+        "observer/src/shadow/regulator_shadow_observer.cpp": "644b1d3bedf64d44afdc1f30a4c3f6800b625aab4684e176b3afab0e00476e02",
+        "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+        "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9"
+      },
+      "source_content_unchanged": true,
+      "stage_qualified": false
+    },
+    {
+      "actual_compiler_dependencies": 1338,
+      "actual_loader_libraries": 53,
+      "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase",
+      "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+      "binary_sha256": "03ced3ca8e63a43547ff03814516a3fd347c2f53a800f3a2b27f3d294805c0ed",
+      "build_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build",
+      "build_rc": 0,
+      "codegen_performed": false,
+      "compiled_source_bundle_pin_verified": true,
+      "configure_rc": 0,
+      "ctest_rc": null,
+      "ctest_registered_tests": [],
+      "declared_native_targets": [
+        "test_controlled_worker_contract"
+      ],
+      "default_build_rc": 0,
+      "elapsed_seconds": 28.661644776992034,
+      "execute_qualified": false,
+      "finite_native": {
+        "GTest_XML": [],
+        "GTest_cases": 0,
+        "all_declared_native_targets_exercised": true,
+        "plain_checks": 18,
+        "plain_targets": {
+          "test_controlled_worker_contract": {
+            "log_sha256": "41bba9e554328d8f7c67ca25d36c41b79aa718a5b5209ceebdc8326579ff555c",
+            "reported_checks": 18,
+            "returncode": 0
+          }
+        }
+      },
+      "install_performed": false,
+      "native_binaries": {
+        "test_controlled_worker_contract": {
+          "bytes": 395576,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build/test_controlled_worker_contract",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build/test_controlled_worker_contract",
+          "sha256": "f440ec576df1a5d2c9729f1e058673cc5a1e9e0264121117d2ee63e827d1616e"
+        }
+      },
+      "native_build_rc": 0,
+      "node_launch_performed": false,
+      "output_directory": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01",
+      "parent_binary_sha256": "7b8015a889adff7652a76008078eacea0b1a039d3abb00cbb706ae799317be9a",
+      "parent_roles_verified_unchanged": true,
+      "parent_source_bundle": {
+        "files": 14,
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker_source_bundle_C3_4_v1.json",
+        "sha256": "d7a13cc5133a290c6b2ca9354324a6dfc01d16f4fa77c8729634c1febddf4633"
+      },
+      "parent_source_content_unchanged": true,
+      "passed": true,
+      "produced_target_pins": {
+        "p1_solver_worker_owned_v2": {
+          "bytes": 2049952,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+          "sha256": "03ced3ca8e63a43547ff03814516a3fd347c2f53a800f3a2b27f3d294805c0ed"
+        },
+        "test_controlled_worker_contract": {
+          "bytes": 395576,
+          "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build/test_controlled_worker_contract",
+          "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/cmake_build/test_controlled_worker_contract",
+          "sha256": "f440ec576df1a5d2c9729f1e058673cc5a1e9e0264121117d2ee63e827d1616e"
+        }
+      },
+      "recipe_sha256": "5b91ac06c16e696d28cd52d39f24a30117e54da5196e717640ab6604ade93e36",
+      "research_conclusion": false,
+      "role": "worker",
+      "runtime_build_rc": 0,
+      "runtime_target": "p1_solver_worker_owned_v2",
+      "schema": "ordered-controlled-role-build/v1",
+      "setup_helper_sha256": "391800763411ce2ee345e95e834589acd05f06a2ff71ddcade2fa2f5e6201107",
+      "source_bundle": {
+        "files": 23,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_worker_attempt01/source_bundle.json",
+        "sha256": "140a339d7d6dc05c5cae80f37a1d8c7aa40e5702c5f6faa6d21891f0acca0e67"
+      },
+      "source_content_sha256_after": {
+        "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+        "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+        "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+        "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+        "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+        "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+        "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+        "controlled_contract_test.cpp": "398ed38bc6e5d0499e02a1e179c49e3aa85dbf8bf34587ef69d69d5094f063bd",
+        "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+        "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+        "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9",
+        "worker/CMakeLists.txt": "9c402235e32c9013ad5b7fc67188703684a9fa52caf601acba3e992a00f88a5a",
+        "worker/capability_source_v4.hpp": "8ec9a3876b75861dbf462ee3ee7e59e9e2a284d48cea363f49613183dc1e5987",
+        "worker/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+        "worker/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+        "worker/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+        "worker/p1_full_contract.hpp": "ac56f6c6b1c25a9d9960fbf041841c04c6db7aeab95dee2e4982f240596daa50",
+        "worker/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+        "worker/p1_resources.hpp": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+        "worker/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+        "worker/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+        "worker/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+        "worker/solver_worker.cpp": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e"
+      },
+      "source_content_sha256_before": {
+        "common/c36_runtime_adapter.hpp": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c",
+        "common/c38_diagnostic_gate.hpp": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882",
+        "common/command_anchor_v2.hpp": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e",
+        "common/owned_peer_c36_v1.hpp": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab",
+        "common/owned_worker_peer_c37_v1.hpp": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551",
+        "common/p1_create_only_atomic.hpp": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8",
+        "common/p1_owned_identity.hpp": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7",
+        "controlled_contract_test.cpp": "398ed38bc6e5d0499e02a1e179c49e3aa85dbf8bf34587ef69d69d5094f063bd",
+        "controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+        "phase_protocol.hpp": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075",
+        "phase_protocol_test.cpp": "d6abacaf0de0700b6c7cd18aab2a8e70d7435aad3e7105cc1ccbac3fcf33b9f9",
+        "worker/CMakeLists.txt": "9c402235e32c9013ad5b7fc67188703684a9fa52caf601acba3e992a00f88a5a",
+        "worker/capability_source_v4.hpp": "8ec9a3876b75861dbf462ee3ee7e59e9e2a284d48cea363f49613183dc1e5987",
+        "worker/p1_admission.hpp": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+        "worker/p1_capability_lease.hpp": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+        "worker/p1_clock_window.hpp": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+        "worker/p1_full_contract.hpp": "ac56f6c6b1c25a9d9960fbf041841c04c6db7aeab95dee2e4982f240596daa50",
+        "worker/p1_preparation_barrier.hpp": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+        "worker/p1_resources.hpp": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+        "worker/p1_tick_barrier.hpp": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+        "worker/p1_worker_liveness.hpp": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+        "worker/protocol.hpp": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+        "worker/solver_worker.cpp": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e"
+      },
+      "source_content_unchanged": true,
+      "stage_qualified": false
+    }
+  ],
+  "passed": true,
+  "research_conclusion": false,
+  "stage_qualified": false
+}

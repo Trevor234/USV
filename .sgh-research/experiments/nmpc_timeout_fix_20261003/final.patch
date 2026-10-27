@@ -1,0 +1,932 @@
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt b/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt
+index 684c75e..7997daa 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt
++++ b/usv_mpc_ws/src/usv_mpc_cpp/CMakeLists.txt
+@@ -247,6 +247,23 @@ if(BUILD_TESTING)
+   )
+   target_link_libraries(test_mpc_core mpc_core_lib)
+ 
++  # Exercise the node's actual output mapping using an injected test solver.
++  ament_add_gtest(test_deadline_control
++    test/test_deadline_control.cpp src/mpc_node.cpp)
++  target_include_directories(test_deadline_control PRIVATE
++    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
++  )
++  target_link_libraries(test_deadline_control mpc_solver_lib)
++  ament_target_dependencies(test_deadline_control
++    rclcpp geometry_msgs nav_msgs sensor_msgs mavros_msgs std_msgs nlohmann_json)
++  set_target_properties(test_deadline_control PROPERTIES
++    BUILD_RPATH "${ACADOS_LIB_DIR};${CASADI_LIB_DIR}"
++  )
++  set_tests_properties(test_deadline_control PROPERTIES
++    ENVIRONMENT "LD_LIBRARY_PATH=${ACADOS_LIB_DIR}:${CASADI_LIB_DIR}:$ENV{LD_LIBRARY_PATH};ROS_DOMAIN_ID=88;ROS_LOCALHOST_ONLY=1"
++    TIMEOUT 60
++  )
++
+   # gtest: acados 后端冒烟 + K1/K2 运行时约束边界回归 (需 acados 运行时库)
+   if(EXISTS "${ACADOS_LIB_DIR}/libacados.so")
+     ament_add_gtest(test_acados_solve test/test_acados_solve.cpp)
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp b/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp
+index 0013860..c945b3c 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp
++++ b/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp
+@@ -35,6 +35,7 @@
+ #pragma once
+ 
+ #include <array>
++#include <atomic>
+ #include <memory>
+ #include <mutex>
+ #include <string>
+@@ -67,6 +68,10 @@ public:
+   void safe_shutdown();
+ 
+ private:
++  // Tests inject a solver without exposing fault-injection ROS parameters.
++  friend class MpcControllerNodeTestAccess;
++  explicit MpcControllerNode(std::unique_ptr<DynamicMpc> solver);
++
+   // ── 初始化 ──────────────────────────────────────────
+   void declare_parameters_();
+   void load_config_();
+@@ -86,7 +91,8 @@ private:
+   std::pair<bool, std::string> can_solve_() const;
+   void enter_standby_(const std::string & reason);
+   void run_dynamic_mpc_();
+-  bool enforce_solve_deadline_(SolveInfo & info);
++  // Returns true when timing rejects the result (timeout or invalid timing).
++  bool enforce_solve_deadline_(SolveInfo & info, double solve_wall_time_ms);
+ 
+   // ── 输出 ────────────────────────────────────────────
+   Eigen::Vector2d thrust_to_rc_pwm_(
+@@ -101,7 +107,8 @@ private:
+   void publish_status_(
+     const SolveInfo & info, bool in_hold,
+     const Eigen::Vector2d & commanded_thrust,
+-    const Eigen::Vector2d & applied_thrust);
++    const Eigen::Vector2d & applied_thrust,
++    double solve_wall_time_ms, const char * control_source);
+   void publish_standby_status_(const std::string & reason);
+   void publish_predicted_trajectory_(const Eigen::MatrixXd & X_pred);
+ 
+@@ -118,6 +125,15 @@ private:
+   double dyn_prediction_time_ = 0.0;
+   double dyn_T_max_ = 25.0;   // 缓存,热路径用
+   double dyn_T_min_ = -25.0;
++  // Cache the publication input separately from the mapped output: replaying
++  // applied thrust through the mapper would scale/map it a second time.
++  Eigen::Vector2d last_commanded_thrust_ = Eigen::Vector2d::Zero();
++  Eigen::Vector2d last_applied_thrust_ = Eigen::Vector2d::Zero();
++  bool has_last_command_ = false;
++  // Shutdown can run outside the timer's callback group. Serialize output and
++  // cache changes without holding this mutex across synchronous solve().
++  std::mutex control_output_mutex_;
++  std::atomic<bool> shutting_down_{false};
+ 
+   // ── 当前状态 ────────────────────────────────────────
+   double x_ = 0, y_ = 0, psi_ = 0, u_ = 0, v_ = 0, r_ = 0;
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp b/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp
+index f807d3a..18de2e1 100644
+--- a/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp
++++ b/usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp
+@@ -49,7 +49,12 @@ double steady_now()
+ }  // namespace
+ 
+ MpcControllerNode::MpcControllerNode()
+-: Node("mpc_controller_node")
++: MpcControllerNode(nullptr)
++{
++}
++
++MpcControllerNode::MpcControllerNode(std::unique_ptr<DynamicMpc> solver)
++: Node("mpc_controller_node"), mpc_(std::move(solver))
+ {
+   declare_parameters_();
+   load_config_();
+@@ -297,7 +302,7 @@ void MpcControllerNode::init_mpc_solver_()
+   p.hydro.Nvv = this->get_parameter("vehicle.Nvv").as_double();
+   p.hydro.Nrr = this->get_parameter("vehicle.Nrr").as_double();
+ 
+-  mpc_ = make_dynamic_mpc(p);
++  if (!mpc_) {mpc_ = make_dynamic_mpc(p);}
+ }
+ 
+ void MpcControllerNode::init_state_()
+@@ -310,6 +315,9 @@ void MpcControllerNode::init_state_()
+   control_count_ = 0;
+   last_state_time_ = 0.0;
+   last_odom_time_ = 0.0;
++  last_commanded_thrust_.setZero();
++  last_applied_thrust_.setZero();
++  has_last_command_ = false;
+ }
+ 
+ void MpcControllerNode::init_pubsub_()
+@@ -477,6 +485,8 @@ std::pair<bool, std::string> MpcControllerNode::can_solve_() const
+ 
+ void MpcControllerNode::enter_standby_(const std::string & reason)
+ {
++  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
++  if (shutting_down_.load()) {return;}
+   bool transition = (prev_state_ != "STANDBY");
+   if (transition) {
+     solver_fail_count_ = 0;
+@@ -510,19 +520,33 @@ void MpcControllerNode::control_loop_()
+   run_dynamic_mpc_();
+ }
+ 
+-bool MpcControllerNode::enforce_solve_deadline_(SolveInfo & info)
++bool MpcControllerNode::enforce_solve_deadline_(
++  SolveInfo & info, double solve_wall_time_ms)
+ {
+-  bool deadline_miss = max_solve_time_ms_ > 0.0 && info.solve_time_ms > max_solve_time_ms_;
++  if (!std::isfinite(solve_wall_time_ms) || solve_wall_time_ms < 0.0 ||
++    !std::isfinite(info.solve_time_ms) || info.solve_time_ms < 0.0 ||
++    !std::isfinite(max_solve_time_ms_))
++  {
++    info.success = false;
++    snprintf(info.error, sizeof(info.error),
++             "solve_timing_invalid: wall=%.1fms backend=%.1fms limit=%.1fms",
++             solve_wall_time_ms, info.solve_time_ms, max_solve_time_ms_);
++    return true;
++  }
++  const bool deadline_miss = max_solve_time_ms_ > 0.0 &&
++    (solve_wall_time_ms > max_solve_time_ms_ || info.solve_time_ms > max_solve_time_ms_);
+   if (deadline_miss) {
+     info.success = false;
+-    snprintf(info.error, sizeof(info.error), "solve_timeout: %.1fms > %.1fms",
+-             info.solve_time_ms, max_solve_time_ms_);
++    snprintf(info.error, sizeof(info.error),
++             "solve_timeout: wall=%.1fms backend=%.1fms limit=%.1fms",
++             solve_wall_time_ms, info.solve_time_ms, max_solve_time_ms_);
+   }
+   return deadline_miss;
+ }
+ 
+ void MpcControllerNode::run_dynamic_mpc_()
+ {
++  if (shutting_down_.load()) {return;}
+   Vector6d current_state;
+   Eigen::MatrixXd reference;
+   {
+@@ -549,8 +573,31 @@ void MpcControllerNode::run_dynamic_mpc_()
+   X_pred:预测状态轨迹
+   U_pred:预测控制序列
+   */
++  // reset_warmstart() also clears the backend's previous-input anchor. Restore
++  // the published equivalent thrust after any pre-solve reset above.
++  {
++    std::lock_guard<std::mutex> output_lock(control_output_mutex_);
++    if (shutting_down_.load()) {return;}
++    if (has_last_command_) {mpc_->set_applied_control(last_applied_thrust_);}
++  }
++  const auto solve_start = std::chrono::steady_clock::now();
+   auto [u_opt, info] = mpc_->solve(current_state, reference);
+-  enforce_solve_deadline_(info);
++  const double solve_wall_time_ms = std::chrono::duration<double, std::milli>(
++    std::chrono::steady_clock::now() - solve_start).count();
++  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
++  if (shutting_down_.load()) {return;}
++  const bool time_rejected = enforce_solve_deadline_(info, solve_wall_time_ms);
++  Eigen::Vector2d selected_command = u_opt;
++  const char * control_source = info.success ? "solver" : "backend_fallback";
++  if (time_rejected) {
++    // solve() may already have shifted the late candidate into its warm start.
++    // Reject that state as well as its first command; this is a post-return gate,
++    // not a watchdog capable of publishing while synchronous solve() is blocked.
++    mpc_->reset_warmstart();
++    selected_command = has_last_command_ ?
++      last_commanded_thrust_ : Eigen::Vector2d::Zero();
++    control_source = has_last_command_ ? "repeat_last_command" : "zero_no_history";
++  }
+ 
+   bool in_hold = false;
+   if (info.success) {
+@@ -564,8 +611,9 @@ void MpcControllerNode::run_dynamic_mpc_()
+     }
+     if (solver_fail_count_ >= solver_hold_threshold_) {
+       in_hold = true;
+-      u_opt.setZero();
+-      mpc_->reset_warmstart();
++      selected_command.setZero();
++      control_source = "hold_zero";
++      if (!time_rejected) {mpc_->reset_warmstart();}
+       if (solver_fail_count_ == solver_hold_threshold_) {
+         RCLCPP_ERROR(this->get_logger(),
+                      "NMPC HOLD 挂起：连续失败 %d 次，正在发布零推力并重置热启动",
+@@ -574,21 +622,26 @@ void MpcControllerNode::run_dynamic_mpc_()
+     }
+   }
+ 
+-  const Eigen::Vector2d applied_thrust = publish_dynamic_output_(u_opt);
++  const Eigen::Vector2d applied_thrust = publish_dynamic_output_(selected_command);
+   // 求解器 solve() 内部先保存了计划首拍；这里用经过 RC/VRX 映射后真正
+   // 下发的等效推力覆盖，使下一拍 ΔT 代价和硬约束从执行输入出发。
+   mpc_->set_applied_control(applied_thrust);
+-  publish_status_(info, in_hold, u_opt, applied_thrust);
++  last_commanded_thrust_ = selected_command;
++  last_applied_thrust_ = applied_thrust;
++  has_last_command_ = true;
++  publish_status_(
++    info, in_hold, selected_command, applied_thrust, solve_wall_time_ms, control_source);
+ 
+   control_count_++;
+   if (control_count_ % 10 == 0) {
+     int steer = rc_pwm_center_, thr = rc_pwm_center_;
+-    // RC debug 与发布路径调用同一个纯映射函数，重算当前 u_opt。
+-    thrust_to_rc_pwm_(u_opt, steer, thr);
++    // RC debug uses the selected publication input, never the rejected candidate.
++    thrust_to_rc_pwm_(selected_command, steer, thr);
+     RCLCPP_INFO(this->get_logger(),
+                 "t=%.1fs  位置=(%.1f,%.1f)  计划推力=(%.1f,%.1f)N  "
+                 "下发等效推力=(%.1f,%.1f)N  RC(steer=%d, throttle=%d)  求解时间=%.0fms",
+-                control_count_ * mpc_dt_, x_, y_, u_opt(0), u_opt(1),
++                control_count_ * mpc_dt_, current_state(0), current_state(1),
++                selected_command(0), selected_command(1),
+                 applied_thrust(0), applied_thrust(1), steer, thr, info.solve_time_ms);
+   }
+ }
+@@ -641,6 +694,9 @@ Eigen::Vector2d MpcControllerNode::publish_dynamic_output_(
+ 
+ void MpcControllerNode::publish_zero_dynamic_output_()
+ {
++  has_last_command_ = false;
++  last_commanded_thrust_.setZero();
++  last_applied_thrust_.setZero();
+   if (output_mode_ == "vrx_thrust") {
+     release_vrx_thrust_();
+   } else {
+@@ -650,6 +706,7 @@ void MpcControllerNode::publish_zero_dynamic_output_()
+ 
+ void MpcControllerNode::release_rc_override_()
+ {
++  has_last_command_ = false;
+   // 全零 OverrideRCIn = 释放所有通道
+   rc_pub_->publish(mavros_msgs::msg::OverrideRCIn());
+ }
+@@ -671,6 +728,7 @@ Eigen::Vector2d MpcControllerNode::publish_vrx_thrust_(
+ 
+ void MpcControllerNode::release_vrx_thrust_()
+ {
++  has_last_command_ = false;
+   // VRX thruster 无"释放通道"概念, 零推力即停船
+   std_msgs::msg::Float64 left, right;
+   left.data = 0.0;
+@@ -682,13 +740,16 @@ void MpcControllerNode::release_vrx_thrust_()
+ void MpcControllerNode::publish_status_(
+   const SolveInfo & info, bool in_hold,
+   const Eigen::Vector2d & commanded_thrust,
+-  const Eigen::Vector2d & applied_thrust)
++  const Eigen::Vector2d & applied_thrust,
++  double solve_wall_time_ms, const char * control_source)
+ {
+   nlohmann::json j;
+   j["state"] = in_hold ? "HOLD" : "ACTIVE";
+   j["success"] = info.success;
+   j["fail_count"] = solver_fail_count_;
+   j["solve_time_ms"] = info.solve_time_ms;
++  j["solve_wall_time_ms"] = solve_wall_time_ms;
++  j["control_source"] = control_source;
+   j["max_solve_time_ms"] = max_solve_time_ms_;
+   j["deadline_miss"] = (std::strncmp(info.error, "solve_timeout", 13) == 0);
+   j["hold"] = in_hold;
+@@ -740,6 +801,8 @@ void MpcControllerNode::publish_standby_status_(const std::string & reason)
+   j["success"] = false;
+   j["fail_count"] = 0;
+   j["solve_time_ms"] = 0.0;
++  j["solve_wall_time_ms"] = 0.0;
++  j["control_source"] = "standby_release";
+   j["max_solve_time_ms"] = max_solve_time_ms_;
+   j["deadline_miss"] = false;
+   j["hold"] = false;
+@@ -866,9 +929,11 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Vector6d & current_sta
+ 
+ void MpcControllerNode::safe_shutdown()
+ {
++  shutting_down_.store(true);
++  std::lock_guard<std::mutex> output_lock(control_output_mutex_);
+   publish_zero_dynamic_output_();
+   publish_standby_status_("node_shutdown");
+-  RCLCPP_INFO(this->get_logger(), "MPC 节点退出: 已发送安全停车指令");
++  RCLCPP_INFO(this->get_logger(), "MPC 节点退出: 已释放控制或发布零推力目标");
+ }
+ 
+ }  // namespace usv_mpc
+diff --git a/usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp b/usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp
+new file mode 100644
+index 0000000..69efee6
+--- /dev/null
++++ b/usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp
+@@ -0,0 +1,612 @@
++// Copyright 2026 USV Developer
++//
++// Permission is hereby granted, free of charge, to any person obtaining a copy
++// of this software and associated documentation files (the "Software"), to deal
++// in the Software without restriction, including without limitation the rights
++// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++// copies of the Software, and to permit persons to whom the Software is
++// furnished to do so, subject to the following conditions:
++//
++// The above copyright notice and this permission notice shall be included in
++// all copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
++// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++// THE SOFTWARE.
++
++/**
++ * @file test_deadline_control.cpp
++ * @brief Deadline rejection regressions observing the actual ROS publications.
++ *
++ * No simulator, FCU, or production delay parameter is used. The controller timer
++ * is cancelled and every output is redirected to a unique test-only topic.
++ */
++
++#include <chrono>
++#include <cmath>
++#include <condition_variable>
++#include <cstdio>
++#include <limits>
++#include <memory>
++#include <mutex>
++#include <string>
++#include <thread>
++#include <utility>
++#include <vector>
++
++#include <gtest/gtest.h>
++#include <nlohmann/json.hpp>
++
++#include "usv_mpc_cpp/mpc_node.hpp"
++
++namespace usv_mpc
++{
++
++// The only private access seam; it injects a solver without changing ROS params.
++class MpcControllerNodeTestAccess
++{
++public:
++  static std::shared_ptr<MpcControllerNode> make(std::unique_ptr<DynamicMpc> solver)
++  {
++    auto node = std::shared_ptr<MpcControllerNode>(
++      new MpcControllerNode(std::move(solver)));
++    node->timer_->cancel();
++    node->dyn_T_min_ = -25.0;
++    node->dyn_T_max_ = 25.0;
++    node->max_solve_time_ms_ = 200.0;
++    node->solver_hold_threshold_ = 5;
++    node->publish_predicted_ = true;
++    node->prev_state_ = "ACTIVE";
++    node->reference_path_ = {{{0.0, 0.0, 0.0}}, {{1.0, 0.0, 0.0}},
++      {{2.0, 0.0, 0.0}}, {{3.0, 0.0, 0.0}}};
++    return node;
++  }
++
++  static void outputs(MpcControllerNode & node, const std::string & prefix)
++  {
++    node.rc_pub_ = node.create_publisher<mavros_msgs::msg::OverrideRCIn>(prefix + "/rc", 10);
++    node.vrx_left_pub_ = node.create_publisher<std_msgs::msg::Float64>(prefix + "/left", 10);
++    node.vrx_right_pub_ = node.create_publisher<std_msgs::msg::Float64>(prefix + "/right", 10);
++    node.status_pub_ = node.create_publisher<std_msgs::msg::String>(prefix + "/status", 10);
++    node.traj_pub_ = node.create_publisher<nav_msgs::msg::Path>(prefix + "/trajectory", 10);
++  }
++
++  static bool discovered(const MpcControllerNode & node)
++  {
++    return node.rc_pub_->get_subscription_count() > 0 &&
++           node.vrx_left_pub_->get_subscription_count() > 0 &&
++           node.vrx_right_pub_->get_subscription_count() > 0 &&
++           node.status_pub_->get_subscription_count() > 0 &&
++           node.traj_pub_->get_subscription_count() > 0;
++  }
++
++  static void vrx(MpcControllerNode & node, double scale = 1.0, double limit = 25.0)
++  {
++    node.output_mode_ = "vrx_thrust";
++    node.vrx_thrust_scale_ = scale;
++    node.vrx_thrust_cmd_max_ = limit;
++  }
++
++  static void rc(MpcControllerNode & node)
++  {
++    node.output_mode_ = "rc_override";
++    node.steering_gain_ = 1.0;
++    node.throttle_gain_ = 0.5;
++    node.steering_sign_ = -1.0;
++  }
++
++  static void run(MpcControllerNode & node)
++  {
++    // Make every candidate eligible for trajectory publication, including late ones.
++    node.control_count_ = 0;
++    node.run_dynamic_mpc_();
++  }
++
++  static void standby(MpcControllerNode & node) {node.enter_standby_("test_disarmed");}
++
++  static bool has_history(const MpcControllerNode & node) {return node.has_last_command_;}
++
++  static void heading(MpcControllerNode & node, double yaw) {node.psi_ = yaw;}
++
++  static bool enforce(MpcControllerNode & node, SolveInfo & info, double wall, double max)
++  {
++    node.max_solve_time_ms_ = max;
++    return node.enforce_solve_deadline_(info, wall);
++  }
++};
++
++}  // namespace usv_mpc
++
++namespace
++{
++
++using usv_mpc::MpcControllerNodeTestAccess;
++using usv_mpc::SolveInfo;
++using namespace std::chrono_literals;
++
++class FakeDynamicMpc : public usv_mpc::DynamicMpc
++{
++public:
++  Eigen::Vector2d candidate = {8.0, 12.0};
++  Eigen::Vector2d anchor = Eigen::Vector2d::Zero();
++  Eigen::Vector2d solve_entry_anchor = Eigen::Vector2d::Zero();
++  bool success = true;
++  double reported_ms = 1.0;
++  std::chrono::milliseconds delay{0};
++  int reset_count = 0;
++  std::vector<std::string> events;
++  bool block = false;
++  bool entered = false;
++  bool released = false;
++  std::mutex gate_mutex;
++  std::condition_variable gate;
++
++  std::pair<Eigen::Vector2d, SolveInfo> solve(
++    const usv_mpc::Vector6d &, const Eigen::MatrixXd &) override
++  {
++    solve_entry_anchor = anchor;
++    events.push_back("solve");
++    if (block) {
++      std::unique_lock<std::mutex> lock(gate_mutex);
++      entered = true;
++      gate.notify_all();
++      gate.wait(lock, [this]() {return released;});
++    }
++    std::this_thread::sleep_for(delay);
++    anchor = candidate;  // Mirrors the backend's tentative first-control cache.
++    SolveInfo info;
++    info.success = success;
++    info.solve_time_ms = reported_ms;
++    std::snprintf(info.backend, sizeof(info.backend), "fake");
++    if (!success) {std::snprintf(info.error, sizeof(info.error), "backend_failure");}
++    info.X_pred = Eigen::MatrixXd::Zero(6, N() + 1);
++    info.U_pred = Eigen::MatrixXd::Zero(2, N());
++    return {candidate, std::move(info)};
++  }
++
++  void set_applied_control(const Eigen::Vector2d & applied) override
++  {
++    events.push_back("set_applied");
++    anchor = applied;
++  }
++
++  void reset_warmstart() override
++  {
++    events.push_back("reset");
++    ++reset_count;
++    anchor.setZero();
++  }
++
++  Eigen::MatrixXd get_predicted_trajectory() const override {return {};}
++  int N() const override {return 2;}
++  double dt() const override {return 0.2;}
++  const char * backend() const override {return "fake";}
++};
++
++class DeadlineControl : public ::testing::Test
++{
++protected:
++  static void SetUpTestSuite() {rclcpp::init(0, nullptr);}
++  static void TearDownTestSuite() {rclcpp::shutdown();}
++
++  void SetUp() override
++  {
++    static unsigned int sequence = 0;
++    const auto suffix = std::to_string(++sequence);
++    prefix_ = "/deadline_test/instance_" + suffix;
++    auto solver = std::make_unique<FakeDynamicMpc>();
++    fake_ = solver.get();
++    controller_ = MpcControllerNodeTestAccess::make(std::move(solver));
++    MpcControllerNodeTestAccess::outputs(*controller_, prefix_);
++    MpcControllerNodeTestAccess::vrx(*controller_);
++    observer_ = std::make_shared<rclcpp::Node>("deadline_observer_" + suffix);
++    left_sub_ = observer_->create_subscription<std_msgs::msg::Float64>(
++      prefix_ + "/left", 10,
++      [this](std_msgs::msg::Float64::ConstSharedPtr msg) {left_.push_back(msg->data);});
++    right_sub_ = observer_->create_subscription<std_msgs::msg::Float64>(
++      prefix_ + "/right", 10,
++      [this](std_msgs::msg::Float64::ConstSharedPtr msg) {right_.push_back(msg->data);});
++    rc_sub_ = observer_->create_subscription<mavros_msgs::msg::OverrideRCIn>(
++      prefix_ + "/rc", 10,
++      [this](mavros_msgs::msg::OverrideRCIn::ConstSharedPtr msg) {rc_.push_back(*msg);});
++    status_sub_ = observer_->create_subscription<std_msgs::msg::String>(
++      prefix_ + "/status", 10,
++      [this](std_msgs::msg::String::ConstSharedPtr msg) {
++        status_.push_back(nlohmann::json::parse(msg->data));
++      });
++    traj_sub_ = observer_->create_subscription<nav_msgs::msg::Path>(
++      prefix_ + "/trajectory", 10,
++      [this](nav_msgs::msg::Path::ConstSharedPtr) {++trajectories_;});
++    executor_.add_node(observer_);
++    const auto deadline = std::chrono::steady_clock::now() + 3s;
++    while (!MpcControllerNodeTestAccess::discovered(*controller_) &&
++      std::chrono::steady_clock::now() < deadline)
++    {
++      executor_.spin_some();
++      std::this_thread::sleep_for(5ms);
++    }
++    ASSERT_TRUE(MpcControllerNodeTestAccess::discovered(*controller_));
++  }
++
++  void TearDown() override
++  {
++    executor_.remove_node(observer_);
++    controller_.reset();
++    observer_.reset();
++  }
++
++  void run(bool use_rc = false)
++  {
++    left_.clear(); right_.clear(); rc_.clear(); status_.clear(); trajectories_ = 0;
++    MpcControllerNodeTestAccess::run(*controller_);
++    drain(use_rc);
++  }
++
++  void drain(bool use_rc = false)
++  {
++    const auto deadline = std::chrono::steady_clock::now() + 2s;
++    while ((status_.empty() || (use_rc ? rc_.empty() : (left_.empty() || right_.empty()))) &&
++      std::chrono::steady_clock::now() < deadline)
++    {
++      executor_.spin_some();
++      std::this_thread::sleep_for(2ms);
++    }
++    executor_.spin_some();
++    // Drain the trajectory topic too before clearing observations for the next run.
++    const auto settle = std::chrono::steady_clock::now() + 20ms;
++    while (std::chrono::steady_clock::now() < settle) {
++      executor_.spin_some();
++      std::this_thread::sleep_for(1ms);
++    }
++    ASSERT_EQ(status_.size(), 1u);
++    if (use_rc) {
++      ASSERT_EQ(rc_.size(), 1u);
++    } else {
++      ASSERT_EQ(left_.size(), 1u);
++      ASSERT_EQ(right_.size(), 1u);
++    }
++  }
++
++  void expect_vrx(double left, double right)
++  {
++    ASSERT_EQ(left_.size(), 1u);
++    ASSERT_EQ(right_.size(), 1u);
++    EXPECT_DOUBLE_EQ(left_.at(0), left);
++    EXPECT_DOUBLE_EQ(right_.at(0), right);
++    EXPECT_DOUBLE_EQ(fake_->anchor(0), left);
++    EXPECT_DOUBLE_EQ(fake_->anchor(1), right);
++  }
++
++  std::shared_ptr<usv_mpc::MpcControllerNode> controller_;
++  FakeDynamicMpc * fake_ = nullptr;
++  std::shared_ptr<rclcpp::Node> observer_;
++  rclcpp::executors::SingleThreadedExecutor executor_;
++  std::string prefix_;
++  rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr left_sub_, right_sub_;
++  rclcpp::Subscription<mavros_msgs::msg::OverrideRCIn>::SharedPtr rc_sub_;
++  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr status_sub_;
++  rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr traj_sub_;
++  std::vector<double> left_, right_;
++  std::vector<mavros_msgs::msg::OverrideRCIn> rc_;
++  std::vector<nlohmann::json> status_;
++  unsigned int trajectories_ = 0;
++};
++
++TEST_F(DeadlineControl, TimelySuccessPublishesCandidateAndActualAnchor)
++{
++  run();
++  expect_vrx(8.0, 12.0);
++  EXPECT_TRUE(status_.at(0).at("success").get<bool>());
++  EXPECT_FALSE(status_.at(0).at("deadline_miss").get<bool>());
++  EXPECT_TRUE(status_.at(0).contains("solve_wall_time_ms"));
++  EXPECT_TRUE(status_.at(0).contains("control_source"));
++  EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(), "solver");
++  EXPECT_EQ(trajectories_, 1u);
++  EXPECT_EQ(fake_->reset_count, 0);
++}
++
++TEST_F(DeadlineControl, BlockingSolveWithShortBackendTimingCannotPublishItsCandidate)
++{
++  run();
++  fake_->candidate = {22.0, -18.0};
++  fake_->reported_ms = 1.0;
++  int rejected_count = 0;
++  for (const auto delay : {250ms, 400ms}) {
++    SCOPED_TRACE(delay.count());
++    fake_->delay = delay;
++    const auto start = std::chrono::steady_clock::now();
++    run();
++    EXPECT_GE(std::chrono::steady_clock::now() - start, delay);
++    expect_vrx(8.0, 12.0);
++    EXPECT_FALSE(status_.at(0).at("success").get<bool>());
++    EXPECT_TRUE(status_.at(0).at("deadline_miss").get<bool>());
++    EXPECT_DOUBLE_EQ(status_.at(0).at("solve_time_ms").get<double>(), 1.0);
++    const double wall_ms = status_.at(0).at("solve_wall_time_ms").get<double>();
++    EXPECT_GE(wall_ms, static_cast<double>(delay.count()));
++    EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(), "repeat_last_command");
++    EXPECT_EQ(trajectories_, 0u);
++    ASSERT_GE(fake_->events.size(), 3u);
++    EXPECT_EQ(fake_->events[fake_->events.size() - 2], "reset");
++    EXPECT_EQ(fake_->events.back(), "set_applied");
++    ++rejected_count;
++    EXPECT_EQ(fake_->reset_count, rejected_count);
++    std::printf(
++      "DEADLINE_OBSERVED injected_ms=%d backend_ms=%.3f wall_ms=%.3f "
++      "left=%.3f right=%.3f source=%s\n",
++      static_cast<int>(delay.count()),
++      status_.at(0).at("solve_time_ms").get<double>(), wall_ms,
++      left_.at(0), right_.at(0),
++      status_.at(0).at("control_source").get<std::string>().c_str());
++  }
++}
++
++TEST_F(DeadlineControl, BackendReportedTimeoutIsAlsoRejectedAndRecoveryUsesActualAnchor)
++{
++  run();
++  fake_->candidate = {22.0, -18.0};
++  fake_->reported_ms = 250.0;
++  run();
++  expect_vrx(8.0, 12.0);
++  EXPECT_TRUE(status_.at(0).at("deadline_miss").get<bool>());
++  EXPECT_EQ(trajectories_, 0u);
++  fake_->candidate = {9.0, 11.0};
++  fake_->reported_ms = 1.0;
++  run();
++  EXPECT_DOUBLE_EQ(fake_->solve_entry_anchor(0), 8.0);
++  EXPECT_DOUBLE_EQ(fake_->solve_entry_anchor(1), 12.0);
++  expect_vrx(9.0, 11.0);
++  EXPECT_TRUE(status_.at(0).at("success").get<bool>());
++  EXPECT_EQ(status_.at(0).at("fail_count").get<int>(), 0);
++}
++
++TEST_F(DeadlineControl, FirstTimeoutCommandsNeutralRcInsteadOfReleasingChannels)
++{
++  MpcControllerNodeTestAccess::rc(*controller_);
++  fake_->reported_ms = 250.0;
++  run(true);
++  ASSERT_EQ(rc_.size(), 1u);
++  EXPECT_EQ(rc_.at(0).channels[0], 1500u);
++  EXPECT_EQ(rc_.at(0).channels[2], 1500u);
++  EXPECT_TRUE(fake_->anchor.isZero());
++  EXPECT_FALSE(status_.at(0).at("hold").get<bool>());
++  EXPECT_EQ(status_.at(0).at("fail_count").get<int>(), 1);
++  EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(), "zero_no_history");
++}
++
++TEST_F(DeadlineControl, FirstTimeoutWithoutCachePublishesZeroVrx)
++{
++  fake_->reported_ms = 250.0;
++  run();
++  expect_vrx(0.0, 0.0);
++}
++
++TEST_F(DeadlineControl, FourTimeoutsHoldLastCommandAndFifthEntersHold)
++{
++  run();
++  fake_->candidate = {22.0, -18.0};
++  fake_->reported_ms = 250.0;
++  for (int failure = 1; failure <= 6; ++failure) {
++    SCOPED_TRACE(failure);
++    run();
++    expect_vrx(failure < 5 ? 8.0 : 0.0, failure < 5 ? 12.0 : 0.0);
++    EXPECT_EQ(status_.at(0).at("fail_count").get<int>(), failure);
++    EXPECT_EQ(status_.at(0).at("hold").get<bool>(), failure >= 5);
++    EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(),
++      failure >= 5 ? "hold_zero" : "repeat_last_command");
++    EXPECT_EQ(trajectories_, 0u);
++  }
++}
++
++TEST_F(DeadlineControl, NonunitVrxScaleAndClampAreNotAppliedTwiceOnTimeout)
++{
++  for (const double scale : {0.5, 2.0}) {
++    SCOPED_TRACE(scale);
++    MpcControllerNodeTestAccess::vrx(*controller_, scale, 20.0);
++    fake_->candidate = {12.0, -18.0};
++    fake_->reported_ms = 1.0;
++    run();
++    const double expected_left = scale == 0.5 ? 6.0 : 20.0;
++    const double expected_right = scale == 0.5 ? -9.0 : -20.0;
++    expect_vrx(expected_left, expected_right);
++    fake_->candidate = {-22.0, 22.0};
++    fake_->reported_ms = 250.0;
++    run();
++    expect_vrx(expected_left, expected_right);
++    EXPECT_DOUBLE_EQ(status_.at(0).at("tl_cmd_n").get<double>(), 12.0);
++    EXPECT_DOUBLE_EQ(status_.at(0).at("tr_cmd_n").get<double>(), -18.0);
++    fake_->reported_ms = 1.0;
++    run();
++    EXPECT_DOUBLE_EQ(fake_->solve_entry_anchor(0), expected_left);
++    EXPECT_DOUBLE_EQ(fake_->solve_entry_anchor(1), expected_right);
++  }
++}
++
++TEST_F(DeadlineControl, RcTimeoutRepeatsTheSamePwmAndKeepsMappedAnchor)
++{
++  MpcControllerNodeTestAccess::rc(*controller_);
++  fake_->candidate = {8.0, 20.0};
++  run(true);
++  ASSERT_EQ(rc_.size(), 1u);
++  const auto original = rc_.at(0);
++  EXPECT_EQ(original.channels[0], 1404u);
++  EXPECT_EQ(original.channels[2], 1612u);
++  const Eigen::Vector2d anchor = fake_->anchor;
++  EXPECT_DOUBLE_EQ(anchor(0), 1.0);
++  EXPECT_DOUBLE_EQ(anchor(1), 13.0);
++  fake_->candidate = {22.0, -18.0};
++  fake_->reported_ms = 250.0;
++  run(true);
++  ASSERT_EQ(rc_.size(), 1u);
++  EXPECT_EQ(rc_.at(0).channels, original.channels);
++  EXPECT_TRUE(fake_->anchor.isApprox(anchor));
++  EXPECT_DOUBLE_EQ(status_.at(0).at("tl_cmd_n").get<double>(), 8.0);
++  EXPECT_DOUBLE_EQ(status_.at(0).at("tr_cmd_n").get<double>(), 20.0);
++}
++
++TEST_F(DeadlineControl, HeadingWarmstartResetRestoresThePublishedAnchorBeforeSolve)
++{
++  MpcControllerNodeTestAccess::vrx(*controller_, 0.5);
++  run();
++  expect_vrx(4.0, 6.0);
++  const auto event_start = fake_->events.size();
++  MpcControllerNodeTestAccess::heading(*controller_, std::acos(-1.0));
++  fake_->candidate = {10.0, 14.0};
++  run();
++  EXPECT_EQ(fake_->reset_count, 1);
++  EXPECT_DOUBLE_EQ(fake_->solve_entry_anchor(0), 4.0);
++  EXPECT_DOUBLE_EQ(fake_->solve_entry_anchor(1), 6.0);
++  ASSERT_GE(fake_->events.size(), event_start + 3);
++  EXPECT_EQ(fake_->events[event_start], "reset");
++  EXPECT_EQ(fake_->events[event_start + 1], "set_applied");
++  EXPECT_EQ(fake_->events[event_start + 2], "solve");
++  expect_vrx(5.0, 7.0);
++  EXPECT_TRUE(status_.at(0).at("success").get<bool>());
++}
++
++TEST_F(DeadlineControl, StandbyInvalidatesCachedCommandBeforeNextTimeout)
++{
++  run();
++  left_.clear(); right_.clear(); status_.clear();
++  MpcControllerNodeTestAccess::standby(*controller_);
++  drain();
++  EXPECT_DOUBLE_EQ(left_.at(0), 0.0);
++  EXPECT_DOUBLE_EQ(right_.at(0), 0.0);
++  EXPECT_EQ(status_.at(0).at("state").get<std::string>(), "STANDBY");
++  fake_->candidate = {22.0, -18.0};
++  fake_->reported_ms = 250.0;
++  run();
++  expect_vrx(0.0, 0.0);
++  EXPECT_EQ(status_.at(0).at("fail_count").get<int>(), 1);
++}
++
++TEST_F(DeadlineControl, OrdinaryTimelyBackendFailureRetainsExistingFallbackBehavior)
++{
++  run();
++  fake_->success = false;
++  fake_->candidate = {6.0, 7.0};
++  run();
++  expect_vrx(6.0, 7.0);
++  EXPECT_FALSE(status_.at(0).at("success").get<bool>());
++  EXPECT_FALSE(status_.at(0).at("deadline_miss").get<bool>());
++  EXPECT_EQ(fake_->reset_count, 0);
++  EXPECT_EQ(status_.at(0).at("error").get<std::string>(), "backend_failure");
++  EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(), "backend_fallback");
++}
++
++TEST_F(DeadlineControl, BackendFailureWithLateTimingStillRejectsItsReturnedControl)
++{
++  run();
++  fake_->success = false;
++  fake_->reported_ms = 250.0;
++  fake_->candidate = {22.0, -18.0};
++  run();
++  expect_vrx(8.0, 12.0);
++  EXPECT_TRUE(status_.at(0).at("deadline_miss").get<bool>());
++  EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(), "repeat_last_command");
++  EXPECT_EQ(fake_->reset_count, 1);
++}
++
++TEST_F(DeadlineControl, ShutdownDuringSolveCannotRepublishOrReviveCachedControl)
++{
++  run();
++  left_.clear(); right_.clear(); status_.clear(); trajectories_ = 0;
++  fake_->candidate = {22.0, -18.0};
++  fake_->block = true;
++  std::thread solving([this]() {MpcControllerNodeTestAccess::run(*controller_);});
++  bool entered = false;
++  {
++    std::unique_lock<std::mutex> lock(fake_->gate_mutex);
++    entered = fake_->gate.wait_for(lock, 2s, [this]() {return fake_->entered;});
++  }
++  EXPECT_TRUE(entered);
++  controller_->safe_shutdown();
++  {
++    std::lock_guard<std::mutex> lock(fake_->gate_mutex);
++    fake_->released = true;
++  }
++  fake_->gate.notify_all();
++  solving.join();
++  drain();
++  EXPECT_DOUBLE_EQ(left_.at(0), 0.0);
++  EXPECT_DOUBLE_EQ(right_.at(0), 0.0);
++  EXPECT_EQ(status_.at(0).at("state").get<std::string>(), "STANDBY");
++  EXPECT_EQ(status_.at(0).at("standby_reason").get<std::string>(), "node_shutdown");
++  EXPECT_EQ(trajectories_, 0u);
++  EXPECT_FALSE(MpcControllerNodeTestAccess::has_history(*controller_));
++  const auto event_count = fake_->events.size();
++  MpcControllerNodeTestAccess::run(*controller_);
++  executor_.spin_some();
++  EXPECT_EQ(fake_->events.size(), event_count);
++  EXPECT_EQ(left_.size(), 1u);
++  EXPECT_EQ(right_.size(), 1u);
++}
++
++TEST_F(DeadlineControl, InvalidBackendTimingCannotPublishItsCandidate)
++{
++  for (const double invalid : {std::numeric_limits<double>::quiet_NaN(),
++      std::numeric_limits<double>::infinity(), -1.0})
++  {
++    fake_->candidate = {8.0, 12.0};
++    fake_->reported_ms = 1.0;
++    run();
++    fake_->candidate = {22.0, -18.0};
++    fake_->reported_ms = invalid;
++    run();
++    expect_vrx(8.0, 12.0);
++    EXPECT_FALSE(status_.at(0).at("success").get<bool>());
++    EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(), "repeat_last_command");
++    EXPECT_EQ(trajectories_, 0u);
++  }
++}
++
++TEST_F(DeadlineControl, DeadlineBoundaryAndDisabledBudgetRemainCompatible)
++{
++  SolveInfo info;
++  info.success = true;
++  info.solve_time_ms = 200.0;
++  EXPECT_FALSE(MpcControllerNodeTestAccess::enforce(*controller_, info, 200.0, 200.0));
++  EXPECT_TRUE(info.success);
++  EXPECT_TRUE(MpcControllerNodeTestAccess::enforce(*controller_, info, 200.001, 200.0));
++  EXPECT_FALSE(info.success);
++  for (const double budget : {0.0, -1.0}) {
++    SCOPED_TRACE(budget);
++    info = SolveInfo{};
++    info.success = true;
++    info.solve_time_ms = 300.0;
++    EXPECT_FALSE(MpcControllerNodeTestAccess::enforce(*controller_, info, 300.0, budget));
++    EXPECT_TRUE(info.success);
++  }
++}
++
++TEST_F(DeadlineControl, InvalidTimingFailsClosedEvenWhenBudgetIsDisabled)
++{
++  const double nan = std::numeric_limits<double>::quiet_NaN();
++  const double inf = std::numeric_limits<double>::infinity();
++  for (const double invalid : {nan, inf, -1.0}) {
++    for (const double budget : {0.0, 200.0}) {
++      SolveInfo info;
++      info.success = true;
++      info.solve_time_ms = invalid;
++      EXPECT_TRUE(MpcControllerNodeTestAccess::enforce(*controller_, info, 1.0, budget));
++      EXPECT_FALSE(info.success);
++      info = SolveInfo{};
++      info.success = true;
++      info.solve_time_ms = 1.0;
++      EXPECT_TRUE(MpcControllerNodeTestAccess::enforce(*controller_, info, invalid, budget));
++      EXPECT_FALSE(info.success);
++    }
++  }
++  for (const double invalid_budget : {nan, inf}) {
++    SolveInfo info;
++    info.success = true;
++    info.solve_time_ms = 1.0;
++    EXPECT_TRUE(MpcControllerNodeTestAccess::enforce(*controller_, info, 1.0, invalid_budget));
++    EXPECT_FALSE(info.success);
++  }
++}
++
++}  // namespace

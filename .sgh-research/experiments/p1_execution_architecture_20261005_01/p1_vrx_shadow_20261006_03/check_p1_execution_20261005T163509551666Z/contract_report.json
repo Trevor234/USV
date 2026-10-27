@@ -1,0 +1,16 @@
+{
+  "schema": "p1-execution-check-v1",
+  "passed": false,
+  "normal_contract_complete": false,
+  "reader_error": "FileNotFoundError: [Errno 2] No such file or directory: '/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_vrx_shadow_20261006_03/regulator_source.jsonl'",
+  "input_sha256_before": {},
+  "issues": [
+    {
+      "code": "reader_or_source_error",
+      "scope": "recording",
+      "message": "[Errno 2] No such file or directory: '/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_vrx_shadow_20261006_03/regulator_source.jsonl'"
+    }
+  ],
+  "checker_sha256": "3fcaf438e78dc72999994cd2898a894bb8d3df5f242f86bbbc81cdef520f9696",
+  "report_created_utc": "2026-10-05T16:35:09.650082+00:00"
+}

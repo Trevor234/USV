@@ -1,0 +1,15 @@
+# 方案A当前状态：第37批V3（2026-10-19启动，2026-10-20收尾）
+
+V3选定名义域的实际owned来源交错已完成。Observer新增显式一次性shadow等待入口；在已有健康激活后，让真实odom回调在快照复制后、最终commit前完成，不改传感器值或观测JSON。原32历史、最多2次校验、20ms抖动和150ms job deadline均保留。
+
+唯一实际run v3_odom_01：Decision26/job2，odom110→111，等待8.820274ms；第一轮原guard检测输入变化，复制新快照后第二轮通过，提交jitter8.956596ms。第二轮raw为111，因目标时刻因果性仍选择110，扫描3/32条；独立完整CDR/GID/Stored与RK4重算通过。25个实际候选全部accepted，另有23个准备期legacy_not_ready、4个no_candidate和1个shutdown，不能把全生命周期53条Decision全部当成候选拒绝。
+
+29项source-linked Native通过，8项真实raw副本审计反例全部拒绝。唯一实际launcher17.797s，五角色return0，正常Publisher-first尾部ACK及组空，宿主进程扫描无遗留。Stored1804消息/53 Decision/30 Applied/59 capability，关机零Applied30；Worker正常Source完整。Recorder内建stream_accounting=false原样保留，独立SQL/metadata核验通过。
+
+只新建Observer ELF，另外四角色及合同、Source认证、Supervisor、最终activation guard和发布/来源/clock回调主体字节保持。初次构建因同一行两次GTest异常断言导致宏标签冲突，失败构建与源码快照保留，拆行后第二次构建通过；未因此重复实际run。
+
+组件证据成立；Witness的normal_contract_qualified只指记录完整性与BusinessReady一致性。shadow Decision的normal_contract_complete按原mode==execute条件仍false。B4整体八组pending、B5/M0b、M4实际唯一出口、模型事务/F6及原P1整体尚未授予资格，原RMSE诊断NoGo和全部旧失败保留。实际clock/参考失效不是本run覆盖，不从Native累加成全域结论。
+
+下一步停止重复V3相同用例，先固定新Observer、既有Worker和监督政策的最终组合，完成无SIGSTOP普通监督路径和按影响图选择的必要旧V1/V2补验，再闭合B4来源/域/政策并向B5推进。研究结论仍false。
+
+交付仅认本批delivery_verification.json的完整二次SHA读回；不声称已重读所有历史MPC镜像。

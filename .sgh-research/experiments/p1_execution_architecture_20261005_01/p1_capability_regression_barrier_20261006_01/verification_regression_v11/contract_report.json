@@ -1,0 +1,329 @@
+{
+  "schema": "p1-execution-check-v1",
+  "run_id": "p1_capability_regression_barrier_20261006_01",
+  "mode": "no_output",
+  "passed": false,
+  "source_bag_contract_complete": false,
+  "logical_admission_contract_passed": true,
+  "lifecycle_verified": false,
+  "diagnostic_complete": false,
+  "raw_input_recording_complete": true,
+  "raw_input_count_comparison": {
+    "clock": {
+      "topic": "/clock",
+      "fixture_published": 271,
+      "actual_bag_count": 271
+    },
+    "odom": {
+      "topic": "/wamv/sensors/position/ground_truth_odometry",
+      "fixture_published": 271,
+      "actual_bag_count": 271
+    },
+    "imu": {
+      "topic": "/wamv/sensors/imu/imu/data",
+      "fixture_published": 271,
+      "actual_bag_count": 271
+    },
+    "path": {
+      "topic": "/path/reference",
+      "fixture_published": 6,
+      "actual_bag_count": 6
+    },
+    "profile": {
+      "topic": "/path/reference_profile",
+      "fixture_published": 6,
+      "actual_bag_count": 6
+    }
+  },
+  "raw_input_recording_scope": "fixture publisher counts versus independently scanned five raw topic bag counts; count agreement does not prove callback reconstruction",
+  "activation_source_contract_complete": false,
+  "activation_source_evidence_limit": "v2 current commit source fields and valid source admissions independently checked; not raw callback/bag reconstruction, coordinate transformation, plant ACK or force",
+  "decision_schema_expected": "p1-execution-decision-v2",
+  "activation_source_observations": {
+    "odom": {
+      "receive_age_ms": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      },
+      "sim_lag_ms": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      }
+    },
+    "imu": {
+      "receive_age_ms": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      },
+      "sim_lag_ms": {
+        "count": 0,
+        "p50": null,
+        "p95": null,
+        "p99": null,
+        "max": null
+      }
+    }
+  },
+  "activation_mixed_skew_ms": {
+    "count": 0,
+    "p50": null,
+    "p95": null,
+    "p99": null,
+    "max": null
+  },
+  "normal_contract_complete": false,
+  "execute_qualified": false,
+  "fault_run": true,
+  "fault_mechanism_passed": true,
+  "fault_mechanism_evidence_complete": true,
+  "fault_expected_worker_source_gaps": [
+    {
+      "code": "terminal_summary_missing_or_nonterminal",
+      "scope": "lifecycle",
+      "stream": "worker"
+    },
+    {
+      "code": "worker_source_counts_or_incomplete",
+      "scope": "recording"
+    },
+    {
+      "code": "lifecycle_fact_unknown_or_false",
+      "scope": "lifecycle",
+      "field": "worker_source_flush_verified"
+    }
+  ],
+  "fault_delay_observations": {
+    "declared_ms": 0,
+    "observed": false,
+    "source_candidate_count": 0,
+    "expired_registration_count": 0,
+    "expired_all_rejected_and_unconsumed": true,
+    "semantics": "owned argv and capability plus source publication interval; scheduling overhead included"
+  },
+  "mechanism_assertions": [
+    {
+      "name": "no_physical_publishers",
+      "passed": true
+    },
+    {
+      "name": "watchdog_invalidated",
+      "passed": true
+    }
+  ],
+  "issues": [
+    {
+      "code": "terminal_summary_missing_or_nonterminal",
+      "scope": "lifecycle",
+      "stream": "worker"
+    },
+    {
+      "code": "worker_source_counts_or_incomplete",
+      "scope": "recording"
+    },
+    {
+      "code": "lifecycle_fact_unknown_or_false",
+      "scope": "lifecycle",
+      "field": "worker_source_flush_verified"
+    }
+  ],
+  "streams": {
+    "jobs": {
+      "source_count": 6,
+      "bag_count": 6
+    },
+    "candidates": {
+      "source_count": 0,
+      "bag_count": 0
+    },
+    "decisions": {
+      "source_count": 8,
+      "bag_count": 8
+    }
+  },
+  "regulator_summary": {
+    "dropped": 0,
+    "emitted": 410,
+    "finished_ns": 1060123765945320,
+    "generated": 410,
+    "normal_source_complete": true,
+    "type": "source_summary"
+  },
+  "worker_summary": {},
+  "observed_metrics": {
+    "tick_start_jitter_ms": {
+      "count": 8,
+      "p50": 0.0801325,
+      "p95": 0.22809894999999997,
+      "p99": 0.25654778999999994,
+      "max": 0.26366
+    },
+    "activation_jitter_ms": {
+      "count": 8,
+      "p50": 0.138668,
+      "p95": 0.3698144,
+      "p99": 0.39167567999999997,
+      "max": 0.397141
+    },
+    "solve_wall_ms": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "backend_ms": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "publish_span_ms": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "target_sim_alignment_ms": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "rtf": {
+      "count": 121,
+      "p50": 0.9997641034262418,
+      "p95": 1.032675714319854,
+      "p99": 1.038927871404888,
+      "max": 1.0401450354758182
+    }
+  },
+  "activation_component_abs_error": {
+    "x_m": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "y_m": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "psi_rad": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "u_m_s": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "v_m_s": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    },
+    "r_rad_s": {
+      "count": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null
+    }
+  },
+  "metrics_semantics": "finite source samples only; diagnostic observations are not worst-case or qualified budgets",
+  "guarantees": {
+    "plant_acceptance_observed": false,
+    "plant_force_measured": false,
+    "atomic_physical_execution_proven": false,
+    "exact_plant_step_timing_proven": false,
+    "gp_training_eligible": false,
+    "raw_callback_bag_exact_reconstruction_proven": false
+  },
+  "storage": {
+    "storage": "mcap",
+    "actual_topic_counts": {
+      "/p1/worker_capability": 24,
+      "/clock": 271,
+      "/wamv/sensors/position/ground_truth_odometry": 271,
+      "/wamv/sensors/imu/imu/data": 271,
+      "/path/reference": 6,
+      "/path/reference_profile": 6,
+      "/p1/execution_decision": 8,
+      "/p1/solve_job": 6,
+      "/p1/stop": 7
+    },
+    "topic_types": {
+      "/path/reference_profile": "std_msgs/msg/Float64MultiArray",
+      "/wamv/sensors/position/ground_truth_odometry": "nav_msgs/msg/Odometry",
+      "/path/reference": "nav_msgs/msg/Path",
+      "/wamv/sensors/imu/imu/data": "sensor_msgs/msg/Imu",
+      "/p1/stop": "std_msgs/msg/Bool",
+      "/p1/solve_job": "usv_research_interfaces/msg/SolveJob",
+      "/p1/worker_capability": "usv_research_interfaces/msg/WorkerCapability",
+      "/p1/solve_candidate": "usv_research_interfaces/msg/SolveCandidate",
+      "/p1/execution_decision": "usv_research_interfaces/msg/ExecutionDecision",
+      "/clock": "rosgraph_msgs/msg/Clock"
+    },
+    "bag_time_semantics": "storage timestamp; never subtracted from CLOCK_MONOTONIC or sim"
+  },
+  "raw_inputs_unchanged": true,
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/fixture_source.jsonl": "412523e0bf23c74f0bbb5f5c4ed558a533c37664db5d250c9cbb48da6c44efd1",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v11/p1_shadow_contract_v4.json": "d2178741bcdd82a53089e08ffe508c16526c3782b4d4b99a8c5d22109e731e0f",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/run_context.json": "4a3a0466d39834cdd7f53a4032fdbd26bad960bcb3aeb6b066b8e32ae9974cc3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/regulator_source.jsonl": "8910fbbbacdb6f1d526846ecb3e62267bdf6982a4183b1d8cea464caf7e16ae3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/worker_source.jsonl": "fb0a57873ffa08ad066e1d5aea111ad40086b5753e22d3e34d3d68a10512ef1b",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/runner_summary.json": "3c6ac3fc1cd7f86e67f122ca4ac2986f71b7913d93a7b9611e484c8021c4bd89",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/owned_process_ledger.jsonl": "cf7de20f9d9e121659ab842c1f651673f09db251d593d2ee3ae6d6de38405e31",
+    "/usr/bin/python3.12": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+    "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator": "e1038c71780b85727f8f30a99d93f86b86ffc0abbd75f04edc7d0b8064c36489",
+    "/opt/ros/jazzy/bin/ros2": "3308327fcefeaefe5601f72e0b473a5f9f9638434f5773d2f40b124f7c9aa04d",
+    "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker": "e78dd29dd86a329e5edf6a92f4bd1eac778ef1fe07dcabc78ddfb4095ffb028a",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/regulator.console.log": "ffd463f65391d77aec0f1588bdf99f400a521552e53cd847337312ca4f62b3d7",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/worker.console.log": "023b119144216dbc144de6b2b47fff317fb2de7a2c5110cd4b1306747a5ad8ea",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/raw_bag/metadata.yaml": "9677826c5c455dfd51ed22e35ae814301415e87dddb680a85a38afd438842fcd",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/raw_bag/raw_bag_0.mcap": "e48d81732687a03ce948284840308e7e677d6499804c23c2a895c6b7e54c7bfc"
+  },
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/fixture_source.jsonl": "412523e0bf23c74f0bbb5f5c4ed558a533c37664db5d250c9cbb48da6c44efd1",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v11/p1_shadow_contract_v4.json": "d2178741bcdd82a53089e08ffe508c16526c3782b4d4b99a8c5d22109e731e0f",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/run_context.json": "4a3a0466d39834cdd7f53a4032fdbd26bad960bcb3aeb6b066b8e32ae9974cc3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/regulator_source.jsonl": "8910fbbbacdb6f1d526846ecb3e62267bdf6982a4183b1d8cea464caf7e16ae3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/worker_source.jsonl": "fb0a57873ffa08ad066e1d5aea111ad40086b5753e22d3e34d3d68a10512ef1b",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/runner_summary.json": "3c6ac3fc1cd7f86e67f122ca4ac2986f71b7913d93a7b9611e484c8021c4bd89",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/owned_process_ledger.jsonl": "cf7de20f9d9e121659ab842c1f651673f09db251d593d2ee3ae6d6de38405e31",
+    "/usr/bin/python3.12": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+    "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator": "e1038c71780b85727f8f30a99d93f86b86ffc0abbd75f04edc7d0b8064c36489",
+    "/opt/ros/jazzy/bin/ros2": "3308327fcefeaefe5601f72e0b473a5f9f9638434f5773d2f40b124f7c9aa04d",
+    "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker": "e78dd29dd86a329e5edf6a92f4bd1eac778ef1fe07dcabc78ddfb4095ffb028a",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/regulator.console.log": "ffd463f65391d77aec0f1588bdf99f400a521552e53cd847337312ca4f62b3d7",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/worker.console.log": "023b119144216dbc144de6b2b47fff317fb2de7a2c5110cd4b1306747a5ad8ea",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/raw_bag/metadata.yaml": "9677826c5c455dfd51ed22e35ae814301415e87dddb680a85a38afd438842fcd",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_capability_regression_barrier_20261006_01/raw_bag/raw_bag_0.mcap": "e48d81732687a03ce948284840308e7e677d6499804c23c2a895c6b7e54c7bfc"
+  },
+  "checker_sha256": "557b60d6efa69f28e288b3078f4549654f3e65f4a68b5abeb8e61bed104fc3fa",
+  "report_created_utc": "2026-10-06T09:34:45.291596+00:00"
+}

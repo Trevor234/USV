@@ -1,0 +1,20 @@
+{
+  "case": "submit_version",
+  "expected_code": "original_submit_tick_identity",
+  "passed": true,
+  "observed_codes": [
+    "complete_original_Witness_integrity",
+    "original_submit_tick_identity",
+    "source_witness_submit_binding_differs"
+  ],
+  "mutation": {
+    "coherent_stored_CDR_updates": [],
+    "source_files": [
+      "observer/source.jsonl",
+      "worker/source.jsonl",
+      "observer/witness.json"
+    ]
+  },
+  "report": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_provenance_20261011_v6/validation_copies/C3_negative_02/submit_version/C3_report.json",
+  "original_authenticity_qualified": false
+}

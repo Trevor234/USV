@@ -1,0 +1,68 @@
+{
+  "schema": "N3-rejudgment/v1",
+  "batch": 106,
+  "date": "2026-10-25",
+  "precondition": "T2差集闭合或明确声明遗留（批96报告+批101/105更新：T2-B 4/4、T2-C通过、T3三项闭合、T2-A resume NW为已声明架构限制）",
+  "source_registers": [
+    "experiments/scheme_A_M4_fixture_gap_20261024_67/postrun/case_applicability_v1.md（69项原始登记）",
+    "experiments/scheme_A_M4_t2b_exp_20261025_96/documents/方案A_第70-96批完整执行报告与后续实施计划_2026-10-25.md（T1/T2权威结论）",
+    "experiments/scheme_A_M4_t3_audit_20261025_101（T3三项闭合+审计）",
+    "experiments/scheme_A_M4_t2bgen_audit_20261025_105（新代际正控闭合+审计）"
+  ],
+  "groups": [
+    {"group": "compatibility_input", "items": 6,
+     "original": "可复用组件5 + 可复用owned子项1",
+     "disposition": "复用维持（F5_mapping/current_core58/49_normal/66_W2证据链，批67登记SHA不变）",
+     "component_level": "evidenced_reused", "owned_level": "evidenced_reused(.06)"},
+    {"group": "time_boundaries", "items": 10, "original": "可复用组件10",
+     "disposition": "复用维持（current_core58确定性注册/消费，150ms截止与200ms目标不变）",
+     "component_level": "evidenced_reused", "owned_level": "not_required_per_register"},
+    {"group": "native_block_and_delivery", "items": 5,
+     "original": "可复用owned子项4 + 可复用组件1",
+     "disposition": "复用维持（66_W2驻留417.85ms+56_W3/W4历史重审通过）",
+     "component_level": "evidenced_reused", "owned_level": "evidenced_reused"},
+    {"group": "candidate_identity_shape", "items": 8, "original": "需补接线验证8",
+     "disposition": "接线已证：批70组件回归32/32+3变异；批71离线38/38；批75 R0反例19项具名拒绝；批76 R1 34/34+真实tick检测器；批84 G1 17/17；批86 P01回顾25/25（含Worker流）——真实candidate()/Worker结果准入路径驱动",
+     "component_level": "evidenced_wired", "owned_level": "via_P01_review(批86)"},
+    {"group": "task_reference", "items": 7, "original": "需补接线验证7",
+     "disposition": "接线已证：T1批70-77（path/profile→task→pending/ready/activation交错）；T2-B族：replace批81/86(25/25)、clear批95(25/25)、expired负控批96、新代际正控批102设计→103组件6/6→104 owned 13/13→105审计20/20（同run gen1→gen2，job 1-27继续）",
+     "component_level": "evidenced_wired", "owned_level": "evidenced(T2-B 4/4)"},
+    {"group": "state_clock", "items": 9, "original": "可复用组件3 + 需补接线验证6",
+     "disposition": "组件复用3维持；接线6项：T1组件+T2-A族按批69合并场景族设计覆盖——silent批92 PASS（stale边界推导+pause bump+5维版本/schedule失效链）、same_stamp批93 PASS（stamp不变+receipt新鲜）、resume→新窗口接纳批94 not_covered（诚实声明：5s drain内系统未恢复，架构限制非测试缺口）",
+     "component_level": "evidenced_wired", "owned_level": "partial_declared(resume NW not_covered)"},
+    {"group": "anchor_fallback", "items": 9, "original": "可复用组件9",
+     "disposition": "复用维持（真实policy/header组件+50逐侧API组件+49/66完整对账，层次与Source适用范围保留）",
+     "component_level": "evidenced_reused", "owned_level": "via_reused_layers"},
+    {"group": "publication_exit", "items": 10,
+     "original": "可复用owned子项5 + 可复用组件2 + 需补接线验证2 + 当前路径未覆盖2",
+     "disposition": "复用维持(.01/.04-.08)；接线(.02/.03)已证：批70 harness提交前/后交错+批91 T2-C完整通过（guard拒绝+ordering+4角色rc=0）；未覆盖(.09/.10)已闭合：批100 C12真实信号梯→组非空→具名cleanup_failed→run失败→survivor有界自灭+无新spawn，批101审计复算通过",
+     "component_level": "evidenced", "owned_level": "evidenced(T2-C+T3-C)"},
+    {"group": "actual_source_recording", "items": 5,
+     "original": "可复用owned子项3 + 可复用组件1 + 当前路径未覆盖1",
+     "disposition": "复用维持(.01/.02/.04/.05)；未覆盖(.03)已闭合：批99 Q族5/5（自然/并发压力、generated=emitted+dropped对账、QueueOverflow恰1次、负控），批101审计复算通过——Stored以publish seam为交付观测（声明，不声称四角色对账）",
+     "component_level": "evidenced", "owned_level": "component_scope_declared"}
+  ],
+  "three_level_verdicts": {
+    "component_level": {
+      "verdict": "PASS",
+      "detail": "69/69项全部处置：30组件复用+13 owned复用+23接线已证（T1批70-77）+3未覆盖闭合（批99-101）"
+    },
+    "stage_qualification": {
+      "verdict": "NOT_GRANTED",
+      "detail": "M4保持false。批67原文：不能以150个测试或43个复用项自动授予M4；M4原前置含N4有限M0/M1模型事务（NX8/NU2/N20/NP6/NP_GLOBAL30 setter路径、prepare/原子提交/固定tick激活/旧mixed候选拒绝/独立warm-start）"
+    },
+    "research_conclusion": {
+      "verdict": "FALSE",
+      "detail": "无研究结论声称；P1/plant/硬实时不在此判；生产B仍MANUAL+RC覆写"
+    }
+  },
+  "declared_leftovers": [
+    "T2-A resume→新窗口接纳 not_covered（架构限制：5s drain内系统未恢复至新接纳；批94诚实声明，非测试缺口）",
+    "T3-Q族 Stored四角色对账不声称（组件层publish seam为交付观测；如需owned Stored对账须另立登记）"
+  ],
+  "n3_gate": {
+    "verdict": "COMPLETE",
+    "detail": "原18条69项证据处置清单逐项完成（复用维持43+接线已证23+未覆盖闭合3），诚实遗留2项声明在册；按批67机器可读顺序，N4有限M0/M1模型事务/F6门开启",
+    "no_auto_grant": "阶段资格与研究结论分别判定且均不通过/不授予"
+  }
+}

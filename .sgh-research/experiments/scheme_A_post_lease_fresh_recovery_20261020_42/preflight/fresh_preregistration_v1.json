@@ -1,0 +1,67 @@
+{
+  "CXX_builds": 0,
+  "Native_cases_reused": 38,
+  "Observer_V1": "none",
+  "Observer_V3": "none/0",
+  "Observer_callback_gate": "none/empty paths",
+  "Worker_V2": "none/0",
+  "Worker_terminal_diagnostic_tail_substitute_forbidden": true,
+  "actual_raw_negative_cases": [
+    "old_Worker_instance",
+    "old_Worker_run",
+    "old_Observer_PID_start",
+    "old_group_not_closed",
+    "new_prepare_before_old_close",
+    "duplicate_job_as_two_cycles",
+    "ready_after_absolute_deadline",
+    "missing_actual_healthy_Applied",
+    "Worker_unusable_during_recovery",
+    "normal_tail_anchor_missing",
+    "normal_tail_not_zero",
+    "submit_after_normal_close_ACK",
+    "accepted_after_normal_close_ACK",
+    "normal_close_ACK_wrong_request"
+  ],
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "business_start": "owned-prepare-before-business-v1/20s/2sTTL",
+  "close_budget_ns": 15000000000,
+  "close_order": [
+    "publisher",
+    "observer",
+    "worker",
+    "synthetic_source",
+    "recorder"
+  ],
+  "close_profile": "normal",
+  "execute_qualified": false,
+  "loader": {
+    "bytes": 107464,
+    "sha256": "7f6265498f8110292b8721c87814fffcec28020f6a3662dc6236518cbdc66a80"
+  },
+  "minimum_distinct_healthy_jobs": 2,
+  "new_seeded_identity_negatives": 8,
+  "original_normal_tail_required": true,
+  "overall_budget_ns": 45000000000,
+  "previous_close_proof": {
+    "bytes": 151544,
+    "sha256": "b18bc7264a772a7b6b237956b93791ef1184e79f39ba2119d176b108583e7d9f"
+  },
+  "previous_closed_run": "ordinary_lease_01",
+  "raw_budget_bytes": 134217728,
+  "research_conclusion": false,
+  "run_id": "fresh_after_lease_01",
+  "runner": {
+    "bytes": 2504,
+    "sha256": "fb86bf01467726d497d2b1093be3516e70bc16bb5d790a2e7570beef14102c50"
+  },
+  "selected_actual_runs": 1,
+  "selected_plan": "A",
+  "source_lock": {
+    "bytes": 461956,
+    "sha256": "04f30f82de3fa60a79d863eb6fd56c7985cdeb5220e91705aeb675ab10379038"
+  },
+  "source_packet_freshness_claimed": false,
+  "stage_qualified": false,
+  "true_plant_qualified": false,
+  "verdict": "GO"
+}

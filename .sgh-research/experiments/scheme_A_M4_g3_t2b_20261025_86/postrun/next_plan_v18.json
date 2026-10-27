@@ -1,0 +1,35 @@
+{
+  "schema": "M4-G3-plan-v86",
+  "recorded_at": "2026-10-25T17:45:23.536740+08:00",
+  "steps": [
+    {
+      "id": "G0/G1/G2",
+      "status": "complete"
+    },
+    {
+      "id": "G3/T2-B retrospective",
+      "status": "complete",
+      "detail": "25/25 G1 audit; P01 observation confirmed; family differences listed"
+    },
+    {
+      "id": "G3/T2-B formal",
+      "status": "optional",
+      "detail": "If stage contract requires pre-registered pass: freeze new identities + one minimal timely replace"
+    },
+    {
+      "id": "G4/T2-C",
+      "status": "next",
+      "task": "offline target guard proof + re-register + single owned"
+    },
+    {
+      "id": "G5/T2-A",
+      "status": "after_G1",
+      "task": "silent/same_stamp/resume coverage"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

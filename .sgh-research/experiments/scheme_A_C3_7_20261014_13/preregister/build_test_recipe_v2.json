@@ -1,0 +1,21 @@
+{
+  "schema": "C3.7-build-native-revision/v2",
+  "reason": "retained first failed attempt, corrected typed CDR assertions, C34 fixture env/nullguard, malformed Worker GID rejection logging",
+  "source_bundle": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_7_20261014_v14/observer_source_bundle_C37_v2.json",
+    "sha256": "9b888dd51213ce0ffe2a311fd24160062377ef8b1e13cf5ae36e039336552aee",
+    "files": 41
+  },
+  "expected_native_count": 239,
+  "build_output": "build/observer_attempt02",
+  "test_output": "component/native_attempt02",
+  "compile_target_budget_s": 180,
+  "compile_concurrency": 2,
+  "native_suite_budget_s": 90,
+  "domain": 131,
+  "positive_run_domain": 132,
+  "preregistered_runtime_bounds_unchanged": true,
+  "old_failure_retained": true,
+  "execute_qualified": false,
+  "stage_qualified": false
+}

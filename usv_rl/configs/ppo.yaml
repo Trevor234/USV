@@ -3,6 +3,17 @@ algorithm: PPO
 seed: 42
 n_envs: 16
 
+# 训练设备：cpu | cuda | auto（auto = 有可用 GPU 就用，否则 cpu）
+# 默认 cpu 是**有意选择**，不是历史遗留：
+#   1. collect_rollouts 占 ~94% 墙钟，瓶颈是 NumPy 环境仿真（单步 ~245 us 纯 RK4），
+#      GPU 不参与这部分；
+#   2. MlpPolicy 的 batch=1/16 前向在 GPU 上比 CPU 更慢（kernel launch + H2D 主导）；
+#   3. 已有 5 种子复现与 docs/report_assets/ 的基线全部在 cpu 上生产，
+#      换默认值会让新旧产物不可比（单次更新数值等价，但 10M 步后轨迹漂移）。
+# 实测 RTX 2060 SUPER / i7-10700 / n_envs=16：cpu 34.7 min，cuda 27.2 min（1.28x）。
+# 要试 GPU 请显式覆盖：python -m usv_rl.train --device cuda
+device: cpu
+
 policy_kwargs:
   net_arch: [256, 256]
   activation_fn: tanh      # nn.Tanh
@@ -33,7 +44,7 @@ eval:
   deterministic: true
 
 # 课程阶段：顺序训练，模型权重与 VecNormalize 统计全程延续。
-# 每阶段结束保存 models/<run>/<stage>/ 下快照。
+# 每阶段结束保存 ../artifacts/rl_models/<run>/<stage>/ 下快照（见 usv_rl/paths.py）。
 curriculum:
   - name: s1_straight
     total_steps: 1000000

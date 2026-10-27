@@ -1,0 +1,111 @@
+{
+  "API_gap_population": {
+    "left": {
+      "business_population_gap_max_ns": 202143502,
+      "decomposition_not_exclusion": "full startup/business/shutdown population retained; business subset is separately labeled",
+      "full_API_pair_count": 107,
+      "full_stream_gap240ms_passed": false,
+      "full_stream_gap_max_ns": 1537738174,
+      "initial_to_first_business_gap_ns": 1537738174
+    },
+    "right": {
+      "business_population_gap_max_ns": 202138423,
+      "decomposition_not_exclusion": "full startup/business/shutdown population retained; business subset is separately labeled",
+      "full_API_pair_count": 107,
+      "full_stream_gap240ms_passed": false,
+      "full_stream_gap_max_ns": 1537738316,
+      "initial_to_first_business_gap_ns": 1537738316
+    }
+  },
+  "execute_qualified": false,
+  "general_mixed_or_turning_qualified": false,
+  "hard_clock_or_WCET_proven": false,
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/pair_wakeup_contract_v1.json": {
+      "bytes": 4265,
+      "sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/normal_source_observation.json": {
+      "bytes": 884,
+      "sha256": "84b66ca482def64dd25799d527efc75a8f844f7db703d9738c3f68bed69dc0f0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/observer/source.jsonl": {
+      "bytes": 22912207,
+      "sha256": "75582ed83f7eef03249782dfdef81978d556b5772577246254b1e63484ae854c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/publisher/controlled_source.jsonl": {
+      "bytes": 1435148,
+      "sha256": "a039edcbb09810afd202f7b3667ba4ce356c85134e1bd27837b5d5d7ce3d1140"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/postrun/check_observed_scope_v1.py": {
+      "bytes": 4216,
+      "sha256": "9b7204165c0954d345771815c9d1ed48971f7150eb343775d878807979594477"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/postrun/current_normal_source20s_audit_v1.json": {
+      "bytes": 1112691,
+      "sha256": "875c702a91449dd53cbab817f0ec919d1ffb91b119521f8a692606a6a6b78e91"
+    }
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/pair_wakeup_contract_v1.json": {
+      "bytes": 4265,
+      "sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/normal_source_observation.json": {
+      "bytes": 884,
+      "sha256": "84b66ca482def64dd25799d527efc75a8f844f7db703d9738c3f68bed69dc0f0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/observer/source.jsonl": {
+      "bytes": 22912207,
+      "sha256": "75582ed83f7eef03249782dfdef81978d556b5772577246254b1e63484ae854c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/publisher/controlled_source.jsonl": {
+      "bytes": 1435148,
+      "sha256": "a039edcbb09810afd202f7b3667ba4ce356c85134e1bd27837b5d5d7ce3d1140"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/postrun/check_observed_scope_v1.py": {
+      "bytes": 4216,
+      "sha256": "9b7204165c0954d345771815c9d1ed48971f7150eb343775d878807979594477"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/postrun/current_normal_source20s_audit_v1.json": {
+      "bytes": 1112691,
+      "sha256": "875c702a91449dd53cbab817f0ec919d1ffb91b119521f8a692606a6a6b78e91"
+    }
+  },
+  "mixed_cases_actual_count": 2,
+  "mixed_frozen_jobs": [
+    {
+      "imu_estimated_source_lag_ns": 20770575,
+      "imu_receipt_age_ns": 19541615,
+      "job_id": 43,
+      "mixed_skew_ns": 0
+    },
+    {
+      "imu_estimated_source_lag_ns": 20805077,
+      "imu_receipt_age_ns": 19489431,
+      "job_id": 64,
+      "mixed_skew_ns": 0
+    }
+  ],
+  "negative_altered_mixed_evidence": [
+    {
+      "case": "receipt",
+      "rejected": true
+    },
+    {
+      "case": "future",
+      "rejected": true
+    },
+    {
+      "case": "skew",
+      "rejected": true
+    }
+  ],
+  "passed": true,
+  "research_conclusion": false,
+  "schema": "current-normal-source-actual-scope-supplement-v1",
+  "source_window_span_ns": 20002935074,
+  "stage_qualified": false,
+  "tick_observed_start_lateness_max_ns": 193314,
+  "tick_observed_start_lateness_min_ns": 46755
+}

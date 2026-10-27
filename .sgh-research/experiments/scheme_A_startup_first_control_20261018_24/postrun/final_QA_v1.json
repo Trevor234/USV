@@ -1,0 +1,1663 @@
+{
+  "MPC_delivery_verified_at_QA": false,
+  "MPC_destination_preparation_passed": false,
+  "all_material_pulses_faster_and_cost_worse": false,
+  "all_ten_registered_probes_complete": true,
+  "archive_integrity_passed": true,
+  "auditor_negative_boundaries": 5,
+  "author_freeze_sha256": "3e35d1fe5a9ee2fe5197c68b90564d683cad50be6f8453b4fd9d43982e3f8c71",
+  "author_frozen_files": 6,
+  "batch_status": "offline_probes_complete_MPC_delivery_pending",
+  "blocked_research_gate": "parent_s005_RMSE",
+  "business_diff_sha256": "d901511293df5be4aecb988509e4c4107977dc7c05f042286869c36e0a239ba5",
+  "delivery_status_authority": "delivery_verification.json, if a later exact copy and full readback succeed",
+  "execute_qualified": false,
+  "faster_nonworsening_cases": [
+    "once__first_refined",
+    "once__n050"
+  ],
+  "final_local_protection_sha256": "49f734a68c18e794a9f47b3ba4ceadff3e9b5df39b40c4d168a4e5f66da2f254",
+  "fixed_file_count": 400,
+  "fixed_files": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/CURRENT.md": {
+      "bytes": 1969,
+      "sha256": "e7fa3fbd4df03cbf62c146c287a37e622476431ba6e29c219f750b3f526289a4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/CMakeLists.txt": {
+      "bytes": 1283,
+      "sha256": "d225a094824b8b7be6964fddae9368f00631bdd6a1ff98b2e7915f0ef885e75b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/actual_first_control_input_v1.json": {
+      "bytes": 24476,
+      "sha256": "24f23593c3134c8729e3f130c40fa217517acfb8c714495a3e98fd2e0293ec26"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/common_replay.hpp": {
+      "bytes": 3111,
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/main.cpp": {
+      "bytes": 2268,
+      "sha256": "d9e90981d3d715a0867a8cace2c31944c2452064155475da1b933500218dce11"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/probe.hpp": {
+      "bytes": 5163,
+      "sha256": "086abd007957607133e94be4c20b725f3f4710314b6eb0f518ec84320a4174b1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/author_snapshot/test_probe.cpp": {
+      "bytes": 1635,
+      "sha256": "2a72abfd50577f84325f1c54d85439e9f9a93972782eacae69023cba337d6cc9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/batch_status_final.json": {
+      "bytes": 1512,
+      "sha256": "ec4dd569e97895d41d8934fdf08cbd74f199c71e5a93273442cd8967f5f4c30f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/probe_build_v1.py": {
+      "bytes": 7531,
+      "sha256": "24454ef9b73db1b4b542155d58771d7e9ce50333ce9a620f75c4251d188d8ff1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/AMENT_IGNORE": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeCache.txt": {
+      "bytes": 22332,
+      "sha256": "a634d4bd991a0214fab8f13a7702a122b67e7ba96e2d0fee01b1f47d0f6007f2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeCCompiler.cmake": {
+      "bytes": 2525,
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake": {
+      "bytes": 5539,
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_C.bin": {
+      "bytes": 15968,
+      "sha256": "ba6646aa78bf3dd0a7997f89bcc1154630fcb86d28103e0bfcd5200b21f54c7c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_CXX.bin": {
+      "bytes": 15992,
+      "sha256": "879b5d31eac14d7b0ca6cd3b96320041ad8d87b538fea24a17e8707f0656bc96"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeSystem.cmake": {
+      "bytes": 398,
+      "sha256": "e6dd9890a5f68bed86fe6a79a06176a48a0d2a9c39c50313df0f1cdafe697e47"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdC/CMakeCCompilerId.c": {
+      "bytes": 27030,
+      "sha256": "9a95913d134b6c5dca36f23acb80765b86313bcfd8da754e5ceb2e259e954074"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdC/a.out": {
+      "bytes": 16088,
+      "sha256": "88aa2744b35746a2f6464f0d7f31c3991c8fdb255d08727ecfbf676478e051b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp": {
+      "bytes": 26804,
+      "sha256": "9b1ebe4919c111011dba043f743e42ada0f1e3804b211e42191d773e7043282c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/a.out": {
+      "bytes": 16096,
+      "sha256": "a3d366f5f634a9cc0d9340115704a2d978e930f75ce0aceac02d7177849a8a1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/CMakeConfigureLog.yaml": {
+      "bytes": 58168,
+      "sha256": "9d9f7e58ac5488f8b6445c58d0683e15c53fdc490e6e82716a18b82cdbc33ad5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 823,
+      "sha256": "f60a593518f8166492097014bf7a922c31549344d57eba108c60087a45f15296"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/CMakeRuleHashes.txt": {
+      "bytes": 112,
+      "sha256": "e6b58a57dcb11fbb84dadf8a9c6a5de353e51c3b809caf7c30ad75bd4f768d63"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Makefile.cmake": {
+      "bytes": 14291,
+      "sha256": "5b18560e50083c9f7e6979ef7d9e576c0427b734330ed4ca9f01c248b6742e30"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Makefile2": {
+      "bytes": 13458,
+      "sha256": "9de4a19527b4ea4ed7971474233612817988d23d59ab286a6a43223a4a6ae1ee"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/1": {
+      "bytes": 5,
+      "sha256": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/2": {
+      "bytes": 5,
+      "sha256": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/3": {
+      "bytes": 5,
+      "sha256": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/4": {
+      "bytes": 5,
+      "sha256": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/5": {
+      "bytes": 5,
+      "sha256": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/6": {
+      "bytes": 5,
+      "sha256": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/7": {
+      "bytes": 5,
+      "sha256": "2e1cfa82b035c26cbbbdae632cea070514eb8b773f616aaeaf668e2f0be8f10d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/Progress/count.txt": {
+      "bytes": 2,
+      "sha256": "aa67a169b0bba217aa0aa88a65346920c84c42447c36ba5f7ea65f422c1fe5d8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/TargetDirectories.txt": {
+      "bytes": 1827,
+      "sha256": "f8904648dcd8bbb9ed69c27878d2072895521272404d7392398431f0f098ebcc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/cmake.check_cache": {
+      "bytes": 85,
+      "sha256": "a26189e394421da57f45706a07713c5720acd200a41711b0c0c590c3c63371c4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/build.make": {
+      "bytes": 3866,
+      "sha256": "668ac5c454824cdb593fe70948b54be5ac8d4f6fd587dc4231e37f1a1a17c5dd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/cmake_clean.cmake": {
+      "bytes": 256,
+      "sha256": "c69872068b7b4965c401fc8e23c6de9da634540f2e3c37abb0ecfa3b4e65d144"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/compiler_depend.make": {
+      "bytes": 147,
+      "sha256": "36e244d61a537fd82590f907810d3fbd82ecde1d28966bb722ec3246b1e6319d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/compiler_depend.ts": {
+      "bytes": 141,
+      "sha256": "ef9088ee4743b0024024c9bd78f5f6cca0b7e2173c4c664a5f1e8ee8b5aadfa9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "aa67a169b0bba217aa0aa88a65346920c84c42447c36ba5f7ea65f422c1fe5d8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/DependInfo.cmake": {
+      "bytes": 832,
+      "sha256": "b5b7dbf41522538fa4d7a7f52eee4c5bec7859dce62e031c4a8d45433b3b0531"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/build.make": {
+      "bytes": 6498,
+      "sha256": "a86037cd4c6de90e69c4d2bd89e0a09948beb9b4758a01a78863ca5244a9310b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/cmake_clean.cmake": {
+      "bytes": 347,
+      "sha256": "27b84212f43f415fc2bc051e331e04c7980c2458bc81ab7599ad7bb6abd6ceb7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/compiler_depend.make": {
+      "bytes": 123,
+      "sha256": "5d382c81a2f903e42a7aa94a8b0d41d1684a67750c41c948078bf0563d78d495"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/compiler_depend.ts": {
+      "bytes": 127,
+      "sha256": "a90f282c5cd07de7b3362f2c43374079a5ba1077219eceba8226615f5f10657c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/depend.make": {
+      "bytes": 104,
+      "sha256": "e2fdfd474c552cc00d5107d1a93bde4a522edf75f27581a3d417385d7982d65a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/flags.make": {
+      "bytes": 771,
+      "sha256": "109ad692f78e8cefc40e64e69ac8be685c93f5218f1e8f8004fe9c5aa02abb7f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/link.txt": {
+      "bytes": 567,
+      "sha256": "bc1e2f447f2b95b094e23019ecd7125fc9ad36b3a9f1cf05317e6a4dc89c3660"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/main.cpp.o": {
+      "bytes": 486024,
+      "sha256": "5ab805826d0655925f340cfa3cc8831a3b54cd2989bb2792f088be0f40480f0a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/main.cpp.o.d": {
+      "bytes": 32688,
+      "sha256": "5296756adfd8d9bd81ebce45a898d73ea892f15f977e69b2a8e35d4c82eaed4d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/replay_first_control.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "a3194f88ef5ae65b7a30877bdb3f7ab384e043aa110d7219d72f1e666ac6246b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/DependInfo.cmake": {
+      "bytes": 846,
+      "sha256": "255a27b15ea650816fc5a68c6ff77fb3078ea119ab34b1afb9f26e98df98cec6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/build.make": {
+      "bytes": 6542,
+      "sha256": "1aa9d623f15ff6522d49bb8aead3cbc8e02e0e91653a5cabebd8a3fa20cdc3fa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/cmake_clean.cmake": {
+      "bytes": 349,
+      "sha256": "c95e4b12a30be63172c94831c90a54040e4a7627ab9d7c2353fe22728d0e055a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/compiler_depend.make": {
+      "bytes": 121,
+      "sha256": "65efde40e684df245b9f4d4a70042769bb3f8fdcb89859ae82211d9591165dff"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/compiler_depend.ts": {
+      "bytes": 125,
+      "sha256": "aa0162a6fae62dc1d79be268b4c2f8d1ace9942bc361583a8521c8850da75972"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/depend.make": {
+      "bytes": 102,
+      "sha256": "67007d7919c83bb2565cb40418071c9f9bc00fd45a61b562044278d715afc83f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/flags.make": {
+      "bytes": 908,
+      "sha256": "591c50e511b0c03599ef79a7ab40551cc5ad4ae08e8bb55dc4fffc2750872f63"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/link.txt": {
+      "bytes": 578,
+      "sha256": "34b46aa6e126efd3d434ab278f37422ccd94ee57bbb5ec22559fdf2316b7d331"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "d07ef668326a9a562e0a72f93d199267d5a0b8fb4172c2286a56a2cb5ef77dd0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/test_first_control.dir/test_probe.cpp.o.d": {
+      "bytes": 35534,
+      "sha256": "5e85ef18d2e1862ff5e15fccbe0099394edd7a78af0adfac6f040793648c85cc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/build.make": {
+      "bytes": 3103,
+      "sha256": "eae698496eb71fcab95166456f058484a94b90436f85f3af292ba833cc9bb934"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/cmake_clean.cmake": {
+      "bytes": 153,
+      "sha256": "e51440eea639df67acafb145cd82e07a0d47a18935f82ef48527ded743c08d36"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.make": {
+      "bytes": 119,
+      "sha256": "544b5020e80145b8265862c76a0811c3dd31a0820e2834b26038f646fa99c80b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.ts": {
+      "bytes": 113,
+      "sha256": "5f7329b918c868b9e2549e3175c8cab0d6c02deccfa5f2700ee294575108f150"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CMakeFiles/uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CTestConfiguration.ini": {
+      "bytes": 2643,
+      "sha256": "1e06f9efd78a542e30ed477cfd6ba9824ba2a56f5ddd64897fb9024f585f95df"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CTestCustom.cmake": {
+      "bytes": 104,
+      "sha256": "604987db904b472a78182f761db384fc8115f0ade6bb2cfed0d2242259f36bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/CTestTestfile.cmake": {
+      "bytes": 2341,
+      "sha256": "7aa95b94116bbfebd41304320435d6b2b6dd3f5988dc1d39c916f1aae18bb4c8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/Makefile": {
+      "bytes": 9482,
+      "sha256": "b050a589263a90dca3b266ed8c36dd815044a69aad7fe0ecd5a8579b246595f7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/ament_cmake_core/stamps/templates_2_cmake.py.stamp": {
+      "bytes": 3691,
+      "sha256": "696037d4de7b593bce6ca467480ee35076eb3efc49a94fa0af7e909fe0c96ebb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/ament_cmake_package_templates/templates.cmake": {
+      "bytes": 1984,
+      "sha256": "0bd4d2e887197f7f9771d2238eff41586d61b13acc51ce8748b36ebcf55753f3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake": {
+      "bytes": 2196,
+      "sha256": "4495b579d8c23bb67da7c07957ca6a8156221be19055452db40c4386ac88f043"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/cmake_install.cmake": {
+      "bytes": 2079,
+      "sha256": "5e59d57b9469f8bd0b7507c88a30a8283329495acbd48dd125193b11d774dbb7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/compile_commands.json": {
+      "bytes": 3595,
+      "sha256": "85fab29c5eb0077573196084513d0f2258aa6f29cf1812d1f85c7860148ba315"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 727,
+      "sha256": "db0b2789b8c83979ff51dd75a5101f1955f7910c2f8d6f139b54f72ead96f355"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/DependInfo.cmake": {
+      "bytes": 742,
+      "sha256": "41b9794eb597def843b1b9c9edb14c35ac7855090406ddb95c553abf7d77ec16"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/build.make": {
+      "bytes": 6279,
+      "sha256": "c34197737f94cf5dd3d25d39dc076b715ef14b20c679c2e5f7cb62fead5be8e8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean.cmake": {
+      "bytes": 296,
+      "sha256": "d1cc0f4bad79d663d6bb4514adc027f4c1c7fb62acfd5040f199eaa981d110b2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean_target.cmake": {
+      "bytes": 37,
+      "sha256": "2528443fca7dd9ef1497170c9300cef9535872d273af72b87f0b2e98e38c9271"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.make": {
+      "bytes": 108,
+      "sha256": "fdd7420efc3c3e7205cafdad1b80a3b1c7222218270db7736088a548d903d4ef"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.ts": {
+      "bytes": 112,
+      "sha256": "997af5bce432b38a2cddd748f433ccd7dc215f91117bb98bf1be692d5dbf7466"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/depend.make": {
+      "bytes": 89,
+      "sha256": "c4217b9fdea79fb317d5c87c2a9e36dceca849a044f58485eca7b013dd9c0a2b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/flags.make": {
+      "bytes": 348,
+      "sha256": "27be6279443a7659140077a129689bd0f7d085d4e058c819a7d6e012decdcb86"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/link.txt": {
+      "bytes": 95,
+      "sha256": "aea10c44f0f4c0e3e6bfae2c9b1a90b0a1aeb6461e1261bf3e5956459b69dc92"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "c06e644090b09d41eaddf59d10bcf03c6db6499eb51fa0d03e5128e5a165cc3c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o": {
+      "bytes": 904992,
+      "sha256": "90e4f754ca78538ac6459109570e87ceb3df6dbd3e17156420c3465b8e17bfca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o.d": {
+      "bytes": 20199,
+      "sha256": "aca881e3eccdc731ba0625c1f14d007422cfea16bea182b24d46385b51d7bedb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/DependInfo.cmake": {
+      "bytes": 755,
+      "sha256": "482c16cf40958ea2f2af8fbe328461afe1ffbec1a765f54218209f65d971b100"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/build.make": {
+      "bytes": 6508,
+      "sha256": "e5cbc3f737059c9f4eb3a7359a3c980a085045c649c24eeb22d1b383e5800c5b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean.cmake": {
+      "bytes": 323,
+      "sha256": "3f59ad1556f8ce3686882d39a119717539f3de3bf194f157e19da63837499020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean_target.cmake": {
+      "bytes": 42,
+      "sha256": "6b477660f7857030e16f3db3360bfe208081383c64621ce00f653f368f15e61c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.make": {
+      "bytes": 113,
+      "sha256": "f1844edb147f0f25d7d0ff34e80a9030e9b97f7caef77fb55b7556888e8826db"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.ts": {
+      "bytes": 117,
+      "sha256": "5d4a42aa2b79e52ea1618f221c27d853ded01837e138ca0f3261036506b0b782"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/depend.make": {
+      "bytes": 94,
+      "sha256": "30c0a4b6d6407c7254abb6c8b2f184b459ea943c7905717f7c09e68820c57730"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/flags.make": {
+      "bytes": 288,
+      "sha256": "cb6466c030931c8c9266cfe4ccd5326ccfdca81d53f2333be3edabfb81f4d2d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/link.txt": {
+      "bytes": 109,
+      "sha256": "2245581bcd068a5f77b07899ba64d9b32d75c4e7a6e8cb0db787d0e480f8319a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "2c0c69e4af70b4caed2b8e1bd9f161f3ee9eb525d5f041631eee6d0661e5a02f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o": {
+      "bytes": 2136,
+      "sha256": "8befe0706e76f35ddca7d01ff02d24839299df23e25ceb2a71ecb12bb9602263"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o.d": {
+      "bytes": 16151,
+      "sha256": "369dcc30ea646e4b70cdf8d5ecf8dc250f455968a0b9bc43173756f34bc2249b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/CTestTestfile.cmake": {
+      "bytes": 370,
+      "sha256": "d54ff0f5af23964e190df1f23199d714b66a30233e2c7eeba805bf2b80da147a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/Makefile": {
+      "bytes": 9692,
+      "sha256": "0cf7e06bc59a33bb7d5d2ff43eae11748dd2c66b2d919796c68b7d72570dbd75"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/cmake_install.cmake": {
+      "bytes": 1252,
+      "sha256": "16e5154d02c5c1b9970cfee51c66dde9a214c8a113ed98f78258809e39f4a554"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/libgtest.a": {
+      "bytes": 966810,
+      "sha256": "859e3b658193fb746dfdd31d03083e872a158e32c36ec8bf183e8c6930b0b671"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/gtest/libgtest_main.a": {
+      "bytes": 2278,
+      "sha256": "4a130629aef45dd8365f17a0b7987602f95aacff5563bd8ebc81017a4c9480e8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/cmake_build/replay_first_control": {
+      "bytes": 267104,
+      "sha256": "faf435dea6bcaacde9ea9ec6d48fa405f7ac679a347a52eddbdb45955d0001d8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/configure.log": {
+      "bytes": 1410,
+      "sha256": "ee81260d72f71f83cdc403cabab9b1ee7a5c616028a0a4dd58cb669cbfa19c49"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/configure.sh": {
+      "bytes": 1152,
+      "sha256": "18afccf8a35a7eaa29808321436b8964bd923687b5578a0ada91ba7885bae3d7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/default_build.log": {
+      "bytes": 22646,
+      "sha256": "9a97bf5a2376600353695d5beaa2f370f43f3f539d9e64d5c2bb0c64ea554133"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/default_build.sh": {
+      "bytes": 647,
+      "sha256": "80faac9f711010266f4ae1679be7d06079f73b92c76c8fd9b354016d7f2cb184"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0000_acados_backend.hpp": {
+      "bytes": 4391,
+      "sha256": "1d2b19d710391464c6833ca58b7162c501926c7bb02193737609b69bb41cfcca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0001_acados_solver_usv_dyn_nmpc.h": {
+      "bytes": 7452,
+      "sha256": "bdac3caa7ee125812d485f87cdde272c5c90d6c10628a996c6fd6f7d75038114"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0002_usv_dyn_nmpc_constraints.h": {
+      "bytes": 3210,
+      "sha256": "d5fe1da868dfbabffa160f83d82ce3d492d8c5e8e2cc091286a55fb43ee8999a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0003_usv_dyn_nmpc_cost.h": {
+      "bytes": 3986,
+      "sha256": "21ffc99e506d2e778e6d5c6e4f95c746f132f1d557d37522ae234f4d090bccbd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0004_usv_dyn_nmpc_model.h": {
+      "bytes": 2379,
+      "sha256": "d2471c85706deb72047df28521074d297a344053a56d90938f4f63046ab90682"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0005_usv_dyn_nmpc_p_global_precompute_fun.h": {
+      "bytes": 2060,
+      "sha256": "175b83c9d37263330d11e7c7828be067764b71cad69a3e5b71802031511ce770"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0006_casadi_backend.hpp": {
+      "bytes": 2826,
+      "sha256": "8cf8ffebd66d438836351460a3cb16815ef9ba847fe9ae946167dcb3bdffe489"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0007_mpc_node.hpp": {
+      "bytes": 10949,
+      "sha256": "536221d592aec0a2d91705f49ce3739f6706afdb8a0426e9a06e1a7a36fbbf72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0008_mpc_node.hpp.pre_reference_prediction_v1": {
+      "bytes": 10647,
+      "sha256": "2a19f008c009a63038b39810923ed958e534ea50d156631e08fe8e927865dfb2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0009_mpc_solver.hpp": {
+      "bytes": 4580,
+      "sha256": "a711527b8556bff8508a99bfcafedc055d81a9c5cddbe5a93f69144cb829dc83"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0010_p1_input_core.hpp": {
+      "bytes": 5795,
+      "sha256": "a626758cbce50acb69e19aa793f6d01f7e913fa92d0172e514a654481c0a0091"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0011_research_logger.hpp": {
+      "bytes": 9611,
+      "sha256": "90f9f7070eac3bf0ad516a034118444afeddfdb65cd91ccffac5d7617c30789a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0012_research_logger.hpp.pre_reference_prediction_v1": {
+      "bytes": 8134,
+      "sha256": "16a9431704b97132a3e9c50db5d953d0388bea612b57c960766fbd5e10581b6d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0013_usv_model_dynamic.hpp": {
+      "bytes": 3576,
+      "sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0014_utils.hpp": {
+      "bytes": 4838,
+      "sha256": "5a78abb9f6acd9851d96169a7bbb2044208b761c1d9d0100a0e68cfc68e27de3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0015_ament_cmake_export_dependencies-extras.cmake": {
+      "bytes": 3942,
+      "sha256": "a672adf07855ba598ec3ab5659d54e489242e928bc924bc97eabd67f91cdfdcc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0016_ament_cmake_export_targets-extras.cmake": {
+      "bytes": 975,
+      "sha256": "af392c7714144c33ab0dbba1f1d8ba9d2648c7a373ff40136e817d0f42d51892"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0017_p1_core_targetsExport-release.cmake": {
+      "bytes": 1979,
+      "sha256": "038fed658c5ad768bd5b25cf718bc4adc939a3ae21c66b91c2df526f1f0edd51"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0018_p1_core_targetsExport.cmake": {
+      "bytes": 5459,
+      "sha256": "81f954e46d7714a3a8ceb241e3e7cc323e6672bf6f6c76c3a3860f633001df2f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0019_usv_mpc_cppConfig-version.cmake": {
+      "bytes": 432,
+      "sha256": "5df7fb3481e154840dd6ac6d1b6eb53c81ed9cadd5e7a00398962383332be7ea"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0020_usv_mpc_cppConfig.cmake": {
+      "bytes": 1349,
+      "sha256": "1ebc247a6ab8c02ec6a489c5f716a11c223d4b8c30b98199c90c50654c18a2a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0021_libcodegen_lib.a": {
+      "bytes": 274422,
+      "sha256": "7431a9cbdd7b8a6d47719ceda2e44b977f2649fbcbb4592771dac99abd2a38dd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0022_libmpc_core_lib.a": {
+      "bytes": 32114,
+      "sha256": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0023_libmpc_solver_lib.a": {
+      "bytes": 212276,
+      "sha256": "5c4a8d70cc6812b36693a5b68cb13a7a812dae828f983b4446a5564ff996d5d1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0024_link.txt": {
+      "bytes": 6353,
+      "sha256": "5d143478a3e5b35ba8da92eebb3b163d3671534e4bae00bd8483269f91ca95d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0025_acados_backend.cpp": {
+      "bytes": 14296,
+      "sha256": "e5513cba1eb45024e2fb4b083b05ebd6ba8d8ced9f133a17f9c0ace3355f27c8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0026_regenerate_acados_codegen.py": {
+      "bytes": 14532,
+      "sha256": "775d271cc4f746b6eb2ebd1d3008636effedcf3af03daae694ea954985b2ead4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0027_usv_model_dynamic.cpp": {
+      "bytes": 3857,
+      "sha256": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0028_CMakeLists.txt": {
+      "bytes": 1070,
+      "sha256": "b4215ba177f52307eb74930a557bd038e4267b5e41a30f85fc52e53e19676950"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0029_gtest-assertion-result.h": {
+      "bytes": 8503,
+      "sha256": "d6562e22c316e831bfbc2cde3b158f06380a22e7e1c6c1e180689abee5c5b972"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0030_gtest-death-test.h": {
+      "bytes": 14910,
+      "sha256": "8decbb86ebbfa142fd78a83cfbeb4c5e73e98179058ce70fcc279935c497429a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0031_gtest-matchers.h": {
+      "bytes": 33067,
+      "sha256": "d637dd188944433c62d96a062f9b1adab851574c537d7021270c7a52a2759a90"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0032_gtest-message.h": {
+      "bytes": 9203,
+      "sha256": "f1c7bd4e0c02240e884deed25a2e0bfd04e5e0c3fd778a3b126cbb64531f65a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0033_gtest-param-test.h": {
+      "bytes": 24008,
+      "sha256": "1adb46e17e47fc2f40dc5b8e9acec4f01efa389a19bbea25d32aea28b94e32e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0034_gtest-printers.h": {
+      "bytes": 40511,
+      "sha256": "f3396ea55d577ee04f15a2b14b14b76edb8a84d385c831defd88cff8535bc273"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0035_gtest-spi.h": {
+      "bytes": 12843,
+      "sha256": "fc0bbebaeb211b81a2ec3df388e5e5f25a7c22e90186839854d2e5b26ce226e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0036_gtest-test-part.h": {
+      "bytes": 7164,
+      "sha256": "2279b9bfd08aff7c0f764a2716bde0d3a61dc12573687a2cff91256b17681bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0037_gtest-typed-test.h": {
+      "bytes": 15889,
+      "sha256": "d56313830bf30d6271d7c1f8ca57dc52d95a10b97e4ace6efa0f085ae519303a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0038_gtest.h": {
+      "bytes": 91459,
+      "sha256": "93da03ddf6d5b9bdf40ae4ded9939067c9ed0b6de93f787f7e8d187609b6b02d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0039_gtest_pred_impl.h": {
+      "bytes": 12783,
+      "sha256": "85e850e735a42ebb5f9a01a018708c1c0b9b7d83c94b14b7d5d29512c00b6ffd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0040_gtest_prod.h": {
+      "bytes": 2502,
+      "sha256": "3c6301ef533db8686e474dd5a0de4d98a31cbb630e2273f712472d1be25aa261"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0041_README.md": {
+      "bytes": 1269,
+      "sha256": "608ec5ac574a6e64e4fc2f4bce2cfc7ff753a04d6822d6ff96e43fff51c6ccc1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0042_gtest-port.h": {
+      "bytes": 1873,
+      "sha256": "5e06747c9e8b86e9d841fabd61c2f045b2bb1133716f127be4a963ced1c44e01"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0043_gtest-printers.h": {
+      "bytes": 2094,
+      "sha256": "b95afda2426e8c4f09c11d3296d522fb336b248c0da7e078388db4bb072c2166"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0044_gtest.h": {
+      "bytes": 1858,
+      "sha256": "21d20a1c64ea38c20c4b12337c261a1a18989d2a30710a83dfb5cd9a3bb3c55e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0045_gtest-death-test-internal.h": {
+      "bytes": 13929,
+      "sha256": "a70d1174ef668639c7af21764442f8e487b0fc70c237a70f90e3161a8e8262d6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0046_gtest-filepath.h": {
+      "bytes": 10339,
+      "sha256": "544ce95d2e1e4b7ae17ee170f482aaa09e17d0056999c4ce7e7a6097c3a755cf"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0047_gtest-internal.h": {
+      "bytes": 63416,
+      "sha256": "a33806c8e6ca5eb6f839b8e015bdf8eae848641035f9499834f9d402b823d5fe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0048_gtest-param-util.h": {
+      "bytes": 38172,
+      "sha256": "effa1b3e6a3554aae8fc82fbe88c1c3215f723bb3e2e444bf424f688c476a030"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0049_gtest-port-arch.h": {
+      "bytes": 4305,
+      "sha256": "37f6d5c70322ee5f4f84fafcb4e8e2f4bbf08a5afc64a6636cf6a9f45d442198"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0050_gtest-port.h": {
+      "bytes": 90033,
+      "sha256": "c22ef5c860dabc3e74225f3a54c2d7224375ad2dd2af619d3f8cbe7e917fc754"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0051_gtest-string.h": {
+      "bytes": 7323,
+      "sha256": "0cc08c746bceb2b101c61ffbc905c598eb62fee3c262c4585c21b10d8a3e6508"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0052_gtest-type-util.h": {
+      "bytes": 7349,
+      "sha256": "c1cf53463579025a7b25466e9680a778d74beff52d8a64b6e83fcb6dd99e4bb7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0053_gtest-all.cc": {
+      "bytes": 2201,
+      "sha256": "972d3016860f9aa6452e078cf77406290fb7003b66fd6c0744a030bd1c323606"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0054_gtest-assertion-result.cc": {
+      "bytes": 3009,
+      "sha256": "dbd2235676dcc0ef6409108a4041e05442fc6895735a5561d71151e6a14296bb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0055_gtest-death-test.cc": {
+      "bytes": 62742,
+      "sha256": "4a0a2dad0efbb61c4f7686ccd326e19d6e5633c98202f6878fa2d18c52f3329a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0056_gtest-filepath.cc": {
+      "bytes": 15732,
+      "sha256": "8eec3fa2a0e6617106a8d9bfedf3209b0a8cad02e2a17e76196807290e940f8c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0057_gtest-internal-inl.h": {
+      "bytes": 47929,
+      "sha256": "fce60f191b52108b5851f6aec51a6f14001e1a79fd302d48c8fdbb842f8fef1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0058_gtest-matchers.cc": {
+      "bytes": 3724,
+      "sha256": "e4ce9edf33493625353cc147a14caac14fdba7390d76166d101fa2fe9d16bbda"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0059_gtest-port.cc": {
+      "bytes": 47960,
+      "sha256": "6e6c0346e833a254e52544728b40fd0cced0b36431e9eed8f5e477e6f5fe1a23"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0060_gtest-printers.cc": {
+      "bytes": 18551,
+      "sha256": "bd14e45b5cb8df8be5944a0aaeb3739c533737a183ae4ed6627f5613eea1f6c9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0061_gtest-test-part.cc": {
+      "bytes": 4028,
+      "sha256": "b268314cbc718b485ff3e45fdeb5a1496bb8d87dadd5e824c558bf3b03e2dbf9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0062_gtest-typed-test.cc": {
+      "bytes": 3823,
+      "sha256": "b92e70b2d7ee3b86328162cbda269a28de4ce67f0e8d9beec5ec2c73a93ba006"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0063_gtest.cc": {
+      "bytes": 259551,
+      "sha256": "53470c00499b943b4f5c3e7b581ffda9c76f828f485f33e17471aa08e8b296ac"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0064_gtest_main.cc": {
+      "bytes": 2430,
+      "sha256": "3836c1ce7c4829c44a30f368d888ae3bed218437d61d102c50c0db4afca33b3f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0065_x86_64-linux-gnu-g++-13": {
+      "bytes": 1027128,
+      "sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0066_x86_64-linux-gnu-ar": {
+      "bytes": 55792,
+      "sha256": "6452af2eea333b8c65e1adb92964fc8f97863ab003fa13f9d12bff5345cd7dbe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/external_snapshot/0067_x86_64-linux-gnu-ranlib": {
+      "bytes": 55792,
+      "sha256": "60254978b8ee2c1b21b41d16a18a621dbbcc72e43eb2fa9f916818256c77e9ee"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/recipe.py.snapshot": {
+      "bytes": 7531,
+      "sha256": "24454ef9b73db1b4b542155d58771d7e9ce50333ce9a620f75c4251d188d8ff1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/result.json": {
+      "bytes": 1713,
+      "sha256": "9966920730fdf5e1b1123c5bbb3a622aa7117ee0004e62a99a04960bd69c5c14"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/source_bundle.json": {
+      "bytes": 29932,
+      "sha256": "cde4b2cd699dbd14774594172b564a29f70eed194be93ff03eba2a7a636bb613"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/source_snapshot/CMakeLists.txt": {
+      "bytes": 1283,
+      "sha256": "d225a094824b8b7be6964fddae9368f00631bdd6a1ff98b2e7915f0ef885e75b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/source_snapshot/actual_first_control_input_v1.json": {
+      "bytes": 24476,
+      "sha256": "24f23593c3134c8729e3f130c40fa217517acfb8c714495a3e98fd2e0293ec26"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/source_snapshot/common_replay.hpp": {
+      "bytes": 3111,
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/source_snapshot/main.cpp": {
+      "bytes": 2268,
+      "sha256": "d9e90981d3d715a0867a8cace2c31944c2452064155475da1b933500218dce11"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/source_snapshot/probe.hpp": {
+      "bytes": 5163,
+      "sha256": "086abd007957607133e94be4c20b725f3f4710314b6eb0f518ec84320a4174b1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt01/source_snapshot/test_probe.cpp": {
+      "bytes": 1601,
+      "sha256": "65e3433753e7926c650028f8bbbe4ff313b1b48b9c8a271a4f8c121b535a7bda"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/actual_link_recipe.txt": {
+      "bytes": 567,
+      "sha256": "bc1e2f447f2b95b094e23019ecd7125fc9ad36b3a9f1cf05317e6a4dc89c3660"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/AMENT_IGNORE": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeCache.txt": {
+      "bytes": 22332,
+      "sha256": "682686aa7608a7303e704284e50e5072f9c7f043838575bacc9eced9d51bc611"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeCCompiler.cmake": {
+      "bytes": 2525,
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake": {
+      "bytes": 5539,
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_C.bin": {
+      "bytes": 15968,
+      "sha256": "ba6646aa78bf3dd0a7997f89bcc1154630fcb86d28103e0bfcd5200b21f54c7c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_CXX.bin": {
+      "bytes": 15992,
+      "sha256": "879b5d31eac14d7b0ca6cd3b96320041ad8d87b538fea24a17e8707f0656bc96"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CMakeSystem.cmake": {
+      "bytes": 398,
+      "sha256": "e6dd9890a5f68bed86fe6a79a06176a48a0d2a9c39c50313df0f1cdafe697e47"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdC/CMakeCCompilerId.c": {
+      "bytes": 27030,
+      "sha256": "9a95913d134b6c5dca36f23acb80765b86313bcfd8da754e5ceb2e259e954074"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdC/a.out": {
+      "bytes": 16088,
+      "sha256": "88aa2744b35746a2f6464f0d7f31c3991c8fdb255d08727ecfbf676478e051b8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp": {
+      "bytes": 26804,
+      "sha256": "9b1ebe4919c111011dba043f743e42ada0f1e3804b211e42191d773e7043282c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/a.out": {
+      "bytes": 16096,
+      "sha256": "a3d366f5f634a9cc0d9340115704a2d978e930f75ce0aceac02d7177849a8a1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/CMakeConfigureLog.yaml": {
+      "bytes": 58168,
+      "sha256": "12910b84e7d00cc443c4759307e37b4acd987ced29cddcd3a509c0a9229ccbc4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 823,
+      "sha256": "39b9b6401fb5b806c574cb14b736fee07c2fa9ae8b3a157052301be7aab259bd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/CMakeRuleHashes.txt": {
+      "bytes": 112,
+      "sha256": "fddcd8f0236fdf682c0f3e7686dd1c7d2e3a71fcb6074a285fb52e35452da25a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/Makefile.cmake": {
+      "bytes": 14291,
+      "sha256": "5b18560e50083c9f7e6979ef7d9e576c0427b734330ed4ca9f01c248b6742e30"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/Makefile2": {
+      "bytes": 13458,
+      "sha256": "8cd2be0d55085989913ed8a11bb1a1874e6e3ee33e93758afabc92821b9fa371"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/TargetDirectories.txt": {
+      "bytes": 1827,
+      "sha256": "a9fc9ee04b7eaa9db3e477b94a21cb9de0ddfd943cbdba4a89875013a7a8f27c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/cmake.check_cache": {
+      "bytes": 85,
+      "sha256": "a26189e394421da57f45706a07713c5720acd200a41711b0c0c590c3c63371c4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/build.make": {
+      "bytes": 3866,
+      "sha256": "072e07f44112effcd16f4a98f520022b60ef318802c203e29f3e96040507bba8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/cmake_clean.cmake": {
+      "bytes": 256,
+      "sha256": "c69872068b7b4965c401fc8e23c6de9da634540f2e3c37abb0ecfa3b4e65d144"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/compiler_depend.make": {
+      "bytes": 147,
+      "sha256": "36e244d61a537fd82590f907810d3fbd82ecde1d28966bb722ec3246b1e6319d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/compiler_depend.ts": {
+      "bytes": 141,
+      "sha256": "ef9088ee4743b0024024c9bd78f5f6cca0b7e2173c4c664a5f1e8ee8b5aadfa9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/p1_first_control_fixed_tail_uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "aa67a169b0bba217aa0aa88a65346920c84c42447c36ba5f7ea65f422c1fe5d8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/DependInfo.cmake": {
+      "bytes": 832,
+      "sha256": "b5b7dbf41522538fa4d7a7f52eee4c5bec7859dce62e031c4a8d45433b3b0531"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/build.make": {
+      "bytes": 6498,
+      "sha256": "965b0422841e5a7e90ae75554a1afd18df106d2628212e8a64f59af21072230b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/cmake_clean.cmake": {
+      "bytes": 347,
+      "sha256": "27b84212f43f415fc2bc051e331e04c7980c2458bc81ab7599ad7bb6abd6ceb7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/compiler_depend.make": {
+      "bytes": 123,
+      "sha256": "5d382c81a2f903e42a7aa94a8b0d41d1684a67750c41c948078bf0563d78d495"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/compiler_depend.ts": {
+      "bytes": 127,
+      "sha256": "a90f282c5cd07de7b3362f2c43374079a5ba1077219eceba8226615f5f10657c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/depend.make": {
+      "bytes": 104,
+      "sha256": "e2fdfd474c552cc00d5107d1a93bde4a522edf75f27581a3d417385d7982d65a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/flags.make": {
+      "bytes": 771,
+      "sha256": "e0ecb4041db09a5c0368b1e3159cbb06bb673c229c7f9cb4a3853b5952af497c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/link.txt": {
+      "bytes": 567,
+      "sha256": "bc1e2f447f2b95b094e23019ecd7125fc9ad36b3a9f1cf05317e6a4dc89c3660"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/main.cpp.o": {
+      "bytes": 486024,
+      "sha256": "d7fd9b6936cbfc0f0a2e4d74dd8dd33943ef92e9ec55058bfd7ecb7fe983e63c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/main.cpp.o.d": {
+      "bytes": 32688,
+      "sha256": "5296756adfd8d9bd81ebce45a898d73ea892f15f977e69b2a8e35d4c82eaed4d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/replay_first_control.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "a3194f88ef5ae65b7a30877bdb3f7ab384e043aa110d7219d72f1e666ac6246b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/DependInfo.cmake": {
+      "bytes": 846,
+      "sha256": "255a27b15ea650816fc5a68c6ff77fb3078ea119ab34b1afb9f26e98df98cec6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/build.make": {
+      "bytes": 6542,
+      "sha256": "a6cd3a699232390673dbc71830e24eb2c4c37b7ec6619f4091583416102979f3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/cmake_clean.cmake": {
+      "bytes": 349,
+      "sha256": "c95e4b12a30be63172c94831c90a54040e4a7627ab9d7c2353fe22728d0e055a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/compiler_depend.make": {
+      "bytes": 121,
+      "sha256": "65efde40e684df245b9f4d4a70042769bb3f8fdcb89859ae82211d9591165dff"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/compiler_depend.ts": {
+      "bytes": 125,
+      "sha256": "aa0162a6fae62dc1d79be268b4c2f8d1ace9942bc361583a8521c8850da75972"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/depend.make": {
+      "bytes": 102,
+      "sha256": "67007d7919c83bb2565cb40418071c9f9bc00fd45a61b562044278d715afc83f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/flags.make": {
+      "bytes": 908,
+      "sha256": "591c50e511b0c03599ef79a7ab40551cc5ad4ae08e8bb55dc4fffc2750872f63"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/link.txt": {
+      "bytes": 578,
+      "sha256": "34b46aa6e126efd3d434ab278f37422ccd94ee57bbb5ec22559fdf2316b7d331"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "d07ef668326a9a562e0a72f93d199267d5a0b8fb4172c2286a56a2cb5ef77dd0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/test_probe.cpp.o": {
+      "bytes": 435280,
+      "sha256": "a08fbb1ed1cba614c2e985ee225e1ea3d8ff19c271379700af248b9f82c1fb4c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/test_first_control.dir/test_probe.cpp.o.d": {
+      "bytes": 35534,
+      "sha256": "5e85ef18d2e1862ff5e15fccbe0099394edd7a78af0adfac6f040793648c85cc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/build.make": {
+      "bytes": 3103,
+      "sha256": "91c73636263e8dd2fc545f7e753020c817934ae6f8cd80d281e24be58f9c018c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/cmake_clean.cmake": {
+      "bytes": 153,
+      "sha256": "e51440eea639df67acafb145cd82e07a0d47a18935f82ef48527ded743c08d36"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.make": {
+      "bytes": 119,
+      "sha256": "544b5020e80145b8265862c76a0811c3dd31a0820e2834b26038f646fa99c80b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.ts": {
+      "bytes": 113,
+      "sha256": "5f7329b918c868b9e2549e3175c8cab0d6c02deccfa5f2700ee294575108f150"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CMakeFiles/uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CTestConfiguration.ini": {
+      "bytes": 2643,
+      "sha256": "5a9ad5adab1e04565998e50e5d984db833e7e896c56efd1b415287d10045d97f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CTestCustom.cmake": {
+      "bytes": 104,
+      "sha256": "604987db904b472a78182f761db384fc8115f0ade6bb2cfed0d2242259f36bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/CTestTestfile.cmake": {
+      "bytes": 2341,
+      "sha256": "9468039e898a8672a32395ba35665e962d0fa283692f587180dd99244b60f283"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/Makefile": {
+      "bytes": 9482,
+      "sha256": "b6d249d3234417b36a785097d3801a62737fd498e3d682ce3a449685067c7a68"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/ament_cmake_core/stamps/templates_2_cmake.py.stamp": {
+      "bytes": 3691,
+      "sha256": "696037d4de7b593bce6ca467480ee35076eb3efc49a94fa0af7e909fe0c96ebb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/ament_cmake_package_templates/templates.cmake": {
+      "bytes": 1984,
+      "sha256": "0bd4d2e887197f7f9771d2238eff41586d61b13acc51ce8748b36ebcf55753f3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake": {
+      "bytes": 2196,
+      "sha256": "9d994ea7a85b59d1012d79d4f4fea9da5eaffb533c51fa1222bdcf0faf259d2f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/cmake_install.cmake": {
+      "bytes": 2079,
+      "sha256": "b4d0da2d824e99cac6532e4746fd4ef4783d6be489d5f00f4d0e02a3b3158232"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/compile_commands.json": {
+      "bytes": 3595,
+      "sha256": "e013d74d265a7a7c6aadeb52d8d4a96f7830c9dfa745c76bfe4c13daa2438c65"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 727,
+      "sha256": "4054eacbc0e7723e092625601235d75eb8b2a670be40048414e3ee6b2fdfb5cc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/DependInfo.cmake": {
+      "bytes": 742,
+      "sha256": "41b9794eb597def843b1b9c9edb14c35ac7855090406ddb95c553abf7d77ec16"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/build.make": {
+      "bytes": 6279,
+      "sha256": "d8ed4e0195b6bd42b082efb958d0c1958c019ce080b512d0b7ff66fd336a369c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean.cmake": {
+      "bytes": 296,
+      "sha256": "d1cc0f4bad79d663d6bb4514adc027f4c1c7fb62acfd5040f199eaa981d110b2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/cmake_clean_target.cmake": {
+      "bytes": 37,
+      "sha256": "2528443fca7dd9ef1497170c9300cef9535872d273af72b87f0b2e98e38c9271"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.make": {
+      "bytes": 108,
+      "sha256": "fdd7420efc3c3e7205cafdad1b80a3b1c7222218270db7736088a548d903d4ef"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/compiler_depend.ts": {
+      "bytes": 112,
+      "sha256": "997af5bce432b38a2cddd748f433ccd7dc215f91117bb98bf1be692d5dbf7466"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/depend.make": {
+      "bytes": 89,
+      "sha256": "c4217b9fdea79fb317d5c87c2a9e36dceca849a044f58485eca7b013dd9c0a2b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/flags.make": {
+      "bytes": 348,
+      "sha256": "27be6279443a7659140077a129689bd0f7d085d4e058c819a7d6e012decdcb86"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/link.txt": {
+      "bytes": 95,
+      "sha256": "aea10c44f0f4c0e3e6bfae2c9b1a90b0a1aeb6461e1261bf3e5956459b69dc92"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "c06e644090b09d41eaddf59d10bcf03c6db6499eb51fa0d03e5128e5a165cc3c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o": {
+      "bytes": 904992,
+      "sha256": "90e4f754ca78538ac6459109570e87ceb3df6dbd3e17156420c3465b8e17bfca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest.dir/src/gtest-all.cc.o.d": {
+      "bytes": 20199,
+      "sha256": "aca881e3eccdc731ba0625c1f14d007422cfea16bea182b24d46385b51d7bedb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/DependInfo.cmake": {
+      "bytes": 755,
+      "sha256": "482c16cf40958ea2f2af8fbe328461afe1ffbec1a765f54218209f65d971b100"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/build.make": {
+      "bytes": 6508,
+      "sha256": "5faf4f75fced6dc99366a5012f70d1f70f7e6d081f6055ebc78e575e6ea69df1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean.cmake": {
+      "bytes": 323,
+      "sha256": "3f59ad1556f8ce3686882d39a119717539f3de3bf194f157e19da63837499020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/cmake_clean_target.cmake": {
+      "bytes": 42,
+      "sha256": "6b477660f7857030e16f3db3360bfe208081383c64621ce00f653f368f15e61c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.make": {
+      "bytes": 113,
+      "sha256": "f1844edb147f0f25d7d0ff34e80a9030e9b97f7caef77fb55b7556888e8826db"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/compiler_depend.ts": {
+      "bytes": 117,
+      "sha256": "5d4a42aa2b79e52ea1618f221c27d853ded01837e138ca0f3261036506b0b782"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/depend.make": {
+      "bytes": 94,
+      "sha256": "30c0a4b6d6407c7254abb6c8b2f184b459ea943c7905717f7c09e68820c57730"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/flags.make": {
+      "bytes": 288,
+      "sha256": "cb6466c030931c8c9266cfe4ccd5326ccfdca81d53f2333be3edabfb81f4d2d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/link.txt": {
+      "bytes": 109,
+      "sha256": "2245581bcd068a5f77b07899ba64d9b32d75c4e7a6e8cb0db787d0e480f8319a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "2c0c69e4af70b4caed2b8e1bd9f161f3ee9eb525d5f041631eee6d0661e5a02f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o": {
+      "bytes": 2136,
+      "sha256": "8befe0706e76f35ddca7d01ff02d24839299df23e25ceb2a71ecb12bb9602263"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/gtest_main.dir/src/gtest_main.cc.o.d": {
+      "bytes": 16151,
+      "sha256": "369dcc30ea646e4b70cdf8d5ecf8dc250f455968a0b9bc43173756f34bc2249b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/CTestTestfile.cmake": {
+      "bytes": 370,
+      "sha256": "883b271a9bb987fadd874fee1b057218a4c4dd7b7cf22924d83d98a144ebefc9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/Makefile": {
+      "bytes": 9692,
+      "sha256": "3a21690a24a7729e5597db36c44787ca9ac90dedd318a40430350d9cc5542c1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/cmake_install.cmake": {
+      "bytes": 1252,
+      "sha256": "16e5154d02c5c1b9970cfee51c66dde9a214c8a113ed98f78258809e39f4a554"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/libgtest.a": {
+      "bytes": 966810,
+      "sha256": "859e3b658193fb746dfdd31d03083e872a158e32c36ec8bf183e8c6930b0b671"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/gtest/libgtest_main.a": {
+      "bytes": 2278,
+      "sha256": "4a130629aef45dd8365f17a0b7987602f95aacff5563bd8ebc81017a4c9480e8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/replay_first_control": {
+      "bytes": 267104,
+      "sha256": "a5f95b58e92c322261714d3cf82788582820c2ad246ed7567335644d1fa23194"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/cmake_build/test_first_control": {
+      "bytes": 739560,
+      "sha256": "33c29326eca47e9120207edfd42bd397bec4f4ab82ca44faf6547376e954b807"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/compile_commands.json": {
+      "bytes": 3595,
+      "sha256": "e013d74d265a7a7c6aadeb52d8d4a96f7830c9dfa745c76bfe4c13daa2438c65"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/compiler_dependency_pins.json": {
+      "bytes": 93936,
+      "sha256": "575224d9d257347562f8630069d77964b2682ad351ff6263811fcc90744e8ada"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/configure.log": {
+      "bytes": 1410,
+      "sha256": "029856b783030a51e5585e396ad15b7677778a72044a72ac64607d4634f12768"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/configure.sh": {
+      "bytes": 1152,
+      "sha256": "e68b0f8b52445ee24a72e7916b6a26a60eab1cc8a17f31988ea24d8a672e4172"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/default_build.log": {
+      "bytes": 636,
+      "sha256": "2dd606cfd3299bcf0678d5f3e9162a98993756a5c1c59479fd92fc2d59f6e9d9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/default_build.sh": {
+      "bytes": 647,
+      "sha256": "f094dfac968951b180b915fa5c850eb104292e8f27cf00bc09160d6f2d7e0702"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0000_acados_backend.hpp": {
+      "bytes": 4391,
+      "sha256": "1d2b19d710391464c6833ca58b7162c501926c7bb02193737609b69bb41cfcca"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0001_acados_solver_usv_dyn_nmpc.h": {
+      "bytes": 7452,
+      "sha256": "bdac3caa7ee125812d485f87cdde272c5c90d6c10628a996c6fd6f7d75038114"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0002_usv_dyn_nmpc_constraints.h": {
+      "bytes": 3210,
+      "sha256": "d5fe1da868dfbabffa160f83d82ce3d492d8c5e8e2cc091286a55fb43ee8999a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0003_usv_dyn_nmpc_cost.h": {
+      "bytes": 3986,
+      "sha256": "21ffc99e506d2e778e6d5c6e4f95c746f132f1d557d37522ae234f4d090bccbd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0004_usv_dyn_nmpc_model.h": {
+      "bytes": 2379,
+      "sha256": "d2471c85706deb72047df28521074d297a344053a56d90938f4f63046ab90682"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0005_usv_dyn_nmpc_p_global_precompute_fun.h": {
+      "bytes": 2060,
+      "sha256": "175b83c9d37263330d11e7c7828be067764b71cad69a3e5b71802031511ce770"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0006_casadi_backend.hpp": {
+      "bytes": 2826,
+      "sha256": "8cf8ffebd66d438836351460a3cb16815ef9ba847fe9ae946167dcb3bdffe489"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0007_mpc_node.hpp": {
+      "bytes": 10949,
+      "sha256": "536221d592aec0a2d91705f49ce3739f6706afdb8a0426e9a06e1a7a36fbbf72"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0008_mpc_node.hpp.pre_reference_prediction_v1": {
+      "bytes": 10647,
+      "sha256": "2a19f008c009a63038b39810923ed958e534ea50d156631e08fe8e927865dfb2"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0009_mpc_solver.hpp": {
+      "bytes": 4580,
+      "sha256": "a711527b8556bff8508a99bfcafedc055d81a9c5cddbe5a93f69144cb829dc83"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0010_p1_input_core.hpp": {
+      "bytes": 5795,
+      "sha256": "a626758cbce50acb69e19aa793f6d01f7e913fa92d0172e514a654481c0a0091"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0011_research_logger.hpp": {
+      "bytes": 9611,
+      "sha256": "90f9f7070eac3bf0ad516a034118444afeddfdb65cd91ccffac5d7617c30789a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0012_research_logger.hpp.pre_reference_prediction_v1": {
+      "bytes": 8134,
+      "sha256": "16a9431704b97132a3e9c50db5d953d0388bea612b57c960766fbd5e10581b6d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0013_usv_model_dynamic.hpp": {
+      "bytes": 3576,
+      "sha256": "f0e5e7f74e4eba3a84295914f36ecb8216de97469b4d34626c6b046ce933638a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0014_utils.hpp": {
+      "bytes": 4838,
+      "sha256": "5a78abb9f6acd9851d96169a7bbb2044208b761c1d9d0100a0e68cfc68e27de3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0015_ament_cmake_export_dependencies-extras.cmake": {
+      "bytes": 3942,
+      "sha256": "a672adf07855ba598ec3ab5659d54e489242e928bc924bc97eabd67f91cdfdcc"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0016_ament_cmake_export_targets-extras.cmake": {
+      "bytes": 975,
+      "sha256": "af392c7714144c33ab0dbba1f1d8ba9d2648c7a373ff40136e817d0f42d51892"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0017_p1_core_targetsExport-release.cmake": {
+      "bytes": 1979,
+      "sha256": "038fed658c5ad768bd5b25cf718bc4adc939a3ae21c66b91c2df526f1f0edd51"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0018_p1_core_targetsExport.cmake": {
+      "bytes": 5459,
+      "sha256": "81f954e46d7714a3a8ceb241e3e7cc323e6672bf6f6c76c3a3860f633001df2f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0019_usv_mpc_cppConfig-version.cmake": {
+      "bytes": 432,
+      "sha256": "5df7fb3481e154840dd6ac6d1b6eb53c81ed9cadd5e7a00398962383332be7ea"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0020_usv_mpc_cppConfig.cmake": {
+      "bytes": 1349,
+      "sha256": "1ebc247a6ab8c02ec6a489c5f716a11c223d4b8c30b98199c90c50654c18a2a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0021_libcodegen_lib.a": {
+      "bytes": 274422,
+      "sha256": "7431a9cbdd7b8a6d47719ceda2e44b977f2649fbcbb4592771dac99abd2a38dd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0022_libmpc_core_lib.a": {
+      "bytes": 32114,
+      "sha256": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0023_libmpc_solver_lib.a": {
+      "bytes": 212276,
+      "sha256": "5c4a8d70cc6812b36693a5b68cb13a7a812dae828f983b4446a5564ff996d5d1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0024_link.txt": {
+      "bytes": 6353,
+      "sha256": "5d143478a3e5b35ba8da92eebb3b163d3671534e4bae00bd8483269f91ca95d4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0025_acados_backend.cpp": {
+      "bytes": 14296,
+      "sha256": "e5513cba1eb45024e2fb4b083b05ebd6ba8d8ced9f133a17f9c0ace3355f27c8"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0026_regenerate_acados_codegen.py": {
+      "bytes": 14532,
+      "sha256": "775d271cc4f746b6eb2ebd1d3008636effedcf3af03daae694ea954985b2ead4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0027_usv_model_dynamic.cpp": {
+      "bytes": 3857,
+      "sha256": "8b9df5a0880b5418773d3d76a57159989e0d373b760b80d732fec4aa7c0473c3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0028_CMakeLists.txt": {
+      "bytes": 1070,
+      "sha256": "b4215ba177f52307eb74930a557bd038e4267b5e41a30f85fc52e53e19676950"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0029_gtest-assertion-result.h": {
+      "bytes": 8503,
+      "sha256": "d6562e22c316e831bfbc2cde3b158f06380a22e7e1c6c1e180689abee5c5b972"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0030_gtest-death-test.h": {
+      "bytes": 14910,
+      "sha256": "8decbb86ebbfa142fd78a83cfbeb4c5e73e98179058ce70fcc279935c497429a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0031_gtest-matchers.h": {
+      "bytes": 33067,
+      "sha256": "d637dd188944433c62d96a062f9b1adab851574c537d7021270c7a52a2759a90"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0032_gtest-message.h": {
+      "bytes": 9203,
+      "sha256": "f1c7bd4e0c02240e884deed25a2e0bfd04e5e0c3fd778a3b126cbb64531f65a7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0033_gtest-param-test.h": {
+      "bytes": 24008,
+      "sha256": "1adb46e17e47fc2f40dc5b8e9acec4f01efa389a19bbea25d32aea28b94e32e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0034_gtest-printers.h": {
+      "bytes": 40511,
+      "sha256": "f3396ea55d577ee04f15a2b14b14b76edb8a84d385c831defd88cff8535bc273"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0035_gtest-spi.h": {
+      "bytes": 12843,
+      "sha256": "fc0bbebaeb211b81a2ec3df388e5e5f25a7c22e90186839854d2e5b26ce226e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0036_gtest-test-part.h": {
+      "bytes": 7164,
+      "sha256": "2279b9bfd08aff7c0f764a2716bde0d3a61dc12573687a2cff91256b17681bf0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0037_gtest-typed-test.h": {
+      "bytes": 15889,
+      "sha256": "d56313830bf30d6271d7c1f8ca57dc52d95a10b97e4ace6efa0f085ae519303a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0038_gtest.h": {
+      "bytes": 91459,
+      "sha256": "93da03ddf6d5b9bdf40ae4ded9939067c9ed0b6de93f787f7e8d187609b6b02d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0039_gtest_pred_impl.h": {
+      "bytes": 12783,
+      "sha256": "85e850e735a42ebb5f9a01a018708c1c0b9b7d83c94b14b7d5d29512c00b6ffd"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0040_gtest_prod.h": {
+      "bytes": 2502,
+      "sha256": "3c6301ef533db8686e474dd5a0de4d98a31cbb630e2273f712472d1be25aa261"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0041_README.md": {
+      "bytes": 1269,
+      "sha256": "608ec5ac574a6e64e4fc2f4bce2cfc7ff753a04d6822d6ff96e43fff51c6ccc1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0042_gtest-port.h": {
+      "bytes": 1873,
+      "sha256": "5e06747c9e8b86e9d841fabd61c2f045b2bb1133716f127be4a963ced1c44e01"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0043_gtest-printers.h": {
+      "bytes": 2094,
+      "sha256": "b95afda2426e8c4f09c11d3296d522fb336b248c0da7e078388db4bb072c2166"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0044_gtest.h": {
+      "bytes": 1858,
+      "sha256": "21d20a1c64ea38c20c4b12337c261a1a18989d2a30710a83dfb5cd9a3bb3c55e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0045_gtest-death-test-internal.h": {
+      "bytes": 13929,
+      "sha256": "a70d1174ef668639c7af21764442f8e487b0fc70c237a70f90e3161a8e8262d6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0046_gtest-filepath.h": {
+      "bytes": 10339,
+      "sha256": "544ce95d2e1e4b7ae17ee170f482aaa09e17d0056999c4ce7e7a6097c3a755cf"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0047_gtest-internal.h": {
+      "bytes": 63416,
+      "sha256": "a33806c8e6ca5eb6f839b8e015bdf8eae848641035f9499834f9d402b823d5fe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0048_gtest-param-util.h": {
+      "bytes": 38172,
+      "sha256": "effa1b3e6a3554aae8fc82fbe88c1c3215f723bb3e2e444bf424f688c476a030"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0049_gtest-port-arch.h": {
+      "bytes": 4305,
+      "sha256": "37f6d5c70322ee5f4f84fafcb4e8e2f4bbf08a5afc64a6636cf6a9f45d442198"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0050_gtest-port.h": {
+      "bytes": 90033,
+      "sha256": "c22ef5c860dabc3e74225f3a54c2d7224375ad2dd2af619d3f8cbe7e917fc754"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0051_gtest-string.h": {
+      "bytes": 7323,
+      "sha256": "0cc08c746bceb2b101c61ffbc905c598eb62fee3c262c4585c21b10d8a3e6508"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0052_gtest-type-util.h": {
+      "bytes": 7349,
+      "sha256": "c1cf53463579025a7b25466e9680a778d74beff52d8a64b6e83fcb6dd99e4bb7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0053_gtest-all.cc": {
+      "bytes": 2201,
+      "sha256": "972d3016860f9aa6452e078cf77406290fb7003b66fd6c0744a030bd1c323606"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0054_gtest-assertion-result.cc": {
+      "bytes": 3009,
+      "sha256": "dbd2235676dcc0ef6409108a4041e05442fc6895735a5561d71151e6a14296bb"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0055_gtest-death-test.cc": {
+      "bytes": 62742,
+      "sha256": "4a0a2dad0efbb61c4f7686ccd326e19d6e5633c98202f6878fa2d18c52f3329a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0056_gtest-filepath.cc": {
+      "bytes": 15732,
+      "sha256": "8eec3fa2a0e6617106a8d9bfedf3209b0a8cad02e2a17e76196807290e940f8c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0057_gtest-internal-inl.h": {
+      "bytes": 47929,
+      "sha256": "fce60f191b52108b5851f6aec51a6f14001e1a79fd302d48c8fdbb842f8fef1a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0058_gtest-matchers.cc": {
+      "bytes": 3724,
+      "sha256": "e4ce9edf33493625353cc147a14caac14fdba7390d76166d101fa2fe9d16bbda"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0059_gtest-port.cc": {
+      "bytes": 47960,
+      "sha256": "6e6c0346e833a254e52544728b40fd0cced0b36431e9eed8f5e477e6f5fe1a23"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0060_gtest-printers.cc": {
+      "bytes": 18551,
+      "sha256": "bd14e45b5cb8df8be5944a0aaeb3739c533737a183ae4ed6627f5613eea1f6c9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0061_gtest-test-part.cc": {
+      "bytes": 4028,
+      "sha256": "b268314cbc718b485ff3e45fdeb5a1496bb8d87dadd5e824c558bf3b03e2dbf9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0062_gtest-typed-test.cc": {
+      "bytes": 3823,
+      "sha256": "b92e70b2d7ee3b86328162cbda269a28de4ce67f0e8d9beec5ec2c73a93ba006"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0063_gtest.cc": {
+      "bytes": 259551,
+      "sha256": "53470c00499b943b4f5c3e7b581ffda9c76f828f485f33e17471aa08e8b296ac"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0064_gtest_main.cc": {
+      "bytes": 2430,
+      "sha256": "3836c1ce7c4829c44a30f368d888ae3bed218437d61d102c50c0db4afca33b3f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0065_x86_64-linux-gnu-g++-13": {
+      "bytes": 1027128,
+      "sha256": "1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0066_x86_64-linux-gnu-ar": {
+      "bytes": 55792,
+      "sha256": "6452af2eea333b8c65e1adb92964fc8f97863ab003fa13f9d12bff5345cd7dbe"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/external_snapshot/0067_x86_64-linux-gnu-ranlib": {
+      "bytes": 55792,
+      "sha256": "60254978b8ee2c1b21b41d16a18a621dbbcc72e43eb2fa9f916818256c77e9ee"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/loader.log": {
+      "bytes": 714,
+      "sha256": "3fb1d693bce7f17c7fcc8ded511f3447d61f17c15793bf1a4067545e64bc1ea7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/loader.sh": {
+      "bytes": 653,
+      "sha256": "337fbc443126c189c9ca121e4ec2e2e09cf126e2eb7f9cffcb90aeedbd354782"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/native.gtest.xml": {
+      "bytes": 1647,
+      "sha256": "b2ed16136818b1ebbd041f1d7b70d06c693be2b3f60e706ece3a35c8297dafd5"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/native.log": {
+      "bytes": 949,
+      "sha256": "be223bc06f19d873ec9fe3386423407b83238fc3480074a2335c07ea7e2e0fde"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/native.sh": {
+      "bytes": 792,
+      "sha256": "30922ccc578b6b76d21bc4c1d300591d36a27806e501ed7b8f7d755af76fcad1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/recipe.py.snapshot": {
+      "bytes": 7531,
+      "sha256": "24454ef9b73db1b4b542155d58771d7e9ce50333ce9a620f75c4251d188d8ff1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/result.json": {
+      "bytes": 2442,
+      "sha256": "3eea53cfe5e6b84ece6a02de3e3ace270145577b8612b207f53e9e7262c6b365"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/runtime_library_pins.json": {
+      "bytes": 2713,
+      "sha256": "912ae8e897d7977efd7d4443d5701d6e0da270bc225de970d9661d564e68bea3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/source_bundle.json": {
+      "bytes": 29932,
+      "sha256": "4e8602a138d4a3fad4f8171244247fcef9f90c984f6430cd2c0c1e02cd77f580"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/source_snapshot/CMakeLists.txt": {
+      "bytes": 1283,
+      "sha256": "d225a094824b8b7be6964fddae9368f00631bdd6a1ff98b2e7915f0ef885e75b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/source_snapshot/actual_first_control_input_v1.json": {
+      "bytes": 24476,
+      "sha256": "24f23593c3134c8729e3f130c40fa217517acfb8c714495a3e98fd2e0293ec26"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/source_snapshot/common_replay.hpp": {
+      "bytes": 3111,
+      "sha256": "99f9ee498a94b3778de4f864323326b0c4b22e712fe6544ca4ddb10f444399b6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/source_snapshot/main.cpp": {
+      "bytes": 2268,
+      "sha256": "d9e90981d3d715a0867a8cace2c31944c2452064155475da1b933500218dce11"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/source_snapshot/probe.hpp": {
+      "bytes": 5163,
+      "sha256": "086abd007957607133e94be4c20b725f3f4710314b6eb0f518ec84320a4174b1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/build/replay_attempt02/source_snapshot/test_probe.cpp": {
+      "bytes": 1635,
+      "sha256": "2a72abfd50577f84325f1c54d85439e9f9a93972782eacae69023cba337d6cc9"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/component/build_attempt01_correction_v1.json": {
+      "bytes": 429,
+      "sha256": "8967a7d3235d8a207ad819ddcc11c719b07d3ab56fa0ac72d18dce59cef15da4"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/documents/next_fixed_first_tail_optimization_plan_v1.md": {
+      "bytes": 3362,
+      "sha256": "f8620d61ace78259d2f32bba9d4c39c441f8395102933160dfb737162c5ec4aa"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/documents/\u65b9\u6848A_\u9996\u62cd\u63a7\u5236\u4e0e\u56fa\u5b9a\u5c3e\u5e8f\u5217\u63a2\u9488_\u7ed3\u679c\u4e0e\u4e0b\u4e00\u6b65_2026-10-18.md": {
+      "bytes": 8909,
+      "sha256": "8f86530cfd6ab0d41ab1342ae4fa8145a7aebe1ac0d286840297f572be84cd16"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/finalize_first_control_v1.py": {
+      "bytes": 13637,
+      "sha256": "46b70efc45d4d61ac4d6e1f97b103d6f4b15b748d5dc33522fed006e298009a0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/intermediate_local_backup_v1/CURRENT.md": {
+      "bytes": 324,
+      "sha256": "df2c227af36769e7d25df7a6bae3e97bd5a373073373366ab74453d5cf1a4b6e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/author_freeze_v1.json": {
+      "bytes": 2997,
+      "sha256": "3e35d1fe5a9ee2fe5197c68b90564d683cad50be6f8453b4fd9d43982e3f8c71"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/first_control_audit_v1.json": {
+      "bytes": 18369,
+      "sha256": "d4519ae492e00ccdb45496bfa5bc153e2336db3d15571c6cd4b338163d64313b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/independent_model_v1.py": {
+      "bytes": 2153,
+      "sha256": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/intermediate_local_backup_v1.json": {
+      "bytes": 558,
+      "sha256": "4c2b088219d3cce7807e6edcf5a5d29d4975ebe2edf725fbe4b56af5186f05e6"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/verify_first_control_v1.py": {
+      "bytes": 8858,
+      "sha256": "8bee09c604dd963510fd492bbdf812a3782d2e0b9a9f07da72b9a7e1fd8d3a47"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preflight/MPC_delivery_preparation_v1.json": {
+      "bytes": 1027,
+      "sha256": "1f6c6309e33d851cb79f3801dfd31bf028e5573288b1031a4d58bf1f7a9f8f07"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preflight/MPC_unavailable_attempt01.json": {
+      "bytes": 408,
+      "sha256": "36e9d0d1f1af9daa474fc895b4360aa8241fec48ac3de979268313f9a17ad770"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preflight/preflight_reflection_first_control_v1.md": {
+      "bytes": 3512,
+      "sha256": "dea011c28580b6bc8e638d3dafb96e86b937171d696f185791f24c94eaf5419d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preflight/prepare_MPC_destination_v1.py": {
+      "bytes": 1139,
+      "sha256": "e8c7521e91513f2ff05a517fec9bfb4a6a236a73141f08b30fcff8a8334457ea"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preflight/workspace_final_local_v1.json": {
+      "bytes": 21286224,
+      "sha256": "49f734a68c18e794a9f47b3ba4ceadff3e9b5df39b40c4d168a4e5f66da2f254"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preflight/workspace_initial_local_v1.json": {
+      "bytes": 21281991,
+      "sha256": "46f588e2228eff40609ffbe2c8ab61b20cc5cb6ee05a3235d56c056ddefc2117"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preregister/first_control_v1.json": {
+      "bytes": 4641,
+      "sha256": "53145f3c8e1b17c02629e8ab99a6dceb08d2b6db28a24d8245bb98806b465753"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preregister/offline_invocation_lock_v1.json": {
+      "bytes": 119120,
+      "sha256": "012571e5f332fd089b22db2ec4aa6864886ece9b97661542220c152464727adf"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/protection_local_v1.py": {
+      "bytes": 73302,
+      "sha256": "51a261946d6937ddd5c7e7517266d5c26dc9c47fa63f56afb2c8941937ad2f21"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/native_first_control_v1.json": {
+      "bytes": 77761,
+      "sha256": "5955bd8a382eb3598d318a290e5704ff5650d07ba09af13b30b633e6f75ba27f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/native_first_control_v1.log": {
+      "bytes": 8608,
+      "sha256": "185c6395152f5e46a5a67277517bcf80bebdbf3a281420deaed80d5275705a28"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/native_first_control_v1.sh": {
+      "bytes": 951,
+      "sha256": "0f41dbeea3ccb45c2a86eed16e59f12135ccee8fa2db2501905df2fc5be2c10e"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/offline_invocation_v1.json": {
+      "bytes": 658,
+      "sha256": "0f3ee1c27ed7de8a9578c43c9b8f811424a96337e72ff65af4d8004b1be99963"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/run_offline_v1.py": {
+      "bytes": 4755,
+      "sha256": "87573ad209ad31defff3519c7bed90b39cde4f8b17565126f0139a8e456bb049"
+    }
+  },
+  "independent_audit_sha256": "d4519ae492e00ccdb45496bfa5bc153e2336db3d15571c6cd4b338163d64313b",
+  "initial_local_protection_sha256": "46f588e2228eff40609ffbe2c8ab61b20cc5cb6ee05a3235d56c056ddefc2117",
+  "local_old_asset_bytes": 3976884716,
+  "local_old_asset_paths": 34838,
+  "native_GTest_cases": 4,
+  "native_result_sha256": "5955bd8a382eb3598d318a290e5704ff5650d07ba09af13b30b633e6f75ba27f",
+  "new_closed_loop_performance_qualified": false,
+  "new_closed_loop_run": false,
+  "offline_probes_complete": true,
+  "original_RMSE_failure_preserved": true,
+  "original_real_launch_exception": [
+    {
+      "current_live_file_edited_or_restored_by_this_batch": false,
+      "current_pin": {
+        "bytes": 15602,
+        "mode": 436,
+        "sha256": "f7d6f8a66ef834148da1a17aa71a93b86fca4f2a0ef5e0029f6aa4d039549b43"
+      },
+      "diff_bytes": 515,
+      "diff_sha256": "96cdf76e50289c687c36de0afcd159969de7b9c4ce624ab98a78eabf6a452d16",
+      "historical_recovery_snapshot_written_at_resume": true,
+      "old_bytes_retained_in_original_Git_HEAD": true,
+      "old_pin": {
+        "bytes": 15682,
+        "mode": 436,
+        "sha256": "a4d0dd480bbcd3518c0d9ad40c34db86123fb7a772135dd44ac03d04e7a2420e"
+      },
+      "origin": "unknown; present before resumed turn",
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py"
+    }
+  ],
+  "passed": true,
+  "passed_semantics": "local archive integrity and ten registered offline numeric probes only; remote mirrors and delivery not verified",
+  "preregistration_sha256": "53145f3c8e1b17c02629e8ab99a6dceb08d2b6db28a24d8245bb98806b465753",
+  "remote_MPC_expected_paths_deferred": 24125,
+  "remote_MPC_mirrors_currently_verified": false,
+  "research_conclusion": false,
+  "schema": "first-control-fixed-tail-local-QA/v1",
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

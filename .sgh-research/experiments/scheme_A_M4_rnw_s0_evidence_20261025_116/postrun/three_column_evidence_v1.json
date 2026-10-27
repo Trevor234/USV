@@ -1,0 +1,62 @@
+{
+  "schema": "RNW-S0-three-column-evidence/v1",
+  "batch": 116,
+  "date": "2026-10-25",
+  "basis": "batch 115 independent review (R115-01/02) re-verified independently in this batch from the retained raw Source streams; every number below was recomputed here and matched the review's evidence files.",
+  "indexing_rule": "runs are identified by attempt directory + regulator source.jsonl SHA256 + registration SHA256, NEVER by run_id alone (both attempts share run_id T3-T2A-RNW2).",
+  "runs": [
+    {
+      "attempt": "attempt-1",
+      "directory": "experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/runs/T2A_RNW2_attempt1",
+      "source_sha256_16": "9e5af822bd81622e",
+      "registration_sha256_16": "0d14b9f53557ccd8",
+      "column_raw_received_clock": {
+        "count": 104, "epoch_values": [0], "adjacent_regressions": 0,
+        "last_before_silence_sim_ns": 101801502986,
+        "first_after_silence_sim_ns": 102598920912,
+        "silence_sim_advance_ns": 797417926,
+        "silence_wall_gap_ns": 1558151128,
+        "verdict": "raw clock monotonic; no backward step; epoch unchanged"
+      },
+      "column_fixture_writer": {
+        "source": "batch 115 review mapping_arithmetic_v1.json (CDR replay); fixture source semantics: silent stops clock entirely (synthetic_source_m4.cpp L256), stamp advances per 20ms wall-timer step by wall delta (L254-255), clock_resume adds advance once (L176), hold_until_ns_ write-only (L173/271)"
+      },
+      "column_output_engineering_projection": {
+        "note": "regulator projects sim 1:1 through silence (sim_+(start-clock_receive_)); attempt-1 closed before a post-resume pair settled; window insufficiency recorded in batch 112"
+      }
+    },
+    {
+      "attempt": "attempt-2",
+      "directory": "experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/runs/T2A_RNW2",
+      "source_sha256_16": "193cdf465cd1605e",
+      "registration_sha256_16": "0f024caf35dc9b96",
+      "column_raw_received_clock": {
+        "count": 97, "epoch_values": [0], "adjacent_regressions": 0,
+        "last_before_silence_sim_ns": 101782845634,
+        "first_after_silence_sim_ns": 102580295878,
+        "silence_sim_advance_ns": 797450244,
+        "silence_wall_gap_ns": 1539221548,
+        "verdict": "raw clock monotonic; NO backward step; epoch unchanged; L630 (s<sim_ or >5s jump) NOT triggered by this run's evidence"
+      },
+      "column_fixture_writer": {
+        "hold_to_resume_action_gap_ns": 1527323783,
+        "duration_ms_registered": 1200,
+        "note": "actual hold ended by explicit resume action; hold_until_ns_ never read; writer-target pairing from review CDR replay"
+      },
+      "column_output_engineering_projection": {
+        "seq14_right_sim_ns": 103129840890,
+        "seq15_left_sim_ns": 102588031850,
+        "regression_left_minus_prev_right_ns": -541809040,
+        "seq15_tick": 0, "seq14_tick": 4,
+        "owned_pair_consistency_failed_count": 1,
+        "mechanism_per_R115_02": "seq15 side0 API success -> push_history_locked sees engineering sim regression (L844) -> synchronous clear history+both known=[false,false] -> side1 API success -> history anchor [false,true] vs authority [true,true] -> L1248 consistency guard fail-closed"
+      }
+    }
+  ],
+  "interpretation_superseded": {
+    "batch_113_claims_revoked": ["31.91ms raw-clock backward step (mixed attempt-1 value with attempt-2 projection, different runs/domains)", "clock-thread L630 race as the demonstrated trigger"],
+    "batch_114_claims_revoked": ["B2'+B0 fully concretized as two minimal diffs", "B0 via change_version (belongs to shadow CommandAnchor, not OutputAuthority)", "recovery first stamp >= last received stamp as sufficient guard (already true in failed attempt-2)"],
+    "batch_115_adopted": ["R115-01: L630 not triggered by retained evidence; asymmetric-reset race unproven in this run", "R115-02: L844 synchronous regression branch fully explains [false,true]", "R115-03..08 as written"]
+  },
+  "originals_untouched": true
+}

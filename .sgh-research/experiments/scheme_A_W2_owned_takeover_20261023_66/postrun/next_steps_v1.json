@@ -1,0 +1,56 @@
+{
+  "schema": "scheme-A-mainline-after-owned-W2-v66",
+  "order_fixed": true,
+  "no_additional_owned_run_executed_this_batch": true,
+  "steps": [
+    {
+      "id": "N1",
+      "task": "逐case适用性与Fixture差集清单",
+      "inputs": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/M4_fault_matrix_v1.json",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/postrun/M4_fault_coverage_v1.json",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/implementation/w2_author"
+      ],
+      "deliverable": "每条原required_case绑定原证据/SHA/源码范围/合同；状态为可复用、需补接线验证、未覆盖或明确不适用并给理由。",
+      "done_when": "所有原条目都有可审计处置，无空白、无整组资格自动转移；列出需新执行的最小case清单。"
+    },
+    {
+      "id": "N2",
+      "task": "只实现与执行清单中的最小缺口",
+      "depends_on": "N1",
+      "code_plan": "新派生批次复用已冻结core；Fixture提供有界刺激；必要Driver分支与独立事实审计同批固定；执行代码变化重新封存/登记。",
+      "candidates_pending_inventory": [
+        "原deadline/target时序边界",
+        "reference/state/clock变化",
+        "HOLD/ramp/anchor差集",
+        "cleanup_failed禁止重启",
+        "Source队列压力与已声明丢弃"
+      ],
+      "constraints": [
+        "上述是待N1筛选的候选集合，不是宣称每项均须新ROS长跑",
+        "故障不允许修改150ms截止/600ms租约/1s watchdog/关闭预算",
+        "每个owned case先登记、自动重试0、失败原件保留、无plant/硬件"
+      ],
+      "done_when": "各缺口有真实所需层级证据；组件只证明组件，需owned的case由实际Source/Stored与关闭对账判定。"
+    },
+    {
+      "id": "N3",
+      "task": "M4联合复判",
+      "depends_on": "N2",
+      "done_when": "原九组逐项满足，复用适用性与新增证据共同成立后，才单独判定完整M4；不以通过数量替代覆盖。"
+    },
+    {
+      "id": "N4",
+      "task": "有限模型事务/F6",
+      "depends_on": "M4满足该阶段原登记前置条件",
+      "done_when": "读取原F6合同后在新批次细化模型版本、提交/拒绝及失效行为的有限事务验证；本批未实现、未授予F6资格。"
+    },
+    {
+      "id": "N5",
+      "task": "P1联合验收",
+      "depends_on": "原P1全部前置满足",
+      "done_when": "按冻结P1合同汇总组件/阶段/实际执行证据，明确API、进程退出、plant接受、硬实时的各自边界。"
+    }
+  ]
+}

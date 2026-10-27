@@ -1,0 +1,241 @@
+{
+  "step_id": "E03",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "11 real Driver.main/preflight cases, full positive frozen identity fixture, all negative Popen=0; freeze adapter and Driver share one physical rule.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E03/attempt04",
+  "observed_facts": {
+    "rule_module_identity": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/audit/t2_rnw_admission_rules.py",
+      "sha256": "a0a62374e8ed18953d52cd621e65529c917d94a0c3e74cf8920697bbd13c1858",
+      "family_judged": "T2A-gen-resume-new-window"
+    },
+    "actual_Driver_main_calls": 11,
+    "max_Popen_calls": 0,
+    "actual_full_preflight_positive": "existing frozen assets as identity fixture only; no new executable identity registration or owned run"
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "freeze_and_Driver_same_physical_rule_function",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "ENTRY2-LEGAL",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-LEGAL",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 1
+          },
+          "actual_main_rejection": "legal_preflight_returned",
+          "unexpected_parser_error": null,
+          "freeze_rejections": []
+        }
+      },
+      {
+        "name": "ENTRY2-CLAUSES-FALSE",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-CLAUSES-FALSE",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: clause_value:resume_requires_new_window, clause_value:old_candidate_must_not_revive, clause_value:pause_confirm_ns",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "clause_value:resume_requires_new_window",
+            "clause_value:old_candidate_must_not_revive",
+            "clause_value:pause_confirm_ns"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-MISSING-HOLD",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-MISSING-HOLD",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: missing_hold, required_sequence_not_exact_prefix",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "missing_hold",
+            "required_sequence_not_exact_prefix"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-RESUME-FIRST",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-RESUME-FIRST",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: resume_before_hold, required_sequence_not_exact_prefix, trigger_delay_not_monotonic",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "resume_before_hold",
+            "required_sequence_not_exact_prefix",
+            "trigger_delay_not_monotonic"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-DUP-ID",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-DUP-ID",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: duplicate_action_id",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "duplicate_action_id"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-ID-TYPE",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-ID-TYPE",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: action_id_domain",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "action_id_domain"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-FLOAT-DELAY",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-FLOAT-DELAY",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: trigger_domain:clock_hold",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "trigger_domain:clock_hold"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-TRIGGER-SHAPE",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-TRIGGER-SHAPE",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: action_parameters_or_trigger_shape",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "action_parameters_or_trigger_shape"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-UNKNOWN",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-UNKNOWN",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: missing_hold, unregistered_action:clock_warp, required_sequence_not_exact_prefix",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "missing_hold",
+            "unregistered_action:clock_warp",
+            "required_sequence_not_exact_prefix"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-CLAUSE-TYPE",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-CLAUSE-TYPE",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "hardened RNW admission rejected: clause_value:pause_confirm_ns",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "clause_value:pause_confirm_ns"
+          ]
+        }
+      },
+      {
+        "name": "ENTRY2-UNKNOWN-FIELD",
+        "passed": true,
+        "detail": {
+          "case": "ENTRY2-UNKNOWN-FIELD",
+          "calls": {
+            "Popen": 0,
+            "real_preflight": 1,
+            "returned": 0
+          },
+          "actual_main_rejection": "T2B-GEN table exact fields",
+          "unexpected_parser_error": null,
+          "freeze_rejections": [
+            "table_exact_fields"
+          ]
+        }
+      }
+    ],
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    "implementation/audit/t2_rnw_admission_rules.py",
+    "implementation/audit/rnw_admission_v2.py",
+    "implementation/tests/run_real_preflight.py"
+  ],
+  "remaining_obligations": [
+    "Fixture identity is only for offline preflight; no new owned registry or executable qualification."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

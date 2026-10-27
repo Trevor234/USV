@@ -1,0 +1,68 @@
+# USV physical parameters — VRX 仿真船 overlay。
+#
+# 按 USVANSIS 2026-09-03 辨识记录与 2026-07-23 纵向先验保存的参数快照。
+# 2026-09-14 起 vrx.launch.py 的 SDF 生成器和 MPC 共用此文件。
+# 生成器对非对称附加质量作显式对称化，结果保存为 effective_vehicle.yaml；
+# 此文件中的原始数值不变。模型与实船的一致性仍需实测验证。
+#   - 艏摇 (Nr_dot/Nr/Nrr): 2026-09-03 阶段3 角加速度回归 (Iz_eff=5.537)
+#   - 纵向 (Xu/Xuu): 阶段2 决议维持 7-23 先验 (新数据未推翻)
+#   - 质量/几何/d_thruster: 实船 14.2 kg / 1.2 m / 0.25 m
+#   - 推进器 K=1.6437e-6 N/RPM² (T_max=25N @ 3900RPM 假设, 7-23)
+#
+# 用途:
+#   - vrx.launch.py (scheme B) 的 MPC `vehicle.*` 参数,
+#     与 usv_simulation.vrx_model 生成的原生 SDF 使用同一组有效参数。
+#     仿真专用假设见 usv_simulation/config/vrx_model.yaml。
+#
+# IMPORTANT: parameter names must match declare_parameter calls in
+# usv_mpc_cpp/src/mpc_node.cpp (flat dotted names in code, nested in YAML).
+
+/**:
+  ros__parameters:
+    # ----- Hull (used by Gazebo SDF + MPC dynamic model) -----
+    vehicle:
+      mass: 14.2          # kg, 实船总质量 (2026-09-03 锚定, 含推进器)
+      Iz: 2.13            # kg·m², 刚体艏摇惯量 (= m(L²+B²)/12);
+                          # 原报告 Iz_eff=5.537；本文件舍入后 Iz-Nr_dot=5.54
+      xg: 0.12            # m, CG 纵向偏移 (+ forward)
+      d_thruster: 0.25    # m, 半桨距 (间距 0.5 m)
+
+      # ----- Hull geometry (informational for MPC) -----
+      length: 1.2         # m, length overall
+      beam: 0.6           # m, beam
+      draft: 0.10         # m, waterline depth
+      height: 0.30        # m, freeboard above water
+
+      # ----- Added mass (negative by Fossen convention) -----
+      Xu_dot: -2.0
+      Yv_dot: -8.0
+      Yr_dot: 0.0
+      Nv_dot: -0.363545
+      Nr_dot: -3.41       # 阶段3: 由 Iz_eff=5.537 反解 (Iz=2.13)
+
+      # ----- Linear damping -----
+      # Xu 高置信 (R²=0.54 直接前向); 横漂耦合项 (Yr/Nv) 按 7-23 置零。
+      Xu: -2.272063
+      Yv: -2.629019
+      Yr: 0.0
+      Nv: 0.0
+      Nr: -3.105          # 阶段3: was -4.286144
+
+      # ----- Quadratic damping -----
+      Xuu: -11.571784
+      Yvv: -0.05
+      Yrr: 0.0
+      Nvv: 0.0
+      Nrr: -0.71          # 阶段3 新增: was 0.0 (置零) — 高转速二次艏摇阻尼
+
+    # ----- Thruster -----
+    # NOTE: T_max / T_min / dT_max are declared in mpc_params_vrx.yaml under
+    # `dynamic.*` and take precedence there for MPC. Repeated here so the
+    # parameter-identification scripts can read a single file.
+    # Keep in sync with mpc_params_vrx.yaml.
+    thruster:
+      pwm_min: 1000
+      pwm_center: 1500
+      pwm_max: 2000
+      T_max_forward: 25.0   # N per thruster (K_T, 7-23 假设 @ 3900 RPM)
+      T_max_reverse: 25.0   # N per thruster (正反等推力, 7-23)

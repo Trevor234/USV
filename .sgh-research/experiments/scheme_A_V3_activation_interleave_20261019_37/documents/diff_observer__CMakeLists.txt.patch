@@ -1,0 +1,15 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_V2_supervisor_bridge_20261019_36/author/observer/CMakeLists.txt
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/observer/CMakeLists.txt
+@@ -27,7 +27,8 @@
+ add_executable(p1_regulator_shadow_observer_owned_v2 src/shadow/regulator_shadow_observer.cpp)
+ link_regulator(p1_regulator_shadow_observer_owned_v2)
+ 
+-# Pure C++ component target; no rclcpp/context or actuator endpoint.
+-add_executable(test_v1_sink_queue tests/test_v1_sink_queue.cpp)
+-target_include_directories(test_v1_sink_queue PRIVATE src/shadow)
+-target_link_libraries(test_v1_sink_queue PRIVATE nlohmann_json::nlohmann_json Threads::Threads)
++# Source-linked activation/callback tests; no actuator DataWriter.
++find_package(ament_cmake_gtest REQUIRED)
++ament_add_gtest(test_reference_activation_alignment tests/test_reference_activation_alignment.cpp TIMEOUT 45)
++link_regulator(test_reference_activation_alignment)
++target_compile_definitions(test_reference_activation_alignment PRIVATE P1_REGULATOR_SOURCE="${CMAKE_CURRENT_SOURCE_DIR}/src/shadow/regulator_shadow_observer.cpp" P1_ACTIVATION_REPLAY_FILE="${CMAKE_CURRENT_SOURCE_DIR}/tests/data/parent_activation_prefixes_v1.json")

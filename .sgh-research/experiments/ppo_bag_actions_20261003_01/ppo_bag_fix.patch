@@ -1,0 +1,1184 @@
+--- a/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py
++++ b/usv_mpc_ws/src/usv_bringup/launch/vrx.launch.py
+@@ -279,6 +279,7 @@
+             profile_topic,
+             mpc_status_topic,
+             predicted_trajectory_topic,
++            "/clock",
+         ],
+         output="screen",
+         condition=IfCondition(record_bag),
+--- a/usv_mpc_ws/docs/bag_recording.md
++++ b/usv_mpc_ws/docs/bag_recording.md
+@@ -1,4 +1,6 @@
+ # ROS 2 数据记录（rosbag2 + MCAP）
++
++第 1–7 节描述 MAVROS 实机录包；VRX 仿真方案 C 的入口、话题与验收见第 8 节。两个入口的存储参数与话题清单分别生效。
+ 
+ 本方案记录无人艇核心控制闭环，用于复盘定位、IMU、飞控状态、MPC 输出、参考轨迹和求解器状态。默认写入外接 SSD `/mnt/usv_bags`，不会在 SSD 缺失时回退到 Pi5 的 SD 卡。
+ 
+@@ -127,3 +129,143 @@
+ ```
+ 
+ 保持 `armed=false`，运行约 30 秒后 Ctrl-C，再用 `ros2 bag info` 检查 MAVROS 和 MPC 状态消息。这样可在推进器不动作的情况下验证 SSD、QoS、MCAP 和 shutdown/finalize 流程。
++
++## 8. VRX 方案 C：PPO 已发布动作录包与验收
++
++VRX 使用 `usv_bringup vrx.launch.py`，必须显式指定 `scheme:=C record_bag:=true`。`record_bag` 默认仍为 `false`，录包输出位置由 `bag_dir` 和 `run_id` 决定。此入口保留原有 rosbag2 存储与记录时间选项；不能把第 3 节实机的 `config/bag_topics.yaml`、SSD 路径或 MCAP preset 当作 VRX 的有效配置。
++
++“已执行动作”在这里指 PPO 节点经过幅值与变化率限制后，向 VRX 发布的左右推力命令，单位 N。记录不是推进器实际产生的力，也没有 Gazebo 接收确认。状态中的 `tl_cmd_n/tr_cmd_n` 是请求推力；`tl_n/tr_n` 才对应左右推力话题。做动作统计时应选择后者。
++
++### 8.1 启动与正常停止
++
++以下脚本使用当前默认参考任务。需要其他任务时，将已核验的用户参考文件作为 `waypoints_file:=/absolute/path/to/waypoints.yaml` 参数传给 launch，并在运行上下文中保存实际参数。不要依赖一次性实验目录中的参考文件长期存在。
++
++```bash
++#!/usr/bin/env bash
++set -e
++source /opt/ros/jazzy/setup.bash
++source /home/trevor/USV/vrx_ws/install/setup.bash
++source /home/trevor/USV/usv_mpc_ws/install/setup.bash
++
++# 93 是示例；先确认此 domain 没有其他实验进程。
++export ROS_DOMAIN_ID=93
++export ROS_LOCALHOST_ONLY=1
++PPO_RUN_ID="rl_c_actions_$(date +%Y%m%d_%H%M%S)"
++export GZ_PARTITION="$PPO_RUN_ID"
++PPO_BAG_DIR=/home/trevor/USV/data/sim_bags
++PPO_MODEL=/home/trevor/USV/usv_rl/models/v5/s4_dr/policy_physical_n.onnx
++PPO_MANIFEST=/home/trevor/USV/usv_rl/models/v5/s4_dr/policy_physical_n.manifest.json
++PPO_EVIDENCE_DIR="/home/trevor/USV/.sgh-research/experiments/$PPO_RUN_ID"
++
++test -f "$PPO_MODEL"
++test -f "$PPO_MANIFEST"
++test ! -e "$PPO_BAG_DIR/$PPO_RUN_ID"
++test ! -e "$PPO_EVIDENCE_DIR"
++mkdir -p "$PPO_BAG_DIR"
++mkdir "$PPO_EVIDENCE_DIR"
++printf '%s\n' "$PPO_BAG_DIR/$PPO_RUN_ID" > "$PPO_EVIDENCE_DIR/bag_path.txt"
++sha256sum "$PPO_MODEL" "$PPO_MANIFEST" > "$PPO_EVIDENCE_DIR/model_sha256.txt"
++printf 'run_id=%s\nevidence_dir=%s\n' "$PPO_RUN_ID" "$PPO_EVIDENCE_DIR"
++
++ros2 launch usv_bringup vrx.launch.py \
++  scheme:=C headless:=true record_bag:=true \
++  bag_dir:="$PPO_BAG_DIR" run_id:="$PPO_RUN_ID" \
++  rl_model:="$PPO_MODEL"
++```
++
++保存为 Bash 脚本执行，`set -e` 会在模型、清单或 run_id 检查失败时停止。`run_id` 目录存在即换新名字，不向旧 bag 写入。使用当前有效的物理 N 模型和单位清单；旧 `policy.onnx` 带有已知缺少物理缩放的问题，不能因为它也能生成推力话题就认作正确单位的基线。
++
++先确认正在使用的 overlay：`ros2 pkg prefix usv_bringup` 应指向 `/home/trevor/USV/usv_mpc_ws/install/usv_bringup`。修改此 launch 后在 `/home/trevor/USV/usv_mpc_ws` 构建 `usv_bringup`，再 source 安装空间，检查安装侧 recorder 参数确有 `/clock`。
++
++录制开始后确认 recorder 已订阅下表中的话题。控制器的 9 秒启动延迟不能保证 DDS 发现已完成；启动日志中的订阅结果与录后解码检查都需要保留。烟测运行约 60 秒墙钟，目标至少 10 个 ACTIVE 控制拍并有非零命令；墙钟时长不等于仿真时长。使用 Ctrl-C 正常停止，等待 recorder 刷新缓存并写完 `metadata.yaml` 后验收，不用 `kill -9`。独立实验全部进程应使用相同的 ROS domain 与 Gazebo partition，停止后确认该实验进程已退出。
++
++### 8.2 必录话题
++
++| 默认话题 | ROS 类型 | 用途 |
++|---|---|---|
++| `/wamv/thrusters/left/thrust` | `std_msgs/msg/Float64` | 已发布左推力命令，N |
++| `/wamv/thrusters/right/thrust` | `std_msgs/msg/Float64` | 已发布右推力命令，N |
++| `/mpc/status` | `std_msgs/msg/String` | JSON 状态、请求推力与限幅后推力、PPO 身份 |
++| `/wamv/sensors/position/ground_truth_odometry` | `nav_msgs/msg/Odometry` | 观测状态及 Header 中的仿真时间 |
++| `/wamv/sensors/imu/imu/data` | `sensor_msgs/msg/Imu` | IMU 观测 |
++| `/path/reference` | `nav_msgs/msg/Path` | 采用的参考路径 |
++| `/path/reference_profile` | `std_msgs/msg/Float64MultiArray` | 参考速度与调度剖面 |
++| `/clock` | `rosgraph_msgs/msg/Clock` | 仿真时钟、暂停与重置诊断 |
++
++现有 `/mpc/predicted_trajectory` 继续保留在 recorder 列表中，但方案 C 不要求产生此话题，缺失或为空不会使 PPO 动作验收失败。左右推力、status、odom、IMU、path 和 profile 仍使用 launch 中的可配置话题参数；`/clock` 为当前 VRX 固定时钟话题。
++
++### 8.3 录后检查与两个 profile
++
++`scripts/check_ppo_bag.py` 按 metadata 中的 storage id 读取实际记录并反序列化。它不修改 bag 或 metadata；报告必须写在 bag 之外，不能用 `ros2 bag info` 的非零计数替代动作完整性检查。
++
++录制脚本会输出实际 `run_id` 和证据目录。脚本退出后其局部变量不会传回父终端；在验收终端按刚才打印的 run_id 设置变量，source 相同 ROS 环境，然后运行：
++
++```bash
++source /opt/ros/jazzy/setup.bash
++source /home/trevor/USV/usv_mpc_ws/install/setup.bash
++PPO_RUN_ID=替换为刚才输出的实际run_id
++PPO_BAG_DIR=/home/trevor/USV/data/sim_bags
++PPO_EVIDENCE_DIR="/home/trevor/USV/.sgh-research/experiments/$PPO_RUN_ID"
++
++ros2 bag info "$PPO_BAG_DIR/$PPO_RUN_ID"
++
++python3 /home/trevor/USV/usv_mpc_ws/scripts/check_ppo_bag.py \
++  "$PPO_BAG_DIR/$PPO_RUN_ID" \
++  --profile ppo-actions-v1 \
++  --match-window-ms 20 --value-tolerance-n 1e-5 \
++  --thrust-limit-n 25.0 \
++  --min-active 10 --require-nonzero-active \
++  --report "$PPO_EVIDENCE_DIR/acceptance.json"
++```
++
++- `ppo-actions-v1` 用于新 bag 正式验收：要求上表 8 个话题有实际可解码记录，验证方案 C 身份、左右发布与 status 一对一匹配，并检查 clock 与 odom 对控制区间的覆盖和可见时序空洞。
++- `legacy-actions` 用于历史 bag 的已发布动作流检查：允许缺 `/clock`，但会标明 `timing_incomplete`。此模式不能替代新 bag 正式验收，也不能弥补历史缺失动作。
++
++检查器先按 bag 接收时间和顺序逐路配对，匹配窗默认严格小于 20 ms，并必须小于半个名义控制周期；当前 `dynamic_dt=0.2 s`，因此该上界为 100 ms。匹配后再比较数值，默认允许误差 `1e-5 N`。它不会搜索相同数值补齐缺帧或重复使用相邻命令；未匹配、窗口内歧义、坏 JSON、缺字段、错误类型、NaN/Inf、发布值与 `tl_n/tr_n` 不一致都明确失败。待机零命令和开始/结束残帧也纳入检查，不能静默删除残帧后声明整包完整。
++
++`--thrust-limit-n` 依据本次有效执行配置与模型单位清单设置，示例为当前 v5 的 ±25 N；更换配置后应明确更新该参数。量程通过本身不能证明 ONNX 已正确缩放，验收仍需绑定模型和 manifest 的 SHA256。`--min-active 10 --require-nonzero-active` 是本次烟测的附加条件，避免一直 STANDBY 或全零运行被视为 PPO 动作链烟测成功；其他研究任务可以合法地产生全零动作，不应普遍禁止。
++
++历史正例的检查命令：
++
++```bash
++python3 /home/trevor/USV/usv_mpc_ws/scripts/check_ppo_bag.py \
++  /home/trevor/USV/.sgh-research/experiments/v5_scaling_fix_20261003/results/new_physical_n/new_physical_n \
++  --profile legacy-actions --thrust-limit-n 25.0 \
++  --report /home/trevor/USV/.sgh-research/experiments/ppo_bag_history_new_physical_n.json
++```
++
++退出码 `0` 表示所选 profile 通过；`2` 表示可读取但数据合同不合格；`1` 表示无法读取、依赖缺失或配置错误。新研究 bag 只有正式验收通过才纳入数据集。失败 bag 保留为诊断，修复原因后使用新 run_id 重新录制。
++
++### 8.4 话题重映射
++
++launch 与检查器必须使用同一组实际话题名。例如录制时传入 `left_thrust_topic:=/experiment/left_thrust right_thrust_topic:=/experiment/right_thrust mpc_status_topic:=/experiment/rl_status`，验收时相应传入：
++
++```bash
++python3 /home/trevor/USV/usv_mpc_ws/scripts/check_ppo_bag.py \
++  /absolute/path/to/bag --profile ppo-actions-v1 \
++  --left-topic /experiment/left_thrust \
++  --right-topic /experiment/right_thrust \
++  --status-topic /experiment/rl_status \
++  --thrust-limit-n 25.0 \
++  --report /absolute/path/outside_bag/acceptance.json
++```
++
++其余参数对应关系为 `odom_topic` → `--odom-topic`、`imu_topic` → `--imu-topic`、`path_topic` → `--path-topic`、`profile_topic` → `--profile-topic`。`--clock-topic` 默认 `/clock`；若外部记录入口更改时钟名，必须同步设置。不能因检查器仍使用默认值而把正确的重映射 bag 误判为漏录，也不能使用重复的话题名让左右命令共用一条流。
++
++### 8.5 时间与结论边界
++
++当前 Float64 没有 Header，status 也没有源序号或源时间戳。检查通过证明已记录发布流满足配对与数值合同；它不能证明每一个计划控制拍都被 recorder 录下。如果同一拍的左右推力与 status 三路共同缺失，配对仍可能通过。严格 profile 使用同一 clock 分段内最近的 clock 辅助检查连续 ACTIVE 间隔，大于 `1.5 × dynamic_dt` 的可见空洞会失败；当前周期对应 0.3 s。这仍不能保证识别所有共同掉拍，或区分控制器漏拍与 recorder 漏录。
++
++补录 `/clock` 可帮助诊断暂停、回退、重置与时序覆盖，但不能消除跨话题传输和接收延迟。严格 profile 对 clock 回退或控制区间无覆盖明确失败，不跨重置拼接样本。bag 的墙钟接收时间不能直接用作仿真动力学 Δt。本入口继续保留现有 recorder 时间模式，没有增加 `--use-sim-time`；该参数会改为使用最近收到的 clock 作为记录时间，并在首条 clock 前不写消息，属于不同时间合同，参见 [rosbag2 Jazzy 官方说明](https://github.com/ros2/rosbag2/tree/jazzy#simulation-time)。
++
++报告保留 `common_drop_identifiable=false`、`exact_execution_timing_available=false` 和 `gp_labels_ready=false`。通过动作验收不自动意味着精确 GP 标签可用、执行延迟已测得或控制性能已经改善。首选 A 后续如需精确持有输入与状态对齐，应另行建立联合动作事件及源时间/序号合同。
++
++### 8.6 历史 bag 分类与运行上下文
++
++- `data/sim_bags/rl_c_001` 只有参考路径、剖面、odom 和 IMU，缺少左右推力、status 和 clock；两种 profile 均应拒绝。保留原文件，外部报告标记 `action_recording_complete=false`、`gp_labels_ready=false`。它仍可做有边界的轨迹与观测分析，不能直接计算可靠的动作统计、限幅、控制努力或动力学残差标签。
++- 前次 `new_physical_n` bag 有已验证的动作记录，但未录 clock；`legacy-actions` 可以检查已记录流，正式 `ppo-actions-v1` 应因时钟缺失拒绝。
++- 前次 `old_diagnostic` 虽有动作记录，仍带已知物理缩放缺陷；只能保留为诊断对照。
++
++缺失的历史动作不能补零，不能把动力学逆算或重新运行策略得到的动作当成原实验的真实发布动作写回 bag。需要已发布输入的研究样本必须重新录制。
++
++在 bag 外的实验目录保存 `run_context.json` 或等效上下文文件，包括实际启动命令、解析后的话题名、模型与 manifest SHA256、Git HEAD 和未提交差异、有效车辆/控制参数与参考任务、ROS domain、Gazebo partition、recorder 时间模式、停止方式和检查器参数。建议同时保存 `ros2 pkg prefix usv_bringup`、recorder 订阅日志及验收 JSON，便于核验实际运行的 overlay。当前配置不能冒充历史训练配置；上下文中不要保存登录凭据。
+--- /dev/null
++++ b/usv_mpc_ws/scripts/check_ppo_bag.py
+@@ -0,0 +1,585 @@
++#!/usr/bin/env python3
++"""Read-only check of PPO published-command records, not realized actuator forces.
++
++ROS dependencies are imported only by read_bag().  The pure validate_records()
++entry point also accepts synthetic records, so loss and timing checks can be
++tested without ROS.  Receive-time matching cannot prove common-drop absence or
++precise input holding intervals; these limitations are explicit in the report.
++"""
++from __future__ import annotations
++
++import argparse
++from bisect import bisect_left, bisect_right
++from collections import Counter
++from dataclasses import dataclass, field
++import json
++import math
++from numbers import Real
++from pathlib import Path
++import sys
++from typing import Any, Iterable, Mapping
++
++
++DEFAULT_TOPICS = {
++    "left": "/wamv/thrusters/left/thrust",
++    "right": "/wamv/thrusters/right/thrust",
++    "status": "/mpc/status",
++    "odom": "/wamv/sensors/position/ground_truth_odometry",
++    "imu": "/wamv/sensors/imu/imu/data",
++    "path": "/path/reference",
++    "reference_profile": "/path/reference_profile",
++    "clock": "/clock",
++}
++TOPIC_TYPES = {
++    "left": "std_msgs/msg/Float64",
++    "right": "std_msgs/msg/Float64",
++    "status": "std_msgs/msg/String",
++    "odom": "nav_msgs/msg/Odometry",
++    "imu": "sensor_msgs/msg/Imu",
++    "path": "nav_msgs/msg/Path",
++    "reference_profile": "std_msgs/msg/Float64MultiArray",
++    "clock": "rosgraph_msgs/msg/Clock",
++}
++LIMITATIONS = [
++    "Recorded values are published commands, not measured or acknowledged actuator forces.",
++    "Float64/status lack a source timestamp and control sequence; receive-time pairing is approximate.",
++    "A common loss of left/right/status may be unidentifiable without a visible simulation-time gap.",
++    "Thrust bounds alone do not verify physical units; bind the model and manifest hashes in run_context.",
++    "This check does not establish precise hold intervals, execution latency, or GP label readiness.",
++]
++
++
++@dataclass(frozen=True)
++class Record:
++    topic: str
++    bag_ns: int
++    payload: dict[str, Any]
++
++
++@dataclass
++class Config:
++    profile: str = "ppo-actions-v1"
++    topics: dict[str, str] = field(default_factory=lambda: dict(DEFAULT_TOPICS))
++    match_window_s: float = 0.02
++    tolerance_n: float = 1e-5
++    nominal_dt_s: float = 0.2
++    thrust_limit_n: float = 25.0
++    min_active: int = 0
++    require_nonzero_active: bool = False
++    expected_counts: dict[str, int] | None = None
++
++    def validate(self) -> None:
++        if self.profile not in ("ppo-actions-v1", "legacy-actions"):
++            raise ValueError("unknown profile")
++        for name in ("match_window_s", "nominal_dt_s", "thrust_limit_n"):
++            if not _finite(getattr(self, name)) or getattr(self, name) <= 0:
++                raise ValueError(f"{name} must be positive and finite")
++        if not _finite(self.tolerance_n) or self.tolerance_n < 0:
++            raise ValueError("tolerance_n must be nonnegative and finite")
++        if self.match_window_s >= 0.5 * self.nominal_dt_s:
++            raise ValueError("match_window_s must be strictly below half nominal_dt_s")
++        if isinstance(self.min_active, bool) or not isinstance(self.min_active, int) or self.min_active < 0:
++            raise ValueError("min_active must be a nonnegative integer")
++        if set(self.topics) != set(DEFAULT_TOPICS):
++            raise ValueError("topics must contain exactly the eight documented role names")
++        if any(not isinstance(v, str) or not v.startswith("/") for v in self.topics.values()):
++            raise ValueError("topic names must be absolute ROS names")
++        if len(set(self.topics.values())) != len(self.topics):
++            raise ValueError("topic roles must have distinct names")
++        if self.expected_counts is not None:
++            for count in self.expected_counts.values():
++                if isinstance(count, bool) or not isinstance(count, int) or count < 0:
++                    raise ValueError("metadata counts must be nonnegative integers")
++
++
++def _finite(value: Any) -> bool:
++    return isinstance(value, Real) and not isinstance(value, bool) and math.isfinite(value)
++
++
++def _stamp_ns(stamp: Mapping[str, Any]) -> int:
++    sec, nanosec = stamp["sec"], stamp["nanosec"]
++    if any(isinstance(v, bool) or not isinstance(v, int) for v in (sec, nanosec)):
++        raise ValueError("timestamp sec/nanosec must be integers")
++    if sec < 0 or not 0 <= nanosec < 1_000_000_000:
++        raise ValueError("timestamp out of range")
++    return sec * 1_000_000_000 + nanosec
++
++
++def _first_nonfinite_path(value: Any, path: str = "payload") -> str | None:
++    """Check all numeric fields retained from real deserialized ROS messages."""
++    if isinstance(value, Real) and not isinstance(value, bool):
++        if not math.isfinite(value):
++            return path
++    elif isinstance(value, Mapping):
++        for key, child in value.items():
++            result = _first_nonfinite_path(child, f"{path}.{key}")
++            if result is not None:
++                return result
++    elif isinstance(value, (list, tuple)):
++        for index, child in enumerate(value):
++            result = _first_nonfinite_path(child, f"{path}[{index}]")
++            if result is not None:
++                return result
++    return None
++
++
++def validate_records(records: Iterable[Record], topic_types: Mapping[str, str],
++                     config: Config | None = None) -> dict[str, Any]:
++    """Validate actual decoded records; invalid config raises ValueError.
++
++    Payloads use the ROS field names: {data: float}, {data: JSON string},
++    {clock: {sec, nanosec}}, or {header: {stamp: {sec, nanosec}}}.
++    A status JSON object may also be passed directly.  Decode failures can be
++    represented by {"__decode_error__": "reason"}; they still count as records.
++    """
++    cfg = config or Config()
++    cfg.validate()
++    strict = cfg.profile == "ppo-actions-v1"
++    failures: list[dict[str, Any]] = []
++    warnings: list[dict[str, Any]] = []
++    counts: Counter[str] = Counter()
++    decoded: Counter[str] = Counter()
++    by_role: dict[str, list[tuple[int, int, Any]]] = {key: [] for key in DEFAULT_TOPICS}
++    role_for_topic = {topic: role for role, topic in cfg.topics.items()}
++
++    def issue(code: str, detail: str, *, warning: bool = False, **context: Any) -> None:
++        (warnings if warning else failures).append({"code": code, "detail": detail, **context})
++
++    for role, topic in cfg.topics.items():
++        if topic not in topic_types:
++            issue("missing_topic", f"Missing {role} topic", topic=topic,
++                  warning=(role == "clock" and not strict))
++        elif topic_types[topic] != TOPIC_TYPES[role]:
++            issue("wrong_topic_type", f"Expected {TOPIC_TYPES[role]}", topic=topic,
++                  actual_type=topic_types[topic])
++
++    for index, rec in enumerate(records):
++        counts[rec.topic] += 1
++        role = role_for_topic.get(rec.topic)
++        if role is None:
++            continue
++        if isinstance(rec.bag_ns, bool) or not isinstance(rec.bag_ns, int) or rec.bag_ns < 0:
++            issue("invalid_bag_timestamp", "Bag timestamp must be a nonnegative integer", record_index=index)
++            continue
++        try:
++            if not isinstance(rec.payload, dict):
++                raise ValueError("decoded payload is not a mapping")
++            if "__decode_error__" in rec.payload:
++                raise ValueError(rec.payload["__decode_error__"])
++            invalid_path = _first_nonfinite_path(rec.payload)
++            if invalid_path is not None:
++                raise ValueError(f"nonfinite numeric field {invalid_path}")
++            if topic_types.get(rec.topic) != TOPIC_TYPES[role]:
++                continue
++            if role in ("left", "right"):
++                value = rec.payload["data"]
++                if not _finite(value):
++                    raise ValueError("thrust must be a finite numeric value")
++                value = float(value)
++                if abs(value) > cfg.thrust_limit_n + cfg.tolerance_n:
++                    issue("thrust_out_of_range", "Published thrust exceeds configured limit", topic=rec.topic,
++                          record_index=index, value_n=value)
++            elif role == "status":
++                value = json.loads(rec.payload["data"]) if "data" in rec.payload else dict(rec.payload)
++                if not isinstance(value, dict):
++                    raise ValueError("status JSON must be an object")
++                invalid_path = _first_nonfinite_path(value, "status")
++                if invalid_path is not None:
++                    raise ValueError(f"nonfinite numeric field {invalid_path}")
++                for name in ("tl_n", "tr_n", "tl_cmd_n", "tr_cmd_n", "dynamic_dt"):
++                    if not _finite(value.get(name)):
++                        raise ValueError(f"missing/nonfinite status field {name}")
++                if value["dynamic_dt"] <= 0:
++                    raise ValueError("dynamic_dt must be positive")
++                if cfg.match_window_s >= 0.5 * value["dynamic_dt"]:
++                    issue("window_exceeds_dynamic_dt", "Match window is not below half this status dynamic_dt",
++                          record_index=index)
++                if value.get("state") not in ("ACTIVE", "STANDBY"):
++                    raise ValueError("state must be ACTIVE or STANDBY")
++                identity = {"control_mode": "rl", "backend": "onnx_ppo", "actuation_anchor_source": "vrx_published"}
++                if any(value.get(k) != v for k, v in identity.items()):
++                    issue("wrong_controller_identity", "Status is not a PPO VRX published-command anchor",
++                          record_index=index)
++                for name in ("tl_n", "tr_n", "tl_cmd_n", "tr_cmd_n"):
++                    if abs(value[name]) > cfg.thrust_limit_n + cfg.tolerance_n:
++                        issue("thrust_out_of_range", f"Status {name} exceeds configured limit",
++                              record_index=index, value_n=value[name])
++            elif role == "clock":
++                value = _stamp_ns(rec.payload["clock"])
++            elif role in ("odom", "imu", "path"):
++                value = _stamp_ns(rec.payload["header"]["stamp"])
++            else:
++                value = rec.payload["data"]
++                if not isinstance(value, (list, tuple)) or not value or not all(_finite(x) for x in value):
++                    raise ValueError("reference_profile data must be a nonempty finite numeric array")
++            decoded[rec.topic] += 1
++            by_role[role].append((rec.bag_ns, index, value))
++        except (KeyError, ValueError, TypeError, OverflowError, RecursionError) as exc:
++            issue("invalid_payload", str(exc), topic=rec.topic, record_index=index)
++
++    for role, topic in cfg.topics.items():
++        if decoded[topic] == 0 and topic in topic_types:
++            issue("no_decodable_records", f"No usable {role} records", topic=topic,
++                  warning=(role == "clock" and not strict and counts[topic] == 0))
++    if cfg.expected_counts is not None:
++        for topic in set(counts) | set(cfg.expected_counts):
++            if counts[topic] != cfg.expected_counts.get(topic, 0):
++                issue("metadata_count_mismatch", "Actual scanned message count differs from metadata", topic=topic,
++                      actual_count=counts[topic], metadata_count=cfg.expected_counts.get(topic, 0))
++
++    for role, stream in by_role.items():
++        if any(current[0] < previous[0] for previous, current in zip(stream, stream[1:])):
++            issue("bag_time_regression", f"Receive time regressed on {role}")
++        stream.sort(key=lambda item: (item[0], item[1]))
++
++    statuses = by_role["status"]
++    active_count = sum(value["state"] == "ACTIVE" for _, _, value in statuses)
++    nonzero_active = sum(value["state"] == "ACTIVE" and
++                         (abs(value["tl_n"]) > cfg.tolerance_n or abs(value["tr_n"]) > cfg.tolerance_n)
++                         for _, _, value in statuses)
++    if active_count < cfg.min_active:
++        issue("insufficient_active", "ACTIVE count below smoke-test minimum", actual=active_count, minimum=cfg.min_active)
++    if cfg.require_nonzero_active and nonzero_active == 0:
++        issue("no_nonzero_active", "Smoke test requires a nonzero ACTIVE published command")
++
++    # Match by time/order only.  Values are deliberately unavailable until a
++    # unique, unused temporal candidate has been selected.
++    matching: dict[str, Any] = {}
++    # Use integer bounds: subtracting a float from epoch-scale nanoseconds loses
++    # precision and can misclassify a record one nanosecond inside the window.
++    # ceil retains the strict threshold for discrete integer-nanosecond stamps.
++    window_ns = math.ceil(cfg.match_window_s * 1_000_000_000)
++    all_statuses_paired = True
++    for role, status_field in (("left", "tl_n"), ("right", "tr_n")):
++        stream = by_role[role]
++        times = [entry[0] for entry in stream]
++        used: set[int] = set()
++        matched = 0
++        max_error = 0.0
++        max_offset_ns = 0
++        last_match = -1
++        for time_ns, status_index, status in statuses:
++            lower = bisect_right(times, time_ns - window_ns)
++            upper = bisect_left(times, time_ns + window_ns)
++            candidates = list(range(lower, upper))
++            if not candidates:
++                issue("missing_action_match", f"No {role} message inside strict temporal window",
++                      status_index=status_index, status_bag_ns=time_ns)
++                all_statuses_paired = False
++                continue
++            if len(candidates) != 1:
++                issue("ambiguous_action_match", f"Multiple {role} temporal candidates; values cannot resolve them",
++                      status_index=status_index, candidate_indices=[stream[j][1] for j in candidates])
++                all_statuses_paired = False
++                continue
++            position = candidates[0]
++            if position in used or position <= last_match:
++                issue("reused_or_out_of_order_action", f"{role} message cannot be reused or matched out of order",
++                      status_index=status_index, action_index=stream[position][1])
++                all_statuses_paired = False
++                continue
++            used.add(position)
++            last_match = position
++            matched += 1
++            offset_ns = abs(stream[position][0] - time_ns)
++            error = abs(stream[position][2] - status[status_field])
++            max_error = max(max_error, error)
++            max_offset_ns = max(max_offset_ns, offset_ns)
++            if error > cfg.tolerance_n:
++                issue("action_value_mismatch", f"{role} publication differs from status {status_field}",
++                      status_index=status_index, action_index=stream[position][1], error_n=error)
++        unpaired = [entry[1] for j, entry in enumerate(stream) if j not in used]
++        if unpaired:
++            issue("unmatched_action_records", f"Unpaired {role} records, including any boundary fragments",
++                  record_indices=unpaired)
++        matching[role] = {"message_count": len(stream), "matched_count": matched,
++                          "status_match_rate": matched / len(statuses) if statuses else 0.0,
++                          "unmatched_count": len(unpaired), "max_error_n": max_error,
++                          "max_abs_offset_s": max_offset_ns / 1_000_000_000}
++
++    timing: dict[str, Any] = {
++        "timing_incomplete": not bool(by_role["clock"]),
++        "mapping_method": "latest preceding /clock by bag receive timestamp; no interpolation across reset",
++        "gap_threshold_dynamic_dt_factor": 1.5,
++        "odom_sim_coverage_tolerance_s": 0.5 * cfg.nominal_dt_s,
++        "clock_reset_count": 0, "odom_reset_count": 0, "clock_equal_sample_count": 0,
++        "clock_segments": [], "clock_pause_segments": [],
++        "active_visible_gaps": [], "max_active_sim_interval_s": None,
++        "active_nonprogressing_intervals": [], "max_preceding_clock_receive_age_s": None,
++        "max_adjacent_active_receive_interval_s": None,
++    }
++    if not by_role["clock"] and not strict:
++        issue("timing_incomplete", "Clock absent: receive-time command consistency only", warning=True)
++    for role in ("clock", "odom"):
++        stream = by_role[role]
++        resets = [(a[1], b[1]) for a, b in zip(stream, stream[1:]) if b[2] < a[2]]
++        timing[f"{role}_reset_count"] = len(resets)
++        if resets:
++            issue("simulation_time_reset", f"{role} time regressed; do not join segments", warning=not strict,
++                  role=role, reset_record_indices=resets)
++        if role == "clock":
++            timing["clock_equal_sample_count"] = sum(a[2] == b[2] for a, b in zip(stream, stream[1:]))
++            if stream:
++                segment_start = 0
++                pause_start = None
++                for position in range(1, len(stream) + 1):
++                    at_end = position == len(stream)
++                    reset = not at_end and stream[position][2] < stream[position - 1][2]
++                    equal = not at_end and stream[position][2] == stream[position - 1][2]
++                    if equal and pause_start is None:
++                        pause_start = position - 1
++                    elif not equal and pause_start is not None:
++                        timing["clock_pause_segments"].append({
++                            "start_record_index": stream[pause_start][1],
++                            "end_record_index": stream[position - 1][1],
++                            "simulation_ns": stream[pause_start][2],
++                            "receive_duration_s": (stream[position - 1][0] - stream[pause_start][0]) / 1e9,
++                            "interpretation": "equal received clock samples; absence of clock while paused is not observable here",
++                        })
++                        pause_start = None
++                    if at_end or reset:
++                        timing["clock_segments"].append({
++                            "start_record_index": stream[segment_start][1],
++                            "end_record_index": stream[position - 1][1],
++                            "bag_range_ns": [stream[segment_start][0], stream[position - 1][0]],
++                            "simulation_range_ns": [stream[segment_start][2], stream[position - 1][2]],
++                        })
++                        segment_start = position
++        if statuses and stream and (stream[0][0] > statuses[0][0] or stream[-1][0] < statuses[-1][0]):
++            timing["timing_incomplete"] = True
++            issue("control_interval_not_covered", f"{role} receive-time range does not cover all status records",
++                  warning=not strict, role=role,
++                  stream_range_ns=[stream[0][0], stream[-1][0]],
++                  status_range_ns=[statuses[0][0], statuses[-1][0]])
++
++    clocks = by_role["clock"]
++    clock_times = [item[0] for item in clocks]
++    mapped: list[int | None] = []
++    clock_receive_ages = []
++    for status_time, _, _ in statuses:
++        index = bisect_right(clock_times, status_time) - 1
++        mapped.append(clocks[index][2] if index >= 0 else None)
++        if index >= 0:
++            clock_receive_ages.append((status_time - clocks[index][0]) / 1e9)
++    timing["max_preceding_clock_receive_age_s"] = max(clock_receive_ages) if clock_receive_ages else None
++    if statuses and clocks and any(value is None for value in mapped):
++        timing["timing_incomplete"] = True
++        issue("missing_preceding_clock", "Some controls have no preceding clock record", warning=not strict)
++    if statuses and by_role["odom"] and mapped and all(value is not None for value in mapped):
++        odom_stamps = [item[2] for item in by_role["odom"]]
++        margin_ns = 0.5 * cfg.nominal_dt_s * 1_000_000_000
++        if min(odom_stamps) > min(mapped) + margin_ns or max(odom_stamps) < max(mapped) - margin_ns:
++            timing["timing_incomplete"] = True
++            issue("odom_sim_interval_not_covered", "Odometry stamps do not cover mapped control simulation times",
++                  warning=not strict)
++    intervals = []
++    receive_intervals = []
++    if timing["clock_reset_count"] == 0:
++        for index in range(1, len(statuses)):
++            previous, current = statuses[index - 1], statuses[index]
++            if previous[2]["state"] != "ACTIVE" or current[2]["state"] != "ACTIVE":
++                continue
++            receive_intervals.append((current[0] - previous[0]) / 1_000_000_000)
++            if mapped[index] is None or mapped[index - 1] is None:
++                continue
++            interval_s = (mapped[index] - mapped[index - 1]) / 1_000_000_000
++            intervals.append(interval_s)
++            if interval_s <= 0:
++                nonprogress = {"before_status_index": previous[1], "after_status_index": current[1],
++                               "simulation_interval_s": interval_s}
++                timing["active_nonprogressing_intervals"].append(nonprogress)
++                timing["timing_incomplete"] = True
++                issue("nonprogressing_active_sim_time",
++                      "Clock cannot distinguish adjacent ACTIVE controls; pause, coarse clock, or stale mapping is possible",
++                      warning=not strict, **nonprogress)
++            if interval_s > 1.5 * previous[2]["dynamic_dt"]:
++                gap = {"before_status_index": previous[1], "after_status_index": current[1],
++                       "simulation_interval_s": interval_s,
++                       "threshold_s": 1.5 * previous[2]["dynamic_dt"]}
++                timing["active_visible_gaps"].append(gap)
++                issue("visible_active_gap", "Mapped ACTIVE interval exceeds configured dynamic_dt factor",
++                      warning=not strict, **gap)
++    timing["max_active_sim_interval_s"] = max(intervals) if intervals else None
++    timing["max_adjacent_active_receive_interval_s"] = max(receive_intervals) if receive_intervals else None
++    action_codes = {"invalid_payload", "wrong_topic_type", "missing_topic", "no_decodable_records",
++                    "thrust_out_of_range", "wrong_controller_identity", "window_exceeds_dynamic_dt",
++                    "missing_action_match", "ambiguous_action_match", "reused_or_out_of_order_action",
++                    "action_value_mismatch", "unmatched_action_records", "invalid_bag_timestamp", "bag_time_regression"}
++    action_topics = {cfg.topics[name] for name in ("left", "right", "status")}
++    action_failures = [item for item in failures if item["code"] in action_codes and
++                       ("topic" not in item or item["topic"] in action_topics)]
++    consistent = bool(statuses) and all_statuses_paired and not action_failures
++    return {
++        "schema": "ppo-bag-actions-check/1", "profile": cfg.profile, "passed": not failures,
++        "exit_code": 0 if not failures else 2,
++        "recorded_action_stream_consistent": consistent,
++        "simulation_clock_recorded": bool(clocks),
++        "common_drop_identifiable": False, "exact_execution_timing_available": False,
++        "gp_labels_ready": False, "action_recording_complete": False,
++        "action_recording_complete_note": "No source sequence: entire planned control stream completeness is unproven.",
++        "allowed_use": (["published_command_statistics_with_timing_limits", "trajectory_analysis_with_limits"]
++                        if consistent else ["trajectory_and_observation_analysis_with_limits"]),
++        "actual_message_counts": dict(counts), "decoded_message_counts": dict(decoded),
++        "metadata_message_counts": cfg.expected_counts,
++        "topic_types": dict(topic_types), "active_count": active_count,
++        "nonzero_active_count": nonzero_active, "matching": matching, "timing": timing,
++        "parameters": {"topics": dict(cfg.topics), "match_window_s": cfg.match_window_s,
++                       "window_is_strict": True, "tolerance_n": cfg.tolerance_n,
++                       "nominal_dt_s": cfg.nominal_dt_s, "thrust_limit_n": cfg.thrust_limit_n,
++                       "thrust_limit_source": "explicit validator argument; not inferred from recorded values",
++                       "min_active": cfg.min_active, "require_nonzero_active": cfg.require_nonzero_active},
++        "failures": failures, "warnings": warnings, "limitations": LIMITATIONS,
++    }
++
++
++def _message_payload(role: str, msg: Any) -> dict[str, Any]:
++    def stamp(value: Any) -> dict[str, int]:
++        return {"sec": int(value.sec), "nanosec": int(value.nanosec)}
++    if role in ("left", "right", "status"):
++        return {"data": msg.data}
++    if role == "reference_profile":
++        return {"data": list(msg.data)}
++    if role == "clock":
++        return {"clock": stamp(msg.clock)}
++    # Keep all sensor/path numeric fields so a successful CDR decode does not
++    # falsely count NaN/Inf observations as usable.  This is not a physics or
++    # reference-layout validator.
++    from rosidl_runtime_py.convert import message_to_ordereddict
++    return message_to_ordereddict(msg)
++
++
++def read_bag(bag: Path, cfg: Config) -> tuple[list[Record], dict[str, str], dict[str, Any]]:
++    """Read metadata-selected storage without creating/writing any bag file."""
++    import yaml
++    import rosbag2_py
++    from rclpy.serialization import deserialize_message
++    from rosidl_runtime_py.utilities import get_message
++
++    metadata_path = bag / "metadata.yaml"
++    with metadata_path.open("r", encoding="utf-8") as handle:
++        document = yaml.safe_load(handle)
++    info = document["rosbag2_bagfile_information"]
++    storage_id = info["storage_identifier"]
++    if not isinstance(storage_id, str) or not storage_id:
++        raise ValueError("metadata storage_identifier missing or invalid")
++    files = info.get("relative_file_paths", [])
++    if not files or any(not isinstance(name, str) or not name for name in files):
++        raise ValueError("metadata relative_file_paths missing or invalid")
++    for name in files:
++        candidate = (bag / name).resolve()
++        if not candidate.is_relative_to(bag):
++            raise ValueError("metadata storage path escapes bag directory")
++        if not candidate.is_file():
++            raise ValueError(f"missing storage file {name}")
++    expected_counts: dict[str, int] = {}
++    metadata_types: dict[str, str] = {}
++    for item in info["topics_with_message_count"]:
++        entry = item["topic_metadata"]
++        name = entry["name"]
++        if name in expected_counts:
++            raise ValueError(f"duplicate metadata topic {name}")
++        expected_counts[name] = item["message_count"]
++        metadata_types[name] = entry["type"]
++    cfg.expected_counts = expected_counts
++    cfg.validate()
++    total = info["message_count"]
++    if isinstance(total, bool) or not isinstance(total, int) or total != sum(expected_counts.values()):
++        raise ValueError("metadata total message count differs from per-topic totals")
++    reader = rosbag2_py.SequentialReader()
++    reader.open(rosbag2_py.StorageOptions(uri=str(bag), storage_id=storage_id),
++                rosbag2_py.ConverterOptions(input_serialization_format="cdr", output_serialization_format="cdr"))
++    actual_types = {entry.name: entry.type for entry in reader.get_all_topics_and_types()}
++    if actual_types != metadata_types:
++        raise ValueError("storage topic definitions disagree with metadata")
++    role_for_topic = {topic: role for role, topic in cfg.topics.items()}
++    classes: dict[str, Any] = {}
++    for topic, role in role_for_topic.items():
++        if actual_types.get(topic) == TOPIC_TYPES[role]:
++            try:
++                classes[topic] = get_message(actual_types[topic])
++            except Exception as exc:
++                raise ImportError(f"Cannot load required ROS message class {actual_types[topic]}: {exc}") from exc
++    records = []
++    while reader.has_next():
++        topic, serialized, bag_ns = reader.read_next()
++        payload: dict[str, Any] = {}
++        if topic in role_for_topic:
++            if topic in classes:
++                try:
++                    payload = _message_payload(role_for_topic[topic], deserialize_message(serialized, classes[topic]))
++                except Exception as exc:
++                    payload = {"__decode_error__": f"{type(exc).__name__}: {exc}"}
++        records.append(Record(topic, int(bag_ns), payload))
++    return records, actual_types, {"bag": str(bag), "storage_id": storage_id,
++                                  "storage_files": files, "metadata_total_message_count": total,
++                                  "recorder_time_mode": "not inferred; see external run_context.json"}
++
++
++def _parser() -> argparse.ArgumentParser:
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("bag", type=Path)
++    parser.add_argument("--profile", choices=("ppo-actions-v1", "legacy-actions"), default="ppo-actions-v1")
++    parser.add_argument("--report", type=Path, required=True, help="JSON report outside the original bag directory")
++    parser.add_argument("--match-window-ms", type=float, default=20.0)
++    parser.add_argument("--match-window-s", type=float, default=None, help=argparse.SUPPRESS)
++    parser.add_argument("--value-tolerance-n", "--tolerance-n", dest="tolerance_n", type=float, default=1e-5)
++    parser.add_argument("--nominal-dt-s", type=float, default=0.2)
++    parser.add_argument("--thrust-limit-n", type=float, default=25.0)
++    parser.add_argument("--min-active", type=int, default=0)
++    parser.add_argument("--require-nonzero-active", action="store_true")
++    for role, topic in DEFAULT_TOPICS.items():
++        if role == "reference_profile":
++            parser.add_argument("--profile-topic", "--reference-profile-topic", dest="reference_profile_topic", default=topic)
++        else:
++            parser.add_argument(f"--{role}-topic", default=topic)
++    return parser
++
++
++def main(argv: list[str] | None = None) -> int:
++    parser = _parser()
++    try:
++        args = parser.parse_args(argv)
++    except SystemExit as exc:
++        return 0 if exc.code == 0 else 1
++    bag = args.bag.expanduser().resolve()
++    report_path = args.report.expanduser().resolve()
++    if report_path == bag or report_path.is_relative_to(bag):
++        print("Configuration error: report must be outside the original bag directory", file=sys.stderr)
++        return 1
++    cfg = Config(profile=args.profile,
++                 topics={role: getattr(args, f"{role}_topic") for role in DEFAULT_TOPICS},
++                 match_window_s=(args.match_window_ms / 1000.0 if args.match_window_s is None else args.match_window_s),
++                 tolerance_n=args.tolerance_n,
++                 nominal_dt_s=args.nominal_dt_s, thrust_limit_n=args.thrust_limit_n,
++                 min_active=args.min_active, require_nonzero_active=args.require_nonzero_active)
++    try:
++        cfg.validate()
++        if not bag.is_dir():
++            raise ValueError("bag must be an existing directory containing metadata.yaml")
++        records, types, provenance = read_bag(bag, cfg)
++        report = validate_records(records, types, cfg)
++        report["reading"] = provenance
++        exit_code = report["exit_code"]
++    except Exception as exc:
++        report = {"schema": "ppo-bag-actions-check/1", "profile": cfg.profile, "passed": False,
++                  "exit_code": 1, "configuration_or_read_error": f"{type(exc).__name__}: {exc}",
++                  "bag": str(bag), "common_drop_identifiable": False,
++                  "exact_execution_timing_available": False, "gp_labels_ready": False,
++                  "limitations": LIMITATIONS}
++        exit_code = 1
++    try:
++        report_path.parent.mkdir(parents=True, exist_ok=True)
++        with report_path.open("w", encoding="utf-8") as handle:
++            json.dump(report, handle, ensure_ascii=False, indent=2, allow_nan=False)
++            handle.write("\n")
++    except (OSError, ValueError) as exc:
++        print(f"Cannot write external report: {exc}", file=sys.stderr)
++        return 1
++    print(json.dumps({"passed": report["passed"], "exit_code": exit_code, "report": str(report_path),
++                      "failure_count": len(report.get("failures", [])),
++                      "error": report.get("configuration_or_read_error")}, ensure_ascii=False))
++    return exit_code
++
++
++if __name__ == "__main__":
++    sys.exit(main())
+--- /dev/null
++++ b/usv_mpc_ws/scripts/tests/test_check_ppo_bag.py
+@@ -0,0 +1,430 @@
++"""Independent data-contract tests for the read-only PPO bag checker.
++
++These fixtures represent decoded bag records, so the tests do not require ROS.
++The real-bag reader is separately exercised on the Ubuntu ROS installation.
++"""
++
++import copy
++import contextlib
++import io
++import json
++import math
++from pathlib import Path
++import sys
++import tempfile
++import unittest
++from unittest import mock
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++import check_ppo_bag as checker
++
++
++TOPICS = {
++    "left": "/wamv/thrusters/left/thrust",
++    "right": "/wamv/thrusters/right/thrust",
++    "status": "/mpc/status",
++    "odom": "/wamv/sensors/position/ground_truth_odometry",
++    "imu": "/wamv/sensors/imu/imu/data",
++    "path": "/path/reference",
++    "reference_profile": "/path/reference_profile",
++    "clock": "/clock",
++}
++TYPES = {
++    TOPICS["left"]: "std_msgs/msg/Float64",
++    TOPICS["right"]: "std_msgs/msg/Float64",
++    TOPICS["status"]: "std_msgs/msg/String",
++    TOPICS["odom"]: "nav_msgs/msg/Odometry",
++    TOPICS["imu"]: "sensor_msgs/msg/Imu",
++    TOPICS["path"]: "nav_msgs/msg/Path",
++    TOPICS["reference_profile"]: "std_msgs/msg/Float64MultiArray",
++    TOPICS["clock"]: "rosgraph_msgs/msg/Clock",
++}
++NS = 1_000_000_000
++
++
++def stamp(ns):
++    return {"sec": ns // NS, "nanosec": ns % NS}
++
++
++def record(key, bag_ns, payload):
++    return checker.Record(TOPICS[key], bag_ns, payload)
++
++
++def status_payload(left=3.0, right=4.0, state="ACTIVE", **overrides):
++    value = {
++        "state": state,
++        "control_mode": "rl",
++        "backend": "onnx_ppo",
++        "actuation_anchor_source": "vrx_published",
++        "dynamic_dt": 0.2,
++        "tl_cmd_n": left,
++        "tr_cmd_n": right,
++        "tl_n": left,
++        "tr_n": right,
++    }
++    if state == "STANDBY":
++        value["standby_reason"] = "no_path"
++    value.update(overrides)
++    return {"data": json.dumps(value)}
++
++
++def complete_records(n=5, left=3.0, right=4.0, state="ACTIVE"):
++    """0.2 s control ticks with independent left/right/status arrivals."""
++    records = []
++    for index in range(n):
++        start = NS + index * 200_000_000
++        records.extend([
++            record("left", start + 1_000_000, {"data": left}),
++            record("right", start + 2_000_000, {"data": right}),
++            record("status", start + 3_000_000,
++                   status_payload(left, right, state)),
++        ])
++    end = NS + n * 200_000_000
++    for bag_ns in range(NS, end + 10_000_000, 10_000_000):
++        records.append(record("clock", bag_ns,
++                              {"clock": stamp(10 * NS + bag_ns - NS)}))
++    for bag_ns in (900_000_000, end + 100_000_000):
++        records.append(record("odom", bag_ns,
++                              {"header": {"stamp": stamp(10 * NS + bag_ns - NS)}}))
++    records.extend([
++        record("imu", NS, {"header": {"stamp": stamp(10 * NS)}}),
++        record("path", NS, {"header": {"stamp": stamp(10 * NS)}, "poses": []}),
++        record("reference_profile", NS, {"data": [0.0, 0.8, 0.0]}),
++    ])
++    return sorted(records, key=lambda item: item.bag_ns)
++
++
++def replace_payload(records, key, occurrence, payload):
++    result, count = [], 0
++    for item in records:
++        if item.topic == TOPICS[key]:
++            if count == occurrence:
++                item = checker.Record(item.topic, item.bag_ns, payload)
++            count += 1
++        result.append(item)
++    return result
++
++
++def remove_occurrence(records, key, occurrence):
++    result, count = [], 0
++    for item in records:
++        if item.topic == TOPICS[key]:
++            if count == occurrence:
++                count += 1
++                continue
++            count += 1
++        result.append(item)
++    return result
++
++
++def without_topic(records, key):
++    return [item for item in records if item.topic != TOPICS[key]]
++
++
++class PpoBagContractTests(unittest.TestCase):
++    def check(self, records=None, topic_types=None, **config):
++        return checker.validate_records(
++            complete_records() if records is None else records,
++            TYPES if topic_types is None else topic_types,
++            checker.Config(**config),
++        )
++
++    def assertFails(self, records=None, topic_types=None, **config):
++        report = self.check(records, topic_types, **config)
++        self.assertFalse(report["passed"], report)
++        self.assertTrue(report["failures"], report)
++        return report
++
++    def test_complete_stream_passes_without_predictive_trajectory(self):
++        report = self.check()
++        self.assertTrue(report["passed"], report)
++        self.assertTrue(report["recorded_action_stream_consistent"])
++        self.assertTrue(report["simulation_clock_recorded"])
++        self.assertFalse(report["common_drop_identifiable"])
++        self.assertFalse(report["exact_execution_timing_available"])
++        self.assertFalse(report["gp_labels_ready"])
++
++    def test_validation_leaves_input_records_and_metadata_unchanged(self):
++        records, types = complete_records(), copy.deepcopy(TYPES)
++        old_payloads = [(x.topic, x.bag_ns, copy.deepcopy(x.payload)) for x in records]
++        self.assertTrue(self.check(records, types)["passed"])
++        self.assertEqual(old_payloads, [(x.topic, x.bag_ns, x.payload) for x in records])
++        self.assertEqual(types, TYPES)
++
++    def test_legacy_without_clock_passes_with_timing_limitation(self):
++        records = without_topic(complete_records(), "clock")
++        types = {key: value for key, value in TYPES.items() if key != TOPICS["clock"]}
++        report = self.check(records, types, profile="legacy-actions")
++        self.assertTrue(report["passed"], report)
++        self.assertFalse(report["simulation_clock_recorded"])
++        self.assertTrue(report["warnings"], report)
++        self.assertFalse(report["gp_labels_ready"])
++
++    def test_strict_without_clock_fails(self):
++        self.assertFails(without_topic(complete_records(), "clock"))
++
++    def test_missing_left_right_or_status_fails_even_if_metadata_lists_topic(self):
++        for key in ("left", "right", "status"):
++            with self.subTest(key=key):
++                self.assertFails(without_topic(complete_records(), key))
++
++    def test_missing_required_observation_reference_topics_fails(self):
++        for key in ("odom", "imu", "path", "reference_profile"):
++            with self.subTest(key=key):
++                self.assertFails(without_topic(complete_records(), key))
++
++    def test_single_internal_drop_is_not_hidden_by_constant_values(self):
++        for key in ("left", "right", "status"):
++            with self.subTest(key=key):
++                self.assertFails(remove_occurrence(complete_records(), key, 2))
++
++    def test_shared_drop_with_visible_simulation_gap_fails_strict(self):
++        records = complete_records()
++        for key in ("left", "right", "status"):
++            records = remove_occurrence(records, key, 2)
++        self.assertFails(records)
++
++    def test_shared_drop_without_clock_is_not_claimed_identifiable(self):
++        records = complete_records()
++        for key in ("left", "right", "status"):
++            records = remove_occurrence(records, key, 2)
++        report = self.check(without_topic(records, "clock"), profile="legacy-actions")
++        self.assertTrue(report["passed"], report)
++        self.assertTrue(report["recorded_action_stream_consistent"])
++        self.assertFalse(report["common_drop_identifiable"])
++        self.assertFalse(report["exact_execution_timing_available"])
++
++    def test_duplicate_constant_command_reports_ambiguity(self):
++        records = complete_records()
++        records.append(record("left", NS + 5_000_000, {"data": 3.0}))
++        report = self.assertFails(sorted(records, key=lambda item: item.bag_ns))
++        self.assertTrue(any("ambig" in failure["code"] for failure in report["failures"]), report)
++
++    def test_temporal_pair_is_checked_before_matching_equal_value_elsewhere(self):
++        records = complete_records(n=2)
++        records = replace_payload(records, "left", 0, {"data": 9.0})
++        records = replace_payload(records, "left", 1, {"data": 3.0})
++        self.assertFails(records)
++
++    def test_numerical_mismatch_fails(self):
++        self.assertFails(replace_payload(complete_records(), "right", 2, {"data": 4.25}))
++
++    def test_numerical_tolerance_is_configurable(self):
++        records = replace_payload(complete_records(), "left", 2, {"data": 3.00002})
++        self.assertFails(records)
++        self.assertTrue(self.check(records, tolerance_n=0.00003)["passed"])
++
++    def test_near_window_edge_passes_and_exact_edge_fails(self):
++        for offset_ns, expected in ((19_999_999, True), (20_000_000, False)):
++            records = [checker.Record(x.topic, x.bag_ns + 2_000_000 - offset_ns, x.payload)
++                       if x.topic == TOPICS["left"] else x for x in complete_records()]
++            report = self.check(sorted(records, key=lambda item: item.bag_ns))
++            self.assertEqual(report["passed"], expected, report)
++
++    def test_epoch_scale_receive_timestamps_preserve_nanosecond_window_boundary(self):
++        epoch_offset_ns = 1_700_000_000_000_000_000
++        for offset_ns, expected in ((19_999_999, True), (20_000_000, False)):
++            with self.subTest(offset_ns=offset_ns):
++                records = [checker.Record(x.topic,
++                                          epoch_offset_ns + x.bag_ns +
++                                          (2_000_000 - offset_ns if x.topic == TOPICS["left"] else 0),
++                                          x.payload)
++                           for x in complete_records()]
++                report = self.check(sorted(records, key=lambda item: item.bag_ns))
++                self.assertEqual(report["passed"], expected, report)
++
++    def test_unmatched_beginning_and_ending_records_are_not_discarded(self):
++        for occurrence in (0, 4):
++            with self.subTest(occurrence=occurrence):
++                self.assertFails(remove_occurrence(complete_records(), "right", occurrence))
++
++    def test_extra_command_outside_status_window_fails(self):
++        records = complete_records()
++        records.append(record("left", 500_000_000, {"data": 0.0}))
++        self.assertFails(sorted(records, key=lambda item: item.bag_ns))
++
++    def test_all_standby_zero_is_valid_data_but_fails_active_smoke(self):
++        records = complete_records(left=0.0, right=0.0, state="STANDBY")
++        self.assertTrue(self.check(records)["passed"])
++        self.assertFails(records, min_active=10, require_nonzero_active=True)
++
++    def test_active_zero_is_valid_data_but_fails_nonzero_smoke(self):
++        records = complete_records(n=10, left=0.0, right=0.0)
++        self.assertTrue(self.check(records, min_active=10)["passed"])
++        self.assertFails(records, min_active=10, require_nonzero_active=True)
++
++    def test_smoke_minimum_and_nonzero_pass_when_satisfied(self):
++        self.assertTrue(self.check(complete_records(n=10), min_active=10,
++                                   require_nonzero_active=True)["passed"])
++        self.assertFails(complete_records(n=9), min_active=10)
++
++    def test_mixed_control_identity_fails(self):
++        for override in ({"control_mode": "nmpc"}, {"backend": "ipopt"},
++                         {"actuation_anchor_source": "actual_sensor"}):
++            with self.subTest(override=override):
++                self.assertFails(replace_payload(complete_records(), "status", 2,
++                                                  status_payload(**override)))
++
++    def test_unknown_state_and_missing_applied_fields_fail(self):
++        self.assertFails(replace_payload(complete_records(), "status", 2,
++                                          status_payload(state="UNKNOWN")))
++        value = json.loads(status_payload()["data"])
++        del value["tr_n"]
++        self.assertFails(replace_payload(complete_records(), "status", 2,
++                                          {"data": json.dumps(value)}))
++
++    def test_malformed_json_fails(self):
++        for payload in ({"data": "{"}, {"data": "[]"}, {"data": "null"}):
++            with self.subTest(payload=payload):
++                self.assertFails(replace_payload(complete_records(), "status", 2, payload))
++
++    def test_nonfinite_command_or_status_fields_fail(self):
++        for value in (math.nan, math.inf, -math.inf):
++            with self.subTest(value=value):
++                self.assertFails(replace_payload(complete_records(), "left", 2, {"data": value}))
++                self.assertFails(replace_payload(complete_records(), "status", 2,
++                                                  status_payload(tl_cmd_n=value)))
++
++    def test_nonfinite_observation_reference_values_fail(self):
++        payloads = {
++            "odom": {"header": {"stamp": stamp(9_900_000_000)},
++                     "pose": {"pose": {"position": {"x": math.nan}}}},
++            "imu": {"header": {"stamp": stamp(10 * NS)},
++                    "angular_velocity": {"z": math.inf}},
++            "path": {"header": {"stamp": stamp(10 * NS)},
++                     "poses": [{"pose": {"position": {"y": -math.inf}}}]},
++            "reference_profile": {"data": [0.0, math.nan, 0.0]},
++        }
++        for key, payload in payloads.items():
++            with self.subTest(key=key):
++                self.assertFails(replace_payload(complete_records(), key, 0, payload))
++
++    def test_status_dynamic_period_must_be_positive_finite_and_bound_window(self):
++        for value in (0.0, -0.2, math.nan, 0.03):
++            with self.subTest(value=value):
++                self.assertFails(replace_payload(complete_records(), "status", 2,
++                                                  status_payload(dynamic_dt=value)))
++
++    def test_wrong_topic_type_fails(self):
++        for key in ("left", "status", "clock", "odom", "reference_profile"):
++            with self.subTest(key=key):
++                types = dict(TYPES)
++                types[TOPICS[key]] = "std_msgs/msg/Bool"
++                self.assertFails(topic_types=types)
++
++    def test_clock_reset_fails_strict(self):
++        records = complete_records()
++        records = [checker.Record(x.topic, x.bag_ns,
++                                   {"clock": stamp(1 * NS + x.bag_ns - NS)})
++                   if x.topic == TOPICS["clock"] and x.bag_ns >= NS + 400_000_000
++                   else x for x in records]
++        self.assertFails(records)
++
++    def test_clock_with_receive_coverage_but_no_sim_progress_fails_strict(self):
++        records = [checker.Record(x.topic, x.bag_ns, {"clock": stamp(10 * NS)})
++                   if x.topic == TOPICS["clock"] else x for x in complete_records()]
++        self.assertFails(records)
++        report = self.check(records, profile="legacy-actions")
++        self.assertTrue(report["passed"], report)
++        self.assertTrue(report["warnings"], report)
++
++    def test_stale_clock_must_not_mask_adjacent_active_control_intervals(self):
++        records = [x for x in complete_records()
++                   if x.topic != TOPICS["clock"] or x.bag_ns in (NS, 2 * NS)]
++        self.assertFails(records)
++
++    def test_clock_must_cover_both_control_boundaries(self):
++        for condition in (lambda x: x.bag_ns >= NS + 100_000_000,
++                          lambda x: x.bag_ns <= NS + 700_000_000):
++            records = [x for x in complete_records()
++                       if x.topic != TOPICS["clock"] or condition(x)]
++            self.assertFails(records)
++
++    def test_odometry_message_exists_but_does_not_cover_controls(self):
++        self.assertFails(remove_occurrence(complete_records(), "odom", 1))
++
++    def test_odometry_simulation_stamps_must_cover_mapped_control_time(self):
++        records = [checker.Record(x.topic, x.bag_ns,
++                                   {"header": {"stamp": stamp(NS)}})
++                   if x.topic == TOPICS["odom"] else x for x in complete_records()]
++        self.assertFails(records)
++
++    def test_remapped_topics_pass_only_with_matching_configuration(self):
++        remapped = {key: "/test" + topic for key, topic in TOPICS.items()}
++        names = {TOPICS[key]: remapped[key] for key in TOPICS}
++        records = [checker.Record(names[x.topic], x.bag_ns, x.payload) for x in complete_records()]
++        types = {names[key]: value for key, value in TYPES.items()}
++        self.assertFails(records, types)
++        self.assertTrue(self.check(records, types, topics=remapped)["passed"])
++
++    def test_thrust_limit_is_a_parameter_not_a_fixed_25_n_rule(self):
++        records = complete_records(left=-12.0, right=12.0)
++        self.assertTrue(self.check(records, thrust_limit_n=12.0)["passed"])
++        self.assertFails(records, thrust_limit_n=11.0)
++        self.assertTrue(self.check(complete_records(left=30.0, right=30.0),
++                                   thrust_limit_n=35.0)["passed"])
++
++    def test_actual_scanned_counts_must_agree_with_metadata(self):
++        counts = {}
++        for item in complete_records():
++            counts[item.topic] = counts.get(item.topic, 0) + 1
++        self.assertTrue(self.check(expected_counts=counts)["passed"])
++        counts[TOPICS["left"]] += 1
++        report = self.assertFails(expected_counts=counts)
++        self.assertTrue(any(x["code"] == "metadata_count_mismatch" for x in report["failures"]), report)
++
++    def test_cli_refuses_report_inside_bag_before_reading(self):
++        with tempfile.TemporaryDirectory() as directory:
++            bag = Path(directory) / "bag"
++            bag.mkdir()
++            metadata = bag / "metadata.yaml"
++            metadata.write_text("sentinel", encoding="utf-8")
++            with mock.patch.object(checker, "read_bag") as read, contextlib.redirect_stderr(io.StringIO()):
++                self.assertEqual(checker.main([str(bag), "--report", str(metadata)]), 1)
++            read.assert_not_called()
++            self.assertEqual(metadata.read_text(encoding="utf-8"), "sentinel")
++
++    def test_cli_invalid_configuration_exits_one_with_external_error_report(self):
++        with tempfile.TemporaryDirectory() as directory:
++            bag = Path(directory) / "bag"
++            bag.mkdir()
++            output = Path(directory) / "error.json"
++            with mock.patch.object(checker, "read_bag") as read, contextlib.redirect_stdout(io.StringIO()):
++                result = checker.main([str(bag), "--report", str(output), "--match-window-ms", "100"])
++            self.assertEqual(result, 1)
++            read.assert_not_called()
++            report = json.loads(output.read_text(encoding="utf-8"))
++            self.assertEqual(report["exit_code"], 1)
++            self.assertFalse(report["passed"])
++
++    def test_cli_data_failure_exits_two_with_external_data_report(self):
++        with tempfile.TemporaryDirectory() as directory:
++            bag = Path(directory) / "bag"
++            bag.mkdir()
++            output = Path(directory) / "acceptance.json"
++            records = remove_occurrence(complete_records(), "left", 2)
++            with mock.patch.object(checker, "read_bag", return_value=(records, TYPES, {})), \
++                    contextlib.redirect_stdout(io.StringIO()):
++                result = checker.main([str(bag), "--report", str(output)])
++            self.assertEqual(result, 2)
++            report = json.loads(output.read_text(encoding="utf-8"))
++            self.assertEqual(report["exit_code"], 2)
++            self.assertFalse(report["passed"])
++
++    def test_bad_configuration_raises_valueerror(self):
++        cases = [
++            {"profile": "unknown"}, {"match_window_s": 0},
++            {"match_window_s": -0.1}, {"match_window_s": 0.1},
++            {"match_window_s": math.nan}, {"nominal_dt_s": 0},
++            {"tolerance_n": -1}, {"tolerance_n": math.inf},
++            {"thrust_limit_n": 0}, {"thrust_limit_n": math.nan},
++            {"min_active": -1},
++            {"topics": {**TOPICS, "right": TOPICS["left"]}},
++        ]
++        for config in cases:
++            with self.subTest(config=config), self.assertRaises(ValueError):
++                self.check(**config)
++
++
++if __name__ == "__main__":
++    unittest.main()

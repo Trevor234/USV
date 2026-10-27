@@ -1,0 +1,13 @@
+{
+  "binaries_after_failed_build": {
+    "p1_solver_worker": {
+      "sha256": "e78dd29dd86a329e5edf6a92f4bd1eac778ef1fe07dcabc78ddfb4095ffb028a",
+      "resolved": "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker"
+    },
+    "p1_regulator": {
+      "sha256": "bf7671248b00895584adf7f014c3f42c85a7481fdbc1b6c128789ac884eb8cf8",
+      "resolved": "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator"
+    }
+  },
+  "failure_log_sha256": "834ae069d742ac955886599bd57efb45543590ee5543cc3d86b1a9a7276081db"
+}

@@ -1,0 +1,188 @@
+{
+  "schema": "p1-D1-startup-handshake-component-status-v1",
+  "date": "2026-10-09",
+  "completed_scope": "isolated implementation and component verification only",
+  "publisher_startup_identity_and_hold_release_components_verified": true,
+  "publisher_release_shutdown_linearization_verified": true,
+  "first_applied_and_shutdown_flush_fixture_verified": true,
+  "observer_actual_callback_legacy_ready_components_verified": true,
+  "strict_v2_shared_readiness_protocol_compatible": true,
+  "owned_process_and_isolated_graph_helper_fixture_verified": true,
+  "final_test_case_invocations": 260,
+  "ubuntu_case_invocations": 131,
+  "local_checker_case_invocations": 129,
+  "final_skipped": 0,
+  "global_3864_guard_passed": false,
+  "known_live_drift_count": 25,
+  "frozen_source_matched": 146,
+  "mpc_interface_dependency_matched": 280,
+  "scoped_component_dependency_lock_count": 2818,
+  "scoped_guard_file_count": 3365,
+  "scoped_guard_sha256": "5606551d69a441d220b0d734fdb2897b08e10732b0622a5b383f0d939748d6a4",
+  "version_manifest_sha256": "765aa9270024820eaa150fb173a6cbae4055079f42cdf5bfad7fd123866bd733",
+  "production_release_driver_complete": false,
+  "owned_dds_endpoint_bindings_verified": false,
+  "publisher_effective_full_configuration_verified": false,
+  "external_worker_zero_hook_argv_verified": false,
+  "production_complete_constructor_ready_chain_verified": false,
+  "strict_v2_full_source_and_actual_storage_positive_verified": false,
+  "shared_source_bag_positive_path_verified": false,
+  "actual_Witness_positive_verified": false,
+  "production_owned_prepare_close_verified": false,
+  "current_reproducible_domain_closed": false,
+  "affected_version_stress_recovery_complete": false,
+  "time_parameter_rationale_closed": false,
+  "actual_master_clock_bound_verified": false,
+  "D1_ready": false,
+  "D1_run": false,
+  "B4": false,
+  "B5": false,
+  "M0b": false,
+  "M4": false,
+  "F6": false,
+  "P1": false,
+  "execute": false,
+  "physical_release": false,
+  "new_Gazebo_run": false,
+  "production_observer_executed": false,
+  "original_F5_binary_replaced": false,
+  "live_workspace_restored_or_overwritten": false,
+  "next_plan": "C:\\Users\\sgh\\Documents\\MPC\\P1_M0b_B4_D1_owned端点与配置认证_最小计划_2026-10-09.md",
+  "binaries": {
+    "p1_F5_held_publisher": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/publisher/build/p1_F5_held_publisher",
+      "sha256": "21019c23823f8f8f86d856e66158ef73ff784c56cb6822ec69cf7faf632189d4"
+    },
+    "p1_regulator_shadow_observer_ready_v1": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_handshake_20261009_v1/observer/build/p1_regulator_shadow_observer_ready_v1",
+      "sha256": "58e72a003782aa783f78e81cebf12260c378a7dcfa21f7de254415aa8b183bd6"
+    }
+  },
+  "evidence": {
+    "build_primary_v1.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\build_primary_v1.json",
+      "sha256": "73bf77644be119027d29622f60390fe18d3acad2e252b7e6364cdb7700570b4d",
+      "bytes": 641860
+    },
+    "build_input_manifest_v1.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\build_input_manifest_v1.json",
+      "sha256": "ced2c149cbe3411d7e0047ec488aa2b296a59708de6a0de232de716c120f3ed5",
+      "bytes": 14995
+    },
+    "build_result_v1.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\build_result_v1.json",
+      "sha256": "dbb4bc94cef56946ed6791c794a72b226bd993ac8d3a81dd63d5edffa6b8626a",
+      "bytes": 31247
+    },
+    "primary_manifest_v1.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\primary_manifest_v1.json",
+      "sha256": "b2873e3d8c09dacf562d4a6107b00d5d8ee661e51dadde5baf48fbfc0c56f78f",
+      "bytes": 70659
+    },
+    "startup_handshake_build_manifest_v1.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\startup_handshake_build_manifest_v1.json",
+      "sha256": "765aa9270024820eaa150fb173a6cbae4055079f42cdf5bfad7fd123866bd733",
+      "bytes": 2282
+    },
+    "shared_readiness_input_manifest_A1.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\shared_readiness_input_manifest_A1.json",
+      "sha256": "dbe80ac0fc2826698faa7e8503372a6fab64deb61d976601cb1857a4a970efbc",
+      "bytes": 1458
+    },
+    "shared_readiness_result_A1.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\shared_readiness_result_A1.json",
+      "sha256": "b54a9555181eb8eece66444cdf1df7a0deec90fdf48090cd97d0fdde7ac77eec",
+      "bytes": 3979
+    },
+    "shared_readiness_assessment.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\shared_readiness_assessment.json",
+      "sha256": "6bbeb527554d064804b98d826d13100f9323eb475efd2b948b8a56161a007906",
+      "bytes": 1500
+    },
+    "remote_drift_audit.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\remote_drift_audit.json",
+      "sha256": "cc8db5425cd1aacabaa93a14e41550102b9229f722ac8dedf658301ed6967f6b",
+      "bytes": 167020
+    },
+    "build_dependency_audit.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\build_dependency_audit.json",
+      "sha256": "5699fb194c99282f09c6a59b365463b5c24d9762b5a1259c166ad4acd85b2a4c",
+      "bytes": 778881
+    },
+    "scoped_assets_close_result.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\scoped_assets_close_result.json",
+      "sha256": "ecbb7fdaf6c63df1b4edcc304aa8125fb882589be8e5854b8f558792996f4eb3",
+      "bytes": 4716
+    },
+    "independent_review.md": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\independent_review.md",
+      "sha256": "a62c96b897b45ba0dd54a1cfffcb3f53d333e6aa9c149d669da4851dabd713fa",
+      "bytes": 6526
+    },
+    "independent_review.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\independent_review.json",
+      "sha256": "06d96b721bfc638cdb7261191dd682b210c4c529a01ad5de6eac12f8cee82c60",
+      "bytes": 73474
+    },
+    "preflight_reflection_startup_handshake_20261009.md": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\preflight_reflection_startup_handshake_20261009.md",
+      "sha256": "861de47bc822ffe85b659ff28b8602baecc3cb47780648819f8e14f952be6de8",
+      "bytes": 3946
+    },
+    "preflight_isolated_build_supplement.md": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\preflight_isolated_build_supplement.md",
+      "sha256": "8da44f283e9c9f146b662c72c025ea25d8fc259b7018dd4b5433ec70683e7357",
+      "bytes": 3362
+    },
+    "preflight_checker_A2.md": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\preflight_checker_A2.md",
+      "sha256": "5bc2732dab583e3815658543539c40596b242a6a68a78568bbeb286e65d44af1",
+      "bytes": 540
+    },
+    "preflight_checker_A3.md": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\preflight_checker_A3.md",
+      "sha256": "8e048f9570c2bc54504aa0b2e708d43207d31f49f766624065d77343f8685e99",
+      "bytes": 532
+    },
+    "test_batches/owned_local_A1/input_manifest.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\owned_local_A1\\input_manifest.json",
+      "sha256": "3fb10a07d052deca9eead67a7c82d2d540a304e074918aceea143820a97475eb",
+      "bytes": 1799
+    },
+    "test_batches/owned_local_A1/result.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\owned_local_A1\\result.json",
+      "sha256": "baade88130e4b8d39361efc16d7047bcf74a457f129c42ba244c4c8db017ac95",
+      "bytes": 43187
+    },
+    "test_batches/checkers_A1/input_manifest.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\checkers_A1\\input_manifest.json",
+      "sha256": "d2cbc867789329debcaba529153ac0d5b7be805ff464dfec0c64e0dbca979907",
+      "bytes": 2543
+    },
+    "test_batches/checkers_A1/result.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\checkers_A1\\result.json",
+      "sha256": "d243eb02fb047a483c21083f9a61b7bfbbd80fd2924d218e8ac34bcc21680a98",
+      "bytes": 237
+    },
+    "test_batches/checkers_A2/input_manifest.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\checkers_A2\\input_manifest.json",
+      "sha256": "f56992787182ec5fe7bec8605ad0f84c4dd1a93f4ed692a7b7aaa05879e51457",
+      "bytes": 2693
+    },
+    "test_batches/checkers_A2/result.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\checkers_A2\\result.json",
+      "sha256": "d243eb02fb047a483c21083f9a61b7bfbbd80fd2924d218e8ac34bcc21680a98",
+      "bytes": 237
+    },
+    "test_batches/checkers_A3/input_manifest.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\checkers_A3\\input_manifest.json",
+      "sha256": "4060dd257e2a9d81d5220eecc65bcb42e71cadfb4d7e1098877f0c62da3cd91b",
+      "bytes": 2693
+    },
+    "test_batches/checkers_A3/result.json": {
+      "path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_startup_handshake_20261009\\test_batches\\checkers_A3\\result.json",
+      "sha256": "706d2f89e724bc4baa35196cec179e4583fe474e8a98652d423853e96a4bd825",
+      "bytes": 581
+    }
+  }
+}

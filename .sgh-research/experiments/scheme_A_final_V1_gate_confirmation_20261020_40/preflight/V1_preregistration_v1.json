@@ -1,0 +1,50 @@
+{
+  "CXX_builds": 0,
+  "Native_cases_reused": 38,
+  "Observer_V1": "decision_queue_saturation_after_authenticated_phase_v2",
+  "Observer_V3": "none/0",
+  "Worker_V2": "none/0",
+  "actual_raw_copy_negatives": 14,
+  "actual_runs": 1,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "business_start": "owned-prepare-before-business-v1/20s/2sTTL",
+  "close_budget_ns": 15000000000,
+  "close_order": [
+    "observer",
+    "publisher",
+    "worker",
+    "synthetic_source",
+    "recorder"
+  ],
+  "close_profile": "sink-fault-self-close-v1",
+  "execute_qualified": false,
+  "loader": {
+    "bytes": 107466,
+    "sha256": "b7c1b1a9d9d65c6f08ce870f12b099ce819919b0de23eecb2207a7eb2e7c47ac"
+  },
+  "normal_Observer_Source_complete_expected": false,
+  "overall_budget_ns": 45000000000,
+  "raw_budget_bytes": 134217728,
+  "research_conclusion": false,
+  "role_returncodes": {
+    "observer": 2,
+    "publisher": 0,
+    "recorder": 0,
+    "synthetic_source": 0,
+    "worker": 0
+  },
+  "run_id": "final_V1_01",
+  "runner": {
+    "bytes": 2414,
+    "sha256": "0f1a9c5263d0a2b9473975b9133e42f4af31d6552a771818026151ae6161d876"
+  },
+  "selected_plan": "A",
+  "source_lock": {
+    "bytes": 400991,
+    "sha256": "ff2f4910bd9d16a01274d8d803bd7b83f9fd8e5a9e9480f013ef770de81d5eb4"
+  },
+  "stage_qualified": false,
+  "strict_accepted_Applied_authenticated_ACK_before_arm_required": true,
+  "true_plant_qualified": false,
+  "verdict": "GO"
+}

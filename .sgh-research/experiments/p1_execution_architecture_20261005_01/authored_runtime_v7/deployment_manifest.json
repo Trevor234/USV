@@ -1,0 +1,18 @@
+{
+  "run_p1_vrx_validation.py": {
+    "local_raw_sha256": "c601fb4b9c98067215c362222505ebe32785d30f2d6e88667fc4e7a9de5068e7",
+    "deployed_sha256": "c601fb4b9c98067215c362222505ebe32785d30f2d6e88667fc4e7a9de5068e7"
+  },
+  "test_vrx_runtime_gates.py": {
+    "local_raw_sha256": "6da10feba20131f0868204426a91d4d8a743cc6954166de8428001cc0f0c2928",
+    "deployed_sha256": "6da10feba20131f0868204426a91d4d8a743cc6954166de8428001cc0f0c2928"
+  },
+  "run_no_output_calibration.py": {
+    "local_raw_sha256": "9a06623342c133f3f59225171b28808607aaaf7e402dff1a0193483da831b177",
+    "deployed_sha256": "9a06623342c133f3f59225171b28808607aaaf7e402dff1a0193483da831b177"
+  },
+  "owned_process_supervisor.py": {
+    "local_raw_sha256": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173",
+    "deployed_sha256": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173"
+  }
+}

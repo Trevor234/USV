@@ -1,0 +1,75 @@
+{
+  "schema": "p0-independent-config-runtime/1",
+  "runtime_parameter_dump": {
+    "path": null,
+    "sha256": null,
+    "source": "caller mapping only; bind actual dump identity externally"
+  },
+  "config_sources_sha256": "35e87e7ed7b5eac215501a89ccb6271bad7073645ab7bc7ae998c49a6be4701b",
+  "controller_effective_vehicle": {
+    "mass": 14.2,
+    "Iz": 2.13,
+    "xg": 0.12,
+    "d_thruster": 0.25,
+    "Xu_dot": -2.0,
+    "Yv_dot": -8.0,
+    "Yr_dot": -0.1817725,
+    "Nv_dot": -0.1817725,
+    "Nr_dot": -3.41,
+    "Xu": -2.272063,
+    "Yv": -2.629019,
+    "Yr": 0.0,
+    "Nv": 0.0,
+    "Nr": -3.105,
+    "Xuu": -11.571784,
+    "Yvv": -0.05,
+    "Yrr": 0.0,
+    "Nvv": 0.0,
+    "Nrr": -0.71
+  },
+  "solver_input_constraints": {
+    "T_max": 25.0,
+    "T_min": -25.0,
+    "source": "nominal thruster magnitudes; independent of plant limits"
+  },
+  "plant_effective_vehicle": {
+    "mass": 17.04,
+    "Iz": 2.13,
+    "xg": 0.12,
+    "d_thruster": 0.25,
+    "Xu_dot": -2.0,
+    "Yv_dot": -8.0,
+    "Yr_dot": -0.1817725,
+    "Nv_dot": -0.1817725,
+    "Nr_dot": -3.41,
+    "Xu": -2.272063,
+    "Yv": -2.629019,
+    "Yr": 0.0,
+    "Nv": 0.0,
+    "Nr": -3.105,
+    "Xuu": -11.571784,
+    "Yvv": -0.05,
+    "Yrr": 0.0,
+    "Nvv": 0.0,
+    "Nrr": -0.71
+  },
+  "plant_actuator_command_limits": {
+    "max_N": 25.0,
+    "min_N": -25.0,
+    "source": "plant thruster input; generated SDF confirmation required"
+  },
+  "plant_projection": {
+    "added_mass_cross_policy": "symmetric_mean",
+    "source_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/config/vrx_model.yaml",
+    "source_sha256": "edcd9d129357651c8bc9c0ca9d081e91bc6467db5420fd88e305e3e77281093a"
+  },
+  "model_report_sha256": "f4fcdcf493f1a01a01d4e6b802399c223128c1710c366d417799a1bd8b12df47",
+  "plant_effective_yaml_sha256": "bfa5bb69c96d90485e833e1361712b348fc85066faeee5f938982d81d1c8fdb5",
+  "plant_sdf_sha256": "6283a24636e3991098a10e51e5436485fdb404e77f6c16adc76dab7d66c2bc56",
+  "nominal_effective_yaml_sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+  "runtime_effective_verified": true,
+  "plant_generated_verified": true,
+  "plant_equivalence_proven": false,
+  "exact_execution_timing_available": false,
+  "gp_labels_ready": false
+}

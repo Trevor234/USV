@@ -1,0 +1,11 @@
+{
+  "parent": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_8_20261014_14",
+  "files": {
+    "archive_inventory_v1.json": "099b6f617cdcf73a3a301a3a865c21a15bc53b1b0b94bac224a8083f3ec5332d",
+    "delivery_verification.json": "41a20f8a1b45d807167dc779259c8ceb2fdcd8683d41eae6b339138cacbf1290",
+    "batch_status_final.json": "182995ee8cff4ea11540fbaedfbd7795940230ef5c412fd17d26d397a3f5effc",
+    "postrun/final_QA_current.json": "2bc7770f6e80d03dc6f9aaa5e90e4b7f5411630dbdea3a8a7984268bc1d3d2fd",
+    "archive_v1.py": "2f8b7e84f6a5bc2ed46fe7b220c573ca5406a9bd09c9d0905c3eaed78af1868c",
+    "protection_v1.py": "5cb4a0296dcac350b08fd61d15e2ab47ebd13efbec6b97500889950ba3192521"
+  }
+}

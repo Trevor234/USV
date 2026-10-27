@@ -1,0 +1,32 @@
+{
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "automatic_retries": 0,
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "domain_id": 120,
+  "fault_injection_enabled": false,
+  "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+  "index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "max_seconds": 45,
+  "minimum_assertions": [
+    "new sole owner actual output Writers",
+    "all output Readers belong to registered auxiliary roles",
+    "no API before grant",
+    "initial unknown, actual API anchors only",
+    "full-stream gap240ms/span5ms/jitter20ms",
+    "complete Source/Raw/Stored with bounded-close facts"
+  ],
+  "old_normal_or_fault_qualifications_transferred": false,
+  "outer_timeout_seconds": 90,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/runs/owned_normal20s_01",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/implementation/selected_runtime_registry_v1.json",
+  "registry_sha256": "cd92fa97bde20cf5044acb5eeca0cc5b2b37dcf0aff3de854b2e74e43205be8b",
+  "run_id": "M4_owned_nominal_20261021_48_01",
+  "schema": "M4-owned-normal-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "source_window_ns": 20000000000,
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

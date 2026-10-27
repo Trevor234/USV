@@ -1,0 +1,77 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_supervision_20261020_38/author/observer/tests/test_reference_activation_alignment.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/observer/tests/test_reference_activation_alignment.cpp
+@@ -33,6 +33,13 @@
+  static void clear(Regulator&r){r.invalidate_locked();}
+  static void change_version(Regulator&r){++r.version_.task;r.invalidate_locked();}
+  static void one_channel(Regulator&r){r.history_.erase(r.history_.begin());}
++ static void install_start_gate(Regulator&r){
++  business_start::Identity id{"native-run",p1::boot_id(),std::string(64,'a'),std::string(64,'b'),std::string(64,'c'),std::string(64,'d'),getpid(),p1_owned::process_start_ticks()};
++  r.business_start_gate_=std::make_unique<business_start::Gate>(id,p1::monotonic_ns());
++ }
++ static void blocked_tick(Regulator&r){r.tick_loop();}
++ static bool no_business(Regulator&r){std::lock_guard<std::mutex> l(r.prep_mutex_);return r.decision_seq_==0&&r.job_id_==0&&!r.pending_&&!r.tick_.joinable()&&!r.prep_.joinable();}
++ static bool start_failed(Regulator&r){return r.business_start_failed_;}
+  static void enable_interleave(Regulator&r){r.v3_policy_=activation_interleave::policy;r.last_accepted_=p1::monotonic_ns()-100000000;}
+  static void rollback_clock(Regulator&r){rosgraph_msgs::msg::Clock c;c.clock.sec=99;r.clock(c);}
+  static void stop(Regulator&r){r.stopping_=true;}
+@@ -137,3 +144,60 @@
+  EXPECT_THROW(validate("none",b,"shadow",true,true,false),std::runtime_error);
+  EXPECT_THROW(validate("typo",b,"shadow",true,true,false),std::runtime_error);
+ }
++
++namespace {
++business_start::Identity gate_identity(){return {"native-gate","native-boot",std::string(64,'a'),std::string(64,'b'),std::string(64,'c'),std::string(64,'d'),123,456};}
++const int64_t GATE_NOW=100000000000LL;
++business_start::Context gate_context(){business_start::Context c;c.ready=c.worker_valid=c.owner_alive=c.worker_alive=c.owner_open=c.source_eligible=true;c.anchor_known={true,true};c.anchor_n={0,0};c.anchor_sequence={1,1};c.version={{"task",2},{"model",1},{"config",1},{"schedule",1},{"epoch",0}};return c;}
++p1::Json gate_command(){const auto id=gate_identity();return {{"schema","p1-owned-business-start-v1"},{"run_id",id.run_id},{"boot_id",id.boot_id},{"contract_sha256",id.contract_sha256},{"driver_pid",id.driver_pid},{"driver_start_ticks",id.driver_start_ticks},{"driver_tool_sha256",id.driver_tool_sha256},{"observer_manifest_sha256",id.observer_manifest_sha256},{"publisher_manifest_sha256",id.publisher_manifest_sha256},{"issued_ns",GATE_NOW+1000000},{"seq",1},{"initial_applied_sequence",1},{"publisher_bound_ns",GATE_NOW+100},{"version",gate_context().version},{"stage_qualified",false},{"execute_qualified",false}};}
++}
++TEST(BusinessGate,ValidBoundOneShotAndReplayRejected){
++ business_start::Gate g(gate_identity(),GATE_NOW);auto raw=gate_command().dump();
++ auto grant=g.open(raw,GATE_NOW+2000000,gate_context());EXPECT_TRUE(g.started());EXPECT_EQ(grant.applied_sequence,1u);
++ EXPECT_THROW(g.open(raw,GATE_NOW+3000000,gate_context()),std::runtime_error);
++}
++TEST(BusinessGate,EveryIdentityAndVersionMismatchRejected){
++ const std::vector<std::string> text={"run_id","boot_id","contract_sha256","driver_tool_sha256","observer_manifest_sha256","publisher_manifest_sha256"};
++ for(const auto &key:text){business_start::Gate g(gate_identity(),GATE_NOW);auto j=gate_command();j[key]="foreign";EXPECT_THROW(g.open(j.dump(),GATE_NOW+2000000,gate_context()),std::runtime_error)<<key;EXPECT_FALSE(g.started());}
++ for(const auto &key:{"driver_pid","driver_start_ticks","seq","initial_applied_sequence"}){business_start::Gate g(gate_identity(),GATE_NOW);auto j=gate_command();j[key]=999;EXPECT_THROW(g.open(j.dump(),GATE_NOW+2000000,gate_context()),std::runtime_error)<<key;}
++ auto j=gate_command();j["version"]["epoch"]=1;business_start::Gate g(gate_identity(),GATE_NOW);
++ EXPECT_THROW(g.open(j.dump(),GATE_NOW+2000000,gate_context()),std::runtime_error);
++}
++TEST(BusinessGate,TypedBoolUnknownAndOversizeReject){
++ for(const auto &key:{"driver_pid","driver_start_ticks","seq","initial_applied_sequence","issued_ns","publisher_bound_ns"}){auto j=gate_command();j[key]=true;business_start::Gate g(gate_identity(),GATE_NOW);EXPECT_THROW(g.open(j.dump(),GATE_NOW+2000000,gate_context()),std::runtime_error)<<key;}
++ auto j=gate_command();j["unknown"]=0;business_start::Gate g(gate_identity(),GATE_NOW);
++ EXPECT_THROW(g.open(j.dump(),GATE_NOW+2000000,gate_context()),std::runtime_error);
++ EXPECT_THROW(g.open(std::string(8193,'x'),GATE_NOW+2000000,gate_context()),std::runtime_error);
++}
++TEST(BusinessGate,OriginalLivePrerequisitesAllRequired){
++ for(int k=0;k<10;++k){auto c=gate_context();switch(k){case 0:c.ready=false;break;case 1:c.worker_valid=false;break;case 2:c.worker_unusable=true;break;case 3:c.stopping=true;break;case 4:c.sink_failed=true;break;case 5:c.owner_alive=false;break;case 6:c.worker_alive=false;break;case 7:c.owner_open=false;break;case 8:c.source_eligible=false;break;default:c.anchor_n[1]=.1;}
++  business_start::Gate g(gate_identity(),GATE_NOW);EXPECT_THROW(g.open(gate_command().dump(),GATE_NOW+2000000,c),std::runtime_error)<<k;EXPECT_FALSE(g.started());}
++}
++TEST(BusinessGate,FutureStaleAndDeadlineRejected){
++ for(auto issued:{GATE_NOW-1,GATE_NOW+3000000}){auto j=gate_command();j["issued_ns"]=issued;business_start::Gate g(gate_identity(),GATE_NOW);EXPECT_THROW(g.open(j.dump(),GATE_NOW+2000000,gate_context()),std::runtime_error);}
++ business_start::Gate stale(gate_identity(),GATE_NOW);
++ EXPECT_THROW(stale.open(gate_command().dump(),GATE_NOW+business_start::request_ttl_ns+2000000,gate_context()),std::runtime_error);
++ business_start::Gate expired(gate_identity(),GATE_NOW);EXPECT_TRUE(expired.expired(GATE_NOW+business_start::timeout_ns));
++ EXPECT_THROW(expired.open(gate_command().dump(),GATE_NOW+business_start::timeout_ns,gate_context()),std::runtime_error);
++}
++TEST(BusinessGate,CancelledBeforeStartCannotOpen){
++ business_start::Gate g(gate_identity(),GATE_NOW);g.close(GATE_NOW+1,business_start::State::cancelled);
++ EXPECT_FALSE(g.started());
++ EXPECT_THROW(g.open(gate_command().dump(),GATE_NOW+2000000,gate_context()),std::runtime_error);
++}
++TEST(BusinessGate,PolicyScopeRequiresExplicitFreshPath){
++ using business_start::validate_policy;
++ EXPECT_NO_THROW(validate_policy("immediate","",0,"shadow",true,true));
++ EXPECT_THROW(validate_policy("immediate","",1,"shadow",true,true),std::runtime_error);
++ EXPECT_THROW(validate_policy(business_start::policy,"/tmp/no-gate",business_start::timeout_ns,"execute",true,true),std::runtime_error);
++ EXPECT_THROW(validate_policy(business_start::policy,"/tmp/no-gate",business_start::timeout_ns,"shadow",false,true),std::runtime_error);
++ EXPECT_THROW(validate_policy(business_start::policy,"/tmp/no-gate",business_start::timeout_ns,"shadow",true,false),std::runtime_error);
++}
++TEST_F(Activation,GateWaitingStillAdmitsActualOdomImuCallbacks){
++ C33MatrixAccess::install_start_gate(*r);auto old=C33MatrixAccess::snapshot(*r);C33MatrixAccess::odom(*r,SIM);C33MatrixAccess::imu(*r,SIM);
++ auto now=C33MatrixAccess::snapshot(*r);EXPECT_GT(now.odom_seq,old.odom_seq);EXPECT_GT(now.imu_seq,old.imu_seq);EXPECT_TRUE(C33MatrixAccess::no_business(*r));
++}
++TEST_F(Activation,ActualTickEntryWithoutGateOpenCannotPublishOrSubmit){
++ C33MatrixAccess::install_start_gate(*r);C33MatrixAccess::blocked_tick(*r);
++ EXPECT_TRUE(C33MatrixAccess::start_failed(*r));EXPECT_TRUE(C33MatrixAccess::no_business(*r));
++}

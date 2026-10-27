@@ -1,0 +1,46 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "case": "R1",
+  "case_summary": {
+    "physical_API_calls": 0,
+    "rectypes": [
+      "activation_sensor_history_reset",
+      "adapter_worker_callback",
+      "capability_admission",
+      "clock",
+      "imu_admission",
+      "odom_admission",
+      "owned_execute_waiting",
+      "owned_full_recorder_bound",
+      "owned_prepare_closed_before_API",
+      "owned_prepare_ready",
+      "owned_reception_closed",
+      "owned_reference_pair_commit",
+      "path_version",
+      "profile_version",
+      "source_summary"
+    ],
+    "regulator_returncode": 3
+  },
+  "input_continuity": 39,
+  "mutation_rejections": [
+    "r1_api_call_fabricated",
+    "r1_job_fabricated"
+  ],
+  "mutations_tested": 2,
+  "passed": true,
+  "plant_acceptance_observed": false,
+  "research_conclusion": false,
+  "run_id": "M4_owned_fault_20261021_53_R1",
+  "schema": "M4-owned-fault-audit/v1",
+  "stored_counts": {
+    "/clock": 31,
+    "/p1/worker_capability": 5,
+    "/path/reference": 2,
+    "/path/reference_profile": 2,
+    "/wamv/sensors/imu/imu/data": 31,
+    "/wamv/sensors/position/ground_truth_odometry": 31
+  }
+}

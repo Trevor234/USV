@@ -1,0 +1,5261 @@
+{
+  "schema": "p1-C3.2-atomic-observation-components-v2",
+  "passed": false,
+  "groups": {
+    "input_transaction_ordinals": {
+      "passed": true,
+      "issues": [],
+      "transactions": 1021,
+      "projections": 1021,
+      "selection_order": "input mutex commit ordinal only"
+    },
+    "whole_raw_CDR_GID_callback_sequences_and_transport": {
+      "passed": true,
+      "issues": [],
+      "raw_callbacks": {
+        "profile_version": 13,
+        "path_version": 13,
+        "clock": 324,
+        "imu_admission": 324,
+        "odom_admission": 324
+      },
+      "source_typed_streams": {
+        "jobs": {
+          "source": 24,
+          "storage": 24
+        },
+        "candidates": {
+          "source": 24,
+          "storage": 24
+        },
+        "decisions": {
+          "source": 33,
+          "storage": 33
+        }
+      },
+      "transport_counts": {
+        "/clock": 347,
+        "/mavros/rc/override": 0,
+        "/mpc/predicted_trajectory": 5,
+        "/mpc/status": 23,
+        "/p1/execution_decision": 33,
+        "/p1/solve_candidate": 24,
+        "/p1/solve_job": 24,
+        "/p1/worker_capability": 53,
+        "/path/reference": 14,
+        "/path/reference_profile": 14,
+        "/research/control/applied": 23,
+        "/research/cycle_timing": 22,
+        "/research/reference_prediction": 22,
+        "/research/state_snapshot": 218,
+        "/wamv/sensors/imu/imu/data": 347,
+        "/wamv/sensors/position/ground_truth_odometry": 347,
+        "/wamv/thrusters/left/thrust": 23,
+        "/wamv/thrusters/right/thrust": 23
+      },
+      "raw_serialization_padding_compared": false,
+      "raw_all_decoded_fields_compared": true
+    },
+    "capability_full19_publisher_and_normal_admission_lease": {
+      "passed": true,
+      "issues": [],
+      "publisher_source": 53,
+      "actual_storage": 53,
+      "admissions": {
+        "capability_fields": 19,
+        "storage_count": 53,
+        "admission_count": 38,
+        "all_admission_payloads_checked": true,
+        "typed_ordered_subsequence_only": true,
+        "matched_storage_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          35,
+          36,
+          37,
+          38,
+          39,
+          40,
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50,
+          51
+        ],
+        "unmatched_storage_count": 15,
+        "complete_population_bijection": false,
+        "publisher_source_publish_counts_available": false,
+        "source_packet_freshness_available": false
+      },
+      "commit_worker_valid_actual_reads": 1,
+      "foreign_invalid_terminal_capability_covered": false,
+      "packet_unique_identity": false,
+      "packet_freshness": false
+    },
+    "independent_input_state_reference_clock_and_Applied_prefix": {
+      "passed": true,
+      "issues": [],
+      "prefixes": 1022,
+      "full_reference_stamp_pairs": true,
+      "formatter_domain": "recorded finite ASCII/IEEE values only",
+      "noninput_pause_schedule_mutations_covered": false
+    },
+    "immutable_Job_ordinal_reference_history_nominal": {
+      "passed": true,
+      "issues": [],
+      "jobs": 24,
+      "proof": [
+        {
+          "job_id": 1,
+          "input_commit_ordinal": 261,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 4,
+            "profile_sequence": 4,
+            "path_stamp": {
+              "sec": 101,
+              "nanosec": 498506585
+            },
+            "profile_stamp": {
+              "sec": 101,
+              "nanosec": 498506585
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 2,
+          "input_commit_ordinal": 292,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 4,
+            "profile_sequence": 4,
+            "path_stamp": {
+              "sec": 101,
+              "nanosec": 498506585
+            },
+            "profile_stamp": {
+              "sec": 101,
+              "nanosec": 498506585
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 3,
+          "input_commit_ordinal": 325,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 5,
+            "profile_sequence": 5,
+            "path_stamp": {
+              "sec": 101,
+              "nanosec": 999706306
+            },
+            "profile_stamp": {
+              "sec": 101,
+              "nanosec": 999706306
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 4,
+          "input_commit_ordinal": 356,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 5,
+            "profile_sequence": 5,
+            "path_stamp": {
+              "sec": 101,
+              "nanosec": 999706306
+            },
+            "profile_stamp": {
+              "sec": 101,
+              "nanosec": 999706306
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 5,
+          "input_commit_ordinal": 387,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 5,
+            "profile_sequence": 5,
+            "path_stamp": {
+              "sec": 101,
+              "nanosec": 999706306
+            },
+            "profile_stamp": {
+              "sec": 101,
+              "nanosec": 999706306
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 6,
+          "input_commit_ordinal": 420,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 6,
+            "profile_sequence": 6,
+            "path_stamp": {
+              "sec": 102,
+              "nanosec": 498538853
+            },
+            "profile_stamp": {
+              "sec": 102,
+              "nanosec": 498538853
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 7,
+          "input_commit_ordinal": 450,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 6,
+            "profile_sequence": 6,
+            "path_stamp": {
+              "sec": 102,
+              "nanosec": 498538853
+            },
+            "profile_stamp": {
+              "sec": 102,
+              "nanosec": 498538853
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 8,
+          "input_commit_ordinal": 484,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 7,
+            "profile_sequence": 7,
+            "path_stamp": {
+              "sec": 102,
+              "nanosec": 998306907
+            },
+            "profile_stamp": {
+              "sec": 102,
+              "nanosec": 998306907
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 9,
+          "input_commit_ordinal": 515,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 7,
+            "profile_sequence": 7,
+            "path_stamp": {
+              "sec": 102,
+              "nanosec": 998306907
+            },
+            "profile_stamp": {
+              "sec": 102,
+              "nanosec": 998306907
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 10,
+          "input_commit_ordinal": 546,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 7,
+            "profile_sequence": 7,
+            "path_stamp": {
+              "sec": 102,
+              "nanosec": 998306907
+            },
+            "profile_stamp": {
+              "sec": 102,
+              "nanosec": 998306907
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 11,
+          "input_commit_ordinal": 579,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 8,
+            "profile_sequence": 8,
+            "path_stamp": {
+              "sec": 103,
+              "nanosec": 498401042
+            },
+            "profile_stamp": {
+              "sec": 103,
+              "nanosec": 498401042
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 12,
+          "input_commit_ordinal": 610,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 8,
+            "profile_sequence": 8,
+            "path_stamp": {
+              "sec": 103,
+              "nanosec": 498401042
+            },
+            "profile_stamp": {
+              "sec": 103,
+              "nanosec": 498401042
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 13,
+          "input_commit_ordinal": 642,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 9,
+            "profile_sequence": 9,
+            "path_stamp": {
+              "sec": 103,
+              "nanosec": 999501066
+            },
+            "profile_stamp": {
+              "sec": 103,
+              "nanosec": 999501066
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 14,
+          "input_commit_ordinal": 674,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 9,
+            "profile_sequence": 9,
+            "path_stamp": {
+              "sec": 103,
+              "nanosec": 999501066
+            },
+            "profile_stamp": {
+              "sec": 103,
+              "nanosec": 999501066
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 15,
+          "input_commit_ordinal": 705,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 9,
+            "profile_sequence": 9,
+            "path_stamp": {
+              "sec": 103,
+              "nanosec": 999501066
+            },
+            "profile_stamp": {
+              "sec": 103,
+              "nanosec": 999501066
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 16,
+          "input_commit_ordinal": 735,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 10,
+            "profile_sequence": 10,
+            "path_stamp": {
+              "sec": 104,
+              "nanosec": 499218038
+            },
+            "profile_stamp": {
+              "sec": 104,
+              "nanosec": 499218038
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 17,
+          "input_commit_ordinal": 769,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 10,
+            "profile_sequence": 10,
+            "path_stamp": {
+              "sec": 104,
+              "nanosec": 499218038
+            },
+            "profile_stamp": {
+              "sec": 104,
+              "nanosec": 499218038
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 18,
+          "input_commit_ordinal": 802,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 11,
+            "profile_sequence": 11,
+            "path_stamp": {
+              "sec": 104,
+              "nanosec": 999694491
+            },
+            "profile_stamp": {
+              "sec": 104,
+              "nanosec": 999694491
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 19,
+          "input_commit_ordinal": 833,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 11,
+            "profile_sequence": 11,
+            "path_stamp": {
+              "sec": 104,
+              "nanosec": 999694491
+            },
+            "profile_stamp": {
+              "sec": 104,
+              "nanosec": 999694491
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 20,
+          "input_commit_ordinal": 864,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 11,
+            "profile_sequence": 11,
+            "path_stamp": {
+              "sec": 104,
+              "nanosec": 999694491
+            },
+            "profile_stamp": {
+              "sec": 104,
+              "nanosec": 999694491
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 21,
+          "input_commit_ordinal": 897,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 12,
+            "profile_sequence": 12,
+            "path_stamp": {
+              "sec": 105,
+              "nanosec": 498917119
+            },
+            "profile_stamp": {
+              "sec": 105,
+              "nanosec": 498917119
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 22,
+          "input_commit_ordinal": 927,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 12,
+            "profile_sequence": 12,
+            "path_stamp": {
+              "sec": 105,
+              "nanosec": 498917119
+            },
+            "profile_stamp": {
+              "sec": 105,
+              "nanosec": 498917119
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 23,
+          "input_commit_ordinal": 961,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 13,
+            "profile_sequence": 13,
+            "path_stamp": {
+              "sec": 105,
+              "nanosec": 998695454
+            },
+            "profile_stamp": {
+              "sec": 105,
+              "nanosec": 998695454
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        },
+        {
+          "job_id": 24,
+          "input_commit_ordinal": 991,
+          "reference_selection": {
+            "ref_present": true,
+            "path_sequence": 13,
+            "profile_sequence": 13,
+            "path_stamp": {
+              "sec": 105,
+              "nanosec": 998695454
+            },
+            "profile_stamp": {
+              "sec": 105,
+              "nanosec": 998695454
+            },
+            "path_fingerprint": "585f9b13bb721ab378345dc5de1394995cf3692a7b4980b0a63abc61dadbfffc",
+            "profile_fingerprint": "d1a8224cea22c434a003f12ecc81227e5b6b875ece957f649da4f8c50b6ea0ab",
+            "path_size": 61,
+            "profile_size": 61
+          }
+        }
+      ],
+      "dynamic_or_mixed_turn_qualified": false
+    },
+    "both_full_atomic_snapshots_last_ordinal_input_identity": {
+      "passed": true,
+      "issues": [],
+      "decisions": 33,
+      "snapshots": 66,
+      "final_anchor_from_raw_prefix": true,
+      "later_canonical_Decision_anchor_used_for_final": false
+    },
+    "actual_immutable_Candidate_full_CDR_transport": {
+      "passed": false,
+      "issues": [
+        {
+          "code": "accepted_registration_identity_not_unique",
+          "job": 1
+        }
+      ],
+      "captures": 33,
+      "present": 23,
+      "proof": [
+        {
+          "decision": 10,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 1,
+          "captured_cdr_sha256": "a15d8e0d45515231fe79a59ccaa20bc9d4bcfe08a9650c6e8b66b81c22c95827",
+          "captured_cdr_bytes": 3324,
+          "wire_cdr_sha256": "0ea7aa713490cb394cd3b40cd2cc59d8398ba434d663a5216b57b48c02566320",
+          "wire_cdr_bytes": 3324,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 11,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 2,
+          "captured_cdr_sha256": "48891b162245d6b2cece91726ba74e8b5b20ef5f84073749a7e3a057c1a2d32c",
+          "captured_cdr_bytes": 3356,
+          "wire_cdr_sha256": "ec1848e269446adeb7b0bc415c937f21873ee14baf0a16bc476fab784e16a7b8",
+          "wire_cdr_bytes": 3356,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 12,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 3,
+          "captured_cdr_sha256": "8ed3feeffe2f3b4eee446d145cb4736363ae5f2e72ddfe32c9e9050c7ca00aec",
+          "captured_cdr_bytes": 3388,
+          "wire_cdr_sha256": "dadbd23a16777c0ecf53d0d46d0e3d1b0c029965fbc7a44129992bd5885e3be4",
+          "wire_cdr_bytes": 3388,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 13,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 4,
+          "captured_cdr_sha256": "819748d914bcc11ebb858fc992de3a414ec6033743d6fab0e25383103a7e4806",
+          "captured_cdr_bytes": 3420,
+          "wire_cdr_sha256": "f1c0fa01f853c9d9dc6030cd4ae4e95c3946c50dbd597c455adbe9d8ffcfa659",
+          "wire_cdr_bytes": 3420,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 14,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 5,
+          "captured_cdr_sha256": "57f676ecd7d325806b480f69ddbb00f152f16180df93ad6fbca7755db5c1fdac",
+          "captured_cdr_bytes": 3460,
+          "wire_cdr_sha256": "3848f2ce673b420842bdf2da272f313be6cf0b82a1b14947412462e7b5a0b171",
+          "wire_cdr_bytes": 3460,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 15,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 6,
+          "captured_cdr_sha256": "caeb33d04172dcaed678efe524cce656a2e5c1a4fa17c3ed312bbbe41dd74c22",
+          "captured_cdr_bytes": 3492,
+          "wire_cdr_sha256": "ffef30b285847c592210e97303889c364bfe90fa7c55363952ae25e1c6fbaa24",
+          "wire_cdr_bytes": 3492,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 16,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 7,
+          "captured_cdr_sha256": "72f4a3ba6564a59243e6856c061ca6d1f19baf755a3caa491084512af97dc454",
+          "captured_cdr_bytes": 3524,
+          "wire_cdr_sha256": "07ae9260676661ab43da3342fb7e3d2688b65e9529ccfa94ffac80393d071c89",
+          "wire_cdr_bytes": 3524,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 17,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 8,
+          "captured_cdr_sha256": "18a04b3431e14a672ffe1aa38c51d32ae5430265a2d7a50b68123f00d426449c",
+          "captured_cdr_bytes": 3556,
+          "wire_cdr_sha256": "bc747e0ca6566856fbf8a6429a6b70e65856d28a3ca878719cd89bdbec275c45",
+          "wire_cdr_bytes": 3556,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 18,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 9,
+          "captured_cdr_sha256": "fc9d11cfc83ca84a9615d82994fbdb36b87b375592b71ed7159c4208e82c3bb8",
+          "captured_cdr_bytes": 3596,
+          "wire_cdr_sha256": "fb4353d73612c42c9b249355693cdac75bf82d4cd228ec19e6531c0502d33e8e",
+          "wire_cdr_bytes": 3596,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 19,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 10,
+          "captured_cdr_sha256": "529bea86d67c8d8b571fcda004b47aee71c2b0b71baeda8c675f2709306df2ca",
+          "captured_cdr_bytes": 3628,
+          "wire_cdr_sha256": "c36b97f80c64733b969d0708dc3841acc4c4ebbc812d2023960d545484b7a465",
+          "wire_cdr_bytes": 3628,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 20,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 11,
+          "captured_cdr_sha256": "a47c8bd4b715f1eee98f75a02a2cba3d8b0338d100fd683d1eb1326880bdaa60",
+          "captured_cdr_bytes": 3660,
+          "wire_cdr_sha256": "e290ee0cf7a31061e80918934ac7b7ba973551b0cde8cac8dc0e9268a2a59025",
+          "wire_cdr_bytes": 3660,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 21,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 12,
+          "captured_cdr_sha256": "0e1cb07d2f97de9a3c058d560402c04fea15df7365a5afd1c625ab4c05610431",
+          "captured_cdr_bytes": 3692,
+          "wire_cdr_sha256": "769cf2e56eb6d2ceba41c2ce2d159ed0171a68f4407287359de809a045021554",
+          "wire_cdr_bytes": 3692,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 22,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 13,
+          "captured_cdr_sha256": "cb7cf1d3bb4a14d6151e3228076811db50018c5a734d5f88cb0f3ee5cb4a6afc",
+          "captured_cdr_bytes": 3732,
+          "wire_cdr_sha256": "3c684dd06ced68e9bdc43b10e3beb73fa0d169f0cf24e6e633df817bb9a4880e",
+          "wire_cdr_bytes": 3732,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 23,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 14,
+          "captured_cdr_sha256": "2cf40eb479e2082f94b514380731d23ee673afdeea94b287de000f2d5c534ece",
+          "captured_cdr_bytes": 3764,
+          "wire_cdr_sha256": "9e80a5aef45b93e5c6737d5ebaee0eac5f0322fa47edcd87fd6fd761ff21f6da",
+          "wire_cdr_bytes": 3764,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 24,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 15,
+          "captured_cdr_sha256": "209f5baaf38aff0cd4aa22a7b0ec0c411bf8e68d8970f1978a798c0d5cd39bd7",
+          "captured_cdr_bytes": 3796,
+          "wire_cdr_sha256": "1e7ae5a06d686256d4eb17febb0de8c4c4f18b2e2e0ddcb0914ae1a193430b3c",
+          "wire_cdr_bytes": 3796,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 25,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 16,
+          "captured_cdr_sha256": "4de044baed452f568acc1fba35dda7c6f337cbca2c8ee76ad47a76344417036e",
+          "captured_cdr_bytes": 3828,
+          "wire_cdr_sha256": "acd71f8be792a1de9d9204c48ddf78f984a8d9073e83e0686abdd3f985e76cee",
+          "wire_cdr_bytes": 3828,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 26,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 17,
+          "captured_cdr_sha256": "bb2af794930e67db37921c9c0a6b8c2633e22d962748befc8f316b5147c79df1",
+          "captured_cdr_bytes": 3868,
+          "wire_cdr_sha256": "bdd6496098ad9787981415a76b4247fe598585ac4447385ac4e9f093423a56cf",
+          "wire_cdr_bytes": 3868,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 27,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 18,
+          "captured_cdr_sha256": "a6f11817f807c264e7effdc829043b46c8a354465e515416a921355ae4e71810",
+          "captured_cdr_bytes": 3900,
+          "wire_cdr_sha256": "c520cfa99c861e4626a2fdd6dfef73ba0e0a976a959fb3aa47312daab0127212",
+          "wire_cdr_bytes": 3900,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 28,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 19,
+          "captured_cdr_sha256": "6fb1a05287cb84fe784058369da04e051623e786d9ad22abaac42a798c1efd73",
+          "captured_cdr_bytes": 3932,
+          "wire_cdr_sha256": "4c6bfc32d9d6fad95037ef6a01f5d0793eb269405ca387b3720cd34c5ca1cbff",
+          "wire_cdr_bytes": 3932,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 29,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 20,
+          "captured_cdr_sha256": "2975bcb70882911bde6bfb3beae81a992a58de28dcdfcc507a8327641399d4a8",
+          "captured_cdr_bytes": 3964,
+          "wire_cdr_sha256": "1ea08490bacd54919bc8a7b42c4d59cf18bcf126d0c12636411fdf5eb48c502f",
+          "wire_cdr_bytes": 3964,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 30,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 21,
+          "captured_cdr_sha256": "492c2aea47fc91070368c7cafcbbf0ccabec486d340a641e01b2d3ce7158e2dc",
+          "captured_cdr_bytes": 4004,
+          "wire_cdr_sha256": "09d9a903031db5970e1ecdb70e2effee05dc64b29df0ad9afeaeec41bdb01280",
+          "wire_cdr_bytes": 4004,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 31,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 22,
+          "captured_cdr_sha256": "62c649f5ceffe119bf9d7398132fba956a15d0c6b7ca92ae790fec46e5edebfa",
+          "captured_cdr_bytes": 4036,
+          "wire_cdr_sha256": "70351d71c0d60bbdd3a297e2ea959f75b6cd37fcc69715d0bd476c1cad6b0009",
+          "wire_cdr_bytes": 4036,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        },
+        {
+          "decision": 32,
+          "ticket_present": true,
+          "candidate_present": true,
+          "pair": true,
+          "job_id": 23,
+          "captured_cdr_sha256": "7bd8bae21f1448ac82c692400ab0bdd74f6517a3763f8e4c7494e4d3ff5b7b9a",
+          "captured_cdr_bytes": 4068,
+          "wire_cdr_sha256": "28e83fc250b291d5e036bd762923960d4f59410e2ea7921a8bf3e38ce95b34dd",
+          "wire_cdr_bytes": 4068,
+          "representation_SHA_equal": false,
+          "representation_distinct": true,
+          "full_decoded_Candidate_and_Job_equal": true
+        }
+      ],
+      "pointer_address_identity_claimed": false,
+      "full_echoed_Job_CDR_in_digest": true,
+      "captured_SHA_required_equal_to_network_wire_SHA": false,
+      "full_decoded_Candidate_IEEE_identity": true
+    },
+    "actual_gate_short_circuit_shape_and_independent_reason_fallback": {
+      "passed": true,
+      "issues": [],
+      "decisions": 33,
+      "proof": [
+        {
+          "decision": 1,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 2,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 3,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 4,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 5,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 6,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 7,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 8,
+          "reason": "legacy_not_ready",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 9,
+          "reason": "no_candidate",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            8.605226027076817,
+            8.606668027077014
+          ]
+        },
+        {
+          "decision": 10,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            8.488532367718859,
+            8.492123087718932
+          ]
+        },
+        {
+          "decision": 11,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            10.36887598177141,
+            10.371791181771433
+          ]
+        },
+        {
+          "decision": 12,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.173136867186896,
+            11.175761187186893
+          ]
+        },
+        {
+          "decision": 13,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.526951044758814,
+            11.52994592475882
+          ]
+        },
+        {
+          "decision": 14,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.686858768179828,
+            11.687973408179854
+          ]
+        },
+        {
+          "decision": 15,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.738162236066437,
+            11.741128156066445
+          ]
+        },
+        {
+          "decision": 16,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.781849917772128,
+            11.785981437772127
+          ]
+        },
+        {
+          "decision": 17,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.779875688352096,
+            11.782648008352101
+          ]
+        },
+        {
+          "decision": 18,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.799835806329211,
+            11.803984366329217
+          ]
+        },
+        {
+          "decision": 19,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.814736773144267,
+            11.816542693144271
+          ]
+        },
+        {
+          "decision": 20,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.789144856024045,
+            11.792111256024054
+          ]
+        },
+        {
+          "decision": 21,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.815720186258313,
+            11.825133866258323
+          ]
+        },
+        {
+          "decision": 22,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.822215610003186,
+            11.827978570003179
+          ]
+        },
+        {
+          "decision": 23,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.788430239295995,
+            11.791197439295999
+          ]
+        },
+        {
+          "decision": 24,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.793979672185191,
+            11.794889512185208
+          ]
+        },
+        {
+          "decision": 25,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.798933831413054,
+            11.80246319141306
+          ]
+        },
+        {
+          "decision": 26,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.778606049946713,
+            11.780284369946719
+          ]
+        },
+        {
+          "decision": 27,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.789920276910163,
+            11.791948116910163
+          ]
+        },
+        {
+          "decision": 28,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.791570958798445,
+            11.79381599879845
+          ]
+        },
+        {
+          "decision": 29,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.789239896749681,
+            11.790081016749678
+          ]
+        },
+        {
+          "decision": 30,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            11.7868455697751,
+            11.78921644977509
+          ]
+        },
+        {
+          "decision": 31,
+          "reason": "anchor_mismatch",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "decision": 32,
+          "reason": "",
+          "accepted": true,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            7.924374915095093,
+            7.9243749150951
+          ]
+        },
+        {
+          "decision": 33,
+          "reason": "shutdown",
+          "accepted": false,
+          "gate_trace": [
+            {
+              "gate": "early_legacy_enabled",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_legacy_measurement",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_stopping",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "early_worker_unusable",
+              "ran": true,
+              "value": false
+            },
+            {
+              "gate": "input_version_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_odom_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "input_imu_equal",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_enabled",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_legacy_measurement",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_worker_valid",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "commit_sink_failed",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "final_stopping",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "final_stop_requested",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_invalid_stopping",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "fallback_invalid_worker_unusable",
+              "ran": false,
+              "value": null
+            },
+            {
+              "gate": "fallback_source_stopping",
+              "ran": true,
+              "value": true
+            },
+            {
+              "gate": "fallback_source_worker_unusable",
+              "ran": false,
+              "value": null
+            }
+          ],
+          "final_command": [
+            0.0,
+            0.0
+          ]
+        }
+      ],
+      "irreversible_flag_read_proof": {
+        "stopping": [
+          {
+            "decision": 1,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 1,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 1,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 2,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 2,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 2,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 3,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 3,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 3,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 4,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 4,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 4,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 5,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 5,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 5,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 6,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 6,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 6,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 7,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 7,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 7,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 8,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 8,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 8,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 9,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 9,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 9,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 10,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 10,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 10,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 11,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 11,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 11,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 12,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 12,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 12,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 13,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 13,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 13,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 14,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 14,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 14,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 15,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 15,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 15,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 16,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 16,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 16,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 17,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 17,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 17,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 18,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 18,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 18,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 19,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 19,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 19,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 20,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 20,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 20,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 21,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 21,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 21,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 22,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 22,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 22,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 23,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 23,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 23,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 24,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 24,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 24,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 25,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 25,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 25,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 26,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 26,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 26,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 27,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 27,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 27,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 28,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 28,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 28,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 29,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 29,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 29,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 30,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 30,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 30,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 31,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 31,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 31,
+            "gate": "fallback_invalid_stopping",
+            "value": false
+          },
+          {
+            "decision": 32,
+            "gate": "early_stopping",
+            "value": false
+          },
+          {
+            "decision": 32,
+            "gate": "final_stopping",
+            "value": false
+          },
+          {
+            "decision": 33,
+            "gate": "early_stopping",
+            "value": true
+          },
+          {
+            "decision": 33,
+            "gate": "final_stopping",
+            "value": true
+          },
+          {
+            "decision": 33,
+            "gate": "fallback_invalid_stopping",
+            "value": true
+          },
+          {
+            "decision": 33,
+            "gate": "fallback_source_stopping",
+            "value": true
+          }
+        ],
+        "worker_unusable": [
+          {
+            "decision": 1,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 1,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 2,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 2,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 3,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 3,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 4,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 4,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 5,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 5,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 6,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 6,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 7,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 7,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 8,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 8,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 9,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 9,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 10,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 10,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 11,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 11,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 12,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 12,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 13,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 13,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 14,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 14,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 15,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 15,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 16,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 16,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 17,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 17,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 18,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 18,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 19,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 19,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 20,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 20,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 21,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 21,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 22,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 22,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 23,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 23,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 24,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 24,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 25,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 25,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 26,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 26,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 27,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 27,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 28,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 28,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 29,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 29,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 30,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 30,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 31,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 31,
+            "gate": "fallback_invalid_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 32,
+            "gate": "early_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 32,
+            "gate": "commit_worker_unusable",
+            "value": false
+          },
+          {
+            "decision": 33,
+            "gate": "early_worker_unusable",
+            "value": false
+          }
+        ]
+      },
+      "Decision_reason_used_as_input": false,
+      "operand_read_timestamps_available": false
+    },
+    "Witness_shutdown_components_separate_from_normal_policy": {
+      "passed": true,
+      "issues": [],
+      "accepted": 1,
+      "all_rejected": false,
+      "normal_Witness_passed": true,
+      "normal_Witness_issues": [],
+      "expected_header": {
+        "run_id": "owned_preimage_v8_positive_02",
+        "boot_id": "d9ebbc36-acd7-46ac-a805-bfe3c9eedd39",
+        "contract_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+        "source_sha256": "a2df86b33315a22ec422b741d124c91b0b03780fdf3986120bd92ad1b8bf5432",
+        "binary_sha256": "2c672c5004457960f2e4e945676aa01bc467f167bd803a0c7077c5169c2469cf",
+        "worker_binary_sha256": "acff3455b1f3dee9e3160ca491545bae0ca29d9e027f2c5a73bc7232b4f6b535",
+        "worker_instance": "4ac57a188ed1ebfe37a5630fe82faa66c568bb49440398fab6b98eb0afcdc54e"
+      },
+      "normal_Witness_policy_unchanged": true,
+      "physical_zero_or_OS_exit_proven_here": false
+    }
+  },
+  "issues": [
+    {
+      "code": "accepted_registration_identity_not_unique",
+      "job": 1
+    }
+  ],
+  "run_id": "owned_preimage_v8_positive_02",
+  "run": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/native_negatives_positive_02/coherent_duplicate_accepted_registration",
+  "component_verification_only": true,
+  "preregister_sha256": "9e55c6e9d9cd34eda6c1e37233de69c2b27079479b329d378a5eb08bebbfc9bb",
+  "input_sha256": {
+    "inputs.json": "1c849df8c3c7a5d157d807424af1a34d07333d6bf2fbb408ebfdcd598315981d",
+    "result.json": "aa0ce0e498b8f3c59ee20f630c9d39288bc6855ae7ba4576651b4b23adfa66a8",
+    "topics.json": "412e36378b5ca4df5f653c7d8c831495d5ef0dec12dcac3b35f5ef3327e49d08",
+    "observer/source.jsonl": "3f5f69d7abae897d85374dab5c5bf917b807f3cd1d04b0ac759a0322b6a86330",
+    "worker/source.jsonl": "0e514e130b13d9a5dc0116d5c759b8af4bdf3f21aaa3dd27e1b2299757b672db",
+    "observer/witness.json": "063c79111e1139505e099f0e6178080b8f0af7adf257c99676efb51c071d0d53",
+    "synthetic_source/transport_source.jsonl": "8037c9492e7490305eb1bdc386f4b6c3edfa9b64a98a4d0619845ef1b1c01b67",
+    "publisher/owned_manifest.json": "82896dd1415501d0935a753b9aeff0fee867e2a55ff54886845781324550479b",
+    "worker/owned_manifest.json": "30b8be988c9a090c58432693e76beaf2238d18025c2653b1dc60aa52cdad2bfd",
+    "observer/owned_manifest.json": "9d51e32da4038bfe90951a20f6912b2112d0f229e8e01a4ac4524aa6a6b3f918",
+    "synthetic_source/owned_manifest.json": "32ce85164ce2c330b7ed39bd9536df5376b62721284a3a9181a55bee2d870f39",
+    "recorder/owned_manifest.json": "d4b965e2427760fd0e10ef3f5966f17cf54220c421fc54cbecb4b81bbce9a183",
+    "recorder/bag/bag_0.db3": "aed6aa100fe50db4eea13354bab5f8c24a26192f3de10c35b1bd2327d845f32e",
+    "recorder/bag/metadata.yaml": "53244ced2422a06461e96f9705c688d361c870b2d18c95e4638e01b88d4f853e"
+  },
+  "external_input_sha256": {
+    "/home/trevor/MPC/scheme_A_atomic_observation_20261011_06/preregister/atomic_preimage_contract_v3.json": "9e55c6e9d9cd34eda6c1e37233de69c2b27079479b329d378a5eb08bebbfc9bb",
+    "/home/trevor/MPC/scheme_A_config_identity_20261011_04/preregister/formatter_corpus_contract_v1.json": "cfa8a09a5b1c638aefa9b3acb11c10eb4233d711b386cf9769d5068875b3442c",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/regulator_shadow_observer.cpp": "a2df86b33315a22ec422b741d124c91b0b03780fdf3986120bd92ad1b8bf5432",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/validate_readiness_v3.py": "0ece9096a9d5c3925215cc801d091c261790d2b361471a57db6d81d4cfae95d3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_owned_fixture.py": "c0ab40a15370f8dafa7fe1fd4806789b364ca46ade02fdb2d83abe66cb0f325e",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_source_components_v4.py": "c1e9a072a519b952902e628108627632c0e04d6136affe3302d9204cbae05a99",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_activation_provenance_v1.py": "33ffaee9097942b30ccb7af55892845709bd647b1498f40bbcb751a69fc1421e",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_config_identity_v1.py": "d981ba6a2cc4ad3ac85376d59f684e88fc57523b24a814d2c292328f192ae8d3"
+  },
+  "storage": {
+    "total_messages": 1562,
+    "serialized_bytes": 898032,
+    "actual_counts": {
+      "/clock": 347,
+      "/mavros/rc/override": 0,
+      "/mpc/predicted_trajectory": 5,
+      "/mpc/status": 23,
+      "/p1/execution_decision": 33,
+      "/p1/solve_candidate": 24,
+      "/p1/solve_job": 24,
+      "/p1/worker_capability": 53,
+      "/path/reference": 14,
+      "/path/reference_profile": 14,
+      "/research/control/applied": 23,
+      "/research/cycle_timing": 22,
+      "/research/reference_prediction": 22,
+      "/research/state_snapshot": 218,
+      "/wamv/sensors/imu/imu/data": 347,
+      "/wamv/sensors/position/ground_truth_odometry": 347,
+      "/wamv/thrusters/left/thrust": 23,
+      "/wamv/thrusters/right/thrust": 23
+    },
+    "timestamp_semantics": "storage receipt; never source selection order"
+  },
+  "independent_pre_run_record_pin_claimed": false,
+  "original_authenticity_qualified": false,
+  "scope_limits": [
+    "bounded synthetic shadow inputs only",
+    "recorded finite ASCII reference fingerprint domain",
+    "noninput pause/schedule mutation not covered",
+    "operand values at original reads observed; no per-operand timestamp",
+    "normal Witness eligibility separate from all-rejected component integrity",
+    "no dynamic20s/mixed-turn/plant acceptance or stage qualification"
+  ],
+  "strict_full_chain": false,
+  "C3_general": false,
+  "D1": false,
+  "B4": false,
+  "B5": false,
+  "M0b": false,
+  "M4": false,
+  "F6": false,
+  "P1": false,
+  "execute": false,
+  "dynamic_20s_R5": false,
+  "mixed_turn": false,
+  "true_master_clock": false,
+  "research_conclusion": false
+}

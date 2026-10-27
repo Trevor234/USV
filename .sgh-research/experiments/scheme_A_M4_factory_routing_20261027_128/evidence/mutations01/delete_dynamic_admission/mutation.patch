@@ -1,0 +1,11 @@
+--- original
++++ delete_dynamic_admission
+@@ -65,7 +65,7 @@
+ 
+ std::unique_ptr<DynamicMpc> make_dynamic_mpc(const MpcParams & params)
+ {
+-  validate_model_parameters(params);
++
+   // 1. 尝试 acados (codegen 已 vendored 并静态链接进本包)
+   try {
+     return std::make_unique<AcadosBackend>(params);

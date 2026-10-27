@@ -1,0 +1,38 @@
+{
+  "batch19_top_level_preregistration_inspection": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/preregister/longitudinal_v1.json",
+      "top_level_RMSE_max_fraction_present": false
+    }
+  ],
+  "batch20_diagnostic_RMSE_fraction": 0.5,
+  "execute_qualified": false,
+  "historical_commitment_retained": "all previously preregistered failures remain failed; no threshold, measurement window or qualification flag changed",
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/preregister/longitudinal_v1.json": "2a97cef384890b4e68db4c296889cc44f3efdedaeca83059cea757a937c4245f",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/documents/方案A_参考位置前视根因与投影修正_首档验证_2026-10-17.md": "7f402fddd52078db0936d4dd1e041df76372bd83f237002264973c8ae83a14fe",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/preregister/projected_v1.json": "3e153b8741fd2bd05d16e5dc6c1e7433ba38eac8ac1494dff7fef3a0055ee5a7",
+    "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/source_docs/首选A_现有ROS平台可行性与实施方案_2026-10-03.md": "9a60751ac2d099729d84cd2f54861c18cefdc0cbe4dff564aa8408700d6d103e",
+    "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/方案A_UbuntuCodex交接与全面推进计划_2026-10-10.md": "296cc1b3149d2bfe0c33f43d38ed642abf0ba12ad32e79e31b0055d4d0782cf6"
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/preregister/longitudinal_v1.json": "2a97cef384890b4e68db4c296889cc44f3efdedaeca83059cea757a937c4245f",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/documents/方案A_参考位置前视根因与投影修正_首档验证_2026-10-17.md": "7f402fddd52078db0936d4dd1e041df76372bd83f237002264973c8ae83a14fe",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/preregister/projected_v1.json": "3e153b8741fd2bd05d16e5dc6c1e7433ba38eac8ac1494dff7fef3a0055ee5a7",
+    "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/source_docs/首选A_现有ROS平台可行性与实施方案_2026-10-03.md": "9a60751ac2d099729d84cd2f54861c18cefdc0cbe4dff564aa8408700d6d103e",
+    "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/方案A_UbuntuCodex交接与全面推进计划_2026-10-10.md": "296cc1b3149d2bfe0c33f43d38ed642abf0ba12ad32e79e31b0055d4d0782cf6"
+  },
+  "main_handoff_no_RMSE_or_halving_statement": true,
+  "passed": true,
+  "primary_plan_halving_or_50percent_lines": [],
+  "research_conclusion": false,
+  "schema": "performance-gate-lineage-audit/v1",
+  "scope": "selected main handoff, primary SchemeA plan and batches19/20 preregistration; not an exhaustive search of all conversation or archives",
+  "separate_workstreams": [
+    "current controlled execution acceptance evidence",
+    "unmet startup-inclusive diagnostic performance goal",
+    "remaining original P1 stage dependencies and research mechanism"
+  ],
+  "stage_qualified": false,
+  "threshold_classification": "later diagnostic performance target; not a theorem or original execution-safety constraint in the inspected primary plans"
+}

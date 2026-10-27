@@ -1,0 +1,143 @@
+{
+  "all_pairs_verified": true,
+  "contract_count": 6,
+  "execute": false,
+  "files": [
+    {
+      "bytes": 6301,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/01_acceptance_core_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/acceptance_core_v1.py",
+      "sha256": "9ff60cc3840b3a8b8998c4ed4db5b26897450697f3cc1999da4784d62cdef76a"
+    },
+    {
+      "bytes": 42282,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/02_budget_scope_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/budget_scope_v1.py",
+      "sha256": "1d5f968177c9a0b1f6cf3f3713c971fd2ca200c5d99fb723f28babf6237c86db"
+    },
+    {
+      "bytes": 12995,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/03_check_acceptance_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/check_acceptance_v1.py",
+      "sha256": "4e6cc87286da6b88a7457bd4c4360930fcdee3e095591ec22ae1babdeb1312fa"
+    },
+    {
+      "bytes": 5072,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/04_check_preparation_io_v2.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/check_preparation_io_v2.py",
+      "sha256": "aa4e8029aab264687a704b5902622277e45725fdb00dc8a28ccc67117ab4189f"
+    },
+    {
+      "bytes": 5297,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/05_generate_acceptance_contract_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/generate_acceptance_contract_v1.py",
+      "sha256": "c01cbc371ef2fc1111bcf266dcbda9bcb6f4423e03654f2b2e031af85b4a8c7b"
+    },
+    {
+      "bytes": 10979,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/06_generate_readiness_contract_c35.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/generate_readiness_contract_c35.py",
+      "sha256": "f62c8d716b04a34ea9dbcd14c1294982c2e86c3b5122f6911b3c033cdfa22dcc"
+    },
+    {
+      "bytes": 4415,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/07_test_acceptance_contract_copies_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/test_acceptance_contract_copies_v1.py",
+      "sha256": "a4879a46333b80253bdcfebb7b1a92b690503bee419c83630c59293820be5368"
+    },
+    {
+      "bytes": 4461,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/08_test_acceptance_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/test_acceptance_v1.py",
+      "sha256": "a0fee50ca80ff54f6b798bba3818e6a22853a7ef1c11c1e91866b5f80f944ded"
+    },
+    {
+      "bytes": 14806,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/09_test_budget_scope_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/test_budget_scope_v1.py",
+      "sha256": "3e02945077a9f973bd9cc7a31d31a2b7c023da490bf7dcac2a07cdde621b3f5d"
+    },
+    {
+      "bytes": 11762,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/10_test_readiness_c35_coherent.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/test_readiness_c35_coherent.py",
+      "sha256": "107e6bed642452aefd6e0f3e2a84fb8d1d0253ca03cff8f39bdc209ce030f071"
+    },
+    {
+      "bytes": 19383,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/11_validate_readiness_c35_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_5_20261013_v11/validate_readiness_c35_v1.py",
+      "sha256": "e6436d7bc266e941c51eb149bcf8df36b4d9d971b38b2768a8991ad5a6967a08"
+    },
+    {
+      "bytes": 9189,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/source/12_finalize_evidence_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/finalize_evidence_v1.py",
+      "sha256": "e8df8ef8a60d23a01d4288e85f63a79cd504fd47abf966dffe7199833728fd3f"
+    },
+    {
+      "bytes": 130190,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/contract/01_acceptance_contract_v3.json",
+      "kind": "contract",
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/acceptance_contract_v3.json",
+      "sha256": "927e9f0776b8deee4c1b77e730409549eba0916df1061e8cd11b1583e73281af"
+    },
+    {
+      "bytes": 224,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/contract/02_acceptance_contract_pin_v3.json",
+      "kind": "contract",
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/acceptance_contract_pin_v3.json",
+      "sha256": "6f19a7adf019a55f49926c0e095cd92d638db743a073c0c2ea714df888614402"
+    },
+    {
+      "bytes": 1937,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/contract/03_execution_scope_v1.json",
+      "kind": "contract",
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/execution_scope_v1.json",
+      "sha256": "dceab65bb91725d0d1d8050db45c626b19b9342713df9142d57b235c003b391d"
+    },
+    {
+      "bytes": 114566,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/contract/04_external_input_registry_v1.json",
+      "kind": "contract",
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/preregister/external_input_registry_v1.json",
+      "sha256": "4756038b43dd3fc318d5b6a7092d2f68e12cb191a541ebc9c6029abeeef3b181"
+    },
+    {
+      "bytes": 140042,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/contract/05_readiness_c35_contract_v1.json",
+      "kind": "contract",
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/readiness/readiness_c35_contract_v1.json",
+      "sha256": "548f821778d3492231d6d1cb9879f3d9b8251da7cc40b2c1cce04f47a7d930df"
+    },
+    {
+      "bytes": 24886,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/final_frozen_snapshot/contract/06_preregister_v2.json",
+      "kind": "contract",
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_5_20261013_10/budget_scope/preregister_v2.json",
+      "sha256": "65899e13565ac070e7439f8af9ba82c82c228ce6b2b91991d6b5d3af9e74b8b3"
+    }
+  ],
+  "finalization_source": 1,
+  "new_N11_python_sources": 11,
+  "parent_N10_manifest": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_4_20261013_09/final_frozen_snapshot/manifest.json",
+    "sha256": "8e30346fd19e88636f9d15b68fe0a55d27c6d78fc3fed8300570b85cba9da7a2"
+  },
+  "parent_N10_pairs_reverified": 355,
+  "research_conclusion": false,
+  "schema": "scheme-A-C3.5-new-source-contract-freeze/v1",
+  "stage_qualified": false
+}

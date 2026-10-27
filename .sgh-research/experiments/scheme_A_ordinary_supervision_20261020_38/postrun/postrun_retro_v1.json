@@ -1,0 +1,18 @@
+{
+  "EDA_route_STA_WNS_PPA": "not applicable",
+  "all_three_attempts_retained": true,
+  "component_policy_validation_passed": true,
+  "execute_qualified": false,
+  "first_attempt_actual_stimulus_entered": false,
+  "next": "review startup dependencies then implement authenticated Observer business start gate before new live work",
+  "next_confidence": "medium",
+  "next_impact": "high",
+  "ordinary_actual_Worker_qualified": false,
+  "primary_mechanism": "startup and preparation policy does not isolate business tick start",
+  "research_conclusion": false,
+  "same_script_recursive_run_justified": false,
+  "second_attempt_incorrect_Recorder_dependency": true,
+  "stage_qualified": false,
+  "third_attempt_early_parameter_service_unavailable": true,
+  "third_specific_discovery_or_constructor_cause_proven": false
+}

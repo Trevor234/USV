@@ -893,8 +893,8 @@ python -m usv_rl.evaluate --baseline los --episodes 50
 # v5 策略同题对比（DR 关闭、确定性推理）
 # 注意: 用 s4_dr/model.zip（与下表及 README 成果表同源）；best/best_model.zip 是
 # EvalCallback 按评估奖励存的最优 checkpoint，数字会略有不同（能耗 ~7458）
-python -m usv_rl.evaluate --model models/v5/s4_dr/model.zip \
-    --vecnorm models/v5/s4_dr/vecnormalize.pkl --episodes 50
+python -m usv_rl.evaluate --model ../artifacts/rl_models/v5/s4_dr/model.zip \
+    --vecnorm ../artifacts/rl_models/v5/s4_dr/vecnormalize.pkl --episodes 50
 ```
 
 参考结果（2026-09-30 初测；2026-10-06 同命令复现，各指标逐项一致）：
@@ -929,7 +929,7 @@ configs/env.yaml ──▶ 环境参数        │
                              ▼
         EvalCallback(定期评估/存 best) + CheckpointCallback(每 50 万步存档)
                              ▼
-        每阶段结束: models/v5/<阶段名>/model.zip + vecnormalize.pkl
+        每阶段结束: ../artifacts/rl_models/v5/<阶段名>/model.zip + vecnormalize.pkl
 ```
 
 ## 7.2 VecNormalize：被低估的关键组件
@@ -965,12 +965,12 @@ configs/env.yaml ──▶ 环境参数        │
 2. **deterministic=True**：取高斯均值不采样——训练时的随机性是探索用的，评估要的是稳定发挥
 3. **路径随机化**：评估路径逐条随机，防止对固定路径过拟合出虚高分
 
-它每次刷新最优成绩就存 `models/v5/best/best_model.zip`——**部署一般用 best 而非最后一刻的权重**（训练末期可能过拟合 DR）。
+它每次刷新最优成绩就存 `../artifacts/rl_models/v5/best/best_model.zip`——**部署一般用 best 而非最后一刻的权重**（训练末期可能过拟合 DR）。
 
 ## 7.5 TensorBoard 曲线判读
 
 ```bash
-tensorboard --logdir ~/USV/usv_rl/runs/
+tensorboard --logdir ~/USV/artifacts/rl_runs/
 ```
 
 四条最关键的曲线及健康/病态形态：
@@ -988,15 +988,15 @@ tensorboard --logdir ~/USV/usv_rl/runs/
 
 ```bash
 cd ~/USV/usv_rl && source .venv/bin/activate
-tensorboard --logdir runs/ --host 127.0.0.1 --port 6006
-# 浏览器开 http://127.0.0.1:6006，选 runs/v5_1
+tensorboard --logdir ../artifacts/rl_runs/ --host 127.0.0.1 --port 6006
+# 浏览器开 http://127.0.0.1:6006，选 v5_1
 ```
 
 三道观察题（对照第 9 章验证你学会了判读）：
 
 1. 找到 s1→s2 的课程切换点（~1M 处）：ep_rew 为什么**先跌后涨**？（提示：任务变难了）
 2. `train/learning_rate` 曲线是什么形状？为什么用线性衰减？（提示：后期需要精细微调）
-3. 对比 runs/v1_1 与 runs/v5_1 的 ep_len 曲线——描述两者形状差异
+3. 对比 TensorBoard 里 `v1/v1_1` 与 `v5/v5_1` 两个 run 的 ep_len 曲线——描述两者形状差异
 
 ---
 
@@ -1064,14 +1064,14 @@ $$\text{obs} \longrightarrow \frac{\text{obs} - \mu}{\sqrt{\sigma^2+\epsilon}} \
 ```bash
 cd ~/USV/usv_rl && source .venv/bin/activate
 # 1. 导出（--thrust-scale-n 必填且只接受 25.0；对拍打印 <1e-3 N 即通过）
-python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip --thrust-scale-n 25.0
+python -m usv_rl.export_policy --model ../artifacts/rl_models/v5/s4_dr/model.zip --thrust-scale-n 25.0
 #    产物: policy_physical_n.onnx + policy_physical_n.manifest.json（旧 policy.onnx
 #    是缩放 bug 时代的产物，输出 [-1,1]，仅留作诊断对照，勿再部署）
 # 2. 端到端冒烟：ONNX 直接在训练环境里跑 20 条轨迹
 python -c "
 import numpy as np, onnxruntime as ort
 from usv_rl.envs import UsvTrackingEnv
-sess = ort.InferenceSession('models/v5/s4_dr/policy_physical_n.onnx')
+sess = ort.InferenceSession('../artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx')
 env = UsvTrackingEnv(path_type='random')
 ok = 0
 for ep in range(20):
@@ -1267,10 +1267,13 @@ usv_rl/                          训练侧（纯 Python，不进 colcon）
 ├── usv_rl/train.py              PPO 训练入口（课程/回调/并行）
 ├── usv_rl/evaluate.py           指标评估（vs LOS）
 ├── usv_rl/export_policy.py      ONNX 导出（契约式：图内 ×25N、manifest、oracle 对拍）
+├── usv_rl/paths.py              产物目录解析（RL_MODELS / RL_RUNS，可 USV_ARTIFACTS_DIR 覆盖）
 ├── tests/                       对拍/API/等价性/导出契约测试（pytest 收集 53 例：动力学对拍 7 / 环境 API 8 / 导出契约 32 / 观测等价 6）
-├── models/v5/                   训练产物（best/、s4_dr/ 含 policy_physical_n.onnx+manifest、checkpoints）
-├── runs/                        TensorBoard 日志
 └── docs/report_assets/          组会汇报图表与复现脚本（fig_curves/fig_trajectory、评估落盘 eval_*.txt、build_ppt.js）
+
+artifacts/                       运行产物（仓库顶层，gitignore；唯一被跟踪的是 README.md）
+├── rl_models/v5/                训练产物（best/、s4_dr/ 含 policy_physical_n.onnx+manifest、checkpoints）
+└── rl_runs/                     TensorBoard 日志
 
 usv_mpc_ws/src/usv_rl_ros/       部署侧（ament_python）
 └── usv_rl_ros/rl_policy_node.py  ONNX 推理节点（scheme C）
@@ -1283,17 +1286,18 @@ usv_mpc_ws/src/usv_mpc_cpp/      方案 B：MPC（对比基线 + fallback）
 ```bash
 cd ~/USV/usv_rl && source .venv/bin/activate
 pytest tests/ -q                                            # 全部测试
-python -m usv_rl.train --run-name v6 --n-envs 16            # 全课程训练
+python -m usv_rl.train --run-name v6 --n-envs 16            # 全课程训练（默认 device=cpu）
 python -m usv_rl.train --run-name t --stage s1_straight --total-steps 1500000   # 单阶段试跑
+python -m usv_rl.train --run-name v6g --n-envs 16 --device cuda  # 用 GPU 训练（实测约 1.28x）
 python -m usv_rl.evaluate --baseline los --episodes 50      # LOS 基线
-python -m usv_rl.evaluate --model models/v5/s4_dr/model.zip \
-    --vecnorm models/v5/s4_dr/vecnormalize.pkl --episodes 50 # 策略评估（成果表同源配置）
-python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip \
+python -m usv_rl.evaluate --model ../artifacts/rl_models/v5/s4_dr/model.zip \
+    --vecnorm ../artifacts/rl_models/v5/s4_dr/vecnormalize.pkl --episodes 50 # 策略评估（成果表同源配置）
+python -m usv_rl.export_policy --model ../artifacts/rl_models/v5/s4_dr/model.zip \
     --thrust-scale-n 25.0                                    # 导出 ONNX（契约式，见 8.1）
-tensorboard --logdir runs/ --port 6006                      # 看曲线
+tensorboard --logdir ../artifacts/rl_runs/ --port 6006       # 看曲线
 # VRX 实测（三层 source 后）：
 ros2 launch usv_bringup vrx.launch.py scheme:=C record_bag:=true \
-    rl_model:=$HOME/USV/usv_rl/models/v5/s4_dr/policy_physical_n.onnx \
+    rl_model:=$HOME/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx \
     waypoints_file:=$HOME/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml
 ```
 

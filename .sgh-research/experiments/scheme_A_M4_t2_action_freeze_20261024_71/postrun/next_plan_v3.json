@@ -1,0 +1,63 @@
+{
+  "schema": "M4-after-T1-review-minimum-plan-v71",
+  "recorded_at": "2026-10-24T20:32:59.400132+08:00",
+  "steps": [
+    {
+      "id": "S0",
+      "status": "complete",
+      "task": "修复观测器与runner失败门(69批)"
+    },
+    {
+      "id": "S1",
+      "status": "complete",
+      "task": "T1剩余小范围语义补证(70批)"
+    },
+    {
+      "id": "S2",
+      "status": "complete",
+      "task": "冻结T2动作表及阶段回执的最小接口(本批71)",
+      "done": "三场景族时序/失败判据成为被四处准入消费的登记条款;bundle/Driver/ELF/registry/三份registration冻结;离线38项正反例+离线入口预检通过;未执行任何owned run"
+    },
+    {
+      "id": "T2-A",
+      "status": "next",
+      "task": "clock冻结/恢复场景族 owned执行",
+      "registration": "implementation/t2_registrations/T2A_v1.json",
+      "checks": [
+        "持续同stamp投递与完全静默>100ms分别登记(条款已冻结)",
+        "逐事件核对pause/RTF/schedule;旧候选不复活;恢复接纳需新窗口证据",
+        "单次有限执行、预检登记、自动重试0、失败原件保留"
+      ]
+    },
+    {
+      "id": "T2-B",
+      "status": "planned",
+      "task": "在途Job与ready窗口clear/replace场景族 owned执行",
+      "registration": "implementation/t2_registrations/T2B_v1.json",
+      "checks": [
+        "solve_active触发已在途;solve_active与ready_window分相已冻结",
+        "原Job截止不延长,错过窗口按登记失败;过期/终端不冒充task拒绝"
+      ]
+    },
+    {
+      "id": "T2-C",
+      "status": "planned",
+      "task": "Driver shutdown与ready/activation交错场景族 owned执行",
+      "registration": "implementation/t2_registrations/T2C_v1.json",
+      "checks": [
+        "ready_window绑定真实完成点;ready_commit<request<=stopping_observed<=guard独立核对",
+        "API零请求/返回/Source flush/Recorder/退出各自对账"
+      ]
+    },
+    {
+      "id": "T3→N3→F6→P1",
+      "status": "retained",
+      "task": "保留主线剩余义务",
+      "checks": [
+        "cleanup_failed与旧group未空禁止restart、Source队列压力尚未覆盖;不被T2替代",
+        "原九组联合复判后推进有限M0/M1/F6再P1;生产B仍MANUAL+RC覆写"
+      ]
+    }
+  ],
+  "stage_qualified": false
+}

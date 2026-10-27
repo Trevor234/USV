@@ -1,0 +1,11 @@
+--- original
++++ check_only_first_parameter
+@@ -48,7 +48,7 @@
+ void validate_model_parameters(const MpcParams & params)
+ {
+   const auto values = p_global::pack(params);
+-  if (!std::all_of(values.begin(), values.end(), [](double x) { return std::isfinite(x); })) {
++  if (!std::isfinite(values[0])) {
+     throw std::invalid_argument("MPC p_global parameters must be finite");
+   }
+ }

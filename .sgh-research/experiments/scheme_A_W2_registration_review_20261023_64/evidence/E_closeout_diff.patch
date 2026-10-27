@@ -1,0 +1,492 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
+@@ -251,6 +251,32 @@
+         closed_by_wait[role]=row;event('owned_role_closed',**row);return row
+     result={'schema':'M4-owned-fault-driver-result-v1','run_id':run,'case':case,'passed':False,'M4_qualified':False,'P1_qualified':False,
+             'production_physical_release_enabled':False,'isolated_scope':SCOPE,'research_conclusion':False}
++    # W2 context is hoisted above the try: `finally` closes these fds, and an
++    # early failure (for example Fixture authentication) must not make cleanup
++    # itself raise UnboundLocalError over the original error.
++    w2 = reg.get('w2_release')
++    w2_read = w2_write = -1
++    w2_binding = None
++    w2_release_sent = False
++    w2_release_frame = None
++    w2_result = None
++    w2_entered_at = None
++    w2_entered_row = {}
++    w2_ticks_after_enter = []
++    # Registration clauses the final predicate depends on are checked BEFORE any
++    # role starts, so a malformed registration fails fast rather than after a run.
++    if case=='W2-native-boundary-hold':
++        assert isinstance(w2,dict),'W2 registration must declare w2_release'
++        for key in ('job_id','ordinal','nonce','wait_budget_ns'):
++            assert isinstance(w2.get(key),int),'w2_release.%s must be an integer'%key
++        assert w2['job_id']>0 and w2['ordinal']>0 and w2['nonce']!=0, \
++            'w2_release job/ordinal/nonce must be positive'
++        assert 0<w2['wait_budget_ns']<=2000000000,'w2_release wait budget out of bounds'
++        _w2_exp=reg.get('expected',{}).get('w2_exit_codes')
++        assert isinstance(_w2_exp,dict) and isinstance(_w2_exp.get('worker'),int), \
++            'W2 registration must declare expected.w2_exit_codes.worker'
++        assert reg.get('expected',{}).get('w2_worker_signals'), \
++            'W2 registration must declare expected.w2_worker_signals'
+     try:
+         for role in ['fixture','worker','recorder','regulator']:(out/role).mkdir()
+         common={'run_id':run,'contract_hash':CONTRACT_SHA,'contract_file':str(reg['contract']),'m4_release_scope':SCOPE}
+@@ -276,9 +302,6 @@
+         # ordinal. The Worker inherits ONLY the read end; this process keeps the
+         # write end and closes its own read end immediately after spawn so EOF
+         # stays decidable by the Worker alone.
+-        w2 = reg.get('w2_release')
+-        w2_read = w2_write = -1
+-        w2_binding = None
+         if w2:
+             w2_read, w2_write = w2_channel_open()
+             # Pin the channel's real identity now that the pipe exists. A static
+@@ -371,11 +394,8 @@
+         dropped_job_id=None;dropped_target_tick=None;decision_ticks={};decisions={}
+         jobs_by_id={};registered_job_ids=set();jobs_after_drop=0
+         generated_at_drop=None;cap_window=[];cap_frame=[]
+-        # W2 release state: wait for the Worker to report it entered the
+-        # registered boundary, then observe at least two complete Regulator
+-        # business ticks before writing the single release frame.
+-        w2_entered_at=None;w2_ticks_after_enter=[];w2_release_sent=False
+-        w2_release_frame=None;w2_result=None
++        # W2 release state was hoisted above the try; only the run-specific
++        # counter is set here.
+         w2_required_ticks=int(w2.get('ticks_before_release',2)) if w2 else 0
+         deadline_obs=min(deadline,time.monotonic()+(8 if case=='W3-result-delivery-delay' else 60))
+         while time.monotonic()<deadline_obs:
+@@ -727,20 +747,35 @@
+             assert isinstance(w2_exp,dict) and 'worker' in w2_exp, \
+                 'W2 registration must declare expected.w2_exit_codes.worker'
+             worker_rc=by_role.get('worker',{}).get('returncode')
++            # The Worker's close signal is checked exactly like the other roles:
++            # only its exit *code* is registration-specific (terminal isolation
++            # exits non-zero). A SIGTERM escalation or a missing signal must fail.
++            w2_worker_signals=[sg['signal'] for sg in by_role.get('worker',{}).get('signals',[])]
++            w2_expected_signals=list(reg['expected']['w2_worker_signals'])
+             w2_common_ok=bool(
+                 rc_is('regulator',0) and not by_role.get('regulator',{}).get('signals')
++                and w2_worker_signals==w2_expected_signals
+                 and rc_is('fixture',0) and only_int('fixture')
+                 and rc_is('recorder',0) and only_int('recorder')
+                 and len(closed)==4 and all(r.get('group_empty') for r in closed)
+                 and result.get('error') is None)
+             # The isolation transition is a *registered* consequence, not a
+             # failure: after a verified expired, the Worker goes fatal and the
+-            # Regulator marks it unusable. Requiring `transition_ns is None`
+-            # would make the outcome depend on whether the Driver closed before
+-            # the next 200 ms heartbeat.
++            # Regulator marks it unusable. A matching reason is not enough — if a
++            # transition happened it must not predate the Worker's own verified
++            # expired fact, otherwise the run was unusable for a different reason.
+             iso_reason=reg.get('expected',{}).get('w2_isolation_reason','fatal_capability')
+-            tr_ok=(result.get('transition_ns') is None
+-                   or str(result.get('transition_reason'))==iso_reason)
++            expired_verified_ns=(result.get('w2_result') or {}).get('guard_ns')
++            if result.get('transition_ns') is None:
++                tr_ok=True
++            else:
++                tr_ok=bool(
++                    str(result.get('transition_reason'))==iso_reason
++                    and isinstance(expired_verified_ns,int)
++                    and result['transition_ns']>=expired_verified_ns)
++            # No watchdog may have fired while the boundary was held: the release
++            # has to arrive before the original 1 s active watchdog.
++            w2_no_watchdog=result.get('watchdog_ns') is None
+             w2r=result.get('w2_result') or {}
+             reg_job=int(w2['job_id']);reg_ord=int(w2['ordinal'])
+             result['passed']=bool(
+@@ -756,6 +791,7 @@
+                     w2.get('ticks_before_release',2))
+                 and worker_rc==w2_exp['worker']
+                 and tr_ok
++                and w2_no_watchdog
+                 and result.get('ramp_ok') is True
+                 and w2_common_ok)
+         elif case=='W4-result-delivery-drop':
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/owned_cold_backend.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/worker/owned_cold_backend.hpp
+@@ -23,7 +23,15 @@
+     // The gate's wait window decides whether a release was valid. This guard
+     // decides whether the Job may still enter C, and it runs after all
+     // preparation so a stop or expiry during preparation is still caught.
++    //
++    // `matches` gates only the *extra* release wait and the target Boundary
++    // facts. Every internal call — including a non-target Job and the restored
++    // BeforeCall path — still has to obey the current Job's stop state and its
++    // original 150 ms deadline. Exempting non-matching calls from those
++    // constraints would let a stopped or expired run keep solving.
+     solver_.set_final_guard([this](unsigned ordinal)->bool{
++      if(stop_&&stop_())return false;
++      if(clock_()>current_deadline_ns_)return false;
+       if(!boundary_->armed()||!boundary_->matches(ordinal,current_job_))return true;
+       return boundary_->permit_native_entry(stop_);
+     });
+@@ -51,6 +59,7 @@
+   bool first=last_job_==0;bool eligible=first&&id==1&&startup_replay::state_of(j).isZero(0.)&&actual_anchor.isZero(0.);
+   if(eligible)for(int k=0;k<=20;++k){const auto &r=j.at("reference");eligible=eligible&&std::abs(r[6*k].get<double>()-.05*.2*k)<=1e-9&&r[6*k+1]==0&&r[6*k+2]==0&&r[6*k+3]==.05&&r[6*k+4]==0&&r[6*k+5]==0;}
+   bool apply=enabled_&&!consumed_&&eligible;last_job_=id;current_job_=int64_t(id);
++  current_deadline_ns_=deadline;
+   if(boundary_)boundary_->set_current_job(current_job_);anchor_set_=false;
+   last_={{"schema","owned-cold-start-native-policy-v1"},{"policy",policy},{"job_id",id},{"context",context},{"candidate_applied",apply},{"eligibility",eligible},{"reason",apply?"applied":!enabled_?"disabled":!first?"not_first_native_job":"outside_registered_cold_domain"},{"backend_entries_started",0},{"backend_entries_completed",0},{"subcalls",Json::array()},{"terminal",false},{"successful",false}};
+   double kernel_sum=0;unsigned ordinal=0;const auto entry=clock_();
+@@ -112,10 +121,24 @@
+    }else result=invoke(reset,true,false);
+    last_["successful"]=true;last_["kernel_sum_ms"]=kernel_sum;last_["native_entry_elapsed_ms"]=(clock_()-entry)/1e6;last_["policy_consumed_for_run"]=consumed_;last_["final_first_control"]={result.control[0],result.control[1]};
+    result.info.solve_time_ms=kernel_sum;return {result.control,result.info};
+-  }catch(...){terminal_=true;last_["terminal"]=true;last_["successful"]=false;last_["policy_consumed_for_run"]=consumed_;try{solver_.set_first_control_mode(false);last_["restored_first_bounds"]=solver_.first_control_bounds();}catch(...){}throw;}
++  }catch(...){
++   terminal_=true;last_["terminal"]=true;last_["successful"]=false;last_["policy_consumed_for_run"]=consumed_;
++   // The final guard may have refused after preparation, in which case the
++   // observer never ran and step never returned. The Boundary still holds the
++   // authoritative disposition, so copy it here: a refusal must be visible in
++   // the policy, and `actual_native_invoked` must keep whatever the call site
++   // already committed rather than being reset to false.
++   if(boundary_){
++     const auto &rec=boundary_->record();
++     last_["w2_boundary"]=w2_boundary_json(rec);
++     last_["w2_actual_C_call_started"]=rec.actual_native_invoked;
++     last_["w2_native_call_count"]=solver_.native_call_count();
++   }
++   try{solver_.set_first_control_mode(false);last_["restored_first_bounds"]=solver_.first_control_bounds();}catch(...){}throw;}
+  }
+  private:
+  usv_mpc::MpcParams p_;startup_replay::RawBackend solver_;Json binding_,last_;bool enabled_=true,reset_pending_=false,anchor_set_=false,consumed_=false,terminal_=false;uint64_t last_job_=0;Eigen::Vector2d anchor_=Eigen::Vector2d::Zero();Clock clock_;BeforeCall hook_;
+  w2_wire::Boundary *boundary_=nullptr;w2_gate::StopPredicate stop_;int64_t current_job_=0;
++ int64_t current_deadline_ns_=0;
+ };
+ } // namespace owned_cold
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/run_source_contract.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/worker/run_source_contract.py
+@@ -0,0 +1,100 @@
++#!/usr/bin/env python3
++"""Source-level wiring assertions the compiled suites cannot make.
++
++Two 62-review findings are about *composition*, not behaviour a unit test sees:
++the Worker's strict whitelist must actually merge the helper's name set, and the
++RawBackend must actually call the final guard. A compiled test exercises the
++helper directly, so deleting the merge (or the guard call) leaves it green —
++which is exactly the 62/E5 blind spot.
++
++These checks read the production source and assert the call is present, so a
++later refactor that drops it fails here.
++"""
++from __future__ import annotations
++
++import json
++from pathlib import Path
++import re
++import sys
++
++sys.dont_write_bytecode = True
++
++HERE = Path(__file__).resolve().parent
++TREE = HERE.parent
++PKG = TREE.parents[1]
++OUT = PKG / 'evidence' / 'w2_source_contract'
++
++WORKER = TREE / 'worker' / 'solver_worker_m4.cpp'
++RAW = TREE / 'worker' / 'raw_backend_v1.hpp'
++BACKEND = TREE / 'worker' / 'owned_cold_backend.hpp'
++
++
++def main() -> int:
++    OUT.mkdir(parents=True, exist_ok=True)
++    checks = {}
++
++    worker = WORKER.read_text()
++    checks['worker_merges_helper_parameter_set'] = bool(re.search(
++        r'const auto &w2_names\s*=\s*w2_entry::parameters\(\);\s*'
++        r'allowed\.insert\(w2_names\.begin\(\),\s*w2_names\.end\(\)\);', worker))
++    checks['worker_whitelist_goes_through_helper'] = 'formal_owned::overrides(*this,allowed)' in worker
++    # A regression that lists the five names literally again would leave the
++    # helper unused; the merge check above would still pass, so assert that the
++    # literal list is not present as the sole source of the names.
++    literal_five = re.search(
++        r'"w2_release_fd"\s*,\s*"w2_release_job_id"\s*,\s*"w2_release_ordinal"'
++        r'\s*,\s*"w2_release_nonce"\s*,\s*"w2_release_wait_ns"', worker)
++    checks['worker_does_not_duplicate_the_five_names'] = not literal_five
++
++    raw = RAW.read_text()
++    checks['raw_backend_calls_final_guard'] = bool(re.search(
++        r'if\(final_guard_&&!final_guard_\(ordinal_\)\)', raw))
++    checks['final_guard_precedes_native_call'] = (
++        raw.index('final_guard_(ordinal_)') < raw.index('note_native_call(ordinal_)'))
++
++    backend = BACKEND.read_text()
++    # E3: the guard must check stop and the Job deadline for every internal
++    # call, before the matches() shortcut.
++    guard = backend[backend.index('set_final_guard'):backend.index('Json w2_boundary_event()')]
++    checks['guard_checks_stop_for_every_call'] = 'if(stop_&&stop_())return false;' in guard
++    checks['guard_checks_deadline_for_every_call'] = \
++        'if(clock_()>current_deadline_ns_)return false;' in guard
++    checks['guard_deadline_check_precedes_matches'] = (
++        guard.index('current_deadline_ns_') < guard.index('matches(ordinal,current_job_)'))
++    # E4: the catch must republish the boundary fact after a refusal.
++    catch = backend[backend.index('}catch(...){'):]
++    checks['catch_republishes_boundary'] = 'last_["w2_boundary"]=w2_boundary_json(rec);' in catch
++
++    # E6: the terminal catch must clear the active slot. Anchor on the catch's
++    # own body rather than a fixed-length window: `active_=0;` also appears in
++    # the timeout paths, which would make this check pass after the fix is
++    # removed from the catch itself.
++    # The file has several `catch(const std::exception & e)` blocks; take the
++    # one that actually contains the terminal record, not the first in the file.
++    term_at = worker.index('"type","terminal_exception"')
++    catch_start = worker.rindex('}catch(const std::exception & e){', 0, term_at)
++    # End at the catch's own `break;}` rather than the next `}}`, which belongs
++    # to the enclosing loop and would pull in the normal-completion path where
++    # `active_=0;` legitimately appears.
++    catch_end = worker.index('break;}', catch_start)
++    catch_body = worker[catch_start:catch_end]
++    checks['terminal_catch_clears_active'] = 'active_=0;' in catch_body
++
++    ok = all(checks.values())
++    report = {'schema': 'W2-source-contract-v1', 'checks': checks,
++              'all_passed': ok,
++              'note': ('Composition checks over production source. These cover '
++                       'what a compiled unit test cannot observe: that the '
++                       'Worker consumes the helper set and that RawBackend '
++                       'really calls the final guard.')}
++    path = OUT / 'source_contract_v1.json'
++    path.write_text(json.dumps(report, indent=2) + '\n')
++    for k, v in checks.items():
++        print('%-46s %s' % (k, 'PASS' if v else 'FAIL'))
++    print('all passed:', ok)
++    print('written:', path)
++    return 0 if ok else 1
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/run_wiring_verification.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/worker/run_wiring_verification.py
+@@ -96,6 +96,24 @@
+         r'     last_\["w2_actual_C_call_started"\]=true;\n'
+         r'   \}\);',
+         '   // mutated: no observer'),
++    # E5: the *real* RawBackend final guard, which the 62 review showed was not
++    # covered: deleting it left the previous 8 tests green.
++    'delete_real_final_guard': (
++        'worker/raw_backend_v1.hpp',
++        r'if\(final_guard_&&!final_guard_\(ordinal_\)\)bias_replay::require\(false,"blocked_at_final_guard"\);',
++        '// mutated: final guard removed'),
++    # E5: the Worker's whitelist must consume the helper set. Removing the
++    # merge leaves the five names unlisted, which the entry contract checks.
++    'worker_whitelist_skips_helper': (
++        'worker/solver_worker_m4.cpp',
++        r'const auto &w2_names=w2_entry::parameters\(\);allowed\.insert\(w2_names\.begin\(\),w2_names\.end\(\)\);',
++        '// mutated: helper set not merged'),
++    # E6: the terminal catch must clear `active_`, or a stale Job is advertised
++    # in every later capability.
++    'terminal_catch_keeps_active': (
++        'worker/solver_worker_m4.cpp',
++        r'      active_=0;\n      break;\}',
++        '      break;}'),
+     # The original seam silently dropped, which is the regression the review
+     # reproduced with a throwing hook.
+     'delete_before_call_hook': (
+@@ -105,6 +123,15 @@
+ }
+ 
+ SUITES = ['test_w2_native_boundary', 'test_w2_backend_wiring', 'test_w2_entry_contract']
++
++# Mutations caught by a source-level check rather than a compiled suite.
++COMPOSITION_MUTATIONS = {
++    'worker_whitelist_skips_helper': 'run_source_contract.py',
++    # The terminal catch lives inside the computation thread and has no unit
++    # seam; the source contract asserts it clears the active slot, so it is the
++    # check this mutation must break.
++    'terminal_catch_keeps_active': 'run_source_contract.py',
++}
+ 
+ CONFIGURE = '''
+ set -e
+@@ -229,10 +256,17 @@
+                     print('mutation %-28s BUILD FAILED (not counted)' % mname)
+                     continue
+                 failed_tests = []
+-                for suite in SUITES:
+-                    s_ok, s_out = run_suite(build, suite)
+-                    if not s_ok:
+-                        failed_tests.extend(summary(s_out)['failed_tests'])
++                if mname in COMPOSITION_MUTATIONS:
++                    script = COMPOSITION_MUTATIONS[mname]
++                    rr = subprocess.run([sys.executable, '-I', str(private / 'worker' / script)],
++                                        capture_output=True, text=True, timeout=120)
++                    if rr.returncode != 0:
++                        failed_tests.append(script)
++                else:
++                    for suite in SUITES:
++                        s_ok, s_out = run_suite(build, suite)
++                        if not s_ok:
++                            failed_tests.extend(summary(s_out)['failed_tests'])
+                 caught = bool(failed_tests)
+                 report['mutations'][mname] = {
+                     'prepared': True, 'caught_by_test_suite': caught,
+@@ -251,11 +285,23 @@
+     all_caught = all(v.get('caught_by_test_suite') for v in prepared.values())
+     unpreparable = [k for k, v in report['mutations'].items()
+                     if not v.get('prepared')]
++    # Two findings are about composition, not behaviour a compiled test can see:
++    # run the source-level contract and the Driver branch replay too.
++    extra = {}
++    for script in ('run_source_contract.py', 'run_driver_branch_replay.py'):
++        r = subprocess.run([sys.executable, '-I', str(HERE / script)],
++                           capture_output=True, text=True, timeout=120)
++        extra[script] = {'returncode': r.returncode,
++                         'tail': r.stdout.strip().splitlines()[-3:]}
++    report['extra_verifications'] = extra
++    extra_ok = all(v['returncode'] == 0 for v in extra.values())
++
+     report['suites_pass'] = suites_ok
+     report['all_prepared_mutations_caught'] = all_caught
+     report['unprepared_mutations'] = unpreparable
++    report['extra_verifications_pass'] = extra_ok
+     report['complete'] = (suites_ok and all_caught and not unpreparable
+-                          and report['sealed_tree_unchanged'])
++                          and report['sealed_tree_unchanged'] and extra_ok)
+ 
+     path = OUT / 'wiring_verification_v2.json'
+     path.write_text(json.dumps(report, indent=2) + '\n')
+@@ -263,6 +309,7 @@
+     print('suites pass:', suites_ok)
+     print('every prepared mutation caught:', all_caught)
+     print('sealed tree unchanged:', report['sealed_tree_unchanged'])
++    print('extra verifications pass:', extra_ok)
+     if unpreparable:
+         print('could not prepare:', unpreparable)
+     print('written:', path)
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/solver_worker_m4.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/worker/solver_worker_m4.cpp
+@@ -4,6 +4,7 @@
+ #include <condition_variable>
+ #include <mutex>
+ #include <optional>
++#include <set>
+ #include <thread>
+ #include <csignal>
+ #include <cstdio>
+@@ -60,7 +61,12 @@
+     caps_=create_publisher<p1::Capability>("/p1/worker_capability",rclcpp::QoS(1).reliable().transient_local());
+     sub_=create_subscription<p1::Job>("/p1/solve_job",rclcpp::QoS(1).reliable(),[this](p1::Job::SharedPtr j){receive(*j);});
+     const auto owned_file=declare_parameter<std::string>("owned_manifest_file","");owned_file_=owned_file;
+-    formal_owned::overrides(*this,{"run_id","contract_hash","contract_file","m4_release_scope","mode","driver_pins_file","driver_pins_sha256","source_file","owned_manifest_file","test_delay_ms","test_native_block_ms","diagnostic_v2_policy","diagnostic_v2_block_ms","diagnostic_drop_after_candidates","use_sim_time","w2_release_fd","w2_release_job_id","w2_release_ordinal","w2_release_nonce","w2_release_wait_ns"});
++    // The W2 names come from the same helper the entry test exercises, so a
++    // change to either the production list or the helper is a single edit. The
++    // ordinary names stay literal; they are not part of the W2 contract.
++    {std::set<std::string> allowed={"run_id","contract_hash","contract_file","m4_release_scope","mode","driver_pins_file","driver_pins_sha256","source_file","owned_manifest_file","test_delay_ms","test_native_block_ms","diagnostic_v2_policy","diagnostic_v2_block_ms","diagnostic_drop_after_candidates","use_sim_time"};
++     const auto &w2_names=w2_entry::parameters();allowed.insert(w2_names.begin(),w2_names.end());
++     formal_owned::overrides(*this,allowed);}
+     parameters_frozen_=p1_owned::freeze_parameters(*this);
+     const auto endpoints=p1_owned::Json::array({
+       p1_owned::publisher_endpoint(*out_,"usv_research_interfaces/msg/SolveCandidate"),
+@@ -312,7 +318,19 @@
+       const auto publish_start=p1::monotonic_ns();
+       try{out_->publish(result);published_candidates_++;result_published=true;event({{"type","candidate_publish_result"},{"job_id",p.job.job_id},{"worker_instance",instance_},{"solve_start_ns",result.solve_start_ns},{"solve_end_ns",result.solve_end_ns},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",true}});}catch(...){event({{"type","candidate_publish_result"},{"job_id",p.job.job_id},{"worker_instance",instance_},{"solve_start_ns",result.solve_start_ns},{"solve_end_ns",result.solve_end_ns},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",false}});throw;}
+       }
+-    }catch(const std::exception & e){fatal_=true;result.reason=std::string(e.what()).substr(0,256);result.success=false;result.prediction_available=false;event({{"type","terminal_exception"},{"job_id",p.job.job_id},{"reason",result.reason}});{std::lock_guard<std::mutex> l(mutex_);if(pending_)event({{"type","pending_discarded"},{"job_id",pending_->job.job_id},{"reason","worker_terminal_exception"}});pending_.reset();}break;}
++    }catch(const std::exception & e){
++      fatal_=true;result.reason=std::string(e.what()).substr(0,256);result.success=false;result.prediction_available=false;
++      // Emit the boundary facts before the terminal record: a guard refusal is
++      // the reason this path was taken, and the evidence must not lose it.
++      emit_w2_result_if_target_(p.job.job_id);
++      event({{"type","terminal_exception"},{"job_id",p.job.job_id},{"reason",result.reason}},true);
++      {std::lock_guard<std::mutex> l(mutex_);if(pending_)event({{"type","pending_discarded"},{"job_id",pending_->job.job_id},{"reason","worker_terminal_exception"}},true);pending_.reset();}
++      // The computation thread is ending. `active_` must not keep naming the
++      // Job it was holding, or every later fatal capability would advertise a
++      // stale active Job. This does NOT increment `completed_`: the Job did not
++      // complete normally, and inflating that counter would break the ledger.
++      active_=0;
++      break;}
+     completed_++;active_=0;
+     if(!result.success||!result.prediction_available){
+       std::optional<uint64_t> discarded;
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/test_w2_backend_wiring.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/worker/test_w2_backend_wiring.cpp
+@@ -229,6 +229,60 @@
+                 .get<unsigned>(), 0u);
+ }
+ 
++TEST(W2Backend, ANonTargetJobStillObeysStopAndDeadline) {
++  // E3: `matches` gates only the extra release wait. A Job that is not the
++  // registered target must still respect its own stop state and its original
++  // deadline — otherwise a stopped or expired run keeps solving other Jobs.
++  const int64_t deadline = kStartNs + 1000000000;
++  Armed a(deadline, /*advance=*/1000000);
++  bool stop = true;
++  a.backend->attach_boundary(&a.boundary, [&] { return stop; });
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  // Job 2 is not the armed target (Job 1 / ordinal 1).
++  // The deadline check that rejects this sits before the solve's try block, so
++  // the backend is not marked terminal; the observable fact is the refusal
++  // itself, which is what "never entered C" means here.
++  EXPECT_THROW(a.backend->solve_owned(target_job(2, deadline)), std::runtime_error);
++}
++
++TEST(W2Backend, ANonTargetJobStillObeysItsOwnDeadline) {
++  // A Job that is not the registered target still must not enter C past its own
++  // deadline. The clock is already past it when the solve starts, which is the
++  // "arrived late" case rather than a preparation-window race.
++  const int64_t deadline = kStartNs + 1000000000;
++  Armed a(deadline, /*advance=*/1000000);
++  a.clock = deadline + 1;
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  // The deadline check that rejects this sits before the solve's try block, so
++  // the backend is not marked terminal; the observable fact is the refusal
++  // itself, which is what "never entered C" means here.
++  EXPECT_THROW(a.backend->solve_owned(target_job(2, deadline)), std::runtime_error);
++}
++
++TEST(W2Backend, ARefusedGuardStillPublishesTheBoundaryFact) {
++  // E4: when the final guard refuses after preparation, the observer never ran
++  // and step never returned, so the catch is the only place that can publish the
++  // disposition. Without it the policy would omit w2_boundary entirely and a
++  // downstream reader would have to infer "not called" from a missing field.
++  const int64_t deadline = kStartNs + 1000000000;
++  Armed a(deadline, /*advance=*/1000000);
++  bool stop = false;
++  a.backend->attach_boundary(&a.boundary, [&] { return stop; });
++  a.boundary.set_entry_observer([&](const w2_wire::BoundaryConfig &) {
++    stop = true;  // refused during preparation
++  });
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_THROW(a.backend->solve_owned(target_job(kTargetJob, deadline)),
++               std::runtime_error);
++  const auto policy = a.backend->last_policy_event();
++  ASSERT_TRUE(policy.contains("w2_boundary"))
++      << "a refused guard must still publish the boundary disposition";
++  EXPECT_EQ(policy.at("w2_boundary").at("disposition").get<std::string>(), "stopped");
++  EXPECT_FALSE(policy.at("w2_boundary").at("actual_native_invoked").get<bool>());
++  EXPECT_FALSE(policy.at("w2_actual_C_call_started").get<bool>());
++  EXPECT_EQ(policy.at("backend_entries_completed").get<unsigned>(), 0u);
++}
++
+ TEST(W2Backend, StopWhileHeldKeepsTheTargetJobOutOfTheNativeCall) {
+   const int64_t deadline = kStartNs + 1000000000;
+   Armed a(deadline, /*advance=*/1000000);
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/w2_native_boundary.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_closeout_review_20261023_62/implementation/w2_author/worker/w2_native_boundary.hpp
+@@ -120,15 +120,17 @@
+   bool permit_native_entry(const w2_gate::StopPredicate & stop_requested) {
+     if (!done_ || record_.disposition != Disposition::kAllowed) return false;
+     const int64_t now = this->now();
++    // Publish the guard instant on every exit, including the allowed one: a
++    // record that keeps the post-wait time would misstate when the decision was
++    // made and how much margin was left.
++    record_.guard_ns = now;
++    record_.past_deadline_ns = now - config_.job_deadline_ns;
+     if (stop_requested && stop_requested()) {
+       record_.disposition = Disposition::kStopped;
+-      record_.guard_ns = now;
+       return false;
+     }
+     if (now > config_.job_deadline_ns) {
+       record_.disposition = Disposition::kExpired;
+-      record_.guard_ns = now;
+-      record_.past_deadline_ns = now - config_.job_deadline_ns;
+       return false;
+     }
+     return true;

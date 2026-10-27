@@ -1,0 +1,8 @@
+{
+  "cause": "adapter header is under author/common, not observer/src/shadow",
+  "error": "FileNotFoundError: observer/src/shadow/c36_runtime_adapter.hpp",
+  "first_review_selection_failed_before_final_review_report": true,
+  "old_attempts_preserved": true,
+  "repair": "selected actual existing common header and compared full function segments",
+  "runtime_and_inputs_changed": false
+}

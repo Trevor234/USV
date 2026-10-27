@@ -1,0 +1,69 @@
+{
+  "findings": [
+    {
+      "id": "R127-01",
+      "priority": "integration_gate",
+      "title": "generated setter does not propagate internal precompute return",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/implementation/baseline/acados_generated/acados_solver_usv_dyn_nmpc.c",
+      "lines": [
+        1045
+      ],
+      "sha256": "38c222d809dc15e362f423ed329f34156ac7e4b836227242407a684f814f9f30",
+      "scope": "reuse/integration readiness, not a claimed boat fault"
+    },
+    {
+      "id": "R127-02",
+      "priority": "integration_gate",
+      "title": "constructor exception may select CasADi via actual factory",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_model_setter_review_20261026_127/implementation/baseline/src/mpc_solver.cpp",
+      "lines": [
+        55
+      ],
+      "sha256": "75273493aa36ebb167f441e57150ba4b92e03d0bb15624c93b2b52185edc67f2",
+      "scope": "reuse/integration readiness, not a claimed boat fault"
+    },
+    {
+      "id": "R127-03",
+      "priority": "integration_gate",
+      "title": "Worker construction/use/capability thread topology differs from experimental owner contract",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/solver_worker_m4.cpp",
+      "lines": [
+        56
+      ],
+      "sha256": "d4e2cd2cc2db7c68fa928dcc2012130e890e3370f88ffba796eb2cfc894468a8",
+      "scope": "reuse/integration readiness, not a claimed boat fault"
+    },
+    {
+      "id": "R127-04",
+      "priority": "integration_gate",
+      "title": "model version is part of full reference Binding",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/observer/src/shadow/task_time_profile_v1.hpp",
+      "lines": [
+        10
+      ],
+      "sha256": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3",
+      "scope": "reuse/integration readiness, not a claimed boat fault"
+    },
+    {
+      "id": "R127-05",
+      "priority": "integration_gate",
+      "title": "actual RawBackend still duplicates packing and unchecked setter",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/implementation/author/worker/raw_backend_v1.hpp",
+      "lines": [
+        31
+      ],
+      "sha256": "2e1f2f0d1f3a393ec1e944462b9490a258eb8cdfa6103144816b8a8fbf13aa8f",
+      "scope": "reuse/integration readiness, not a claimed boat fault"
+    }
+  ],
+  "pure_packing": "READY_FOR_SCOPED_REVIEW",
+  "checked_initialization": "COMPONENT_VALIDATED_FACTORY_GATE_OPEN",
+  "runtime_hot_update": "NOT_IMPLEMENTED_INTERFACE_GATES_OPEN",
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "safety/CMakeLists.txt": "dd851886bcf23a0ea3f0ec597d82fe2f6a6708fea597b187223252a8d740dc90",
+  "safety/p1_admission.hpp": "5b01c10a4cffab59bf15f20e4e5093d49d3d0cfb09840bfef9bd1e2fd69e9c90",
+  "safety/package.xml": "dbe894925b9f2b05c6c1b21ae644ab58f41b648ab01a283b616220b7cfe7f685",
+  "safety/protocol.hpp": "f737d44ae60127f025542513de41ad0bf937230987a7c1044c50bc28eb72472c",
+  "safety/regulator.cpp": "c7d5bce320518acd36a049ada55997bdb1bdd8e833c85475c9e49b67741f8904",
+  "safety/solver_worker.cpp": "78455fbdfb0cdf7c167aae2542f96f36d45605eccf02cd3c7fbf7049bf732370",
+  "safety/test_p1_admission.cpp": "ad917182c5f415533433e71c424ff062ddefb4eaf0cca24bb6940da0cb47fce3",
+  "messages/ExecutionDecision.msg": "cc409406b860fd4dde5e10044fff2aa004e677435704be0c7af76e1a2e55d5dc",
+  "messages/SolveCandidate.msg": "eeee0508e9da6a9e6b88f5d8cf69e4ce0f7fa0413aca5d2c43290fb9a40f27a5",
+  "messages/SolveJob.msg": "e3b90e14b229b3884895ce66bfb6bd062116e1f4d628f4c257f409ac0141383f",
+  "messages/WorkerCapability.msg": "95417e0dfe0bc2a790853c4aa3e9e7a22c602b20bc6f40d65f3a335db1884b02",
+  "evidence/generate_host_only_f5_oracle.py": "8a5b415d7f81a10d5661b3dccb728a6468567644bbd76bcf96800ca9a681ce81",
+  "evidence/test_shared_input_core.cpp": "3185be333ac24267211717a83c5d2a488a817663e75d615d48bbf7356e727e69"
+}

@@ -1,0 +1,11 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_supervision_20261020_38/author_r2/prepare_pair_wakeup_v1.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_supervision_20261020_38/author_r3/prepare_pair_wakeup_v1.py
+@@ -178,8 +178,6 @@
+   op.update(diagnostic_c38_mode='worker-gate' if a.v2_case=='lease' or a.c38_case=='worker_post_exit' else 'applied-gate' if gate_case else 'suppress-close-poll' if a.c38_case=='ack_missing' else 'none',diagnostic_c38_pause_file=str(R/'c38_pause_request.json') if gate_case else '',diagnostic_c38_resume_file=str(R/'c38_resume_request.json') if gate_case else '')
+   expected['observer']={**defaults(),**op}
+   # Complete slow queries and sensor warmup before the Observer's 1s tick lead.
+-  wait_for(lambda:manifest_paths['recorder'].exists(),'Recorder ready before Observer',5)
+-  roles['recorder']=authenticate('recorder')
+   rclpy.init(args=[]);node=Node('p1_owned_fixture_driver',enable_rosout=False,start_parameter_services=False)
+   result['live_parameter_queries']={k:query_parameters(k) for k in ['publisher','worker','synthetic_source']}
+   pre_rows=rows(R/'synthetic_source/transport_source.jsonl')

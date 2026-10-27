@@ -1,0 +1,102 @@
+{
+  "byte_equal_function_segments": {
+    "Applied_phase_and_preparation": {
+      "byte_equal": true,
+      "bytes": 40112,
+      "sha256": "d3e7522650fc897c6ded915a5e1f63944ad04b76130f1ee7eee2d22e7e5f855f"
+    },
+    "imu_reference_clock_callbacks": {
+      "byte_equal": true,
+      "bytes": 6325,
+      "sha256": "9e8552191f855dd8934a80b0c095ea15c9dbf82657d023e2aaa4aeb46aa79e30"
+    },
+    "original_final_activation_guard": {
+      "byte_equal": true,
+      "bytes": 7050,
+      "sha256": "a6316508378f0ecc3b6d80e57e35adaa6c95370bbd73debec814b022bc4a61c5"
+    },
+    "publication_and_V1_fault": {
+      "byte_equal": true,
+      "bytes": 8122,
+      "sha256": "6d32fe9262bbc03be442a3706ad3bac445a3d8493d0f353542ee10248312ed90"
+    },
+    "worker_callbacks_and_close": {
+      "byte_equal": true,
+      "bytes": 9798,
+      "sha256": "91d4d5ea45c023cd61b1cf06cfc54a015e69d65fdd77c962fd421d2d8d389589"
+    }
+  },
+  "changed_files": [
+    {
+      "current": {
+        "bytes": 143237,
+        "sha256": "8f86d7408cbd35a51f5729982ba4d2697f2580778fdb9b99b1d4c28dd711bab7"
+      },
+      "diff": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/documents/diff_observer__src__shadow__regulator_shadow_observer.cpp.patch",
+      "file": "observer/src/shadow/regulator_shadow_observer.cpp",
+      "parent": {
+        "bytes": 141552,
+        "sha256": "f332e859d599760ce610c78d27a45748bdfc4480d2fccf3cbed57586ea4f294f"
+      }
+    },
+    {
+      "current": {
+        "bytes": 1952,
+        "sha256": "3b0211ed41e2b0d81b92da50190f909b56d2f429da20e8906c7f007075e3d803"
+      },
+      "diff": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/documents/diff_observer__CMakeLists.txt.patch",
+      "file": "observer/CMakeLists.txt",
+      "parent": {
+        "bytes": 1712,
+        "sha256": "ee33a52cdd6ce805789121993ed41167f5c7e4cbaa3edf74c355ff0bb0855cd4"
+      }
+    },
+    {
+      "current": {
+        "bytes": 19027,
+        "sha256": "0fa954ad918071186548589599d991439453415b11299b0d17ac839d62dd00bc"
+      },
+      "diff": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/documents/diff_observer__tests__test_reference_activation_alignment.cpp.patch",
+      "file": "observer/tests/test_reference_activation_alignment.cpp",
+      "parent": {
+        "bytes": 16253,
+        "sha256": "55679ef490c20a58a042a46e63715dc5c54c04e98f7861c259a95fd02d2364d8"
+      }
+    },
+    {
+      "current": {
+        "bytes": 57771,
+        "sha256": "c9be5d1f660100595df932206acc67f3957a713c981dba8bc98307246b40cdb0"
+      },
+      "diff": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/documents/diff_prepare_pair_wakeup_v1.py.patch",
+      "file": "prepare_pair_wakeup_v1.py",
+      "parent": {
+        "bytes": 63181,
+        "sha256": "cc2627227a5ef23bb1c6b46558d73430a54445fd42184ac7779efac46a9257a0"
+      }
+    }
+  ],
+  "new_policy_only_waits_and_observes_completed_odom": true,
+  "only_Observer_ELF_rebuilt": true,
+  "original_old_five_hooks_zero": true,
+  "other_four_registry_records_equal": true,
+  "passed": true,
+  "previous_V1_V2_all_role_qualification_automatically_inherited": false,
+  "stage_qualified": false,
+  "unchanged_files": [
+    "observer/src/shadow/activation_sensor_history_v1.hpp",
+    "observer/src/shadow/p1_admission.hpp",
+    "observer/src/shadow/p1_full_contract.hpp",
+    "observer/src/shadow/p1_shadow_entry.hpp",
+    "observer/src/shadow/p1_d0_observation.hpp",
+    "observer/src/shadow/protocol.hpp",
+    "observer/src/shadow/publication_result_v1.hpp",
+    "observer/src/shadow/p1_diag_sink.hpp",
+    "common/c36_runtime_adapter.hpp",
+    "owned_auth.py",
+    "owned_release.py",
+    "runtime/owned_process_supervisor.py",
+    "pair_wakeup_contract_v1.json"
+  ],
+  "wait_call_outside_business_mutex": true
+}

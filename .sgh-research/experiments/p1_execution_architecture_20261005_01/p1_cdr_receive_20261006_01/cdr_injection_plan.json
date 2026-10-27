@@ -1,0 +1,121 @@
+{
+  "schema": "p1-cdr-plan-v1",
+  "run_id": "p1_cdr_receive_20261006_01",
+  "cases": [
+    {
+      "case_index": 0,
+      "topic": "/p1/solve_job",
+      "stage": "before",
+      "job_id": 900001,
+      "blob": "00_before.cdr",
+      "bytes": 1484,
+      "sha256": "ff48df7a7da6fb426097ef468ea46be6cd541f252a992bfa7456a6f5a2f5ce9f",
+      "valid_control": true,
+      "offset_ns": 1000000000
+    },
+    {
+      "case_index": 1,
+      "topic": "/p1/solve_job",
+      "stage": "empty",
+      "job_id": 900002,
+      "blob": "01_empty.cdr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "valid_control": false,
+      "offset_ns": 1400000000
+    },
+    {
+      "case_index": 2,
+      "topic": "/p1/solve_job",
+      "stage": "header3",
+      "job_id": 900003,
+      "blob": "02_header3.cdr",
+      "bytes": 3,
+      "sha256": "faee935763044f124d7526755a5058a33f9402a595994d59eddd4be8546ff201",
+      "valid_control": false,
+      "offset_ns": 1800000000
+    },
+    {
+      "case_index": 3,
+      "topic": "/p1/solve_job",
+      "stage": "tail_minus1",
+      "job_id": 900004,
+      "blob": "03_tail_minus1.cdr",
+      "bytes": 1483,
+      "sha256": "17dcf528fcfd89089f14825baff1026ba03e5c04e8e65cbb55fd88b0bf6cda95",
+      "valid_control": false,
+      "offset_ns": 2200000000
+    },
+    {
+      "case_index": 4,
+      "topic": "/p1/solve_job",
+      "stage": "after",
+      "job_id": 900005,
+      "blob": "04_after.cdr",
+      "bytes": 1484,
+      "sha256": "0a7993bab96582af6f62c129385022114d376020b2bcfdca491231bbe9f7a617",
+      "valid_control": true,
+      "offset_ns": 2600000000
+    },
+    {
+      "case_index": 5,
+      "topic": "/p1/solve_candidate",
+      "stage": "before",
+      "job_id": 900006,
+      "blob": "05_before.cdr",
+      "bytes": 2900,
+      "sha256": "d664ab923e7ea1d73a2f34f84cfa67c13ac2df13bd303631d8df6370ca21b985",
+      "valid_control": true,
+      "offset_ns": 3000000000
+    },
+    {
+      "case_index": 6,
+      "topic": "/p1/solve_candidate",
+      "stage": "empty",
+      "job_id": 900007,
+      "blob": "06_empty.cdr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "valid_control": false,
+      "offset_ns": 3400000000
+    },
+    {
+      "case_index": 7,
+      "topic": "/p1/solve_candidate",
+      "stage": "header3",
+      "job_id": 900008,
+      "blob": "07_header3.cdr",
+      "bytes": 3,
+      "sha256": "faee935763044f124d7526755a5058a33f9402a595994d59eddd4be8546ff201",
+      "valid_control": false,
+      "offset_ns": 3800000000
+    },
+    {
+      "case_index": 8,
+      "topic": "/p1/solve_candidate",
+      "stage": "tail_minus1",
+      "job_id": 900009,
+      "blob": "08_tail_minus1.cdr",
+      "bytes": 2899,
+      "sha256": "c4fabde78f6547a968f580965be02e0f2467064c2c19f6aaee3718f6a056999d",
+      "valid_control": false,
+      "offset_ns": 4200000000
+    },
+    {
+      "case_index": 9,
+      "topic": "/p1/solve_candidate",
+      "stage": "after",
+      "job_id": 900010,
+      "blob": "09_after.cdr",
+      "bytes": 2900,
+      "sha256": "0740804a28feb69a24ba1921e057d9939b1f351c485ac4c121c1a260e579b5cd",
+      "valid_control": true,
+      "offset_ns": 4600000000
+    }
+  ],
+  "sample_count": 10,
+  "observer_depth": 64,
+  "production_reader_depth": 1,
+  "actual_plant": false,
+  "physical_endpoints": 0
+}

@@ -1,0 +1,347 @@
+{
+  "schema": "M4-T1-S1-atom-coverage-update-v70",
+  "recorded_at": "2026-10-24T19:51:54.397435+08:00",
+  "based_on": [
+    "68 ATOM_MAP (evidence/spec68/scripts/run_t1.py)",
+    "69 revised_next_plan_v1.json S1 checks"
+  ],
+  "atoms": [
+    {
+      "atom": "candidate_identity_shape.01",
+      "tests": [
+        "T1Wiring.CandidateValidRegistersAndActivates",
+        "T1Wiring.CandidateFailedSolverNotInvoked"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "three boolean rejection gates now each isolated: prediction_available=false (69), success=false and solver_invoked=false (70), all rejecting with solver_failed while the accepted registration is preserved",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateValidRegistersAndActivates",
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateFailedSolverNotInvoked"
+        ]
+      }
+    },
+    {
+      "atom": "candidate_identity_shape.02",
+      "tests": [
+        "T1Wiring.CandidateInvalidShapeAndUnavailable"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "Job horizon/dt metadata gate (shape_or_time_contract) distinguished from native result shape; native dimensions fixed by the wire contract (126/40/2) as constructive evidence, no bad-shape native experiment claimed",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateInvalidShapeAndUnavailable"
+        ]
+      }
+    },
+    {
+      "atom": "candidate_identity_shape.03",
+      "tests": [
+        "T1Wiring.CandidateNonFinitePrediction"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateNonFinitePrediction"
+        ]
+      }
+    },
+    {
+      "atom": "candidate_identity_shape.04",
+      "tests": [
+        "T1Wiring.CandidateDuplicateRejected"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateDuplicateRejected"
+        ]
+      }
+    },
+    {
+      "atom": "candidate_identity_shape.05",
+      "tests": [
+        "T1Wiring.CandidateOldReorderedJob"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateOldReorderedJob"
+        ]
+      }
+    },
+    {
+      "atom": "candidate_identity_shape.06",
+      "tests": [
+        "T1Wiring.CandidateForeignWorkerAndIdentity"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateForeignWorkerAndIdentity"
+        ]
+      }
+    },
+    {
+      "atom": "candidate_identity_shape.07",
+      "tests": [
+        "T1Wiring.CandidateForeignWorkerAndIdentity"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateForeignWorkerAndIdentity"
+        ]
+      }
+    },
+    {
+      "atom": "candidate_identity_shape.08",
+      "tests": [
+        "T1Wiring.CandidateStaleVersionRejected"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "version rejection dimensions enumerated per the frozen contract: model (isolated 68/69), task/config/schedule (70 ReferenceOrdinaryNewOdomActivation), clock epoch via the state_clock cases",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CandidateStaleVersionRejected"
+        ]
+      }
+    },
+    {
+      "atom": "task_reference.01",
+      "tests": [
+        "T1Wiring.ReferenceClearBeforeFreeze"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ReferenceClearBeforeFreeze"
+        ]
+      }
+    },
+    {
+      "atom": "task_reference.02",
+      "tests": [
+        "T1Wiring.ReferenceSinglePointBeforeFreeze"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ReferenceSinglePointBeforeFreeze"
+        ]
+      }
+    },
+    {
+      "atom": "task_reference.03",
+      "tests": [
+        "T1Wiring.ReferenceClearDuringReadyInvalidates"
+      ],
+      "s1_status": "component_evidence_extended__t2_owned_pending",
+      "s1_note": "ready-window invalidation proven (69); the in-flight window before ready is now proven on the REAL prepare_loop path (version_changed_before_submit, stale result version_mismatch, new-generation positive control)",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ReferenceClearDuringReadyInvalidates"
+        ]
+      }
+    },
+    {
+      "atom": "task_reference.04",
+      "tests": [
+        "T1Wiring.ReferenceReplaceDuringSolve"
+      ],
+      "s1_status": "component_evidence_extended__t2_owned_pending",
+      "s1_note": "ready-window replacement proven (69); in-flight replacement window proven on the REAL prepare_loop path in the same 70 case",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ReferenceReplaceDuringSolve"
+        ]
+      }
+    },
+    {
+      "atom": "task_reference.05",
+      "tests": [
+        "T1Wiring.ReferenceSameContentRepublishKeepsTask"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ReferenceSameContentRepublishKeepsTask"
+        ]
+      }
+    },
+    {
+      "atom": "task_reference.06",
+      "tests": [
+        "T1Wiring.ReferenceProfilePairMismatch"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ReferenceProfilePairMismatch"
+        ]
+      }
+    },
+    {
+      "atom": "task_reference.07",
+      "tests": [
+        "T1Wiring.ReferenceOrdinaryNewOdomKeepsEligible"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "eligible check (69) extended with a REAL activation through admission take and the task/config/schedule rejection dimensions (70)",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ReferenceOrdinaryNewOdomKeepsEligible"
+        ]
+      }
+    },
+    {
+      "atom": "state_clock.04",
+      "tests": [
+        "T1Wiring.ClockPauseInvalidatesSchedule"
+      ],
+      "s1_status": "component_evidence_extended__t2_owned_pending",
+      "s1_note": "component wiring proven (68/69); owned pause/resume timing remains the T2-A scenario family",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ClockPauseInvalidatesSchedule"
+        ]
+      }
+    },
+    {
+      "atom": "state_clock.05",
+      "tests": [
+        "T1Wiring.ClockResumeReschedules"
+      ],
+      "s1_status": "component_evidence_extended__t2_owned_pending",
+      "s1_note": "component wiring proven (68/69); owned resume scheduling remains the T2-A scenario family",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ClockResumeReschedules"
+        ]
+      }
+    },
+    {
+      "atom": "state_clock.06",
+      "tests": [
+        "T1Wiring.ClockBackwardResetsEpoch"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ClockBackwardResetsEpoch"
+        ]
+      }
+    },
+    {
+      "atom": "state_clock.07",
+      "tests": [
+        "T1Wiring.ClockLargeJumpResetsEpoch"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ClockLargeJumpResetsEpoch"
+        ]
+      }
+    },
+    {
+      "atom": "state_clock.08",
+      "tests": [
+        "T1Wiring.ClockRtfLowBandInvalid"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ClockRtfLowBandInvalid"
+        ]
+      }
+    },
+    {
+      "atom": "state_clock.09",
+      "tests": [
+        "T1Wiring.ClockRtfHighBandInvalid"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "no new S1 stimulation required; 68/69 evidence stands for the stated scope",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ClockRtfHighBandInvalid"
+        ]
+      }
+    },
+    {
+      "atom": "publication_exit.02",
+      "tests": [
+        "T1Wiring.CommittedSubmitClearInvalidates"
+      ],
+      "s1_status": "proven_component_scope",
+      "s1_note": "echo-based committed-submit clear (69) plus REAL prepare_loop submit facts: a real echo admits a result without seed_echo, and shutdown/version changes block the real submit with explicit reasons",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/CommittedSubmitClearInvalidates"
+        ]
+      }
+    },
+    {
+      "atom": "publication_exit.03",
+      "tests": [
+        "T1Wiring.ShutdownDuringReadyActivation"
+      ],
+      "s1_status": "component_evidence_extended__t2_owned_pending",
+      "s1_note": "ready-window shutdown rejection (69) plus the real submit-path shutdown guard (shutdown_before_submit); the owned ready/activation interleave remains T2-C",
+      "evidence": {
+        "attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04",
+        "case_dirs": [
+          "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/nominal_run01/cases/ShutdownDuringReadyActivation"
+        ]
+      }
+    }
+  ],
+  "counts": {
+    "atoms_total": 23,
+    "t2_handoff_atoms": 5,
+    "other_atoms": 18,
+    "previous_incorrect_other_count": 19,
+    "correction": "the 69 report corrected the old \"19 others\" count; this batch records 23-5=18"
+  },
+  "claims_guard": "32 executions passing does not imply full semantic closure; each atom status states the exact stimulated scope",
+  "mutations": [
+    "m1_consumed_candidate_revivable",
+    "m2_clock_epoch_no_invalidate",
+    "m3_path_change_no_invalidate"
+  ]
+}

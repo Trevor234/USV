@@ -1,0 +1,46 @@
+{
+  "schema": "B5-minimum-compatibility-work-package/v1",
+  "reuse_existing_formal_v3": true,
+  "new_formal_schema_required": false,
+  "current_diag_native_fields": 81,
+  "current_formal_native_fields": 84,
+  "old_python_diag_fields": 74,
+  "old_python_formal_fields": 77,
+  "source_probe": {
+    "bytes": 5732,
+    "sha256": "3495cc7ef96963cac46a6156370bec3262cd0109cc469c10b0d3c73dd3b8ae4c"
+  },
+  "tasks": [
+    {
+      "order": 1,
+      "task": "从当前81字段、19 hydro及精确profile生成同源Python/C++规范；formal仍复用v3、84字段，不丢7个新策略或已有值变更。",
+      "proof": "独立类型/值/字段集/原模式矩阵与资源边界对拍；保留旧74规范与拒绝。"
+    },
+    {
+      "order": 2,
+      "task": "明确owned正式pre-freeze no_output入口/Recorder/Fixture/Worker绑定；当前shadow Observer不直接转换，不放宽require_shadow_mode。",
+      "proof": "纯role/mode矩阵：diag/shadow保留，formal pre-freeze只no_output，Frozen形状不授予物理启动；新身份必须新bundle。"
+    },
+    {
+      "order": 3,
+      "task": "为正式无输出准备门设计权限和就绪前提；既有gate依赖shadow+fault=true且绑定legacy Publisher，不能靠把fault置true绕过formal。",
+      "proof": "formal fault=false/execute=false保持；明确no_output不需要真实legacy命令锚点，且不得伪造Publisher Applied或Source。"
+    },
+    {
+      "order": 4,
+      "task": "完成以上只编译必要角色/组件及严格反例，源锁后再预注册一个正式no_output owned准备/关闭最小运行。",
+      "proof": "不执行物理Writer；不重复已证的所有V1/V2/recovery，新增真实差集按改变实现复判。"
+    },
+    {
+      "order": 5,
+      "task": "具体B5正式冻结前，证据hash必须对应真实产物/域/政策而不只是64hex占位，runtime physical execute总闸继续false。",
+      "proof": "冻结条件和M4测试入口分开；不得改pending数组或execute标志伪造资格。"
+    }
+  ],
+  "M4_obligations_follow_only_after_appropriate_formal_freeze": true,
+  "physical_release_permission": false,
+  "formal_freeze_completed": false,
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

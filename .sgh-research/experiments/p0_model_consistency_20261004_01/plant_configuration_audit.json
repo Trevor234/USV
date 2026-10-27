@@ -1,0 +1,118 @@
+{
+  "sdf_sha256": "15babac58c11e5bde8eef6c0fa20867578b06e03e49a94e5fa51d02f4ed916fc",
+  "plugins": [
+    {
+      "name": "gz::sim::systems::Thruster",
+      "filename": "gz-sim-thruster-system",
+      "values": {
+        "joint_name": "wamv/left_engine_propeller_joint",
+        "namespace": "wamv",
+        "topic": "thrusters/left/thrust",
+        "name": "left",
+        "thrust_coefficient": "0.015",
+        "fluid_density": "1000.0",
+        "propeller_diameter": "0.1",
+        "velocity_control": "true",
+        "use_angvel_cmd": "false",
+        "min_thrust_cmd": "-25.0",
+        "max_thrust_cmd": "25.0"
+      }
+    },
+    {
+      "name": "gz::sim::systems::Thruster",
+      "filename": "gz-sim-thruster-system",
+      "values": {
+        "joint_name": "wamv/right_engine_propeller_joint",
+        "namespace": "wamv",
+        "topic": "thrusters/right/thrust",
+        "name": "right",
+        "thrust_coefficient": "0.015",
+        "fluid_density": "1000.0",
+        "propeller_diameter": "0.1",
+        "velocity_control": "true",
+        "use_angvel_cmd": "false",
+        "min_thrust_cmd": "-25.0",
+        "max_thrust_cmd": "25.0"
+      }
+    },
+    {
+      "name": "vrx::Surface",
+      "filename": "libSurface.so",
+      "values": {
+        "link_name": "wamv/base_link",
+        "hull_length": "0.6884675215247502",
+        "points_in_link_frame": "true",
+        "hull_radius": "0.15",
+        "fluid_density": "1000.0",
+        "fluid_level": "0.0",
+        "points": "\n        ",
+        "wavefield": "\n        "
+      }
+    },
+    {
+      "name": "gz::sim::systems::Hydrodynamics",
+      "filename": "gz-sim-hydrodynamics-system",
+      "values": {
+        "link_name": "wamv/base_link",
+        "disable_added_mass": "true",
+        "disable_coriolis": "true",
+        "default_current": "0 0 0",
+        "xU": "-2.272063",
+        "xUabsU": "-11.571784",
+        "yV": "-2.629019",
+        "yVabsV": "-0.05",
+        "yR": "0.0",
+        "yRabsR": "0.0",
+        "nV": "0.0",
+        "nVabsV": "0.0",
+        "nR": "-3.105",
+        "nRabsR": "-0.71",
+        "zW": "-65.0",
+        "zWabsW": "-80.0",
+        "kP": "-3.0",
+        "kPabsP": "-4.0",
+        "mQ": "-6.0",
+        "mQabsQ": "-8.0"
+      }
+    },
+    {
+      "name": "gz::sim::systems::OdometryPublisher",
+      "filename": "gz-sim-odometry-publisher-system",
+      "values": {
+        "dimensions": "3",
+        "odom_publish_frequency": "50",
+        "odom_frame": "map",
+        "robot_base_frame": "wamv/base_link"
+      }
+    },
+    {
+      "name": "gz::sim::systems::JointStatePublisher",
+      "filename": "gz-sim-joint-state-publisher-system",
+      "values": {}
+    }
+  ],
+  "inertials": [
+    {
+      "link": "wamv/base_link",
+      "xml": "<inertial>\n        <pose>0.121762711864 0 0.000155367231638 0 0 0</pose>\n        <mass>14.16</mass>\n        <inertia>\n          <ixx>0.5473286581920904</ixx>\n          <iyy>1.784234140903955</iyy>\n          <izz>1.9073754827118645</izz>\n          <ixy>0.0</ixy>\n          <ixz>0.0013766779661016952</ixz>\n          <iyz>0.0</iyz>\n        </inertia>\n        <fluid_added_mass>\n          <xx>2.0</xx>\n          <yy>8.0</yy>\n          <yr>0.1817725</yr>\n          <rr>3.41</rr>\n        </fluid_added_mass>\n      </inertial>\n      "
+    },
+    {
+      "link": "wamv/left_propeller_link",
+      "xml": "<inertial>\n        <pose>0 0 0 0 0 0</pose>\n        <mass>0.02</mass>\n        <inertia>\n          <ixx>2.5000000000000005e-05</ixx>\n          <iyy>1.2740000000000003e-05</iyy>\n          <izz>1.2740000000000003e-05</izz>\n          <ixy>0.0</ixy>\n          <ixz>0.0</ixz>\n          <iyz>0.0</iyz>\n        </inertia>\n      </inertial>\n      "
+    },
+    {
+      "link": "wamv/right_propeller_link",
+      "xml": "<inertial>\n        <pose>0 0 0 0 0 0</pose>\n        <mass>0.02</mass>\n        <inertia>\n          <ixx>2.5000000000000005e-05</ixx>\n          <iyy>1.2740000000000003e-05</iyy>\n          <izz>1.2740000000000003e-05</izz>\n          <ixy>0.0</ixy>\n          <ixz>0.0</ixz>\n          <iyz>0.0</iyz>\n        </inertia>\n      </inertial>\n      "
+    }
+  ],
+  "joints": [
+    {
+      "name": "wamv/left_engine_propeller_joint",
+      "xml": "<joint name=\"wamv/left_engine_propeller_joint\" type=\"revolute\">\n      <parent>wamv/base_link</parent>\n      <child>wamv/left_propeller_link</child>\n      <axis>\n        <xyz>1 0 0</xyz>\n      </axis>\n    </joint>\n    "
+    },
+    {
+      "name": "wamv/right_engine_propeller_joint",
+      "xml": "<joint name=\"wamv/right_engine_propeller_joint\" type=\"revolute\">\n      <parent>wamv/base_link</parent>\n      <child>wamv/right_propeller_link</child>\n      <axis>\n        <xyz>1 0 0</xyz>\n      </axis>\n    </joint>\n    "
+    }
+  ]
+}

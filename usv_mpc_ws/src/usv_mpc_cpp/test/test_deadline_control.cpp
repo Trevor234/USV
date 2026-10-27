@@ -127,6 +127,19 @@ public:
 
   static bool has_history(const MpcControllerNode & node) {return node.has_last_command_;}
 
+  static std::pair<bool, std::string> fcu_mode(MpcControllerNode & node, const std::string & mode)
+  {
+    node.output_mode_ = "rc_override";
+    node.require_fcu_state_ = true;
+    auto state = std::make_shared<mavros_msgs::msg::State>();
+    state->armed = true;
+    state->mode = mode;
+    node.state_callback_(state);
+    return node.can_solve_();
+  }
+
+  static void reload(MpcControllerNode & node) {node.load_config_();}
+
   static void heading(MpcControllerNode & node, double yaw) {node.psi_ = yaw;}
 
   static bool enforce(MpcControllerNode & node, SolveInfo & info, double wall, double max)
@@ -324,6 +337,34 @@ TEST_F(DeadlineControl, TimelySuccessPublishesCandidateAndActualAnchor)
   EXPECT_EQ(status_.at(0).at("control_source").get<std::string>(), "solver");
   EXPECT_EQ(trajectories_, 1u);
   EXPECT_EQ(fake_->reset_count, 0);
+}
+
+TEST_F(DeadlineControl, RcOverrideDefaultsToManualAndRejectsGuidedState)
+{
+  EXPECT_EQ(controller_->get_parameter("allowed_fcu_modes").as_string_array(),
+    std::vector<std::string>{"MANUAL"});
+  EXPECT_TRUE(MpcControllerNodeTestAccess::fcu_mode(*controller_, "MANUAL").first);
+  const auto guided = MpcControllerNodeTestAccess::fcu_mode(*controller_, "GUIDED");
+  EXPECT_FALSE(guided.first);
+  EXPECT_EQ(guided.second, "wrong_mode(GUIDED)");
+}
+
+TEST_F(DeadlineControl, RcOverrideRejectsGuidedEmptyAndMixedModeConfiguration)
+{
+  controller_->set_parameter(rclcpp::Parameter("require_fcu_state", true));
+  for (const auto & modes : std::vector<std::vector<std::string>>{
+      {"GUIDED"}, {}, {"MANUAL", "GUIDED"}})
+  {
+    controller_->set_parameter(rclcpp::Parameter("allowed_fcu_modes", modes));
+    EXPECT_THROW(MpcControllerNodeTestAccess::reload(*controller_), std::invalid_argument);
+  }
+  controller_->set_parameter(rclcpp::Parameter(
+      "allowed_fcu_modes", std::vector<std::string>{"MANUAL"}));
+  EXPECT_NO_THROW(MpcControllerNodeTestAccess::reload(*controller_));
+  controller_->set_parameter(rclcpp::Parameter("require_fcu_state", false));
+  controller_->set_parameter(rclcpp::Parameter(
+      "allowed_fcu_modes", std::vector<std::string>{"GUIDED"}));
+  EXPECT_THROW(MpcControllerNodeTestAccess::reload(*controller_), std::invalid_argument);
 }
 
 TEST_F(DeadlineControl, BlockingSolveWithShortBackendTimingCannotPublishItsCandidate)

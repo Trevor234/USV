@@ -1,0 +1,90 @@
+{
+  "HEAD": "feb50823a07054879e3c6f8d437c02595ce26976",
+  "commit_reset_stash_or_firmware_change": false,
+  "existing_untracked_and_submodule_status_retained": true,
+  "files_after": {
+    "docs/scheme_B_manual_rc_contract.md": {
+      "bytes": 1876,
+      "sha256": "54be4c9dab2a4e5e6a34d7153e3aea363abf87c01cb258c5bf152ebed10415fd"
+    },
+    "usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml": {
+      "bytes": 3063,
+      "sha256": "2e287728d8c6f7e82c286f6ae892bdf39ff07d28366819065af6d1fef3b26068"
+    },
+    "usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml": {
+      "bytes": 3063,
+      "sha256": "2e287728d8c6f7e82c286f6ae892bdf39ff07d28366819065af6d1fef3b26068"
+    },
+    "usv_mpc_ws/src/usv_bringup/config/safety_params.yaml": {
+      "bytes": 1612,
+      "sha256": "dd2201ee9c2c46e23abcb8599a7c27c6b4ff32ab2da3fcb09e4da60834a772c3"
+    },
+    "usv_mpc_ws/src/usv_bringup/launch/real.launch.py": {
+      "bytes": 16016,
+      "sha256": "b9a20c08dea099eabc1b6c0b80b24bfe844cbdd51c40e162307660618ec0afd1"
+    },
+    "usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py": {
+      "bytes": 8033,
+      "sha256": "78f2297e04973bd4b9c167e080f55e3a2047e3ae0ae4420b93168be075210485"
+    },
+    "usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py": {
+      "bytes": 3023,
+      "sha256": "3c0b106319e3aed4cd8e6a521d2a7063ba892f0da2cd1de1ce558a316d09ea9c"
+    },
+    "usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp": {
+      "bytes": 10949,
+      "sha256": "2254051f84f9bbe4d3b9e2d0cf219ad9b6312b24f847201718fabc2ec324fc0c"
+    },
+    "usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp": {
+      "bytes": 51077,
+      "sha256": "44f808eb8355312155241ec3e12739b77aaa0e2184f056b1ce7d8d421d905b6e"
+    },
+    "usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp": {
+      "bytes": 24292,
+      "sha256": "1a5cd0dac51f33ab59d4e40eb302c148a11f62f735b2e739f45cb6b52558dc1d"
+    },
+    "usv_mpc_ws/src/usv_safety_cpp/CMakeLists.txt": {
+      "bytes": 3068,
+      "sha256": "3ac9215ac2f6e7b30d4bc4d8a7bf36473bfb89b1ae161026aa43c168478a30b3"
+    },
+    "usv_mpc_ws/src/usv_safety_cpp/include/usv_safety_cpp/mode_manager_node.hpp": {
+      "bytes": 6106,
+      "sha256": "f9612f4181a7eb3f1a509a7e0796bd84d85a52e66df7d29aa7bc3da814a69e23"
+    },
+    "usv_mpc_ws/src/usv_safety_cpp/src/mode_manager_node.cpp": {
+      "bytes": 21492,
+      "sha256": "e20b05320dc37ba8576fcfbcc5b9063590f5d9bc9d921cb9dfe1f499b0e4b244"
+    },
+    "usv_mpc_ws/src/usv_safety_cpp/test/test_mode_manager_contract.cpp": {
+      "bytes": 4963,
+      "sha256": "4c982f2ed28ebaa6b52434bf107d7335ddafe6a0f1ef3e2c4d0e30c545efdc2e"
+    }
+  },
+  "new_files": [
+    "docs/scheme_B_manual_rc_contract.md",
+    "usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py",
+    "usv_mpc_ws/src/usv_safety_cpp/test/test_mode_manager_contract.cpp"
+  ],
+  "old_clean_projection_must_not_discard_this_user_authorized_delta": true,
+  "schema": "user-authorized-SchemeB-MANUAL-live-workspace-delta/v1",
+  "staging_unchanged_empty": true,
+  "status_after": "## codex/scheme-c-rl...origin/codex/scheme-c-rl\n M ardurover-argus\n M usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml\n M usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml\n M usv_mpc_ws/src/usv_bringup/config/safety_params.yaml\n M usv_mpc_ws/src/usv_bringup/launch/real.launch.py\n M usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py\n M usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp\n M usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp\n M usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp\n M usv_mpc_ws/src/usv_safety_cpp/CMakeLists.txt\n M usv_mpc_ws/src/usv_safety_cpp/include/usv_safety_cpp/mode_manager_node.hpp\n M usv_mpc_ws/src/usv_safety_cpp/src/mode_manager_node.cpp\n?? .zcodeignore\n?? docs/scheme_B_manual_rc_contract.md\n?? usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py\n?? usv_mpc_ws/src/usv_safety_cpp/test/test_mode_manager_contract.cpp\n",
+  "status_before": "## codex/scheme-c-rl...origin/codex/scheme-c-rl\n M ardurover-argus\n?? .zcodeignore\n",
+  "tracked_changed_files": [
+    "usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml",
+    "usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml",
+    "usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+    "usv_mpc_ws/src/usv_bringup/launch/real.launch.py",
+    "usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py",
+    "usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/mpc_node.hpp",
+    "usv_mpc_ws/src/usv_mpc_cpp/src/mpc_node.cpp",
+    "usv_mpc_ws/src/usv_mpc_cpp/test/test_deadline_control.cpp",
+    "usv_mpc_ws/src/usv_safety_cpp/CMakeLists.txt",
+    "usv_mpc_ws/src/usv_safety_cpp/include/usv_safety_cpp/mode_manager_node.hpp",
+    "usv_mpc_ws/src/usv_safety_cpp/src/mode_manager_node.cpp"
+  ],
+  "tracked_patch": {
+    "bytes": 18263,
+    "sha256": "eaf41efdb2aa0ac1c8eb3214b1a72209b90879844d4b8dd4aa9960344792e5bd"
+  }
+}

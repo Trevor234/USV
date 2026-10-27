@@ -1,0 +1,56 @@
+{
+  "schema": "scheme-A-t1-batch68-implementation-plan-v1",
+  "batch": "scheme_A_M4_t1_component_wiring_20261024_68",
+  "created": "2026-10-24",
+  "upstream": {
+    "plan": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/postrun/next_implementation_plan_v1.json",
+    "catalog": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/postrun/case_applicability_v1.json",
+    "task": "T1"
+  },
+  "scope": {
+    "executes": [
+      "T1 component wiring (23 gap atoms + delayed-tick shells)",
+      "3 targeted mutation positive controls",
+      "T2 minimal handoff list"
+    ],
+    "does_not": [
+      "T2 owned cross-process runs",
+      "T3",
+      "N3-N5",
+      "any write to the production tree or 67th current_author"
+    ],
+    "current_owned_run_count": 0,
+    "new_ros_graph": 0
+  },
+  "gap_atom_ids": [
+    "candidate_identity_shape.01", "candidate_identity_shape.02", "candidate_identity_shape.03",
+    "candidate_identity_shape.04", "candidate_identity_shape.05", "candidate_identity_shape.06",
+    "candidate_identity_shape.07", "candidate_identity_shape.08",
+    "task_reference.01", "task_reference.02", "task_reference.03", "task_reference.04",
+    "task_reference.05", "task_reference.06", "task_reference.07",
+    "state_clock.04", "state_clock.05", "state_clock.06", "state_clock.07",
+    "state_clock.08", "state_clock.09",
+    "publication_exit.02", "publication_exit.03"
+  ],
+  "code_targets": {
+    "new_test": "implementation/tests/test_current_candidate_reference_clock.cpp",
+    "regulator_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/implementation/current_author/observer/src/shadow/regulator_owned_execute.cpp",
+    "seams": ["P1_SHADOW_ENTRY_TEST", "P1_C33_MATRIX_TEST", "C33MatrixAccess friend", "P1_REGULATOR_SOURCE include"],
+    "frozen_contract_for_tick_shell": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json"
+  },
+  "mutations": [
+    {"name": "m1_consumed_candidate_revivable", "find": "if(t)candidate_.reset();"},
+    {"name": "m2_clock_epoch_no_invalidate", "find": "anchor_.known={false,false};invalidate_locked();}"},
+    {"name": "m3_path_change_no_invalidate", "find": "version_.task++;path_fingerprint_=fingerprint;invalidate_locked();}"}
+  ],
+  "discipline": [
+    "production sources read-only",
+    "automatic_retries=0",
+    "failed attempts kept never overwritten",
+    "mutations in separate evidence dirs",
+    "no foreign writer",
+    "mirror never overwrites prior deliveries",
+    "every step writes verification JSON"
+  ],
+  "done_when": "所有23项都有实际调用及正反例结果；未覆盖的跨进程部分精确移交T2，不由测试名代替路径。不宣称M4通过/owned资格/跨进程语义。"
+}

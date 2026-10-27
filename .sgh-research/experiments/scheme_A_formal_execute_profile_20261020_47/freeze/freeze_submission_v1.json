@@ -1,0 +1,16 @@
+{
+  "M4_qualified": false,
+  "P1_qualified": false,
+  "artifact_bytes": 373401307,
+  "artifact_count": 4103,
+  "contract_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "freeze_index_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+  "freeze_index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+  "physical_execute_release_enabled": false,
+  "policy_sha256": "475d093f034165b94a09dde577a4462dc3c575752e25a99364d4ac699955918b",
+  "schema": "P1-M0b-engineering-freeze-submit/v1",
+  "spec_sha256": "dca89c6559110290ece07e6102ee4f0bd28f38031f5dfe1702aaab81be45846f",
+  "submission_is_not_independent_verification": true,
+  "template_sha256": "8f54345e2df3feb85aa2dde46077d7d0a3a4d54bf61a350128f7bc66a22ad85b"
+}

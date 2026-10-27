@@ -1,0 +1,34 @@
+{
+  "safety/regulator.cpp": {
+    "sha256": "52624b6f13cde75975a84c1d16130264cb4a3939b16acec6b396007f8fac172b",
+    "bytes": 46572
+  },
+  "safety/CMakeLists.txt": {
+    "sha256": "85d61f54d29de047e82cfa29d6bc59f62604bd01447fec3bc58547539e4320b3",
+    "bytes": 2098
+  },
+  "safety/p1_preparation_barrier.hpp": {
+    "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+    "bytes": 723
+  },
+  "safety/test_p1_preparation_barrier.cpp": {
+    "sha256": "14ac05f411b4b5b07993d9c754a166fe7d7a8811e2c4b750d0bc0f3eab0abb59",
+    "bytes": 1120
+  },
+  "runtime/run_preparation_pending.py": {
+    "sha256": "be6e9d8d1b4f332d006c2518e80444aa67d2d975e9735927bfd66cffe860f76c",
+    "bytes": 16563
+  },
+  "runtime/check_preparation_pending.py": {
+    "sha256": "e207b72241c62992b31209409d18a5994cf865e0ca0f308e279c1bc6abba576a",
+    "bytes": 8446
+  },
+  "runtime/test_preparation_pending.py": {
+    "sha256": "35465233e4d65aebb32783751e76f32715fbb3ba06342ecdeddd08c9d7e8f327",
+    "bytes": 3567
+  },
+  "preflight_reflection_20261006_preparation_pending.md": {
+    "sha256": "31069a43d54ad85e929aee2da8a09af7557291a60510a097587c625a8ffbf656",
+    "bytes": 2790
+  }
+}

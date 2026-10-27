@@ -1,0 +1,27 @@
+{
+  "fixture": {
+    "files": 14,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/source_bundle.json",
+    "sha256": "9ae9f9a5a1ce37efe7a11e25947ea6ca643f8564095bf33ce95fddaaebd7cee9"
+  },
+  "observer": {
+    "files": 37,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/build/activation_observer_attempt02/source_bundle.json",
+    "sha256": "d6512e4246f28203409592611e6c483aee40cd88e31607f2ff4f0c01c9acf49d"
+  },
+  "publisher": {
+    "files": 18,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/source_bundle.json",
+    "sha256": "275ce043b1b0b3f068c8d8e5180b50ffa5adf2c68f5089be83586cf7c98cf453"
+  },
+  "recorder": {
+    "files": 4,
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+    "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+  },
+  "worker": {
+    "files": 28,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/build/activation_worker_attempt02/source_bundle.json",
+    "sha256": "47ac315fce17370695d775a25b36c9c5fcf6a1509a07b049df78196ed2340f2b"
+  }
+}

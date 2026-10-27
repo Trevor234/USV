@@ -1,0 +1,56 @@
+# USV physical parameters — single source of truth.
+#
+# Used by:
+#   - usv_simulation/vrx_model.py (native SDF generation for VRX)
+#
+# References: implementation_plan.md §九 (initial estimates).
+#
+# NOTE: the kinematic MPC node does NOT read these hull (`vehicle.*`) params;
+# they describe the vessel for Gazebo and the parameter-identification scripts.
+# Retained here as the canonical hull description.
+
+/**:
+  ros__parameters:
+    # ----- Hull (used by Gazebo SDF; canonical hull description) -----
+    vehicle:
+      mass: 14.2          # kg, total including payload
+      Iz: 2.13            # kg·m², yaw moment of inertia (= m(L²+B²)/12)
+      xg: 0.12            # m, CG longitudinal offset (+ forward)
+      d_thruster: 0.25    # m, half of thruster spacing 2d (separation=0.5)
+
+      # ----- Hull geometry (Gazebo only — informational for MPC) -----
+      length: 1.2         # m, length overall
+      beam: 0.6           # m, beam
+      draft: 0.10         # m, waterline depth (smaller draft than sim boat)
+      height: 0.30        # m, freeboard above water
+
+      # ----- Added mass (negative by Fossen convention) -----
+      Xu_dot: -2.0
+      Yv_dot: -8.0
+      Yr_dot: 0.0
+      Nv_dot: -0.363545
+      Nr_dot: -1.621220
+
+      # ----- Linear damping -----
+      Xu: -2.272063
+      Yv: -2.629019
+      Yr: 0.0             # zeroed — see block comment above
+      Nv: 0.0             # zeroed — see block comment above
+      Nr: -4.286144
+
+      # ----- Quadratic damping -----
+      Xuu: -11.571784
+      Yvv: -0.05          # near-zero diagonal, kept
+      Yrr: 0.0            # zeroed — shares sway-yaw coupling channel
+      Nvv: 0.0            # zeroed — shares sway-yaw coupling channel
+      Nrr: -0.001         # near-zero diagonal, kept
+
+    # ----- Thruster -----
+    # NOTE: these limits are read by the Gazebo thrust plugin and the
+    # parameter-identification scripts. The kinematic MPC does not use them.
+    thruster:
+      pwm_min: 1000
+      pwm_center: 1500
+      pwm_max: 2000
+      T_max_forward: 25.0   # N per thruster (K_T)
+      T_max_reverse: 25.0   # N per thruster (equal reverse)

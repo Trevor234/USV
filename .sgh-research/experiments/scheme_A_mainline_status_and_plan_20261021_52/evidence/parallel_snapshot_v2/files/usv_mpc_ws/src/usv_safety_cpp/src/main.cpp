@@ -1,0 +1,54 @@
+// Copyright 2026 USV Developer
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+// THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+
+/**
+ * @file main.cpp
+ * @brief mode_manager_node 的入口点。
+ *
+ * 对应 Python 版本: usv_safety/mode_manager_node.py 中的 main() 函数。
+ */
+
+#include <cstdio>
+#include <exception>
+#include <memory>
+
+#include <rclcpp/rclcpp.hpp>
+
+#include "usv_safety_cpp/mode_manager_node.hpp"
+
+int main(int argc, char * argv[])
+{
+  rclcpp::init(argc, argv);
+  // 构造期校验 (mpc_fcu_mode 只接受 MANUAL/GUIDED) 失败会抛异常。未捕获即
+  // abort，systemd 记为 crash 且无退出码；这里转成干净的 1，让配置错误在
+  // 日志里可区分于运行时故障。
+  std::shared_ptr<usv_safety::ModeManagerNode> node;
+  try {
+    node = std::make_shared<usv_safety::ModeManagerNode>();
+  } catch (const std::exception & e) {
+    fprintf(stderr, "[mode_manager] 启动配置被拒绝: %s\n", e.what());
+    rclcpp::shutdown();
+    return 1;
+  }
+  rclcpp::spin(node);
+  rclcpp::shutdown();
+  return 0;
+}

@@ -1,0 +1,67 @@
+{
+  "batch_registered": 118,
+  "cases": [
+    {
+      "assertions": [
+        "t1_raw_stamps_monotonic",
+        "t1_first_resumed_stamp_is_published_pair_mapping",
+        "t1_projection_history_no_regression",
+        "t2_resume_stamp_independent_of_action_instant",
+        "t3_long_hold_maps_capped_and_monotonic",
+        "t4_duplicate_resume_single_application",
+        "t5_missing_resume_frozen_no_crash",
+        "t6_no_double_accumulation",
+        "t7_rtf_window_rebuild_in_band",
+        "t8_no_hold_path_bitwise_identical",
+        "t9_same_stamp_smooth_resume",
+        "t10_catch_up_capped_below_epoch_threshold",
+        "t11_large_stamp_no_overflow",
+        "mutant_m1_no_catchup_is_caught",
+        "mutant_m2_command_time_source_is_caught",
+        "mutant_m3_double_accumulation_is_caught"
+      ],
+      "budget_seconds": 60,
+      "case_id": "S2-B2-MAPPING",
+      "family": "B2_pairing_mapping_component",
+      "qualification_flags": {
+        "ROS_context_created": false,
+        "execute_qualified": false,
+        "research_conclusion": false,
+        "stage_qualified": false
+      },
+      "result_schema": "S2-resume-mapping/v1"
+    }
+  ],
+  "family_registered": "B2-pairing-mapping-S2",
+  "fixed_parameters": {
+    "catch_up_cap_ns": 4900000000,
+    "mapping": "S_next = S_last_published + min(T_next - T_last_published_target, cap)",
+    "mutants_required_caught": 3,
+    "production_call_site": "fixture publish_step + clock_resume",
+    "writer_step_ns": 20000000
+  },
+  "governance": {
+    "auto_retry": 0,
+    "consistency_fail_closed_preserved": true,
+    "failure_originals_preserved": true,
+    "no_L630_or_OutputAuthority_change": true,
+    "pre_registration_required": true,
+    "single_finite_execution": true
+  },
+  "not_claimed": [
+    "owned run (S4 is batch 119)",
+    "B0 design",
+    "healthy-recovery proven (S4 decides)"
+  ],
+  "obligation_binding": {
+    "review": "batch 115 S2/R115-06",
+    "s0": "batch 116",
+    "s1": "batch 117"
+  },
+  "schema": "T3-case-registration/v1",
+  "tree_base": {
+    "binary_sha256": "0c0a1c7fb97ab7c7c8fc91d6e1f43c09688f66e43a3fa49d39f5f7e7eca19d07",
+    "bundle_sha256": "f90831c69407a43abe053ed17e228232fe3928dd1bf4d0061b787632942e05bb",
+    "source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s2_b2_20261025_118/implementation/t2_author"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "original_failed_test_log_sha256": "728d5ce4831e645d6d9d4650824b3d5243071685dc27d6e304defd48b6352bf3",
+  "failed_xml": {
+    "test_p1_worker_liveness.gtest.xml": "757d4e2fbf8935733fb0b426433564bf22fec09b0f868fcfd21faf76067939b4",
+    "test_p1_resources.gtest.xml": "7b70eb3376866433f08e65dddd7e4ee465502b6993a1f7c2e66b5211dbfccb05",
+    "test_p1_admission.gtest.xml": "74569df2fea7a603494744af666ef0a52c2c53931c2f3c814b2eec92f645dc1e",
+    "test_p1_tick_barrier.gtest.xml": "68a0e637e88164da46b6844629c3022dfaf56554322da30194168d3d42463fcc",
+    "test_p1_preparation_barrier.gtest.xml": "318eb2517448730794e2502fc5326ae7aaa63919cda91e8ca18c829fcb3b079d",
+    "test_p1_capability_lease.gtest.xml": "a31c46f2b71d5638c8ba90f5e3975bf02cc847b7eae50bbad860e2e1b60d460d"
+  },
+  "reason": "installed get_serialized_size aligns empty sequence elements; independently tested returned buffer_length differs by four bytes",
+  "repair_changes_size_formula_not_test_criterion": true,
+  "binaries_before_size_repair": {
+    "p1_solver_worker": "d3197a9a7a16924e638d92e84961ba75e63aaf95d3a6545b3b5b1b9f5126925c",
+    "p1_regulator": "bf7671248b00895584adf7f014c3f42c85a7481fdbc1b6c128789ac884eb8cf8"
+  }
+}

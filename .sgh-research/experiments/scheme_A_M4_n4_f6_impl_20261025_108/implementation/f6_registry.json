@@ -1,0 +1,18 @@
+{
+  "comparator": "production AcadosBackend via installed libmpc_solver_lib (unmodified)",
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "harness_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/test_f6_model_transaction.cpp",
+  "harness_source_sha256": "3aaab39450bd6df9f7b1babcc8baaaf36546ff6c03189889348ef2a893c8f6f8",
+  "physical_production_release": false,
+  "ros_context": false,
+  "schema": "F6-transaction-registry/v1",
+  "scope": "F6_model_transaction_component_v1",
+  "source_bundle": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/evidence/freeze/source_bundle.json",
+    "sha256": "ad244ec022e2b2d23cc90b28b9964db3536dd72e5913c37ddb76be75f587c13b"
+  },
+  "test_binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/build_f6/test_f6_model_transaction",
+  "test_binary_sha256": "34c25a8df5ddc50f2259c9a9e9cf6d9977bbc7aec2e6c3ea38ae7a294c4ad00d",
+  "wrapper_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/model_transaction_v1.hpp",
+  "wrapper_source_sha256": "ea0c2c84b2b159eff37bd672a071ba323cce663f1dfd76fad5f7716446f3aef4"
+}

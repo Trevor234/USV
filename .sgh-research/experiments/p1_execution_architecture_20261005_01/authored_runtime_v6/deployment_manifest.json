@@ -1,0 +1,30 @@
+{
+  "run_no_output_calibration.py": {
+    "local_raw_sha256": "9a06623342c133f3f59225171b28808607aaaf7e402dff1a0193483da831b177",
+    "deployed_sha256": "9a06623342c133f3f59225171b28808607aaaf7e402dff1a0193483da831b177"
+  },
+  "owned_process_supervisor.py": {
+    "local_raw_sha256": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173",
+    "deployed_sha256": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173"
+  },
+  "check_p1_execution.py": {
+    "local_raw_sha256": "e0b6319be9fdd143fbf7fc0ff93d0d5a2dad1990f2fa4e2efa44e2aab1bb694f",
+    "deployed_sha256": "e0b6319be9fdd143fbf7fc0ff93d0d5a2dad1990f2fa4e2efa44e2aab1bb694f"
+  },
+  "test_check_p1_execution.py": {
+    "local_raw_sha256": "6a16d59fee2566b068025af1224b2d6be5fdf8165bef74d8a871d460b062ce64",
+    "deployed_sha256": "6a16d59fee2566b068025af1224b2d6be5fdf8165bef74d8a871d460b062ce64"
+  },
+  "test_owned_process_supervisor.py": {
+    "local_raw_sha256": "dd61df35b1731f817124bdad12c6d3f78d3a6de9a942cd4cff3afe1dfcceaeec",
+    "deployed_sha256": "dd61df35b1731f817124bdad12c6d3f78d3a6de9a942cd4cff3afe1dfcceaeec"
+  },
+  "run_p1_vrx_validation.py": {
+    "local_raw_sha256": "648e2b8fb8b68349122ce67da2dba2940b7838bf8c68968168eb6866cab53752",
+    "deployed_sha256": "c101748e74e8951c257b485275e36254f6170d8ab834d061996f80ebc23a335a"
+  },
+  "README_VRX_VALIDATION.md": {
+    "local_raw_sha256": "6769801f8236e20858ff2c97071632a9af35616cf729835f1faf4e2162d67d91",
+    "deployed_sha256": "609630e25f020871ba579f2a1a5d4a91bcbf99804f8993ec34b9365e275d973c"
+  }
+}

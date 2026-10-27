@@ -1,0 +1,81 @@
+{
+  "schema": "M4-after-T1-review-minimum-plan-v70",
+  "recorded_at": "2026-10-24T19:51:54.398327+08:00",
+  "steps": [
+    {
+      "id": "S0",
+      "status": "complete",
+      "task": "修复观测器与runner失败门(69批)"
+    },
+    {
+      "id": "S1",
+      "status": "complete",
+      "task": "T1剩余小范围语义补证,Regulator源码原样",
+      "evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_semantic_supp_20261024_70/evidence/supp_t1/attempt04/verification_v1.json",
+        "postrun/atom_coverage_update_v1.json"
+      ],
+      "done": "23项覆盖更新为已证范围/仍需T2;18项非移交原子计数修正落档;未宣称全覆盖"
+    },
+    {
+      "id": "S2",
+      "status": "next",
+      "task": "冻结T2动作表及阶段回执的最小接口",
+      "code_targets": [
+        "new owned author derived from frozen66 (67 current_author, bundle 732a3549...)",
+        "fixture/synthetic_source_m4.cpp action table",
+        "owned_m4_diagnostic_driver_v1.py",
+        "w2_runtime_contract.py",
+        "Regulator diagnostic-case/parameter admission"
+      ],
+      "checks": [
+        "create-only动作表固定run/case/合同SHA、有限动作和触发Job/版本/阶段;既有Fixture writer执行,candidate伪造不进Fixture",
+        "新增T2值须在入口(w2_runtime_contract.py白名单)、有效参数(Driver装配)、manifest与审计(w2_audit_common/audit_w2)同时消费;normal scope拒绝这些能力",
+        "动作executed回执与Regulator callback/状态变更回执分开;按完整Job/版本/单调时间核对,不用测试flush_pad充当生产ACK",
+        "先离线正反例验证错误case/hash/顺序/多动作/超时/重复回执;不放宽原150ms截止、600ms租约、1s watchdog或关闭预算"
+      ]
+    },
+    {
+      "id": "T2-A",
+      "status": "planned",
+      "task": "clock冻结/恢复场景族",
+      "checks": [
+        "持续投递相同clock stamp保持receipt新鲜与完全静默>100ms的clock stale分别登记",
+        "原>400ms pause、RTF无效与schedule失效逐事件核对;resume明确sim与odom/imu stamp映射",
+        "旧候选不复活;恢复接纳需新窗口有效性和新Job接受证据"
+      ]
+    },
+    {
+      "id": "T2-B",
+      "status": "planned",
+      "task": "在途Job与ready窗口的clear/replace场景族",
+      "checks": [
+        "job_received只证明收到/排队;在途触发须确认同一Job已active或进入计算边界且未产出结果;candidate_received另标ready窗口",
+        "必要时复用已认证有限boundary/release组件;原Job截止绝不延长,错过窗口按登记失败",
+        "区分因旧task被拒与因过期/Worker终端未产生候选;clear与replace不能独立归因则拆子case"
+      ]
+    },
+    {
+      "id": "T2-C",
+      "status": "planned",
+      "task": "Driver shutdown与ready/activation交错场景族",
+      "checks": [
+        "ready确认绑定目标Job及真实完成点;先确认异步Source文件窗口内可靠观测",
+        "文件可见性不足再加仅诊断有界ACK/gate;通知非阻塞、不持业务锁、normal scope不放行",
+        "独立核对ready_commit<request<=stopping_observed<=activation_guard;各角色退出对账"
+      ]
+    },
+    {
+      "id": "T3→N3→F6→P1",
+      "status": "retained",
+      "task": "保留主线剩余义务",
+      "checks": [
+        "cleanup_failed与旧group未空禁止restart、Source队列压力尚未覆盖;不被T2三场景族替代",
+        "每个实际owned case先预检登记、单次有限执行、自动重试0、失败原件保留",
+        "原九组联合复判后才推进有限M0/M1模型事务/F6,再P1;生产B仍MANUAL+RC覆写"
+      ]
+    }
+  ],
+  "stage_qualified": false,
+  "owned_runs_in_70": 0
+}

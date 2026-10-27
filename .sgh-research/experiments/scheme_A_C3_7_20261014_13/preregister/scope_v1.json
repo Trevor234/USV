@@ -1,0 +1,39 @@
+{
+  "MasterClock": "unknown",
+  "WCET": "unknown",
+  "Witness_normal_profile": "normal_business requires exact first real accepted +BusinessReady binding and original necessary record/close/failure predicates",
+  "Witness_observation_profile": "closed_shadow_observation; supports complete accepted or all-rejected populations without claiming normal-business pass",
+  "actual_run_planned": "owned4s normal hooks0; generic full-population check no hard-coded acceptance/counts",
+  "actuator_regulator_publish": false,
+  "author": "N14",
+  "callback_policy": "foreign and resource-rejected Worker callback does not refresh lease, register candidate or mutate trusted Worker/candidate state; existing source-failure/lease-timeout terminal rules remain",
+  "changes": [
+    "Worker role manifest/process/bin/source/typed config plus distinct actual capability/candidate GIDs, pre-merge auth",
+    "bounded per-interface callback receipt counts including resource/auth rejects; no fake successful merge",
+    "Witness-v2 explicit observation_complete/business_ready_observed/normal record predicate",
+    "new evaluator profiles registered before current runs, retained v1 gate and prior failure"
+  ],
+  "client_date": "2026-10-14",
+  "continuous_DDS_unique_owner": "unknown",
+  "current_dynamic20s": "not_run",
+  "current_turn_mixed": "not_run",
+  "native_positive_negative": "real DDS peer interfaces/GID, callback resource/auth/lease, Witness production normal+allreject plus strict decoder/coherent negatives",
+  "plant_acceptance": "unknown",
+  "post_pin_exec_continuity": "unknown",
+  "prior_NormalWitness_failure_kept": true,
+  "research_conclusion": false,
+  "runtime": "new observer only; four N10 exact roles reused",
+  "schema": "C3.7-shadow-worker-witness-preregister/v1",
+  "stage_qualified": false,
+  "unchanged_runtime_bounds": {
+    "T_ns": 200000000,
+    "close_ns": 15000000000,
+    "measurement_ns": 4000000000,
+    "normal_hooks": 0,
+    "prepare_ns": 25000000000,
+    "ready_ns": 150000000,
+    "release_ns": 3000000000,
+    "total_ns": 60000000000
+  },
+  "unified_pressure_recovery_failed_close": "not_run"
+}

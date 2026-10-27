@@ -1,0 +1,26 @@
+{
+  "action_table": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/T2A_RNW3_table.json",
+  "action_table_sha256": "390aac55bcabe8c9feaf564a6b715cd9eafca6f9ddbb7f615e9b767814efb9ce",
+  "audit_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/rnw_audit_v1.py",
+    "sha256": "840ea1839daac54e6b79360c349893e05707c7ac2f414738c15e88b59f3e885f"
+  },
+  "automatic_retries": 0,
+  "case": "T2A-gen-resume-new-window",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "domain_id": 120,
+  "executed": false,
+  "fault_injection_enabled": false,
+  "max_seconds": 45,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/runs/T2A_RNW3",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/s4_registry.json",
+  "registry_sha256": "81401bb1c1a5d8413ce47ef139c6982682ef9a0d359a47fcd25ceda0b3cc2b66",
+  "run_id": "T3-T2A-RNW3",
+  "s4_note": "B2 single-factor positive per batch 115 S4: pass requires genuine same-Job post-resume new-generation acceptance with actual output, adjudicated by the S1 pure audit (rnw_audit_v1); rc0/event-presence/generation-open alone never passes",
+  "schema": "M4-owned-t2bgen-scenario-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

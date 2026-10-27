@@ -1,0 +1,120 @@
+{
+  "schema": "scheme-A-after-case-inventory-minimum-gap-plan-v67",
+  "major_order_fixed": [
+    "W2 complete",
+    "Fixture difference and minimum gap",
+    "M4 reassess",
+    "F6",
+    "P1"
+  ],
+  "component_before_new_owned": true,
+  "steps": [
+    {
+      "id": "T1",
+      "title": "当前Regulator候选/参考/时钟接线组件",
+      "gap_atom_ids": [
+        "candidate_identity_shape.01",
+        "candidate_identity_shape.02",
+        "candidate_identity_shape.03",
+        "candidate_identity_shape.04",
+        "candidate_identity_shape.05",
+        "candidate_identity_shape.06",
+        "candidate_identity_shape.07",
+        "candidate_identity_shape.08",
+        "task_reference.01",
+        "task_reference.02",
+        "task_reference.03",
+        "task_reference.04",
+        "task_reference.05",
+        "task_reference.06",
+        "task_reference.07",
+        "state_clock.04",
+        "state_clock.05",
+        "state_clock.06",
+        "state_clock.07",
+        "state_clock.08",
+        "state_clock.09",
+        "publication_exit.02",
+        "publication_exit.03"
+      ],
+      "code_targets": [
+        "new tests/test_current_candidate_reference_clock.cpp",
+        "existing observer/src/shadow/regulator_owned_execute.cpp through P1_REGULATOR_SOURCE",
+        "existing C33MatrixAccess/ShadowTestTag test seam"
+      ],
+      "implementation": [
+        "新测试使用现成friend/测试构造器驱动真实candidate/path/profile/clock/activate/submit代码，不复制准入算法。",
+        "候选8类、参考7类、时钟6类、发布退出2类逐项映射到23项缺口；再补250/400ms delayed tick外壳组合。",
+        "明确种入readiness/lease/ticket前提，禁止把该组件说成新四角色owned资格；不创建控制DataWriter。",
+        "断言ready/committed/pending无旧身份复活、每候选最多一次、截止不续期、明确拒绝原因。"
+      ],
+      "done_when": "所有23项都有实际调用及正反例结果；未覆盖的跨进程部分精确移交T2，不由测试名代替路径。"
+    },
+    {
+      "id": "T2",
+      "title": "Fixture最小有限刺激接口与必要owned差集",
+      "gap_atom_ids": [],
+      "code_targets": [
+        "new derived fixture/synthetic_source_m4.cpp",
+        "new diagnostic schedule validator/header",
+        "new Driver case/registration and independent raw audit"
+      ],
+      "implementation": [
+        "仅为T1仍须跨进程核验的输入交错增加create-only固定动作表，普通.05默认行为保持。",
+        "由原Fixture已有path/profile/odom/imu/clock writer执行clear/replace或时钟刺激；禁止另造外来writer绕过GID/owner认证。",
+        "动作表固定case/run/文件hash、有限步数/数值/持续预算和触发事件；Source记录计划、实际触发和拒绝原因。",
+        "Candidate伪造不交给Fixture；在已声明诊断Worker或源链接callback组件中验证。",
+        "代码变化后重新bundle→Driver SHA→真实ELF→registry/registration→共享预检；逐case有限运行、自动重试0。"
+      ],
+      "done_when": "只执行已经由T1证明需要owned的最小case清单；每次独立Source/Stored/API/退出对账，不预定九组各一次长run。"
+    },
+    {
+      "id": "T3",
+      "title": "队列压力与cleanup_failed监督消费路径",
+      "gap_atom_ids": [
+        "publication_exit.09",
+        "publication_exit.10",
+        "actual_source_recording.03"
+      ],
+      "code_targets": [
+        "current p1_diag_sink.hpp actual enqueue/drain path",
+        "current Driver wait_close/final cleanup consumer"
+      ],
+      "implementation": [
+        "队列压力沿真实enqueue/drain路径有界注入；逐类generated/emitted/dropped/Stored及正常资格标志对账。",
+        "cleanup_failed通过有界监督组件故障注入覆盖实际消费分支；记录请求/API/进程组事实，证明失败后没有新spawn。",
+        "使用真实进程关闭作正控，并诚实标记失败刺激是监督组件注入；不制造不可杀进程或留下孤儿。",
+        "自动重试0和历史清理成功不当作cleanup_failed分支已通过。"
+      ],
+      "done_when": "三项当前未覆盖义务取得对应层级正反例；需要owned的压力子项先固定例外与差额判据再执行。"
+    },
+    {
+      "id": "N3",
+      "title": "原九组联合复判",
+      "done_when": "原18条、69项按证据层次与来源适用性逐项完成；不能以150个测试或43个复用项自动授予M4。"
+    },
+    {
+      "id": "N4",
+      "title": "有限M0/M1模型事务/F6",
+      "done_when": "M4满足原前置后，依原NX8/NU2/N20/NP6/NP_GLOBAL30数值setter路径验证prepare/原子提交/固定tick激活/旧或mixed候选拒绝/独立warm-start，不codegen、不接GP/PPO。"
+    },
+    {
+      "id": "N5",
+      "title": "P1联合验收",
+      "done_when": "依原P1冻结合同联合检查，API/进程退出/plant接受/硬实时分别判定。"
+    }
+  ],
+  "no_new_prerequisite_C_internal_hang_or_duplicate_release": true,
+  "current_owned_run_count": 0,
+  "baseline_constraints": {
+    "T_ns": 200000000,
+    "deadline_ns": 150000000,
+    "lease_ns": 600000000,
+    "active_watchdog_ns": 1000000000,
+    "automatic_retries": 0,
+    "B_real_mode": "MANUAL + RC override"
+  },
+  "M4_stage_qualified": false,
+  "F6_qualified": false,
+  "P1_qualified": false
+}

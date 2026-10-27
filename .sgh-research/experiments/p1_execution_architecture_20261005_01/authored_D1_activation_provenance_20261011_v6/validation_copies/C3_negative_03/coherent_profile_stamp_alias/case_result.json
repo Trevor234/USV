@@ -1,0 +1,79 @@
+{
+  "case": "coherent_profile_stamp_alias",
+  "expected_code": "original_reason_flow",
+  "passed": true,
+  "observed_codes": [
+    "original_input_change_gate",
+    "original_output_command",
+    "original_reason_flow",
+    "reference_from_nominal_target126",
+    "whole_activation_Witness_binding"
+  ],
+  "mutation": {
+    "coherent_stored_CDR_updates": [
+      {
+        "id": 25,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 103,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 186,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 267,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 386,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 514,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 641,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 769,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 896,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 1024,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 1151,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 1279,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 1401,
+        "topic": "/path/reference_profile"
+      },
+      {
+        "id": 1484,
+        "topic": "/path/reference_profile"
+      }
+    ],
+    "source_files": [
+      "observer/source.jsonl",
+      "worker/source.jsonl",
+      "observer/witness.json"
+    ]
+  },
+  "report": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_provenance_20261011_v6/validation_copies/C3_negative_03/coherent_profile_stamp_alias/C3_report.json",
+  "original_authenticity_qualified": false
+}

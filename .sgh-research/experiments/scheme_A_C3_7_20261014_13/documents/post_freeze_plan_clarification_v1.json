@@ -1,0 +1,14 @@
+{
+  "schema": "C3.7-post-freeze-document-clarification/v1",
+  "original_plan": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/方案A_C3_7后续实施计划_2026-10-14.md",
+  "original_plan_sha256": "edb18cecdaefe06d05d49bdd476f4f937952d3f10235283052dafcd17ee6f93a",
+  "current_plan": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/方案A_C3_7后续实施计划_2026-10-14_v2.md",
+  "current_plan_sha256": "8534fc4dc6f43e3a5c9365b15efe5f86c61d05dde0b14ec370330442646511cd",
+  "reason": "request-before-call and request+2s guards apply to pidfd-exited queued-terminal-tail exception, not ordinary live-owner Applied feedback",
+  "original_QA_retained": true,
+  "source_binary_configuration_or_predicates_changed": false,
+  "stage_qualified": false,
+  "research_conclusion": false,
+  "current_archive_inventory": "archive_inventory_v2.json",
+  "original_prepared_inventory_retained": "archive_inventory_v1.json"
+}

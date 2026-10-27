@@ -26,6 +26,10 @@
  * 对应 Python 版本: usv_safety/mode_manager_node.py 中的 main() 函数。
  */
 
+#include <cstdio>
+#include <exception>
+#include <memory>
+
 #include <rclcpp/rclcpp.hpp>
 
 #include "usv_safety_cpp/mode_manager_node.hpp"
@@ -33,7 +37,17 @@
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<usv_safety::ModeManagerNode>();
+  // 构造期校验 (mpc_fcu_mode 只接受 MANUAL/GUIDED) 失败会抛异常。未捕获即
+  // abort，systemd 记为 crash 且无退出码；这里转成干净的 1，让配置错误在
+  // 日志里可区分于运行时故障。
+  std::shared_ptr<usv_safety::ModeManagerNode> node;
+  try {
+    node = std::make_shared<usv_safety::ModeManagerNode>();
+  } catch (const std::exception & e) {
+    fprintf(stderr, "[mode_manager] 启动配置被拒绝: %s\n", e.what());
+    rclcpp::shutdown();
+    return 1;
+  }
   rclcpp::spin(node);
   rclcpp::shutdown();
   return 0;

@@ -1,0 +1,18 @@
+{
+  "schema": "V1-configuration-applicability-delta/v1",
+  "contract_81_fields_unchanged": true,
+  "new_explicit_parameters": [
+    "diagnostic_v1_sink_policy",
+    "diagnostic_v1_fault_file"
+  ],
+  "five_fresh_owned_roles_verified_per_run": true,
+  "legacy_five_hooks_still_zero": true,
+  "additional_diagnostic_fault_enabled_and_declared": true,
+  "first_case_failed_ordering_retained": true,
+  "repaired_V1_fault_local_case_passed": true,
+  "normal_close_qualified": false,
+  "B4_pending_groups_closed": false,
+  "execute_qualified": false,
+  "stage_qualified": false,
+  "research_conclusion": false
+}

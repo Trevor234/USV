@@ -1,0 +1,1488 @@
+{
+  "argv": [
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/publisher/build/p1_F5_held_publisher",
+    "--ros-args",
+    "-p",
+    "allowed_fcu_modes:=[\"GUIDED\"]",
+    "-p",
+    "control_mode:=\"dynamic\"",
+    "-p",
+    "cruise_speed:=0.6",
+    "-p",
+    "dynamic.Q:=[20.0,20.0,50.0,8.0,1.0,8.0]",
+    "-p",
+    "dynamic.Qf_scale:=8.0",
+    "-p",
+    "dynamic.R:=[0.05,0.05]",
+    "-p",
+    "dynamic.Rd:=[0.2,0.2]",
+    "-p",
+    "dynamic.T_max:=25.0",
+    "-p",
+    "dynamic.T_min:=-25.0",
+    "-p",
+    "dynamic.dT_max:=80.0",
+    "-p",
+    "dynamic.dt:=0.2",
+    "-p",
+    "enable_reference_prediction_logging:=true",
+    "-p",
+    "enable_research_logging:=true",
+    "-p",
+    "horizon:=20",
+    "-p",
+    "imu_topic:=\"/wamv/sensors/imu/imu/data\"",
+    "-p",
+    "max_solve_time_ms:=200.0",
+    "-p",
+    "mpc_dt:=0.2",
+    "-p",
+    "odom_timeout_s:=2.0",
+    "-p",
+    "odom_topic:=\"/wamv/sensors/position/ground_truth_odometry\"",
+    "-p",
+    "output_mode:=\"vrx_thrust\"",
+    "-p",
+    "p1_owned_contract_sha256:=\"0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933\"",
+    "-p",
+    "p1_release_file:=\"/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/release.json\"",
+    "-p",
+    "path_frame:=\"map\"",
+    "-p",
+    "path_topic:=\"/path/reference\"",
+    "-p",
+    "predicted_trajectory_topic:=\"/mpc/predicted_trajectory\"",
+    "-p",
+    "profile_topic:=\"/path/reference_profile\"",
+    "-p",
+    "publish_predicted:=true",
+    "-p",
+    "qos_overrides./clock.subscription.depth:=1",
+    "-p",
+    "qos_overrides./clock.subscription.durability:=\"volatile\"",
+    "-p",
+    "qos_overrides./clock.subscription.history:=\"keep_last\"",
+    "-p",
+    "qos_overrides./clock.subscription.reliability:=\"best_effort\"",
+    "-p",
+    "qos_overrides./parameter_events.publisher.depth:=1000",
+    "-p",
+    "qos_overrides./parameter_events.publisher.durability:=\"volatile\"",
+    "-p",
+    "qos_overrides./parameter_events.publisher.history:=\"keep_last\"",
+    "-p",
+    "qos_overrides./parameter_events.publisher.reliability:=\"reliable\"",
+    "-p",
+    "rc_override_topic:=\"/mavros/rc/override\"",
+    "-p",
+    "rc_pwm_center:=1500",
+    "-p",
+    "rc_pwm_max:=1900",
+    "-p",
+    "rc_pwm_min:=1100",
+    "-p",
+    "rc_steering_channel:=0",
+    "-p",
+    "rc_throttle_channel:=2",
+    "-p",
+    "reference_start_offset:=2",
+    "-p",
+    "require_fcu_state:=false",
+    "-p",
+    "research_baseline_id:=\"F5_20261005_atomic_freeze_01\"",
+    "-p",
+    "research_config_hash:=\"ea45273e1d9643a3165e285a3bc3bffe9fc7726c51067b57e8ef55cbc9460ef7\"",
+    "-p",
+    "research_expected_child_frame:=\"wamv/base_link\"",
+    "-p",
+    "research_expected_pose_frame:=\"map\"",
+    "-p",
+    "research_frame_contract_verified:=true",
+    "-p",
+    "research_logging_armed:=false",
+    "-p",
+    "research_nominal_config_hash:=\"78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84\"",
+    "-p",
+    "research_output_dir:=\"/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/publisher\"",
+    "-p",
+    "research_run_id:=\"owned_source_v4_01-publisher\"",
+    "-p",
+    "solver_hold_threshold:=5",
+    "-p",
+    "start_type_description_service:=true",
+    "-p",
+    "state_timeout_s:=0.0",
+    "-p",
+    "state_topic:=\"/mavros/state\"",
+    "-p",
+    "status_topic:=\"/mpc/status\"",
+    "-p",
+    "steering_gain:=0.4",
+    "-p",
+    "steering_sign:=-1.0",
+    "-p",
+    "throttle_gain:=0.75",
+    "-p",
+    "throttle_sign:=1.0",
+    "-p",
+    "use_sim_time:=true",
+    "-p",
+    "vehicle.Iz:=2.13",
+    "-p",
+    "vehicle.Nr:=-3.105",
+    "-p",
+    "vehicle.Nr_dot:=-3.41",
+    "-p",
+    "vehicle.Nrr:=-0.71",
+    "-p",
+    "vehicle.Nv:=0.0",
+    "-p",
+    "vehicle.Nv_dot:=-0.1817725",
+    "-p",
+    "vehicle.Nvv:=0.0",
+    "-p",
+    "vehicle.Xu:=-2.272063",
+    "-p",
+    "vehicle.Xu_dot:=-2.0",
+    "-p",
+    "vehicle.Xuu:=-11.571784",
+    "-p",
+    "vehicle.Yr:=0.0",
+    "-p",
+    "vehicle.Yr_dot:=-0.1817725",
+    "-p",
+    "vehicle.Yrr:=0.0",
+    "-p",
+    "vehicle.Yv:=-2.629019",
+    "-p",
+    "vehicle.Yv_dot:=-8.0",
+    "-p",
+    "vehicle.Yvv:=-0.05",
+    "-p",
+    "vehicle.d_thruster:=0.25",
+    "-p",
+    "vehicle.mass:=14.2",
+    "-p",
+    "vehicle.xg:=0.12",
+    "-p",
+    "vrx_left_thrust_topic:=\"/wamv/thrusters/left/thrust\"",
+    "-p",
+    "vrx_right_thrust_topic:=\"/wamv/thrusters/right/thrust\"",
+    "-p",
+    "vrx_thrust_cmd_max:=100.0",
+    "-p",
+    "vrx_thrust_scale:=1.0"
+  ],
+  "binary_sha256": "2b96db97bee3bbb867088da8b04a1076f4175d69fdc6d51d897d15b41fbfe437",
+  "boot_id": "d9ebbc36-acd7-46ac-a805-bfe3c9eedd39",
+  "config_hash": "ea45273e1d9643a3165e285a3bc3bffe9fc7726c51067b57e8ef55cbc9460ef7",
+  "contract_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+  "created_steady_ns": 73812956665604,
+  "effective_parameters": {
+    "allowed_fcu_modes": {
+      "canonical_value": [
+        "GUIDED"
+      ],
+      "type": 9,
+      "value": [
+        "GUIDED"
+      ]
+    },
+    "control_mode": {
+      "canonical_value": "dynamic",
+      "type": 4,
+      "value": "dynamic"
+    },
+    "cruise_speed": {
+      "canonical_value": "3fe3333333333333",
+      "type": 3,
+      "value": 0.6
+    },
+    "dynamic.Q": {
+      "canonical_value": [
+        "4034000000000000",
+        "4034000000000000",
+        "4049000000000000",
+        "4020000000000000",
+        "3ff0000000000000",
+        "4020000000000000"
+      ],
+      "type": 8,
+      "value": [
+        20.0,
+        20.0,
+        50.0,
+        8.0,
+        1.0,
+        8.0
+      ]
+    },
+    "dynamic.Qf_scale": {
+      "canonical_value": "4020000000000000",
+      "type": 3,
+      "value": 8.0
+    },
+    "dynamic.R": {
+      "canonical_value": [
+        "3fa999999999999a",
+        "3fa999999999999a"
+      ],
+      "type": 8,
+      "value": [
+        0.05,
+        0.05
+      ]
+    },
+    "dynamic.Rd": {
+      "canonical_value": [
+        "3fc999999999999a",
+        "3fc999999999999a"
+      ],
+      "type": 8,
+      "value": [
+        0.2,
+        0.2
+      ]
+    },
+    "dynamic.T_max": {
+      "canonical_value": "4039000000000000",
+      "type": 3,
+      "value": 25.0
+    },
+    "dynamic.T_min": {
+      "canonical_value": "c039000000000000",
+      "type": 3,
+      "value": -25.0
+    },
+    "dynamic.dT_max": {
+      "canonical_value": "4054000000000000",
+      "type": 3,
+      "value": 80.0
+    },
+    "dynamic.dt": {
+      "canonical_value": "3fc999999999999a",
+      "type": 3,
+      "value": 0.2
+    },
+    "enable_reference_prediction_logging": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "enable_research_logging": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "horizon": {
+      "canonical_value": 20,
+      "type": 2,
+      "value": 20
+    },
+    "imu_topic": {
+      "canonical_value": "/wamv/sensors/imu/imu/data",
+      "type": 4,
+      "value": "/wamv/sensors/imu/imu/data"
+    },
+    "max_solve_time_ms": {
+      "canonical_value": "4069000000000000",
+      "type": 3,
+      "value": 200.0
+    },
+    "mpc_dt": {
+      "canonical_value": "3fc999999999999a",
+      "type": 3,
+      "value": 0.2
+    },
+    "odom_timeout_s": {
+      "canonical_value": "4000000000000000",
+      "type": 3,
+      "value": 2.0
+    },
+    "odom_topic": {
+      "canonical_value": "/wamv/sensors/position/ground_truth_odometry",
+      "type": 4,
+      "value": "/wamv/sensors/position/ground_truth_odometry"
+    },
+    "output_mode": {
+      "canonical_value": "vrx_thrust",
+      "type": 4,
+      "value": "vrx_thrust"
+    },
+    "p1_owned_contract_sha256": {
+      "canonical_value": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+      "type": 4,
+      "value": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933"
+    },
+    "p1_release_file": {
+      "canonical_value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/release.json",
+      "type": 4,
+      "value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/release.json"
+    },
+    "path_frame": {
+      "canonical_value": "map",
+      "type": 4,
+      "value": "map"
+    },
+    "path_topic": {
+      "canonical_value": "/path/reference",
+      "type": 4,
+      "value": "/path/reference"
+    },
+    "predicted_trajectory_topic": {
+      "canonical_value": "/mpc/predicted_trajectory",
+      "type": 4,
+      "value": "/mpc/predicted_trajectory"
+    },
+    "profile_topic": {
+      "canonical_value": "/path/reference_profile",
+      "type": 4,
+      "value": "/path/reference_profile"
+    },
+    "publish_predicted": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "qos_overrides./clock.subscription.depth": {
+      "canonical_value": 1,
+      "type": 2,
+      "value": 1
+    },
+    "qos_overrides./clock.subscription.durability": {
+      "canonical_value": "volatile",
+      "type": 4,
+      "value": "volatile"
+    },
+    "qos_overrides./clock.subscription.history": {
+      "canonical_value": "keep_last",
+      "type": 4,
+      "value": "keep_last"
+    },
+    "qos_overrides./clock.subscription.reliability": {
+      "canonical_value": "best_effort",
+      "type": 4,
+      "value": "best_effort"
+    },
+    "qos_overrides./parameter_events.publisher.depth": {
+      "canonical_value": 1000,
+      "type": 2,
+      "value": 1000
+    },
+    "qos_overrides./parameter_events.publisher.durability": {
+      "canonical_value": "volatile",
+      "type": 4,
+      "value": "volatile"
+    },
+    "qos_overrides./parameter_events.publisher.history": {
+      "canonical_value": "keep_last",
+      "type": 4,
+      "value": "keep_last"
+    },
+    "qos_overrides./parameter_events.publisher.reliability": {
+      "canonical_value": "reliable",
+      "type": 4,
+      "value": "reliable"
+    },
+    "rc_override_topic": {
+      "canonical_value": "/mavros/rc/override",
+      "type": 4,
+      "value": "/mavros/rc/override"
+    },
+    "rc_pwm_center": {
+      "canonical_value": 1500,
+      "type": 2,
+      "value": 1500
+    },
+    "rc_pwm_max": {
+      "canonical_value": 1900,
+      "type": 2,
+      "value": 1900
+    },
+    "rc_pwm_min": {
+      "canonical_value": 1100,
+      "type": 2,
+      "value": 1100
+    },
+    "rc_steering_channel": {
+      "canonical_value": 0,
+      "type": 2,
+      "value": 0
+    },
+    "rc_throttle_channel": {
+      "canonical_value": 2,
+      "type": 2,
+      "value": 2
+    },
+    "reference_start_offset": {
+      "canonical_value": 2,
+      "type": 2,
+      "value": 2
+    },
+    "require_fcu_state": {
+      "canonical_value": false,
+      "type": 1,
+      "value": false
+    },
+    "research_baseline_id": {
+      "canonical_value": "F5_20261005_atomic_freeze_01",
+      "type": 4,
+      "value": "F5_20261005_atomic_freeze_01"
+    },
+    "research_config_hash": {
+      "canonical_value": "ea45273e1d9643a3165e285a3bc3bffe9fc7726c51067b57e8ef55cbc9460ef7",
+      "type": 4,
+      "value": "ea45273e1d9643a3165e285a3bc3bffe9fc7726c51067b57e8ef55cbc9460ef7"
+    },
+    "research_expected_child_frame": {
+      "canonical_value": "wamv/base_link",
+      "type": 4,
+      "value": "wamv/base_link"
+    },
+    "research_expected_pose_frame": {
+      "canonical_value": "map",
+      "type": 4,
+      "value": "map"
+    },
+    "research_frame_contract_verified": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "research_logging_armed": {
+      "canonical_value": false,
+      "type": 1,
+      "value": false
+    },
+    "research_nominal_config_hash": {
+      "canonical_value": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+      "type": 4,
+      "value": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84"
+    },
+    "research_output_dir": {
+      "canonical_value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/publisher",
+      "type": 4,
+      "value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/publisher"
+    },
+    "research_run_id": {
+      "canonical_value": "owned_source_v4_01-publisher",
+      "type": 4,
+      "value": "owned_source_v4_01-publisher"
+    },
+    "solver_hold_threshold": {
+      "canonical_value": 5,
+      "type": 2,
+      "value": 5
+    },
+    "start_type_description_service": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "state_timeout_s": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "state_topic": {
+      "canonical_value": "/mavros/state",
+      "type": 4,
+      "value": "/mavros/state"
+    },
+    "status_topic": {
+      "canonical_value": "/mpc/status",
+      "type": 4,
+      "value": "/mpc/status"
+    },
+    "steering_gain": {
+      "canonical_value": "3fd999999999999a",
+      "type": 3,
+      "value": 0.4
+    },
+    "steering_sign": {
+      "canonical_value": "bff0000000000000",
+      "type": 3,
+      "value": -1.0
+    },
+    "throttle_gain": {
+      "canonical_value": "3fe8000000000000",
+      "type": 3,
+      "value": 0.75
+    },
+    "throttle_sign": {
+      "canonical_value": "3ff0000000000000",
+      "type": 3,
+      "value": 1.0
+    },
+    "use_sim_time": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "vehicle.Iz": {
+      "canonical_value": "40010a3d70a3d70a",
+      "type": 3,
+      "value": 2.13
+    },
+    "vehicle.Nr": {
+      "canonical_value": "c008d70a3d70a3d7",
+      "type": 3,
+      "value": -3.105
+    },
+    "vehicle.Nr_dot": {
+      "canonical_value": "c00b47ae147ae148",
+      "type": 3,
+      "value": -3.41
+    },
+    "vehicle.Nrr": {
+      "canonical_value": "bfe6b851eb851eb8",
+      "type": 3,
+      "value": -0.71
+    },
+    "vehicle.Nv": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Nv_dot": {
+      "canonical_value": "bfc744523f67f4dc",
+      "type": 3,
+      "value": -0.1817725
+    },
+    "vehicle.Nvv": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Xu": {
+      "canonical_value": "c0022d2f5dbb9cfa",
+      "type": 3,
+      "value": -2.272063
+    },
+    "vehicle.Xu_dot": {
+      "canonical_value": "c000000000000000",
+      "type": 3,
+      "value": -2.0
+    },
+    "vehicle.Xuu": {
+      "canonical_value": "c02724c0df58c08b",
+      "type": 3,
+      "value": -11.571784
+    },
+    "vehicle.Yr": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Yr_dot": {
+      "canonical_value": "bfc744523f67f4dc",
+      "type": 3,
+      "value": -0.1817725
+    },
+    "vehicle.Yrr": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Yv": {
+      "canonical_value": "c005083b1d0c8041",
+      "type": 3,
+      "value": -2.629019
+    },
+    "vehicle.Yv_dot": {
+      "canonical_value": "c020000000000000",
+      "type": 3,
+      "value": -8.0
+    },
+    "vehicle.Yvv": {
+      "canonical_value": "bfa999999999999a",
+      "type": 3,
+      "value": -0.05
+    },
+    "vehicle.d_thruster": {
+      "canonical_value": "3fd0000000000000",
+      "type": 3,
+      "value": 0.25
+    },
+    "vehicle.mass": {
+      "canonical_value": "402e99999999999a",
+      "type": 3,
+      "value": 15.3
+    },
+    "vehicle.xg": {
+      "canonical_value": "3fbeb851eb851eb8",
+      "type": 3,
+      "value": 0.12
+    },
+    "vrx_left_thrust_topic": {
+      "canonical_value": "/wamv/thrusters/left/thrust",
+      "type": 4,
+      "value": "/wamv/thrusters/left/thrust"
+    },
+    "vrx_right_thrust_topic": {
+      "canonical_value": "/wamv/thrusters/right/thrust",
+      "type": 4,
+      "value": "/wamv/thrusters/right/thrust"
+    },
+    "vrx_thrust_cmd_max": {
+      "canonical_value": "4059000000000000",
+      "type": 3,
+      "value": 100.0
+    },
+    "vrx_thrust_scale": {
+      "canonical_value": "3ff0000000000000",
+      "type": 3,
+      "value": 1.0
+    }
+  },
+  "effective_parameters_digest_encoding": "p1-typed-ieee754-v1",
+  "effective_parameters_immutable": true,
+  "effective_parameters_sha256": "2e1160ce20c00731247907a9999d487130b87c71602da9f970f58f90805f432e",
+  "endpoint_scope": "all_explicit_application_publishers_and_subscriptions",
+  "endpoints": [
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        31,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/research/state_snapshot",
+      "type": "usv_research_interfaces/msg/StateSnapshot"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        32,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/research/control/applied",
+      "type": "usv_research_interfaces/msg/AppliedControl"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        33,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/research/cycle_timing",
+      "type": "usv_research_interfaces/msg/CycleTiming"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        34,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/research/reference_prediction",
+      "type": "usv_research_interfaces/msg/ReferencePrediction"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        26,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/mavros/rc/override",
+      "type": "mavros_msgs/msg/OverrideRCIn"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        27,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/wamv/thrusters/left/thrust",
+      "type": "std_msgs/msg/Float64"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        28,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/wamv/thrusters/right/thrust",
+      "type": "std_msgs/msg/Float64"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        29,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/mpc/predicted_trajectory",
+      "type": "nav_msgs/msg/Path"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        30,
+        3
+      ],
+      "kind": "publisher",
+      "topic": "/mpc/status",
+      "type": "std_msgs/msg/String"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        21,
+        4
+      ],
+      "kind": "subscription",
+      "topic": "/wamv/sensors/position/ground_truth_odometry",
+      "type": "nav_msgs/msg/Odometry"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        22,
+        4
+      ],
+      "kind": "subscription",
+      "topic": "/wamv/sensors/imu/imu/data",
+      "type": "sensor_msgs/msg/Imu"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        23,
+        4
+      ],
+      "kind": "subscription",
+      "topic": "/path/reference",
+      "type": "nav_msgs/msg/Path"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        24,
+        4
+      ],
+      "kind": "subscription",
+      "topic": "/path/reference_profile",
+      "type": "std_msgs/msg/Float64MultiArray"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        25,
+        4
+      ],
+      "kind": "subscription",
+      "topic": "/mavros/state",
+      "type": "mavros_msgs/msg/State"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        35,
+        4
+      ],
+      "kind": "subscription",
+      "topic": "/clock",
+      "type": "rosgraph_msgs/msg/Clock"
+    },
+    {
+      "gid": [
+        1,
+        15,
+        151,
+        211,
+        109,
+        16,
+        85,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        17,
+        4
+      ],
+      "kind": "subscription",
+      "topic": "/clock",
+      "type": "rosgraph_msgs/msg/Clock"
+    }
+  ],
+  "exe": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/publisher/build/p1_F5_held_publisher",
+  "execute_qualified": false,
+  "gid_storage_size": 16,
+  "infrastructure_endpoints_in_scope": false,
+  "node": "/mpc_controller_node",
+  "nominal_config_hash": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+  "parameter_overrides": {
+    "allowed_fcu_modes": {
+      "canonical_value": [
+        "GUIDED"
+      ],
+      "type": 9,
+      "value": [
+        "GUIDED"
+      ]
+    },
+    "control_mode": {
+      "canonical_value": "dynamic",
+      "type": 4,
+      "value": "dynamic"
+    },
+    "cruise_speed": {
+      "canonical_value": "3fe3333333333333",
+      "type": 3,
+      "value": 0.6
+    },
+    "dynamic.Q": {
+      "canonical_value": [
+        "4034000000000000",
+        "4034000000000000",
+        "4049000000000000",
+        "4020000000000000",
+        "3ff0000000000000",
+        "4020000000000000"
+      ],
+      "type": 8,
+      "value": [
+        20.0,
+        20.0,
+        50.0,
+        8.0,
+        1.0,
+        8.0
+      ]
+    },
+    "dynamic.Qf_scale": {
+      "canonical_value": "4020000000000000",
+      "type": 3,
+      "value": 8.0
+    },
+    "dynamic.R": {
+      "canonical_value": [
+        "3fa999999999999a",
+        "3fa999999999999a"
+      ],
+      "type": 8,
+      "value": [
+        0.05,
+        0.05
+      ]
+    },
+    "dynamic.Rd": {
+      "canonical_value": [
+        "3fc999999999999a",
+        "3fc999999999999a"
+      ],
+      "type": 8,
+      "value": [
+        0.2,
+        0.2
+      ]
+    },
+    "dynamic.T_max": {
+      "canonical_value": "4039000000000000",
+      "type": 3,
+      "value": 25.0
+    },
+    "dynamic.T_min": {
+      "canonical_value": "c039000000000000",
+      "type": 3,
+      "value": -25.0
+    },
+    "dynamic.dT_max": {
+      "canonical_value": "4054000000000000",
+      "type": 3,
+      "value": 80.0
+    },
+    "dynamic.dt": {
+      "canonical_value": "3fc999999999999a",
+      "type": 3,
+      "value": 0.2
+    },
+    "enable_reference_prediction_logging": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "enable_research_logging": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "horizon": {
+      "canonical_value": 20,
+      "type": 2,
+      "value": 20
+    },
+    "imu_topic": {
+      "canonical_value": "/wamv/sensors/imu/imu/data",
+      "type": 4,
+      "value": "/wamv/sensors/imu/imu/data"
+    },
+    "max_solve_time_ms": {
+      "canonical_value": "4069000000000000",
+      "type": 3,
+      "value": 200.0
+    },
+    "mpc_dt": {
+      "canonical_value": "3fc999999999999a",
+      "type": 3,
+      "value": 0.2
+    },
+    "odom_timeout_s": {
+      "canonical_value": "4000000000000000",
+      "type": 3,
+      "value": 2.0
+    },
+    "odom_topic": {
+      "canonical_value": "/wamv/sensors/position/ground_truth_odometry",
+      "type": 4,
+      "value": "/wamv/sensors/position/ground_truth_odometry"
+    },
+    "output_mode": {
+      "canonical_value": "vrx_thrust",
+      "type": 4,
+      "value": "vrx_thrust"
+    },
+    "p1_owned_contract_sha256": {
+      "canonical_value": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+      "type": 4,
+      "value": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933"
+    },
+    "p1_release_file": {
+      "canonical_value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/release.json",
+      "type": 4,
+      "value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/release.json"
+    },
+    "path_frame": {
+      "canonical_value": "map",
+      "type": 4,
+      "value": "map"
+    },
+    "path_topic": {
+      "canonical_value": "/path/reference",
+      "type": 4,
+      "value": "/path/reference"
+    },
+    "predicted_trajectory_topic": {
+      "canonical_value": "/mpc/predicted_trajectory",
+      "type": 4,
+      "value": "/mpc/predicted_trajectory"
+    },
+    "profile_topic": {
+      "canonical_value": "/path/reference_profile",
+      "type": 4,
+      "value": "/path/reference_profile"
+    },
+    "publish_predicted": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "qos_overrides./clock.subscription.depth": {
+      "canonical_value": 1,
+      "type": 2,
+      "value": 1
+    },
+    "qos_overrides./clock.subscription.durability": {
+      "canonical_value": "volatile",
+      "type": 4,
+      "value": "volatile"
+    },
+    "qos_overrides./clock.subscription.history": {
+      "canonical_value": "keep_last",
+      "type": 4,
+      "value": "keep_last"
+    },
+    "qos_overrides./clock.subscription.reliability": {
+      "canonical_value": "best_effort",
+      "type": 4,
+      "value": "best_effort"
+    },
+    "qos_overrides./parameter_events.publisher.depth": {
+      "canonical_value": 1000,
+      "type": 2,
+      "value": 1000
+    },
+    "qos_overrides./parameter_events.publisher.durability": {
+      "canonical_value": "volatile",
+      "type": 4,
+      "value": "volatile"
+    },
+    "qos_overrides./parameter_events.publisher.history": {
+      "canonical_value": "keep_last",
+      "type": 4,
+      "value": "keep_last"
+    },
+    "qos_overrides./parameter_events.publisher.reliability": {
+      "canonical_value": "reliable",
+      "type": 4,
+      "value": "reliable"
+    },
+    "rc_override_topic": {
+      "canonical_value": "/mavros/rc/override",
+      "type": 4,
+      "value": "/mavros/rc/override"
+    },
+    "rc_pwm_center": {
+      "canonical_value": 1500,
+      "type": 2,
+      "value": 1500
+    },
+    "rc_pwm_max": {
+      "canonical_value": 1900,
+      "type": 2,
+      "value": 1900
+    },
+    "rc_pwm_min": {
+      "canonical_value": 1100,
+      "type": 2,
+      "value": 1100
+    },
+    "rc_steering_channel": {
+      "canonical_value": 0,
+      "type": 2,
+      "value": 0
+    },
+    "rc_throttle_channel": {
+      "canonical_value": 2,
+      "type": 2,
+      "value": 2
+    },
+    "reference_start_offset": {
+      "canonical_value": 2,
+      "type": 2,
+      "value": 2
+    },
+    "require_fcu_state": {
+      "canonical_value": false,
+      "type": 1,
+      "value": false
+    },
+    "research_baseline_id": {
+      "canonical_value": "F5_20261005_atomic_freeze_01",
+      "type": 4,
+      "value": "F5_20261005_atomic_freeze_01"
+    },
+    "research_config_hash": {
+      "canonical_value": "ea45273e1d9643a3165e285a3bc3bffe9fc7726c51067b57e8ef55cbc9460ef7",
+      "type": 4,
+      "value": "ea45273e1d9643a3165e285a3bc3bffe9fc7726c51067b57e8ef55cbc9460ef7"
+    },
+    "research_expected_child_frame": {
+      "canonical_value": "wamv/base_link",
+      "type": 4,
+      "value": "wamv/base_link"
+    },
+    "research_expected_pose_frame": {
+      "canonical_value": "map",
+      "type": 4,
+      "value": "map"
+    },
+    "research_frame_contract_verified": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "research_logging_armed": {
+      "canonical_value": false,
+      "type": 1,
+      "value": false
+    },
+    "research_nominal_config_hash": {
+      "canonical_value": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+      "type": 4,
+      "value": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84"
+    },
+    "research_output_dir": {
+      "canonical_value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/publisher",
+      "type": 4,
+      "value": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/runs/owned_source_v4_01/publisher"
+    },
+    "research_run_id": {
+      "canonical_value": "owned_source_v4_01-publisher",
+      "type": 4,
+      "value": "owned_source_v4_01-publisher"
+    },
+    "solver_hold_threshold": {
+      "canonical_value": 5,
+      "type": 2,
+      "value": 5
+    },
+    "start_type_description_service": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "state_timeout_s": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "state_topic": {
+      "canonical_value": "/mavros/state",
+      "type": 4,
+      "value": "/mavros/state"
+    },
+    "status_topic": {
+      "canonical_value": "/mpc/status",
+      "type": 4,
+      "value": "/mpc/status"
+    },
+    "steering_gain": {
+      "canonical_value": "3fd999999999999a",
+      "type": 3,
+      "value": 0.4
+    },
+    "steering_sign": {
+      "canonical_value": "bff0000000000000",
+      "type": 3,
+      "value": -1.0
+    },
+    "throttle_gain": {
+      "canonical_value": "3fe8000000000000",
+      "type": 3,
+      "value": 0.75
+    },
+    "throttle_sign": {
+      "canonical_value": "3ff0000000000000",
+      "type": 3,
+      "value": 1.0
+    },
+    "use_sim_time": {
+      "canonical_value": true,
+      "type": 1,
+      "value": true
+    },
+    "vehicle.Iz": {
+      "canonical_value": "40010a3d70a3d70a",
+      "type": 3,
+      "value": 2.13
+    },
+    "vehicle.Nr": {
+      "canonical_value": "c008d70a3d70a3d7",
+      "type": 3,
+      "value": -3.105
+    },
+    "vehicle.Nr_dot": {
+      "canonical_value": "c00b47ae147ae148",
+      "type": 3,
+      "value": -3.41
+    },
+    "vehicle.Nrr": {
+      "canonical_value": "bfe6b851eb851eb8",
+      "type": 3,
+      "value": -0.71
+    },
+    "vehicle.Nv": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Nv_dot": {
+      "canonical_value": "bfc744523f67f4dc",
+      "type": 3,
+      "value": -0.1817725
+    },
+    "vehicle.Nvv": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Xu": {
+      "canonical_value": "c0022d2f5dbb9cfa",
+      "type": 3,
+      "value": -2.272063
+    },
+    "vehicle.Xu_dot": {
+      "canonical_value": "c000000000000000",
+      "type": 3,
+      "value": -2.0
+    },
+    "vehicle.Xuu": {
+      "canonical_value": "c02724c0df58c08b",
+      "type": 3,
+      "value": -11.571784
+    },
+    "vehicle.Yr": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Yr_dot": {
+      "canonical_value": "bfc744523f67f4dc",
+      "type": 3,
+      "value": -0.1817725
+    },
+    "vehicle.Yrr": {
+      "canonical_value": "0000000000000000",
+      "type": 3,
+      "value": 0.0
+    },
+    "vehicle.Yv": {
+      "canonical_value": "c005083b1d0c8041",
+      "type": 3,
+      "value": -2.629019
+    },
+    "vehicle.Yv_dot": {
+      "canonical_value": "c020000000000000",
+      "type": 3,
+      "value": -8.0
+    },
+    "vehicle.Yvv": {
+      "canonical_value": "bfa999999999999a",
+      "type": 3,
+      "value": -0.05
+    },
+    "vehicle.d_thruster": {
+      "canonical_value": "3fd0000000000000",
+      "type": 3,
+      "value": 0.25
+    },
+    "vehicle.mass": {
+      "canonical_value": "402c666666666666",
+      "type": 3,
+      "value": 14.2
+    },
+    "vehicle.xg": {
+      "canonical_value": "3fbeb851eb851eb8",
+      "type": 3,
+      "value": 0.12
+    },
+    "vrx_left_thrust_topic": {
+      "canonical_value": "/wamv/thrusters/left/thrust",
+      "type": 4,
+      "value": "/wamv/thrusters/left/thrust"
+    },
+    "vrx_right_thrust_topic": {
+      "canonical_value": "/wamv/thrusters/right/thrust",
+      "type": 4,
+      "value": "/wamv/thrusters/right/thrust"
+    },
+    "vrx_thrust_cmd_max": {
+      "canonical_value": "4059000000000000",
+      "type": 3,
+      "value": 100.0
+    },
+    "vrx_thrust_scale": {
+      "canonical_value": "3ff0000000000000",
+      "type": 3,
+      "value": 1.0
+    }
+  },
+  "parent_baseline_manifest_sha256": "77737a5924f1bcd97996dee3c08e204a4a4c8fbf2f3716ff65d41fbc4bad6762",
+  "pgid": 69741,
+  "physical_output_state": "held",
+  "physical_release_qualified": false,
+  "pid": 69741,
+  "process_start_ticks": 7381290,
+  "producer_instance_id": "owned_source_v4_01-publisher:73812942596051",
+  "rmw_implementation": "rmw_fastrtps_cpp",
+  "role": "publisher",
+  "run_id": "owned_source_v4_01-publisher",
+  "schema_version": "p1-owned-role-v1",
+  "sid": 69741,
+  "source_bundle_sha256": "5c8f832b8c4b41a1454d3a473fe19119a28463a3331d25ad5377604961fe37e0"
+}

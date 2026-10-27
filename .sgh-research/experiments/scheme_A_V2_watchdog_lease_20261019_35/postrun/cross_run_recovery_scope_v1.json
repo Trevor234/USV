@@ -1,0 +1,86 @@
+{
+  "Native_in_C_uninterruptible_hang_tested": false,
+  "V2_scoped_minimal_cases_complete": true,
+  "actual_launches": 4,
+  "actual_raw_terminal_negative_checks": 8,
+  "all_interleavings_pending_bound_proven": false,
+  "all_original_V2_stage_claims_complete": false,
+  "barrier_release_after_watchdog_ns": 505910444,
+  "barrier_started_after_at_least_one_completed_Job": 1,
+  "current_version_old_instance_packet_injection_tested": false,
+  "different_Worker_instances_PIDs_and_start_times": true,
+  "execute_qualified": false,
+  "final_profile_passed_runs": 2,
+  "fresh_prefix_Applied": 4,
+  "fresh_prefix_Decision": 23,
+  "fresh_prefix_actual_API_before_barrier": true,
+  "fresh_run_new_actual_accepted_prefix_before_its_separate_fault": true,
+  "initial_literal_reason_and_normal_tail_failure_preserved": true,
+  "initial_missing_library_failure_preserved": true,
+  "input_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_active_r3_05/observer/source.jsonl": {
+      "bytes": 2727889,
+      "sha256": "32b41d9a64ba1e9366049de462fdf108f61bbd787977c5d6ba92df396d73228d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_active_r3_05/owned_process_ledger.jsonl": {
+      "bytes": 19942,
+      "sha256": "f1bb3dee64cebb215083883c2c5ee42ff5467aafa1338e2ac2b8732d0f4fd556"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_active_r3_05/publisher/controlled_source.jsonl": {
+      "bytes": 174409,
+      "sha256": "47922b4355f56138ab87100c4200b1675bd919b3f53c18ebfe1f874ebff88d93"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_active_r3_05/result.json": {
+      "bytes": 6909,
+      "sha256": "24ee5ae052133df7a4f1a311670f71ec90c944e7d21c7849c032ce65a41991e1"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_active_r3_05/worker/owned_manifest.json": {
+      "bytes": 10474,
+      "sha256": "6dd6ab7a4aceb012d9f0715ed1c09812134e8526b7b8e93fa9f8a1a8f3469b7f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_active_r3_05/worker/source.jsonl": {
+      "bytes": 202480,
+      "sha256": "ba519a4e47fcc1a68a72cc60c254671b7977b376030720f551d49cefc80e82e3"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_lease_r3_04/owned_process_ledger.jsonl": {
+      "bytes": 20158,
+      "sha256": "995322b1118868638242bacd5f66d97552bc323dfe37addccb11233b42c18c3f"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_lease_r3_04/result.json": {
+      "bytes": 9986,
+      "sha256": "00c9904eed302f06508b586e46a9afc88b81fe582352743c0c5fa21f4c46212b"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/author_r3/runs/v2_lease_r3_04/worker/owned_manifest.json": {
+      "bytes": 10256,
+      "sha256": "0de6c19b607aab66af8fc6d6434ad655dd32224227a645f3aab49a6d691b5523"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/postrun/v2_active_r3_audit_v1.json": {
+      "bytes": 833287,
+      "sha256": "9b51df501f4079500b11eeca0d27c89de44c9dced7d5e2fd5f8480c915f9d29d"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/postrun/v2_lease_r3_audit_v1.json": {
+      "bytes": 834529,
+      "sha256": "ab27e591beb96fd27bc4f3d537a9e7b4206cfa5c656bbdd810e952e86fe12a39"
+    }
+  },
+  "new_causal_close_offline_checks": 10,
+  "new_native_policy_assertions": 22,
+  "new_time_boundary_checks": 12,
+  "observed_capability_pending_max": 1,
+  "original_normal_business_results": [
+    false,
+    false
+  ],
+  "passed": true,
+  "prior_all_owned_groups_closed_before_new_Worker_spawn": true,
+  "released_runs": 3,
+  "research_conclusion": false,
+  "role_cpp_builds": 1,
+  "same_Worker_ELF_and_contract": true,
+  "schema": "V2-cross-run-recovery-and-scope/v1",
+  "stage_qualified": false,
+  "sustained_normal_twenty_second_recovery_qualified": false,
+  "true_plant_qualified": false,
+  "watchdog_to_Worker_group_cleanup_observed_ns": 2180917236,
+  "watchdog_triggered_TERM_KILL_deadline_qualified": false
+}

@@ -1,0 +1,29 @@
+# Simulation-only assumptions. Identified planar coefficients remain in
+# usv_bringup/config/usv_params_sim.yaml (or vehicle_config:=...). SI units.
+# These dimensions/details describe a procedural concept, not a measured CAD hull.
+added_mass_cross_policy: symmetric_mean
+fluid_density: 1000.0
+fluid_level: 0.0
+# I_z in the controller is about base_link; builder subtracts m*xg^2 for COM.
+roll_inertia: 0.55
+pitch_inertia: 1.80
+# Unidentified vertical dynamics: starting values, not identification results.
+heave_linear_drag: 65.0
+heave_quadratic_drag: 80.0
+roll_linear_drag: 3.0
+roll_quadratic_drag: 4.0
+pitch_linear_drag: 6.0
+pitch_quadratic_drag: 8.0
+# Four Surface samples with an equivalent cylinder calibrated to displacement.
+buoyancy_radius: 0.15
+buoyancy_half_length_fraction: 0.27
+buoyancy_half_beam_fraction: 0.30
+# Small fixed-axis propulsors; mass is deducted from the 14.2 kg total.
+rotor_mass: 0.02
+propeller_diameter: 0.10
+thruster_x_fraction: -0.42
+thruster_z: -0.055
+# Sets only the displayed RPM for force commands in N. Not a PWM calibration.
+thrust_coefficient: 0.015
+imu_angular_stddev: 0.002
+imu_acceleration_stddev: 0.02

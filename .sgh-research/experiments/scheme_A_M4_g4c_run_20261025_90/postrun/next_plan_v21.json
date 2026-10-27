@@ -1,0 +1,22 @@
+{
+  "schema": "M4-plan-v90",
+  "recorded_at": "2026-10-25T18:24:36.662356+08:00",
+  "steps": [
+    {
+      "id": "T2-C infra",
+      "status": "MILESTONE"
+    },
+    {
+      "id": "T2-C trigger",
+      "status": "next"
+    },
+    {
+      "id": "G5/T2A",
+      "status": "after_T2C"
+    },
+    {
+      "id": "T3+",
+      "status": "retained"
+    }
+  ]
+}

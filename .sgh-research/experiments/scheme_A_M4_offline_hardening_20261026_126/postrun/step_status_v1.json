@@ -1,0 +1,138 @@
+{
+  "automatic_owned_runs": 0,
+  "batch": 126,
+  "outcome_dimensions": [
+    "observed_facts",
+    "run_accepted",
+    "coverage",
+    "stage_qualified"
+  ],
+  "production_B_mode": "MANUAL+RC override",
+  "qualification": {
+    "F6": false,
+    "M4": false,
+    "P1": false,
+    "hard_realtime": false,
+    "plant": false
+  },
+  "schema": "plan126-step-status-v1",
+  "statuses_allowed": [
+    "NOT_STARTED",
+    "RUNNING",
+    "PASS",
+    "FAIL_STOP",
+    "BLOCKED_SPEC",
+    "NOT_COVERED",
+    "N/A"
+  ],
+  "steps": {
+    "E00": {
+      "attempts": [
+        "attempt01"
+      ],
+      "status": "PASS"
+    },
+    "E01": {
+      "attempts": [
+        "attempt01",
+        "attempt02",
+        "Q"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E01_step_result_v2.json"
+    },
+    "E02": {
+      "attempts": [
+        "attempt01",
+        "attempt02",
+        "attempt03",
+        "attempt06"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E02_step_result_v2.json"
+    },
+    "E03": {
+      "attempts": [
+        "attempt01",
+        "attempt02",
+        "attempt04"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E03_step_result_v2.json"
+    },
+    "E04": {
+      "attempts": [
+        "attempt01",
+        "attempt02",
+        "attempt03",
+        "A105"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E04_step_result_v2.json"
+    },
+    "E05": {
+      "attempts": [
+        "attempt01",
+        "attempt02",
+        "attempt03",
+        "attempt05"
+      ],
+      "status": "PASS",
+      "review_reopened": "Actual caller bypasses token; serial and foreign checks missing. Earlier PASS retained in takeover snapshot.",
+      "latest_result": "postrun/E05_step_result_v2.json"
+    },
+    "E06": {
+      "attempts": [
+        "attempt01"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E06_step_result.json"
+    },
+    "E07": {
+      "attempts": [
+        "attempt01"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E07_step_result.json"
+    },
+    "E08": {
+      "attempts": [
+        "attempt01"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E08_step_result.json"
+    },
+    "E09": {
+      "attempts": [
+        "attempt02"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E09_step_result.json"
+    },
+    "E10": {
+      "attempts": [
+        "attempt01"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E10_step_result.json"
+    },
+    "E11": {
+      "attempts": [
+        "attempt01"
+      ],
+      "status": "PASS",
+      "latest_result": "postrun/E11_step_result.json"
+    },
+    "E12": {
+      "status": "FAIL_STOP",
+      "attempts": [
+        "attempt01",
+        "attempt02"
+      ],
+      "latest_result": "postrun/E12_step_result_v2.json"
+    }
+  },
+  "historical_process_status": "FAIL_STOP",
+  "historical_process_finding": "E04 original transient write, restored; retained, not waived",
+  "current_authority": "User requested takeover and continued modifications; functional steps retain their order. This does not retroactively certify original preservation."
+}

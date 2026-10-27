@@ -1,0 +1,18 @@
+{
+  "schema": "M4-T2A-COMPLETE-v92",
+  "recorded_at": "2026-10-25T18:55:28.627349+08:00",
+  "result": "AUDIT PASSED \u2014 all applicable checks pass; not_covered correctly reported",
+  "key_passes": [
+    "silent_exceeds_receipt_stale(boundary derivation)",
+    "pause_confirmed_generation_bump",
+    "old_candidate_must_not_revise(5-dim version)",
+    "hold_minimum",
+    "receipt/output/closure/witness/stored"
+  ],
+  "not_covered": [
+    "resume_requires_new_window(no post-resume acceptance)",
+    "same_stamp(silent run)"
+  ],
+  "owned_runs": 1,
+  "elapsed": 9.7
+}

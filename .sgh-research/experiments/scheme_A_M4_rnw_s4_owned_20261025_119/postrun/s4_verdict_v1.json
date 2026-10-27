@@ -1,0 +1,181 @@
+{
+  "schema": "S4-owned-run-verdict/v1",
+  "batch": 119,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/runs/T2A_RNW3",
+  "driver_rc": 0,
+  "elapsed_seconds": 15.864,
+  "driver_stdout_tail": "{\"passed\": true, \"error\": null, \"elapsed_seconds\": 15.036836212035269, \"output\": \"/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s4_owned_20261025_119/implementation/runs/T2A_RNW3\"}\n",
+  "driver_stderr_tail": "",
+  "driver_selfreport_passed": true,
+  "audit": {
+    "passed": true,
+    "clauses": [
+      {
+        "name": "regulator_source_parse_clean",
+        "passed": true,
+        "detail": {
+          "parse_errors": 0
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "driver_events_parse_clean",
+        "passed": true,
+        "detail": {
+          "parse_errors": 0
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "four_roles_closed_clean",
+        "passed": true,
+        "detail": {
+          "regulator": {
+            "rc": 0,
+            "empty": true
+          },
+          "fixture": {
+            "rc": 0,
+            "empty": true
+          },
+          "worker": {
+            "rc": 0,
+            "empty": true
+          },
+          "recorder": {
+            "rc": 0,
+            "empty": true
+          }
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "exactly_four_single_spawns",
+        "passed": true,
+        "detail": [
+          "fixture",
+          "worker",
+          "recorder",
+          "regulator"
+        ],
+        "coverage": "covered"
+      },
+      {
+        "name": "no_restart_events",
+        "passed": true,
+        "detail": null,
+        "coverage": "covered"
+      },
+      {
+        "name": "driver_selfreport_recorded_only",
+        "passed": true,
+        "detail": {
+          "passed": true
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "pause_silence_exceeds_confirm_bound",
+        "passed": true,
+        "detail": {
+          "wall_gap_ns": 1501382210,
+          "pause_confirm_ns": 400000000
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "raw_clock_monotonic",
+        "passed": true,
+        "detail": {
+          "adjacent_regressions": 0
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "clock_epoch_unchanged_legal",
+        "passed": true,
+        "detail": {
+          "epochs": [
+            0
+          ]
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "schedule_transition_observed",
+        "passed": true,
+        "detail": {
+          "schedule_generations": [
+            1,
+            3
+          ]
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "single_generation_open",
+        "passed": true,
+        "detail": {
+          "generation": 2,
+          "previous_terminal_reason": "epoch_binding_changed",
+          "previous_first_job_id": 1,
+          "previous_last_job_id": 6
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "two_commits_distinct_binding_identity",
+        "passed": true,
+        "detail": {
+          "gens": [
+            1,
+            2
+          ],
+          "schedule": [
+            1,
+            3
+          ],
+          "clock_epoch": [
+            0,
+            0
+          ]
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "r4_same_job_new_generation_acceptance",
+        "passed": true,
+        "detail": {
+          "job_id": 7,
+          "decision_sequence": 18,
+          "candidate_accepted": true,
+          "control_source": "candidate",
+          "api_returned": [
+            true,
+            true
+          ],
+          "applied_sequence": 18
+        },
+        "coverage": "covered"
+      },
+      {
+        "name": "old_candidate_disposition",
+        "passed": false,
+        "detail": {
+          "pre_open_candidates": 6,
+          "rejection_events": 0
+        },
+        "coverage": "not_covered"
+      },
+      {
+        "name": "job_ids_strictly_monotonic",
+        "passed": true,
+        "detail": {
+          "count": 36
+        },
+        "coverage": "covered"
+      }
+    ]
+  },
+  "passed": true
+}

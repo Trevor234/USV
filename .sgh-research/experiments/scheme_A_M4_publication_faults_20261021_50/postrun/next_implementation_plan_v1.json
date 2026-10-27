@@ -1,0 +1,58 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "RTI_cost_model_threshold_tuning": false,
+  "automatic_next_ROS_run_registered": false,
+  "closed_this_batch": "exact49 partial publication/Applied/zero/grace/clear source-linked component",
+  "codegen_GP_PPO": false,
+  "do_not_repeat": [
+    "successful49 normal",
+    "closed45/46 preparation/source",
+    "old39-42 without affected code",
+    "same16 publication components without source change or new failure"
+  ],
+  "new_full_no_output_business_stage": false,
+  "production_release_enabled": false,
+  "research_conclusion": false,
+  "run_policy": {
+    "automatic_retries": 0,
+    "case_specific_preregistration": true,
+    "driver_max_seconds": 45,
+    "normal_source_recalibration_added": false,
+    "outer_max_seconds": 90
+  },
+  "runtime_source_changes_this_batch": 0,
+  "schema": "M4-next-live-owned-cancel-and-worker-exit-then-F6-P1/v1",
+  "steps": [
+    {
+      "action": "derive finite fault Driver and only actually required role source/bin bindings; preserve frozen contract/numbers and normal49 evidence",
+      "order": 1
+    },
+    {
+      "action": "preregister exact preparation boundary, authenticate four actual roles and cancel before grant; verify API0, full-recorder vs process-only semantics and finite empty groups",
+      "case": "R1-owned-pre-grant-cancel",
+      "order": 2
+    },
+    {
+      "action": "preregister one authenticated Worker exit after actual accepted business, expected signal/RC/Source exception; verify no new submit/activation, actual per-side API/ramp history and finite cleanup without restart",
+      "case": "R2-owned-worker-exit",
+      "order": 3
+    },
+    {
+      "action": "close original remaining nine-group exact cases and F5/source/reference applicability with scoped reuse and necessary actual triggers; no blanket repeats",
+      "order": 4
+    },
+    {
+      "action": "finite immutable numeric M0/M1 model+plan atomic transaction, fixed-tick activation, old/mixed rejection, saved-plan immutability and separate warmstart; then F6 freeze and original P1 joint review",
+      "order": 5
+    }
+  ],
+  "stop_conditions": [
+    "identity/config/source/bin/GID mismatch",
+    "pre-grant API",
+    "invalid normal activation",
+    "undeclared loss/timeout/partial or successful-side rollback",
+    "cleanup_failed or old group nonempty"
+  ]
+}

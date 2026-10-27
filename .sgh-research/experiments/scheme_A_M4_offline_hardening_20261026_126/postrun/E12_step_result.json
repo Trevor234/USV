@@ -1,0 +1,15 @@
+{
+  "step_id": "E12",
+  "status": "FAIL_STOP",
+  "functional_verification_passed": false,
+  "reason": "Historical E04 protected-original write prevents blanket125-contract signoff; current bytes restored and technical work passed.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E12/attempt01",
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "delivery_status": "see separate readback receipt"
+}

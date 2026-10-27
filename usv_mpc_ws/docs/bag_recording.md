@@ -153,8 +153,8 @@ export ROS_LOCALHOST_ONLY=1
 PPO_RUN_ID="rl_c_actions_$(date +%Y%m%d_%H%M%S)"
 export GZ_PARTITION="$PPO_RUN_ID"
 PPO_BAG_DIR=/home/trevor/USV/data/sim_bags
-PPO_MODEL=/home/trevor/USV/usv_rl/models/v5/s4_dr/policy_physical_n.onnx
-PPO_MANIFEST=/home/trevor/USV/usv_rl/models/v5/s4_dr/policy_physical_n.manifest.json
+PPO_MODEL=/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx
+PPO_MANIFEST=/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.manifest.json
 PPO_EVIDENCE_DIR="/home/trevor/USV/.sgh-research/experiments/$PPO_RUN_ID"
 
 test -f "$PPO_MODEL"

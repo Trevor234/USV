@@ -1,0 +1,19 @@
+{
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "fixture_elf_compiled": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s2_b2_20261025_118/build/cmake/p1_m4_fixture_owned",
+  "fixture_elf_sha256": "b0230ca44e9aa5133f197005fc5c824c69b9c430799242087463a84b911f51a7",
+  "fixture_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s2_b2_20261025_118/implementation/t2_author/fixture/synthetic_source_m4.cpp",
+  "fixture_source_sha256": "20e11a758a95d085e8bfa1d97992ee52661c955dd8f69a3b8633fcabc2789e53",
+  "helper_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s2_b2_20261025_118/implementation/t2_author/fixture/resume_stamp_mapping_v1.hpp",
+  "helper_source_sha256": "8ef9f3573bb742a451f2c4e8b866f454fff2cb35c9b99355076fddc2b3daa6da",
+  "physical_production_release": false,
+  "ros_context_for_suite": false,
+  "schema": "S2-B2-mapping-registry/v1",
+  "scope": "B2_pairing_mapping_component_v1",
+  "source_bundle": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s2_b2_20261025_118/evidence/freeze/source_bundle.json",
+    "sha256": "f90831c69407a43abe053ed17e228232fe3928dd1bf4d0061b787632942e05bb"
+  },
+  "test_binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_rnw_s2_b2_20261025_118/implementation/build_s2/test_resume_mapping_v1",
+  "test_binary_sha256": "0c0a1c7fb97ab7c7c8fc91d6e1f43c09688f66e43a3fa49d39f5f7e7eca19d07"
+}

@@ -1,0 +1,232 @@
+{
+  "B4_all_eight_groups_qualified": false,
+  "CXX_builds": 0,
+  "M0b_formal_qualified": false,
+  "M4_qualified": false,
+  "MPC_delivery_pending_at_QA": true,
+  "Native_cases_executed_this_batch": 0,
+  "Native_cases_reused": 38,
+  "Observer_normal_Source_complete": true,
+  "SIGSTOP_used": false,
+  "TERM_KILL_paths_exercised": false,
+  "Worker_normal_Source_complete": true,
+  "actual_ROS_reruns": 0,
+  "actual_ROS_runs": 1,
+  "actual_raw_copy_negative_cases": 14,
+  "actual_signals": [
+    {
+      "role": "publisher",
+      "signal": 2
+    },
+    {
+      "role": "observer",
+      "signal": 2
+    },
+    {
+      "role": "worker",
+      "signal": 2
+    },
+    {
+      "role": "synthetic_source",
+      "signal": 2
+    },
+    {
+      "role": "recorder",
+      "signal": 2
+    }
+  ],
+  "all_five_owned_groups_empty": true,
+  "all_five_registered_ELFs_reused": true,
+  "all_five_returncodes_zero": true,
+  "all_old_failures_preserved": true,
+  "audit_pin": {
+    "bytes": 998318,
+    "sha256": "91a7f586ec1e123302244e795411acab63b0eef750b6670555f03c264106619e"
+  },
+  "contract_thresholds_unchanged": true,
+  "current_B4_81_field_register_refreshed": true,
+  "current_selected_post_lease41_recovery_case_passed": true,
+  "delivery_authority": "delivery_verification.json",
+  "diagnostic_profiles_registered": 4,
+  "execute_qualified": false,
+  "final_audit_inputs_unchanged": 2411,
+  "final_checker_version": 2,
+  "first_audit_inputs_unchanged": 2409,
+  "formal_B5_freeze": false,
+  "host_global_process_absence_claimed": false,
+  "host_unreadable_processes": 282,
+  "initial_checker_semantic_rejection_retained": true,
+  "metrics": {
+    "gate": {
+      "actual_gated_start_confirmed": true,
+      "authorized_ns": 443827341876224,
+      "duplicate_create_rejected": true,
+      "execute_qualified": false,
+      "first_phase_decision_sequence": 1,
+      "first_phase_publish_delay_ns": 3253700,
+      "first_tick_planned_ns": 443828342044866,
+      "parameter_queries_completed_ns": 443825083040003,
+      "passed": true,
+      "prestart_callbacks_live": true,
+      "prestart_decisions": 0,
+      "prestart_jobs": 0,
+      "research_conclusion": false,
+      "stage_qualified": false
+    },
+    "healthy": {
+      "distinct_healthy_jobs": 2,
+      "execute_qualified": false,
+      "no_current_fault_transition": true,
+      "original_absolute_deadlines": true,
+      "pairs": [
+        {
+          "Applied_sequence": 3,
+          "decision_sequence": 2,
+          "job_id": 1,
+          "ready_margin_ns": 143769477
+        },
+        {
+          "Applied_sequence": 4,
+          "decision_sequence": 3,
+          "job_id": 2,
+          "ready_margin_ns": 144056934
+        }
+      ],
+      "passed": true,
+      "research_conclusion": false,
+      "stage_qualified": false
+    },
+    "identity": {
+      "all_five_PID_start_pairs_fresh": true,
+      "execute_qualified": false,
+      "new_Worker_instance": "9dd3d862432aa35cae05add5e854a1007a0f73dbeafe0ce40bc63ca476a21a3a",
+      "new_own_manifest_bindings": true,
+      "new_run": "fresh_after_lease_01",
+      "old_Worker_instance": "e7ccdce5325dae649f64dff3fe08bea8fef2e1ad865ec246ce2fd9e67d394942",
+      "old_all_groups_closed_before_new_prepare": true,
+      "passed": true,
+      "previous_run": "ordinary_lease_01",
+      "research_conclusion": false,
+      "same_five_registered_ELFs": true,
+      "stage_qualified": false
+    },
+    "storage": {
+      "Recorder_builtin_stream_accounting_claim": false,
+      "Stored_Applied": 6,
+      "Stored_Decisions": 7,
+      "Stored_capabilities": 43,
+      "Stored_capabilities_without_complete_Worker_Source_attempt_match": 0,
+      "Stored_messages": 951,
+      "Witness_Source_join": {
+        "basis": {
+          "activation_reason_covers_all_worker_gates": false,
+          "activation_reason_dictionary": {
+            "0": "accepted",
+            "1": "shutdown",
+            "2": "run_unusable",
+            "3": "other_rejected"
+          },
+          "business_ready_observed": true,
+          "enabled": true,
+          "evaluation_profile": "closed_shadow_observation",
+          "execute_qualified": false,
+          "expected_log_overflow_mechanism_passed": false,
+          "issues": [],
+          "normal_business": true,
+          "normal_contract_complete": false,
+          "normal_contract_qualified": true,
+          "normal_contract_scope": "Witness records and first real accepted activation/BusinessReady consistency only; no control or phase qualification",
+          "observation_complete": true,
+          "passed": true,
+          "phase_qualified": false,
+          "phase_unknown_state_rows": 0,
+          "production_profile": "closed_shadow_observation",
+          "research_conclusion": false,
+          "schema": "p1-fixed-witness-check-v2",
+          "schema_valid": true,
+          "scope": "terminal_fixed_witness_integrity_only",
+          "source_join_verified": false,
+          "witness_complete": true
+        },
+        "business_ready_source_bound": true,
+        "counts": {
+          "activations": 3,
+          "attempts": 3,
+          "decisions": 7,
+          "jobs": 4,
+          "submits": 4,
+          "ticks": 7
+        },
+        "normal_business_contract_qualified": false,
+        "passed": true,
+        "profile": "closed_shadow_observation",
+        "unlogged_phase_callback_fact_scope": "phase POD integrity; accepted BusinessReady and terminal Close additionally bound to Source",
+        "whole_population_source_join": true,
+        "window_clipped": false
+      },
+      "Worker_Source_is_forced_incomplete": false,
+      "Worker_Source_trailing_bytes": 0,
+      "actual_GID_and_full_value_binding_verified": true,
+      "command_amplitude_and_API_start_rate_verified": true,
+      "independent_SQL_metadata_verified": true,
+      "plant_or_force_acknowledgement": false,
+      "shutdown_zero_sequence": 6,
+      "source_typed_join": {
+        "issues": [],
+        "passed": true,
+        "streams": {
+          "candidates": {
+            "source": 4,
+            "storage": 4
+          },
+          "decisions": {
+            "source": 7,
+            "storage": 7
+          },
+          "jobs": {
+            "source": 4,
+            "storage": 4
+          }
+        },
+        "window_clipped": false
+      }
+    },
+    "tail": {
+      "all_five_returns_zero": true,
+      "anchor_count": 6,
+      "execute_qualified": false,
+      "final_zero_Applied_sequence": 6,
+      "normal_business_qualified": false,
+      "original_normal_tail_verified": true,
+      "passed": true,
+      "research_conclusion": false,
+      "selected_normal_resource_close_verified": true,
+      "stage_qualified": false
+    },
+    "timing": {
+      "Source_Decisions": 7,
+      "Source_candidates": 4,
+      "Source_jobs": 4,
+      "Witness_accepted_activations": 3,
+      "max_start_gap_ns": 200040679,
+      "max_start_or_activation_jitter_ns": 153864,
+      "skipped_ticks": 0
+    }
+  },
+  "new_B4_register_negatives_executed": 0,
+  "new_seeded_identity_negative_cases": 8,
+  "normal_business_qualified": false,
+  "old_local_bytes_rechecked": 6057276901,
+  "old_local_paths_rechecked": 47938,
+  "original_B4_register_negatives_reused": 13,
+  "original_normal_tail_component_verified": true,
+  "passed": true,
+  "passed_scope": "one current synthetic nominal controlled shadow fresh cold start after lease41, two distinct healthy jobs, complete original normal tail and finite owned resource closure",
+  "prerun_inputs_unchanged": 2286,
+  "research_conclusion": false,
+  "runtime_code_changed_by_audit_fix": false,
+  "schema": "exact-post-lease-fresh-identity-normal-tail-final-QA/v1",
+  "selected_profile_evidence_freeze_completed": true,
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

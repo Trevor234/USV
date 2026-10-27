@@ -1,0 +1,172 @@
+{
+  "cases": [
+    {
+      "accepted": 102,
+      "activation_span_seconds": 20.198363859,
+      "candidate_attempts": 102,
+      "case": "s005",
+      "consecutive": 102,
+      "last5s_mean_surge_m_s": 0.062491690170501255,
+      "measured_surge_RMSE_m_s": 0.014784991510502932,
+      "measurement_sensor_count": 1035,
+      "measurement_window_seconds": 20.709847203,
+      "minimum_candidate_ready_slack_ms": 141.391208,
+      "model": {
+        "independent_replay": {
+          "Source_state_used_as_seed": false,
+          "algorithm": "independent_canonical_grid_exactprefix_checkpoints_v1",
+          "control_WCET_claimed": false,
+          "integration_steps": 13556,
+          "late_input_rollbacks": 0,
+          "peak_checkpoints": 12338,
+          "rows": 1219
+        },
+        "maximum_absolute_replay_error": 1.9539925233402755e-14,
+        "native_work_audit": {
+          "late_event_rewinds": 0,
+          "maximum_native_query_integration_steps": 14,
+          "ordinary_queries": 1219,
+          "state_corrections": 0,
+          "work_is_source_observation_not_WCET_qualification": true
+        },
+        "states_recomputed": 1219,
+        "true_physical_plant_acceptance": false
+      },
+      "passed": true,
+      "reference_speed_m_s": 0.05,
+      "source_sha256": {
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/observer/source.jsonl": "f1ae6d8318c1b5768f3ead453c46636f9e283827f040b2387edcbbafd841ee64",
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/synthetic_source/nominal_steps.jsonl": "5a5e4b5e3428fe470ac3718dd83bc2c29bbd4bfe0350dbd324fafd8b2446f3da",
+        ".sgh-research/experiments/scheme_A_longitudinal_20261016_19/runs/s005_01/check_result.json": "84052635295fc420706e56b46edbdfa7bc3ede0f4722bb7541e2b9defb5e13e0"
+      },
+      "stored_model_sensor_count": 1219
+    },
+    {
+      "accepted": 103,
+      "activation_span_seconds": 20.400102439,
+      "candidate_attempts": 103,
+      "case": "s010",
+      "consecutive": 103,
+      "last5s_mean_surge_m_s": 0.12498642995703162,
+      "measured_surge_RMSE_m_s": 0.029260913386751467,
+      "measurement_sensor_count": 1035,
+      "measurement_window_seconds": 20.716500706,
+      "minimum_candidate_ready_slack_ms": 141.916952,
+      "model": {
+        "independent_replay": {
+          "Source_state_used_as_seed": false,
+          "algorithm": "independent_canonical_grid_exactprefix_checkpoints_v1",
+          "control_WCET_claimed": false,
+          "integration_steps": 13663,
+          "late_input_rollbacks": 0,
+          "peak_checkpoints": 12435,
+          "rows": 1229
+        },
+        "maximum_absolute_replay_error": 4.085620730620576e-14,
+        "native_work_audit": {
+          "late_event_rewinds": 0,
+          "maximum_native_query_integration_steps": 13,
+          "ordinary_queries": 1229,
+          "state_corrections": 0,
+          "work_is_source_observation_not_WCET_qualification": true
+        },
+        "states_recomputed": 1229,
+        "true_physical_plant_acceptance": false
+      },
+      "passed": true,
+      "reference_speed_m_s": 0.1,
+      "source_sha256": {
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s010_01/observer/source.jsonl": "8d81a7f2bbaa66588b5000b713689c9dded16f026e60dea235e01705c3ed250e",
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s010_01/synthetic_source/nominal_steps.jsonl": "4c7820058ab2515d39ef23633d639bdc456fd973a56a12217da23397d483d267",
+        ".sgh-research/experiments/scheme_A_longitudinal_20261016_19/runs/s010_01/check_result.json": "56648843d61a9f3edf79c1f674e14a75a942ffe099bb299f8137716f7d14d5d3"
+      },
+      "stored_model_sensor_count": 1229
+    },
+    {
+      "accepted": 101,
+      "activation_span_seconds": 20.000162383,
+      "candidate_attempts": 101,
+      "case": "s030",
+      "consecutive": 101,
+      "last5s_mean_surge_m_s": 0.3749999181310822,
+      "measured_surge_RMSE_m_s": 0.08808870950703403,
+      "measurement_sensor_count": 1024,
+      "measurement_window_seconds": 20.497153485,
+      "minimum_candidate_ready_slack_ms": 142.095274,
+      "model": {
+        "independent_replay": {
+          "Source_state_used_as_seed": false,
+          "algorithm": "independent_canonical_grid_exactprefix_checkpoints_v1",
+          "control_WCET_claimed": false,
+          "integration_steps": 13551,
+          "late_input_rollbacks": 0,
+          "peak_checkpoints": 12333,
+          "rows": 1219
+        },
+        "maximum_absolute_replay_error": 3.8191672047105385e-14,
+        "native_work_audit": {
+          "late_event_rewinds": 0,
+          "maximum_native_query_integration_steps": 13,
+          "ordinary_queries": 1219,
+          "state_corrections": 0,
+          "work_is_source_observation_not_WCET_qualification": true
+        },
+        "states_recomputed": 1219,
+        "true_physical_plant_acceptance": false
+      },
+      "passed": true,
+      "reference_speed_m_s": 0.3,
+      "source_sha256": {
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s030_01/observer/source.jsonl": "bc491f6510530e5672f6f56bbe1f7932447a9cd3fb47cc95cdd2717687f10e6e",
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s030_01/synthetic_source/nominal_steps.jsonl": "74b2724ccd21a3683b4a5f0a40b706285d55118e2d35406a6597c7f25a91226a",
+        ".sgh-research/experiments/scheme_A_longitudinal_20261016_19/runs/s030_01/check_result.json": "57ff614e3e32c110cdef8225d61e2ff5ae5b69994f94bca7323038a1e82b8295"
+      },
+      "stored_model_sensor_count": 1219
+    },
+    {
+      "accepted": 102,
+      "activation_span_seconds": 20.200134683,
+      "candidate_attempts": 102,
+      "case": "s060",
+      "consecutive": 102,
+      "last5s_mean_surge_m_s": 0.7334771366173203,
+      "measured_surge_RMSE_m_s": 0.15508263209306208,
+      "measurement_sensor_count": 1022,
+      "measurement_window_seconds": 20.453717182,
+      "minimum_candidate_ready_slack_ms": 98.183781,
+      "model": {
+        "independent_replay": {
+          "Source_state_used_as_seed": false,
+          "algorithm": "independent_canonical_grid_exactprefix_checkpoints_v1",
+          "control_WCET_claimed": false,
+          "integration_steps": 13366,
+          "late_input_rollbacks": 44,
+          "peak_checkpoints": 12118,
+          "rows": 1198
+        },
+        "maximum_absolute_replay_error": 5.684341886080802e-14,
+        "native_work_audit": {
+          "late_event_rewinds": 69,
+          "maximum_native_query_integration_steps": 24,
+          "ordinary_queries": 1129,
+          "state_corrections": 69,
+          "work_is_source_observation_not_WCET_qualification": true
+        },
+        "states_recomputed": 1198,
+        "true_physical_plant_acceptance": false
+      },
+      "passed": true,
+      "reference_speed_m_s": 0.6,
+      "source_sha256": {
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s060_01/observer/source.jsonl": "ed8b795ce354153f754c4d963578f138ae7b5d38c0ff0dc0bed5d53a1f488160",
+        ".sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s060_01/synthetic_source/nominal_steps.jsonl": "c712ad3509debb5921c608527e58cdb73be10a60ad5553b99dd1034f0e7d5402",
+        ".sgh-research/experiments/scheme_A_longitudinal_20261016_19/runs/s060_01/check_result.json": "f0cfed2b6a528ac7cb98415b44144419f3a85f07a276623866c02edd4ffabca8"
+      },
+      "stored_model_sensor_count": 1198
+    }
+  ],
+  "performance_qualification_threshold_preregistered": false,
+  "performance_superiority_claimed": false,
+  "schema": "longitudinal-observed-metrics/v1",
+  "stage_qualified": false
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "current-normal-source-selector-cases-v1",
+  "passed": true,
+  "case_count": 17,
+  "cases": [
+    {
+      "name": "exact20s_boundary",
+      "expected": "complete",
+      "actual": "complete",
+      "passed": true
+    },
+    {
+      "name": "under20s",
+      "expected": "incomplete",
+      "actual": "incomplete",
+      "passed": true
+    },
+    {
+      "name": "missingMiddle_not_contiguous",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "v_component_not_only_u",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "speed_above1_2",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "source_order_backward",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "freeze_gap_above250ms",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "unknown_anchor",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "virtual_anchor_not_actual",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "different_run_no_splicing",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "different_Worker_no_splicing",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "nonfinite_source",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "out_of_range_command",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "source_job_boolean",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "cannot_fill20_with_zero_tail",
+      "expected": "reject",
+      "actual": "reject",
+      "passed": true
+    },
+    {
+      "name": "first_dynamic_origin_fixed_not_first_row",
+      "expected": "incomplete",
+      "actual": "incomplete",
+      "passed": true
+    },
+    {
+      "name": "exactSpeed1_2_allowed",
+      "expected": "complete",
+      "actual": "complete",
+      "passed": true
+    }
+  ],
+  "seeded_component_only": true,
+  "stage_qualified": false,
+  "execute_qualified": false
+}

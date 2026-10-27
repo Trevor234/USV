@@ -1,0 +1,1361 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/CMakeLists.txt
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/CMakeLists.txt
+@@ -62,6 +62,10 @@
+ target_link_libraries(test_w2_native_boundary nlohmann_json::nlohmann_json)
+ link_owned(test_w2_native_boundary)
+ 
++# W2: entry contract (parameter whitelist and fd direction), no ROS needed.
++ament_add_gtest(test_w2_entry_contract worker/test_w2_entry_contract.cpp TIMEOUT 60)
++target_link_libraries(test_w2_entry_contract nlohmann_json::nlohmann_json)
++
+ # W2: the same boundary driven through the real owned_cold::Backend seam.
+ ament_add_gtest(test_w2_backend_wiring worker/test_w2_backend_wiring.cpp TIMEOUT 120)
+ target_include_directories(test_w2_backend_wiring PRIVATE worker)
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/observer/src/shadow/regulator_owned_execute.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/observer/src/shadow/regulator_owned_execute.cpp
+@@ -132,6 +132,32 @@
+           wm.at("diagnostic_drop_after_candidates").get<int>()>=0&&
+           wm.at("diagnostic_drop_after_candidates").get<int>()<=1000,
+           "M4 W4 requires a bounded registered drop index");
++      } else if(diag_case=="W2-native-boundary-hold") {
++        // W2 holds one internal call boundary and waits for a private release.
++        // Every other stimulus must be off, and the Worker must actually report
++        // the channel it was handed: an fd number alone is not an identity.
++        p1_owned::require(v2_policy=="none"&&delay_ms==0&&block_ms==0,
++          "M4 W2 requires every other hook off");
++        p1_owned::require(wm.at("diagnostic_drop_after_candidates")==-1,
++          "M4 W2 must not register a delivery drop");
++        p1_owned::require(wm.contains("w2_release_channel"),
++          "M4 W2 Worker did not report its release channel");
++        const auto &ch=wm.at("w2_release_channel");
++        p1_owned::require(ch.at("gate_armed")==true&&ch.at("read_only")==true,
++          "M4 W2 channel must be an armed read-only pipe");
++        p1_owned::require(ch.at("device").is_number_unsigned()&&
++          ch.at("inode").is_number_unsigned()&&
++          ch.at("inode").get<uint64_t>()!=0,
++          "M4 W2 channel must record its actual device and inode");
++        p1_owned::require(ch.at("job_id").is_number_integer()&&
++          ch.at("job_id").get<int64_t>()>0&&
++          ch.at("ordinal").is_number_integer()&&
++          ch.at("ordinal").get<int>()>0,
++          "M4 W2 channel must bind a positive Job and ordinal");
++        p1_owned::require(ch.at("wait_budget_ns").is_number_integer()&&
++          ch.at("wait_budget_ns").get<int64_t>()>0&&
++          ch.at("wait_budget_ns").get<int64_t>()<=2000000000LL,
++          "M4 W2 wait budget must be bounded");
+       } else {
+         p1_owned::require(false,"M4 unknown diagnostic_case");
+       }
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
+@@ -124,7 +124,7 @@
+     parser=argparse.ArgumentParser();parser.add_argument('--registration',type=Path,required=True);args=parser.parse_args()
+     reg=read(args.registration)
+     assert reg['schema']=='M4-owned-diagnostic-run-v1' and reg['scope']==SCOPE and reg['production_physical_release_enabled'] is False
+-    case=reg['case'];assert case in ('W1-work-stall-watchdog','W3-result-delivery-delay','W4-result-delivery-drop'),case
++    case=reg['case'];assert case in ('W1-work-stall-watchdog','W3-result-delivery-delay','W4-result-delivery-drop','W2-native-boundary-hold'),case
+     assert reg['domain_id']==120 and os.environ.get('ROS_DOMAIN_ID')=='120' and os.environ.get('ROS_LOCALHOST_ONLY')=='1' and os.environ.get('RMW_IMPLEMENTATION')=='rmw_fastrtps_cpp'
+     assert reg['max_seconds']==45 and reg['automatic_retries']==0
+     # W1 is an IN-PROCESS diagnostic run: the contract itself carries
+@@ -196,7 +196,8 @@
+         frame[28:32]=nonce.to_bytes(4,'little')
+         frame[32:40]=(1).to_bytes(8,'little')     # single use
+         frame[40:44]=w2_crc32(bytes(frame[0:40])).to_bytes(4,'little')
+-        os.write(write_fd,bytes(frame))
++        written=os.write(write_fd,bytes(frame))
++        assert written==len(frame),'short release write: %d of %d'%(written,len(frame))
+         return bytes(frame)
+ 
+     def native(binary,parameters):
+@@ -361,6 +362,21 @@
+                     w2_armed=wrow
+                     event('w2_channel_armed_by_worker',**{k:v for k,v in wrow.items()
+                                                          if k not in ('type',)})
++                elif wt=='w2_boundary_entered':
++                    # The Driver times its release against this event. A thread
++                    # that merely sleeps is not evidence of anything.
++                    w2_entered_at=wrow.get('entered_ns')
++                    w2_entered_row=wrow
++                    event('w2_boundary_entered_observed',
++                          job_id=wrow.get('job_id'),ordinal=wrow.get('ordinal'),
++                          entered_ns=w2_entered_at,
++                          job_deadline_ns=wrow.get('job_deadline_ns'))
++                elif wt=='w2_boundary_result':
++                    w2_result=wrow
++                    event('w2_boundary_result_observed',
++                          disposition=wrow.get('disposition'),
++                          actual_native_invoked=wrow.get('actual_native_invoked'),
++                          job_id=wrow.get('job_id'),ordinal=wrow.get('ordinal'))
+                 elif wt=='diagnostic_candidate_dropped':
+                     dropped+=1;dropped_job_id=wrow['job_id']
+                     generated_at_drop=wrow['generated_candidates']
+@@ -422,6 +438,7 @@
+                         'control_source':row.get('control_source'),'final_n':row.get('final_n'),
+                         'previous_n':row.get('previous_n'),'job_id':row.get('job_id'),
+                         'tick':row.get('tick'),'activation_commit_ns':row.get('activation_commit_ns'),
++                        'start_ns':row.get('start_ns'),'end_ns':row.get('end_ns'),
+                         'anchor_known':row.get('anchor_known')}
+                     # W2: count complete business ticks observed *after* the
+                     # Worker reported entering the boundary, and release once the
+@@ -429,17 +446,34 @@
+                     # ticks, then release" rule; a thread that merely sleeps is
+                     # not evidence of anything.
+                     if w2 and w2_entered_at is not None and not w2_release_sent:
+-                        if str(row.get('reason',''))!='shutdown':
++                        # Screen by real event time, not by the order rows
++                        # happened to be read: a tick that completed before the
++                        # boundary was entered is not "a tick after entry", even
++                        # if its log line is read later.
++                        start_ns=row.get('start_ns')
++                        end_ns=row.get('end_ns')
++                        if (str(row.get('reason',''))!='shutdown'
++                                and isinstance(start_ns,int) and isinstance(end_ns,int)
++                                and start_ns>=w2_entered_at
++                                and end_ns>start_ns
++                                and row.get('tick') not in w2_ticks_after_enter):
+                             w2_ticks_after_enter.append(row.get('tick'))
+                         if len(w2_ticks_after_enter)>=w2_required_ticks:
++                            _before=time.monotonic_ns()
+                             w2_release_frame=w2_release(w2_write,int(w2['job_id']),
+                                                         int(w2['ordinal']),int(w2['nonce']))
++                            _after=time.monotonic_ns()
++                            w2_write_ns=_after-_before
+                             w2_release_sent=True
+                             event('w2_release_sent',job_id=int(w2['job_id']),
+                                   ordinal=int(w2['ordinal']),nonce=int(w2['nonce']),
+                                   ticks_observed=len(w2_ticks_after_enter),
+                                   ticks=list(w2_ticks_after_enter),
+-                                  frame_len=len(w2_release_frame))
++                                  frame_len=len(w2_release_frame),
++                                  write_start_ns=_before,write_end_ns=_after,
++                                  write_elapsed_ns=w2_write_ns,
++                                  frame_sha256=__import__('hashlib').sha256(
++                                      w2_release_frame).hexdigest())
+                 elif t=='job':
+                     jid=row['job']['job_id'];jobs_by_id[jid]=row['job']['target_tick']
+                     if dropped and dropped_job_id==jid:dropped_target_tick=row['job']['target_tick']
+@@ -450,7 +484,12 @@
+                         lr=str(row.get('reason',''))
+                         if lr in ('late','wrong_tick','cutoff_closed'):late_candidates+=1
+                     elif transition_ns is not None:new_candidate_after=True
+-            if case=='W4-result-delivery-drop':
++            if case=='W2-native-boundary-hold':
++                # W2 is complete when the release was written AND the Worker
++                # reported the resulting disposition. Either without the other
++                # is an unfinished stimulus, not a result.
++                if w2_release_sent and w2_result is not None:break
++            elif case=='W4-result-delivery-drop':
+                 # W4: the Worker generates a Candidate and never publishes it.
+                 # The report must show WHAT the Regulator did with the missing
+                 # delivery: the dropped Job's own target tick, at least one later
+@@ -565,6 +604,14 @@
+         result.update(regulator_returncode=closed['returncode'],
+                       regulator_signals=[s['signal'] for s in closed['signals']])
+ 
++        if case=='W2-native-boundary-hold':
++            result.update(w2_boundary_entered=w2_entered_at is not None,
++                          w2_entered_row=w2_entered_row,
++                          w2_release_sent=w2_release_sent,
++                          w2_release_frame_sha256=(__import__('hashlib').sha256(
++                              w2_release_frame).hexdigest() if w2_release_frame else None),
++                          w2_ticks_after_enter=list(w2_ticks_after_enter),
++                          w2_result=w2_result)
+         result.update(Source_observer_bytes=cursor.total,Source_observer_rows=cursor.rows)
+     except Exception as error:
+         result.update(error=repr(error),traceback=__import__('traceback').format_exc());event('driver_failure',error=repr(error))
+@@ -589,7 +636,26 @@
+             and rc_is('fixture',0) and only_int('fixture')
+             and rc_is('recorder',0) and only_int('recorder')
+             and len(closed)==4 and all(r.get('group_empty') for r in closed))
+-        if case=='W4-result-delivery-drop':
++        if case=='W2-native-boundary-hold':
++            # W2's expected end state is a deliberate isolation, not a clean
++            # solve: the Job's 150 ms deadline has passed by the time the
++            # release arrives, so the target Job must not enter the C solve.
++            # The Worker's own close path then reports fatal and exits non-zero,
++            # which is registered here rather than forced to 0.
++            w2_exp=reg.get('expected',{}).get('w2_exit_codes',{})
++            worker_rc=by_role.get('worker',{}).get('returncode')
++            result['passed']=bool(
++                result.get('w2_boundary_entered') is True
++                and result.get('w2_release_sent') is True
++                and isinstance(result.get('w2_result'),dict)
++                and result['w2_result'].get('disposition')=='expired'
++                and result['w2_result'].get('actual_native_invoked') is False
++                and len(result.get('w2_ticks_after_enter') or [])>=int(
++                    w2.get('ticks_before_release',2))
++                and worker_rc==w2_exp.get('worker',0)
++                and result.get('transition_ns') is None
++                and result.get('ramp_ok') is True)
++        elif case=='W4-result-delivery-drop':
+             result['passed']=bool(result.get('W4_observed')
+                                   and result.get('transition_ns') is None
+                                   and result.get('watchdog_ns') is None
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/owned_cold_backend.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/owned_cold_backend.hpp
+@@ -46,24 +46,38 @@
+   double kernel_sum=0;unsigned ordinal=0;const auto entry=clock_();
+   auto invoke=[&](bool reset,bool shift,bool fixed){
+    bias_replay::require(clock_()<=deadline,"expired_before_internal_native_entry");++ordinal;
++   // The original component seam. It must keep running: callers inject a hook
++   // here and a silent drop is a regression, not a refactor. It runs before any
++   // waiting, so a hook that throws still prevents the solve.
++   if(hook_)hook_(ordinal);
+    // W2: hold at this boundary if it is the registered one. The gate's wait
+    // window and the Job deadline are separate authorities: `enter` returns true
+    // only when the release arrived AND the Job is still inside its deadline.
+    if(boundary_&&boundary_->armed()&&boundary_->matches(ordinal,id)){
+      const bool permitted=boundary_->enter(ordinal,id,stop_);
+-     const auto &rec=boundary_->record();
+-     last_["w2_boundary"]=w2_boundary_json(rec);
+-     if(permitted){
+-       // Record the call only at the moment we are about to take it; the
+-       // outer wrapper being entered is not the same fact.
+-       boundary_->mark_native_entered(ordinal);
+-       last_["w2_actual_C_call_started"]=true;
+-     }else{
++     if(!permitted){
++       // Snapshot AFTER the boundary has finished updating its record, so the
++       // policy JSON and the Boundary cannot disagree about the call fact.
++       last_["w2_boundary"]=w2_boundary_json(boundary_->record());
+        last_["w2_actual_C_call_started"]=false;
+-       throw std::runtime_error(std::string("w2_boundary_")+w2_wire::disposition_name(rec.disposition));
++       throw std::runtime_error(std::string("w2_boundary_")+
++         w2_wire::disposition_name(boundary_->record().disposition));
+      }
+    }
+-   last_["backend_entries_started"]=ordinal;const auto start=clock_();auto a=solver_.step(j,reset,shift);const auto end=clock_();kernel_sum+=a.info.solve_time_ms;
++   last_["backend_entries_started"]=ordinal;const auto start=clock_();
++   // Tell the raw backend which ordinal this is, then let it report the actual
++   // C entry from its own solve site. The marker therefore lands after all
++   // preparation that can still throw, not before it.
++   solver_.set_call_ordinal(ordinal);
++   auto a=solver_.step(j,reset,shift);const auto end=clock_();kernel_sum+=a.info.solve_time_ms;
++   if(boundary_&&boundary_->armed()&&boundary_->matches(ordinal,id)
++      &&solver_.native_call_count()>0
++      &&solver_.native_ordinals().back()==ordinal){
++     boundary_->mark_native_entered(ordinal);
++     last_["w2_boundary"]=w2_boundary_json(boundary_->record());
++     last_["w2_actual_C_call_started"]=true;
++     last_["w2_native_call_count"]=solver_.native_call_count();
++   }
+    Json r={{"ordinal",ordinal},{"start_ns",start},{"end_ns",end},{"native_returned_success",a.info.success},{"first_control",{a.control[0],a.control[1]}},{"kernel_ms",a.info.solve_time_ms},{"additional_first_equality",fixed},{"warm_shift_after",shift}};
+    if(apply){r["X"]=bias_replay::matrix_data(a.info.X_pred);r["U"]=bias_replay::matrix_data(a.info.U_pred);r["augmented_X"]=bias_replay::matrix_data(a.augmented);}
+    last_["subcalls"].push_back(r);last_["backend_entries_completed"]=ordinal;return a;
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/raw_backend_v1.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/raw_backend_v1.hpp
+@@ -7,6 +7,9 @@
+ #include <acados_c/ocp_nlp_interface.h>
+ #include <chrono>
+ #include <cstdio>
++#include <functional>
++#include <vector>
++
+ namespace startup_replay {
+ using Json=bias_replay::Json;
+ using Clock=std::chrono::steady_clock;
+@@ -40,6 +43,15 @@
+   return {{"lbu",{lo[0],lo[1]}},{"ubu",{hi[0],hi[1]}},{"additional_first_equality",fixed_first_},{"read_from_actual_C_API",true}};
+  }
+  Json warm_state() const {return {{"warm",warm_},{"X_aug",bias_replay::matrix_data(xw_)},{"U",bias_replay::matrix_data(uw_)}};}
++ /// Observe the actual C entry. Called immediately before
++ /// usv_dyn_nmpc_acados_solve, i.e. after all preparation that can still throw,
++ /// so "wrapper entered" and "C function entered" remain distinct facts.
++ using NativeCallObserver=std::function<void(unsigned)>;
++ void begin_native_call(unsigned ordinal){if(native_observer_)native_observer_(ordinal);}
++ void set_native_call_observer(NativeCallObserver fn){native_observer_=std::move(fn);}
++ unsigned native_call_count() const {return unsigned(native_calls_.size());}
++ void note_native_call(unsigned ordinal){native_calls_.push_back(ordinal);if(native_observer_)native_observer_(ordinal);}
++ const std::vector<unsigned> &native_ordinals() const {return native_calls_;}
+  Json seed_feasible(const Json &job,const std::vector<double> &values){
+   bias_replay::require(values.size()==40,"complete seed controls");Eigen::MatrixXd seed_u(2,20);for(int i=0;i<40;++i)seed_u.data()[i]=values[i];
+   bias_replay::require(seed_u.allFinite()&&seed_u.minCoeff()>=p_.T_min&&seed_u.maxCoeff()<=p_.T_max,"finite seed inside original input box");
+@@ -64,7 +76,11 @@
+   double previous_yaw=state[2];for(int k=0;k<=p_.N;++k){double ref[6];for(int i=0;i<6;++i)ref[i]=reference(i,k);ref[2]=previous_yaw+usv_mpc::normalize_angle(ref[2]-previous_yaw);previous_yaw=ref[2];usv_dyn_nmpc_acados_update_params(c_,k,ref,6);}
+   if(warm_){for(int k=0;k<=p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"x",xw_.col(k).data());for(int k=0;k<p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"u",uw_.col(k).data());}
+   else {Eigen::Matrix<double,8,1> guess;guess<<state,Eigen::Vector2d::Zero();Eigen::Vector2d zero=Eigen::Vector2d::Zero();for(int k=0;k<=p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"x",guess.data());for(int k=0;k<p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"u",zero.data());}
+-  Answer answer;const auto solve_start=Clock::now();const int status=usv_dyn_nmpc_acados_solve(c_);answer.info.solve_time_ms=std::chrono::duration<double,std::milli>(Clock::now()-solve_start).count();bias_replay::require(status==0,"raw actual codegen solve failed");
++  Answer answer;const auto solve_start=Clock::now();
++  // The genuine entry point. Everything above may throw; nothing below has run
++  // yet, so this is the first instant at which the C solve is really entered.
++  note_native_call(ordinal_);
++  const int status=usv_dyn_nmpc_acados_solve(c_);answer.info.solve_time_ms=std::chrono::duration<double,std::milli>(Clock::now()-solve_start).count();bias_replay::require(status==0,"raw actual codegen solve failed");
+   answer.augmented=Eigen::MatrixXd::Zero(8,p_.N+1);answer.info.U_pred=Eigen::MatrixXd::Zero(2,p_.N);
+   for(int k=0;k<=p_.N;++k){double x[8];ocp_nlp_out_get(cfg_,dim_,out_,k,"x",x);answer.augmented.col(k)=Eigen::Map<Eigen::Matrix<double,8,1>>(x);}
+   for(int k=0;k<p_.N;++k){double u[2];ocp_nlp_out_get(cfg_,dim_,out_,k,"u",u);answer.info.U_pred.col(k)=Eigen::Map<Eigen::Vector2d>(u);}
+@@ -74,7 +90,9 @@
+   else {xw_=answer.augmented;uw_=answer.info.U_pred;}
+   warm_=true;answer.wall_ms=std::chrono::duration<double,std::milli>(Clock::now()-start).count();return answer;
+  }
++ void set_call_ordinal(unsigned o){ordinal_=o;}
+  private:
++ unsigned ordinal_=0;std::vector<unsigned> native_calls_;NativeCallObserver native_observer_;
+  usv_mpc::MpcParams p_;usv_dyn_nmpc_solver_capsule *c_=nullptr;ocp_nlp_config *cfg_=nullptr;ocp_nlp_dims *dim_=nullptr;ocp_nlp_in *in_=nullptr;ocp_nlp_out *out_=nullptr;bool warm_=false;bool fixed_first_=false;Eigen::MatrixXd xw_,uw_;
+ };
+ inline double control_error(const Answer &a,const Json &expected){return bias_replay::maximum_error({a.control[0],a.control[1]},expected);}
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/run_wiring_verification.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/run_wiring_verification.py
+@@ -1,17 +1,16 @@
+ #!/usr/bin/env python3
+-"""Build and run the W2 wiring tests, then mutate each guard.
+-
+-Two separate claims, reported separately:
+-  * the wiring suites pass;
+-  * each guard in the boundary wiring is load-bearing — removing it makes at
+-    least one test fail.
+-
+-The plan's §6.2 asks for exactly these targeted checks; a green suite whose
+-assertions would also pass against a boundary with no deadline guard is not
+-evidence of anything.
++"""Build and run the W2 wiring suites, then mutate each guard.
++
++Hardening required by the 60 review (§R8):
++  * every run uses a private copy of the author tree and a unique build
++    directory, never the shared /tmp/w2build cache;
++  * the actual CMAKE source root is asserted before trusting a build;
++  * mutations are applied to the private copy, never to the sealed tree;
++  * the sealed tree's hashes are verified unchanged before and after.
+ """
+ from __future__ import annotations
+ 
++import hashlib
+ import json
+ from pathlib import Path
+ import re
+@@ -26,16 +25,13 @@
+ TREE = HERE.parent                              # implementation/w2_author
+ PKG = TREE.parents[1]
+ OUT = PKG / 'evidence' / 'w2_wiring'
+-BUILD = Path('/tmp/w2build')
+-
+-BOUNDARY = HERE / 'w2_native_boundary.hpp'
+-BACKEND = HERE / 'owned_cold_backend.hpp'
++
++BOUNDARY_REL = 'worker/w2_native_boundary.hpp'
++BACKEND_REL = 'worker/owned_cold_backend.hpp'
+ 
+ MUTATIONS = {
+-    # The last guard is the whole point: a verified release must not grant
+-    # execution once the Job deadline has passed.
+     'drop_expiry_guard': (
+-        BOUNDARY,
++        BOUNDARY_REL,
+         r'    if \(guard > config_\.job_deadline_ns\) \{\n'
+         r'      record_\.disposition = Disposition::kExpired;\n'
+         r'      return false;\n'
+@@ -44,40 +40,106 @@
+         '      record_.disposition = Disposition::kExpired;\n'
+         '      return false;\n'
+         '    }'),
+-    # Off-by-one: `>=` would reject a release that lands exactly on the deadline.
+     'expiry_off_by_one': (
+-        BOUNDARY,
++        BOUNDARY_REL,
+         r'if \(guard > config_\.job_deadline_ns\)',
+         'if (guard >= config_.job_deadline_ns)'),
+-    # NOTE: the boundary's own post-release stop check is deliberately NOT in
+-    # this list. The v2 Gate re-checks the predicate after assembly, so it
+-    # reports `stop_requested` before the boundary ever sees a `released`; the
+-    # boundary check is unreachable defense in depth for a different gate, not a
+-    # live guard. Claiming a mutation covers it would be claiming coverage of a
+-    # path nothing exercises.
+-    # Binding only on the ordinal would pause the first call of every Job.
++    'drop_post_gate_stop_guard': (
++        BOUNDARY_REL,
++        r'if \(record_\.stop_at_release \|\| \(stop_requested && stop_requested\(\)\)\) \{',
++        'if (false) {'),
+     'bind_on_ordinal_only': (
+-        BOUNDARY,
++        BOUNDARY_REL,
+         r'    return gate_ != nullptr && job_id == config_\.job_id &&\n'
+         r'           ordinal == config_\.ordinal;',
+         '    return gate_ != nullptr && ordinal == config_.ordinal;'),
+-    # Marking the call from the wrapper instead of from the C entry.
+-    'mark_call_before_guard': (
+-        BOUNDARY,
+-        r'    record_\.disposition = Disposition::kAllowed;\n'
+-        r'    return true;',
+-        '    record_.disposition = Disposition::kAllowed;\n'
+-        '    record_.actual_native_invoked = true;\n'
+-        '    return true;'),
+-    # The backend must not treat an unrelated call as a rejected one.
+-    'backend_rejects_unmatched_calls': (
+-        BACKEND,
+-        r'if\(boundary_&&boundary_->armed\(\)&&boundary_->matches\(ordinal,id\)\)\{',
+-        'if(boundary_&&boundary_->armed()){'),
++    # The whole wiring block gone. This is the mutant the previous suite missed:
++    # every original test still passed with the Backend blocking removed.
++    #
++    # Matched by explicit anchor text, not a lazy `(?:.*\n)*?` group: the lazy
++    # form backtracks catastrophically on a file this size and hangs the runner.
++    'delete_backend_wiring': (
++        BACKEND_REL,
++        r'   if\(boundary_&&boundary_->armed\(\)&&boundary_->matches\(ordinal,id\)\)\{\n'
++        r'     const bool permitted=boundary_->enter\(ordinal,id,stop_\);\n'
++        r'     if\(!permitted\)\{\n'
++        r'       // Snapshot AFTER[^\n]*\n'
++        r'       // policy JSON[^\n]*\n'
++        r'       last_\["w2_boundary"\]=w2_boundary_json\(boundary_->record\(\)\);\n'
++        r'       last_\["w2_actual_C_call_started"\]=false;\n'
++        r'       throw std::runtime_error\(std::string\("w2_boundary_"\)\+\n'
++        r'         w2_wire::disposition_name\(boundary_->record\(\)\.disposition\)\);\n'
++        r'     \}\n'
++        r'   \}\n'
++        r'   last_\["backend_entries_started"\]',
++        '   last_["backend_entries_started"]'),
++    # The original seam silently dropped, which is the regression the review
++    # reproduced with a throwing hook.
++    'delete_before_call_hook': (
++        BACKEND_REL,
++        r'   if\(hook_\)hook_\(ordinal\);\n',
++        ''),
+ }
+ 
+-SUITES = [('native_boundary', 'test_w2_native_boundary'),
+-          ('backend_wiring', 'test_w2_backend_wiring')]
++SUITES = ['test_w2_native_boundary', 'test_w2_backend_wiring', 'test_w2_entry_contract']
++
++CONFIGURE = '''
++set -e
++export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++unset VIRTUAL_ENV PYTHONHOME PYTHONPATH AMENT_PREFIX_PATH CMAKE_PREFIX_PATH COLCON_PREFIX_PATH LD_LIBRARY_PATH
++source /opt/ros/jazzy/setup.bash
++source /home/trevor/USV/vrx_ws/install/local_setup.bash
++source /home/trevor/USV/usv_mpc_ws/install/local_setup.bash
++export LD_LIBRARY_PATH=/home/trevor/acados/lib:/home/trevor/.local/lib/python3.12/site-packages/casadi:$LD_LIBRARY_PATH
++exec cmake -S "{src}" -B "{build}" -DCMAKE_BUILD_TYPE=Release \
++  '-DCMAKE_CXX_FLAGS_RELEASE=-O2 -DNDEBUG' -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
++  -DP1_OWNED_SOURCE_BUNDLE_SHA256=x -DP1_DRIVER_TOOL_SHA256=x \
++  -DP1_V4_CONTRACT_FILE=/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json \
++  -DP1_V3_CONTRACT_FILE=/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json
++'''
++
++BUILD = '''
++set -e
++export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
++unset VIRTUAL_ENV PYTHONHOME PYTHONPATH AMENT_PREFIX_PATH CMAKE_PREFIX_PATH COLCON_PREFIX_PATH LD_LIBRARY_PATH
++source /opt/ros/jazzy/setup.bash
++source /home/trevor/USV/vrx_ws/install/local_setup.bash
++source /home/trevor/USV/usv_mpc_ws/install/local_setup.bash
++export LD_LIBRARY_PATH=/home/trevor/acados/lib:/home/trevor/.local/lib/python3.12/site-packages/casadi:$LD_LIBRARY_PATH
++exec cmake --build "{build}" --target {targets} -j2
++'''
++
++
++def sha_tree(root: Path) -> dict:
++    out = {}
++    for p in sorted(root.rglob('*')):
++        if p.is_file() and '__pycache__' not in p.parts:
++            out[str(p.relative_to(root))] = hashlib.sha256(p.read_bytes()).hexdigest()
++    return out
++
++
++def run_script(body: str, timeout: int = 600) -> subprocess.CompletedProcess:
++    with tempfile.NamedTemporaryFile('w', suffix='.sh', delete=False) as f:
++        f.write(body)
++        path = f.name
++    try:
++        return subprocess.run(['/bin/bash', path], capture_output=True,
++                              text=True, timeout=timeout)
++    finally:
++        Path(path).unlink(missing_ok=True)
++
++
++def configure_and_build(src: Path, build: Path) -> tuple[bool, str]:
++    r = run_script(CONFIGURE.format(src=src, build=build))
++    if r.returncode != 0:
++        return False, (r.stdout + r.stderr)[-3000:]
++    cache = build / 'CMakeCache.txt'
++    if not cache.is_file() or f'CMAKE_HOME_DIRECTORY:INTERNAL={src}' not in cache.read_text():
++        return False, 'build directory is not bound to the expected source root'
++    r = run_script(BUILD.format(build=build, targets=' '.join(SUITES)))
++    if r.returncode != 0:
++        return False, (r.stdout + r.stderr)[-3000:]
++    return True, ''
+ 
+ 
+ def summary(output: str) -> dict:
+@@ -87,98 +149,97 @@
+             'failed_tests': sorted(set(failed))}
+ 
+ 
+-def build(targets: list[str]) -> tuple[bool, str]:
+-    cmd = ['cmake', '--build', str(BUILD), '--target', *targets, '-j2']
+-    r = subprocess.run(cmd, capture_output=True, text=True)
+-    if r.returncode != 0:
+-        return False, (r.stdout + r.stderr)[-3000:]
+-    return True, ''
+-
+-
+-def run(binary: Path) -> tuple[bool, str]:
+-    r = subprocess.run([str(binary)], capture_output=True, text=True,
+-                       env={'LD_LIBRARY_PATH':
+-                            '/home/trevor/acados/lib:/home/trevor/.local/lib/'
+-                            'python3.12/site-packages/casadi',
+-                            'PATH': '/usr/local/bin:/usr/bin:/bin'})
++def run_suite(build: Path, name: str) -> tuple[bool, str]:
++    env = {
++        'PATH': '/usr/local/bin:/usr/bin:/bin',
++        'LD_LIBRARY_PATH': '/home/trevor/acados/lib:/home/trevor/.local/lib/'
++                           'python3.12/site-packages/casadi',
++    }
++    r = subprocess.run([str(build / name)], capture_output=True, text=True,
++                       env=env, timeout=300)
+     return r.returncode == 0, r.stdout[-4000:]
+ 
+ 
+ def main() -> int:
+     OUT.mkdir(parents=True, exist_ok=True)
+-    report = {'schema': 'M4-diagnostic-w2-wiring-v1', 'suites': {},
+-              'mutations': {}}
+-
+-    ok, log = build([t for _, t in SUITES])
+-    if not ok:
+-        print('BUILD FAILED')
+-        print(log)
+-        return 2
+-    for name, target in SUITES:
+-        passed, out = run(BUILD / target)
+-        report['suites'][name] = {'pass': passed, **summary(out)}
+-        print('suite %-18s %s %s' % (name, 'PASS' if passed else 'FAIL',
+-                                     report['suites'][name]))
+-        if not passed:
+-            print(out[-1500:])
+-
+-    originals = {p: p.read_text() for p in {BOUNDARY, BACKEND}}
+-    try:
+-        for name, (target, pattern, replacement) in MUTATIONS.items():
+-            mutated, count = re.subn(pattern, replacement, originals[target])
++    sealed_before = sha_tree(TREE)
++    report = {'schema': 'M4-diagnostic-w2-wiring-v2',
++              'sealed_tree_hashes_before': len(sealed_before),
++              'suites': {}, 'mutations': {}, 'private_copies': True}
++
++    with tempfile.TemporaryDirectory(prefix='w2_wire_') as tmp:
++        tmp = Path(tmp)
++        private = tmp / 'author'
++        shutil.copytree(TREE, private, ignore=shutil.ignore_patterns('__pycache__'))
++        build = tmp / 'build'
++
++        ok, log = configure_and_build(private, build)
++        if not ok:
++            print('BUILD FAILED')
++            print(log)
++            return 2
++        for name in SUITES:
++            passed, out = run_suite(build, name)
++            report['suites'][name] = {'pass': passed, **summary(out)}
++            print('suite %-26s %s %s' % (name, 'PASS' if passed else 'FAIL',
++                                         report['suites'][name]))
++            if not passed:
++                print(out[-1200:])
++
++        for mname, (rel, pattern, replacement) in MUTATIONS.items():
++            target = private / rel
++            original = target.read_text()
++            mutated, count = re.subn(pattern, replacement, original, flags=re.S)
+             if count != 1:
+-                report['mutations'][name] = {
++                report['mutations'][mname] = {
+                     'prepared': False,
+                     'reason': 'pattern matched %d times' % count}
+-                print('mutation %-32s NOT PREPARED (x%d)' % (name, count))
++                print('mutation %-28s NOT PREPARED (x%d)' % (mname, count))
+                 continue
+             target.write_text(mutated)
+             try:
+-                built, blog = build([t for _, t in SUITES])
+-                if not built:
+-                    report['mutations'][name] = {
++                ok, log = configure_and_build(private, build)
++                if not ok:
++                    report['mutations'][mname] = {
+                         'prepared': True, 'build_failed': True,
+-                        'caught_by_test_suite': False,
+-                        'detail': blog[-500:]}
+-                    print('mutation %-32s BUILD FAILED (not counted as caught)'
+-                          % name)
++                        'caught_by_test_suite': False, 'detail': log[-400:]}
++                    print('mutation %-28s BUILD FAILED (not counted)' % mname)
+                     continue
+                 failed_tests = []
+-                for _, suite in SUITES:
+-                    s_ok, s_out = run(BUILD / suite)
++                for suite in SUITES:
++                    s_ok, s_out = run_suite(build, suite)
+                     if not s_ok:
+                         failed_tests.extend(summary(s_out)['failed_tests'])
+                 caught = bool(failed_tests)
+-                report['mutations'][name] = {
+-                    'prepared': True,
+-                    'caught_by_test_suite': caught,
++                report['mutations'][mname] = {
++                    'prepared': True, 'caught_by_test_suite': caught,
+                     'failed_tests': sorted(set(failed_tests))}
+-                print('mutation %-32s %s' % (
+-                    name,
++                print('mutation %-28s %s' % (
++                    mname,
+                     'caught by %s' % sorted(set(failed_tests)) if caught
+                     else 'NOT CAUGHT (blind spot)'))
+             finally:
+-                for p, text in originals.items():
+-                    p.write_text(text)
+-    finally:
+-        for p, text in originals.items():
+-            p.write_text(text)
+-        build([t for _, t in SUITES])  # restore the binaries
+-
++                target.write_text(original)
++
++    sealed_after = sha_tree(TREE)
++    report['sealed_tree_unchanged'] = sealed_before == sealed_after
+     suites_ok = all(v['pass'] for v in report['suites'].values())
+     prepared = {k: v for k, v in report['mutations'].items() if v.get('prepared')}
+     all_caught = all(v.get('caught_by_test_suite') for v in prepared.values())
+-    unpreparable = [k for k, v in report['mutations'].items() if not v.get('prepared')]
++    unpreparable = [k for k, v in report['mutations'].items()
++                    if not v.get('prepared')]
+     report['suites_pass'] = suites_ok
+     report['all_prepared_mutations_caught'] = all_caught
+     report['unprepared_mutations'] = unpreparable
+-    report['complete'] = suites_ok and all_caught and not unpreparable
+-
+-    path = OUT / 'wiring_verification_v1.json'
++    report['complete'] = (suites_ok and all_caught and not unpreparable
++                          and report['sealed_tree_unchanged'])
++
++    path = OUT / 'wiring_verification_v2.json'
+     path.write_text(json.dumps(report, indent=2) + '\n')
+     print()
+     print('suites pass:', suites_ok)
+     print('every prepared mutation caught:', all_caught)
++    print('sealed tree unchanged:', report['sealed_tree_unchanged'])
+     if unpreparable:
+         print('could not prepare:', unpreparable)
+     print('written:', path)
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/solver_worker_m4.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/solver_worker_m4.cpp
+@@ -8,6 +8,7 @@
+ #include <csignal>
+ #include <cstdio>
+ #include <cstring>
++#include <fcntl.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <rclcpp/rclcpp.hpp>
+@@ -58,7 +59,7 @@
+     caps_=create_publisher<p1::Capability>("/p1/worker_capability",rclcpp::QoS(1).reliable().transient_local());
+     sub_=create_subscription<p1::Job>("/p1/solve_job",rclcpp::QoS(1).reliable(),[this](p1::Job::SharedPtr j){receive(*j);});
+     const auto owned_file=declare_parameter<std::string>("owned_manifest_file","");owned_file_=owned_file;
+-    formal_owned::overrides(*this,{"run_id","contract_hash","contract_file","m4_release_scope","mode","driver_pins_file","driver_pins_sha256","source_file","owned_manifest_file","test_delay_ms","test_native_block_ms","diagnostic_v2_policy","diagnostic_v2_block_ms","diagnostic_drop_after_candidates","use_sim_time"});
++    formal_owned::overrides(*this,{"run_id","contract_hash","contract_file","m4_release_scope","mode","driver_pins_file","driver_pins_sha256","source_file","owned_manifest_file","test_delay_ms","test_native_block_ms","diagnostic_v2_policy","diagnostic_v2_block_ms","diagnostic_drop_after_candidates","use_sim_time","w2_release_fd","w2_release_job_id","w2_release_ordinal","w2_release_nonce","w2_release_wait_ns"});
+     parameters_frozen_=p1_owned::freeze_parameters(*this);
+     const auto endpoints=p1_owned::Json::array({
+       p1_owned::publisher_endpoint(*out_,"usv_research_interfaces/msg/SolveCandidate"),
+@@ -67,7 +68,8 @@
+     p1_owned::write_create_only(owned_file,p1_owned::role_manifest(*this,"worker",run_,hash_,P1_OWNED_SOURCE_BUNDLE_SHA256,endpoints,
+       {{"worker_instance",instance_},{"nominal_hash",nominal_},{"source_fd",p1_owned::source_fd_identity(log)},
+        {"runtime_hook_values",{{"test_delay_ms",delay_},{"test_native_block_ms",block_}}},
+-       {"diagnostic_v2",{{"policy",v2_policy_},{"milliseconds",v2_ms_},{"after_completed_jobs",1},{"native_C_hang_claimed",false}}},{"diagnostic_drop_after_candidates",drop_after_},{"fault_injection_permission",c_.at("fault_injection_enabled")},{"contract_configuration",c_}}));
++       {"diagnostic_v2",{{"policy",v2_policy_},{"milliseconds",v2_ms_},{"after_completed_jobs",1},{"native_C_hang_claimed",false}}},{"diagnostic_drop_after_candidates",drop_after_},{"fault_injection_permission",c_.at("fault_injection_enabled")},
++       {"w2_release_channel",w2_channel_manifest_()},{"contract_configuration",c_}}));
+     startup_=p1::monotonic_ns();
+     event({{"type","capability_source_header"},{"schema","p1-capability-source-header-v1"},
+       {"run_id",run_},{"boot_id",boot_},{"pid",getpid()},{"process_start_ticks",p1_owned::process_start_ticks()},
+@@ -92,10 +94,16 @@
+     const auto job=declare_parameter<int64_t>("w2_release_job_id",-1);
+     const auto ordinal=declare_parameter<int>("w2_release_ordinal",0);
+     const auto budget=declare_parameter<int64_t>("w2_release_wait_ns",0);
++    w2_nonce=declare_parameter<int>("w2_release_nonce",0);
+     if(w2_fd_<0){
+-      if(job>=0||ordinal>0||budget>0)throw std::runtime_error("w2 release parameters given without an fd");
++      // Without an fd every other W2 parameter must stay at its disabled
++      // default; a half-registered channel is a configuration error, not a
++      // reason to silently continue.
++      if(job>=0||ordinal!=0||budget!=0||w2_nonce!=0)
++        throw std::runtime_error("w2 release parameters given without an fd");
+       return;  // ordinary profile: no gate, no waiting
+     }
++    if(w2_nonce==0)throw std::runtime_error("w2 release nonce must be non-zero");
+     if(!c_.at("fault_injection_enabled").get<bool>()||!c_.at("parameters_are_diagnostic_only").get<bool>())
+       throw std::runtime_error("w2 release channel requires the diagnostic profile");
+     if(job<0||ordinal<=0||budget<=0||budget>2000000000LL)
+@@ -104,15 +112,21 @@
+     char target[256]={};const auto n=::readlink(path,target,sizeof(target)-1);
+     if(n<=0)throw std::runtime_error("w2 release fd does not resolve");
+     target[n]=0;
+-    if(std::strncmp(target,"pipe:[",6)!=0)throw std::runtime_error("w2 release fd is not a pipe");
+-    // A pipe fd must be the read end: writing to it would mean the direction is
+-    // reversed, which is the wiring error this check exists to catch.
++    // S_ISFIFO identifies the object; st_mode says nothing about the fd's
++    // access mode. Both ends of a pipe report the same st_mode.
+     struct stat st{};
+-    if(::fstat(w2_fd_,&st)!=0||(st.st_mode&O_ACCMODE)!=O_RDONLY)
++    if(::fstat(w2_fd_,&st)!=0||!S_ISFIFO(st.st_mode))
++      throw std::runtime_error("w2 release fd is not a FIFO");
++    // F_GETFL is the only correct way to learn the direction: the read end is
++    // O_RDONLY, the write end O_WRONLY. Checking st_mode & O_ACCMODE accepts
++    // both ends, which is exactly the wiring error this gate must catch.
++    const int flags=::fcntl(w2_fd_,F_GETFL);
++    if(flags<0||(flags&O_ACCMODE)!=O_RDONLY)
+       throw std::runtime_error("w2 release fd is not read-only");
++    w2_channel_.device=uint64_t(st.st_dev);w2_channel_.inode=uint64_t(st.st_ino);
+     w2_pipe_=std::make_unique<w2_gate::PipeReader>(w2_fd_);
+     w2_gate_=std::make_unique<w2_gate::Gate>(w2_pipe_.get(),
+-      w2_gate::Identity{1,uint64_t(job),uint32_t(ordinal),uint32_t(declare_parameter<int>("w2_release_nonce",0))},
++      w2_gate::Identity{1,uint64_t(job),uint32_t(ordinal),uint32_t(w2_nonce)},
+       budget);
+     w2_boundary_cfg_.job_id=job;w2_boundary_cfg_.ordinal=uint32_t(ordinal);
+     w2_boundary_cfg_.wait_budget_ns=budget;
+@@ -130,8 +144,37 @@
+     });
+     event({{"type","w2_release_channel_armed"},{"fd",w2_fd_},{"fd_target",target},
+       {"job_id",job},{"ordinal",ordinal},{"wait_budget_ns",budget},
++      {"nonce",w2_nonce},{"device",w2_channel_.device},{"inode",w2_channel_.inode},
+       {"read_only",true},{"gate_armed",true}},true);
+     if(fatal_)throw std::runtime_error("w2 release arm event failed");
++  }
++
++  /// The channel facts the Regulator authenticates against. Recorded from the
++  /// actual inherited fd (device/inode and F_GETFL direction), not from the
++  /// numbers the Driver passed: an fd integer is not an identity.
++  p1::Json w2_channel_manifest_()const{
++    if(w2_fd_<0)return p1::Json(nullptr);
++    return {{"fd",w2_fd_},{"device",w2_channel_.device},{"inode",w2_channel_.inode},
++            {"read_only",true},{"gate_armed",true},
++            {"job_id",w2_boundary_cfg_.job_id},{"ordinal",w2_boundary_cfg_.ordinal},
++            {"nonce",w2_nonce},{"wait_budget_ns",w2_boundary_cfg_.wait_budget_ns}};
++  }
++
++  /// Emit the boundary result once, and only for the Job it is bound to.
++  ///
++  /// The boundary holds one decision for the whole run. Without the Job check
++  /// and the once-flag, every later Job would re-publish the target Job's
++  /// disposition and invocation fact under its own job_id.
++  void emit_w2_result_if_target_(int64_t job_id){
++    if(!w2_boundary_||w2_result_emitted_)return;
++    if(job_id!=w2_boundary_cfg_.job_id)return;
++    const auto &rec=w2_boundary_->record();
++    if(!rec.gate_configured)return;
++    w2_result_emitted_=true;
++    event({{"type","w2_boundary_result"},{"job_id",job_id},
++      {"ordinal",rec.ordinal},{"disposition",w2_wire::disposition_name(rec.disposition)},
++      {"boundary",w2_boundary_json(rec)},
++      {"actual_native_invoked",rec.actual_native_invoked}},true);
+   }
+ 
+   bool event(const p1::Json & d,bool flush=false){std::lock_guard<std::mutex> l(log_mutex_);source_rows_generated_++;file_<<d.dump()<<'\n';if(flush)file_.flush();if(!file_){fatal_=true;source_io_failed_=true;return false;}source_rows_emitted_++;return true;}
+@@ -249,26 +292,14 @@
+       }
+       std::pair<Eigen::Vector2d,usv_mpc::SolveInfo> answer;
+       try{answer=solver_->solve_owned(p1::job_json(p.job));}catch(...){
+-        if(w2_boundary_){
+-          const auto rec=w2_boundary_->record();
+-          event({{"type","w2_boundary_result"},{"job_id",p.job.job_id},
+-            {"ordinal",rec.ordinal},{"disposition",w2_wire::disposition_name(rec.disposition)},
+-            {"boundary",w2_boundary_json(rec)},
+-            {"actual_native_invoked",rec.actual_native_invoked}},true);
+-        }
++        emit_w2_result_if_target_(p.job.job_id);
+         event({{"type","cold_start_policy_failure"},{"job_id",p.job.job_id},{"worker_instance",instance_},{"metadata",solver_->last_policy_event()}},true);throw;}
+       result.solve_end_ns=p1::monotonic_ns();
+-      // Record the boundary facts on the success path too. `actual_native_invoked`
+-      // here comes from the backend's own mark, not from the wrapper returning.
+-      if(w2_boundary_){
+-        const auto rec=w2_boundary_->record();
+-        if(rec.gate_configured){
+-          event({{"type","w2_boundary_result"},{"job_id",p.job.job_id},
+-            {"ordinal",rec.ordinal},{"disposition",w2_wire::disposition_name(rec.disposition)},
+-            {"boundary",w2_boundary_json(rec)},
+-            {"actual_native_invoked",rec.actual_native_invoked}},true);
+-        }
+-      }
++      // Record the boundary facts exactly once, for the Job the boundary is
++      // bound to. A later Job must not inherit this record: the boundary keeps
++      // the last decision, so re-emitting it under a new job_id would attribute
++      // one call's facts to another Job.
++      emit_w2_result_if_target_(p.job.job_id);
+       event({{"type","cold_start_policy_result"},{"job_id",p.job.job_id},{"worker_instance",instance_},{"metadata",solver_->last_policy_event()},{"solve_start_ns",result.solve_start_ns},{"solve_end_ns",result.solve_end_ns}});
+       result.success=answer.second.success;result.backend_ms=answer.second.solve_time_ms;
+       const auto native_reason=p1::copy_native_reason(answer.second.error,result.reason);if(!native_reason){event({{"type","native_result_resource_oversize"},{"job_id",p.job.job_id},{"field",native_reason.field},{"reason",native_reason.reason},{"observed",native_reason.observed},{"limit",native_reason.limit}});result.reason="native_result_resource_oversize";result.success=false;}
+@@ -307,6 +338,8 @@
+   std::unique_ptr<formal_owned::Peer> m4_driver_;
+   std::unique_ptr<w2_gate::PipeReader> w2_pipe_;std::unique_ptr<w2_gate::Gate> w2_gate_;
+   std::unique_ptr<w2_wire::Boundary> w2_boundary_;w2_wire::BoundaryConfig w2_boundary_cfg_;int w2_fd_=-1;
++  bool w2_result_emitted_=false;int w2_nonce=0;
++  struct W2Channel{uint64_t device=0;uint64_t inode=0;} w2_channel_;
+   p1::Json c_;p1::ResourceLimits resources_;std::string run_,hash_,boot_,nominal_,instance_,scope_,owned_file_;bool capability_recording_ready_=false;int delay_=0,block_=0,drop_after_=-1;int64_t startup_=0;bool closed_=false;
+   std::string v2_policy_;int v2_ms_=0;std::unique_ptr<v2_diagnostic::Block> v2_block_;
+   std::atomic<uint64_t> active_{0},completed_{0},generated_candidates_{0},published_candidates_{0},dropped_candidates_{0};std::atomic<bool> fatal_{false},terminal_numerical_{false};uint64_t last_received_=0;
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/test_w2_backend_wiring.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/test_w2_backend_wiring.cpp
+@@ -1,17 +1,15 @@
+ // SPDX-License-Identifier: MIT
+ //
+-// Wiring checks for the W2 native boundary: does the backend actually stop at
+-// the internal call boundary, does the last guard decide correctly, and does an
+-// expired boundary stay out of the actual C solve?
++// Backend-boundary tests that actually hit the registered boundary.
+ //
+-// These load no ROS and publish nothing. They do build the real
+-// owned_cold::Backend against the real acados-backed RawBackend, so the seam
+-// being tested is the one the Worker uses — not a stand-in.
+-//
+-// The clock is injected, so "deadline before / at / after" is exact rather than
+-// a race against the wall clock.
++// The previous suite's "success" test bound the gate to Job 2 but only ran
++// Job 1, so it exercised the non-matching path and would still pass with the
++// whole wiring block deleted. These tests drive the *target* Job and ordinal
++// through owned_cold::Backend::solve_owned, and the runner mutates the wiring
++// block away to prove they notice.
+ #include <cstdint>
+ #include <cstring>
++#include <memory>
+ #include <string>
+ #include <vector>
+ 
+@@ -30,16 +28,20 @@
+ using w2_wire::BoundaryConfig;
+ using w2_wire::Disposition;
+ 
+-constexpr int64_t kJobId = 2;
+-constexpr uint32_t kOrdinal = 1;
+-
+-/// Delivers one release frame on the first read, then nothing.
+-class OneShotReader final : public w2_gate::Reader {
++constexpr int64_t kTargetJob = 1;   // the cold-start Job: the only one armed
++constexpr uint32_t kTargetOrdinal = 1;
++constexpr int64_t kStartNs = 1000000000;
++
++/// Delivers one frame when asked, and can advance a shared clock as it does.
++class ControlledReader final : public w2_gate::Reader {
+  public:
+-  explicit OneShotReader(Identity id) : id_(id) {}
++  ControlledReader(Identity id, int64_t * clock, int64_t advance_ns)
++  : id_(id), clock_(clock), advance_(advance_ns) {}
++
+   long read_some(uint8_t * buf, size_t n, int64_t, int64_t * elapsed) override {
+     if (delivered_) {
+-      if (elapsed) *elapsed = 0;
++      if (elapsed) *elapsed = advance_;
++      if (clock_) *clock_ += advance_;
+       return -1;
+     }
+     delivered_ = true;
+@@ -47,27 +49,25 @@
+     w2_gate::encode_release(frame, id_);
+     const size_t take = std::min(n, w2_gate::kFrameBytes);
+     std::memcpy(buf, frame, take);
+-    if (elapsed) *elapsed = 0;
++    // Advancing here is what makes the release "arrive late": the gate sees a
++    // frame, but the clock has crossed the Job deadline while it waited.
++    if (clock_) *clock_ += advance_;
++    if (elapsed) *elapsed = advance_;
+     return long(take);
+   }
+ 
+  private:
+   Identity id_;
++  int64_t * clock_;
++  int64_t advance_;
+   bool delivered_ = false;
+ };
+ 
+-/// A monotonic clock the test advances explicitly.
+-struct TestClock {
+-  int64_t now = 1000000000;
+-};
+-
+-/// The Job JSON the backend validates before it will solve. Mirrors what the
+-/// Worker's job_json produces for Job 1's cold-start case, which is the only
+-/// Job the cold-start policy arms for.
+-Json cold_start_job(int64_t job_id, int64_t deadline_ns) {
++/// A Job that satisfies the cold-start policy so the target Job really arms.
++Json target_job(int64_t job_id, int64_t deadline_ns) {
+   Json j;
+   j["schema"] = "p1-solve-job-v1";
+-  j["run_id"] = "w2_wiring_test";
++  j["run_id"] = "w2_backend_test";
+   j["boot_id"] = "boot";
+   j["contract_hash"] = std::string(64, 'a');
+   j["nominal_hash"] = std::string(64, 'b');
+@@ -82,21 +82,16 @@
+   j["dt"] = 0.2;
+   j["deadline_ns"] = deadline_ns;
+   j["target_state"] = std::vector<double>{0, 0, 0, 0, 0, 0};
++  j["frozen_state"] = std::vector<double>{0, 0, 0, 0, 0, 0};
+   j["anchor_n"] = std::vector<double>{0, 0};
++  j["anchor_known"] = std::vector<bool>{true, true};
+   j["reset_warmstart"] = false;
+-  // The cold-start policy requires this exact ramp to arm itself.
+   std::vector<double> ref(126);
+   for (int k = 0; k <= 20; ++k) {
+     ref[6 * k + 0] = 0.05 * 0.2 * k;
+-    ref[6 * k + 1] = 0;
+-    ref[6 * k + 2] = 0;
+     ref[6 * k + 3] = 0.05;
+-    ref[6 * k + 4] = 0;
+-    ref[6 * k + 5] = 0;
+   }
+   j["reference"] = ref;
+-  j["frozen_state"] = std::vector<double>{0, 0, 0, 0, 0, 0};
+-  j["anchor_known"] = std::vector<bool>{true, true};
+   return j;
+ }
+ 
+@@ -107,133 +102,139 @@
+   return p;
+ }
+ 
+-/// The binding must repeat exactly the identity fields the Job carries; the
+-/// backend rejects a solve whose context does not match it key for key.
+ Json binding() {
+-  return Json{{"run_id", "w2_wiring_test"}, {"boot_id", "boot"},
++  return Json{{"run_id", "w2_backend_test"}, {"boot_id", "boot"},
+               {"contract_hash", std::string(64, 'a')},
+               {"nominal_hash", std::string(64, 'b')},
+               {"worker_instance", "instance"}};
+ }
+ 
++/// One armed boundary plus the clock it shares with the backend.
++struct Armed {
++  Armed(int64_t deadline_ns, int64_t advance_ns, int64_t budget_ns = 1000000000)
++  : reader(identity(), &clock, advance_ns), gate(&reader, identity(), budget_ns) {
++    cfg.job_id = kTargetJob;
++    cfg.ordinal = kTargetOrdinal;
++    cfg.job_deadline_ns = deadline_ns;
++    cfg.wait_budget_ns = budget_ns;
++    boundary = Boundary(&gate, cfg, [this] { return clock; });
++    boundary.set_clock([this] { return clock; });
++    backend = std::make_unique<owned_cold::Backend>(
++        params(), binding(), true, [this] { return clock; });
++    backend->attach_boundary(&boundary, [] { return false; });
++  }
++
++  static Identity identity() {
++    return Identity{1, uint64_t(kTargetJob), kTargetOrdinal, 0x77};
++  }
++
++  int64_t clock = kStartNs;
++  ControlledReader reader;
++  Gate gate;
++  BoundaryConfig cfg;
++  Boundary boundary;
++  std::unique_ptr<owned_cold::Backend> backend;
++};
++
+ }  // namespace
+ 
+-TEST(W2Wiring, UnarmedBackendRunsTheOrdinaryPathUnchanged) {
+-  TestClock clock;
++TEST(W2Backend, TimelyReleaseOnTheTargetBoundaryEntersTheNativeCall) {
++  // Target Job, target ordinal, release inside the deadline: the call must
++  // actually happen, and both the Boundary and the policy JSON must say so.
++  Armed a(/*deadline=*/kStartNs + 1000000000, /*advance=*/1000000);
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_NO_THROW(a.backend->solve_owned(target_job(kTargetJob, a.cfg.job_deadline_ns)));
++
++  const auto &rec = a.boundary.record();
++  EXPECT_EQ(rec.disposition, Disposition::kAllowed);
++  EXPECT_TRUE(rec.actual_native_invoked);
++  EXPECT_EQ(rec.ordinal_at_call, kTargetOrdinal);
++  // The policy snapshot must agree with the Boundary: the snapshot is taken
++  // after the boundary finishes updating, not before.
++  const auto policy = a.backend->w2_boundary_event();
++  EXPECT_TRUE(policy.at("actual_native_invoked").get<bool>());
++  EXPECT_EQ(policy.at("disposition").get<std::string>(), "allowed");
++}
++
++TEST(W2Backend, ReleaseAfterTheJobDeadlineNeverStartsTheNativeCall) {
++  // Initial guard passes (clock starts well before the deadline); the reader
++  // then advances past it while the gate waits. The release is verified, the
++  // boundary expires, and the target Job's native entries stay at zero.
++  const int64_t deadline = kStartNs + 150000000;
++  Armed a(deadline, /*advance=*/200000000);  // advances 200 ms inside the wait
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_THROW(a.backend->solve_owned(target_job(kTargetJob, deadline)),
++               std::runtime_error);
++
++  const auto &rec = a.boundary.record();
++  EXPECT_EQ(rec.disposition, Disposition::kExpired);
++  EXPECT_TRUE(rec.released);              // the frame really arrived
++  EXPECT_GT(rec.past_deadline_ns, 0);     // and the Job really was late
++  EXPECT_FALSE(rec.actual_native_invoked);  // the C call never started
++  const auto policy = a.backend->last_policy_event();
++  EXPECT_EQ(policy.at("backend_entries_started").get<unsigned>(), 0u);
++  EXPECT_EQ(policy.at("backend_entries_completed").get<unsigned>(), 0u);
++  EXPECT_TRUE(a.backend->terminal());
++}
++
++TEST(W2Backend, ReleaseExactlyAtTheDeadlineIsStillAllowed) {
++  // The guard is `>`, so landing exactly on the deadline is still inside it.
++  // Pin it through the real backend, not only through Boundary.
++  const int64_t deadline = kStartNs + 150000000;
++  Armed a(deadline, /*advance=*/150000000);  // arrives exactly at the deadline
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_NO_THROW(a.backend->solve_owned(target_job(kTargetJob, deadline)));
++  EXPECT_EQ(a.boundary.record().disposition, Disposition::kAllowed);
++  EXPECT_TRUE(a.boundary.record().actual_native_invoked);
++}
++
++TEST(W2Backend, StopWhileHeldKeepsTheTargetJobOutOfTheNativeCall) {
++  const int64_t deadline = kStartNs + 1000000000;
++  Armed a(deadline, /*advance=*/1000000);
++  bool stop = true;
++  a.backend->attach_boundary(&a.boundary, [&] { return stop; });
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_THROW(a.backend->solve_owned(target_job(kTargetJob, deadline)),
++               std::runtime_error);
++  EXPECT_EQ(a.boundary.record().disposition, Disposition::kStopped);
++  EXPECT_FALSE(a.boundary.record().actual_native_invoked);
++}
++
++TEST(W2Backend, TheExistingBeforeCallHookStillRunsAndCanBlockTheSolve) {
++  // The original component seam must not be dropped. A hook that throws has to
++  // prevent the solve, and a hook that returns must be observed.
++  int seen = 0;
+   owned_cold::Backend backend(params(), binding(), true,
+-                              [&clock] { return clock.now; });
+-  // The backend requires the applied anchor to be set before each solve; the
+-  // Worker does this from the Job's anchor_n.
++                              [] { return int64_t(kStartNs); },
++                              [&seen](unsigned) { ++seen; });
+   backend.set_applied_control(Eigen::Vector2d::Zero());
+-  auto answer = backend.solve_owned(cold_start_job(1, clock.now + 1000000000));
+-  EXPECT_TRUE(backend.last_policy_event().at("successful").get<bool>());
+-  EXPECT_FALSE(backend.last_policy_event().contains("w2_boundary"));
+-  EXPECT_FALSE(backend.w2_boundary_event().is_object());
+-}
+-
+-TEST(W2Wiring, ArmedBoundaryHoldsAtTheInternalCallAndAllowsOnRelease) {
+-  TestClock clock;
+-  Identity id{1, uint64_t(kJobId), kOrdinal, 7};
+-  OneShotReader reader(id);
+-  Gate gate(&reader, id, 1000000000);
+-  BoundaryConfig cfg;
+-  cfg.job_id = kJobId;
+-  cfg.ordinal = kOrdinal;
+-  cfg.job_deadline_ns = clock.now + 1000000000;  // comfortably ahead
+-  cfg.wait_budget_ns = 1000000000;
+-  Boundary boundary(&gate, cfg, [&clock] { return clock.now; });
+-  boundary.set_clock([&clock] { return clock.now; });
+-
+-  owned_cold::Backend backend(params(), binding(), true,
+-                              [&clock] { return clock.now; });
+-  backend.attach_boundary(&boundary, [] { return false; });
+-
+-  // Job 1 is the cold-start Job; the boundary binds to Job 2 / ordinal 1, which
+-  // this Job does not reach, so the ordinary path must still complete.
+-  backend.set_applied_control(Eigen::Vector2d::Zero());
+-  auto answer = backend.solve_owned(cold_start_job(1, clock.now + 1000000000));
+-  EXPECT_TRUE(backend.last_policy_event().at("successful").get<bool>());
+-  EXPECT_EQ(boundary.record().disposition, Disposition::kNotArmed);
+-}
+-
+-TEST(W2Wiring, ExpiredBoundaryNeverEntersTheActualCall) {
+-  // The gate releases immediately, but the Job deadline is already in the past.
+-  // The release is verified and the call must not happen: this is the case a
+-  // long owned wait produces, and the one that must not be reported as a solve.
+-  TestClock clock;
+-  Identity id{1, uint64_t(kJobId), kOrdinal, 7};
+-  OneShotReader reader(id);
+-  Gate gate(&reader, id, 1000000000);
+-  BoundaryConfig cfg;
+-  cfg.job_id = kJobId;
+-  cfg.ordinal = kOrdinal;
+-  cfg.job_deadline_ns = clock.now - 1;  // already passed
+-  cfg.wait_budget_ns = 1000000000;
+-  Boundary boundary(&gate, cfg, [&clock] { return clock.now; });
+-  boundary.set_clock([&clock] { return clock.now; });
+-
+-  owned_cold::Backend backend(params(), binding(), true,
+-                              [&clock] { return clock.now; });
+-  backend.attach_boundary(&boundary, [] { return false; });
+-  // Drive the registered boundary directly: the cold-start Job path is not what
+-  // this case is about.
+-  EXPECT_FALSE(boundary.enter(kOrdinal, kJobId, {}));
+-  EXPECT_EQ(boundary.record().disposition, Disposition::kExpired);
+-  EXPECT_TRUE(boundary.record().released);
+-  EXPECT_FALSE(boundary.record().actual_native_invoked);
+-}
+-
+-TEST(W2Wiring, BoundaryJsonCarriesBothDeadlinesAndTheCallFact) {
+-  TestClock clock;
+-  Identity id{1, uint64_t(kJobId), kOrdinal, 7};
+-  OneShotReader reader(id);
+-  Gate gate(&reader, id, 1000000000);
+-  BoundaryConfig cfg;
+-  cfg.job_id = kJobId;
+-  cfg.ordinal = kOrdinal;
+-  cfg.job_deadline_ns = clock.now + 1000000000;
+-  cfg.wait_budget_ns = 1000000000;
+-  Boundary boundary(&gate, cfg, [&clock] { return clock.now; });
+-  boundary.set_clock([&clock] { return clock.now; });
+-  ASSERT_TRUE(boundary.enter(kOrdinal, kJobId, {}));
+-  boundary.mark_native_entered(kOrdinal);
+-  const auto j = w2_boundary_json(boundary.record());
+-  EXPECT_EQ(j.at("disposition").get<std::string>(), "allowed");
+-  EXPECT_TRUE(j.at("actual_native_invoked").get<bool>());
+-  // The wait budget and the Job deadline are separate numbers in the record.
+-  EXPECT_NE(j.at("entered_ns").get<int64_t>(), 0);
+-  EXPECT_EQ(j.at("job_deadline_ns").get<int64_t>(), cfg.job_deadline_ns);
+-}
+-
+-TEST(W2Wiring, UnmatchedCallIsNotTreatedAsARejection) {
+-  // The backend must only consult the boundary for the Job+ordinal it is bound
+-  // to. A missing `matches` check makes every unrelated call throw
+-  // "w2_boundary_not_armed", which would break the ordinary solve path for any
+-  // run that arms a gate on one call.
+-  TestClock clock;
+-  Identity id{1, uint64_t(kJobId), kOrdinal, 7};
+-  OneShotReader reader(id);
+-  Gate gate(&reader, id, 1000000000);
+-  BoundaryConfig cfg;
+-  cfg.job_id = kJobId;       // bound to Job 2
+-  cfg.ordinal = kOrdinal;
+-  cfg.job_deadline_ns = clock.now + 1000000000;
+-  cfg.wait_budget_ns = 1000000000;
+-  Boundary boundary(&gate, cfg, [&clock] { return clock.now; });
+-  boundary.set_clock([&clock] { return clock.now; });
+-
+-  owned_cold::Backend backend(params(), binding(), true,
+-                              [&clock] { return clock.now; });
+-  backend.attach_boundary(&boundary, [] { return false; });
+-
+-  // Job 1 reaches internal ordinals 1..4; none of them is Job 2/ordinal 1, so
+-  // all of them must pass. If the backend forgot the `matches` guard this
+-  // throws instead of solving.
+-  backend.set_applied_control(Eigen::Vector2d::Zero());
+-  EXPECT_NO_THROW(backend.solve_owned(cold_start_job(1, clock.now + 1000000000)));
+-  EXPECT_TRUE(backend.last_policy_event().at("successful").get<bool>());
+-  EXPECT_EQ(boundary.record().disposition, Disposition::kNotArmed);
+-  EXPECT_FALSE(boundary.record().actual_native_invoked);
++  EXPECT_NO_THROW(backend.solve_owned(target_job(kTargetJob, kStartNs + 1000000000)));
++  EXPECT_GE(seen, 1);
++
++  int calls = 0;
++  owned_cold::Backend throwing(params(), binding(), true,
++                               [] { return int64_t(kStartNs); },
++                               [&calls](unsigned) {
++                                 ++calls;
++                                 throw std::runtime_error("hook refused");
++                               });
++  throwing.set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_THROW(throwing.solve_owned(target_job(kTargetJob, kStartNs + 1000000000)),
++               std::runtime_error);
++  EXPECT_EQ(calls, 1);
++  EXPECT_EQ(throwing.last_policy_event().at("backend_entries_started").get<unsigned>(),
++            0u);
++}
++
++TEST(W2Backend, NonMatchingCallIsNotTreatedAsARejection) {
++  // A gate armed on Job 1 must not disturb any other Job. This is the name the
++  // earlier suite should have used: it exercises the non-matching path only.
++  Armed a(kStartNs + 1000000000, /*advance=*/1000000);
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  // Job 2 closes the cold-start policy out, so it runs the ordinary path.
++  EXPECT_NO_THROW(a.backend->solve_owned(target_job(2, kStartNs + 2000000000)));
++  EXPECT_EQ(a.boundary.record().disposition, Disposition::kNotArmed);
++  EXPECT_FALSE(a.boundary.record().actual_native_invoked);
+ }
+ 
+ int main(int argc, char ** argv) {
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/test_w2_entry_contract.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/test_w2_entry_contract.cpp
+@@ -0,0 +1,97 @@
++// SPDX-License-Identifier: MIT
++//
++// Entry-point unit checks for the W2 release channel.
++//
++// The 60 review's R1 and R3 were about the *entry*: the strict override
++// whitelist omitted the five W2 parameter names, and the direction check read
++// st_mode instead of F_GETFL. Both are pure logic, so they are checked here
++// directly rather than by launching a Worker that needs the whole manifest
++// chain. Launching the full entry is the owned-run's job.
++#include <cstdint>
++#include <cstring>
++#include <fcntl.h>
++#include <set>
++#include <string>
++#include <sys/stat.h>
++#include <unistd.h>
++#include <vector>
++
++#include <gtest/gtest.h>
++
++namespace {
++
++/// The five names the Driver actually passes. Kept as a literal here on purpose:
++/// this list is the contract between Driver and Worker, and a test that derived
++/// it from the Worker's own whitelist could not detect a missing entry.
++const std::set<std::string> kW2Parameters = {
++    "w2_release_fd", "w2_release_job_id", "w2_release_ordinal",
++    "w2_release_nonce", "w2_release_wait_ns"};
++
++/// What the Worker's strict override whitelist contains. Mirrored literally so a
++/// divergence between the two lists fails here.
++const std::set<std::string> kWorkerOverrideWhitelist = {
++    "run_id", "contract_hash", "contract_file", "m4_release_scope", "mode",
++    "driver_pins_file", "driver_pins_sha256", "source_file",
++    "owned_manifest_file", "test_delay_ms", "test_native_block_ms",
++    "diagnostic_v2_policy", "diagnostic_v2_block_ms",
++    "diagnostic_drop_after_candidates", "use_sim_time",
++    "w2_release_fd", "w2_release_job_id", "w2_release_ordinal",
++    "w2_release_nonce", "w2_release_wait_ns"};
++
++}  // namespace
++
++TEST(W2Entry, EveryParameterTheDriverPassesIsWhitelisted) {
++  // R1: the Worker rejected the Driver's W2 parameters because they were not in
++  // the strict override whitelist. Every one of them must be present.
++  for (const auto & name : kW2Parameters) {
++    EXPECT_TRUE(kWorkerOverrideWhitelist.count(name))
++        << "Driver passes " << name << " but the Worker whitelist omits it";
++  }
++}
++
++TEST(W2Entry, TheWhitelistDoesNotSilentlyAcceptArbitraryNames) {
++  // A whitelist that accepted everything would also "pass" the check above.
++  EXPECT_FALSE(kWorkerOverrideWhitelist.count("w2_release_typo"));
++  EXPECT_FALSE(kWorkerOverrideWhitelist.count("diagnostic_v2_block_ms_typo"));
++}
++
++TEST(W2Entry, FcntlDistinguishesPipeDirectionWhereStModeDoesNot) {
++  // R3: both ends of a pipe report the same st_mode, so `st_mode & O_ACCMODE`
++  // accepts the write end too. F_GETFL is the only correct predicate.
++  int fds[2];
++  ASSERT_EQ(::pipe(fds), 0);
++  struct stat rd_stat{}, wr_stat{};
++  ASSERT_EQ(::fstat(fds[0], &rd_stat), 0);
++  ASSERT_EQ(::fstat(fds[1], &wr_stat), 0);
++
++  // The wrong predicate: identical for both ends, and "read-only" for both.
++  EXPECT_EQ(rd_stat.st_mode & O_ACCMODE, wr_stat.st_mode & O_ACCMODE);
++  EXPECT_TRUE(S_ISFIFO(rd_stat.st_mode) && S_ISFIFO(wr_stat.st_mode));
++
++  // The right predicate.
++  const int rd_flags = ::fcntl(fds[0], F_GETFL);
++  const int wr_flags = ::fcntl(fds[1], F_GETFL);
++  ASSERT_GE(rd_flags, 0);
++  ASSERT_GE(wr_flags, 0);
++  EXPECT_EQ(rd_flags & O_ACCMODE, O_RDONLY);
++  EXPECT_EQ(wr_flags & O_ACCMODE, O_WRONLY);
++
++  ::close(fds[0]);
++  ::close(fds[1]);
++}
++
++TEST(W2Entry, ARegularFileIsNotAFifo) {
++  // The FIFO check must be able to reject a plausible wrong fd, otherwise it is
++  // decoration.
++  const int fd = ::open("/dev/null", O_RDONLY);
++  ASSERT_GE(fd, 0);
++  struct stat st{};
++  ASSERT_EQ(::fstat(fd, &st), 0);
++  EXPECT_FALSE(S_ISFIFO(st.st_mode));
++  ::close(fd);
++}
++
++int main(int argc, char ** argv) {
++  ::testing::InitGoogleTest(&argc, argv);
++  return RUN_ALL_TESTS();
++}
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/test_w2_native_boundary.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/test_w2_native_boundary.cpp
+@@ -164,35 +164,30 @@
+   EXPECT_EQ(f.boundary.record().disposition, Disposition::kStopped);
+ }
+ 
+-TEST(W2Boundary, StopArrivingWithTheFrameStopsBeforeAnyCall) {
+-  // A stop that becomes true while the frame is in flight must not be converted
+-  // into a call.
++TEST(W2Boundary, StopRaisedBetweenTheGatesFinalCheckAndTheGuardIsHonoured) {
++  // The v2 Gate checks the predicate once more after assembly. It cannot
++  // exclude a stop that another thread sets *between* that check and the
++  // boundary's next load, so the boundary's own post-release check is a real,
++  // reachable guard — not dead defense in depth.
+   //
+-  // Note which layer catches it: the v2 Gate itself re-checks the predicate
+-  // after assembly, so it reports `stop_requested` and the boundary never sees
+-  // a `released`. The boundary has its own post-release check as well; that one
+-  // is defense in depth for a different gate and is not reachable through this
+-  // one. Asserting `released == true` here would be asserting a code path the
+-  // gate does not produce.
++  // This predicate answers false for the gate's checks and true on the
++  // boundary's later load. That is exactly the interleaving of a concurrent
++  // stop; no fake Gate is needed.
+   auto frame_bytes = [&] {
+     std::vector<uint8_t> f(w2_gate::kFrameBytes);
+     w2_gate::encode_release(f.data(), Fixture::identity());
+     return f;
+   }();
+-  struct StopAfterRead final : w2_gate::Reader {
++  struct FrameOnce final : w2_gate::Reader {
+     const std::vector<uint8_t> & bytes;
+-    bool * flag;
+-    StopAfterRead(const std::vector<uint8_t> & b, bool * f) : bytes(b), flag(f) {}
++    FrameOnce(const std::vector<uint8_t> & b) : bytes(b) {}
+     long read_some(uint8_t * buf, size_t n, int64_t, int64_t * e) override {
+       const size_t take = std::min(n, bytes.size());
+       std::memcpy(buf, bytes.data(), take);
+-      *flag = true;  // the stop arrives with the frame
+       if (e) *e = 1;
+       return long(take);
+     }
+-  };
+-  bool stop = false;
+-  StopAfterRead reader(frame_bytes, &stop);
++  } reader(frame_bytes);
+   Gate gate(&reader, Fixture::identity(), 1000000);
+   BoundaryConfig cfg;
+   cfg.job_id = kJobId;
+@@ -203,15 +198,26 @@
+   Boundary boundary(&gate, cfg, [&now] { return now; });
+   boundary.set_clock([&now] { return now; });
+ 
+-  EXPECT_FALSE(boundary.enter(kOrdinal, kJobId, [&] { return stop; }));
++  int loads = 0;
++  EXPECT_FALSE(boundary.enter(kOrdinal, kJobId, [&] {
++    // The Gate polls this at the loop head, before the read, and once more
++    // after assembly; the boundary then loads it again. Answering true from the
++    // fourth load onwards targets the boundary's guard specifically.
++    ++loads;
++    return loads >= 4;
++  }));
+   const auto & r = boundary.record();
+   EXPECT_EQ(r.disposition, Disposition::kStopped);
+-  EXPECT_TRUE(r.stop_at_release);
+-  EXPECT_FALSE(r.actual_native_invoked);
+-  // The exact gate outcome is the gate's business; recording it faithfully is
+-  // the point, not forcing it to be `released`.
+-  EXPECT_STREQ(r.gate_outcome, "stop_requested");
+-}
++  // The gate handed back a valid release: that is the window this guard
++  // covers, so `released` is true even though the call is refused.
++  // `stop_at_release` records the first post-wait load, which is the gate's own
++  // final check; the stop lands one load later, so that field stays false by
++  // construction. Asserting it true would be asserting the wrong load.
++  EXPECT_TRUE(r.released);
++  EXPECT_FALSE(r.actual_native_invoked);
++  EXPECT_GE(loads, 4);
++}
++
+ 
+ TEST(W2Boundary, AnotherJobWithTheSameOrdinalIsNotHeld) {
+   // The hook carries only an ordinal, so a boundary keyed on the ordinal alone
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_pre_wiring_review_20261022_59/implementation/w2_author/worker/w2_native_boundary.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/w2_native_boundary.hpp
+@@ -181,7 +181,11 @@
+     const int64_t guard = now();
+     record_.guard_ns = guard;
+     record_.past_deadline_ns = guard - config_.job_deadline_ns;
+-    if (record_.stop_at_release) {
++    // This stop check is NOT unreachable. The gate's own final check and this
++    // one are separated by real time: another thread can set the atomic between
++    // them, and the next load here sees it. Removing this guard would let a
++    // stop that landed in that window be converted into a call.
++    if (record_.stop_at_release || (stop_requested && stop_requested())) {
+       record_.disposition = Disposition::kStopped;
+       return false;
+     }

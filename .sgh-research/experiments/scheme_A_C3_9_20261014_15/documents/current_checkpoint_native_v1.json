@@ -1,0 +1,15 @@
+{
+  "schema": "C3.9-native-checkpoint/v1",
+  "preservation_passed": true,
+  "default_build_attempt01_passed": false,
+  "default_build_attempt02_passed": true,
+  "native_count": 251,
+  "native_suites": 15,
+  "native_passed": true,
+  "finite_checker_v1_count": 25,
+  "actual_owned_case_status": "not_run",
+  "state": "components_complete_owned_cases_pending",
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

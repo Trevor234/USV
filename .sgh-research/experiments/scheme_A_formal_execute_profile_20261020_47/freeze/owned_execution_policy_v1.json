@@ -1,0 +1,213 @@
+{
+  "M4_forward_obligations": [
+    {
+      "current_qualified": false,
+      "evidence_available": "当前prepare图/GID和controlled Publisher证据",
+      "id": "M4-own-outputs",
+      "requirement": "新regulator独占两侧实际Writer，旧Publisher不并发拥有；当前Observer物理0。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32纯组件与当前成功API观测",
+      "id": "M4-per-side-anchor",
+      "requirement": "每侧实际publish-start/返回结果更新，失败侧unknown；跨owner bootstrap须明确权威。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "当前共享组件源码/32事件表；非当前owned实际故障API",
+      "id": "M4-partial-API",
+      "requirement": "未来所选shared publish_pair两侧均尝试；和旧Publisher同try块左失败跳过右不同。分支不得混用，成功侧不可回滚。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32共享纯组件；非M4执行链",
+      "id": "M4-hold-ramp-five-misses",
+      "requirement": "非零HOLD边界、invalid立即ramp、连续5拍无候选、unknown和每侧率限分别验证。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32组件、40 fault close、42 normal controlled tail",
+      "id": "M4-shutdown-accounting",
+      "requirement": "zero requested、双API成功、进程退出、plant不混；关到zero请求不等于测得零推力。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "43完整API流gap复核",
+      "id": "M4-bootstrap-gap",
+      "requirement": "初始known-zero/owner交接到业务输出的cadence与gap门须事前设计，当前1.4..1.6s首gap不能剪掉后声称240ms。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32组件、当前tick/controlled API有限样本",
+      "id": "M4-timing-API",
+      "requirement": "原5ms span/240ms gap/20ms tick门在新实际执行分支确认，有限调度假设和域外失效明示。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "39 Native、37实际输入交错与当前实际数据",
+      "id": "M4-source-domain",
+      "requirement": "在候选正式域下重核源/clock/1:1与mixed/未来/失效义务；当前名义短窗不扩到一般plant。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "39～42绑定各自版本的证据",
+      "id": "M4-qualification-regression",
+      "requirement": "新runtime/合同/入口改变后按真实差集回归，不能继承旧bin身份，不能无差集重跑所有旧case。"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "trusted_source_graph",
+      "text": "startup时五owned身份/图/GID匹配；后续传感器来源与本地DDS图保持所选部署前提，未证明全局持续排他性。"
+    },
+    {
+      "id": "clock_1_to_1_engineering",
+      "text": "近1:1仿真时钟仅工程外推假设；平均RTF带不作为短时间误差硬界。"
+    },
+    {
+      "id": "nominal_point_model",
+      "text": "固定19水动力参数的RK4名义点模型；不是真实船/VRX6DOF或可达集。"
+    },
+    {
+      "id": "bounded_local_scheduling",
+      "text": "本地Linux/ROS有限观测和工程检查；无WCET、精确600ms停止或自动恢复时延保证。"
+    }
+  ],
+  "bootstrap": {
+    "cadence_ns": 200000000,
+    "first_pair_start_deadline_from_prepare_grant_ns": 200000000,
+    "first_success_anchor": "each side actual API publish-start only",
+    "full_API_stream_includes": [
+      "bootstrap",
+      "waiting",
+      "business",
+      "fallback",
+      "shutdown"
+    ],
+    "gap_ns": 240000000,
+    "id": "owned_unknown_then_actual_zero_pair_fixed_tick_v1",
+    "initial_anchor_known": [
+      false,
+      false
+    ],
+    "initial_numeric_zero_has_no_authority": true,
+    "initial_request_n": [
+      0,
+      0
+    ],
+    "jitter_ns": 20000000,
+    "late_tick": "skip catch-up bursts; latch timing failure and stop business, continue bounded fallback/close",
+    "pair_span_ns": 5000000,
+    "partial_first_pair": "successful side irreversible; failed side unknown; terminal business stop, bounded close",
+    "pre_first_API_and_cross_owner_interval": "unknown; no rate or plant-zero proof",
+    "rho_available_on_first_pair": false,
+    "tick_origin": "prepare grant monotonic; no one-second quiet lead",
+    "waiting_inputs_or_first_candidate": "publish zero requests on each absolute tick; no job until both actual zero APIs succeeded and current ready/source gates pass"
+  },
+  "contract_fields": 84,
+  "contract_overrides_from_diagnostic": {
+    "baseline_input": "F5_NOMINAL_SOURCE_OWNED_REGULATOR_20261020_01",
+    "preparation_retry_policy": "owned_reference_pair_completion_before_business_v1",
+    "propagation_semantics": "owned-regulator per-side successful API publish-start history from accepted odom stamp, mixed r retained with separate IMU stamp; future held current command; RK4 nominal point prediction"
+  },
+  "contract_schema": "p1-execution-contract-v3",
+  "domain": {
+    "WCET_proven": false,
+    "current_full_startup_gap_max_ns": 1537738316,
+    "engineering_source_limits": {
+      "adjacent_odom_gap_ns_max": 250000000,
+      "planar_speed_m_s_max": 1.2
+    },
+    "full_1_2m_s_domain_proven": false,
+    "full_startup_gap240ms_in_calibration_passed": false,
+    "general_turn_or_mixed_proven": false,
+    "observed_dynamic_jobs": 101,
+    "observed_mixed_jobs": 2,
+    "observed_planar_speed_m_s": [
+      0.011050352621275452,
+      0.06214294029836156
+    ],
+    "observed_source_duration_ns": 20002935074,
+    "plant_or_6DOF_proven": false,
+    "selected_calibration_domain": "owned local nominal straight reference 0.05 m/s, no obstacles, near 1:1 sim clock"
+  },
+  "mode_matrix": {
+    "diagnostic_v2": [
+      "no_output",
+      "shadow"
+    ],
+    "formal_frozen_v3_shape": [
+      "no_output",
+      "execute"
+    ],
+    "formal_pre_freeze_v3": [
+      "no_output"
+    ],
+    "formal_prepare45_entry": [
+      "old formal pre-freeze v3+no_output prepare-only"
+    ],
+    "old_Observer39_entry": [
+      "diagnostic_v2+shadow only"
+    ],
+    "physical_execute_release": [],
+    "target_entry_preflight": [
+      "no_output"
+    ]
+  },
+  "output": {
+    "both_calls_attempted": true,
+    "hold_equality_allowed": true,
+    "hold_ns": 600000000,
+    "hold_origin": "last accepted candidate activation; ordinary republish never renews it",
+    "invalid_bypasses_hold": true,
+    "map_scale": 1,
+    "mapped_bounds_n": [
+      -25,
+      25
+    ],
+    "per_side_anchor": "update only after returned API, at its actual publish-start; failure marks only that side unknown",
+    "ramp": "known side toward zero with rho times its own actual elapsed interval",
+    "rho_n_s": 80,
+    "shutdown_grace_ns": 2500000000,
+    "shutdown_outcomes_separate": [
+      "zero requested",
+      "each API returned",
+      "owned process exit",
+      "plant receipt unknown"
+    ],
+    "timing_failure_after_API": "successful calls remain in history; never rollback or relabel them",
+    "unknown_side_request": "zero only; rho unavailable"
+  },
+  "owner": {
+    "callback_or_worker_output_forbidden": true,
+    "fixture_physical_writers": 0,
+    "legacy_output_writers": 0,
+    "old_output_owner_exit_required_before_new_run": true,
+    "output_writer_count": 2,
+    "recorder_physical_writers": 0,
+    "role": "p1_owned_execute_regulator",
+    "run_boot_contract_manifest_and_GID_binding_required": true,
+    "sole_job_owner": true,
+    "sole_output_owner": true,
+    "worker_physical_writers": 0
+  },
+  "physical_execute_release_enabled": false,
+  "profile_id": "P1_owned_nominal_execution_20261020_01",
+  "qualification_scope": "M0b engineering values and policy freeze before independent M4; no runtime or plant release",
+  "schema": "P1-owned-execution-profile-policy/v1",
+  "source": {
+    "M4_output_history_owner": "new regulator only; legacy Applied cannot establish new owner authority",
+    "asset_basis": "F5 fixed nominal 19-hydro, original path/profile frames/topics, scheme=B dynamic NMPC",
+    "current_calibration": "batch46 normal_source20s_03; Observer39 Worker35 Publisher18 Fixture19 RecorderC3.4",
+    "model": "nominal RK4 point; retained IMU stamp for mixed r",
+    "no_new_full_no_output_business_stage": true,
+    "prepare_requires": [
+      "owned identity/graph/GIDs",
+      "recorder ready",
+      "worker valid capability callback lease",
+      "matching path/profile content",
+      "fresh odom/optional mixed IMU and clock"
+    ],
+    "reference": "first successful job submit completion target sim epoch; first-target task-time profile; offset 0"
+  }
+}

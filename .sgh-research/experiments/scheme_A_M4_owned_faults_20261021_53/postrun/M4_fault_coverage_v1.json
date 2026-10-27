@@ -1,0 +1,167 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "all_nine_groups_require_new_long_ROS_runs": false,
+  "closed_this_batch": [
+    "R1-owned-pre-grant-cancel: shutdown before submit with zero physical API",
+    "R2-owned-worker-exit: real worker_process_exited supervision with bounded fallback ramp",
+    "R3-owned-capability-lease-expiry: receipt lease expiry isolated from worker death"
+  ],
+  "groups": [
+    {
+      "acceptance": "same reused core; exact declared future-reference semantics; no hidden writer",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/evidence/F5_and_calibrated_nominal_scope_v1.json"
+      ],
+      "id": "compatibility_input",
+      "new_batch50_source_linked_subcomponent": false,
+      "new_batch53_owned_fault_subcomponent": false,
+      "remaining_obligation": "original F5 source/reference/mapping and logging applicability not closed",
+      "required_cases": [
+        "F5 source/reference/mapping qualified old regression and logging off/on",
+        "new target-reference independent fixture, no implicit physical writer"
+      ]
+    },
+    {
+      "acceptance": "complete absolute 150ms cutoff equality allowed, strict-after cutoff; target remains origin+200ms; no deadline extension or late activation",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/verification/component_verification_v1.json",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/postrun/actual_normal_audit_v1.json"
+      ],
+      "id": "time_boundaries",
+      "new_batch50_source_linked_subcomponent": false,
+      "new_batch53_owned_fault_subcomponent": false,
+      "remaining_obligation": "complete original timing cases require exact-case coverage; this batch only adds seeded shutdown grace boundary",
+      "required_cases": [
+        "50/150/250/400ms; ready before/equal/after deadline",
+        "early ready, wrong target, delayed tick"
+      ]
+    },
+    {
+      "acceptance": "multiple complete regulator ticks while worker blocked; active/pending/ready bounded; one backend only; delivery delay not called native block",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [],
+      "id": "native_block_and_delivery",
+      "new_batch50_source_linked_subcomponent": false,
+      "new_batch53_owned_fault_subcomponent": false,
+      "remaining_obligation": "current owner true native block and distinct delivery delay/drop not covered by this batch",
+      "required_cases": [
+        "worker held at native boundary until independent release",
+        "separate result delivery delay/drop"
+      ]
+    },
+    {
+      "acceptance": "invalid selection or normal output count=0; each candidate consumed at most once; bounded slots and explicit reason",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/verification/source_core_reuse_v1.json",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/verification/component_verification_v1.json"
+      ],
+      "id": "candidate_identity_shape",
+      "new_batch50_source_linked_subcomponent": false,
+      "new_batch53_owned_fault_subcomponent": false,
+      "remaining_obligation": "same-source admission evidence retained; original full case matrix not jointly closed",
+      "required_cases": [
+        "failed, invalid shape, NaN, duplicate, old/reordered IDs",
+        "foreign producer/boot/version"
+      ]
+    },
+    {
+      "acceptance": "semantic task generation only; old task rejected before activation; new odom does not unconditionally starve",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/verification/source_core_reuse_v1.json"
+      ],
+      "id": "task_reference",
+      "new_batch50_source_linked_subcomponent": true,
+      "new_batch53_owned_fault_subcomponent": false,
+      "remaining_obligation": "clear pending component added; actual before/after committed-submit and reference replacement obligations remain",
+      "required_cases": [
+        "clear/single point before freeze, clear/replacement during solve",
+        "same content republish, path/profile mismatch, ordinary new odom"
+      ]
+    },
+    {
+      "acceptance": "separate receipt/sim ages, IMU only if mixed; selected tolerances; epoch/schedule invalidation; no cross-domain subtraction or resurrection",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/verification/component_verification_v1.json",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/postrun/actual_normal_audit_v1.json"
+      ],
+      "id": "state_clock",
+      "new_batch50_source_linked_subcomponent": false,
+      "new_batch53_owned_fault_subcomponent": false,
+      "remaining_obligation": "normal/selector components retained; current-runtime pause/reset/jump/RTF/mixed faults remain",
+      "required_cases": [
+        "source stale/future, mixed skew, activation mismatch",
+        "pause/resume/reset/jump and RTF band"
+      ]
+    },
+    {
+      "acceptance": "actual per-side history; H=600ms from last accepted activation; rho80 each actual interval; missing anchor unavailable; no instant-zero rate fiction",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/postrun/actual_normal_audit_v1.json",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_publication_faults_20261021_50/postrun/publication_fault_audit_v1.json"
+      ],
+      "id": "anchor_fallback",
+      "new_batch50_source_linked_subcomponent": true,
+      "new_batch53_owned_fault_subcomponent": false,
+      "remaining_obligation": "actual nominal stream and exact-source partial histories covered; full HOLD/ramp/5-miss/interval cases remain",
+      "required_cases": [
+        "mid-interval change/same-value republish/different API intervals/missing history",
+        "five misses, HOLD equality/after, invalid bypass, unknown side"
+      ]
+    },
+    {
+      "acceptance": "sole new owner; both calls attempted; successful side irreversible; unknown failed side; finite cleanup attempt/no restart until old group empty; request/API/process/plant flags separate",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_publication_faults_20261021_50/postrun/publication_fault_audit_v1.json",
+        "postrun/R1_audit_v1.json",
+        "postrun/R2_audit_v1.json",
+        "postrun/R3_audit_v1.json"
+      ],
+      "id": "publication_exit",
+      "new_batch50_source_linked_subcomponent": true,
+      "new_batch53_owned_fault_subcomponent": true,
+      "remaining_obligation": "R1 closed shutdown-before-submit with zero API; R2 closed worker death; R3 closed capability receipt lease expiry (SIGSTOP, 775.5 ms > 600 ms lease, < 1 s watchdog). active watchdog is structurally not isolable by external signal; cleanup failed remains open.",
+      "remaining_structurally_blocked": [
+        "active watchdog (see implementation/W1_watchdog_not_isolable_v1.json)"
+      ],
+      "required_cases": [
+        "clear/shutdown before/after submit; left/right partial API outcomes",
+        "worker death, active watchdog, capability lease and cleanup failed"
+      ]
+    },
+    {
+      "acceptance": "normal source/Witness/raw/Stored accounting complete, full startup/business/fallback/shutdown API stream; fault flags follow declared exception, extra unexplained loss/error/overrun fails",
+      "current_M4_qualified": false,
+      "current_scoped_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/postrun/actual_normal_audit_v1.json",
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_publication_faults_20261021_50/postrun/publication_fault_audit_v1.json"
+      ],
+      "id": "actual_source_recording",
+      "new_batch50_source_linked_subcomponent": true,
+      "remaining_obligation": "normal Stored/wire and component Source complete; R2/R3 exercise the fault-profile reader (tolerant worker tail) but queue pressure and declared drop under load remain open.",
+      "required_cases": [
+        "new isolated normal straight0.05 then controlled faults",
+        "log queue pressure, source/emit/bag counts and before/after assets"
+      ]
+    }
+  ],
+  "new_full_owned_fault_runs": 3,
+  "new_owned_fault_cases_passed": 3,
+  "new_source_linked_publication_exit_cases_passed": 16,
+  "parent_matrix": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/M4_fault_matrix_v1.json",
+  "parent_matrix_pin": {
+    "bytes": 6332,
+    "sha256": "58c7eccb51eb463a3012de09b4e78d4f4397317025d5618be4cf798a9d0fbd74"
+  },
+  "publication_exit_whole_group_qualified": false,
+  "research_conclusion": false,
+  "schema": "M4-after-owned-fault-R1-R2-original-nine-group-coverage/v1"
+}

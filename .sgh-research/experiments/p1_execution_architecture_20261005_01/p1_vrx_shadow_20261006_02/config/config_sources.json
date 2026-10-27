@@ -1,0 +1,111 @@
+{
+  "exact_execution_timing_available": false,
+  "expected_plant_effective_vehicle": {
+    "Iz": 2.13,
+    "Nr": -3.105,
+    "Nr_dot": -3.41,
+    "Nrr": -0.71,
+    "Nv": 0.0,
+    "Nv_dot": -0.1817725,
+    "Nvv": 0.0,
+    "Xu": -2.272063,
+    "Xu_dot": -2.0,
+    "Xuu": -11.571784,
+    "Yr": 0.0,
+    "Yr_dot": -0.1817725,
+    "Yrr": 0.0,
+    "Yv": -2.629019,
+    "Yv_dot": -8.0,
+    "Yvv": -0.05,
+    "d_thruster": 0.25,
+    "mass": 14.2,
+    "xg": 0.12
+  },
+  "gp_labels_ready": false,
+  "nominal": {
+    "source_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_nominal_f3.yaml",
+    "source_sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+    "thruster": {
+      "T_max_forward": 25.0,
+      "T_max_reverse": 25.0
+    },
+    "vehicle": {
+      "Iz": 2.13,
+      "Nr": -3.105,
+      "Nr_dot": -3.41,
+      "Nrr": -0.71,
+      "Nv": 0.0,
+      "Nv_dot": -0.1817725,
+      "Nvv": 0.0,
+      "Xu": -2.272063,
+      "Xu_dot": -2.0,
+      "Xuu": -11.571784,
+      "Yr": 0.0,
+      "Yr_dot": -0.1817725,
+      "Yrr": 0.0,
+      "Yv": -2.629019,
+      "Yv_dot": -8.0,
+      "Yvv": -0.05,
+      "d_thruster": 0.25,
+      "mass": 14.2,
+      "xg": 0.12
+    }
+  },
+  "nominal_effective_sha256": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+  "nominal_projection": "none; exact nineteen explicit vehicle values",
+  "plant": {
+    "source_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/p0_plant_f3.yaml",
+    "source_sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35",
+    "thruster": {
+      "T_max_forward": 25.0,
+      "T_max_reverse": 25.0
+    },
+    "vehicle": {
+      "Iz": 2.13,
+      "Nr": -3.105,
+      "Nr_dot": -3.41,
+      "Nrr": -0.71,
+      "Nv": 0.0,
+      "Nv_dot": -0.363545,
+      "Nvv": 0.0,
+      "Xu": -2.272063,
+      "Xu_dot": -2.0,
+      "Xuu": -11.571784,
+      "Yr": 0.0,
+      "Yr_dot": 0.0,
+      "Yrr": 0.0,
+      "Yv": -2.629019,
+      "Yv_dot": -8.0,
+      "Yvv": -0.05,
+      "d_thruster": 0.25,
+      "mass": 14.2,
+      "xg": 0.12
+    }
+  },
+  "plant_actuator_command_limits": {
+    "max_N": 25.0,
+    "min_N": -25.0,
+    "source": "plant thruster input; generated SDF confirmation required"
+  },
+  "plant_equivalence_proven": false,
+  "plant_generated_verified": false,
+  "runtime_effective_verified": false,
+  "schema": "p0-independent-config-sources/1",
+  "simulation": {
+    "added_mass_cross_policy": "symmetric_mean",
+    "source_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/config/vrx_model.yaml",
+    "source_sha256": "edcd9d129357651c8bc9c0ca9d081e91bc6467db5420fd88e305e3e77281093a"
+  },
+  "snapshot_paths": {
+    "nominal_effective": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_vrx_shadow_20261006_02/config/nominal_effective.yaml",
+    "nominal_input": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_vrx_shadow_20261006_02/config/nominal_input.yaml",
+    "plant_input": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_vrx_shadow_20261006_02/config/plant_input.yaml",
+    "simulation_input": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_vrx_shadow_20261006_02/config/simulation_input.yaml"
+  },
+  "solver_input_constraints": {
+    "T_max": 25.0,
+    "T_min": -25.0,
+    "source": "nominal thruster magnitudes; independent of plant limits"
+  },
+  "source_snapshots_unchanged": true
+}

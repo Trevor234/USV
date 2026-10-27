@@ -1,0 +1,30 @@
+{
+  "schema": "M4-G2-plan-v85",
+  "recorded_at": "2026-10-25T17:42:31.647612+08:00",
+  "steps": [
+    {
+      "id": "G0/G1/G2",
+      "status": "complete"
+    },
+    {
+      "id": "G3/T2-B",
+      "status": "next",
+      "task": "retrospective P01 re-audit + clear/new-gen/expired differences"
+    },
+    {
+      "id": "G4/T2-C",
+      "status": "after_G1",
+      "task": "offline target guard proof + re-register + single owned"
+    },
+    {
+      "id": "G5/T2-A",
+      "status": "after_G1",
+      "task": "silent/same_stamp/resume coverage"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

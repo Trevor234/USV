@@ -1,0 +1,48 @@
+{
+  "Applied_permitted": 0,
+  "Decisions_permitted": 0,
+  "acceptance": [
+    "actual4role config/proc/GID binding",
+    "actual native grant and replay rejection",
+    "zero forbiddenWriters/jobs",
+    "allSource+bag closed,INTonly,groupsEmpty",
+    "external source/bag/raw-input accounting and source-lock recheck"
+  ],
+  "close_budget_seconds": 10,
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/author/formal_pre_freeze_contract_v1.json",
+  "contract_sha256": "1faedd4bbf7338ffbd3bc1f9b049285e58d7c3605816d416ac2b83fbfd5365fb",
+  "domain_id": 197,
+  "execute_qualified": false,
+  "fault_injection_enabled": false,
+  "max_seconds": 35,
+  "not_qualified": [
+    "fullRegulatorNoOutput",
+    "B5freeze",
+    "M0b",
+    "M4",
+    "modelTransaction",
+    "P1"
+  ],
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/runs/formal_prepare_01",
+  "physical_execute_release_enabled": false,
+  "physical_publishers_permitted": 0,
+  "prepared_hold_seconds": 1,
+  "registered_ns": 460595160333207,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/build/native_formal_attempt03/runtime_registry_v1.json",
+  "registry_sha256": "f3929cc132274d300ad7576e23c57d894de0c4224a40df45e02e88bcae66829b",
+  "research_conclusion": false,
+  "run_id": "formal_prepare_01",
+  "schema": "formal-owned-prepare-run-v1",
+  "solver_jobs_permitted": 0,
+  "source_lock": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/preflight/actual_source_lock_v1.json",
+  "source_lock_sha256": "1ba0fd0ace785ead843be746849f8d3230a70e377e91399967add835f5884129",
+  "stage_qualified": false,
+  "stop_order": [
+    "preparer",
+    "fixture",
+    "worker",
+    "recorder"
+  ],
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/preflight/formal_topics_v1.json",
+  "topics_sha256": "7a5a83b0e9722f5feaff1319678e4945dd30445b1e1b6d47fc15fea49ff451bd"
+}

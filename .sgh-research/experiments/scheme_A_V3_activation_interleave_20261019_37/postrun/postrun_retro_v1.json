@@ -1,0 +1,42 @@
+{
+  "EDA_route_STA_WNS_PPA": "not applicable",
+  "execute_qualified": false,
+  "experience_used": [
+    "snapshot freshness differs from target-time causal frame",
+    "driver/Witness scope differs from stage qualification"
+  ],
+  "hypotheses": {
+    "first_guard_invalidated": true,
+    "fresh_second_snapshot": true,
+    "older_causal_frame_selected": true,
+    "original_jitter_deadline_not_extended": true,
+    "real_callback_during_wait": true
+  },
+  "next_confidence": "medium",
+  "next_impact": "high",
+  "next_objective": "ordinary unpaused supervision and final role-combination necessary confirmation",
+  "next_risk": "bounded",
+  "observations": {
+    "accepted_after_final_guard": true,
+    "activation_jitter_ns": 8956596,
+    "actual_clock_epoch_interleave": false,
+    "actual_source_input_interleave": true,
+    "attempts": 2,
+    "callback_commit_ns": 386802689837215,
+    "callback_raw_cdr_sha256": "2d062e1a6ae05756f7d1debf6100c2de8df760b701d2afb34212f9b657720310",
+    "callback_sequence": 111,
+    "decision_sequence": 26,
+    "job_id": 2,
+    "passed": true,
+    "raw_odom_sequence": 110,
+    "reason": "",
+    "retry": true,
+    "stage_qualified": false,
+    "start_jitter_ns": 56196,
+    "wait_ns": 8820274
+  },
+  "primary_mechanism": "actual concurrency evidence gap closed for selected finite source scope",
+  "repeated_same_V3_run_justified": false,
+  "research_conclusion": false,
+  "stage_qualified": false
+}

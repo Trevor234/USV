@@ -1,0 +1,24 @@
+{
+  "Observer_CPP_modified": false,
+  "all_raw_failures_preserved": true,
+  "legacy_business_anchors": 6,
+  "matching_legacy_invalidation": {
+    "check_ns": 383183422911622,
+    "clock_epoch": 0,
+    "legacy_ready_ns": 383182374144752,
+    "measurement_eligible": false,
+    "reason": "worker_unusable:worker_capability_expired",
+    "run_id": "v2_lease_r2_02",
+    "schema": "p1-D1-legacy-ready-invalidation-v1",
+    "sequence": 6,
+    "terminal": true,
+    "type": "legacy_ready_invalidated"
+  },
+  "original_case_completed": false,
+  "original_exact_literal_reason_gate_passed": false,
+  "original_normal_tail_qualification": false,
+  "raw_authenticated_Applied_callbacks": 11,
+  "raw_terminal_reason": "legacy_ready_invalidated:worker_unusable:worker_capability_expired",
+  "receipt_age_at_transition_ns": 694535691,
+  "repair": "strict causal-chain recognition and separate terminal-reception close profile; ordinary business anchor closure stays false"
+}

@@ -1,0 +1,58 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "automatic_retries": 0,
+  "boundary": "The Worker completes native solve, writes the Candidate row, and deliberately does not publish it. The Regulator sees no candidate for that job target tick, falls back under the frozen hold/ramp policy, and the Worker still clears active_job and increments completed_jobs before the next job arrives.",
+  "case": "W4-result-delivery-drop",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "declared_exceptions": [],
+  "domain_id": 120,
+  "drop_after_candidates": 2,
+  "expected": {
+    "active_job_cleared_before_next_job": true,
+    "active_watchdog_tripped": false,
+    "business_tick_after_dropped_tick": ">=1",
+    "candidate_accounting": "generated == published + dropped",
+    "delivery_resumes_after_drop": true,
+    "dropped_candidate_must_not_be_registered": true,
+    "dropped_candidates": 1,
+    "dropped_target_tick_decided_as": "no_candidate",
+    "exit_codes": {
+      "fixture": 0,
+      "recorder": 0,
+      "regulator": 0,
+      "worker": 0
+    },
+    "fallback_source_must_match_hold_policy": true,
+    "signals": {
+      "fixture": [
+        "SIGINT"
+      ],
+      "recorder": [
+        "SIGINT"
+      ],
+      "regulator": [],
+      "worker": [
+        "SIGINT"
+      ]
+    },
+    "transition_reason": null
+  },
+  "fault_injection_enabled": true,
+  "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "index_sha256": "d1a9f0e2b7c4a8536e0f2b9d4c7a1e5836b0d9f2c4a7e1b8369d0c5f2a8e4b71",
+  "max_seconds": 45,
+  "old_normal_or_fault_qualifications_transferred": false,
+  "outer_timeout_seconds": 90,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/runs/W4_02",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/selected_runtime_registry_v1.json",
+  "registry_sha256": "9859eb4c88c41e73454029c3e985849a55fe03455fadf0be18202dca6620c8e4",
+  "run_id": "M4_diagnostic_W4_20261022_02",
+  "schema": "M4-owned-diagnostic-run-v1",
+  "scope": "M4_owned_diagnostic_worker_only_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

@@ -1,0 +1,11 @@
+{
+  "files": {
+    "archive_inventory_v1.json": "7fd313c1f567652869251b933fbd7df679e41a680a83e9ef07080bc2faa74da8",
+    "archive_v1.py": "3e9a97187aeddcd17db5e21ac74e4fceb5c9bbaae2c0420d9f7ad997dc7a8604",
+    "batch_status_final.json": "fc32d46a542d25f0b2ee6c652ea8b740eb6c38ed0b8a1aa98e2aac6db81040c4",
+    "delivery_verification.json": "bc10a49955e242ddb8534c7a1f049677442208bf54afe5646073404e63b9c110",
+    "postrun/final_QA_current.json": "63fa780b77a88c0d6ddd5bb22ec35b3c5aa12dd968c8878fac47a61b2039030d",
+    "protection_v1.py": "6f9de8644fe8418a40d3d4fa5bdd3442752cdab5e1059001f8ecfb5230584773"
+  },
+  "parent": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_9_20261014_15"
+}

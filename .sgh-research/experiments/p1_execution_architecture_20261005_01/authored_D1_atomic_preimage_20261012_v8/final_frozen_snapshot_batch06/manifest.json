@@ -1,0 +1,1843 @@
+{
+  "schema": "batch06-v7-v8-final-frozen-source-and-binary/v1",
+  "directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06",
+  "file_count": 305,
+  "bytes": 79701333,
+  "files": {
+    "v7/audit_all_rejected_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/audit_all_rejected_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/audit_all_rejected_v1.py",
+      "sha256": "92f6013fd4b939d8c28cf32bf72094410f093d78e95f477e7ef23322d2c9189d",
+      "bytes": 26903
+    },
+    "v8/audit_all_rejected_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/audit_all_rejected_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/audit_all_rejected_v1.py",
+      "sha256": "92f6013fd4b939d8c28cf32bf72094410f093d78e95f477e7ef23322d2c9189d",
+      "bytes": 26903
+    },
+    "v7/build_atomic_observer_v7.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/build_atomic_observer_v7.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/build_atomic_observer_v7.py",
+      "sha256": "d5a12a1d3fd8fb91d94d669df50510e3990d0020598ac6e1190ce2cced1a9d80",
+      "bytes": 7390
+    },
+    "v8/build_atomic_observer_v7.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/build_atomic_observer_v7.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/build_atomic_observer_v7.py",
+      "sha256": "d5a12a1d3fd8fb91d94d669df50510e3990d0020598ac6e1190ce2cced1a9d80",
+      "bytes": 7390
+    },
+    "v7/build_manifest_current.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/build_manifest_current.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/build_manifest_current.json",
+      "sha256": "8e79d5fe190784457b5719a653ed43539b741addfac5f860c457c15c66c44f23",
+      "bytes": 3992
+    },
+    "v8/build_manifest_current.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/build_manifest_current.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/build_manifest_current.json",
+      "sha256": "9fc2a1b9837f9bb82890db246fc653d1563e01116f3c5a19ee54ee221ae9b4f3",
+      "bytes": 3985
+    },
+    "v7/check_activation_provenance_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/check_activation_provenance_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/check_activation_provenance_v1.py",
+      "sha256": "33ffaee9097942b30ccb7af55892845709bd647b1498f40bbcb751a69fc1421e",
+      "bytes": 44335
+    },
+    "v8/check_activation_provenance_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_activation_provenance_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/check_activation_provenance_v1.py",
+      "sha256": "33ffaee9097942b30ccb7af55892845709bd647b1498f40bbcb751a69fc1421e",
+      "bytes": 44335
+    },
+    "v7/check_atomic_observation_v2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/check_atomic_observation_v2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/check_atomic_observation_v2.py",
+      "sha256": "8261bece62125d12b25a1d65706052adb2a1798156a3c2510b11c484264f8fc6",
+      "bytes": 64288
+    },
+    "v8/check_atomic_observation_v2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_atomic_observation_v2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/check_atomic_observation_v2.py",
+      "sha256": "b7fda4536d62a6cb4af6a5fb8c3f4dd1b0374a8d1caa2612b2bba6bd450a2f93",
+      "bytes": 68622
+    },
+    "v7/check_config_identity_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/check_config_identity_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/check_config_identity_v1.py",
+      "sha256": "d981ba6a2cc4ad3ac85376d59f684e88fc57523b24a814d2c292328f192ae8d3",
+      "bytes": 15196
+    },
+    "v8/check_config_identity_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_config_identity_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/check_config_identity_v1.py",
+      "sha256": "d981ba6a2cc4ad3ac85376d59f684e88fc57523b24a814d2c292328f192ae8d3",
+      "bytes": 15196
+    },
+    "v7/check_owned_fixture.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/check_owned_fixture.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/check_owned_fixture.py",
+      "sha256": "c0ab40a15370f8dafa7fe1fd4806789b364ca46ade02fdb2d83abe66cb0f325e",
+      "bytes": 20732
+    },
+    "v8/check_owned_fixture.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_owned_fixture.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/check_owned_fixture.py",
+      "sha256": "c0ab40a15370f8dafa7fe1fd4806789b364ca46ade02fdb2d83abe66cb0f325e",
+      "bytes": 20732
+    },
+    "v7/check_source_components_v4.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/check_source_components_v4.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/check_source_components_v4.py",
+      "sha256": "c1e9a072a519b952902e628108627632c0e04d6136affe3302d9204cbae05a99",
+      "bytes": 26467
+    },
+    "v8/check_source_components_v4.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/check_source_components_v4.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/check_source_components_v4.py",
+      "sha256": "c1e9a072a519b952902e628108627632c0e04d6136affe3302d9204cbae05a99",
+      "bytes": 26467
+    },
+    "v7/common/p1_owned_identity.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/common/p1_owned_identity.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/common/p1_owned_identity.hpp",
+      "sha256": "c48aae5e403d4ebaf511b2141a963de0d7baabb344c4eaa6320608fb170f86b7",
+      "bytes": 13061
+    },
+    "v8/common/p1_owned_identity.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/common/p1_owned_identity.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/common/p1_owned_identity.hpp",
+      "sha256": "c48aae5e403d4ebaf511b2141a963de0d7baabb344c4eaa6320608fb170f86b7",
+      "bytes": 13061
+    },
+    "v7/consolidate_current_v5.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/consolidate_current_v5.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/consolidate_current_v5.py",
+      "sha256": "4963cbf71290b94eb2165832b4aed086e59276897c9785c560d1d2bb5ee76e65",
+      "bytes": 7478
+    },
+    "v8/consolidate_current_v5.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/consolidate_current_v5.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/consolidate_current_v5.py",
+      "sha256": "4963cbf71290b94eb2165832b4aed086e59276897c9785c560d1d2bb5ee76e65",
+      "bytes": 7478
+    },
+    "v7/consolidate_current_v6.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/consolidate_current_v6.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/consolidate_current_v6.py",
+      "sha256": "0a742cd2eb514cef11e4cb723070cc68a8e71a517377b94927d70278fd000457",
+      "bytes": 3152
+    },
+    "v8/consolidate_current_v6.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/consolidate_current_v6.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/consolidate_current_v6.py",
+      "sha256": "0a742cd2eb514cef11e4cb723070cc68a8e71a517377b94927d70278fd000457",
+      "bytes": 3152
+    },
+    "v7/fixture/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/fixture/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/fixture/CMakeLists.txt",
+      "sha256": "2fd4c8bcc1ddfa29259cd172b3826ade098a7f47a630a34635172f8cf117a712",
+      "bytes": 1119
+    },
+    "v8/fixture/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/fixture/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/fixture/CMakeLists.txt",
+      "sha256": "2fd4c8bcc1ddfa29259cd172b3826ade098a7f47a630a34635172f8cf117a712",
+      "bytes": 1119
+    },
+    "v7/fixture/synthetic_source.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/fixture/synthetic_source.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/fixture/synthetic_source.cpp",
+      "sha256": "73f48e2f151043f41e22054ebaa6c82ac366b90ad0e7a460a1643aaf6e4c4bd3",
+      "bytes": 7532
+    },
+    "v8/fixture/synthetic_source.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/fixture/synthetic_source.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/fixture/synthetic_source.cpp",
+      "sha256": "73f48e2f151043f41e22054ebaa6c82ac366b90ad0e7a460a1643aaf6e4c4bd3",
+      "bytes": 7532
+    },
+    "v7/fixture_source_bundle_v6.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/fixture_source_bundle_v6.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/fixture_source_bundle_v6.json",
+      "sha256": "08251934d2c1c1a9b92a199577b7af407857eadf5525d4197cc17092aa900ba0",
+      "bytes": 1105
+    },
+    "v8/fixture_source_bundle_v6.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/fixture_source_bundle_v6.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/fixture_source_bundle_v6.json",
+      "sha256": "08251934d2c1c1a9b92a199577b7af407857eadf5525d4197cc17092aa900ba0",
+      "bytes": 1105
+    },
+    "v7/formatter_probe.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/formatter_probe.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/formatter_probe.cpp",
+      "sha256": "3caf14c62a70a15fcb8607e2a93d9af294a6e5a67503cc9739a24f7d9f3aba95",
+      "bytes": 911
+    },
+    "v8/formatter_probe.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/formatter_probe.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/formatter_probe.cpp",
+      "sha256": "3caf14c62a70a15fcb8607e2a93d9af294a6e5a67503cc9739a24f7d9f3aba95",
+      "bytes": 911
+    },
+    "v7/historical_tool_bytes/driver_revision2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/historical_tool_bytes/driver_revision2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/historical_tool_bytes/driver_revision2.py",
+      "sha256": "429df7947ade25fbe2eb4165609623fc96e67fa48aecaedfe8c4a35ab4b11caf",
+      "bytes": 29331
+    },
+    "v8/historical_tool_bytes/driver_revision2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/historical_tool_bytes/driver_revision2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/historical_tool_bytes/driver_revision2.py",
+      "sha256": "429df7947ade25fbe2eb4165609623fc96e67fa48aecaedfe8c4a35ab4b11caf",
+      "bytes": 29331
+    },
+    "v7/historical_tool_bytes/negative_checker_revision1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/historical_tool_bytes/negative_checker_revision1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/historical_tool_bytes/negative_checker_revision1.py",
+      "sha256": "f26a27de22ebdc769a33febc6bb597a8d495d1e6c9d652dd3b969e98827bc607",
+      "bytes": 6873
+    },
+    "v8/historical_tool_bytes/negative_checker_revision1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/historical_tool_bytes/negative_checker_revision1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/historical_tool_bytes/negative_checker_revision1.py",
+      "sha256": "f26a27de22ebdc769a33febc6bb597a8d495d1e6c9d652dd3b969e98827bc607",
+      "bytes": 6873
+    },
+    "v7/historical_tool_bytes/negative_checker_revision2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/historical_tool_bytes/negative_checker_revision2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/historical_tool_bytes/negative_checker_revision2.py",
+      "sha256": "07f357334714eb6ae820adc058a0995cdd4e210c3dfb0a8b1bf2c29daba4f1eb",
+      "bytes": 7156
+    },
+    "v8/historical_tool_bytes/negative_checker_revision2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/historical_tool_bytes/negative_checker_revision2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/historical_tool_bytes/negative_checker_revision2.py",
+      "sha256": "07f357334714eb6ae820adc058a0995cdd4e210c3dfb0a8b1bf2c29daba4f1eb",
+      "bytes": 7156
+    },
+    "v7/historical_tool_bytes/negative_checker_revision3.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/historical_tool_bytes/negative_checker_revision3.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/historical_tool_bytes/negative_checker_revision3.py",
+      "sha256": "aaa8b6d1dd5be81d73e17354972159d8fe056007ed33efe97968aac38622f517",
+      "bytes": 8076
+    },
+    "v8/historical_tool_bytes/negative_checker_revision3.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/historical_tool_bytes/negative_checker_revision3.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/historical_tool_bytes/negative_checker_revision3.py",
+      "sha256": "aaa8b6d1dd5be81d73e17354972159d8fe056007ed33efe97968aac38622f517",
+      "bytes": 8076
+    },
+    "v7/historical_tool_bytes/negative_checker_revision4.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/historical_tool_bytes/negative_checker_revision4.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/historical_tool_bytes/negative_checker_revision4.py",
+      "sha256": "e7b7d4c097b6791b732beab6706b9279ccc4d53f745fc528dca99dbd4adf603c",
+      "bytes": 9581
+    },
+    "v8/historical_tool_bytes/negative_checker_revision4.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/historical_tool_bytes/negative_checker_revision4.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/historical_tool_bytes/negative_checker_revision4.py",
+      "sha256": "e7b7d4c097b6791b732beab6706b9279ccc4d53f745fc528dca99dbd4adf603c",
+      "bytes": 9581
+    },
+    "v7/historical_tool_bytes/supervisor_revision1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/historical_tool_bytes/supervisor_revision1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/historical_tool_bytes/supervisor_revision1.py",
+      "sha256": "8c24c4c69e1621c907fca14ef1ce2678de823ef5d0fbd413bd877f0d5e6d7217",
+      "bytes": 10641
+    },
+    "v8/historical_tool_bytes/supervisor_revision1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/historical_tool_bytes/supervisor_revision1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/historical_tool_bytes/supervisor_revision1.py",
+      "sha256": "8c24c4c69e1621c907fca14ef1ce2678de823ef5d0fbd413bd877f0d5e6d7217",
+      "bytes": 10641
+    },
+    "v7/observer/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/CMakeLists.txt",
+      "sha256": "c1f685641bd31047538c0d8ff79ab39156e143cdce33abf694485170a30187e8",
+      "bytes": 2000
+    },
+    "v8/observer/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/CMakeLists.txt",
+      "sha256": "c1f685641bd31047538c0d8ff79ab39156e143cdce33abf694485170a30187e8",
+      "bytes": 2000
+    },
+    "v7/observer/src/shadow/callback_raw_v4.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/callback_raw_v4.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/callback_raw_v4.hpp",
+      "sha256": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398",
+      "bytes": 1931
+    },
+    "v8/observer/src/shadow/callback_raw_v4.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/callback_raw_v4.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/callback_raw_v4.hpp",
+      "sha256": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398",
+      "bytes": 1931
+    },
+    "v7/observer/src/shadow/p1_admission.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_admission.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_admission.hpp",
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "bytes": 8297
+    },
+    "v8/observer/src/shadow/p1_admission.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_admission.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_admission.hpp",
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "bytes": 8297
+    },
+    "v7/observer/src/shadow/p1_capability_lease.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_capability_lease.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_capability_lease.hpp",
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "bytes": 1020
+    },
+    "v8/observer/src/shadow/p1_capability_lease.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_capability_lease.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_capability_lease.hpp",
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "bytes": 1020
+    },
+    "v7/observer/src/shadow/p1_clock_window.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_clock_window.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_clock_window.hpp",
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "bytes": 1902
+    },
+    "v8/observer/src/shadow/p1_clock_window.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_clock_window.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_clock_window.hpp",
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "bytes": 1902
+    },
+    "v7/observer/src/shadow/p1_d0_observation.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_d0_observation.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_d0_observation.hpp",
+      "sha256": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f",
+      "bytes": 7522
+    },
+    "v8/observer/src/shadow/p1_d0_observation.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_d0_observation.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_d0_observation.hpp",
+      "sha256": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f",
+      "bytes": 7522
+    },
+    "v7/observer/src/shadow/p1_diag_sink.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_diag_sink.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_diag_sink.hpp",
+      "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79",
+      "bytes": 5305
+    },
+    "v8/observer/src/shadow/p1_diag_sink.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_diag_sink.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_diag_sink.hpp",
+      "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79",
+      "bytes": 5305
+    },
+    "v7/observer/src/shadow/p1_full_contract.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_full_contract.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_full_contract.hpp",
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea",
+      "bytes": 11798
+    },
+    "v8/observer/src/shadow/p1_full_contract.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_full_contract.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_full_contract.hpp",
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea",
+      "bytes": 11798
+    },
+    "v7/observer/src/shadow/p1_preparation_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_preparation_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_preparation_barrier.hpp",
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "bytes": 723
+    },
+    "v8/observer/src/shadow/p1_preparation_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_preparation_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_preparation_barrier.hpp",
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "bytes": 723
+    },
+    "v7/observer/src/shadow/p1_resources.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_resources.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_resources.hpp",
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+      "bytes": 13624
+    },
+    "v8/observer/src/shadow/p1_resources.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_resources.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_resources.hpp",
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+      "bytes": 13624
+    },
+    "v7/observer/src/shadow/p1_shadow_entry.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_shadow_entry.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_shadow_entry.hpp",
+      "sha256": "e5f952cb29c9c975f584b1ce4be456a06c9e3dcac6d7435bed81fdaf1c9bae6b",
+      "bytes": 7551
+    },
+    "v8/observer/src/shadow/p1_shadow_entry.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_shadow_entry.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_shadow_entry.hpp",
+      "sha256": "e5f952cb29c9c975f584b1ce4be456a06c9e3dcac6d7435bed81fdaf1c9bae6b",
+      "bytes": 7551
+    },
+    "v7/observer/src/shadow/p1_tick_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_tick_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_tick_barrier.hpp",
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "bytes": 708
+    },
+    "v8/observer/src/shadow/p1_tick_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_tick_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_tick_barrier.hpp",
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "bytes": 708
+    },
+    "v7/observer/src/shadow/p1_witness.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_witness.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_witness.hpp",
+      "sha256": "c114df7d6c587e389ebdacc7344536e7f00dca81cc8dea2d352dac4ada6d6a93",
+      "bytes": 24118
+    },
+    "v8/observer/src/shadow/p1_witness.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_witness.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_witness.hpp",
+      "sha256": "c114df7d6c587e389ebdacc7344536e7f00dca81cc8dea2d352dac4ada6d6a93",
+      "bytes": 24118
+    },
+    "v7/observer/src/shadow/p1_worker_liveness.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/p1_worker_liveness.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/p1_worker_liveness.hpp",
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "bytes": 1227
+    },
+    "v8/observer/src/shadow/p1_worker_liveness.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/p1_worker_liveness.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/p1_worker_liveness.hpp",
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "bytes": 1227
+    },
+    "v7/observer/src/shadow/protocol.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/protocol.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/protocol.hpp",
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "bytes": 6581
+    },
+    "v8/observer/src/shadow/protocol.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/protocol.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/protocol.hpp",
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "bytes": 6581
+    },
+    "v7/observer/src/shadow/regulator_shadow_observer.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/src/shadow/regulator_shadow_observer.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/src/shadow/regulator_shadow_observer.cpp",
+      "sha256": "6e9bb2b74b11151b07538d13f2c3dde1a2d0580c183a33f2455956b81ae269be",
+      "bytes": 86692
+    },
+    "v8/observer/src/shadow/regulator_shadow_observer.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/src/shadow/regulator_shadow_observer.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/src/shadow/regulator_shadow_observer.cpp",
+      "sha256": "a2df86b33315a22ec422b741d124c91b0b03780fdf3986120bd92ad1b8bf5432",
+      "bytes": 86960
+    },
+    "v7/observer/tests/test_atomic_observation.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/tests/test_atomic_observation.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/tests/test_atomic_observation.cpp",
+      "sha256": "1854bb1fb72cab0b0feabd7fdc5e2e5347424ebe47cd7b08b9b5f2a678c12273",
+      "bytes": 12987
+    },
+    "v8/observer/tests/test_atomic_observation.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/tests/test_atomic_observation.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/tests/test_atomic_observation.cpp",
+      "sha256": "2d2949f02e0d30c1db23a54218648dd29eaa863c8c9cbc614b8cecd387778e75",
+      "bytes": 17779
+    },
+    "v7/observer/tests/test_d0_observation.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/tests/test_d0_observation.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/tests/test_d0_observation.cpp",
+      "sha256": "6c9e4606670f35ec5069f998769cf7fba7ffde9815fd5e740a4f5bf1f3ed5955",
+      "bytes": 6402
+    },
+    "v8/observer/tests/test_d0_observation.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/tests/test_d0_observation.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/tests/test_d0_observation.cpp",
+      "sha256": "6c9e4606670f35ec5069f998769cf7fba7ffde9815fd5e740a4f5bf1f3ed5955",
+      "bytes": 6402
+    },
+    "v7/observer/tests/test_enqueue_branch.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/tests/test_enqueue_branch.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/tests/test_enqueue_branch.cpp",
+      "sha256": "9909f8892ef84891519842056d05afa4f984311e9976ff4801554e88932494bc",
+      "bytes": 8704
+    },
+    "v8/observer/tests/test_enqueue_branch.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/tests/test_enqueue_branch.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/tests/test_enqueue_branch.cpp",
+      "sha256": "9909f8892ef84891519842056d05afa4f984311e9976ff4801554e88932494bc",
+      "bytes": 8704
+    },
+    "v7/observer/tests/test_legacy_ready.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/tests/test_legacy_ready.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/tests/test_legacy_ready.cpp",
+      "sha256": "c90c1a5d01d7aadeeab5f72fd92cb1e9c43a68c71a0b37ba0a3c9cfe866d2456",
+      "bytes": 17124
+    },
+    "v8/observer/tests/test_legacy_ready.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/tests/test_legacy_ready.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/tests/test_legacy_ready.cpp",
+      "sha256": "c90c1a5d01d7aadeeab5f72fd92cb1e9c43a68c71a0b37ba0a3c9cfe866d2456",
+      "bytes": 17124
+    },
+    "v7/observer/tests/test_shadow_entry.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/tests/test_shadow_entry.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer/tests/test_shadow_entry.cpp",
+      "sha256": "66064b802b53a30521b87308fd0ce40a28546da29736c5266024722115d5f18a",
+      "bytes": 19441
+    },
+    "v8/observer/tests/test_shadow_entry.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/tests/test_shadow_entry.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer/tests/test_shadow_entry.cpp",
+      "sha256": "66064b802b53a30521b87308fd0ce40a28546da29736c5266024722115d5f18a",
+      "bytes": 19441
+    },
+    "v7/observer_source_bundle_v10_atomic_v7.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer_source_bundle_v10_atomic_v7.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer_source_bundle_v10_atomic_v7.json",
+      "sha256": "b2330e3367d1984778f7833f4319eb313529b9b5bd60ac4400350c87a5814005",
+      "bytes": 7693
+    },
+    "v8/observer_source_bundle_v10_atomic_v7.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer_source_bundle_v10_atomic_v7.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer_source_bundle_v10_atomic_v7.json",
+      "sha256": "b2330e3367d1984778f7833f4319eb313529b9b5bd60ac4400350c87a5814005",
+      "bytes": 7693
+    },
+    "v7/observer_source_bundle_v11_atomic_v7.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer_source_bundle_v11_atomic_v7.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer_source_bundle_v11_atomic_v7.json",
+      "sha256": "bdf3a06b13147542e62564c081826cce99e936385bca2ad07a04fc141b5e51b7",
+      "bytes": 7832
+    },
+    "v8/observer_source_bundle_v11_atomic_v7.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer_source_bundle_v11_atomic_v7.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer_source_bundle_v11_atomic_v7.json",
+      "sha256": "bdf3a06b13147542e62564c081826cce99e936385bca2ad07a04fc141b5e51b7",
+      "bytes": 7832
+    },
+    "v7/observer_source_bundle_v7.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer_source_bundle_v7.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer_source_bundle_v7.json",
+      "sha256": "8c91077fb6e118b1479afa49b86cd1bcfbe49c5646b0faaebd48978bdae980d4",
+      "bytes": 6837
+    },
+    "v8/observer_source_bundle_v7.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer_source_bundle_v7.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer_source_bundle_v7.json",
+      "sha256": "8c91077fb6e118b1479afa49b86cd1bcfbe49c5646b0faaebd48978bdae980d4",
+      "bytes": 6837
+    },
+    "v7/observer_source_bundle_v8_raw_v4.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer_source_bundle_v8_raw_v4.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/observer_source_bundle_v8_raw_v4.json",
+      "sha256": "5d595b90b4879cf5580a7dcec508d3bdc9943671ce88ab82dfe1760458d6837e",
+      "bytes": 7190
+    },
+    "v8/observer_source_bundle_v8_raw_v4.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer_source_bundle_v8_raw_v4.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer_source_bundle_v8_raw_v4.json",
+      "sha256": "5d595b90b4879cf5580a7dcec508d3bdc9943671ce88ab82dfe1760458d6837e",
+      "bytes": 7190
+    },
+    "v7/owned_auth.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/owned_auth.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/owned_auth.py",
+      "sha256": "c9fc7bbaf8611d657b61ea6059020b86af276265b041b67d7e48d8589911f45f",
+      "bytes": 14165
+    },
+    "v8/owned_auth.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/owned_auth.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/owned_auth.py",
+      "sha256": "c9fc7bbaf8611d657b61ea6059020b86af276265b041b67d7e48d8589911f45f",
+      "bytes": 14165
+    },
+    "v7/owned_release.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/owned_release.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/owned_release.py",
+      "sha256": "689faf811493d97f4d09670d201a544d94577df2031b9e6d37d136feac3e4f8c",
+      "bytes": 13384
+    },
+    "v8/owned_release.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/owned_release.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/owned_release.py",
+      "sha256": "689faf811493d97f4d09670d201a544d94577df2031b9e6d37d136feac3e4f8c",
+      "bytes": 13384
+    },
+    "v7/prepare_fixture.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/prepare_fixture.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/prepare_fixture.py",
+      "sha256": "cf093339ae2437454d3e896a35e5abfbe824e8a632bdfbc1f793967a8bc7c44a",
+      "bytes": 31902
+    },
+    "v8/prepare_fixture.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/prepare_fixture.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/prepare_fixture.py",
+      "sha256": "cf093339ae2437454d3e896a35e5abfbe824e8a632bdfbc1f793967a8bc7c44a",
+      "bytes": 31902
+    },
+    "v7/publisher/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher/CMakeLists.txt",
+      "sha256": "f222bd5164251bab0a4f32de67186f8205e4e98ad378c2e22db294ffa1e4919c",
+      "bytes": 6009
+    },
+    "v8/publisher/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher/CMakeLists.txt",
+      "sha256": "f222bd5164251bab0a4f32de67186f8205e4e98ad378c2e22db294ffa1e4919c",
+      "bytes": 6009
+    },
+    "v7/publisher/include/usv_mpc_cpp/mpc_node.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+      "sha256": "7e6593fba2f188c9cb8bd47e0f4dabad877fd35e2f6304d9fd9fc11690f931d5",
+      "bytes": 11591
+    },
+    "v8/publisher/include/usv_mpc_cpp/mpc_node.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+      "sha256": "7e6593fba2f188c9cb8bd47e0f4dabad877fd35e2f6304d9fd9fc11690f931d5",
+      "bytes": 11591
+    },
+    "v7/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "sha256": "475ff2bdcd6e77beb256c862f9c90362432808e9f9884e8195e87cf2bb3280bc",
+      "bytes": 18740
+    },
+    "v8/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "sha256": "475ff2bdcd6e77beb256c862f9c90362432808e9f9884e8195e87cf2bb3280bc",
+      "bytes": 18740
+    },
+    "v7/publisher/include/usv_mpc_cpp/research_logger.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher/include/usv_mpc_cpp/research_logger.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher/include/usv_mpc_cpp/research_logger.hpp",
+      "sha256": "01755d675ea0ab8295918df14308e7e41157888b4f3cecfea35df3c73ab90661",
+      "bytes": 10857
+    },
+    "v8/publisher/include/usv_mpc_cpp/research_logger.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher/include/usv_mpc_cpp/research_logger.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher/include/usv_mpc_cpp/research_logger.hpp",
+      "sha256": "01755d675ea0ab8295918df14308e7e41157888b4f3cecfea35df3c73ab90661",
+      "bytes": 10857
+    },
+    "v7/publisher/src/mpc_node.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher/src/mpc_node.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher/src/mpc_node.cpp",
+      "sha256": "fd3fef62d552687f7283169681674834569d2b754ca2ada89c3a3d1603f14242",
+      "bytes": 60059
+    },
+    "v8/publisher/src/mpc_node.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher/src/mpc_node.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher/src/mpc_node.cpp",
+      "sha256": "fd3fef62d552687f7283169681674834569d2b754ca2ada89c3a3d1603f14242",
+      "bytes": 60059
+    },
+    "v7/publisher/src/mpc_node_main.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher/src/mpc_node_main.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher/src/mpc_node_main.cpp",
+      "sha256": "43f95ae192e61f7e8433a33801a16bc9993ae6a47ae2d33306bdfe897bdd7cc8",
+      "bytes": 3036
+    },
+    "v8/publisher/src/mpc_node_main.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher/src/mpc_node_main.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher/src/mpc_node_main.cpp",
+      "sha256": "43f95ae192e61f7e8433a33801a16bc9993ae6a47ae2d33306bdfe897bdd7cc8",
+      "bytes": 3036
+    },
+    "v7/publisher/tests/test_publisher_startup.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher/tests/test_publisher_startup.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher/tests/test_publisher_startup.cpp",
+      "sha256": "49932bdee4152d569ee92a4aa0fc184a031ab74ea5141f1b524939a70387e400",
+      "bytes": 31440
+    },
+    "v8/publisher/tests/test_publisher_startup.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher/tests/test_publisher_startup.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher/tests/test_publisher_startup.cpp",
+      "sha256": "49932bdee4152d569ee92a4aa0fc184a031ab74ea5141f1b524939a70387e400",
+      "bytes": 31440
+    },
+    "v7/publisher_source_bundle_v6.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/publisher_source_bundle_v6.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/publisher_source_bundle_v6.json",
+      "sha256": "5c8f832b8c4b41a1454d3a473fe19119a28463a3331d25ad5377604961fe37e0",
+      "bytes": 2838
+    },
+    "v8/publisher_source_bundle_v6.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/publisher_source_bundle_v6.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/publisher_source_bundle_v6.json",
+      "sha256": "5c8f832b8c4b41a1454d3a473fe19119a28463a3331d25ad5377604961fe37e0",
+      "bytes": 2838
+    },
+    "v7/recorder/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/recorder/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/recorder/CMakeLists.txt",
+      "sha256": "eee4c30c9fd3f68bec8a5e74b26f81b5967fcd520705caccfe9520874d95e248",
+      "bytes": 1203
+    },
+    "v8/recorder/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/recorder/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/recorder/CMakeLists.txt",
+      "sha256": "eee4c30c9fd3f68bec8a5e74b26f81b5967fcd520705caccfe9520874d95e248",
+      "bytes": 1203
+    },
+    "v7/recorder/src/owned_recorder.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/recorder/src/owned_recorder.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/recorder/src/owned_recorder.cpp",
+      "sha256": "1142ff4c2fda7b25daa4bd95217beb2baf43f69fe5752532708a37d2d70bf3a6",
+      "bytes": 13567
+    },
+    "v8/recorder/src/owned_recorder.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/recorder/src/owned_recorder.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/recorder/src/owned_recorder.cpp",
+      "sha256": "1142ff4c2fda7b25daa4bd95217beb2baf43f69fe5752532708a37d2d70bf3a6",
+      "bytes": 13567
+    },
+    "v7/recorder_source_bundle_v6.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/recorder_source_bundle_v6.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/recorder_source_bundle_v6.json",
+      "sha256": "a2fdf77c9033fc656bb7a204dc30a71086ab4f078c087f540f031688eb5dc4a2",
+      "bytes": 1115
+    },
+    "v8/recorder_source_bundle_v6.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/recorder_source_bundle_v6.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/recorder_source_bundle_v6.json",
+      "sha256": "a2fdf77c9033fc656bb7a204dc30a71086ab4f078c087f540f031688eb5dc4a2",
+      "bytes": 1115
+    },
+    "v7/runtime/candidate_fault_spec.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/candidate_fault_spec.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/candidate_fault_spec.py",
+      "sha256": "6c32e64474976d03ffc187140754923ca1b2b06f419bf055ad6fe60f4e011ff2",
+      "bytes": 3777
+    },
+    "v8/runtime/candidate_fault_spec.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/candidate_fault_spec.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/candidate_fault_spec.py",
+      "sha256": "6c32e64474976d03ffc187140754923ca1b2b06f419bf055ad6fe60f4e011ff2",
+      "bytes": 3777
+    },
+    "v7/runtime/check_C0_gates.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_C0_gates.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_C0_gates.py",
+      "sha256": "287caa5253b7d983a70b9a3758b677f1a09c9a6230327a08a5d0aa035eb705be",
+      "bytes": 9660
+    },
+    "v8/runtime/check_C0_gates.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_C0_gates.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_C0_gates.py",
+      "sha256": "287caa5253b7d983a70b9a3758b677f1a09c9a6230327a08a5d0aa035eb705be",
+      "bytes": 9660
+    },
+    "v7/runtime/check_candidate_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_candidate_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_candidate_matrix.py",
+      "sha256": "9df990fe0d3481c3ac6423e64f89598d80f684aac10c6f418d2dca527bc9f9f1",
+      "bytes": 12802
+    },
+    "v8/runtime/check_candidate_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_candidate_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_candidate_matrix.py",
+      "sha256": "9df990fe0d3481c3ac6423e64f89598d80f684aac10c6f418d2dca527bc9f9f1",
+      "bytes": 12802
+    },
+    "v7/runtime/check_live_worker_loss.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_live_worker_loss.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_live_worker_loss.py",
+      "sha256": "e270d82e28ca6fd0630ecab34755f0dd6eed223b2c52a83150369cc184f4f974",
+      "bytes": 14760
+    },
+    "v8/runtime/check_live_worker_loss.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_live_worker_loss.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_live_worker_loss.py",
+      "sha256": "e270d82e28ca6fd0630ecab34755f0dd6eed223b2c52a83150369cc184f4f974",
+      "bytes": 14760
+    },
+    "v7/runtime/check_p1_C0_comparison.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_p1_C0_comparison.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_p1_C0_comparison.py",
+      "sha256": "3738f668b5609b18f14bfb3cab9e0b590a131d6c02ce994663896aad26105b59",
+      "bytes": 23629
+    },
+    "v8/runtime/check_p1_C0_comparison.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_p1_C0_comparison.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_p1_C0_comparison.py",
+      "sha256": "3738f668b5609b18f14bfb3cab9e0b590a131d6c02ce994663896aad26105b59",
+      "bytes": 23629
+    },
+    "v7/runtime/check_p1_execution.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_p1_execution.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_p1_execution.py",
+      "sha256": "469563fb55523e0202725fdc6fc18af446ece84b612c79ee85794e0288829262",
+      "bytes": 76366
+    },
+    "v8/runtime/check_p1_execution.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_p1_execution.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_p1_execution.py",
+      "sha256": "469563fb55523e0202725fdc6fc18af446ece84b612c79ee85794e0288829262",
+      "bytes": 76366
+    },
+    "v7/runtime/check_p1_witness.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_p1_witness.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_p1_witness.py",
+      "sha256": "fb13fe66b8f996f96bac72e96eaa6a1b1f21f27af19a8b62b2dac13bc273596f",
+      "bytes": 24789
+    },
+    "v8/runtime/check_p1_witness.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_p1_witness.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_p1_witness.py",
+      "sha256": "fb13fe66b8f996f96bac72e96eaa6a1b1f21f27af19a8b62b2dac13bc273596f",
+      "bytes": 24789
+    },
+    "v7/runtime/check_preparation_pending.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_preparation_pending.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_preparation_pending.py",
+      "sha256": "e207b72241c62992b31209409d18a5994cf865e0ca0f308e279c1bc6abba576a",
+      "bytes": 8446
+    },
+    "v8/runtime/check_preparation_pending.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_preparation_pending.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_preparation_pending.py",
+      "sha256": "e207b72241c62992b31209409d18a5994cf865e0ca0f308e279c1bc6abba576a",
+      "bytes": 8446
+    },
+    "v7/runtime/check_regulator_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_regulator_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_regulator_fault_matrix.py",
+      "sha256": "d50260927af8595cfcba387066c3151ffdbbfd5ac8e85004514c66081297e46c",
+      "bytes": 12701
+    },
+    "v8/runtime/check_regulator_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_regulator_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_regulator_fault_matrix.py",
+      "sha256": "d50260927af8595cfcba387066c3151ffdbbfd5ac8e85004514c66081297e46c",
+      "bytes": 12701
+    },
+    "v7/runtime/check_resource_delivery.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_resource_delivery.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_resource_delivery.py",
+      "sha256": "b84d33025f53c92c5af211c5a388cccfa432f0ba825fe41a7975ed13866805aa",
+      "bytes": 9131
+    },
+    "v8/runtime/check_resource_delivery.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_resource_delivery.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_resource_delivery.py",
+      "sha256": "b84d33025f53c92c5af211c5a388cccfa432f0ba825fe41a7975ed13866805aa",
+      "bytes": 9131
+    },
+    "v7/runtime/check_scheduler_preparation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_scheduler_preparation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_scheduler_preparation.py",
+      "sha256": "e800a9b79bc2e260d229bc7ecdaa4ae42db0dec2991bbffb21f15cae5c87338c",
+      "bytes": 11742
+    },
+    "v8/runtime/check_scheduler_preparation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_scheduler_preparation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_scheduler_preparation.py",
+      "sha256": "e800a9b79bc2e260d229bc7ecdaa4ae42db0dec2991bbffb21f15cae5c87338c",
+      "bytes": 11742
+    },
+    "v7/runtime/check_time_task_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_time_task_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_time_task_matrix.py",
+      "sha256": "c4c02f690b5dd67afda5263b97f9d4e0bb891673afc5791158fd75c1262cba7c",
+      "bytes": 13029
+    },
+    "v8/runtime/check_time_task_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_time_task_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_time_task_matrix.py",
+      "sha256": "c4c02f690b5dd67afda5263b97f9d4e0bb891673afc5791158fd75c1262cba7c",
+      "bytes": 13029
+    },
+    "v7/runtime/check_worker_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/check_worker_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/check_worker_fault_matrix.py",
+      "sha256": "de46d02498b629997f3eca5d73933d70d7deebc89f6c923fb75d78929f34fc3e",
+      "bytes": 15915
+    },
+    "v8/runtime/check_worker_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/check_worker_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/check_worker_fault_matrix.py",
+      "sha256": "de46d02498b629997f3eca5d73933d70d7deebc89f6c923fb75d78929f34fc3e",
+      "bytes": 15915
+    },
+    "v7/runtime/cleanup_C0_inner.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/cleanup_C0_inner.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/cleanup_C0_inner.py",
+      "sha256": "2cb39d74440bda285089e061ae282ad4b48e4d0805192cfc9746447922603b82",
+      "bytes": 18329
+    },
+    "v8/runtime/cleanup_C0_inner.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/cleanup_C0_inner.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/cleanup_C0_inner.py",
+      "sha256": "2cb39d74440bda285089e061ae282ad4b48e4d0805192cfc9746447922603b82",
+      "bytes": 18329
+    },
+    "v7/runtime/owned_process_supervisor.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/owned_process_supervisor.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/owned_process_supervisor.py",
+      "sha256": "643200100c12f9bcace6926f0497fdfeb0969fea40d45b6336b398438e4b40fe",
+      "bytes": 10711
+    },
+    "v8/runtime/owned_process_supervisor.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/owned_process_supervisor.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/owned_process_supervisor.py",
+      "sha256": "643200100c12f9bcace6926f0497fdfeb0969fea40d45b6336b398438e4b40fe",
+      "bytes": 10711
+    },
+    "v7/runtime/p1_capability_observer_accounting.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/p1_capability_observer_accounting.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/p1_capability_observer_accounting.py",
+      "sha256": "93523bb8e0a6cc6e6a334c2f5ab1325d51f2f063141bc7a175b1e6bb698b9744",
+      "bytes": 1683
+    },
+    "v8/runtime/p1_capability_observer_accounting.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/p1_capability_observer_accounting.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/p1_capability_observer_accounting.py",
+      "sha256": "93523bb8e0a6cc6e6a334c2f5ab1325d51f2f063141bc7a175b1e6bb698b9744",
+      "bytes": 1683
+    },
+    "v7/runtime/p1_contract_revision.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/p1_contract_revision.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/p1_contract_revision.py",
+      "sha256": "97fb9766238e0eb570d265ac0203564289cfa7f55adf056f6e1ef5f9491718e9",
+      "bytes": 3015
+    },
+    "v8/runtime/p1_contract_revision.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/p1_contract_revision.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/p1_contract_revision.py",
+      "sha256": "97fb9766238e0eb570d265ac0203564289cfa7f55adf056f6e1ef5f9491718e9",
+      "bytes": 3015
+    },
+    "v7/runtime/p1_contract_spec_v1.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/p1_contract_spec_v1.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/p1_contract_spec_v1.json",
+      "sha256": "33fb4a5eef93aa6abce5a61e7549dd7217f90c9572e5097791731fbb89661ffd",
+      "bytes": 6558
+    },
+    "v8/runtime/p1_contract_spec_v1.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/p1_contract_spec_v1.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/p1_contract_spec_v1.json",
+      "sha256": "33fb4a5eef93aa6abce5a61e7549dd7217f90c9572e5097791731fbb89661ffd",
+      "bytes": 6558
+    },
+    "v7/runtime/p1_full_contract.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/p1_full_contract.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/p1_full_contract.py",
+      "sha256": "380e6aebcf68c9cf1466feba0ea1a02e55847f14080cf8b89aa55fa67cab568a",
+      "bytes": 8625
+    },
+    "v8/runtime/p1_full_contract.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/p1_full_contract.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/p1_full_contract.py",
+      "sha256": "380e6aebcf68c9cf1466feba0ea1a02e55847f14080cf8b89aa55fa67cab568a",
+      "bytes": 8625
+    },
+    "v7/runtime/p1_live_loss_cleanup.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/p1_live_loss_cleanup.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/p1_live_loss_cleanup.py",
+      "sha256": "8bc257d4536bc2ec7f00ba5e9a1d8346c0d12c8c2208eb330e34fa30d66f8f6b",
+      "bytes": 1333
+    },
+    "v8/runtime/p1_live_loss_cleanup.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/p1_live_loss_cleanup.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/p1_live_loss_cleanup.py",
+      "sha256": "8bc257d4536bc2ec7f00ba5e9a1d8346c0d12c8c2208eb330e34fa30d66f8f6b",
+      "bytes": 1333
+    },
+    "v7/runtime/p1_payload_digest.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/p1_payload_digest.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/p1_payload_digest.py",
+      "sha256": "80969c86cbe72aa238c24503be9d5d69c257ff111a2cc0a5787f966b4af4b6c5",
+      "bytes": 1173
+    },
+    "v8/runtime/p1_payload_digest.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/p1_payload_digest.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/p1_payload_digest.py",
+      "sha256": "80969c86cbe72aa238c24503be9d5d69c257ff111a2cc0a5787f966b4af4b6c5",
+      "bytes": 1173
+    },
+    "v7/runtime/patch_watchdog_observation_v12.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/patch_watchdog_observation_v12.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/patch_watchdog_observation_v12.py",
+      "sha256": "9d0fed8f18187d894eaeed03ac03137ad5b2b16af4f5de4181808d8f9ae6011b",
+      "bytes": 6158
+    },
+    "v8/runtime/patch_watchdog_observation_v12.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/patch_watchdog_observation_v12.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/patch_watchdog_observation_v12.py",
+      "sha256": "9d0fed8f18187d894eaeed03ac03137ad5b2b16af4f5de4181808d8f9ae6011b",
+      "bytes": 6158
+    },
+    "v7/runtime/run_candidate_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_candidate_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_candidate_matrix.py",
+      "sha256": "6b01bb8fdfbbd8acc52bbc63f30f03021801aa8d09aff45c8172ae616ac3b51f",
+      "bytes": 18232
+    },
+    "v8/runtime/run_candidate_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_candidate_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_candidate_matrix.py",
+      "sha256": "6b01bb8fdfbbd8acc52bbc63f30f03021801aa8d09aff45c8172ae616ac3b51f",
+      "bytes": 18232
+    },
+    "v7/runtime/run_formal_no_output_validation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_formal_no_output_validation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_formal_no_output_validation.py",
+      "sha256": "d8098c64defe3b477363c94a959de29eb60c899039885ac13cfd3ce2f5da01cb",
+      "bytes": 39783
+    },
+    "v8/runtime/run_formal_no_output_validation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_formal_no_output_validation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_formal_no_output_validation.py",
+      "sha256": "d8098c64defe3b477363c94a959de29eb60c899039885ac13cfd3ce2f5da01cb",
+      "bytes": 39783
+    },
+    "v7/runtime/run_live_worker_loss.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_live_worker_loss.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_live_worker_loss.py",
+      "sha256": "9774f2423b5976456d218ed377a361818fcb5fe524eb74bfe76601d0660b0d83",
+      "bytes": 18817
+    },
+    "v8/runtime/run_live_worker_loss.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_live_worker_loss.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_live_worker_loss.py",
+      "sha256": "9774f2423b5976456d218ed377a361818fcb5fe524eb74bfe76601d0660b0d83",
+      "bytes": 18817
+    },
+    "v7/runtime/run_no_output_calibration.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_no_output_calibration.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_no_output_calibration.py",
+      "sha256": "48db472183bffe6d6ec13704fcf9162ddfa6b7fd5dab0da3a6e8854e267786ef",
+      "bytes": 40462
+    },
+    "v8/runtime/run_no_output_calibration.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_no_output_calibration.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_no_output_calibration.py",
+      "sha256": "48db472183bffe6d6ec13704fcf9162ddfa6b7fd5dab0da3a6e8854e267786ef",
+      "bytes": 40462
+    },
+    "v7/runtime/run_p1_vrx_validation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_p1_vrx_validation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_p1_vrx_validation.py",
+      "sha256": "27e9eaa4e24b7a7fd4191f7892edf8929a2d4c0ccd0caeb14b56f8fc0c0e855b",
+      "bytes": 61149
+    },
+    "v8/runtime/run_p1_vrx_validation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_p1_vrx_validation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_p1_vrx_validation.py",
+      "sha256": "27e9eaa4e24b7a7fd4191f7892edf8929a2d4c0ccd0caeb14b56f8fc0c0e855b",
+      "bytes": 61149
+    },
+    "v7/runtime/run_preparation_pending.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_preparation_pending.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_preparation_pending.py",
+      "sha256": "be6e9d8d1b4f332d006c2518e80444aa67d2d975e9735927bfd66cffe860f76c",
+      "bytes": 16563
+    },
+    "v8/runtime/run_preparation_pending.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_preparation_pending.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_preparation_pending.py",
+      "sha256": "be6e9d8d1b4f332d006c2518e80444aa67d2d975e9735927bfd66cffe860f76c",
+      "bytes": 16563
+    },
+    "v7/runtime/run_r5_diag_validation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_r5_diag_validation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_r5_diag_validation.py",
+      "sha256": "c8bc0141e3ad7b37ff07b1e3ce440c47b01e4386b90bf9f362beda1922ea0766",
+      "bytes": 54329
+    },
+    "v8/runtime/run_r5_diag_validation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_r5_diag_validation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_r5_diag_validation.py",
+      "sha256": "c8bc0141e3ad7b37ff07b1e3ce440c47b01e4386b90bf9f362beda1922ea0766",
+      "bytes": 54329
+    },
+    "v7/runtime/run_regulator_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_regulator_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_regulator_fault_matrix.py",
+      "sha256": "0d8582698035d0dcc1b29596281112a570f3cea1d47cbf47e08d3333ef785d5c",
+      "bytes": 16644
+    },
+    "v8/runtime/run_regulator_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_regulator_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_regulator_fault_matrix.py",
+      "sha256": "0d8582698035d0dcc1b29596281112a570f3cea1d47cbf47e08d3333ef785d5c",
+      "bytes": 16644
+    },
+    "v7/runtime/run_time_task_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_time_task_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_time_task_matrix.py",
+      "sha256": "ae9b460c293e4e722508f5b0ef8514c96fb8a6fef5a677758d72ac9203da9521",
+      "bytes": 18817
+    },
+    "v8/runtime/run_time_task_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_time_task_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_time_task_matrix.py",
+      "sha256": "ae9b460c293e4e722508f5b0ef8514c96fb8a6fef5a677758d72ac9203da9521",
+      "bytes": 18817
+    },
+    "v7/runtime/run_worker_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/run_worker_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/run_worker_fault_matrix.py",
+      "sha256": "3d38813af7fd9af79481434d940bdc98b456b971a77158603fdfb22b1c52d1f3",
+      "bytes": 20018
+    },
+    "v8/runtime/run_worker_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/run_worker_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/run_worker_fault_matrix.py",
+      "sha256": "3d38813af7fd9af79481434d940bdc98b456b971a77158603fdfb22b1c52d1f3",
+      "bytes": 20018
+    },
+    "v7/runtime/test_C0_gates.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_C0_gates.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_C0_gates.py",
+      "sha256": "d53a50577e5b427af0963c967ba23ec88d19993dff1637c8eb88fc3eadf198dd",
+      "bytes": 8476
+    },
+    "v8/runtime/test_C0_gates.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_C0_gates.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_C0_gates.py",
+      "sha256": "d53a50577e5b427af0963c967ba23ec88d19993dff1637c8eb88fc3eadf198dd",
+      "bytes": 8476
+    },
+    "v7/runtime/test_C0_inner_cleanup.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_C0_inner_cleanup.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_C0_inner_cleanup.py",
+      "sha256": "1f076891c2ef49670915913b57d839eaef6baeb693df7a09600ea4c062deb061",
+      "bytes": 12664
+    },
+    "v8/runtime/test_C0_inner_cleanup.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_C0_inner_cleanup.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_C0_inner_cleanup.py",
+      "sha256": "1f076891c2ef49670915913b57d839eaef6baeb693df7a09600ea4c062deb061",
+      "bytes": 12664
+    },
+    "v7/runtime/test_candidate_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_candidate_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_candidate_matrix.py",
+      "sha256": "37a68500aff0c10c17d37385a1b4ec2254d04e9b724d1dd257a748ce224d002a",
+      "bytes": 6061
+    },
+    "v8/runtime/test_candidate_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_candidate_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_candidate_matrix.py",
+      "sha256": "37a68500aff0c10c17d37385a1b4ec2254d04e9b724d1dd257a748ce224d002a",
+      "bytes": 6061
+    },
+    "v7/runtime/test_capability_observer_accounting.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_capability_observer_accounting.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_capability_observer_accounting.py",
+      "sha256": "6d0a9c0325b9a96c6ccb658919e5ddf75648011cabb5c164c51c8b90e9efa6b5",
+      "bytes": 2101
+    },
+    "v8/runtime/test_capability_observer_accounting.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_capability_observer_accounting.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_capability_observer_accounting.py",
+      "sha256": "6d0a9c0325b9a96c6ccb658919e5ddf75648011cabb5c164c51c8b90e9efa6b5",
+      "bytes": 2101
+    },
+    "v7/runtime/test_check_p1_execution.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_check_p1_execution.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_check_p1_execution.py",
+      "sha256": "c3341fcf35d7001241836a3b533c024d7b5a6aae9d4bdcf0b0c09268a981d9ec",
+      "bytes": 37242
+    },
+    "v8/runtime/test_check_p1_execution.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_check_p1_execution.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_check_p1_execution.py",
+      "sha256": "c3341fcf35d7001241836a3b533c024d7b5a6aae9d4bdcf0b0c09268a981d9ec",
+      "bytes": 37242
+    },
+    "v7/runtime/test_contract_revision.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_contract_revision.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_contract_revision.py",
+      "sha256": "3e42e46a59784ab7c439374d5476b502c2d0c2b0e117e89e2d6bc7ff4b66a64f",
+      "bytes": 10070
+    },
+    "v8/runtime/test_contract_revision.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_contract_revision.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_contract_revision.py",
+      "sha256": "3e42e46a59784ab7c439374d5476b502c2d0c2b0e117e89e2d6bc7ff4b66a64f",
+      "bytes": 10070
+    },
+    "v7/runtime/test_fault_mechanisms.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_fault_mechanisms.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_fault_mechanisms.py",
+      "sha256": "e934fb8fc0e762f4751dae7beea0fdd806b5bb0fcb4d8782b33ddc63fb882d6a",
+      "bytes": 7343
+    },
+    "v8/runtime/test_fault_mechanisms.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_fault_mechanisms.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_fault_mechanisms.py",
+      "sha256": "e934fb8fc0e762f4751dae7beea0fdd806b5bb0fcb4d8782b33ddc63fb882d6a",
+      "bytes": 7343
+    },
+    "v7/runtime/test_full_contract.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_full_contract.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_full_contract.py",
+      "sha256": "52abfd9aa3ed05bb5dff5addfc766fa0b7eae27017ca9394a80839c81d887def",
+      "bytes": 16371
+    },
+    "v8/runtime/test_full_contract.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_full_contract.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_full_contract.py",
+      "sha256": "52abfd9aa3ed05bb5dff5addfc766fa0b7eae27017ca9394a80839c81d887def",
+      "bytes": 16371
+    },
+    "v7/runtime/test_live_loss_cleanup.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_live_loss_cleanup.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_live_loss_cleanup.py",
+      "sha256": "f8a43f3d99e9a98dd910fbd0c1a8e8a18faa6a5fff3bda290d854a1b7691cf16",
+      "bytes": 1634
+    },
+    "v8/runtime/test_live_loss_cleanup.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_live_loss_cleanup.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_live_loss_cleanup.py",
+      "sha256": "f8a43f3d99e9a98dd910fbd0c1a8e8a18faa6a5fff3bda290d854a1b7691cf16",
+      "bytes": 1634
+    },
+    "v7/runtime/test_live_worker_loss.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_live_worker_loss.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_live_worker_loss.py",
+      "sha256": "ec2f8f797c2ac58d5b363ca02576565c542479416cc924d7efd0c8bc07339b49",
+      "bytes": 3922
+    },
+    "v8/runtime/test_live_worker_loss.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_live_worker_loss.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_live_worker_loss.py",
+      "sha256": "ec2f8f797c2ac58d5b363ca02576565c542479416cc924d7efd0c8bc07339b49",
+      "bytes": 3922
+    },
+    "v7/runtime/test_owned_process_supervisor.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_owned_process_supervisor.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_owned_process_supervisor.py",
+      "sha256": "dd61df35b1731f817124bdad12c6d3f78d3a6de9a942cd4cff3afe1dfcceaeec",
+      "bytes": 5138
+    },
+    "v8/runtime/test_owned_process_supervisor.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_owned_process_supervisor.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_owned_process_supervisor.py",
+      "sha256": "dd61df35b1731f817124bdad12c6d3f78d3a6de9a942cd4cff3afe1dfcceaeec",
+      "bytes": 5138
+    },
+    "v7/runtime/test_p1_C0_comparison.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_p1_C0_comparison.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_p1_C0_comparison.py",
+      "sha256": "bad376d3345358995fe20672e085d3e518a91459bde4cf6ed28ad9edc139a39f",
+      "bytes": 23828
+    },
+    "v8/runtime/test_p1_C0_comparison.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_p1_C0_comparison.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_p1_C0_comparison.py",
+      "sha256": "bad376d3345358995fe20672e085d3e518a91459bde4cf6ed28ad9edc139a39f",
+      "bytes": 23828
+    },
+    "v7/runtime/test_p1_witness.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_p1_witness.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_p1_witness.py",
+      "sha256": "4f8ba630029edbde9af77cd1aa69bd4891bef6ba4d0f708022ee0d4f123711e4",
+      "bytes": 25436
+    },
+    "v8/runtime/test_p1_witness.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_p1_witness.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_p1_witness.py",
+      "sha256": "4f8ba630029edbde9af77cd1aa69bd4891bef6ba4d0f708022ee0d4f123711e4",
+      "bytes": 25436
+    },
+    "v7/runtime/test_preparation_pending.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_preparation_pending.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_preparation_pending.py",
+      "sha256": "35465233e4d65aebb32783751e76f32715fbb3ba06342ecdeddd08c9d7e8f327",
+      "bytes": 3567
+    },
+    "v8/runtime/test_preparation_pending.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_preparation_pending.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_preparation_pending.py",
+      "sha256": "35465233e4d65aebb32783751e76f32715fbb3ba06342ecdeddd08c9d7e8f327",
+      "bytes": 3567
+    },
+    "v7/runtime/test_publication_history.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_publication_history.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_publication_history.py",
+      "sha256": "7862cb5330332112042cc68c25981d31b80e6708710c97775d5ac527edbfc684",
+      "bytes": 4720
+    },
+    "v8/runtime/test_publication_history.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_publication_history.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_publication_history.py",
+      "sha256": "7862cb5330332112042cc68c25981d31b80e6708710c97775d5ac527edbfc684",
+      "bytes": 4720
+    },
+    "v7/runtime/test_r5_diag_runner.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_r5_diag_runner.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_r5_diag_runner.py",
+      "sha256": "929a94df22dfbb3ee95ffee259055fb226e90f782a56ce4f9067b14e09bfdcd6",
+      "bytes": 17531
+    },
+    "v8/runtime/test_r5_diag_runner.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_r5_diag_runner.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_r5_diag_runner.py",
+      "sha256": "929a94df22dfbb3ee95ffee259055fb226e90f782a56ce4f9067b14e09bfdcd6",
+      "bytes": 17531
+    },
+    "v7/runtime/test_regulator_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_regulator_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_regulator_fault_matrix.py",
+      "sha256": "a51ab6c6947bac638f8f03e6dd40ea88f27209b1b0f42ecd12853dcb49c19283",
+      "bytes": 3523
+    },
+    "v8/runtime/test_regulator_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_regulator_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_regulator_fault_matrix.py",
+      "sha256": "a51ab6c6947bac638f8f03e6dd40ea88f27209b1b0f42ecd12853dcb49c19283",
+      "bytes": 3523
+    },
+    "v7/runtime/test_resource_delivery.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_resource_delivery.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_resource_delivery.py",
+      "sha256": "8a43938bc85272c29836994f9edff70abb412f383f86d59a5181f1efe9567ea2",
+      "bytes": 4923
+    },
+    "v8/runtime/test_resource_delivery.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_resource_delivery.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_resource_delivery.py",
+      "sha256": "8a43938bc85272c29836994f9edff70abb412f383f86d59a5181f1efe9567ea2",
+      "bytes": 4923
+    },
+    "v7/runtime/test_scheduler_preparation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_scheduler_preparation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_scheduler_preparation.py",
+      "sha256": "961f51972ba69a6919807120648b01b85a7fdbee4cb2a3f3fcbe2e54da620d2e",
+      "bytes": 6563
+    },
+    "v8/runtime/test_scheduler_preparation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_scheduler_preparation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_scheduler_preparation.py",
+      "sha256": "961f51972ba69a6919807120648b01b85a7fdbee4cb2a3f3fcbe2e54da620d2e",
+      "bytes": 6563
+    },
+    "v7/runtime/test_time_task_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_time_task_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_time_task_matrix.py",
+      "sha256": "a6da6c065c026fbcb8e7b5087ceaf92b67e675fd9673c2796129d3a2aaba20ef",
+      "bytes": 5440
+    },
+    "v8/runtime/test_time_task_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_time_task_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_time_task_matrix.py",
+      "sha256": "a6da6c065c026fbcb8e7b5087ceaf92b67e675fd9673c2796129d3a2aaba20ef",
+      "bytes": 5440
+    },
+    "v7/runtime/test_vrx_runtime_gates.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_vrx_runtime_gates.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_vrx_runtime_gates.py",
+      "sha256": "b6a56292ac934bb60b7fc6cb17f8db61718e86d131f05c280d05dc3330ca9e43",
+      "bytes": 8631
+    },
+    "v8/runtime/test_vrx_runtime_gates.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_vrx_runtime_gates.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_vrx_runtime_gates.py",
+      "sha256": "b6a56292ac934bb60b7fc6cb17f8db61718e86d131f05c280d05dc3330ca9e43",
+      "bytes": 8631
+    },
+    "v7/runtime/test_watchdog_observation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_watchdog_observation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_watchdog_observation.py",
+      "sha256": "b268edd7d24f96475e949768228be1157218b6fb28c9727e08d7f5a6bfcfffeb",
+      "bytes": 1050
+    },
+    "v8/runtime/test_watchdog_observation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_watchdog_observation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_watchdog_observation.py",
+      "sha256": "b268edd7d24f96475e949768228be1157218b6fb28c9727e08d7f5a6bfcfffeb",
+      "bytes": 1050
+    },
+    "v7/runtime/test_worker_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/runtime/test_worker_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/runtime/test_worker_fault_matrix.py",
+      "sha256": "951a56bcf1ef335f07aa8a3c5336caa8dab4b60b01ad4eea48551c91e6eaa3dc",
+      "bytes": 10444
+    },
+    "v8/runtime/test_worker_fault_matrix.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/runtime/test_worker_fault_matrix.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/runtime/test_worker_fault_matrix.py",
+      "sha256": "951a56bcf1ef335f07aa8a3c5336caa8dab4b60b01ad4eea48551c91e6eaa3dc",
+      "bytes": 10444
+    },
+    "v7/source_bundles_current.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/source_bundles_current.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/source_bundles_current.json",
+      "sha256": "8e49a8ff98b781662393f499876c9e2495d4d920856047fd852ef4471c802463",
+      "bytes": 1445
+    },
+    "v8/source_bundles_current.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/source_bundles_current.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/source_bundles_current.json",
+      "sha256": "1691c2c7ff31107498aa885c1b1800e803aab959da8e68f8d9c2360e73c13e0e",
+      "bytes": 1444
+    },
+    "v7/test_activation_provenance_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_activation_provenance_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_activation_provenance_v1.py",
+      "sha256": "4e2384fb03bf11befc7d8f844cf037e74510520581a81880e92a53170b570bc6",
+      "bytes": 15126
+    },
+    "v8/test_activation_provenance_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_activation_provenance_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_activation_provenance_v1.py",
+      "sha256": "4e2384fb03bf11befc7d8f844cf037e74510520581a81880e92a53170b570bc6",
+      "bytes": 15126
+    },
+    "v7/test_actual_unknown_child.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_actual_unknown_child.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_actual_unknown_child.py",
+      "sha256": "62672ab949d74e20fa1031294832cf69cd6cb07e77576afb18d6ecb7cb6905b1",
+      "bytes": 10497
+    },
+    "v8/test_actual_unknown_child.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_actual_unknown_child.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_actual_unknown_child.py",
+      "sha256": "62672ab949d74e20fa1031294832cf69cd6cb07e77576afb18d6ecb7cb6905b1",
+      "bytes": 10497
+    },
+    "v7/test_all_rejected_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_all_rejected_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_all_rejected_v1.py",
+      "sha256": "55c02de788385610e50352757ab98f687fb648cd6bbda39773c88a77191449d5",
+      "bytes": 5042
+    },
+    "v8/test_all_rejected_v1.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_all_rejected_v1.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_all_rejected_v1.py",
+      "sha256": "55c02de788385610e50352757ab98f687fb648cd6bbda39773c88a77191449d5",
+      "bytes": 5042
+    },
+    "v7/test_atomic_observation_v2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_atomic_observation_v2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_atomic_observation_v2.py",
+      "sha256": "3a352fdec02a32e943035fe7461ec9c9d268ec7e8f3f52f9f0b38dbac71d51d1",
+      "bytes": 24449
+    },
+    "v8/test_atomic_observation_v2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_atomic_observation_v2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_atomic_observation_v2.py",
+      "sha256": "769a3e4805904ad3f0591b4b5681d20a3e0634b2fe22db165ec3b56861187fcc",
+      "bytes": 27827
+    },
+    "v7/test_config_and_current_v5.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_config_and_current_v5.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_config_and_current_v5.py",
+      "sha256": "288db1acebfeed7cb68448d31bc311d5b01aa6714f0cd8a20f7ce19fb8178b52",
+      "bytes": 13300
+    },
+    "v8/test_config_and_current_v5.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_config_and_current_v5.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_config_and_current_v5.py",
+      "sha256": "288db1acebfeed7cb68448d31bc311d5b01aa6714f0cd8a20f7ce19fb8178b52",
+      "bytes": 13300
+    },
+    "v7/test_config_full_fanout_v2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_config_full_fanout_v2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_config_full_fanout_v2.py",
+      "sha256": "338cd7613267443a60d31ea07a91bc4cb2df95e302bc9c7edc5331e84344c622",
+      "bytes": 4188
+    },
+    "v8/test_config_full_fanout_v2.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_config_full_fanout_v2.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_config_full_fanout_v2.py",
+      "sha256": "338cd7613267443a60d31ea07a91bc4cb2df95e302bc9c7edc5331e84344c622",
+      "bytes": 4188
+    },
+    "v7/test_current_supervision_qualification.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_current_supervision_qualification.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_current_supervision_qualification.py",
+      "sha256": "e2ba49f15b8789727519da3a35e1867c9fbe690a9bcf205065b2aa3767ff916a",
+      "bytes": 7689
+    },
+    "v8/test_current_supervision_qualification.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_current_supervision_qualification.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_current_supervision_qualification.py",
+      "sha256": "e2ba49f15b8789727519da3a35e1867c9fbe690a9bcf205065b2aa3767ff916a",
+      "bytes": 7689
+    },
+    "v7/test_owned_auth.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_owned_auth.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_owned_auth.py",
+      "sha256": "cfaf09937a97542d086b1f6c93a09986645edf3a7092d68882c665c2347337d0",
+      "bytes": 6379
+    },
+    "v8/test_owned_auth.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_owned_auth.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_owned_auth.py",
+      "sha256": "cfaf09937a97542d086b1f6c93a09986645edf3a7092d68882c665c2347337d0",
+      "bytes": 6379
+    },
+    "v7/test_readiness_v3_copies.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_readiness_v3_copies.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_readiness_v3_copies.py",
+      "sha256": "0989cd586210dc8b54e12f4e7fc0b319886140cf9419d4450acc94c6c62465e1",
+      "bytes": 15374
+    },
+    "v8/test_readiness_v3_copies.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_readiness_v3_copies.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_readiness_v3_copies.py",
+      "sha256": "0989cd586210dc8b54e12f4e7fc0b319886140cf9419d4450acc94c6c62465e1",
+      "bytes": 15374
+    },
+    "v7/test_source_components_v4.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_source_components_v4.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_source_components_v4.py",
+      "sha256": "b0b3cfa41ea164f0d2a1daa21fd4908ce91ed2383f6dd328cb2b7b65b662d320",
+      "bytes": 10042
+    },
+    "v8/test_source_components_v4.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_source_components_v4.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_source_components_v4.py",
+      "sha256": "b0b3cfa41ea164f0d2a1daa21fd4908ce91ed2383f6dd328cb2b7b65b662d320",
+      "bytes": 10042
+    },
+    "v7/test_supervision_failure_paths.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/test_supervision_failure_paths.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/test_supervision_failure_paths.py",
+      "sha256": "492ddcb32f40e24d8a3614e841a926cd92986dda3f33b50707c69fab6953214a",
+      "bytes": 10774
+    },
+    "v8/test_supervision_failure_paths.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/test_supervision_failure_paths.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/test_supervision_failure_paths.py",
+      "sha256": "492ddcb32f40e24d8a3614e841a926cd92986dda3f33b50707c69fab6953214a",
+      "bytes": 10774
+    },
+    "v7/validate_current_legacy_rules_v5.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/validate_current_legacy_rules_v5.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/validate_current_legacy_rules_v5.py",
+      "sha256": "515927912d27d22a8f0854adf9753014f7e508036cdd86bf5c350cfe5eca63b3",
+      "bytes": 50802
+    },
+    "v8/validate_current_legacy_rules_v5.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/validate_current_legacy_rules_v5.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/validate_current_legacy_rules_v5.py",
+      "sha256": "515927912d27d22a8f0854adf9753014f7e508036cdd86bf5c350cfe5eca63b3",
+      "bytes": 50802
+    },
+    "v7/validate_readiness_v3.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/validate_readiness_v3.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/validate_readiness_v3.py",
+      "sha256": "0ece9096a9d5c3925215cc801d091c261790d2b361471a57db6d81d4cfae95d3",
+      "bytes": 50725
+    },
+    "v8/validate_readiness_v3.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/validate_readiness_v3.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/validate_readiness_v3.py",
+      "sha256": "0ece9096a9d5c3925215cc801d091c261790d2b361471a57db6d81d4cfae95d3",
+      "bytes": 50725
+    },
+    "v7/verify_negative_and_mutation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/verify_negative_and_mutation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/verify_negative_and_mutation.py",
+      "sha256": "847095098bbeb0a05aa1866aa5eb7b1f4a5d8f7bc61265150cb51921da5d506d",
+      "bytes": 4768
+    },
+    "v8/verify_negative_and_mutation.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/verify_negative_and_mutation.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/verify_negative_and_mutation.py",
+      "sha256": "847095098bbeb0a05aa1866aa5eb7b1f4a5d8f7bc61265150cb51921da5d506d",
+      "bytes": 4768
+    },
+    "v7/verify_prepare_close.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/verify_prepare_close.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/verify_prepare_close.py",
+      "sha256": "e66b60b4a0148d093518c78ceaabc0c2c9a6e75c2620d3905786d8fd9d7d8e09",
+      "bytes": 10061
+    },
+    "v8/verify_prepare_close.py": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/verify_prepare_close.py",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/verify_prepare_close.py",
+      "sha256": "e66b60b4a0148d093518c78ceaabc0c2c9a6e75c2620d3905786d8fd9d7d8e09",
+      "bytes": 10061
+    },
+    "v7/worker/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/CMakeLists.txt",
+      "sha256": "c5423dc4bc317323966578f1ac8ab23f027da1cb68b19445f7b53eed12cf4947",
+      "bytes": 1187
+    },
+    "v8/worker/CMakeLists.txt": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/CMakeLists.txt",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/CMakeLists.txt",
+      "sha256": "c5423dc4bc317323966578f1ac8ab23f027da1cb68b19445f7b53eed12cf4947",
+      "bytes": 1187
+    },
+    "v7/worker/capability_source_v4.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/capability_source_v4.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/capability_source_v4.hpp",
+      "sha256": "8ec9a3876b75861dbf462ee3ee7e59e9e2a284d48cea363f49613183dc1e5987",
+      "bytes": 1716
+    },
+    "v8/worker/capability_source_v4.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/capability_source_v4.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/capability_source_v4.hpp",
+      "sha256": "8ec9a3876b75861dbf462ee3ee7e59e9e2a284d48cea363f49613183dc1e5987",
+      "bytes": 1716
+    },
+    "v7/worker/p1_admission.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_admission.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_admission.hpp",
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "bytes": 8297
+    },
+    "v8/worker/p1_admission.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_admission.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_admission.hpp",
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+      "bytes": 8297
+    },
+    "v7/worker/p1_capability_lease.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_capability_lease.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_capability_lease.hpp",
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "bytes": 1020
+    },
+    "v8/worker/p1_capability_lease.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_capability_lease.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_capability_lease.hpp",
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+      "bytes": 1020
+    },
+    "v7/worker/p1_clock_window.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_clock_window.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_clock_window.hpp",
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "bytes": 1902
+    },
+    "v8/worker/p1_clock_window.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_clock_window.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_clock_window.hpp",
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+      "bytes": 1902
+    },
+    "v7/worker/p1_full_contract.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_full_contract.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_full_contract.hpp",
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea",
+      "bytes": 11798
+    },
+    "v8/worker/p1_full_contract.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_full_contract.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_full_contract.hpp",
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea",
+      "bytes": 11798
+    },
+    "v7/worker/p1_preparation_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_preparation_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_preparation_barrier.hpp",
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "bytes": 723
+    },
+    "v8/worker/p1_preparation_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_preparation_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_preparation_barrier.hpp",
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc",
+      "bytes": 723
+    },
+    "v7/worker/p1_resources.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_resources.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_resources.hpp",
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+      "bytes": 13624
+    },
+    "v8/worker/p1_resources.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_resources.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_resources.hpp",
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2",
+      "bytes": 13624
+    },
+    "v7/worker/p1_tick_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_tick_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_tick_barrier.hpp",
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "bytes": 708
+    },
+    "v8/worker/p1_tick_barrier.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_tick_barrier.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_tick_barrier.hpp",
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4",
+      "bytes": 708
+    },
+    "v7/worker/p1_worker_liveness.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/p1_worker_liveness.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/p1_worker_liveness.hpp",
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "bytes": 1227
+    },
+    "v8/worker/p1_worker_liveness.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/p1_worker_liveness.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/p1_worker_liveness.hpp",
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28",
+      "bytes": 1227
+    },
+    "v7/worker/protocol.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/protocol.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/protocol.hpp",
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "bytes": 6581
+    },
+    "v8/worker/protocol.hpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/protocol.hpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/protocol.hpp",
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db",
+      "bytes": 6581
+    },
+    "v7/worker/solver_worker.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker/solver_worker.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker/solver_worker.cpp",
+      "sha256": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e",
+      "bytes": 20595
+    },
+    "v8/worker/solver_worker.cpp": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker/solver_worker.cpp",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker/solver_worker.cpp",
+      "sha256": "2fc0fca064d8b1e8a1d4fe86810323a4d687643cb38201ddfc6a97bd6283973e",
+      "bytes": 20595
+    },
+    "v7/worker_source_bundle_v8.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker_source_bundle_v8.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker_source_bundle_v8.json",
+      "sha256": "896b1f5c9a484176fea574946e4d30d69a342c9510d13b41dc422eeef70f80ff",
+      "bytes": 3868
+    },
+    "v8/worker_source_bundle_v8.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker_source_bundle_v8.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker_source_bundle_v8.json",
+      "sha256": "896b1f5c9a484176fea574946e4d30d69a342c9510d13b41dc422eeef70f80ff",
+      "bytes": 3868
+    },
+    "v7/worker_source_bundle_v9_cap_v4.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/worker_source_bundle_v9_cap_v4.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v7/worker_source_bundle_v9_cap_v4.json",
+      "sha256": "94db46b4ffdf4f20f7bc9adc11f6ef0d7417204fb5007e3d52d4f79c8a4c4839",
+      "bytes": 4222
+    },
+    "v8/worker_source_bundle_v9_cap_v4.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/worker_source_bundle_v9_cap_v4.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/worker_source_bundle_v9_cap_v4.json",
+      "sha256": "94db46b4ffdf4f20f7bc9adc11f6ef0d7417204fb5007e3d52d4f79c8a4c4839",
+      "bytes": 4222
+    },
+    "v8/observer_source_bundle_v12_preimage_v8.json": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer_source_bundle_v12_preimage_v8.json",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/v8/observer_source_bundle_v12_preimage_v8.json",
+      "sha256": "c7ab2e8a5056a973cec881dd2c3e30addb89d3008058d363900441a956e4ad31",
+      "bytes": 7627
+    },
+    "active_binaries/publisher": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/publisher/build/p1_F5_held_publisher",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/active_binaries/publisher",
+      "sha256": "2b96db97bee3bbb867088da8b04a1076f4175d69fdc6d51d897d15b41fbfe437",
+      "bytes": 4752408
+    },
+    "active_binaries/observer": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/build/p1_regulator_shadow_observer_owned_v2",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/active_binaries/observer",
+      "sha256": "2c672c5004457960f2e4e945676aa01bc467f167bd803a0c7077c5169c2469cf",
+      "bytes": 6190712
+    },
+    "active_binaries/worker": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/worker/build/p1_solver_worker_owned_v2",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/active_binaries/worker",
+      "sha256": "acff3455b1f3dee9e3160ca491545bae0ca29d9e027f2c5a73bc7232b4f6b535",
+      "bytes": 2035240
+    },
+    "active_binaries/recorder": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/recorder/build/p1_owned_recorder",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/active_binaries/recorder",
+      "sha256": "301bfb597975805a24063402329fa7e3cd2d43a060bcb4de9c6f5fe0135d59b3",
+      "bytes": 567056
+    },
+    "active_binaries/fixture": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/fixture/build/p1_synthetic_source",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/active_binaries/fixture",
+      "sha256": "ca4ca6291b584977d235bf909986e23eff6fb33fda56eb58398b17710d5fb4af",
+      "bytes": 996784
+    },
+    "historical_binaries/v7_observer_opaque": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build02/p1_regulator_shadow_observer_owned_v2",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/historical_binaries/v7_observer_opaque",
+      "sha256": "0d8ab0a60c0a97d193cb3793761cfd28141b6105d3f29d0afddc8cf781231f3d",
+      "bytes": 6190712
+    },
+    "historical_binaries/v7_first_runtime": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build/p1_regulator_shadow_observer_owned_v2",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/historical_binaries/v7_first_runtime",
+      "sha256": "ad2c034f77787bee59367dd6b5036a865437cb6a76029f4dcde1472e01615ead",
+      "bytes": 6190712
+    },
+    "native_v7_first/test_shadow_entry": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build/test_shadow_entry",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/native_v7_first/test_shadow_entry",
+      "sha256": "e508867ece94902ac6a4c1770053168220f6fdfe986323e14b59cda18544991d",
+      "bytes": 7050992
+    },
+    "native_v7_first/test_enqueue_branch": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build/test_enqueue_branch",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/native_v7_first/test_enqueue_branch",
+      "sha256": "84b76fbf5d1684876b742134836140a33347808de459c3d800ce444c90e07503",
+      "bytes": 6968024
+    },
+    "native_v7_first/test_d0_observation": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build/test_d0_observation",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/native_v7_first/test_d0_observation",
+      "sha256": "78cbdc3fa90d0b4bcd4863747b28b428ad8046f849d3436e47e9fc1cb98b1328",
+      "bytes": 6842496
+    },
+    "native_v7_first/test_legacy_ready": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build/test_legacy_ready",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/native_v7_first/test_legacy_ready",
+      "sha256": "f67ff1610bbbca85ea5ce4c2f144c15f8f625f226638e84c032f0b9f65246002",
+      "bytes": 7033520
+    },
+    "native_v7_first/test_atomic_observation": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build/test_atomic_observation",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/native_v7_first/test_atomic_observation",
+      "sha256": "a70d0c52dc465ba8979b7cad9b37e8bbbd3b260b4fccc65bd55b2877b48c92d6",
+      "bytes": 6931768
+    },
+    "native_v7_corrected/test_shadow_entry": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_observation_20261011_v7/observer/build02/test_shadow_entry",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/native_v7_corrected/test_shadow_entry",
+      "sha256": "f75c24185d2b2680197f9af838f03b83d63b00c2ee0caa7a7bd80d71f321fc04",
+      "bytes": 7050992
+    },
+    "native_v8/test_atomic_observation": {
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/observer/build/test_atomic_observation",
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_atomic_preimage_20261012_v8/final_frozen_snapshot_batch06/native_v8/test_atomic_observation",
+      "sha256": "dbb1c4bea1ea72606666c58f149bc8bcf392fc53fcfa32e813b52aa96c97f675",
+      "bytes": 6970752
+    }
+  },
+  "source_count": 291,
+  "v7_retained_without_backqualification": true,
+  "v8_components_passed": true,
+  "stage_qualified": false,
+  "research_conclusion": false
+}

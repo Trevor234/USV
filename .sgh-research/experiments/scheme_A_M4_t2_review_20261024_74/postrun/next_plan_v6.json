@@ -1,0 +1,74 @@
+{
+  "schema": "M4-after-T2-independent-review-minimum-plan-v74",
+  "supersedes_interpretation_of": ["batch72/postrun/next_plan_v4.json", "batch73/postrun/next_plan_v5.json"],
+  "prior_artifacts_edited": false,
+  "basis": "postrun/review_findings_v1.json and documents/方案A_第74批_70至73批独立代码审查与后续实施计划_2026-10-24.md",
+  "steps": [
+    {
+      "id": "S1",
+      "status": "finite_component_pass_retained",
+      "evidence": "70 strict retained verdict replay: 32/32 plus 3 named assertion mutations; no new owned qualification"
+    },
+    {
+      "id": "R0",
+      "status": "next_implementation",
+      "task": "Derive a new author from rev8; repair complete trigger construction, command/receipt/executor binding, exact drain accounting, real C stop-request evidence and fail-closed A/B/C audits",
+      "files": ["t2_scenario_driver_v1.py", "t2_action_contract.py", "fixture/synthetic_source_m4.cpp", "audit_t2.py"],
+      "acceptance": ["positive fixtures pass", "all retained invalid flows reject by intended named assertions", "malformed/missing inputs and unprepared mutations cannot count as caught", "every frozen clause has an explicit evidence predicate or is reported uncovered"],
+      "owned_runs": 0
+    },
+    {
+      "id": "R1",
+      "status": "after_R0",
+      "task": "Repair schedule/tick witness transition, separate prediction-history validity from successful per-side output facts, make exception accounting non-lossy, repair actual clock publication counters",
+      "files": ["observer/src/shadow/regulator_owned_execute.cpp", "observer/src/shadow/p1_witness.hpp", "fixture/synthetic_source_m4.cpp"],
+      "acceptance": ["same-generation tick9->0 regression caught without weakening consistency", "577973559ns mapping regression reproduces then fixes history/authority disagreement", "two successful API calls remain in accounting when policy validation throws", "154 model steps with 39 silent steps yields 115 clock publications", "ordinary component regression remains valid"],
+      "new_source_bundle_driver_ELF_registration_required": true,
+      "owned_runs": 0
+    },
+    {
+      "id": "R2/T2-B-design",
+      "status": "after_R0_R1",
+      "decision": "independent T2 scoped diagnostic variant reusing existing W2 entry/gate/boundary and private pipe protocol",
+      "ordinary_scope_implicitly_armed": false,
+      "trigger": "real target boundary_entered ACK",
+      "target_ordinal": "first actual C call ordinal=1",
+      "candidate_correlation": "existing run/full Job/Worker fields link Candidate and registration to the nonce/ordinal-bound boundary chain; no new Candidate wire fields required",
+      "release_order": ["target Job identity and original deadline pinned", "boundary entered", "Fixture action receipt", "Regulator task/version commit ACK", "single Driver release", "final stop/deadline guard", "actual C entry and original-Job Candidate", "same-Job timely version rejection"],
+      "deadline_ns_from_tick_origin": 150000000,
+      "deadline_extension": false,
+      "other_frozen_business_budgets_relaxed": false,
+      "epoch_policy": "old-generation rejection and new-generation recovery are separate obligations; current static Epoch becomes terminal on binding changes; new-generation positive needs an explicit scoped design",
+      "negative_control": "released after original Job deadline must remain native=false and follow registered expiry/isolation; cannot count as stale rejection",
+      "owned_runs": 0
+    },
+    {
+      "id": "T2-B",
+      "status": "conditional_after_finite_components_exec_channel_and_new_identity_pass",
+      "task": "Run one finite pre-registered minimal timely inflight case; close clear/replace/new-generation obligations separately as required",
+      "automatic_retries": 0,
+      "do_not_accept_as_substitute": ["expired", "late", "wrong_tick", "run_unusable", "terminal isolation", "missing target Candidate"]
+    },
+    {
+      "id": "T2-C",
+      "status": "rev8_not_executable_repair_then_re_register",
+      "task": "Verify complete ready trigger, actual request timestamp, real StoppingObserved and target activation guard; then one finite owned run",
+      "ordering": "ready_commit<request<=stopping_observed<=activation_guard",
+      "automatic_retries": 0,
+      "full_API_Source_Stored_role_closure_required": true
+    },
+    {
+      "id": "T2-A-reassessment",
+      "status": "partial_valid_observations_retained_full_acceptance_false",
+      "task": "After R0/R1 use new pinned evidence for remaining silent/same_stamp/new-window obligations; retain T2A_14 as a failed integrity regression, never overwrite it"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained_after_required_T2_obligations",
+      "task": "Reconcile finite fixture/matrix differences, then finite model transactions and P1 acceptance"
+    }
+  ],
+  "scope_limits": {"native_C_internal_hang_added_as_prerequisite": false, "plant_added_as_prerequisite": false, "hard_realtime_added_as_prerequisite": false},
+  "qualification": {"M4": false, "F6": false, "P1": false, "plant": false, "hard_realtime": false},
+  "production_B_mode": "MANUAL+RC override"
+}

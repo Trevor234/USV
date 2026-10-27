@@ -66,6 +66,7 @@ public:
   bool switch_to_hold();
 
 private:
+  friend class ModeManagerNodeTestAccess;
   // ── 初始化辅助 ──────────────────────────────────────
   void declare_parameters_();
   void load_config_();
@@ -89,6 +90,7 @@ private:
 
   // ── 内部状态 ────────────────────────────────────────
   std::string current_mavros_mode_ = "MANUAL";
+  std::string mpc_fcu_mode_ = "MANUAL";
   bool        armed_ = false;
   bool        mpc_ok_ = true;                  // 默认 True,直到收到真正的错误
   int         mpc_fail_count_ = 0;

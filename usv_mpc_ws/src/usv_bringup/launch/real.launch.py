@@ -15,6 +15,7 @@ Usage:
 """
 
 import os
+from typing import List
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -27,6 +28,7 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch.actions import ExecuteProcess
 
 def generate_launch_description():
@@ -211,6 +213,9 @@ def generate_launch_description():
             {
                 "auto_arm": False,
                 "auto_mode_switch": False,
+                "mpc_fcu_mode": PythonExpression([
+                    "'GUIDED' if '", scheme, "' == 'A' else 'MANUAL'"
+                ]),
                 "state_topic": mavros_state_topic,
                 "odom_topic": mavros_odom_topic,
                 "battery_topic": "/mavros/battery",
@@ -295,6 +300,9 @@ def generate_launch_description():
                 "profile_topic": profile_topic,
                 "state_topic": mavros_state_topic,
                 "rc_override_topic": mavros_rc_override_topic,
+                "allowed_fcu_modes": ParameterValue(PythonExpression([
+                    "'[GUIDED]' if '", scheme, "' == 'A' else '[MANUAL]'"
+                ]), value_type=List[str]),
             },
         ],
     )

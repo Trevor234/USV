@@ -1,0 +1,31 @@
+{
+  "ROS_nodes_started": false,
+  "execute_qualified": false,
+  "input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json",
+  "input_sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+  "jobs": 102,
+  "native_baseline_max_X_U_abs_error": 1e-09,
+  "native_baseline_max_control_abs_error_n": 1e-10,
+  "old_speed_ladder_advanced": false,
+  "primary_job": 1,
+  "primary_small_change_control_abs_n": 0.0001,
+  "primary_small_change_control_relative_fraction": 0.001,
+  "primary_small_change_feasible_cost_relative_fraction": 0.001,
+  "public_vs_C_API_shifted_max_abs_error": 1e-10,
+  "repeat_count": 12,
+  "research_conclusion": false,
+  "runtime_code_changed": false,
+  "schema": "scheme-A-startup-RTI-selected-scope/v1",
+  "selected_job_ids": [
+    1,
+    2,
+    5,
+    10
+  ],
+  "stage_qualified": false,
+  "variants": [
+    "public_backend_shifted_warm",
+    "C_API_same_shifted_warm",
+    "C_API_unshifted_solution_guess"
+  ]
+}

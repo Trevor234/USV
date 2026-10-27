@@ -1,0 +1,14 @@
+{
+  "count": 1,
+  "files": [
+    {
+      "bytes": 338,
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "a081798d40ca01574e6d1532ebc6bdef3648f3ad3b47e571d8a31ec9e21f432f",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/intermediate_local_backup_v1/CURRENT.md"
+    }
+  ],
+  "remote_intermediate_not_available": true,
+  "schema": "first-control-initial-local-current-backup/v1"
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "M4-G4-plan-v87",
+  "recorded_at": "2026-10-25T17:50:17.277547+08:00",
+  "steps": [
+    {
+      "id": "G4/T2-C offline proof",
+      "status": "complete",
+      "detail": "C positive control PASS; negative controls verified in batch 84 tests"
+    },
+    {
+      "id": "G4/T2-C owned",
+      "status": "next",
+      "task": "fix freeze output paths → T2C registration → single owned run → G1 audit"
+    },
+    {
+      "id": "G5/T2-A",
+      "status": "after_G4",
+      "task": "silent/same_stamp/resume coverage"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

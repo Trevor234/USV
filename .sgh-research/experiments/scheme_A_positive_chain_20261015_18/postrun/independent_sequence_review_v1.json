@@ -1,0 +1,186 @@
+{
+  "all_reviewed_inputs_unchanged_after_read": true,
+  "cases": {
+    "A2": {
+      "Applied_Source_CDR_Storage_packets_joined": 24,
+      "Applied_binding_semantics": "complete decoded typed fields; receiver transport bytes and Source reserialization padding are not assumed identical",
+      "actual_close_owner_alive": true,
+      "all_recorded_Applied_exact_zero": true,
+      "all_registered_groups_reaped": true,
+      "consecutive_accepted": 20,
+      "five_role_returncodes": {
+        "observer": 0,
+        "publisher": 0,
+        "recorder": 0,
+        "synthetic_source": 0,
+        "worker": 0
+      },
+      "measurement_accepted": 20,
+      "measurement_attempts": 20,
+      "owner_exit_proof_ns": 97083621433718,
+      "passed": true,
+      "phase_packets_independently_joined": 22,
+      "phase_start_after_Applied_DDS_return_max_ns": 207137,
+      "phase_start_after_Applied_DDS_return_min_ns": 100120,
+      "same_guard_and_time_budgets": {
+        "ready_ns": 150000000,
+        "target_ns": 200000000
+      },
+      "tail_acceptance_counted": false
+    },
+    "B": {
+      "Applied_Source_CDR_Storage_packets_joined": 25,
+      "Applied_binding_semantics": "complete decoded typed fields; receiver transport bytes and Source reserialization padding are not assumed identical",
+      "actual_close_owner_alive": true,
+      "all_registered_groups_reaped": true,
+      "consecutive_accepted": 19,
+      "five_role_returncodes": {
+        "observer": 0,
+        "publisher": 0,
+        "recorder": 0,
+        "synthetic_source": 0,
+        "worker": 0
+      },
+      "measurement_accepted": 19,
+      "measurement_attempts": 20,
+      "owner_exit_proof_ns": 97125622498019,
+      "passed": true,
+      "phase_packets_independently_joined": 22,
+      "phase_start_after_Applied_DDS_return_max_ns": 235085,
+      "phase_start_after_Applied_DDS_return_min_ns": 126638,
+      "same_guard_and_time_budgets": {
+        "ready_ns": 150000000,
+        "target_ns": 200000000
+      },
+      "single_controlled_input_negative": {
+        "activation_ns": 97121208993196,
+        "actual_Stored_Applied_n": [
+          0.1,
+          0.1
+        ],
+        "actual_Stored_Applied_sequence": 3,
+        "actual_Stored_CDR_sha256": "edeea72c908213bbc885722e965aaabbdda34d3e7534140095a2767ccb92c05b",
+        "frozen_anchor_n": [
+          0.0,
+          0.0
+        ],
+        "job_id": 1,
+        "left_call_ns": 97121109903352,
+        "otherwise_Ready": true,
+        "reason": "anchor_mismatch",
+        "right_call_end_ns": 97121109949936,
+        "unchanged_Job_deadline_ns": 97121158787877
+      },
+      "tail_acceptance_counted": false
+    },
+    "C": {
+      "Applied_Source_CDR_Storage_packets_joined": 25,
+      "Applied_binding_semantics": "complete decoded typed fields; receiver transport bytes and Source reserialization padding are not assumed identical",
+      "actual_close_owner_alive": true,
+      "all_registered_groups_reaped": true,
+      "consecutive_accepted": 21,
+      "dynamic_checkpoint": {
+        "Stored_position_x_m": 0.10221587675305453,
+        "Stored_sensor_stamp_ns": 104059702562,
+        "complete_contract_hydro_checkpoint_matches": true,
+        "first_nonzero_Stored_Applied_n": [
+          0.4564605247564987,
+          0.45646052475648685
+        ],
+        "first_nonzero_Stored_Applied_sequence": 3,
+        "first_nonzero_Stored_CDR_sha256": "f65ebcee8e0dfaa2c781bd4648a8d8bf6e58ce972a10a6739dc56d2b873e330f",
+        "independent_checker_reported_max_absolute_replay_error": 1.734723475976807e-18,
+        "max_Stored_surge_m_s": 0.06318830793043553,
+        "model_Source_sensor_sequence": 204,
+        "model_Source_state": [
+          0.10221587675305453,
+          -1.1203412519216236e-08,
+          8.945796959479425e-08,
+          0.06318830793043553,
+          -1.1438239453714639e-08,
+          7.707711750453332e-08
+        ],
+        "model_steps": 357,
+        "real_physical_plant_acceptance": false,
+        "review_did_not_rerun_replay": true
+      },
+      "five_role_returncodes": {
+        "observer": 0,
+        "publisher": 0,
+        "recorder": 0,
+        "synthetic_source": 0,
+        "worker": 0
+      },
+      "measurement_accepted": 21,
+      "measurement_attempts": 21,
+      "owner_exit_proof_ns": 97159334411814,
+      "passed": true,
+      "phase_packets_independently_joined": 23,
+      "phase_start_after_Applied_DDS_return_max_ns": 209265,
+      "phase_start_after_Applied_DDS_return_min_ns": 97993,
+      "same_guard_and_time_budgets": {
+        "ready_ns": 150000000,
+        "target_ns": 200000000
+      },
+      "tail_acceptance_counted": false
+    }
+  },
+  "client_review_date": "2026-10-16",
+  "execute_qualified": false,
+  "passed": true,
+  "research_conclusion": false,
+  "retained_first_attempt": {
+    "Cpp_guard_or_budget_changed_for_checker_fix": false,
+    "all_five_source_build_registries_equal_before_after_checker_revision": true,
+    "callback_processed_ns": 96956030212851,
+    "correction": "checker v2 uses true nested callback sampling order; original v1 demanded two distinct samples equal",
+    "first_callback_entry_ns": 96956030129836,
+    "new_checker_sha256": "04224c9565e6d4f00954dd55884ad0e3e6b49212dd8faaa85ccd6fc8ab66e382",
+    "old_checker_sha256": "417b481752098717a6efe22e73e8569974245ae0a3deaca4225fe00b01f52fb3",
+    "original_issue_codes": [
+      "whole_phase_actual_callback_metadata"
+    ],
+    "original_report_passed": false,
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_01",
+    "raw_CDR_sampling_entry_ns": 96956030136184,
+    "underlying_measurement_accepted": 20,
+    "validation_observed_ns": 96956030206768
+  },
+  "review_method": "independent read-only Source checkpoints plus immutable SQLite CDR deserialization; no participant init, ROS run, or additional test suite",
+  "reviewed_input_sha256": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/controlled_contract_v1.json": "d3ad712ffa9b835186130917ebc3f8b2075b984e6d85b3424962bed69cca3664",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_01/check_controlled_v1.py.snapshot": "417b481752098717a6efe22e73e8569974245ae0a3deaca4225fe00b01f52fb3",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_01/inputs.json": "49ca90e5f89ff324ef4c9fd2c491b8160092a33f82b60a1b84c14efc5bc71d86",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_01/observer/source.jsonl": "bcbcc81ce174cf10a12a491a8aa3cb3a4c57c5415f46508a12e9690feb344ccb",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/c38_owner_exit_proof.json": "cd6a29cc5bfa843fdca759e169ec7a8d92f80784b9a45e6ca1d3109d4e0c6fcb",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/check_controlled_v2.py.snapshot": "04224c9565e6d4f00954dd55884ad0e3e6b49212dd8faaa85ccd6fc8ab66e382",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/inputs.json": "315ccce0a94a4ab301085bf522c8ce7a4fa8c91cd04d0e03de3bfa6868816234",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/observer/source.jsonl": "435511a83b58dcd9402669774c2904b1992e13b7ed18421fab7ca5f628886248",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/owned_process_ledger.jsonl": "22b60aaed07a4c7fa486b5f54f98645867502e913538bca00cd94bb4891894e7",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/publisher/controlled_source.jsonl": "47fd75b6b855a0d68fce36ceeb2df2ce029880c5cfbb83ca1fcd315dd8fce01b",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/recorder/bag/bag_0.db3": "50cffd076bea3945c4712abc667522fc2b57d2554c06af67d8183e13072bc137",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_A2_02/result.json": "d50da144828339276e8b3729e27d25a51ec87ab8450b0a76e37566c73bfdc058",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_B_02/c38_owner_exit_proof.json": "40b5711a9399804725272acc9066d2355f0fa200bcb733b4e30bbdf4e4db92dc",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_B_02/inputs.json": "b84d2ae1772cded1d1f2727f12728d6dca4e73233d11baff900ceb72779afe17",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_B_02/observer/source.jsonl": "fc0234136eeda0e511d198c2a16efc6982f52af2bd61b72e11cbeffce4cd58af",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_B_02/owned_process_ledger.jsonl": "e82ee973ab814a701125acb8fb4ef3abb955c203b7fc1accee79d642bcb304cd",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_B_02/publisher/controlled_source.jsonl": "b06c6195bb44f516442ef4f59eb0ea8a660fc31a878aa733e15b1f1dd33e6aaa",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_B_02/recorder/bag/bag_0.db3": "76f62e8942295bca59fac00eecaff8a40d426bee39d8f8dc356e89b340db7bd2",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_B_02/result.json": "4434702a23d4ea89b17d9d5e48744a81f973f534b4c0b8016cecab8b59257695",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/c38_owner_exit_proof.json": "c30b11b257478a4d5e8cf54d77f4ead4438ec3025c5533c04967e595d3b41e8d",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/inputs.json": "a2c154e687d8fdb0405fb4c6118189ef08c3114f7375f79c67049d8317371460",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/observer/source.jsonl": "fad229996f8f44c3dd8b5caeedd21f264d88641dbb335d554eba043a422af34a",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/owned_process_ledger.jsonl": "c374ce21cdc8f6da56e2bff4967e45b6bc7e1316887e2cd98ffb7797df9eea34",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/publisher/controlled_source.jsonl": "119e85837f8e3e7b20698278e6851e391478e31faf02b5843ace9ca30537b96f",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/recorder/bag/bag_0.db3": "79d11faf5fbe02dc5487d421dfa87e53be079a6640eb31c0ccff718cf0d50ec2",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/result.json": "5c331352b573f9713b54c0b71a806c3e2b003245e60486abe96e0dd27cad4b23",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/synthetic_source/nominal_steps.jsonl": "3241239141f4acb6c25a01048cdaf2c6348574a6e1021bf5bd4fd3815544c827",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/controlled_phase/runs/ordered_C_02/synthetic_source/owned_manifest.json": "bc7dcd5d866bc3179bf689a0d6a671741ae3c10d7c08a82cee1648274776d173",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/runs/controlled_A2_01/check_result.json": "faf4a9b3a9c1bcbb72e9b375dd16286c22d7417a82f132f735e14305839ed4ad",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/runs/controlled_A2_02/check_result.json": "3195ee0ff983eda20cb1a6954c927df1e3db06fdb97b43d8bfd01215ae810568",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/runs/controlled_B_02/check_result.json": "2c0531d939d46efe590d3c47222e3b3b429089b85b988a1e5b7e32d6d4fef14b",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/runs/controlled_C_02/check_result.json": "7864040067f3196b3fde03e66ff6bd95fce971dd88e9f43637d8f4a152e225f4"
+  },
+  "schema": "ordered-sequence-independent-readonly-review/v1",
+  "stage_qualified": false
+}

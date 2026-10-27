@@ -1,0 +1,828 @@
+{
+  "schema": "p1-D0-source-reconstruction-contract-v1",
+  "date": "2026-10-09",
+  "stage": "D0a/D0c initial contract and decisions",
+  "scope": {
+    "read_only_inputs": true,
+    "remote": false,
+    "ROS": false,
+    "new_run": false,
+    "root_source_modified": false,
+    "old_evidence_modified": false,
+    "analysis_uses_existing_full_B4_json_not_rescans_large_jsonl": true,
+    "source_contract_is_proposal_not_implementation_attestation": true
+  },
+  "inputs": {
+    "hashes_before": {
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\diagnostic\\regulator_r5_diag.cpp": {
+        "sha256": "a38d563a52570f11da9e68b5743c6c1989b26e77508620358ad3e402bd0a8a3b",
+        "bytes": 60272
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\ordinary\\regulator.cpp": {
+        "sha256": "7abfaf03722499bbe9d28da19d050404667682ff3918813d2133b98dadfd8477",
+        "bytes": 53200
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\ordinary\\p1_admission.hpp": {
+        "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+        "bytes": 8297
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\diagnostic\\p1_full_contract.hpp": {
+        "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea",
+        "bytes": 11798
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\diagnostic\\p1_clock_window.hpp": {
+        "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+        "bytes": 1902
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\dynamic_state_analysis.json": {
+        "sha256": "e9f7be5888fa40db11b179063fba1e02af511f1476183976c1df30c1028020ee",
+        "bytes": 978532
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\dynamic_state_review.md": {
+        "sha256": "56ba883d70cd253030a6ef25840c835dd2a7c3dfc05067df198a7604f07878bc",
+        "bytes": 16381
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\clock_proxy_analysis.json": {
+        "sha256": "67dcafa52c4334cd1ef1ee365baedb6db636fec00c002a626e2def466232e6d5",
+        "bytes": 154714
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\clock_independent_review.md": {
+        "sha256": "5275e7b01d792584ffae7edaac932ac76ba0f8e61d1c1b9d6b682dfbd62c65a5",
+        "bytes": 4252
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\field_audit.md": {
+        "sha256": "035f14b30e7c3ea8ed73b4e11a08a77e8a153ef9b34ccbcbf960734868c5f890",
+        "bytes": 10955
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\old_shadow_source_check.md": {
+        "sha256": "f309bba2bea2c84417072ea0cb6a0112d12e5dbce7f4cb3ef876719ff029bf16",
+        "bytes": 9069
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_preparation_20261007\\existing_raw_analysis_20261007.json": {
+        "sha256": "ed8fcdbcdd7a12177e3c863052c9ed1bcdd87a5c33695d68a3b9955fcf0d3845",
+        "bytes": 116188
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_preparation_20261007\\existing_evidence_extract.json": {
+        "sha256": "e56671e7cbaa7ca17bec8661f750ea0e34a198f3dd791319dcc6d3196c03e1c9",
+        "bytes": 13106
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p0_config_reference_2026-10-04\\metadata_summary_v2.json": {
+        "sha256": "ddb60bf3164fe56a4fe16ef10dc57bc3b26e4b61179fe638a0e27e434f3fb758",
+        "bytes": 321849
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p0_config_reference_2026-10-04\\config\\preregistered_fixture.json": {
+        "sha256": "7bd7aa7373df366e319ee352d15b581b7ebfb59f29dc4d56d1596872b5815067",
+        "bytes": 4139
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_atomic_freeze_2026-10-05\\metadata_summary.json": {
+        "sha256": "93e9a3870d27eb1ab33d59b168301019618dc3af886f46f4bbc78ba1c03046ca",
+        "bytes": 71231
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\regulator_source.jsonl": {
+        "sha256": "550286256ff265c6017b02b93668a34cd3b7a3db2a98330b2b20463e34162f35",
+        "bytes": 7262161
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\worker_source.jsonl": {
+        "sha256": "d098b97741f99f8a02e06e09a42a1a4f5668ccb6728f6d47733c97c37f2addbd",
+        "bytes": 2038987
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\run_context.json": {
+        "sha256": "06c20a1d7663770f4f1c526f25d478b800eca85065f3605a3e35367e2361ff41",
+        "bytes": 216561
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\runner_summary.json": {
+        "sha256": "3a7dadc37d824efac3514fd90051d36bef4e1b0544709b4c6fa72f053c00b988",
+        "bytes": 12460
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\vrx_twin_circle_007_fixed\\metadata.yaml": {
+        "sha256": "3dfebb2be36579fd5e0ef0c7782c0a0669cb595ab929341be972ae4fb832c3aa",
+        "bytes": 6617
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\vrx_scheme_b_circle_001\\metadata.yaml": {
+        "sha256": "4442d75fc7a6d99f0f3a0cf7ae49f9a95e5ab4a44a41feb37285cc3e0230eb1a",
+        "bytes": 5847
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\scheme_b_straight_001\\metadata.yaml": {
+        "sha256": "963ed3a48f88a2105436fae6f78a93d6b61d03a665673db9d2ef51dd94bd11da",
+        "bytes": 8812
+      }
+    },
+    "hashes_after": {
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\diagnostic\\regulator_r5_diag.cpp": {
+        "sha256": "a38d563a52570f11da9e68b5743c6c1989b26e77508620358ad3e402bd0a8a3b",
+        "bytes": 60272
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\ordinary\\regulator.cpp": {
+        "sha256": "7abfaf03722499bbe9d28da19d050404667682ff3918813d2133b98dadfd8477",
+        "bytes": 53200
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\ordinary\\p1_admission.hpp": {
+        "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557",
+        "bytes": 8297
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\diagnostic\\p1_full_contract.hpp": {
+        "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea",
+        "bytes": 11798
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\diagnostic\\p1_clock_window.hpp": {
+        "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc",
+        "bytes": 1902
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\dynamic_state_analysis.json": {
+        "sha256": "e9f7be5888fa40db11b179063fba1e02af511f1476183976c1df30c1028020ee",
+        "bytes": 978532
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\dynamic_state_review.md": {
+        "sha256": "56ba883d70cd253030a6ef25840c835dd2a7c3dfc05067df198a7604f07878bc",
+        "bytes": 16381
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\clock_proxy_analysis.json": {
+        "sha256": "67dcafa52c4334cd1ef1ee365baedb6db636fec00c002a626e2def466232e6d5",
+        "bytes": 154714
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\clock_independent_review.md": {
+        "sha256": "5275e7b01d792584ffae7edaac932ac76ba0f8e61d1c1b9d6b682dfbd62c65a5",
+        "bytes": 4252
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\field_audit.md": {
+        "sha256": "035f14b30e7c3ea8ed73b4e11a08a77e8a153ef9b34ccbcbf960734868c5f890",
+        "bytes": 10955
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\old_shadow_source_check.md": {
+        "sha256": "f309bba2bea2c84417072ea0cb6a0112d12e5dbce7f4cb3ef876719ff029bf16",
+        "bytes": 9069
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_preparation_20261007\\existing_raw_analysis_20261007.json": {
+        "sha256": "ed8fcdbcdd7a12177e3c863052c9ed1bcdd87a5c33695d68a3b9955fcf0d3845",
+        "bytes": 116188
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_preparation_20261007\\existing_evidence_extract.json": {
+        "sha256": "e56671e7cbaa7ca17bec8661f750ea0e34a198f3dd791319dcc6d3196c03e1c9",
+        "bytes": 13106
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p0_config_reference_2026-10-04\\metadata_summary_v2.json": {
+        "sha256": "ddb60bf3164fe56a4fe16ef10dc57bc3b26e4b61179fe638a0e27e434f3fb758",
+        "bytes": 321849
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p0_config_reference_2026-10-04\\config\\preregistered_fixture.json": {
+        "sha256": "7bd7aa7373df366e319ee352d15b581b7ebfb59f29dc4d56d1596872b5815067",
+        "bytes": 4139
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_atomic_freeze_2026-10-05\\metadata_summary.json": {
+        "sha256": "93e9a3870d27eb1ab33d59b168301019618dc3af886f46f4bbc78ba1c03046ca",
+        "bytes": 71231
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\regulator_source.jsonl": {
+        "sha256": "550286256ff265c6017b02b93668a34cd3b7a3db2a98330b2b20463e34162f35",
+        "bytes": 7262161
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\worker_source.jsonl": {
+        "sha256": "d098b97741f99f8a02e06e09a42a1a4f5668ccb6728f6d47733c97c37f2addbd",
+        "bytes": 2038987
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\run_context.json": {
+        "sha256": "06c20a1d7663770f4f1c526f25d478b800eca85065f3605a3e35367e2361ff41",
+        "bytes": 216561
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_B4_sources_20261009\\historical_raw\\runner_summary.json": {
+        "sha256": "3a7dadc37d824efac3514fd90051d36bef4e1b0544709b4c6fa72f053c00b988",
+        "bytes": 12460
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\vrx_twin_circle_007_fixed\\metadata.yaml": {
+        "sha256": "3dfebb2be36579fd5e0ef0c7782c0a0669cb595ab929341be972ae4fb832c3aa",
+        "bytes": 6617
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\vrx_scheme_b_circle_001\\metadata.yaml": {
+        "sha256": "4442d75fc7a6d99f0f3a0cf7ae49f9a95e5ab4a44a41feb37285cc3e0230eb1a",
+        "bytes": 5847
+      },
+      "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\scheme_b_straight_001\\metadata.yaml": {
+        "sha256": "963ed3a48f88a2105436fae6f78a93d6b61d03a665673db9d2ef51dd94bd11da",
+        "bytes": 8812
+      }
+    },
+    "unchanged": true
+  },
+  "mode_policy": {
+    "dedicated_diagnostic_gate": {
+      "mode": "no_output",
+      "schema": "p1-execution-contract-v2",
+      "diagnostic_contract_revision": 5,
+      "source": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\diagnostic\\regulator_r5_diag.cpp",
+      "lines": [
+        48,
+        49
+      ]
+    },
+    "diag5_is_revision_not_duration": true,
+    "duration_specified_by_diag5": false,
+    "ordinary_diagnostic_loader_shadow_allowed": true,
+    "dedicated_ctor_stricter_than_shared_loader": true,
+    "D0_preserved_gate_shadow_allowed": false,
+    "D1_F5_shadow_entry_ready": false,
+    "decision": "Keep dedicated gate. no_output observation test qualifies field semantics only. A D1 shadow observer/entry requires a separately controlled supported-mode design, source/binary/contract identity, and affected checks; do not bypass ctor or claim current observer can F5shadow."
+  },
+  "current_generation_locations": {
+    "ordinary": {
+      "snapshot": 294,
+      "target_state": 299,
+      "predict_and_state_check": 302,
+      "final_input_gate": 305,
+      "final_provenance": [
+        318,
+        319,
+        320
+      ]
+    },
+    "diagnostic": {
+      "snapshot": 353,
+      "predict_and_state_check": 362,
+      "final_input_gate": 365,
+      "final_provenance": [
+        384,
+        385,
+        386
+      ]
+    },
+    "state_check_early_return": {
+      "source": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_enqueue_invalidation_20261008\\src\\ordinary\\p1_admission.hpp",
+      "lines": [
+        95,
+        96
+      ]
+    },
+    "location_note": "Read exact source lines; code movement in D0 must bind new line/hash. No new observer attestation here."
+  },
+  "historical_reconstruction": {
+    "run_id": "p1_capability_regression_shadow_20261006_01",
+    "decisions": 183,
+    "jobs": 163,
+    "with_job_and_complete_numeric_pairs": 160,
+    "without_job": 23,
+    "accepted": 2,
+    "complete_numeric_pairs": [
+      "156anchor_mismatch",
+      "2rtf_unaligned",
+      "2accepted"
+    ],
+    "availability_matrix": [
+      {
+        "quantity": "decision identity/status/final_reason",
+        "available": 183,
+        "unavailable": 0,
+        "proof": "raw source rows; exact whole-run scope not exact measurement window"
+      },
+      {
+        "quantity": "frozen job sources and initial states",
+        "available": 163,
+        "unavailable": 0,
+        "proof": "job metadata exact join to raw source; frozen mixed5 allskew0"
+      },
+      {
+        "quantity": "decision target and activation numeric pair",
+        "available": 160,
+        "unavailable": 23,
+        "proof": "exact old caller branch + written finite states + job join;23initializedzero unavailable"
+      },
+      {
+        "quantity": "complete six dimensional error reconstructed",
+        "available": 160,
+        "unavailable": 23,
+        "proof": "independent wrapped subtraction; cannot become plant residual"
+      },
+      {
+        "quantity": "explicit predict_success field",
+        "available": 0,
+        "unavailable": 183,
+        "proof": "160successful-write inference from exact caller;23nojob notattempted; no old explicit success flag"
+      },
+      {
+        "quantity": "explicit tick-start validation_snapshot fields",
+        "available": 0,
+        "unavailable": 183,
+        "proof": "field absent, final-current fields are not a replacement"
+      },
+      {
+        "quantity": "activation snapshot equals final source gate attestation for numeric pair",
+        "available": 2,
+        "unavailable": 158,
+        "proof": "onlyaccepted2 go through unchanged gate; not a claim all158 changed"
+      },
+      {
+        "quantity": "full-error availability/computed flags in old raw",
+        "available": 0,
+        "unavailable": 183,
+        "proof": "state_check early return exists; reanalysis separately recovers160 fullerrors"
+      },
+      {
+        "quantity": "exact validation measurement-window endpoints",
+        "available": 0,
+        "unavailable": 2,
+        "proof": "owned ledger text absent from given fourfiles; driver103 not sourcewindow"
+      },
+      {
+        "quantity": "historical propagation core exact body",
+        "available": 0,
+        "unavailable": 1,
+        "proof": "expectedold a626758..., currentlocal6180198...; do not replay latest as historical proof"
+      }
+    ],
+    "sensor_receive_race_candidate_sequences": [
+      31
+    ],
+    "sensor_receive_race_is_not_mutex_commit_order_proof": true,
+    "source_provenance_groups_are_conditional_final_labels": true,
+    "original_183_160_23_counts_preserved": true
+  },
+  "proposed_observation_groups": [
+    {
+      "group": "identity",
+      "fields": [
+        "schema/revision",
+        "run_id",
+        "boot_id",
+        "contract_hash",
+        "observer_source_sha256",
+        "observer_binary_sha256",
+        "worker_instance",
+        "decision_sequence",
+        "tick",
+        "job_id"
+      ],
+      "rule": "Join original decision one-to-one by identity. Diagnostic sidecar only; no ROS IDL, fixed Witness layout, or formal contract-field expansion."
+    },
+    {
+      "group": "validation_snapshot",
+      "fields": [
+        "available",
+        "capture_request_ns",
+        "copy_capture_ns",
+        "capture_semantics",
+        "snapshot_state[6]",
+        "task/model/config/schedule/epoch",
+        "odom_sequence/stamp_ns/receive_ns",
+        "imu_sequence/stamp_ns/receive_ns",
+        "r_from_imu",
+        "clock_sim_ns/receive_ns",
+        "rtf_valid/rtf",
+        "paused",
+        "anchor_source/producer/run/known/n/sequence/publish_ns",
+        "bounded_history_or_exact_reference"
+      ],
+      "rule": "Copy exactly tick-start Snapshot s used by predict, even on early reject/nojob. Old tick_start now occurs before mutex acquisition; preserve business now and label new lock-held copy time separately. Final-current members may not substitute."
+    },
+    {
+      "group": "prediction",
+      "fields": [
+        "attempted",
+        "success",
+        "failure_stage/reason",
+        "from_sim_ns",
+        "target_sim_ns",
+        "target_job_id",
+        "input_state[6]",
+        "output_state[6]",
+        "component_finite[6]",
+        "initial_publisher_commands[2]",
+        "initial_command_found[2]",
+        "propagation_semantics/source_hash"
+      ],
+      "rule": "Attempt false for no t/cand; success explicit from existing bool call. Do not infer success from nonzero arrays. Preserve no_output initial-input exemption as diagnostic fixture behavior."
+    },
+    {
+      "group": "complete_error",
+      "fields": [
+        "available",
+        "computed[6]",
+        "finite[6]",
+        "wrapped_error[6]",
+        "definition",
+        "original_state_check_called",
+        "original_state_check_result",
+        "original_error_vector"
+      ],
+      "rule": "Only after successful actual prediction, independently compute all six actual-target, psi atan2(sin(delta),cos(delta)). Record early-reject state-check result separately from final reason; do not change existing state_check/acceptance or fill uncomputed dimensions with fake zeros."
+    },
+    {
+      "group": "final_commit",
+      "fields": [
+        "commit_ns",
+        "final_current_odom/imu_sequence/stamp_ns/receive_ns/mixed",
+        "final_clock_sim/receive/rtf",
+        "input_change_gate_evaluated",
+        "input_change_gate_passed",
+        "snapshot_vs_final_sequence_equal",
+        "final_reason",
+        "accepted",
+        "control_source",
+        "requested/final_commands"
+      ],
+      "rule": "Keep existing activation_* fields and explicitly call them final provenance. Sequence comparison observation may be computed unconditionally, but business input-change gate stays exactly as-is."
+    },
+    {
+      "group": "clock_observation",
+      "fields": [
+        "all_clock_receive_sim/epoch/receive_ns",
+        "job_frozen_clock_sim/receive_ns",
+        "target_monotonic_ns",
+        "assumed_rtf",
+        "validation_clock_copy",
+        "final_clock",
+        "source_generation_time_available",
+        "transport_delay_bound_available",
+        "measurement_window_start/end_ns"
+      ],
+      "rule": "Preserve 1:1 formula; do not multiply by measured mean RTF or silently widen20ms. Later received-clock proxy stays offline; unavailable source time/delay remains unavailable, not reconstructed from receipt."
+    },
+    {
+      "group": "availability_and_failure",
+      "fields": [
+        "observation_available",
+        "not_available_reason",
+        "source_sink_failed/drop/summary",
+        "schema_maximum_shape",
+        "recording_prefix/suffix_scope"
+      ],
+      "rule": "Unavailable/null and explicit computed flags are semantically different from real zero. Bounded state6/error6/command2/history<=256 only; no recursive variable metadata. Added observation has load and Sink-failure effects to qualify separately."
+    }
+  ],
+  "research_domain_decision": {
+    "current_proposed_speed_upper_mps": 1.2,
+    "frozen": false,
+    "auto_expand_to_1p3": false,
+    "v11_dynamic": {
+      "body_speed_stats": {
+        "n": 1817,
+        "min": 1.2391531446391453,
+        "max": 1.2595424716483636,
+        "mean": 1.2498613064295967,
+        "median": 1.249891634806253,
+        "p95": 1.2552723530557293,
+        "p99": 1.2564908262115069
+      },
+      "body_speed_over_1p2_count": 1817,
+      "reference_u_mps": 0.8,
+      "reference_curvature": 0,
+      "mixed_frozen_jobs": 5,
+      "mixed_frozen_skew_ms_all": 0
+    },
+    "F4_saved_summary": {
+      "cases": {
+        "p0_f4_config_baseline_20261005_02": {
+          "reference_modes": {
+            "profile_time": 215
+          },
+          "profile_sync_reasons": {
+            "stamp_match": 215
+          },
+          "reference_first_u_m_s": {
+            "count": 215,
+            "min": 0.7071070185159962,
+            "max": 0.8,
+            "mean": 0.7995679396210047,
+            "median": 0.8,
+            "p95": 0.8
+          },
+          "reference_first_v_m_s": {
+            "count": 215,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0
+          },
+          "actual_start_minus_nearest": {
+            "count": 215,
+            "min": 2,
+            "max": 2,
+            "mean": 2.0,
+            "median": 2,
+            "p95": 2
+          },
+          "horizon_steps": [
+            20
+          ],
+          "prediction_dt": [
+            0.2
+          ],
+          "prediction_available_count": 215,
+          "controller_ref_state_u_m_s": {
+            "count": 215,
+            "min": 1.1662330054227663,
+            "max": 1.2566153924687828,
+            "mean": 1.2485332778920584,
+            "median": 1.2485950977353977,
+            "p95": 1.2555874277563162
+          },
+          "candidate_u0_vs_published_final_absdiff_N": {
+            "count": 430,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0
+          },
+          "clock_status_counts": {
+            "observed": 3004
+          },
+          "valid_state_sim_epoch_spans": {
+            "0": {
+              "count": 3004,
+              "start_ns": 19860000000,
+              "end_ns": 79920000000,
+              "span_s": 60.06
+            }
+          },
+          "valid_state_sim_span_s": 60.06,
+          "sim_span_policy": "valid StateSnapshot; observed clock; per epoch only; no cross-reset aggregation"
+        },
+        "p0_f4_config_plant_mass_20261005_01": {
+          "reference_modes": {
+            "profile_time": 224
+          },
+          "profile_sync_reasons": {
+            "stamp_match": 224
+          },
+          "reference_first_u_m_s": {
+            "count": 224,
+            "min": 0.7071070185159962,
+            "max": 0.8,
+            "mean": 0.7995852991898037,
+            "median": 0.8,
+            "p95": 0.8
+          },
+          "reference_first_v_m_s": {
+            "count": 224,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0
+          },
+          "actual_start_minus_nearest": {
+            "count": 224,
+            "min": 2,
+            "max": 2,
+            "mean": 2.0,
+            "median": 2,
+            "p95": 2
+          },
+          "horizon_steps": [
+            20
+          ],
+          "prediction_dt": [
+            0.2
+          ],
+          "prediction_available_count": 224,
+          "controller_ref_state_u_m_s": {
+            "count": 224,
+            "min": 1.1735293543948813,
+            "max": 1.2747578795364247,
+            "mean": 1.2487728086754495,
+            "median": 1.2490899833622335,
+            "p95": 1.2552759133049745
+          },
+          "candidate_u0_vs_published_final_absdiff_N": {
+            "count": 448,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0
+          },
+          "clock_status_counts": {
+            "observed": 3003
+          },
+          "valid_state_sim_epoch_spans": {
+            "0": {
+              "count": 3003,
+              "start_ns": 20060000000,
+              "end_ns": 80100000000,
+              "span_s": 60.04
+            }
+          },
+          "valid_state_sim_span_s": 60.04,
+          "sim_span_policy": "valid StateSnapshot; observed clock; per epoch only; no cross-reset aggregation"
+        },
+        "p0_f4_config_nominal_mass_20261005_01": {
+          "reference_modes": {
+            "profile_time": 222
+          },
+          "profile_sync_reasons": {
+            "stamp_match": 222
+          },
+          "reference_first_u_m_s": {
+            "count": 222,
+            "min": 0.7071070185159962,
+            "max": 0.8,
+            "mean": 0.7995815631464684,
+            "median": 0.8,
+            "p95": 0.8
+          },
+          "reference_first_v_m_s": {
+            "count": 222,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0
+          },
+          "actual_start_minus_nearest": {
+            "count": 222,
+            "min": 2,
+            "max": 2,
+            "mean": 2.0,
+            "median": 2,
+            "p95": 2
+          },
+          "horizon_steps": [
+            20
+          ],
+          "prediction_dt": [
+            0.2
+          ],
+          "prediction_available_count": 222,
+          "controller_ref_state_u_m_s": {
+            "count": 222,
+            "min": 1.1689205671003358,
+            "max": 1.2591754292672541,
+            "mean": 1.2487426990891173,
+            "median": 1.2485669084528914,
+            "p95": 1.2562443099212233
+          },
+          "candidate_u0_vs_published_final_absdiff_N": {
+            "count": 444,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "median": 0.0,
+            "p95": 0.0
+          },
+          "clock_status_counts": {
+            "observed": 3013
+          },
+          "valid_state_sim_epoch_spans": {
+            "0": {
+              "count": 3013,
+              "start_ns": 20480000000,
+              "end_ns": 80720000000,
+              "span_s": 60.24
+            }
+          },
+          "valid_state_sim_span_s": 60.24,
+          "sim_span_policy": "valid StateSnapshot; observed clock; per epoch only; no cross-reset aggregation"
+        }
+      },
+      "default_low_u_clue_mps": 1.1662330054227663,
+      "u_is_not_body_speed": true,
+      "decision": "A min u below1.2 is a possible early/domain-inside clue, not a reconstructed six-state/body-speed segment. Saved summary has no precise matching source/IMU/history snapshots here; cannot calibrate D0 dynamic errors. Do not state all historicalF4 segments outofdomain."
+    },
+    "F4_F5_references": {
+      "reported_reference": "straight.yaml",
+      "profile_u_mps": 0.8,
+      "fallback_cruise_mps": 0.6,
+      "config_not_actual_speed": true,
+      "F5_observation": {
+        "reference_modes": {
+          "profile_time": 193
+        },
+        "profile_sync_reasons": {
+          "stamp_match": 193
+        },
+        "clock_status_counts": {
+          "observed": 3004
+        },
+        "valid_state_sim_epoch_spans": {
+          "0": {
+            "count": 3004,
+            "start_ns": 26260000000,
+            "end_ns": 86320000000,
+            "span_s": 60.06
+          }
+        },
+        "valid_state_sim_span_s": 60.06,
+        "reference_eligibility_anomaly_count": 0,
+        "prediction_available_count": 193,
+        "no_cross_epoch_aggregation": true
+      },
+      "low_speed_and_curve_qualified": false
+    },
+    "historical_scene_metadata": [
+      {
+        "name": "vrx_twin_circle_007_fixed",
+        "metadata_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\vrx_twin_circle_007_fixed\\metadata.yaml",
+        "topic_counts": {
+          "/wamv/thrusters/right/thrust": 657,
+          "/wamv/sensors/position/ground_truth_odometry": 1696,
+          "/wamv/thrusters/left/thrust": 657,
+          "/wamv/sensors/imu/imu/data": 16960,
+          "/path/reference": 336,
+          "/path/reference_profile": 336,
+          "/mpc/status": 1688,
+          "/mpc/predicted_trajectory": 99
+        },
+        "local_files": [
+          "analysis_report.txt",
+          "metadata.yaml"
+        ],
+        "local_payload_present": false,
+        "qualification": "metadata clue only; does not prove actual curvature, speed, D0 source lineage, or binary/contract compatibility."
+      },
+      {
+        "name": "vrx_scheme_b_circle_001",
+        "metadata_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\vrx_scheme_b_circle_001\\metadata.yaml",
+        "topic_counts": {
+          "/mpc/status": 580,
+          "/mpc/predicted_trajectory": 116,
+          "/path/reference": 118,
+          "/wamv/thrusters/left/thrust": 580,
+          "/wamv/sensors/imu/imu/data": 1449,
+          "/wamv/thrusters/right/thrust": 580,
+          "/wamv/sensors/position/ground_truth_odometry": 145
+        },
+        "local_files": [
+          "metadata.yaml"
+        ],
+        "local_payload_present": false,
+        "qualification": "metadata clue only; does not prove actual curvature, speed, D0 source lineage, or binary/contract compatibility."
+      },
+      {
+        "name": "scheme_b_straight_001",
+        "metadata_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\a_feasibility_2026-10-03\\remote_snapshot\\data\\sim_bags\\scheme_b_straight_001\\metadata.yaml",
+        "topic_counts": {
+          "/mpc/predicted_trajectory": 0,
+          "/world/lake_gz/wrench": 97,
+          "/mavros/rc/override": 1,
+          "/usv/cmd_force": 98,
+          "/mavros/state": 102,
+          "/mavros/rc/out": 98,
+          "/mavros/local_position/odom": 58,
+          "/mpc/status": 489,
+          "/mavros/imu/data": 98,
+          "/path/reference": 98,
+          "/model/usv_2m/odometry": 5013
+        },
+        "local_files": [
+          "metadata.yaml"
+        ],
+        "local_payload_present": false,
+        "qualification": "metadata clue only; does not prove actual curvature, speed, D0 source lineage, or binary/contract compatibility."
+      }
+    ],
+    "static_no_output_cases": {
+      "valid_for": "state/observer normal pipeline under synthetic zero fixture",
+      "not_valid_for": [
+        "dynamic plant/modelerror",
+        "turning/low-speed domain",
+        "nonzero mixed-skew calibration",
+        "F5 physical-shadow qualification"
+      ]
+    },
+    "decision": "Keep original<=1.2 domain pending. Existing F4 scalar clue and circle metadata cannot replace actual reproducible source segment. Without supported mode and verified domain segment, do notlaunch D1 or alter speed/reference/model to manufacture coverage."
+  },
+  "clock_policy_decision": {
+    "mapping": "target_sim=frozen_clock_sim+(target_monotonic-frozen_clock_receive), assumed_rtf=1.0",
+    "retain_formula": true,
+    "retain_target_sim_slack_ns": 20000000,
+    "slack_is_engineering_gate_not_real_time_bound": true,
+    "rtf_mean_window_ms": [
+      400,
+      600
+    ],
+    "rtf_range": [
+      0.95,
+      1.05
+    ],
+    "mean_rtf_not_instantaneous_or_transport_delay_bound": true,
+    "historical_proxy": {
+      "all_jobs": 163,
+      "point_proxy_over20ms": 2,
+      "bracket_not_entirely_within20ms": 4,
+      "job16_accepted_proxy_ms": 65.233087806,
+      "bracket_gap_ms": 333.200133,
+      "later_receipt_proxy_not_runtime_truth": true,
+      "all_gap_cases_rejected_claim_false": true,
+      "source_generation_and_delay_bound_available": false
+    },
+    "decision": "20ms remains pending engineering acceptance choice plus clock-source assumptions. Preserve receipt age/source lag/future/RTF/pause distinct policies. If real-time bound intended, need source generation/main simulation clock and delay evidence; otherwise keep received-clock proxy qualified and B4pending. Do not widen slack or same-formula check to prove truth."
+  },
+  "completion_dependencies": {
+    "D0a_contract_written": true,
+    "D0a_historical_full_snapshot_reconstruction_possible": false,
+    "D0b_required": true,
+    "D0c_domain_frozen": false,
+    "D0c_20ms_real_time_bound_proven": false,
+    "D1_launch_ready": false,
+    "B4_complete": false,
+    "M0b_complete": false,
+    "execute_qualified": false,
+    "remaining_specific_gaps": [
+      "explicit actual validation snapshot/predict/error observation on isolated entry",
+      "targeted field-vs-business equivalence and observation overhead evidence",
+      "separately supported shadow entry because current diagnostic gate onlyno_output",
+      "actual reproducible<=1.2 reference/state/mixed domain segments",
+      "source-generation/main-clock assumptions or explicitproxy-only limitation",
+      "exact owned measurement window plus whole-source conservation"
+    ]
+  }
+}

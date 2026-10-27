@@ -1,0 +1,80 @@
+{
+  "auto_retry": 0,
+  "batch": 103,
+  "cases": [
+    {
+      "assertion_count": 15,
+      "case": "T2B-GEN-E1",
+      "elapsed_seconds": 0.002,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 15,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/runs/T2B-GEN-E1/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T2B-GEN-E1 passed=true assertions=15\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 4,
+      "case": "T2B-GEN-E2",
+      "elapsed_seconds": 0.001,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 4,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/runs/T2B-GEN-E2/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T2B-GEN-E2 passed=true assertions=4\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 3,
+      "case": "T2B-GEN-E3",
+      "elapsed_seconds": 0.001,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 3,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/runs/T2B-GEN-E3/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T2B-GEN-E3 passed=true assertions=3\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 3,
+      "case": "T2B-GEN-E4",
+      "elapsed_seconds": 0.001,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 3,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/runs/T2B-GEN-E4/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T2B-GEN-E4 passed=true assertions=3\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 3,
+      "case": "T2B-GEN-E5",
+      "elapsed_seconds": 0.001,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 3,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/runs/T2B-GEN-E5/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T2B-GEN-E5 passed=true assertions=3\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 4,
+      "case": "T2B-GEN-E6",
+      "elapsed_seconds": 0.001,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 4,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_gen_impl_20261025_103/implementation/runs/T2B-GEN-E6/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=T2B-GEN-E6 passed=true assertions=4\n",
+      "timed_out": false
+    }
+  ],
+  "passed": true,
+  "schema": "T2B-GEN-run-verdict/v1"
+}

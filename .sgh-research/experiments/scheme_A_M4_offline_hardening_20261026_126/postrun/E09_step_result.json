@@ -1,0 +1,193 @@
+{
+  "step_id": "E09",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Seven-family fixed order, eight child suites PASS; current source unchanged during suite; no new owned.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02",
+  "observed_facts": {
+    "fixed_order": [
+      "Q",
+      "RNW",
+      "A105",
+      "Epoch",
+      "Model",
+      "B2",
+      "History"
+    ],
+    "child_suites": [
+      {
+        "suite": "Q",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Q/verification.json",
+        "pin": {
+          "bytes": 1141,
+          "sha256": "bbdd688fc7216fbb2a1328a5ea1f580b0fd7e3878d880373b7d1ca78f5cd40f3"
+        }
+      },
+      {
+        "suite": "RNW",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/RNW/verification.json",
+        "pin": {
+          "bytes": 17056,
+          "sha256": "09e523355b92815f4557865873790b5ee0821abcc71975299201fe79102c3ad6"
+        }
+      },
+      {
+        "suite": "RNW_entry",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/RNW_entry/verification.json",
+        "pin": {
+          "bytes": 6468,
+          "sha256": "65f3854f438dcd174dfbc6ab6f6b5a808c0347ce67ec8f2e4870428e99e42b91"
+        }
+      },
+      {
+        "suite": "A105",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/A105/verification.json",
+        "pin": {
+          "bytes": 1344,
+          "sha256": "74c13d4eb52844be75636820269f96d02e5a90c1a42339e80e2a2546a04453a8"
+        }
+      },
+      {
+        "suite": "Epoch",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Epoch/verification.json",
+        "pin": {
+          "bytes": 4363,
+          "sha256": "e4316cd4d993082745831ccd5a4767040fead16a1a8009d643297488b949264d"
+        }
+      },
+      {
+        "suite": "Model",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Model/verification.json",
+        "pin": {
+          "bytes": 5622,
+          "sha256": "d6f426c5cb2178c48820d01349f1d62281a2f22bd79600cee20e4a04b5fbf9f7"
+        }
+      },
+      {
+        "suite": "B2",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/B2/verification.json",
+        "pin": {
+          "bytes": 2962,
+          "sha256": "47d928c09bcafeee7c9d7b90aa86942eab5ad4e4b6c811815f3c06906344fa23"
+        }
+      },
+      {
+        "suite": "History",
+        "passed": true,
+        "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/History/verification.json",
+        "pin": {
+          "bytes": 1332,
+          "sha256": "92c61e47d79adc2101bb942399f3a63600fe3b5438266a974c4dd93fdb281516"
+        }
+      }
+    ],
+    "source_files": 139,
+    "historical_process_conformance": false
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "suite.Q",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Q/verification.json"
+        }
+      },
+      {
+        "name": "suite.RNW",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/RNW/verification.json"
+        }
+      },
+      {
+        "name": "suite.RNW_entry",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/RNW_entry/verification.json"
+        }
+      },
+      {
+        "name": "suite.A105",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/A105/verification.json"
+        }
+      },
+      {
+        "name": "suite.Epoch",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Epoch/verification.json"
+        }
+      },
+      {
+        "name": "suite.Model",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Model/verification.json"
+        }
+      },
+      {
+        "name": "suite.B2",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/B2/verification.json"
+        }
+      },
+      {
+        "name": "suite.History",
+        "passed": true,
+        "detail": {
+          "exit": 0,
+          "verification": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/History/verification.json"
+        }
+      },
+      {
+        "name": "all_fixed_families_executed",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "same_current_source_before_after",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "verification_schema": "batch126-offline-verification-v2",
+    "verification_reference": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/verification.json",
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [],
+  "remaining_obligations": [
+    "Historical E04 process failure prevents blanket OFFLINE_HARDENING_ACCEPTED."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

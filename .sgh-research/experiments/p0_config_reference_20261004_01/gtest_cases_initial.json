@@ -1,0 +1,312 @@
+[
+  {
+    "name": "AcadosSolve.NominalSolveSucceedsWithinBounds",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "AcadosSolve.RecedingHorizonWarmStartChainStaysStable",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "AcadosSolve.RuntimeThrustBoundsTakeEffect",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "AcadosSolve.RuntimeRateBoundTakesEffect",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "AcadosSolve.AppliedControlAnchorsNextRateConstraint",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "AcadosSolve.YawWrapAroundPiIsSmooth",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "AcadosSolve.LargeHeadingErrorsRemainSolvable",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "AcadosSolve.NegativeCostWeightIsRejected",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "BackendConsistency.TerminalStepFirstControlAgrees",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "BackendConsistency.PeriodicHeadingCostKeepsItsWeight",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "BackendConsistency.AppliedControlAnchorsBothRateConstraints",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "BackendConsistency.CasadiRejectsNegativeCostWeight",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.TimelySuccessPublishesCandidateAndActualAnchor",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.BlockingSolveWithShortBackendTimingCannotPublishItsCandidate",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.BackendReportedTimeoutIsAlsoRejectedAndRecoveryUsesActualAnchor",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.FirstTimeoutCommandsNeutralRcInsteadOfReleasingChannels",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.FirstTimeoutWithoutCachePublishesZeroVrx",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.FourTimeoutsHoldLastCommandAndFifthEntersHold",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.NonunitVrxScaleAndClampAreNotAppliedTwiceOnTimeout",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.RcTimeoutRepeatsTheSamePwmAndKeepsMappedAnchor",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.HeadingWarmstartResetRestoresThePublishedAnchorBeforeSolve",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.StandbyInvalidatesCachedCommandBeforeNextTimeout",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.OrdinaryTimelyBackendFailureRetainsExistingFallbackBehavior",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.BackendFailureWithLateTimingStillRejectsItsReturnedControl",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.ShutdownDuringSolveCannotRepublishOrReviveCachedControl",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.InvalidBackendTimingCannotPublishItsCandidate",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.DeadlineBoundaryAndDisabledBudgetRemainCompatible",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "DeadlineControl.InvalidTimingFailsClosedEvenWhenBudgetIsDisabled",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "Utils.LocalMapBodyRotationSemantics",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "Utils.QuaternionToYawAndNormalize",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "Utils.RcActuationReportsEquivalentAppliedThrust",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "Utils.ProfileStampParsingAndSyncState",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "Utils.SampleAtTimeInterpolation",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "FossenModel.ZeroControlZeroSpeedSteadyState",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "FossenModel.ForwardThrustProducesSurgeAccel",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "FossenModel.DifferentialThrustProducesYawAccel",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "FossenModel.ForwardNormalizesHeading",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.LoggingOffAndOnPreserveIdenticalCommandSelection",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.YawNinetyDegreesPreservesBodyTwistWithoutSecondRotation",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ImuOverwriteIsMixedAndNextOdomRestoresAtomicSource",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.NewOdomDuringSolveCannotRewriteFrozenInputOrIdentity",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.Real250And400MillisecondBlockingIntervalsAreRecorded",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.RepeatedIdenticalCommandsAlwaysHaveNewJointSequence",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.InvalidNumericQuaternionAndFrameSnapshotsAreFlagged",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ClockPauseResetAndJumpRemainDistinctEpochs",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.RightPublisherExceptionRecordsActualPartialPublication",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ShutdownPublishesActualZeroAndDrainsBeforeContextEnds",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.BoundedQueueOverflowIsCountedByTheActualEnqueuePath",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ObservationalLoggingOverheadUsesIdenticalFixedWorkload",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ReferenceProfileUsesNearestOffsetAndReanchorsProfileTime",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ReferenceStampOrLengthMismatchUsesCruiseFallback",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ReferenceOffsetZeroStillAdvancesAtLeastOnePathPoint",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ReferenceYawUnwrapRemainsContinuousAcrossPi",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.FirstBadQuaternionNeverEnablesControllerWithLoggingOffOrOn",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.BadQuaternionPreservesMixedAcceptedInputAndDoesNotRefreshFreshness",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ValidUnitQuaternionAndItsSignKeepOriginalBodyState",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ResearchContract.ImuZeroUnusedOrientationAcceptsValidRateAndRejectsInvalidRates",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ReferencePredictionContract.ExactFrozenReferenceSuppliedToSolver",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ReferencePredictionContract.AcceptedPredictionCopiedFromSameSolveInfo",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ReferencePredictionContract.FailedLateAndStandbyNoFabrication",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ReferencePredictionContract.LoggingOffAndOnPreserveSameReferenceAndCommands",
+    "failed": false,
+    "skipped": false
+  },
+  {
+    "name": "ReferencePredictionContract.ObservationalOverheadSameFakeWorkload",
+    "failed": false,
+    "skipped": false
+  }
+]

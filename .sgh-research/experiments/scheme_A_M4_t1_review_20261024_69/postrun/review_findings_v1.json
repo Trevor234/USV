@@ -1,0 +1,117 @@
+{
+  "schema": "M4-T1-code-review-v69",
+  "findings": [
+    {
+      "id": "R1",
+      "priority": 1,
+      "kind": "runner/finalizer failure gate",
+      "title": "变异失败和最终失败没有可靠传到进程退出码",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/scripts/run_t1.py",
+      "line": 254,
+      "related": [
+        {
+          "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/scripts/run_t1.py",
+          "line": 194
+        },
+        {
+          "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/scripts/run_t1.py",
+          "line": 244
+        },
+        {
+          "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/scripts/finalize.py",
+          "line": 163
+        }
+      ],
+      "evidence": [
+        "evidence/runner_review02/failure_exit_counterexample_v1.json",
+        "evidence/runner_review02/finalizer_exit_counterexample_v1.json"
+      ],
+      "finding": "原main在M1未prepared时仍返回0；原finalizer输出all_green=false后正常返回None，入口仍以0退出。mutation caught还把非RUN当断言失败，且未要求mrc=1；atom汇总仍只看RUN。",
+      "repair": "新69 runner用同一严格判定函数检查完整人口/执行结果/failures、精确命名断言、RC1、prepared/编译结果、身份前后及3变异非空人口；失败写独立记录并非零退出。",
+      "status": "fixed_in_derived69_not_backwritten_to68"
+    },
+    {
+      "id": "R2",
+      "priority": 1,
+      "kind": "test observation false positive",
+      "title": "注册事件没有绑定本次Job，可用旧成功冒充新调用成功",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/implementation/tests/test_current_candidate_reference_clock.cpp",
+      "line": 138,
+      "evidence": [
+        "evidence/stale_event_probe/counterexample_v1.json"
+      ],
+      "finding": "省掉new-version Job2 candidate()调用后，原ReferenceReplaceDuringSolve仍绿；完整Source只有Job1注册。flush_pad的真实填充不等于本次事件确认。",
+      "repair": "新helper匹配完整job_json、精确type及ready_commit_ns>=本次调用时间，200ms有限等待；新Job恢复同时核对candidate和slot实际状态。",
+      "status": "fixed_in_derived69_and_retested"
+    },
+    {
+      "id": "R3",
+      "priority": 1,
+      "kind": "coverage interpretation",
+      "title": "25项执行通过不能证明原23项每个语义都闭合",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/implementation/tests/test_current_candidate_reference_clock.cpp",
+      "line": 471,
+      "related": [
+        {
+          "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/implementation/tests/test_current_candidate_reference_clock.cpp",
+          "line": 232
+        },
+        {
+          "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/implementation/tests/test_current_candidate_reference_clock.cpp",
+          "line": 239
+        },
+        {
+          "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/implementation/tests/test_current_candidate_reference_clock.cpp",
+          "line": 345
+        }
+      ],
+      "finding": "CommittedSubmit测试只驱动手工echo/ready ticket/activate helper，没有调用真实prepare_loop提交路径；ReferenceReplace先注册candidate再改path，是ready窗口；shape用例改的是Job horizon/dt，未驱动原生结果维度分支。失败用例同时把三个布尔标志置false，尚未隔离success和solver_invoked各自的拒绝门。",
+      "repair": "保留已证消费/回调层，新增小范围真实提交与logical in-flight用例；原生shape先绑定固定类型/生成端证据，不把metadata拒绝改称结果shape已覆盖。",
+      "status": "follow_up_scope_debt_not_a_production_Regulator_bug"
+    },
+    {
+      "id": "R4",
+      "priority": 1,
+      "kind": "T2 causal plan",
+      "title": "T2-B的candidate_received触发位于计算结果之后",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/postrun/t1_handoff_to_t2_v1.json",
+      "line": 29,
+      "finding": "用candidate_received触发clear/replace只能覆盖结果已生成后的窗口；不能据此宣称Worker求解在途。T2-A的silent clock还会先触发100ms receipt stale；T2-C依赖异步Source可见性，必须证明stop早于目标guard。",
+      "repair": "将3项改为3个场景族并先固定精确阶段/事件回执；B区分未完成Job与ready窗口，A区分持续投递冻结stamp与完全静默，C校验ready→request→stopping→guard的真实顺序。",
+      "status": "plan_revised_in69_no_owned_run_started"
+    },
+    {
+      "id": "R5",
+      "priority": 2,
+      "kind": "scope reporting",
+      "title": "new_ros_graph=0应更正为存在组件ROS上下文/测试publisher",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/implementation/tests/test_current_candidate_reference_clock.cpp",
+      "line": 204,
+      "finding": "SetUpTestSuite调用rclcpp::init，ShadowTestTag构造Node并创建/p1_test/shadow_decision Publisher。没有控制DataWriter、owned=0成立；完全没有ROS图活动不成立。",
+      "repair": "新报告分列component_ROS_context_initialized=true、test publisher、localhost/domain121、control_DataWriter=false、owned_runs=0。",
+      "status": "scope_corrected"
+    },
+    {
+      "id": "R6",
+      "priority": 2,
+      "kind": "delivery/preservation",
+      "title": "旧mirror校验只遍历目标，且git porcelain不能证明文件内容未变",
+      "file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t1_component_wiring_20261024_68/scripts/finalize.py",
+      "line": 145,
+      "evidence": [
+        "evidence/runner_review02/mirror_population_counterexample_v1.json",
+        "evidence/mirror68_review_v1.json"
+      ],
+      "finding": "漏掉一个应交付源文件时，原目标侧循环仍返回空mismatches。实际当前639项源文件都匹配，另有5项documents副本也匹配，旧回执639尚未表达后加副本。原mut build使用rmtree会覆盖旧构建证据。",
+      "repair": "新交付明确排除build、对预期/实际人口双向比较并记录SHA；build/run/报告均create-only。当前69额外固定68全1725文件、67全203文件和21个普通工作区文件内容。",
+      "status": "actual68_mirror_intact_new_delivery_gate_stricter"
+    }
+  ],
+  "original25_execution_pass_retained": true,
+  "original3_mutation_assertions_retained": true,
+  "all23_semantic_coverage_signed_off": false,
+  "original_T2_plan_ready_for_execution": false,
+  "M4_stage_qualified": false,
+  "F6_qualified": false,
+  "P1_qualified": false
+}

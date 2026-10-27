@@ -1,0 +1,60 @@
+{
+  "schema": "scheme-A-t1-batch68-t2-handoff-v1",
+  "created": "2026-10-24T17:55:05.842133+08:00",
+  "principle": "只执行已经由T1证明需要owned的最小case清单；每次独立Source/Stored/API/退出对账，不预定九组各一次长run",
+  "component_layer_now_covers": "all 23 wiring atoms (see evidence/t1_wiring/verification_v1.json)",
+  "minimal_owned_cases": [
+    {
+      "id": "T2-A",
+      "atoms": [
+        "state_clock.04",
+        "state_clock.05"
+      ],
+      "scenario": "clock pause >400ms then resume via the REAL Fixture clock writer cross-process",
+      "fixture_action_table_entries": [
+        "clock:hold(silent) duration_ms=600 at step N",
+        "clock:resume(advance +100ms) at step M"
+      ],
+      "why_owned": "pause detection lives in the running tick against a real /clock stream; component shell proved the wiring, not the delivery",
+      "shared_with": "any W-case run that already drives the clock writer (no dedicated run if one exists)"
+    },
+    {
+      "id": "T2-B",
+      "atoms": [
+        "task_reference.03",
+        "task_reference.04"
+      ],
+      "scenario": "path clear / replacement delivered by the REAL Fixture path writer while a solve is in flight",
+      "fixture_action_table_entries": [
+        "path:clear at trigger=candidate_received(job_id=K)",
+        "path:replace(points=5, fingerprint!=initial) at trigger=candidate_received(job_id=K)"
+      ],
+      "why_owned": "writer->callback delivery interleaving with an in-flight job is cross-process by definition"
+    },
+    {
+      "id": "T2-C",
+      "atoms": [
+        "publication_exit.03"
+      ],
+      "scenario": "driver-driven shutdown request interleaved between ready and activation of a real owned run",
+      "fixture_action_table_entries": [
+        "driver:shutdown_request at trigger=ready_registered(job_id=K)"
+      ],
+      "why_owned": "shutdown authority and process exit facts are Driver-owned; the component layer only proved the in-process rejection reason"
+    }
+  ],
+  "explicitly_not_promoted": [
+    "candidate_identity_shape.01-.08 (fully covered component-side; the owned layer already carries W1/W3/W4 evidence)",
+    "task_reference.01/.02/.05/.06/.07",
+    "state_clock.06-.09 (reset/jump/RTF are callback-side and covered)",
+    "publication_exit.02",
+    "delayed-tick shells 250/400ms (time_boundaries companion, covered)"
+  ],
+  "constraints": [
+    "create-only fixed action table in a derived synthetic_source_m4.cpp; normal .05 default behaviour unchanged",
+    "actions executed by the existing fixture path/profile/odom/imu/clock writers only; no foreign publisher",
+    "candidate forgeries stay out of the Fixture (diagnostic worker / source-linked callback component only)",
+    "after code change: re-bundle -> Driver SHA -> real ELF -> registry/registration -> shared pre-check",
+    "per-case limited runs, automatic_retries=0"
+  ]
+}

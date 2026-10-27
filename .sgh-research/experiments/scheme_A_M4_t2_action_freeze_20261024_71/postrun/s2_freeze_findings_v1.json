@@ -1,0 +1,66 @@
+{
+  "schema": "M4-T2-freeze-findings-v71",
+  "recorded_at": "2026-10-24T20:32:59.399948+08:00",
+  "four_admission_points": {
+    "entry": "w2_runtime_contract.registration_preflight_t2 + require_normal_scope_unarmed on the W path",
+    "parameters": "t2_action_contract.fixture_action_parameters consumed by t2_scenario_driver_v1 spawn assembly",
+    "manifest": "Fixture owned_manifest.json records t2_armed/t2_case/t2_action_table_sha256; the armed channel demands the v2 start schema",
+    "audit": "audit_t2.py re-validates the table and consumes the family clauses over separated receipt/regulator streams"
+  },
+  "frozen_vocabulary": {
+    "actions": [
+      "clock_hold",
+      "clock_resume",
+      "driver_shutdown_request",
+      "path_clear",
+      "path_replace"
+    ],
+    "phases": [
+      "after_grant_ms",
+      "job_received",
+      "ready_window",
+      "solve_active"
+    ],
+    "families": [
+      "T2A-clock-freeze",
+      "T2B-inflight-clear-replace",
+      "T2C-driver-shutdown-interleave"
+    ],
+    "max_actions": 4
+  },
+  "budgets_unrelaxed": true,
+  "flush_pad_never_an_ack": true,
+  "regulator_and_worker_sources_unchanged": true,
+  "frozen_registrations": {
+    "T2A": {
+      "registration": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_action_freeze_20261024_71/implementation/t2_registrations/T2A_v1.json",
+      "case": "T2A-clock-freeze",
+      "actions": [
+        "a1",
+        "a2"
+      ],
+      "admitted_at_entry": true
+    },
+    "T2B": {
+      "registration": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_action_freeze_20261024_71/implementation/t2_registrations/T2B_v1.json",
+      "case": "T2B-inflight-clear-replace",
+      "actions": [
+        "a1"
+      ],
+      "admitted_at_entry": true
+    },
+    "T2C": {
+      "registration": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_action_freeze_20261024_71/implementation/t2_registrations/T2C_v1.json",
+      "case": "T2C-driver-shutdown-interleave",
+      "actions": [
+        "a1"
+      ],
+      "admitted_at_entry": true
+    }
+  },
+  "not_executed": [
+    "T2A_01",
+    "T2B_01",
+    "T2C_01"
+  ]
+}

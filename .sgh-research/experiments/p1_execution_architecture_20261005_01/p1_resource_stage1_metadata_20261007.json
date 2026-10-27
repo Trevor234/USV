@@ -1,0 +1,2619 @@
+{
+  "schema": "p1-resource-stage1-metadata-v1",
+  "records": {
+    "resource_v13_build_result_20261007.json": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v13_build_result_20261007.json",
+      "bytes": 9919,
+      "sha256": "18d70d128c6cc047be81df5ee9c5d8233ddb5c4a59957e5706ef84a9c7404113",
+      "record": {
+        "schema": "p1-resource-build-v1",
+        "binaries": {
+          "p1_solver_worker": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26",
+          "p1_regulator": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258"
+        },
+        "binaries_resolved": {
+          "p1_solver_worker": "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker",
+          "p1_regulator": "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator"
+        },
+        "expected_drift": [
+          {
+            "path": "/home/trevor/USV/usv_mpc_ws/install/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_regulator",
+            "before": "2840550545057e5f71ce1d64ca8bc884c4c5ceed2771b4e1b1e2cc5f18e86efd",
+            "after": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258"
+          },
+          {
+            "path": "/home/trevor/USV/usv_mpc_ws/install/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_solver_worker",
+            "before": "e78dd29dd86a329e5edf6a92f4bd1eac778ef1fe07dcabc78ddfb4095ffb028a",
+            "after": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26"
+          },
+          {
+            "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/CMakeLists.txt",
+            "before": "b96b8f1c36cc88ecd3c24108868936cfd72bb8fcc854e68fc9e436dca90abaad",
+            "after": "96943d1c07f0a846805fb4d8239a8f3b6686bb82f588a29f25a5ff082d6ffe19"
+          },
+          {
+            "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/protocol.hpp",
+            "before": "c26c0d7a6df0e5c09ac36496c7fbdd1f81be8f8ee007533528be982358629e6a",
+            "after": "5cab0d978cb9ab3ebc08b649a7915e302b14a1723776750849ddda416c24457b"
+          },
+          {
+            "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/regulator.cpp",
+            "before": "9ce41a8b28d6f954a533af4658fb9d05aaf3db8667faba6021252310e2aeea98",
+            "after": "77a7d3f5eec5d3717a3b91460bcd7fedece7246c5229cc1bb7a1cacd3c1cf8e1"
+          },
+          {
+            "path": "/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/solver_worker.cpp",
+            "before": "faec32f6552a68eb761d695e70bf61ea462beea54c93d10ab7739ffb0640c9b3",
+            "after": "37bb25b6a8cfe0f44435ed9bb5d36c67ab46dbf0800fe15d3e36a4a62f363d8c"
+          }
+        ],
+        "guard_count": 1196,
+        "guard_manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_prelaunch_assets_20261007.json",
+        "guard_sha256": "d2a4b4d348fe30c05118e83fc057c591781c40a44379b4f8d952e5dfe5931a98",
+        "runtime": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v29_resource_20261007",
+        "contract_file": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json",
+        "contract_hash": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+        "current_safety_gtest_count": 79,
+        "gtest_identities": [
+          "usv_research_safety_cpp.Activation.SourceSequenceDoesNotReplaceStateAndVersionGate",
+          "usv_research_safety_cpp.Admission.ClearBetweenCutoffAndActivationInvalidates",
+          "usv_research_safety_cpp.Admission.FixedCapacityAndMissedTickNeverRollsForward",
+          "usv_research_safety_cpp.Admission.WrongTargetDuplicateAndVersion",
+          "usv_research_safety_cpp.Anchor.PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack",
+          "usv_research_safety_cpp.CapabilityLease.BackwardClockTerminal",
+          "usv_research_safety_cpp.CapabilityLease.BeyondDeadlineTerminal",
+          "usv_research_safety_cpp.CapabilityLease.ExactDeadlineAllowed",
+          "usv_research_safety_cpp.CapabilityLease.ExactDeadlineCanRenew",
+          "usv_research_safety_cpp.CapabilityLease.FreshReceiptExtends",
+          "usv_research_safety_cpp.CapabilityLease.IgnoredReceiptDoesNotExtend",
+          "usv_research_safety_cpp.CapabilityLease.LateReceiptCannotHideExpiration",
+          "usv_research_safety_cpp.CapabilityLease.LongMonotonicUptimeSafe",
+          "usv_research_safety_cpp.CapabilityLease.NegativeClockRejected",
+          "usv_research_safety_cpp.CapabilityLease.NoLeaseBeforeFirstValidReceipt",
+          "usv_research_safety_cpp.CapabilityLease.RejectTooShort",
+          "usv_research_safety_cpp.CapabilityLease.RejectUnbounded",
+          "usv_research_safety_cpp.CapabilityLease.TerminalCannotResume",
+          "usv_research_safety_cpp.CapabilityLease.ZeroClockRejected",
+          "usv_research_safety_cpp.ClockWindow.DurationAndRealtimeRatioBoundariesAreInclusive",
+          "usv_research_safety_cpp.ClockWindow.HighRateClockRetainsRequiredDurationAtFiniteCapacity",
+          "usv_research_safety_cpp.ClockWindow.InvalidInputsAndBurstsCannotClaimEstablishedAlignment",
+          "usv_research_safety_cpp.ClockWindow.ReceiveGapRemovesStaleValidityAndNeedsNewCoverage",
+          "usv_research_safety_cpp.ClockWindow.RepeatedSimulationTimeCannotKeepPreviousValidRatio",
+          "usv_research_safety_cpp.ClockWindow.ResetBackwardJumpAndDuplicateReceiveRequireFreshWindow",
+          "usv_research_safety_cpp.Command.AmplitudeAndActualSteadySpacing",
+          "usv_research_safety_cpp.Deadline.BeforeAndAfterHaveDifferentResults",
+          "usv_research_safety_cpp.Deadline.EqualityRegistrationSurvivesEitherCutoffOrder",
+          "usv_research_safety_cpp.Deadline.RegistrationCompletionAfterDeadlineRetractsSlot",
+          "usv_research_safety_cpp.Fallback.FifthMissRampsAndNeverInstantlyDropsLargeThrust",
+          "usv_research_safety_cpp.InputCore.EligibilityPreservesF5ReasonPriority",
+          "usv_research_safety_cpp.InputCore.MappingMatchesDeclaredPhysicalClamp",
+          "usv_research_safety_cpp.InputCore.NumericAndMixedRate",
+          "usv_research_safety_cpp.InputCore.PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture",
+          "usv_research_safety_cpp.InputCore.TargetReferenceIsRebuiltFromPredictedNearestPoint",
+          "usv_research_safety_cpp.PreparationBarrier.DisabledDefault",
+          "usv_research_safety_cpp.PreparationBarrier.RejectBeyondFiniteBound",
+          "usv_research_safety_cpp.PreparationBarrier.RejectDisabledFaultContract",
+          "usv_research_safety_cpp.PreparationBarrier.RejectExecute",
+          "usv_research_safety_cpp.PreparationBarrier.RejectNegative",
+          "usv_research_safety_cpp.PreparationBarrier.RejectShadow",
+          "usv_research_safety_cpp.PreparationBarrier.ThirdTakeOnly",
+          "usv_research_safety_cpp.PublicationHistory.ChangedThenReturnedIsNotSameInputHistory",
+          "usv_research_safety_cpp.PublicationHistory.EvictedFreezeAnchorDoesNotAuthorizeCurrentValue",
+          "usv_research_safety_cpp.PublicationHistory.MissingChannelOrSequenceCannotProveEquivalence",
+          "usv_research_safety_cpp.PublicationHistory.SameValueRepetitionPreservesInputAssumption",
+          "usv_research_safety_cpp.PublicationHistory.UnknownAndNonfinitePublicationsInvalidateProof",
+          "usv_research_safety_cpp.PublicationHistory.WrongTimeAndOutOfOrderRecordsAreRejected",
+          "usv_research_safety_cpp.Resources.ActualSizeMatchesSerializationAcrossPaddingAndHistory",
+          "usv_research_safety_cpp.Resources.ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected",
+          "usv_research_safety_cpp.Resources.ContractMustBeIntegralAndWithinHardCaps",
+          "usv_research_safety_cpp.Resources.ContractPoliciesAreExact",
+          "usv_research_safety_cpp.Resources.EveryCandidateStringRejectsOverLimitBeforeCopy",
+          "usv_research_safety_cpp.Resources.EveryCapabilityStringRejectsOverLimit",
+          "usv_research_safety_cpp.Resources.EveryJobStringAllowsBoundaryAndRejectsOneByteOver",
+          "usv_research_safety_cpp.Resources.ExistingProducerLayoutsRemainAllowedIncludingClear",
+          "usv_research_safety_cpp.Resources.FixedNativeErrorBufferRequiresTerminatorWithinCapacity",
+          "usv_research_safety_cpp.Resources.HistoryUsesContractCapacityAndDoesNotReplaceShapeGate",
+          "usv_research_safety_cpp.Resources.InstalledSerializationAtFullJobAndCandidateBoundary",
+          "usv_research_safety_cpp.Resources.PathMetadataBoundaryAndCountRejection",
+          "usv_research_safety_cpp.Resources.ProfileDimensionsLabelsAndDataBoundaries",
+          "usv_research_safety_cpp.Resources.SmallerCacheDoesNotShrinkWireSchemaBudget",
+          "usv_research_safety_cpp.Resources.Utf8ReasonUsesBytes",
+          "usv_research_safety_cpp.SchedulerBoundary.ExactAndAdjacentDueTicks",
+          "usv_research_safety_cpp.SourceTime.InvalidChronologyAndExtrapolationOverflowAreRejected",
+          "usv_research_safety_cpp.SourceTime.LagAndFutureLimitsAreInclusive",
+          "usv_research_safety_cpp.SourceTime.OnlyMixedStateUsesImuPhysicalAge",
+          "usv_research_safety_cpp.SourceTime.PhysicalNowExtrapolatesClockToCommitAtOneToOne",
+          "usv_research_safety_cpp.SourceTime.ReceiveAgeAndPhysicalLagAreIndependent",
+          "usv_research_safety_cpp.TickBarrier.DiagnosticModeAndFaultPermissionRequired",
+          "usv_research_safety_cpp.TickBarrier.DisabledInEveryMode",
+          "usv_research_safety_cpp.TickBarrier.FiniteInclusiveBounds",
+          "usv_research_safety_cpp.TickBarrier.OneShotOnThirdAttempt",
+          "usv_research_safety_cpp.WorkerLiveness.AliveThenExited",
+          "usv_research_safety_cpp.WorkerLiveness.KilledBeforeReaping",
+          "usv_research_safety_cpp.WorkerLiveness.OldIdentityRemainsDead",
+          "usv_research_safety_cpp.WorkerLiveness.RejectsMissingProcess",
+          "usv_research_safety_cpp.WorkerLiveness.RejectsNonpositive",
+          "usv_research_safety_cpp.WorkerLiveness.RejectsOverflow"
+        ],
+        "cpp_xml_sha256": {
+          "test_p1_worker_liveness.gtest.xml": "3a2fdfe7fc7ce4165dc58b03e39315186747cdee19a84926e87e015a0e809568",
+          "test_p1_resources.gtest.xml": "01cd7a38dd057646a20380cad7327cc7142008acd546507413b4ca33338ae33e",
+          "test_p1_admission.gtest.xml": "b2bb300048eef1e8cd5554ee10846fbda0925b7e71797fe53916bd0c9a391e69",
+          "test_p1_tick_barrier.gtest.xml": "80ec400454f800d9b40c29e6627210f52ef9d32a673b2d908d1ba5ca61cea59d",
+          "test_p1_preparation_barrier.gtest.xml": "f0b17bffcbc17ee3c3a4c7e150c207b68eeb60c38280ad81d0bc6a6dc6127e30",
+          "test_p1_capability_lease.gtest.xml": "41a7bb8fd93d7e02bde7da2c98a1b518cca5e85d6e9e5e75d6d7f9cf3d63563d"
+        },
+        "python_test_log_sha256": "a4b9c2d2ef516cf987b899ae9970bab4300c6592030afe121ca861e2691ba190",
+        "execute_qualified": false
+      }
+    },
+    "resource_v29_batch_20261007.json": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_batch_20261007.json",
+      "bytes": 85680,
+      "sha256": "d7ff5f213066bfbc3c3074cb91b960e2390c1bd099a297b333d4c88118087607",
+      "record": {
+        "schema": "p1-resource-batch-v1",
+        "failure": null,
+        "cases": [
+          {
+            "kind": "startup_invalid",
+            "run_id": "p1_resource_startup_reject_20261007_01",
+            "selected_gate_passed": true,
+            "returncode": 1,
+            "expected_rejection": "unsupported resource bound: max_job_bytes",
+            "source_file_created": false,
+            "cleanup": {
+              "name": "invalid_regulator",
+              "cleanup_complete": true,
+              "returncode": 1,
+              "remaining_members": []
+            },
+            "console_sha256": "aac4454d1ccb9a98634cdc7a4aebccf86617bc5be4b5cc1fb881ff327f01523e",
+            "physical_output_not_created_by_rejected_constructor": true,
+            "proof_scope": "loader_error_before_source_and_publishers_as_defined_in_current_source"
+          },
+          {
+            "kind": "normal",
+            "run_id": "p1_resources_normal_20261007_01",
+            "selected_gate_passed": true,
+            "base_checker_returncode": 0,
+            "base_report": {
+              "schema": "p1-execution-check-v1",
+              "run_id": "p1_resources_normal_20261007_01",
+              "mode": "no_output",
+              "passed": true,
+              "source_bag_contract_complete": true,
+              "logical_admission_contract_passed": true,
+              "lifecycle_verified": true,
+              "diagnostic_complete": true,
+              "raw_input_recording_complete": true,
+              "raw_input_count_comparison": {
+                "clock": {
+                  "topic": "/clock",
+                  "fixture_published": 601,
+                  "actual_bag_count": 601
+                },
+                "odom": {
+                  "topic": "/wamv/sensors/position/ground_truth_odometry",
+                  "fixture_published": 601,
+                  "actual_bag_count": 601
+                },
+                "imu": {
+                  "topic": "/wamv/sensors/imu/imu/data",
+                  "fixture_published": 601,
+                  "actual_bag_count": 601
+                },
+                "path": {
+                  "topic": "/path/reference",
+                  "fixture_published": 13,
+                  "actual_bag_count": 13
+                },
+                "profile": {
+                  "topic": "/path/reference_profile",
+                  "fixture_published": 13,
+                  "actual_bag_count": 13
+                }
+              },
+              "raw_input_recording_scope": "fixture publisher counts versus independently scanned five raw topic bag counts; count agreement does not prove callback reconstruction",
+              "activation_source_contract_complete": true,
+              "activation_source_evidence_limit": "v2 current commit source fields and valid source admissions independently checked; not raw callback/bag reconstruction, coordinate transformation, plant ACK or force",
+              "decision_schema_expected": "p1-execution-decision-v2",
+              "activation_source_observations": {
+                "odom": {
+                  "receive_age_ms": {
+                    "count": 50,
+                    "p50": 7.8076495,
+                    "p95": 19.603827149999997,
+                    "p99": 19.928246259999998,
+                    "max": 20.095349
+                  },
+                  "sim_lag_ms": {
+                    "count": 50,
+                    "p50": 8.4420575,
+                    "p95": 19.70148325,
+                    "p99": 20.04814647,
+                    "max": 20.218273
+                  }
+                },
+                "imu": {
+                  "receive_age_ms": {
+                    "count": 2,
+                    "p50": 10.119712,
+                    "p95": 17.094039699999996,
+                    "p99": 17.713979939999998,
+                    "max": 17.868965
+                  },
+                  "sim_lag_ms": {
+                    "count": 2,
+                    "p50": 11.279589000000001,
+                    "p95": 18.255021,
+                    "p99": 18.8750594,
+                    "max": 19.030069
+                  }
+                }
+              },
+              "activation_mixed_skew_ms": {
+                "count": 2,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0,
+                "max": 0.0
+              },
+              "normal_contract_complete": false,
+              "execute_qualified": false,
+              "fault_run": false,
+              "fault_mechanism_passed": true,
+              "fault_mechanism_evidence_complete": true,
+              "fault_expected_worker_source_gaps": [],
+              "fault_delay_observations": {
+                "declared_ms": 0,
+                "observed": false,
+                "source_candidate_count": 51,
+                "expired_registration_count": 0,
+                "expired_all_rejected_and_unconsumed": true,
+                "semantics": "owned argv and capability plus source publication interval; scheduling overhead included"
+              },
+              "mechanism_assertions": [
+                {
+                  "name": "no_physical_publishers",
+                  "passed": true
+                }
+              ],
+              "issues": [],
+              "streams": {
+                "jobs": {
+                  "source_count": 51,
+                  "bag_count": 51
+                },
+                "candidates": {
+                  "source_count": 51,
+                  "bag_count": 51
+                },
+                "decisions": {
+                  "source_count": 52,
+                  "bag_count": 52
+                }
+              },
+              "regulator_summary": {
+                "dropped": 0,
+                "emitted": 1974,
+                "finished_ns": 1126476173873329,
+                "generated": 1974,
+                "normal_source_complete": true,
+                "type": "source_summary"
+              },
+              "worker_summary": {
+                "completed_jobs": 51,
+                "fatal": false,
+                "finished_ns": 1126476475787322,
+                "generated_candidates": 51,
+                "normal_source_complete": true,
+                "published_candidates": 51,
+                "terminal_numerical_failure": false,
+                "type": "worker_summary"
+              },
+              "observed_metrics": {
+                "tick_start_jitter_ms": {
+                  "count": 52,
+                  "p50": 0.056519,
+                  "p95": 0.05799625,
+                  "p99": 0.05982292,
+                  "max": 0.061255
+                },
+                "activation_jitter_ms": {
+                  "count": 52,
+                  "p50": 0.1201065,
+                  "p95": 0.12447455,
+                  "p99": 0.13733247,
+                  "max": 0.138354
+                },
+                "solve_wall_ms": {
+                  "count": 51,
+                  "p50": 0.312623,
+                  "p95": 0.40600650000000005,
+                  "p99": 0.4666325,
+                  "max": 0.524776
+                },
+                "backend_ms": {
+                  "count": 51,
+                  "p50": 0.294751,
+                  "p95": 0.383843,
+                  "p99": 0.44387849999999995,
+                  "max": 0.502242
+                },
+                "publish_span_ms": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "target_sim_alignment_ms": {
+                  "count": 50,
+                  "p50": 0.38484399999999996,
+                  "p95": 0.835102,
+                  "p99": 0.86448507,
+                  "max": 0.864611
+                },
+                "rtf": {
+                  "count": 559,
+                  "p50": 1.0000510741777557,
+                  "p95": 1.0014039368685537,
+                  "p99": 1.0197945244017812,
+                  "max": 1.025345248366715
+                }
+              },
+              "activation_component_abs_error": {
+                "x_m": {
+                  "count": 50,
+                  "p50": 0.0,
+                  "p95": 0.0,
+                  "p99": 0.0,
+                  "max": 0.0
+                },
+                "y_m": {
+                  "count": 50,
+                  "p50": 0.0,
+                  "p95": 0.0,
+                  "p99": 0.0,
+                  "max": 0.0
+                },
+                "psi_rad": {
+                  "count": 50,
+                  "p50": 0.0,
+                  "p95": 0.0,
+                  "p99": 0.0,
+                  "max": 0.0
+                },
+                "u_m_s": {
+                  "count": 50,
+                  "p50": 0.0,
+                  "p95": 0.0,
+                  "p99": 0.0,
+                  "max": 0.0
+                },
+                "v_m_s": {
+                  "count": 50,
+                  "p50": 0.0,
+                  "p95": 0.0,
+                  "p99": 0.0,
+                  "max": 0.0
+                },
+                "r_rad_s": {
+                  "count": 50,
+                  "p50": 0.0,
+                  "p95": 0.0,
+                  "p99": 0.0,
+                  "max": 0.0
+                }
+              },
+              "metrics_semantics": "finite source samples only; diagnostic observations are not worst-case or qualified budgets",
+              "guarantees": {
+                "plant_acceptance_observed": false,
+                "plant_force_measured": false,
+                "atomic_physical_execution_proven": false,
+                "exact_plant_step_timing_proven": false,
+                "gp_training_eligible": false,
+                "raw_callback_bag_exact_reconstruction_proven": false
+              },
+              "storage": {
+                "storage": "mcap",
+                "actual_topic_counts": {
+                  "/p1/worker_capability": 74,
+                  "/clock": 601,
+                  "/wamv/sensors/position/ground_truth_odometry": 601,
+                  "/wamv/sensors/imu/imu/data": 601,
+                  "/path/reference": 13,
+                  "/path/reference_profile": 13,
+                  "/p1/execution_decision": 52,
+                  "/p1/solve_job": 51,
+                  "/p1/solve_candidate": 51,
+                  "/p1/stop": 7
+                },
+                "topic_types": {
+                  "/wamv/sensors/position/ground_truth_odometry": "nav_msgs/msg/Odometry",
+                  "/path/reference_profile": "std_msgs/msg/Float64MultiArray",
+                  "/path/reference": "nav_msgs/msg/Path",
+                  "/p1/solve_job": "usv_research_interfaces/msg/SolveJob",
+                  "/p1/execution_decision": "usv_research_interfaces/msg/ExecutionDecision",
+                  "/clock": "rosgraph_msgs/msg/Clock",
+                  "/p1/solve_candidate": "usv_research_interfaces/msg/SolveCandidate",
+                  "/p1/worker_capability": "usv_research_interfaces/msg/WorkerCapability",
+                  "/wamv/sensors/imu/imu/data": "sensor_msgs/msg/Imu",
+                  "/p1/stop": "std_msgs/msg/Bool"
+                },
+                "bag_time_semantics": "storage timestamp; never subtracted from CLOCK_MONOTONIC or sim"
+              },
+              "raw_inputs_unchanged": true,
+              "input_sha256_before": {
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/fixture_source.jsonl": "9aff68b35cea8def1e34d59db0de04bb1ee9cbe1d160fad3ba65d4c9635487d3",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/run_context.json": "b5f55de531feaec81ae9c53a364b9a5a49f69192321822da8ced1a29aba752d0",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/regulator_source.jsonl": "de2d49953757b2daa7d58ca7b8c38eb19bad663302bf2d7aad833d8b4dcdfa59",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/worker_source.jsonl": "44b49b7d853c6d3f0e492d798150f57ef63f63b00d5779ea2f111b4e5f9abc12",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/runner_summary.json": "ad19da7802613e843685ac9d9292f77c16b5cf10e6acc6b134e2603b92026d75",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/owned_process_ledger.jsonl": "de6c93178bf4af6c8f58fbe23518491b1189949c218eee49c010c6788711e628",
+                "/usr/bin/python3.12": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258",
+                "/opt/ros/jazzy/bin/ros2": "3308327fcefeaefe5601f72e0b473a5f9f9638434f5773d2f40b124f7c9aa04d",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/regulator.console.log": "480885039ebcffe4ce49f3a283f122406bed14236f3ba3b010e37807bbcf48eb",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/worker.console.log": "387edc8917febca058a1c6ccbe0fbf285b758c356ec927a744ea146f937efcb6",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/raw_bag/metadata.yaml": "5c9e86b3b709557be0715baa3de8d7377ccc30f0686d906d9eb5f2b65a97f50c",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/raw_bag/raw_bag_0.mcap": "46e555e4dcdeee142d434ae845da9468a7c32ebf3df9e093bf918355774e4d83"
+              },
+              "input_sha256_after": {
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/fixture_source.jsonl": "9aff68b35cea8def1e34d59db0de04bb1ee9cbe1d160fad3ba65d4c9635487d3",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/run_context.json": "b5f55de531feaec81ae9c53a364b9a5a49f69192321822da8ced1a29aba752d0",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/regulator_source.jsonl": "de2d49953757b2daa7d58ca7b8c38eb19bad663302bf2d7aad833d8b4dcdfa59",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/worker_source.jsonl": "44b49b7d853c6d3f0e492d798150f57ef63f63b00d5779ea2f111b4e5f9abc12",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/runner_summary.json": "ad19da7802613e843685ac9d9292f77c16b5cf10e6acc6b134e2603b92026d75",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/owned_process_ledger.jsonl": "de6c93178bf4af6c8f58fbe23518491b1189949c218eee49c010c6788711e628",
+                "/usr/bin/python3.12": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258",
+                "/opt/ros/jazzy/bin/ros2": "3308327fcefeaefe5601f72e0b473a5f9f9638434f5773d2f40b124f7c9aa04d",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/regulator.console.log": "480885039ebcffe4ce49f3a283f122406bed14236f3ba3b010e37807bbcf48eb",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/worker.console.log": "387edc8917febca058a1c6ccbe0fbf285b758c356ec927a744ea146f937efcb6",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/raw_bag/metadata.yaml": "5c9e86b3b709557be0715baa3de8d7377ccc30f0686d906d9eb5f2b65a97f50c",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/raw_bag/raw_bag_0.mcap": "46e555e4dcdeee142d434ae845da9468a7c32ebf3df9e093bf918355774e4d83"
+              },
+              "checker_sha256": "557b60d6efa69f28e288b3078f4549654f3e65f4a68b5abeb8e61bed104fc3fa",
+              "report_created_utc": "2026-10-07T04:00:37.250432+00:00"
+            },
+            "delivery_ledger": {
+              "schema": "p1-resource-delivery-ledger-v1",
+              "run_id": "p1_resources_normal_20261007_01",
+              "application_delivery_accounting_complete": true,
+              "passed": true,
+              "scope": "closed_native_application_edges_with_source_and_actual_recorder",
+              "dds_internal_loss_count": null,
+              "dds_internal_loss_cause": "unknown_not_inferred_from_application_gaps",
+              "counts": {
+                "recorder_job_missing": 0,
+                "recorder_job_extra": 0,
+                "recorder_candidate_missing": 0,
+                "recorder_candidate_extra": 0,
+                "recorder_decision_missing": 0,
+                "recorder_decision_extra": 0,
+                "worker_pending_superseded": 0,
+                "worker_pending_expired": 0,
+                "worker_pending_discarded": 0,
+                "worker_job_rejected": 0,
+                "candidate_registration_accepted": 51,
+                "jobs": 51,
+                "candidates": 51,
+                "decisions": 52
+              },
+              "jobs": [
+                {
+                  "job_id": 1,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 2,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 3,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 4,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 5,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 6,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 7,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 8,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 9,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 10,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 11,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 12,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 13,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 14,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 15,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 16,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 17,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 18,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 19,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 20,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 21,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 22,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 23,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 24,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 25,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 26,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 27,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 28,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 29,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 30,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 31,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 32,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 33,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 34,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 35,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 36,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 37,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 38,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 39,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 40,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 41,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 42,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 43,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 44,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 45,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 46,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 47,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 48,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 49,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 50,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 51,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                }
+              ],
+              "issues": [],
+              "execute_qualified": false,
+              "storage": {
+                "storage": "mcap",
+                "actual_topic_counts": {
+                  "/p1/worker_capability": 74,
+                  "/clock": 601,
+                  "/wamv/sensors/position/ground_truth_odometry": 601,
+                  "/wamv/sensors/imu/imu/data": 601,
+                  "/path/reference": 13,
+                  "/path/reference_profile": 13,
+                  "/p1/execution_decision": 52,
+                  "/p1/solve_job": 51,
+                  "/p1/solve_candidate": 51,
+                  "/p1/stop": 7
+                },
+                "topic_types": {
+                  "/wamv/sensors/position/ground_truth_odometry": "nav_msgs/msg/Odometry",
+                  "/path/reference_profile": "std_msgs/msg/Float64MultiArray",
+                  "/path/reference": "nav_msgs/msg/Path",
+                  "/p1/solve_job": "usv_research_interfaces/msg/SolveJob",
+                  "/p1/execution_decision": "usv_research_interfaces/msg/ExecutionDecision",
+                  "/clock": "rosgraph_msgs/msg/Clock",
+                  "/p1/solve_candidate": "usv_research_interfaces/msg/SolveCandidate",
+                  "/p1/worker_capability": "usv_research_interfaces/msg/WorkerCapability",
+                  "/wamv/sensors/imu/imu/data": "sensor_msgs/msg/Imu",
+                  "/p1/stop": "std_msgs/msg/Bool"
+                },
+                "bag_time_semantics": "storage timestamp; never subtracted from CLOCK_MONOTONIC or sim"
+              },
+              "evidence_sha256": {
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/regulator_source.jsonl": "de2d49953757b2daa7d58ca7b8c38eb19bad663302bf2d7aad833d8b4dcdfa59",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/worker_source.jsonl": "44b49b7d853c6d3f0e492d798150f57ef63f63b00d5779ea2f111b4e5f9abc12",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/run_context.json": "b5f55de531feaec81ae9c53a364b9a5a49f69192321822da8ced1a29aba752d0",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/verification_resource_base_v13/contract_report.json": "3fb39317c0e9d2f3e8c3fda506770a37d3454b1682f90251baca343548232678",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_normal_20261007_01/raw_bag/raw_bag_0.mcap": "46e555e4dcdeee142d434ae845da9468a7c32ebf3df9e093bf918355774e4d83"
+              }
+            },
+            "native_accepted": 50,
+            "delivery_returncode": 0
+          },
+          {
+            "kind": "delay150",
+            "run_id": "p1_resources_delay150_20261007_01",
+            "selected_gate_passed": true,
+            "base_checker_returncode": 2,
+            "base_report": {
+              "schema": "p1-execution-check-v1",
+              "run_id": "p1_resources_delay150_20261007_01",
+              "mode": "no_output",
+              "passed": false,
+              "source_bag_contract_complete": true,
+              "logical_admission_contract_passed": true,
+              "lifecycle_verified": true,
+              "diagnostic_complete": false,
+              "raw_input_recording_complete": true,
+              "raw_input_count_comparison": {
+                "clock": {
+                  "topic": "/clock",
+                  "fixture_published": 665,
+                  "actual_bag_count": 665
+                },
+                "odom": {
+                  "topic": "/wamv/sensors/position/ground_truth_odometry",
+                  "fixture_published": 665,
+                  "actual_bag_count": 665
+                },
+                "imu": {
+                  "topic": "/wamv/sensors/imu/imu/data",
+                  "fixture_published": 665,
+                  "actual_bag_count": 665
+                },
+                "path": {
+                  "topic": "/path/reference",
+                  "fixture_published": 14,
+                  "actual_bag_count": 14
+                },
+                "profile": {
+                  "topic": "/path/reference_profile",
+                  "fixture_published": 14,
+                  "actual_bag_count": 14
+                }
+              },
+              "raw_input_recording_scope": "fixture publisher counts versus independently scanned five raw topic bag counts; count agreement does not prove callback reconstruction",
+              "activation_source_contract_complete": false,
+              "activation_source_evidence_limit": "v2 current commit source fields and valid source admissions independently checked; not raw callback/bag reconstruction, coordinate transformation, plant ACK or force",
+              "decision_schema_expected": "p1-execution-decision-v2",
+              "activation_source_observations": {
+                "odom": {
+                  "receive_age_ms": {
+                    "count": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  },
+                  "sim_lag_ms": {
+                    "count": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  }
+                },
+                "imu": {
+                  "receive_age_ms": {
+                    "count": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  },
+                  "sim_lag_ms": {
+                    "count": 0,
+                    "p50": null,
+                    "p95": null,
+                    "p99": null,
+                    "max": null
+                  }
+                }
+              },
+              "activation_mixed_skew_ms": {
+                "count": 0,
+                "p50": null,
+                "p95": null,
+                "p99": null,
+                "max": null
+              },
+              "normal_contract_complete": false,
+              "execute_qualified": false,
+              "fault_run": true,
+              "fault_mechanism_passed": true,
+              "fault_mechanism_evidence_complete": true,
+              "fault_expected_worker_source_gaps": [],
+              "fault_delay_observations": {
+                "declared_ms": 150,
+                "observed": true,
+                "source_candidate_count": 51,
+                "expired_registration_count": 51,
+                "expired_all_rejected_and_unconsumed": true,
+                "semantics": "owned argv and capability plus source publication interval; scheduling overhead included"
+              },
+              "mechanism_assertions": [
+                {
+                  "name": "no_physical_publishers",
+                  "passed": true
+                },
+                {
+                  "name": "post_native_delay_observed",
+                  "passed": true
+                },
+                {
+                  "name": "original_deadline_respected",
+                  "passed": true
+                },
+                {
+                  "name": "late_candidate_rejected",
+                  "passed": true
+                }
+              ],
+              "issues": [],
+              "streams": {
+                "jobs": {
+                  "source_count": 51,
+                  "bag_count": 51
+                },
+                "candidates": {
+                  "source_count": 51,
+                  "bag_count": 51
+                },
+                "decisions": {
+                  "source_count": 52,
+                  "bag_count": 52
+                }
+              },
+              "regulator_summary": {
+                "dropped": 0,
+                "emitted": 1974,
+                "finished_ns": 1126499357490959,
+                "generated": 1974,
+                "normal_source_complete": true,
+                "type": "source_summary"
+              },
+              "worker_summary": {
+                "completed_jobs": 51,
+                "fatal": false,
+                "finished_ns": 1126499578796130,
+                "generated_candidates": 51,
+                "normal_source_complete": true,
+                "published_candidates": 51,
+                "terminal_numerical_failure": false,
+                "type": "worker_summary"
+              },
+              "observed_metrics": {
+                "tick_start_jitter_ms": {
+                  "count": 52,
+                  "p50": 0.044733499999999995,
+                  "p95": 0.06114114999999999,
+                  "p99": 0.06235556,
+                  "max": 0.06248
+                },
+                "activation_jitter_ms": {
+                  "count": 52,
+                  "p50": 0.1033605,
+                  "p95": 0.11915049999999999,
+                  "p99": 0.12747247,
+                  "max": 0.131299
+                },
+                "solve_wall_ms": {
+                  "count": 51,
+                  "p50": 0.313061,
+                  "p95": 0.397054,
+                  "p99": 0.4604085,
+                  "max": 0.522048
+                },
+                "backend_ms": {
+                  "count": 51,
+                  "p50": 0.295797,
+                  "p95": 0.37544900000000003,
+                  "p99": 0.43777900000000003,
+                  "max": 0.498374
+                },
+                "publish_span_ms": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "target_sim_alignment_ms": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "rtf": {
+                  "count": 559,
+                  "p50": 0.9999993105648468,
+                  "p95": 1.0014013881329424,
+                  "p99": 1.005608663629318,
+                  "max": 1.0079138151987153
+                }
+              },
+              "activation_component_abs_error": {
+                "x_m": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "y_m": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "psi_rad": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "u_m_s": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "v_m_s": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                },
+                "r_rad_s": {
+                  "count": 0,
+                  "p50": null,
+                  "p95": null,
+                  "p99": null,
+                  "max": null
+                }
+              },
+              "metrics_semantics": "finite source samples only; diagnostic observations are not worst-case or qualified budgets",
+              "guarantees": {
+                "plant_acceptance_observed": false,
+                "plant_force_measured": false,
+                "atomic_physical_execution_proven": false,
+                "exact_plant_step_timing_proven": false,
+                "gp_training_eligible": false,
+                "raw_callback_bag_exact_reconstruction_proven": false
+              },
+              "storage": {
+                "storage": "mcap",
+                "actual_topic_counts": {
+                  "/p1/worker_capability": 82,
+                  "/clock": 665,
+                  "/wamv/sensors/position/ground_truth_odometry": 665,
+                  "/wamv/sensors/imu/imu/data": 665,
+                  "/path/reference": 14,
+                  "/path/reference_profile": 14,
+                  "/p1/execution_decision": 52,
+                  "/p1/solve_job": 51,
+                  "/p1/solve_candidate": 51,
+                  "/p1/stop": 7
+                },
+                "topic_types": {
+                  "/wamv/sensors/position/ground_truth_odometry": "nav_msgs/msg/Odometry",
+                  "/path/reference_profile": "std_msgs/msg/Float64MultiArray",
+                  "/path/reference": "nav_msgs/msg/Path",
+                  "/p1/solve_job": "usv_research_interfaces/msg/SolveJob",
+                  "/p1/worker_capability": "usv_research_interfaces/msg/WorkerCapability",
+                  "/p1/solve_candidate": "usv_research_interfaces/msg/SolveCandidate",
+                  "/p1/execution_decision": "usv_research_interfaces/msg/ExecutionDecision",
+                  "/clock": "rosgraph_msgs/msg/Clock",
+                  "/wamv/sensors/imu/imu/data": "sensor_msgs/msg/Imu",
+                  "/p1/stop": "std_msgs/msg/Bool"
+                },
+                "bag_time_semantics": "storage timestamp; never subtracted from CLOCK_MONOTONIC or sim"
+              },
+              "raw_inputs_unchanged": true,
+              "input_sha256_before": {
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/fixture_source.jsonl": "3e0e081ed12b9aca50cf6f26d48aef13ab6e9d84267928a623c0700227b0e7fd",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/run_context.json": "96d7f5c13487fc92f863e64abbf0e3074f93b1acf6b1e3613356901384f9c523",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/regulator_source.jsonl": "177444a5c572910d0d18cb4c9ce2ebd3d3ef1f0491e2d39fd3a4868438190209",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/worker_source.jsonl": "936dd6ed1c40955acfbfc36a23ec659c9978ec8364dc86c033e635a360b751c7",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/runner_summary.json": "b755e9b4214c41ffe59f6167ff3cf1797e85c6e6f95e0ee57b9daf0b1fd57a53",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/owned_process_ledger.jsonl": "2cf610d3f199b418c2cbe5d6dfbbabfd555543a9dab1c45ad34e56232521c96c",
+                "/usr/bin/python3.12": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258",
+                "/opt/ros/jazzy/bin/ros2": "3308327fcefeaefe5601f72e0b473a5f9f9638434f5773d2f40b124f7c9aa04d",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/regulator.console.log": "60d9641f3cb396c5397f18ce1e04af362febb348bd1ffc1ef9b314cb2237c55d",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/worker.console.log": "c163e1d4c4bed1189f35ab40a0a37eaedf52c1ce3eb2b016987415140ec33472",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/raw_bag/metadata.yaml": "3282f131cccc7fa23f262180435669a1ed5091655669c18079ae87227c0572a9",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/raw_bag/raw_bag_0.mcap": "d60d80927c117781d56a071935df419c140e174c472837dc728fe0843c6bc4ce"
+              },
+              "input_sha256_after": {
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/fixture_source.jsonl": "3e0e081ed12b9aca50cf6f26d48aef13ab6e9d84267928a623c0700227b0e7fd",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007/p1_shadow_contract_v5.json": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/run_context.json": "96d7f5c13487fc92f863e64abbf0e3074f93b1acf6b1e3613356901384f9c523",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/regulator_source.jsonl": "177444a5c572910d0d18cb4c9ce2ebd3d3ef1f0491e2d39fd3a4868438190209",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/worker_source.jsonl": "936dd6ed1c40955acfbfc36a23ec659c9978ec8364dc86c033e635a360b751c7",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/runner_summary.json": "b755e9b4214c41ffe59f6167ff3cf1797e85c6e6f95e0ee57b9daf0b1fd57a53",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/owned_process_ledger.jsonl": "2cf610d3f199b418c2cbe5d6dfbbabfd555543a9dab1c45ad34e56232521c96c",
+                "/usr/bin/python3.12": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator": "a0bafccdab69e36e46a180e360356d51a42ce4895f5d258f74e6bf272df01258",
+                "/opt/ros/jazzy/bin/ros2": "3308327fcefeaefe5601f72e0b473a5f9f9638434f5773d2f40b124f7c9aa04d",
+                "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker": "39f595bd09335fde2b76588913c6db7cf8c35619c2f51bf8f02af85852226d26",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/regulator.console.log": "60d9641f3cb396c5397f18ce1e04af362febb348bd1ffc1ef9b314cb2237c55d",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/worker.console.log": "c163e1d4c4bed1189f35ab40a0a37eaedf52c1ce3eb2b016987415140ec33472",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/raw_bag/metadata.yaml": "3282f131cccc7fa23f262180435669a1ed5091655669c18079ae87227c0572a9",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/raw_bag/raw_bag_0.mcap": "d60d80927c117781d56a071935df419c140e174c472837dc728fe0843c6bc4ce"
+              },
+              "checker_sha256": "557b60d6efa69f28e288b3078f4549654f3e65f4a68b5abeb8e61bed104fc3fa",
+              "report_created_utc": "2026-10-07T04:00:59.878734+00:00"
+            },
+            "delivery_ledger": {
+              "schema": "p1-resource-delivery-ledger-v1",
+              "run_id": "p1_resources_delay150_20261007_01",
+              "application_delivery_accounting_complete": true,
+              "passed": true,
+              "scope": "closed_native_application_edges_with_source_and_actual_recorder",
+              "dds_internal_loss_count": null,
+              "dds_internal_loss_cause": "unknown_not_inferred_from_application_gaps",
+              "counts": {
+                "recorder_job_missing": 0,
+                "recorder_job_extra": 0,
+                "recorder_candidate_missing": 0,
+                "recorder_candidate_extra": 0,
+                "recorder_decision_missing": 0,
+                "recorder_decision_extra": 0,
+                "worker_pending_superseded": 0,
+                "worker_pending_expired": 0,
+                "worker_pending_discarded": 0,
+                "worker_job_rejected": 0,
+                "candidate_registration_rejected": 51,
+                "jobs": 51,
+                "candidates": 51,
+                "decisions": 52
+              },
+              "jobs": [
+                {
+                  "job_id": 1,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 2,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 3,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 4,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 5,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 6,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 7,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 8,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 9,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 10,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 11,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 12,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 13,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 14,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 15,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 16,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 17,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 18,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 19,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 20,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 21,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 22,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 23,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 24,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 25,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 26,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 27,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 28,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 29,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 30,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 31,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 32,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 33,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 34,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 35,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 36,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 37,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 38,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 39,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 40,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 41,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 42,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 43,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 44,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 45,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 46,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 47,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 48,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 49,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 50,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                },
+                {
+                  "job_id": 51,
+                  "submit_count": 1,
+                  "bag_job_count": 1,
+                  "receipt_count": 1,
+                  "candidate_count": 1,
+                  "bag_candidate_count": 1,
+                  "job_publish_count": 1,
+                  "candidate_publish_count": 1,
+                  "registration_count": 1,
+                  "outcome_count": 0,
+                  "unexplained_steps": [],
+                  "receipt_proof": "full_job_echo"
+                }
+              ],
+              "issues": [],
+              "execute_qualified": false,
+              "storage": {
+                "storage": "mcap",
+                "actual_topic_counts": {
+                  "/p1/worker_capability": 82,
+                  "/clock": 665,
+                  "/wamv/sensors/position/ground_truth_odometry": 665,
+                  "/wamv/sensors/imu/imu/data": 665,
+                  "/path/reference": 14,
+                  "/path/reference_profile": 14,
+                  "/p1/execution_decision": 52,
+                  "/p1/solve_job": 51,
+                  "/p1/solve_candidate": 51,
+                  "/p1/stop": 7
+                },
+                "topic_types": {
+                  "/wamv/sensors/position/ground_truth_odometry": "nav_msgs/msg/Odometry",
+                  "/path/reference_profile": "std_msgs/msg/Float64MultiArray",
+                  "/path/reference": "nav_msgs/msg/Path",
+                  "/p1/solve_job": "usv_research_interfaces/msg/SolveJob",
+                  "/p1/worker_capability": "usv_research_interfaces/msg/WorkerCapability",
+                  "/p1/solve_candidate": "usv_research_interfaces/msg/SolveCandidate",
+                  "/p1/execution_decision": "usv_research_interfaces/msg/ExecutionDecision",
+                  "/clock": "rosgraph_msgs/msg/Clock",
+                  "/wamv/sensors/imu/imu/data": "sensor_msgs/msg/Imu",
+                  "/p1/stop": "std_msgs/msg/Bool"
+                },
+                "bag_time_semantics": "storage timestamp; never subtracted from CLOCK_MONOTONIC or sim"
+              },
+              "evidence_sha256": {
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/regulator_source.jsonl": "177444a5c572910d0d18cb4c9ce2ebd3d3ef1f0491e2d39fd3a4868438190209",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/worker_source.jsonl": "936dd6ed1c40955acfbfc36a23ec659c9978ec8364dc86c033e635a360b751c7",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/run_context.json": "96d7f5c13487fc92f863e64abbf0e3074f93b1acf6b1e3613356901384f9c523",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/verification_resource_base_v13/contract_report.json": "526776afbe527cef4c805a0ad424c1e0c287940f59353d5ae863dc2211408dd2",
+                "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/p1_resources_delay150_20261007_01/raw_bag/raw_bag_0.mcap": "d60d80927c117781d56a071935df419c140e174c472837dc728fe0843c6bc4ce"
+              }
+            },
+            "native_accepted": 0,
+            "delivery_returncode": 0
+          }
+        ],
+        "steps": [
+          {
+            "log": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_normal_01.runner.log",
+            "returncode": 0,
+            "sha256": "f01200fdf082fd52a276118f73cd3a32b636c1e2b5d6abda37b5816c7e499236"
+          },
+          {
+            "log": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_normal_01.base.log",
+            "returncode": 0,
+            "sha256": "fb98c242612f6bf2561dddc1cb97ee542210a067868ec8b1fce44cbafdf72873"
+          },
+          {
+            "log": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_normal_01.delivery.log",
+            "returncode": 0,
+            "sha256": "d775ac6dcda03d7a450507eca68ef25061c131a595329f4d59b0706c50a5ad00"
+          },
+          {
+            "log": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_delay150_01.runner.log",
+            "returncode": 0,
+            "sha256": "429cb526370c8f3ffc9f07fdc0febd8fdb0b8c21f854742a0eaaf39ef05a3318"
+          },
+          {
+            "log": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_delay150_01.base.log",
+            "returncode": 2,
+            "sha256": "f4e28cfb1dcaceee962eb28444fc0385949a3e300ee2ea3e5adc112e8220d966"
+          },
+          {
+            "log": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_delay150_01.delivery.log",
+            "returncode": 0,
+            "sha256": "b67cac7cd7776fd6275f66d456b5cda14adfd428407312a71e3e41cfe0a43737"
+          }
+        ],
+        "asset_final": {
+          "manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_prelaunch_assets_20261007.json",
+          "manifest_sha256": "d2a4b4d348fe30c05118e83fc057c591781c40a44379b4f8d952e5dfe5931a98",
+          "count": 1196,
+          "drift": []
+        },
+        "host_final": {
+          "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+          "monotonic_ns": 1126503446017948,
+          "existing_controller_gazebo_count": 0,
+          "unreadable_cmdline_count": 0
+        },
+        "execute_qualified": false,
+        "m2_complete": false,
+        "m0b_complete": false,
+        "m4_complete": false
+      }
+    },
+    "resource_v13_first_failed_build_20261007.json": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v13_first_failed_build_20261007.json",
+      "bytes": 549,
+      "sha256": "143791fd59603f0ec21e16d80a9ec023618c3531a5274ab3635455d01fc37a61",
+      "record": {
+        "binaries_after_failed_build": {
+          "p1_solver_worker": {
+            "sha256": "e78dd29dd86a329e5edf6a92f4bd1eac778ef1fe07dcabc78ddfb4095ffb028a",
+            "resolved": "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_solver_worker"
+          },
+          "p1_regulator": {
+            "sha256": "bf7671248b00895584adf7f014c3f42c85a7481fdbc1b6c128789ac884eb8cf8",
+            "resolved": "/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/p1_regulator"
+          }
+        },
+        "failure_log_sha256": "834ae069d742ac955886599bd57efb45543590ee5543cc3d86b1a9a7276081db"
+      }
+    },
+    "resource_v13_failed_size_test_20261007.json": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v13_failed_size_test_20261007.json",
+      "bytes": 1193,
+      "sha256": "2ce009304cc33b3c5a97294d172e243ce34f8c19c849bd583b8997f668717211",
+      "record": {
+        "original_failed_test_log_sha256": "728d5ce4831e645d6d9d4650824b3d5243071685dc27d6e304defd48b6352bf3",
+        "failed_xml": {
+          "test_p1_worker_liveness.gtest.xml": "757d4e2fbf8935733fb0b426433564bf22fec09b0f868fcfd21faf76067939b4",
+          "test_p1_resources.gtest.xml": "7b70eb3376866433f08e65dddd7e4ee465502b6993a1f7c2e66b5211dbfccb05",
+          "test_p1_admission.gtest.xml": "74569df2fea7a603494744af666ef0a52c2c53931c2f3c814b2eec92f645dc1e",
+          "test_p1_tick_barrier.gtest.xml": "68a0e637e88164da46b6844629c3022dfaf56554322da30194168d3d42463fcc",
+          "test_p1_preparation_barrier.gtest.xml": "318eb2517448730794e2502fc5326ae7aaa63919cda91e8ca18c829fcb3b079d",
+          "test_p1_capability_lease.gtest.xml": "a31c46f2b71d5638c8ba90f5e3975bf02cc847b7eae50bbad860e2e1b60d460d"
+        },
+        "reason": "installed get_serialized_size aligns empty sequence elements; independently tested returned buffer_length differs by four bytes",
+        "repair_changes_size_formula_not_test_criterion": true,
+        "binaries_before_size_repair": {
+          "p1_solver_worker": "d3197a9a7a16924e638d92e84961ba75e63aaf95d3a6545b3b5b1b9f5126925c",
+          "p1_regulator": "bf7671248b00895584adf7f014c3f42c85a7481fdbc1b6c128789ac884eb8cf8"
+        }
+      }
+    },
+    "resource_v13_deployment_20261007.json": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v13_deployment_20261007.json",
+      "bytes": 7615,
+      "sha256": "79b0f8547b0e9c3a4b7c823168255e0e229e562986a7c7e45179aa43ffba7f1b",
+      "record": {
+        "schema": "p1-resource-deployment-v1",
+        "host_preflight": {
+          "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+          "monotonic_ns": 1125969948991214,
+          "existing_controller_gazebo_count": 0,
+          "unreadable_cmdline_count": 0
+        },
+        "asset_precheck": {
+          "manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/scheduler_v28_prelaunch_assets_20261006.json",
+          "manifest_sha256": "952adef65c073044d2133b3638b988ccd7524138a65be750e1bf0c785a403fb7",
+          "count": 1123,
+          "drift": []
+        },
+        "old_sources": {
+          "protocol.hpp": "c26c0d7a6df0e5c09ac36496c7fbdd1f81be8f8ee007533528be982358629e6a",
+          "solver_worker.cpp": "faec32f6552a68eb761d695e70bf61ea462beea54c93d10ab7739ffb0640c9b3",
+          "regulator.cpp": "9ce41a8b28d6f954a533af4658fb9d05aaf3db8667faba6021252310e2aeea98",
+          "CMakeLists.txt": "b96b8f1c36cc88ecd3c24108868936cfd72bb8fcc854e68fc9e436dca90abaad"
+        },
+        "old_binaries": {
+          "p1_solver_worker": "e78dd29dd86a329e5edf6a92f4bd1eac778ef1fe07dcabc78ddfb4095ffb028a",
+          "p1_regulator": "2840550545057e5f71ce1d64ca8bc884c4c5ceed2771b4e1b1e2cc5f18e86efd"
+        },
+        "new_files": {
+          "safety/protocol.hpp": {
+            "sha256": "5cab0d978cb9ab3ebc08b649a7915e302b14a1723776750849ddda416c24457b",
+            "bytes": 6411
+          },
+          "safety/solver_worker.cpp": {
+            "sha256": "205f4b10a345d1bf52623acec81e65f2f4ef7ac46cd3698c491ae347e45b0298",
+            "bytes": 14461
+          },
+          "safety/regulator.cpp": {
+            "sha256": "77a7d3f5eec5d3717a3b91460bcd7fedece7246c5229cc1bb7a1cacd3c1cf8e1",
+            "bytes": 52876
+          },
+          "safety/CMakeLists.txt": {
+            "sha256": "96943d1c07f0a846805fb4d8239a8f3b6686bb82f588a29f25a5ff082d6ffe19",
+            "bytes": 2647
+          },
+          "safety/p1_resources.hpp": {
+            "sha256": "d7b7982d313ff53329df86925c172a722c058e7dc984a89d86adebf824e15ff0",
+            "bytes": 13020
+          },
+          "safety/test_p1_resources.cpp": {
+            "sha256": "d09461f86fcf7fe3976187623cb207c29acaf23fb3f58e9c094516d9ea613733",
+            "bytes": 7985
+          },
+          "runtime/p1_contract_revision.py": {
+            "sha256": "97fb9766238e0eb570d265ac0203564289cfa7f55adf056f6e1ef5f9491718e9",
+            "bytes": 3015
+          },
+          "runtime/test_contract_revision.py": {
+            "sha256": "3e42e46a59784ab7c439374d5476b502c2d0c2b0e117e89e2d6bc7ff4b66a64f",
+            "bytes": 10070
+          },
+          "runtime/run_no_output_calibration.py": {
+            "sha256": "48db472183bffe6d6ec13704fcf9162ddfa6b7fd5dab0da3a6e8854e267786ef",
+            "bytes": 40462
+          },
+          "runtime/check_resource_delivery.py": {
+            "sha256": "4759d6a6a18e59c409d27e54da5af3901404bbf6b6da0be2a3e543cfeaf3c56c",
+            "bytes": 9046
+          },
+          "runtime/test_resource_delivery.py": {
+            "sha256": "8a43938bc85272c29836994f9edff70abb412f383f86d59a5181f1efe9567ea2",
+            "bytes": 4923
+          },
+          "p1_shadow_contract_v5.json": {
+            "sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+            "bytes": 3910
+          },
+          "preflight_reflection_20261007_resources.md": {
+            "sha256": "2d55935fedce9cb0056fdb467666402a8a67d6387c6c58f226b51a746ee1b006",
+            "bytes": 2972
+          }
+        },
+        "old_runtime_files": {
+          "patch_watchdog_observation_v12.py": "9d0fed8f18187d894eaeed03ac03137ad5b2b16af4f5de4181808d8f9ae6011b",
+          "run_no_output_calibration.py": "c034dab794688dd0c9d55157c6cc6706469cea266d1a5349a75fd92913053be8",
+          "test_live_worker_loss.py": "ec2f8f797c2ac58d5b363ca02576565c542479416cc924d7efd0c8bc07339b49",
+          "test_scheduler_preparation.py": "961f51972ba69a6919807120648b01b85a7fdbee4cb2a3f3fcbe2e54da620d2e",
+          "owned_process_supervisor.py": "7b85044e270e463ff785c957417398ac5f24669aef3f6f9cdbaf7468bbde4173",
+          "p1_contract_revision.py": "a54e5edff884f87e3bdd1a91eab8ba676bf6ca04e1d952a07f6c6706a39b0692",
+          "test_live_loss_cleanup.py": "f8a43f3d99e9a98dd910fbd0c1a8e8a18faa6a5fff3bda290d854a1b7691cf16",
+          "run_time_task_matrix.py": "ae9b460c293e4e722508f5b0ef8514c96fb8a6fef5a677758d72ac9203da9521",
+          "test_worker_fault_matrix.py": "951a56bcf1ef335f07aa8a3c5336caa8dab4b60b01ad4eea48551c91e6eaa3dc",
+          "test_contract_revision.py": "22167cb4b57d32663eb8e293e559c44dca8d9b69ad7ddf316b79f0d676f49b28",
+          "candidate_fault_spec.py": "6c32e64474976d03ffc187140754923ca1b2b06f419bf055ad6fe60f4e011ff2",
+          "test_owned_process_supervisor.py": "dd61df35b1731f817124bdad12c6d3f78d3a6de9a942cd4cff3afe1dfcceaeec",
+          "check_scheduler_preparation.py": "e800a9b79bc2e260d229bc7ecdaa4ae42db0dec2991bbffb21f15cae5c87338c",
+          "test_check_p1_execution.py": "c3341fcf35d7001241836a3b533c024d7b5a6aae9d4bdcf0b0c09268a981d9ec",
+          "check_candidate_matrix.py": "9df990fe0d3481c3ac6423e64f89598d80f684aac10c6f418d2dca527bc9f9f1",
+          "p1_live_loss_cleanup.py": "8bc257d4536bc2ec7f00ba5e9a1d8346c0d12c8c2208eb330e34fa30d66f8f6b",
+          "p1_payload_digest.py": "80969c86cbe72aa238c24503be9d5d69c257ff111a2cc0a5787f966b4af4b6c5",
+          "p1_capability_observer_accounting.py": "93523bb8e0a6cc6e6a334c2f5ab1325d51f2f063141bc7a175b1e6bb698b9744",
+          "run_live_worker_loss.py": "9774f2423b5976456d218ed377a361818fcb5fe524eb74bfe76601d0660b0d83",
+          "test_regulator_fault_matrix.py": "a51ab6c6947bac638f8f03e6dd40ea88f27209b1b0f42ecd12853dcb49c19283",
+          "test_time_task_matrix.py": "a6da6c065c026fbcb8e7b5087ceaf92b67e675fd9673c2796129d3a2aaba20ef",
+          "check_p1_execution.py": "557b60d6efa69f28e288b3078f4549654f3e65f4a68b5abeb8e61bed104fc3fa",
+          "test_watchdog_observation.py": "b268edd7d24f96475e949768228be1157218b6fb28c9727e08d7f5a6bfcfffeb",
+          "test_capability_observer_accounting.py": "6d0a9c0325b9a96c6ccb658919e5ddf75648011cabb5c164c51c8b90e9efa6b5",
+          "run_candidate_matrix.py": "6b01bb8fdfbbd8acc52bbc63f30f03021801aa8d09aff45c8172ae616ac3b51f",
+          "test_preparation_pending.py": "35465233e4d65aebb32783751e76f32715fbb3ba06342ecdeddd08c9d7e8f327",
+          "check_regulator_fault_matrix.py": "d50260927af8595cfcba387066c3151ffdbbfd5ac8e85004514c66081297e46c",
+          "test_publication_history.py": "7862cb5330332112042cc68c25981d31b80e6708710c97775d5ac527edbfc684",
+          "check_live_worker_loss.py": "e270d82e28ca6fd0630ecab34755f0dd6eed223b2c52a83150369cc184f4f974",
+          "run_preparation_pending.py": "be6e9d8d1b4f332d006c2518e80444aa67d2d975e9735927bfd66cffe860f76c",
+          "check_preparation_pending.py": "e207b72241c62992b31209409d18a5994cf865e0ca0f308e279c1bc6abba576a",
+          "test_vrx_runtime_gates.py": "b6a56292ac934bb60b7fc6cb17f8db61718e86d131f05c280d05dc3330ca9e43",
+          "check_time_task_matrix.py": "c4c02f690b5dd67afda5263b97f9d4e0bb891673afc5791158fd75c1262cba7c",
+          "run_worker_fault_matrix.py": "3d38813af7fd9af79481434d940bdc98b456b971a77158603fdfb22b1c52d1f3",
+          "run_regulator_fault_matrix.py": "0d8582698035d0dcc1b29596281112a570f3cea1d47cbf47e08d3333ef785d5c",
+          "run_p1_vrx_validation.py": "27e9eaa4e24b7a7fd4191f7892edf8929a2d4c0ccd0caeb14b56f8fc0c0e855b",
+          "test_candidate_matrix.py": "37a68500aff0c10c17d37385a1b4ec2254d04e9b724d1dd257a748ce224d002a",
+          "test_fault_mechanisms.py": "e934fb8fc0e762f4751dae7beea0fdd806b5bb0fcb4d8782b33ddc63fb882d6a",
+          "check_worker_fault_matrix.py": "de46d02498b629997f3eca5d73933d70d7deebc89f6c923fb75d78929f34fc3e"
+        },
+        "new_runtime_files": 41,
+        "source_archive": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_v13_resource_20261007",
+        "runtime": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_runtime_v29_resource_20261007",
+        "backup": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/v12_before_resource_closure_20261007",
+        "no_ros_nodes_created": true,
+        "execute_qualified": false
+      }
+    }
+  },
+  "logs": {
+    "resource_v29_python_tests_20261007.log": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_python_tests_20261007.log",
+      "bytes": 38112,
+      "sha256": "a4b9c2d2ef516cf987b899ae9970bab4300c6592030afe121ca861e2691ba190",
+      "tail": "_same_identity_fails (test_resource_delivery.DeliveryRisks.test_duplicate_same_identity_fails) ... ok\ntest_foreign_same_id_receipt_fails (test_resource_delivery.DeliveryRisks.test_foreign_same_id_receipt_fails) ... ok\ntest_full_closed_chain (test_resource_delivery.DeliveryRisks.test_full_closed_chain) ... ok\ntest_missing_rejected_registration_is_not_ignored (test_resource_delivery.DeliveryRisks.test_missing_rejected_registration_is_not_ignored) ... ok\ntest_publish_return_unknown_is_not_success (test_resource_delivery.DeliveryRisks.test_publish_return_unknown_is_not_success) ... ok\ntest_receiver_missing_but_recorder_present (test_resource_delivery.DeliveryRisks.test_receiver_missing_but_recorder_present) ... ok\ntest_same_id_different_payload_fails (test_resource_delivery.DeliveryRisks.test_same_id_different_payload_fails) ... ok\ntest_superseded_is_counted_separately (test_resource_delivery.DeliveryRisks.test_superseded_is_counted_separately) ... ok\ntest_weak_base_facts_cannot_complete_chain (test_resource_delivery.DeliveryRisks.test_weak_base_facts_cannot_complete_chain) ... ok\ntest_worker_received_without_outcome (test_resource_delivery.DeliveryRisks.test_worker_received_without_outcome) ... ok\ntest_cancelled_or_nonempty_premise_missing_rejected (test_scheduler_preparation.PreparationProof.test_cancelled_or_nonempty_premise_missing_rejected) ... ok\ntest_latest_snapshot_and_original_deadline_required (test_scheduler_preparation.PreparationProof.test_latest_snapshot_and_original_deadline_required) ... ok\ntest_natural_latest_pending_release (test_scheduler_preparation.PreparationProof.test_natural_latest_pending_release) ... ok\ntest_old_item_submission_or_missing_reject_rejected (test_scheduler_preparation.PreparationProof.test_old_item_submission_or_missing_reject_rejected) ... ok\ntest_tick_independence_and_recovery_required (test_scheduler_preparation.PreparationProof.test_tick_independence_and_recovery_required) ... ok\ntest_wrong_replacement_chain_and_capacity_rejected (test_scheduler_preparation.PreparationProof.test_wrong_replacement_chain_and_capacity_rejected) ... ok\ntest_actual_ready_skip_and_recovery (test_scheduler_preparation.SchedulerProof.test_actual_ready_skip_and_recovery) ... ok\ntest_callbacks_and_native_recovery_required (test_scheduler_preparation.SchedulerProof.test_callbacks_and_native_recovery_required) ... ok\ntest_requires_ready_candidate_premise (test_scheduler_preparation.SchedulerProof.test_requires_ready_candidate_premise) ... ok\ntest_stale_activation_or_replay_rejected (test_scheduler_preparation.SchedulerProof.test_stale_activation_or_replay_rejected) ... ok\ntest_terminal_or_cancelled_or_uncleared_rejected (test_scheduler_preparation.SchedulerProof.test_terminal_or_cancelled_or_uncleared_rejected) ... ok\ntest_wrong_due_and_absolute_plan_rejected (test_scheduler_preparation.SchedulerProof.test_wrong_due_and_absolute_plan_rejected) ... ok\ntest_after_target (test_time_task_matrix.TimeTaskEvidence.test_after_target) ... ok\ntest_bad_reason (test_time_task_matrix.TimeTaskEvidence.test_bad_reason) ... ok\ntest_before_deadline (test_time_task_matrix.TimeTaskEvidence.test_before_deadline) ... ok\ntest_callback_after_target (test_time_task_matrix.TimeTaskEvidence.test_callback_after_target) ... ok\ntest_callback_before_deadline (test_time_task_matrix.TimeTaskEvidence.test_callback_before_deadline) ... ok\ntest_clear_passes (test_time_task_matrix.TimeTaskEvidence.test_clear_passes) ... ok\ntest_generation_not_changed (test_time_task_matrix.TimeTaskEvidence.test_generation_not_changed) ... ok\ntest_late_ready (test_time_task_matrix.TimeTaskEvidence.test_late_ready) ... ok\ntest_missing_fault (test_time_task_matrix.TimeTaskEvidence.test_missing_fault) ... ok\ntest_no_recovery (test_time_task_matrix.TimeTaskEvidence.test_no_recovery) ... ok\ntest_not_ready (test_time_task_matrix.TimeTaskEvidence.test_not_ready) ... ok\ntest_old_activated (test_time_task_matrix.TimeTaskEvidence.test_old_activated) ... ok\ntest_old_stamp_not_relabelled_as_fresh (test_time_task_matrix.TimeTaskEvidence.test_old_stamp_not_relabelled_as_fresh) ... ok\ntest_physical_old_stamp_with_fresh_receipt (test_time_task_matrix.TimeTaskEvidence.test_physical_old_stamp_with_fresh_receipt) ... ok\ntest_reset_anchor_silently_recovered (test_time_task_matrix.TimeTaskEvidence.test_reset_anchor_silently_recovered) ... ok\ntest_reset_epoch_missing (test_time_task_matrix.TimeTaskEvidence.test_reset_epoch_missing) ... ok\ntest_reset_new_job (test_time_task_matrix.TimeTaskEvidence.test_reset_new_job) ... ok\ntest_reset_passes (test_time_task_matrix.TimeTaskEvidence.test_reset_passes) ... ok\ntest_selected_digest (test_time_task_matrix.TimeTaskEvidence.test_selected_digest) ... ok\ntest_short_observation (test_time_task_matrix.TimeTaskEvidence.test_short_observation) ... ok\ntest_too_few_decisions (test_time_task_matrix.TimeTaskEvidence.test_too_few_decisions) ... ok\ntest_wrong_native (test_time_task_matrix.TimeTaskEvidence.test_wrong_native) ... ok\ntest_changed_command_cannot_use_old_identity_exclusion (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_changed_command_cannot_use_old_identity_exclusion) ... ok\ntest_constructor_records_unknown_environment_without_granting_ownership (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_constructor_records_unknown_environment_without_granting_ownership) ... ok\ntest_each_parameter_dump_has_bounded_independent_discovery (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_each_parameter_dump_has_bounded_independent_discovery) ... ok\ntest_new_same_uid_inaccessible_pid_fails (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_new_same_uid_inaccessible_pid_fails) ... ok\ntest_other_uid_remains_unowned_and_unsignalled (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_other_uid_remains_unowned_and_unsignalled) ... ok\ntest_pid_reuse_and_parent_session_change_fail (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_pid_reuse_and_parent_session_change_fail) ... ok\ntest_prelaunch_context_does_not_access_uncreated_owned_tree (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_prelaunch_context_does_not_access_uncreated_owned_tree) ... ok\ntest_readable_scope_requires_both_domain_and_partition (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_readable_scope_requires_both_domain_and_partition) ... ok\ntest_tracked_owned_pid_cannot_use_preexisting_exclusion (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_tracked_owned_pid_cannot_use_preexisting_exclusion) ... ok\ntest_unchanged_preexisting_unreadable_identity_is_observation_only (test_vrx_runtime_gates.ExistingEnvironmentRisks.test_unchanged_preexisting_unreadable_identity_is_observation_only) ... ok\ntest_diagnostics_inside_body_are_not_arbitrarily_stripped (test_vrx_runtime_gates.ParameterDocumentRisks.test_diagnostics_inside_body_are_not_arbitrarily_stripped) ... ok\ntest_extra_root_or_malformed_parameter_mapping_rejected (test_vrx_runtime_gates.ParameterDocumentRisks.test_extra_root_or_malformed_parameter_mapping_rejected) ... ok\ntest_missing_duplicate_and_foreign_header_rejected (test_vrx_runtime_gates.ParameterDocumentRisks.test_missing_duplicate_and_foreign_header_rejected) ... ok\ntest_warning_prefix_preserved_outside_exact_parameter_body (test_vrx_runtime_gates.ParameterDocumentRisks.test_warning_prefix_preserved_outside_exact_parameter_body) ... ok\ntest_both_actual_named_single_owners_are_ready (test_vrx_runtime_gates.PhysicalDiscoveryRisks.test_both_actual_named_single_owners_are_ready) ... ok\ntest_extra_foreign_or_wrong_type_is_immediate_failure (test_vrx_runtime_gates.PhysicalDiscoveryRisks.test_extra_foreign_or_wrong_type_is_immediate_failure) ... ok\ntest_missing_or_unknown_identity_waits_without_granting_ownership (test_vrx_runtime_gates.PhysicalDiscoveryRisks.test_missing_or_unknown_identity_waits_without_granting_ownership) ... ok\ntest_owned_legacy_exit_is_not_discovery_readiness (test_vrx_runtime_gates.PhysicalDiscoveryRisks.test_owned_legacy_exit_is_not_discovery_readiness) ... ok\ntest_confirmation_deadline_is_inclusive_and_overdue_fails (test_watchdog_observation.WatchdogObservationRisks.test_confirmation_deadline_is_inclusive_and_overdue_fails) ... ok\ntest_delayed_regulator_confirmation_is_in_finite_observation_window (test_watchdog_observation.WatchdogObservationRisks.test_delayed_regulator_confirmation_is_in_finite_observation_window) ... ok\ntest_equality_is_not_expiry_and_external_expiry_needs_regulator (test_watchdog_observation.WatchdogObservationRisks.test_equality_is_not_expiry_and_external_expiry_needs_regulator) ... ok\ntest_stale_or_future_decision_cannot_confirm_watchdog (test_watchdog_observation.WatchdogObservationRisks.test_stale_or_future_decision_cannot_confirm_watchdog) ... ok\ntest_actual_message_loss (test_worker_fault_matrix.EvidenceTests.test_actual_message_loss) ... ok\ntest_bad_pid_identity (test_worker_fault_matrix.EvidenceTests.test_bad_pid_identity) ... ok\ntest_canonical_order_does_not_change_identity (test_worker_fault_matrix.EvidenceTests.test_canonical_order_does_not_change_identity) ... ok\ntest_complete_queue_fixture (test_worker_fault_matrix.EvidenceTests.test_complete_queue_fixture) ... ok\ntest_expired_task_invoked (test_worker_fault_matrix.EvidenceTests.test_expired_task_invoked) ... ok\ntest_float_bits_preserve_signed_zero (test_worker_fault_matrix.EvidenceTests.test_float_bits_preserve_signed_zero) ... ok\ntest_foreign_pid (test_worker_fault_matrix.EvidenceTests.test_foreign_pid) ... ok\ntest_full_prediction_tamper (test_worker_fault_matrix.EvidenceTests.test_full_prediction_tamper) ... ok\ntest_missing_ack (test_worker_fault_matrix.EvidenceTests.test_missing_ack) ... ok\ntest_missing_asset_post_guard (test_worker_fault_matrix.EvidenceTests.test_missing_asset_post_guard) ... ok\ntest_native_after_deadline (test_worker_fault_matrix.EvidenceTests.test_native_after_deadline) ... ok\ntest_nonfinite_stimulus_is_stable (test_worker_fault_matrix.EvidenceTests.test_nonfinite_stimulus_is_stable) ... ok\ntest_one_last_history_value_changes_content (test_worker_fault_matrix.EvidenceTests.test_one_last_history_value_changes_content) ... ok\ntest_pending_capacity (test_worker_fault_matrix.EvidenceTests.test_pending_capacity) ... ok\ntest_replacement_loss (test_worker_fault_matrix.EvidenceTests.test_replacement_loss) ... ok\ntest_residual_process (test_worker_fault_matrix.EvidenceTests.test_residual_process) ... ok\ntest_role_ambiguity (test_worker_fault_matrix.EvidenceTests.test_role_ambiguity) ... ok\ntest_semantic_payload_tamper (test_worker_fault_matrix.EvidenceTests.test_semantic_payload_tamper) ... ok\ntest_source_job_content_changed (test_worker_fault_matrix.EvidenceTests.test_source_job_content_changed) ... ok\ntest_terminal_counter_mismatch (test_worker_fault_matrix.EvidenceTests.test_terminal_counter_mismatch) ... ok\ntest_unverified_executable (test_worker_fault_matrix.EvidenceTests.test_unverified_executable) ... ok\ntest_death_has_unknown_source_even_if_cleanup_passes (test_worker_fault_matrix.NumericalAndDeathEvidenceTests.test_death_has_unknown_source_even_if_cleanup_passes) ... ok\ntest_death_without_owned_signal_is_not_proven (test_worker_fault_matrix.NumericalAndDeathEvidenceTests.test_death_without_owned_signal_is_not_proven) ... ok\ntest_endpoint_observation_and_test_failure_are_independent (test_worker_fault_matrix.NumericalAndDeathEvidenceTests.test_endpoint_observation_and_test_failure_are_independent) ... ok\ntest_native_success_cannot_be_claimed_numerical_failure (test_worker_fault_matrix.NumericalAndDeathEvidenceTests.test_native_success_cannot_be_claimed_numerical_failure) ... ok\ntest_numerical_failure_is_quarantined (test_worker_fault_matrix.NumericalAndDeathEvidenceTests.test_numerical_failure_is_quarantined) ... ok\ntest_post_terminal_job_cannot_be_silently_dropped (test_worker_fault_matrix.NumericalAndDeathEvidenceTests.test_post_terminal_job_cannot_be_silently_dropped) ... ok\n\n----------------------------------------------------------------------\nRan 300 tests in 0.593s\n\nOK\n"
+    },
+    "resource_v13_cpp_results_size_repair_20261007.log": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v13_cpp_results_size_repair_20261007.log",
+      "bytes": 51,
+      "sha256": "a45260c21582d95dc21a3f89a2d4cace30f625159e99c71a22291c1646d25076",
+      "tail": "Summary: 85 tests, 0 errors, 0 failures, 0 skipped\n"
+    },
+    "resource_v13_build_20261007.log": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v13_build_20261007.log",
+      "bytes": 4779,
+      "sha256": "834ae069d742ac955886599bd57efb45543590ee5543cc3d86b1a9a7276081db",
+      "tail": "Starting >>> usv_research_safety_cpp\n--- stderr: usv_research_safety_cpp\n/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/solver_worker.cpp: In member function \u2018void Worker::work()\u2019:\n/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/solver_worker.cpp:90:30: error: request for member \u2018size\u2019 in \u2018answer.std::pair<Eigen::Matrix<double, 2, 1>, usv_mpc::SolveInfo>::second.usv_mpc::SolveInfo::error\u2019, which is of non-class type \u2018char [256]\u2019\n   90 |       if(answer.second.error.size()>256){event({{\"type\",\"native_result_resource_oversize\"},{\"job_id\",p.job.job_id},{\"field\",\"candidate.reason\"},{\"observed\",answer.second.error.size()},{\"limit\",256}});result.reason=\"native_result_resource_oversize\";result.success=false;}else result.reason=answer.second.error;\n      |                              ^~~~\n/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/solver_worker.cpp:90:177: error: request for member \u2018size\u2019 in \u2018answer.std::pair<Eigen::Matrix<double, 2, 1>, usv_mpc::SolveInfo>::second.usv_mpc::SolveInfo::error\u2019, which is of non-class type \u2018char [256]\u2019\n   90 |       if(answer.second.error.size()>256){event({{\"type\",\"native_result_resource_oversize\"},{\"job_id\",p.job.job_id},{\"field\",\"candidate.reason\"},{\"observed\",answer.second.error.size()},{\"limit\",256}});result.reason=\"native_result_resource_oversize\";result.success=false;}else result.reason=answer.second.error;\n      |                                                                                                                                                                                 ^~~~\n/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/solver_worker.cpp:90:47: error: cannot convert \u2018<brace-enclosed initializer list>\u2019 to \u2018const p1::Json&\u2019 {aka \u2018const nlohmann::json_abi_v3_11_3::basic_json<>&\u2019}\n   90 |       if(answer.second.error.size()>256){event({{\"type\",\"native_result_resource_oversize\"},{\"job_id\",p.job.job_id},{\"field\",\"candidate.reason\"},{\"observed\",answer.second.error.size()},{\"limit\",256}});result.reason=\"native_result_resource_oversize\";result.success=false;}else result.reason=answer.second.error;\n      |                                          ~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/solver_worker.cpp:35:31: note:   initializing argument 1 of \u2018void Worker::event(const p1::Json&, bool)\u2019\n   35 |   void event(const p1::Json & d,bool flush=false){std::lock_guard<std::mutex> l(log_mutex_);file_<<d.dump()<<'\\n';if(flush)file_.flush();if(!file_)fatal_=true;}\n      |              ~~~~~~~~~~~~~~~~~^\n/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/regulator.cpp: In member function \u2018void Regulator::tick_loop()\u2019:\n/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/regulator.cpp:307:472: warning: narrowing conversion of \u2018planned\u2019 from \u2018long unsigned int\u2019 to \u2018int64_t\u2019 {aka \u2018long int\u2019} [-Wnarrowing]\n  307 |         std::lock_guard<std::mutex> l(mutex_);const auto enqueue_now=p1::monotonic_ns();check_worker_locked(enqueue_now);auto next=snapshot_locked(enqueue_now);if(!stopping_&&!worker_unusable_&&worker_valid_&&!sink_->failed()&&eligible(next,next.freeze).empty()){std::lock_guard<std::mutex> q(prep_mutex_);if(pending_)sink_->add({{\"type\",\"prepare_pending_replaced\"},{\"old_target_tick\",pending_->tick+1},{\"replacement_target_tick\",tick+1}});pending_=Preparation{next,tick,planned};if(preparation_barrier_active_)sink_->add({{\"type\",\"diagnostic_preparation_pending_enqueued\"},{\"target_tick\",tick+1},{\"enqueued_ns\",enqueue_now},{\"pending_count\",1}});prep_cv_.notify_one();}}\n      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        ^~~~~~~\ngmake[2]: *** [CMakeFiles/p1_solver_worker.dir/build.make:76\uff1aCMakeFiles/p1_solver_worker.dir/solver_worker.cpp.o] \u9519\u8bef 1\ngmake[1]: *** [CMakeFiles/Makefile2:169\uff1aCMakeFiles/p1_solver_worker.dir/all] \u9519\u8bef 2\ngmake[1]: *** \u6b63\u5728\u7b49\u5f85\u672a\u5b8c\u6210\u7684\u4efb\u52a1....\ngmake: *** [Makefile:146\uff1aall] \u9519\u8bef 2\n---\nFailed   <<< usv_research_safety_cpp [48.7s, exited with code 2]\n[Processing: usv_research_safety_cpp]\n\nSummary: 0 packages finished [49.3s]\n  1 package failed: usv_research_safety_cpp\n  1 package had stderr output: usv_research_safety_cpp\n"
+    },
+    "resource_v13_cpp_results_20261007.log": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v13_cpp_results_20261007.log",
+      "bytes": 4517,
+      "sha256": "728d5ce4831e645d6d9d4650824b3d5243071685dc27d6e304defd48b6352bf3",
+      "tail": "build/usv_research_safety_cpp/Testing/20261007-0356/Test.xml: 6 tests, 0 errors, 1 failure, 0 skipped\n- test_p1_resources\n  <<< failure message\n    -- run_test.py: invoking following command in '/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp':\n     - /home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/test_p1_resources --gtest_output=xml:/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/test_results/usv_research_safety_cpp/test_p1_resources.gtest.xml\n    Running main() from /opt/ros/jazzy/src/gtest_vendor/src/gtest_main.cc\n    [==========] Running 15 tests from 1 test suite.\n    [----------] Global test environment set-up.\n    [----------] 15 tests from Resources\n    [ RUN      ] Resources.FixedNativeErrorBufferRequiresTerminatorWithinCapacity\n    [       OK ] Resources.FixedNativeErrorBufferRequiresTerminatorWithinCapacity (0 ms)\n    [ RUN      ] Resources.InstalledSerializationAtFullJobAndCandidateBoundary\n    [       OK ] Resources.InstalledSerializationAtFullJobAndCandidateBoundary (241 ms)\n    [ RUN      ] Resources.ActualSizeMatchesSerializationAcrossPaddingAndHistory\n    /home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp:29: Failure\n    Expected equality of these values:\n      serialized(j)\n        Which is: 1948\n      p1::job_cdr_bytes(j)\n        Which is: 1944\n    \n    [  FAILED  ] Resources.ActualSizeMatchesSerializationAcrossPaddingAndHistory (0 ms)\n    [ RUN      ] Resources.EveryJobStringAllowsBoundaryAndRejectsOneByteOver\n    [       OK ] Resources.EveryJobStringAllowsBoundaryAndRejectsOneByteOver (0 ms)\n    [ RUN      ] Resources.EveryCandidateStringRejectsOverLimitBeforeCopy\n    [       OK ] Resources.EveryCandidateStringRejectsOverLimitBeforeCopy (0 ms)\n    [ RUN      ] Resources.EveryCapabilityStringRejectsOverLimit\n    [       OK ] Resources.EveryCapabilityStringRejectsOverLimit (0 ms)\n    [ RUN      ] Resources.Utf8ReasonUsesBytes\n    [       OK ] Resources.Utf8ReasonUsesBytes (0 ms)\n    [ RUN      ] Resources.HistoryUsesContractCapacityAndDoesNotReplaceShapeGate\n    [       OK ] Resources.HistoryUsesContractCapacityAndDoesNotReplaceShapeGate (0 ms)\n    [ RUN      ] Resources.ContractMustBeIntegralAndWithinHardCaps\n    [       OK ] Resources.ContractMustBeIntegralAndWithinHardCaps (7 ms)\n    [ RUN      ] Resources.ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected\n    [       OK ] Resources.ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected (0 ms)\n    [ RUN      ] Resources.ContractPoliciesAreExact\n    [       OK ] Resources.ContractPoliciesAreExact (0 ms)\n    [ RUN      ] Resources.SmallerCacheDoesNotShrinkWireSchemaBudget\n    [       OK ] Resources.SmallerCacheDoesNotShrinkWireSchemaBudget (0 ms)\n    [ RUN      ] Resources.PathMetadataBoundaryAndCountRejection\n    [       OK ] Resources.PathMetadataBoundaryAndCountRejection (0 ms)\n    [ RUN      ] Resources.ProfileDimensionsLabelsAndDataBoundaries\n    [       OK ] Resources.ProfileDimensionsLabelsAndDataBoundaries (0 ms)\n    [ RUN      ] Resources.ExistingProducerLayoutsRemainAllowedIncludingClear\n    [       OK ] Resources.ExistingProducerLayoutsRemainAllowedIncludingClear (0 ms)\n    [----------] 15 tests from Resources (249 ms total)\n    \n    [----------] Global test environment tear-down\n    [==========] 15 tests from 1 test suite ran. (249 ms total)\n    [  PASSED  ] 14 tests.\n    [  FAILED  ] 1 test, listed below:\n    [  FAILED  ] Resources.ActualSizeMatchesSerializationAcrossPaddingAndHistory\n    \n     1 FAILED TEST\n    -- run_test.py: return code 1\n    -- run_test.py: inject classname prefix into gtest result file '/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/test_results/usv_research_safety_cpp/test_p1_resources.gtest.xml'\n    -- run_test.py: verify result file '/home/trevor/USV/usv_mpc_ws/build/usv_research_safety_cpp/test_results/usv_research_safety_cpp/test_p1_resources.gtest.xml'\n  >>>\nbuild/usv_research_safety_cpp/test_results/usv_research_safety_cpp/test_p1_resources.gtest.xml: 15 tests, 0 errors, 1 failure, 0 skipped\n- usv_research_safety_cpp.Resources ActualSizeMatchesSerializationAcrossPaddingAndHistory (/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp:28)\n  <<< failure message\n    /home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp:29\n    Expected equality of these values:\n      serialized(j)\n        Which is: 1948\n      p1::job_cdr_bytes(j)\n        Which is: 1944\n  >>>\n\nSummary: 85 tests, 0 errors, 2 failures, 0 skipped\n"
+    }
+  },
+  "python_tests": 300
+}

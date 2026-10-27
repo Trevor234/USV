@@ -1,0 +1,75 @@
+--- a/experimental_model/model_transaction_v1.hpp
++++ b/experimental_model/model_transaction_v1.hpp
+@@ -22,6 +22,7 @@
+ #include <acados_c/ocp_nlp_interface.h>
+ #include "acados_solver_usv_dyn_nmpc.h"
+ #include "usv_mpc_cpp/utils.hpp"
++#include "usv_mpc_cpp/p_global_apply.hpp"
+ #include <Eigen/Dense>
+ #include <array>
+ #include <algorithm>
+@@ -115,7 +116,10 @@
+     state_ = TransactionState::FAULTED; has_committed_ = false;
+     try {
+       ++stats_.setter_calls;
+-      if (api_.set_global(capsule_, const_cast<double *>(pg.data()), NPG) != 0) return false;
++      if (!usv_mpc::p_global::apply_with(capsule_, pg,
++          [this](auto * capsule, double * values, int size) {
++            return api_.set_global(capsule, values, size);
++          }).ok()) return false;
+       if (!warm_.at(staged_).has) {
+         ++stats_.reset_calls;
+         if (api_.reset(capsule_, 1) != 0) return false;
+--- a/experimental_model/test_f6_model_transaction.cpp
++++ b/experimental_model/test_f6_model_transaction.cpp
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: MIT
+ // F6 limited model transaction harness (batch 107 design, batch 108 run).
+ // Native, no ROS context, no codegen, no GP/PPO. Drives the real vendored
+-// acados C API through model_transaction_v1.hpp and compares against real
+-// AcadosBackend instances (production class, unmodified). One registered
++// acados C API through model_transaction_v1.hpp and compares against the freshly compiled
++// checked_init AcadosBackend source candidate. One registered
+ // case per invocation; result.json carries per-assertion evidence.
+ #include "model_transaction_v1.hpp"
+ #include "usv_mpc_cpp/acados_backend.hpp"
+@@ -28,19 +28,7 @@
+   return p;
+ }
+ std::array<double, 30> make_p_global(const MpcParams & p) {
+-  // Layout pinned to acados_backend.cpp L45-67: 19 hydro + 6 Q + 2 R + 2 Rd + 1 Qf.
+-  std::array<double, 30> pg{};
+-  const auto & h = p.hydro;
+-  pg[0] = h.mass; pg[1] = h.Iz; pg[2] = h.xg; pg[3] = h.d_thruster;
+-  pg[4] = h.Xu_dot; pg[5] = h.Yv_dot; pg[6] = h.Yr_dot; pg[7] = h.Nv_dot;
+-  pg[8] = h.Nr_dot; pg[9] = h.Xu; pg[10] = h.Yv; pg[11] = h.Yr;
+-  pg[12] = h.Nv; pg[13] = h.Nr; pg[14] = h.Xuu; pg[15] = h.Yvv;
+-  pg[16] = h.Yrr; pg[17] = h.Nvv; pg[18] = h.Nrr;
+-  for (int i = 0; i < 6; ++i) pg[19 + i] = p.Q_diag(i);
+-  pg[25] = p.R_diag(0); pg[26] = p.R_diag(1);
+-  pg[27] = p.Rd_diag(0); pg[28] = p.Rd_diag(1);
+-  pg[29] = p.Qf_scale;
+-  return pg;
++  return usv_mpc::p_global::pack(p);
+ }
+ Eigen::MatrixXd ref_tick(int k) {          // .05 straight, 6 x 21
+   Eigen::MatrixXd R(6, 21);
+@@ -218,6 +206,7 @@
+     Json result = {{"schema", "F6-model-transaction/v1"}, {"case", casename}, {"passed", all_ok},
+                    {"assertions", asserts}, {"assertion_count", asserts.size()}, {"checks", checks},
+                    {"tolerance", TOL},
++                   {"comparison_scope", "fresh checked_init source snapshot, not an installed solver archive"},
+                    {"m1_perturbations", {{"mass", {14.2, 15.0}}, {"Xu", {-2.272063, -2.4}},
+                                           {"Nr", {-4.286144, -4.4}}}},
+                    {"ROS_context_created", false}, {"actuator_endpoints_created", false},
+--- a/experimental_model/test_f6_state_v2.cpp
++++ b/experimental_model/test_f6_state_v2.cpp
+@@ -91,7 +91,7 @@
+     require(!std::filesystem::exists(out),"fresh output");std::filesystem::create_directories(out);
+     state_case(argv[1]);Json result={{"case",argv[1]},{"passed",all_ok},{"assertions",asserts},
+       {"real_C_entries",c_entries.load()},{"adapter_failure_is_native_failure",false},
+-      {"comparison_scope","fixed inputs vs pinned installed library, not current production source"},
++      {"comparison_scope","fixed inputs vs freshly compiled checked_init source snapshot; generated C O1, C++ O2; no production landing"},
+       {"stage_qualified",false},{"ROS_context_created",false}};
+     std::ofstream f(out/"result.json");f<<result.dump(2)<<'\n';return all_ok?0:2;
+   }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 3;}

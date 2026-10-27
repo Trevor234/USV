@@ -1,0 +1,8 @@
+{
+  "before": "bf5cf43bc55b5329c8d3a75b49523368538ac769d9b1a385d062e5347024ef8a",
+  "after": "ab2c3258a2180c059eff0bd9f7b64f95a65c97c05fba7454578eedda10ece5d3",
+  "expected_changed_file": [
+    "check_resource_delivery.py"
+  ],
+  "runtime_python_files": 41
+}

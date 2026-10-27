@@ -1,0 +1,719 @@
+{
+  "Native_assertions": 117,
+  "Native_cases": 14,
+  "compiler_dependency_inputs": 1403,
+  "component_elapsed_seconds": 73.66976969101233,
+  "current_delivery_authority": "delivery_verification.json",
+  "current_delivery_pending_at_QA": true,
+  "execute_qualified": false,
+  "final_protection_sha256": "dc8463debd2ec50a317e24e1de557b6de7e6f20c32850a69ca064b86c45ff0d4",
+  "fixed_file_count": 172,
+  "fixed_files": {
+    "CURRENT.md": {
+      "bytes": 1694,
+      "sha256": "b9f59d761a725b7ba5684a839b0390085d1e236c69e76d5312a447bc19905bff"
+    },
+    "author/common/c36_runtime_adapter.hpp": {
+      "bytes": 4275,
+      "sha256": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c"
+    },
+    "author/common/c38_diagnostic_gate.hpp": {
+      "bytes": 7504,
+      "sha256": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882"
+    },
+    "author/common/command_anchor_v2.hpp": {
+      "bytes": 15733,
+      "sha256": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e"
+    },
+    "author/common/owned_peer_c36_v1.hpp": {
+      "bytes": 22381,
+      "sha256": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab"
+    },
+    "author/common/owned_worker_peer_c37_v1.hpp": {
+      "bytes": 15459,
+      "sha256": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551"
+    },
+    "author/common/p1_create_only_atomic.hpp": {
+      "bytes": 2937,
+      "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+    },
+    "author/common/p1_owned_identity.hpp": {
+      "bytes": 12545,
+      "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+    },
+    "author/observer/CMakeLists.txt": {
+      "bytes": 1727,
+      "sha256": "0c2aea2ad342f23b9666429aa17f2e6c1eac14e9c2fffc486fb19d5877803e90"
+    },
+    "author/observer/src/shadow/activation_sensor_history_v1.hpp": {
+      "bytes": 3466,
+      "sha256": "78482091d680284dfdb111a39a960ef2557c95e770e109fb271d82895ec01260"
+    },
+    "author/observer/src/shadow/callback_raw_v4.hpp": {
+      "bytes": 1931,
+      "sha256": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398"
+    },
+    "author/observer/src/shadow/p1_admission.hpp": {
+      "bytes": 8297,
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+    },
+    "author/observer/src/shadow/p1_capability_lease.hpp": {
+      "bytes": 1020,
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c"
+    },
+    "author/observer/src/shadow/p1_clock_window.hpp": {
+      "bytes": 1902,
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc"
+    },
+    "author/observer/src/shadow/p1_d0_observation.hpp": {
+      "bytes": 7522,
+      "sha256": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f"
+    },
+    "author/observer/src/shadow/p1_diag_sink.hpp": {
+      "bytes": 5305,
+      "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79"
+    },
+    "author/observer/src/shadow/p1_full_contract.hpp": {
+      "bytes": 12347,
+      "sha256": "badc16c89cb30e563049d66d853b5d31718427065c6d08d517f0f82e88d35abe"
+    },
+    "author/observer/src/shadow/p1_preparation_barrier.hpp": {
+      "bytes": 723,
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc"
+    },
+    "author/observer/src/shadow/p1_resources.hpp": {
+      "bytes": 13626,
+      "sha256": "441c11c8506c73120ae62f5f5e1f5c2b62c67d84ad772dba28d2aece390fa37c"
+    },
+    "author/observer/src/shadow/p1_shadow_entry.hpp": {
+      "bytes": 7573,
+      "sha256": "a1048befecba1373fcb4fa13e4071450fad88f988f7442dde018fc833e429342"
+    },
+    "author/observer/src/shadow/p1_tick_barrier.hpp": {
+      "bytes": 708,
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4"
+    },
+    "author/observer/src/shadow/p1_witness.hpp": {
+      "bytes": 30128,
+      "sha256": "6c0e71b3a1801ea7a1d6f23fa5a6c027d8c134b48d96bb8553c8855e8e02dd85"
+    },
+    "author/observer/src/shadow/p1_worker_liveness.hpp": {
+      "bytes": 1227,
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28"
+    },
+    "author/observer/src/shadow/projected_profile_time_v1.hpp": {
+      "bytes": 3761,
+      "sha256": "c7e2004804530826d9e5c0f4d2c2c2c5e6d2d5705443be293ab6f07969afa74b"
+    },
+    "author/observer/src/shadow/protocol.hpp": {
+      "bytes": 6581,
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+    },
+    "author/observer/src/shadow/publication_result_v1.hpp": {
+      "bytes": 3433,
+      "sha256": "4308b52c31c8555bfb19bdd776aa541b14cdacc230006477e75653ab344ba6e0"
+    },
+    "author/observer/src/shadow/regulator_shadow_observer.cpp": {
+      "bytes": 138770,
+      "sha256": "1183217371efcefdb8523ae9a452fe76ea247ee208059c37f3098ff551016084"
+    },
+    "author/observer/src/shadow/task_time_entry_contract_v1.hpp": {
+      "bytes": 1358,
+      "sha256": "2d3da0f412b471be314c55c630add295453d5ea06178927b77e62f753c87e8b1"
+    },
+    "author/observer/src/shadow/task_time_profile_v1.hpp": {
+      "bytes": 5139,
+      "sha256": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3"
+    },
+    "author/observer/tests/data/parent_activation_prefixes_v1.json": {
+      "bytes": 3671000,
+      "sha256": "1665863947727d618bbba0c41bd10f63bc62efb785e1d5b1a593b441758a7568"
+    },
+    "author/observer/tests/test_projected_profile_time_v1.cpp": {
+      "bytes": 3747,
+      "sha256": "4e016ff65c50463193da460423f952119f61f6c4aaa8736a1bf966aa3d35c1e4"
+    },
+    "author/observer/tests/test_publication_component.cpp": {
+      "bytes": 9569,
+      "sha256": "32433b7419962598957ad3ad0c860f65451591cecd210ffef259baf8aa3f954e"
+    },
+    "author/observer/tests/test_reference_activation_alignment.cpp": {
+      "bytes": 16253,
+      "sha256": "55679ef490c20a58a042a46e63715dc5c54c04e98f7861c259a95fd02d2364d8"
+    },
+    "author/observer/tests/test_reference_pair_callbacks.cpp": {
+      "bytes": 15579,
+      "sha256": "6507b9868f31d8fd243fa6747d4807049615936356c2f97a66cf097077f42983"
+    },
+    "author/observer/tests/test_task_time_entry_contract_v1.cpp": {
+      "bytes": 1892,
+      "sha256": "c3a595186d67b163094daea5ec5fc91edb380d512ec22c20b467fb11ef16b8b5"
+    },
+    "author/observer/tests/test_task_time_profile_v1.cpp": {
+      "bytes": 4311,
+      "sha256": "25209c032205713a3de776677104d265366b30d5fc8fd9eb0028a5ca5fc258e8"
+    },
+    "author/phase_protocol.hpp": {
+      "bytes": 14075,
+      "sha256": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075"
+    },
+    "batch_status_final.json": {
+      "bytes": 786,
+      "sha256": "297561e2717414690ef525bd1aa4ce195cfd11acd9043ff4e25c4eb45cc89439"
+    },
+    "build/publication_attempt01/build.log": {
+      "bytes": 461,
+      "sha256": "8a65366c2f41876dd7fb4be4e941922c4156f0a6a0ce2c520abcb384a63c4032"
+    },
+    "build/publication_attempt01/build.sh": {
+      "bytes": 972,
+      "sha256": "98ed8fd7944ee8f7f716a5e332f6971de4a7f3e256321bc3d86350331522a004"
+    },
+    "build/publication_attempt01/cmake_build/AMENT_IGNORE": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "build/publication_attempt01/cmake_build/CMakeCache.txt": {
+      "bytes": 31344,
+      "sha256": "f2bd6ac0e279938da010489be6d82288b8bbd58e8f2338519981e0a8e471b038"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeCCompiler.cmake": {
+      "bytes": 2525,
+      "sha256": "b5aad1667b4986e327d85cefeec26e17c6cb3dedf285649b05c522599a3cb824"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeCXXCompiler.cmake": {
+      "bytes": 5539,
+      "sha256": "12aa7c8bbf1cab72086c6cf13c49e3efb595ce9a89e3a1cbc73bf019b660bd12"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_C.bin": {
+      "bytes": 15968,
+      "sha256": "ba6646aa78bf3dd0a7997f89bcc1154630fcb86d28103e0bfcd5200b21f54c7c"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeDetermineCompilerABI_CXX.bin": {
+      "bytes": 15992,
+      "sha256": "879b5d31eac14d7b0ca6cd3b96320041ad8d87b538fea24a17e8707f0656bc96"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CMakeSystem.cmake": {
+      "bytes": 398,
+      "sha256": "e6dd9890a5f68bed86fe6a79a06176a48a0d2a9c39c50313df0f1cdafe697e47"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdC/CMakeCCompilerId.c": {
+      "bytes": 27030,
+      "sha256": "9a95913d134b6c5dca36f23acb80765b86313bcfd8da754e5ceb2e259e954074"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdC/a.out": {
+      "bytes": 16088,
+      "sha256": "88aa2744b35746a2f6464f0d7f31c3991c8fdb255d08727ecfbf676478e051b8"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/CMakeCXXCompilerId.cpp": {
+      "bytes": 26804,
+      "sha256": "9b1ebe4919c111011dba043f743e42ada0f1e3804b211e42191d773e7043282c"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/3.28.3/CompilerIdCXX/a.out": {
+      "bytes": 16096,
+      "sha256": "a3d366f5f634a9cc0d9340115704a2d978e930f75ce0aceac02d7177849a8a1a"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/CMakeConfigureLog.yaml": {
+      "bytes": 57861,
+      "sha256": "ff221e7dfcfcc99cd905fcbfa22af301135e0595d8f640fa268a27d030ab5917"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/CMakeDirectoryInformation.cmake": {
+      "bytes": 802,
+      "sha256": "c7423c15cb2b99d920d101d5c080e11f253ae142e5fc26748067503865961b7f"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/CMakeRuleHashes.txt": {
+      "bytes": 109,
+      "sha256": "673e4152cfb05abc8604751ac1f786ca1940fbafb89562dd4d1024ec2d121f55"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/Makefile.cmake": {
+      "bytes": 73876,
+      "sha256": "665d3c3a63ca7a935b9bc42a99ebf30bbd729bd90192020b054a235f9d5c2e38"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/Makefile2": {
+      "bytes": 10178,
+      "sha256": "f95eca74882c66cbef3211d64243e46f447f00531440971ff8597bd4eb1a2927"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/TargetDirectories.txt": {
+      "bytes": 1127,
+      "sha256": "06a8e9057b5cec5778f9847a793a88a9a671ab7a2a12aea6d0b2eddf18ad4d63"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/cmake.check_cache": {
+      "bytes": 85,
+      "sha256": "a26189e394421da57f45706a07713c5720acd200a41711b0c0c590c3c63371c4"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_publication_component_uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_publication_component_uninstall.dir/build.make": {
+      "bytes": 3764,
+      "sha256": "b2acde092c58868c8701a7441efabb8f82a3a88170ac99573cc3e226f6e02b7b"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_publication_component_uninstall.dir/cmake_clean.cmake": {
+      "bytes": 250,
+      "sha256": "1a0417f9480f78b07a4cf73034b4c94f81fd1d134968f6f45395adbc22458109"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_publication_component_uninstall.dir/compiler_depend.make": {
+      "bytes": 144,
+      "sha256": "8ac227e5adcff556fdbcd45bbb8ea0e90c45fd6fd69714cb6158162de223cc87"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_publication_component_uninstall.dir/compiler_depend.ts": {
+      "bytes": 138,
+      "sha256": "457cfca2c92b07f56d8cdaf6b92fa5a2d00ad1a0fb6ef492b554bdb65a379bae"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_publication_component_uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/DependInfo.cmake": {
+      "bytes": 936,
+      "sha256": "bca5c1a12f502b17e6e06801cbfc305c1f4d6ced1a421a98a42df61f91375802"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/build.make": {
+      "bytes": 19517,
+      "sha256": "2a15a80f66bc48fead678c4e7c60171fa722772199ebdc9c4d465af1e75f4469"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/cmake_clean.cmake": {
+      "bytes": 496,
+      "sha256": "773a19b6bf76187a617e45a9b874979eb83ab850354743268dff6472f95ebc01"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/compiler_depend.make": {
+      "bytes": 140,
+      "sha256": "908d72ef105b71fa21b20dc40a606d9a1c3dd4126dc11527d9eb32844e235c54"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/compiler_depend.ts": {
+      "bytes": 144,
+      "sha256": "6695cd1161f5b9b93dea57265e5ec78656e46e9dd855c003f7183d0a6b7f7381"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/depend.make": {
+      "bytes": 121,
+      "sha256": "2b15ddc5933c0474f723c4ccd32c30fb2f24df995dfa1ca800805f21879991a0"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/flags.make": {
+      "bytes": 2671,
+      "sha256": "3213ba6fcda95b2d35738d38f8af1dc1dbf851040b635c2a62792676b2595f0b"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/link.txt": {
+      "bytes": 8044,
+      "sha256": "4dc8e077f95c84958280fac466d18319a2cabbbdbb13d583f66624caacd104ef"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "c06e644090b09d41eaddf59d10bcf03c6db6499eb51fa0d03e5128e5a165cc3c"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/src/shadow/regulator_shadow_observer.cpp.o": {
+      "bytes": 10442152,
+      "sha256": "2cca53e4da715ef0ddb9bccfe037fe77a399a5e2862f4c47c89e60b08c300f85"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/p1_regulator_shadow_observer_owned_v2.dir/src/shadow/regulator_shadow_observer.cpp.o.d": {
+      "bytes": 91404,
+      "sha256": "e44ca42743afc758f4a41c30519f6663512728b6e9b5842ad842409c32209301"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/progress.marks": {
+      "bytes": 2,
+      "sha256": "7de1555df0c2700329e815b93b32c571c3ea54dc967b89e81ab73b9972b72d1d"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/DependInfo.cmake": {
+      "bytes": 902,
+      "sha256": "6972b92a59f09a1e3f28c7ce041b7f0a1fdd492df62778a2f0257e70d87eddf8"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/build.make": {
+      "bytes": 6791,
+      "sha256": "6bd4dfef8d21cde9a4b710749a7b9a44128dcb528c3b025cbf20a4019a566342"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/cmake_clean.cmake": {
+      "bytes": 433,
+      "sha256": "6f283f601df9537bd351bd64f8570f82fc9c9d540afa7c757be995780a7d8fd3"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/compiler_depend.make": {
+      "bytes": 129,
+      "sha256": "4c44e1b21c89f8ac00c0574cb7ffe56722b1777cb2810cf58efdb50d55bf0bff"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/compiler_depend.ts": {
+      "bytes": 133,
+      "sha256": "01ea19dc5bf176ed28462410b8eec00552f889a00799cc9e3359262e7fc93c6c"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/depend.make": {
+      "bytes": 110,
+      "sha256": "5e4e796171022502c7b5cdb828ceba26a98b4d6f1ab1e090792a66d188df3dba"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/flags.make": {
+      "bytes": 318,
+      "sha256": "7824f27bf2bae5169cdb5af90e2a06cbb9ee130431c84d90d8777c75b8178db1"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/link.txt": {
+      "bytes": 138,
+      "sha256": "c71d9477eefdb6b9685b3b569f431df0d569a68870a44dccdef350a8b9ff90a8"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/progress.make": {
+      "bytes": 43,
+      "sha256": "2c0c69e4af70b4caed2b8e1bd9f161f3ee9eb525d5f041631eee6d0661e5a02f"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/tests/test_publication_component.cpp.o": {
+      "bytes": 228600,
+      "sha256": "742c4c102e26c39df1a7bf4472d1578ce5aedc9dc797847115be7e45a2341373"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/test_publication_component.dir/tests/test_publication_component.cpp.o.d": {
+      "bytes": 16738,
+      "sha256": "d74ab1fa7f685420d003f9b93338a28b08deccd0b5f240e6faaadabd4ba90ec9"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/uninstall.dir/DependInfo.cmake": {
+      "bytes": 585,
+      "sha256": "b2ca23380b5c9dd7f07b120e32fb11a157a4def74d801994559b1c8c88f92f55"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/uninstall.dir/build.make": {
+      "bytes": 3050,
+      "sha256": "101dc2ace11226d2fa0337b44e658c3f98c3aa0c563b5987047c15f80a8df23b"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/uninstall.dir/cmake_clean.cmake": {
+      "bytes": 153,
+      "sha256": "e51440eea639df67acafb145cd82e07a0d47a18935f82ef48527ded743c08d36"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.make": {
+      "bytes": 119,
+      "sha256": "544b5020e80145b8265862c76a0811c3dd31a0820e2834b26038f646fa99c80b"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/uninstall.dir/compiler_depend.ts": {
+      "bytes": 113,
+      "sha256": "5f7329b918c868b9e2549e3175c8cab0d6c02deccfa5f2700ee294575108f150"
+    },
+    "build/publication_attempt01/cmake_build/CMakeFiles/uninstall.dir/progress.make": {
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    "build/publication_attempt01/cmake_build/CTestConfiguration.ini": {
+      "bytes": 2596,
+      "sha256": "40466f996ae1ca0b8a533fc92687d34b250aba1c93412d2b6c39fb3247931d24"
+    },
+    "build/publication_attempt01/cmake_build/CTestCustom.cmake": {
+      "bytes": 104,
+      "sha256": "604987db904b472a78182f761db384fc8115f0ade6bb2cfed0d2242259f36bf0"
+    },
+    "build/publication_attempt01/cmake_build/CTestTestfile.cmake": {
+      "bytes": 439,
+      "sha256": "6848fa91d7eccd8b93e6f7a1aa062287c35e4579f4b81a86df51857e4b1d46ea"
+    },
+    "build/publication_attempt01/cmake_build/Makefile": {
+      "bytes": 10065,
+      "sha256": "199f07eecc056002782805c819f4f29bc56ca52ff78ff2dcf0072aada2f4cde4"
+    },
+    "build/publication_attempt01/cmake_build/ament_cmake_core/stamps/templates_2_cmake.py.stamp": {
+      "bytes": 3691,
+      "sha256": "696037d4de7b593bce6ca467480ee35076eb3efc49a94fa0af7e909fe0c96ebb"
+    },
+    "build/publication_attempt01/cmake_build/ament_cmake_package_templates/templates.cmake": {
+      "bytes": 1984,
+      "sha256": "0bd4d2e887197f7f9771d2238eff41586d61b13acc51ce8748b36ebcf55753f3"
+    },
+    "build/publication_attempt01/cmake_build/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake": {
+      "bytes": 2201,
+      "sha256": "48e99f791fae22999fd45fe46219ee0646c800f31cb49571606230aa9e30e8f6"
+    },
+    "build/publication_attempt01/cmake_build/cmake_install.cmake": {
+      "bytes": 1803,
+      "sha256": "e921669660f3718691091bc7f69c751bc9cd0e8dd33088eb2ba5e869fb6dfc50"
+    },
+    "build/publication_attempt01/cmake_build/compile_commands.json": {
+      "bytes": 3983,
+      "sha256": "a427796792ade041ea3401cc44bb7d65643dc69308914591af9f832e5d9052c0"
+    },
+    "build/publication_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2": {
+      "bytes": 7223464,
+      "sha256": "ada12f87305c266f53eccce249548ab882ad0e907f9865182a2c7315a0f50177"
+    },
+    "build/publication_attempt01/cmake_build/test_publication_component": {
+      "bytes": 138656,
+      "sha256": "6b5b82a8c7d5bd5c62659d521d3d071d3f371753ec30ff3774951419bbb1881c"
+    },
+    "build/publication_attempt01/compile_commands.json": {
+      "bytes": 3983,
+      "sha256": "a427796792ade041ea3401cc44bb7d65643dc69308914591af9f832e5d9052c0"
+    },
+    "build/publication_attempt01/compiler_dependency_pins.json": {
+      "bytes": 490489,
+      "sha256": "1df1264d8660949bd5b3feadbd653eee3521357f83f64732fe0557a52016a7b9"
+    },
+    "build/publication_attempt01/configure.log": {
+      "bytes": 2392,
+      "sha256": "916ad93e340b98117ae3a5c3ee98469c43d454d2d4db333daddb29c37b2aacd8"
+    },
+    "build/publication_attempt01/configure.sh": {
+      "bytes": 1255,
+      "sha256": "085e8357af6e3ec26bd61203be9f06c051c3af2743643e1bb5226157b806a8dd"
+    },
+    "build/publication_attempt01/link_command_snapshots/000_link.txt": {
+      "bytes": 8044,
+      "sha256": "4dc8e077f95c84958280fac466d18319a2cabbbdbb13d583f66624caacd104ef"
+    },
+    "build/publication_attempt01/link_command_snapshots/001_link.txt": {
+      "bytes": 138,
+      "sha256": "c71d9477eefdb6b9685b3b569f431df0d569a68870a44dccdef350a8b9ff90a8"
+    },
+    "build/publication_attempt01/loader_dependencies.log": {
+      "bytes": 5592,
+      "sha256": "1c87f7ae0cb638bc566df3a5a124eb92fab08625b3a96397cb314af8d69654b1"
+    },
+    "build/publication_attempt01/loader_dependencies.sh": {
+      "bytes": 986,
+      "sha256": "e06e04994c69fc5a0ddee90cf33937227be44be4c779c56e4d3addb334e3f6e1"
+    },
+    "build/publication_attempt01/native.log": {
+      "bytes": 27,
+      "sha256": "e47183b18582c12b9a4b7903b53a114b3a0849442ec781553d5454f0454690fd"
+    },
+    "build/publication_attempt01/native.sh": {
+      "bytes": 1104,
+      "sha256": "3b464b2895d4f35e83238cecf5af2d1c1ef6c4393abb1c0b6e420326ec7a55bb"
+    },
+    "build/publication_attempt01/native_events.json": {
+      "bytes": 15104,
+      "sha256": "70a216726bd934080751dc4085867f2bd55ffca1dba84c004b59a5b9997db8b1"
+    },
+    "build/publication_attempt01/result.json": {
+      "bytes": 2302,
+      "sha256": "ffe1d1127bf2e8221951567ed68b7036a59bff0e940fdf20e00e75d5bc1bff3f"
+    },
+    "build/publication_attempt01/runtime_library_pins.json": {
+      "bytes": 17414,
+      "sha256": "e2403964f6a25ac47222e9585b31d6dc0e200d173c69b1e67784c31b613cacd7"
+    },
+    "build/publication_attempt01/source_bundle.json": {
+      "bytes": 17464,
+      "sha256": "71b1bcff743091a931af075df3a34bd549b0930d0093e55d08ea99519f02b2a9"
+    },
+    "build/publication_attempt01/source_snapshot/common/c36_runtime_adapter.hpp": {
+      "bytes": 4275,
+      "sha256": "b3389f57c5b5c22d7946dba96cf9a087f539d6d953960c066c5d4957dc3e593c"
+    },
+    "build/publication_attempt01/source_snapshot/common/c38_diagnostic_gate.hpp": {
+      "bytes": 7504,
+      "sha256": "fe1a666e66d6d38a54b721bc9626cf86d1862366b585dd3ba57ade1512805882"
+    },
+    "build/publication_attempt01/source_snapshot/common/command_anchor_v2.hpp": {
+      "bytes": 15733,
+      "sha256": "879a95616f342a7727aa2c589f61cba014600563f9fd995fee74c459eb084b4e"
+    },
+    "build/publication_attempt01/source_snapshot/common/owned_peer_c36_v1.hpp": {
+      "bytes": 22381,
+      "sha256": "d4b28cdf3a40f3cde105cd62687ec0e177dd91d773586fafe7a2da4fba954aab"
+    },
+    "build/publication_attempt01/source_snapshot/common/owned_worker_peer_c37_v1.hpp": {
+      "bytes": 15459,
+      "sha256": "b5775869337e3f0468d7720a9c35b6c37b6f161e29d36313b12af93b84975551"
+    },
+    "build/publication_attempt01/source_snapshot/common/p1_create_only_atomic.hpp": {
+      "bytes": 2937,
+      "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+    },
+    "build/publication_attempt01/source_snapshot/common/p1_owned_identity.hpp": {
+      "bytes": 12545,
+      "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+    },
+    "build/publication_attempt01/source_snapshot/observer/CMakeLists.txt": {
+      "bytes": 1727,
+      "sha256": "0c2aea2ad342f23b9666429aa17f2e6c1eac14e9c2fffc486fb19d5877803e90"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/activation_sensor_history_v1.hpp": {
+      "bytes": 3466,
+      "sha256": "78482091d680284dfdb111a39a960ef2557c95e770e109fb271d82895ec01260"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/callback_raw_v4.hpp": {
+      "bytes": 1931,
+      "sha256": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_admission.hpp": {
+      "bytes": 8297,
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_capability_lease.hpp": {
+      "bytes": 1020,
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_clock_window.hpp": {
+      "bytes": 1902,
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_d0_observation.hpp": {
+      "bytes": 7522,
+      "sha256": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_diag_sink.hpp": {
+      "bytes": 5305,
+      "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_full_contract.hpp": {
+      "bytes": 12347,
+      "sha256": "badc16c89cb30e563049d66d853b5d31718427065c6d08d517f0f82e88d35abe"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_preparation_barrier.hpp": {
+      "bytes": 723,
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_resources.hpp": {
+      "bytes": 13626,
+      "sha256": "441c11c8506c73120ae62f5f5e1f5c2b62c67d84ad772dba28d2aece390fa37c"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_shadow_entry.hpp": {
+      "bytes": 7573,
+      "sha256": "a1048befecba1373fcb4fa13e4071450fad88f988f7442dde018fc833e429342"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_tick_barrier.hpp": {
+      "bytes": 708,
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_witness.hpp": {
+      "bytes": 30128,
+      "sha256": "6c0e71b3a1801ea7a1d6f23fa5a6c027d8c134b48d96bb8553c8855e8e02dd85"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/p1_worker_liveness.hpp": {
+      "bytes": 1227,
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/projected_profile_time_v1.hpp": {
+      "bytes": 3761,
+      "sha256": "c7e2004804530826d9e5c0f4d2c2c2c5e6d2d5705443be293ab6f07969afa74b"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/protocol.hpp": {
+      "bytes": 6581,
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/publication_result_v1.hpp": {
+      "bytes": 3433,
+      "sha256": "4308b52c31c8555bfb19bdd776aa541b14cdacc230006477e75653ab344ba6e0"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/regulator_shadow_observer.cpp": {
+      "bytes": 138770,
+      "sha256": "1183217371efcefdb8523ae9a452fe76ea247ee208059c37f3098ff551016084"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/task_time_entry_contract_v1.hpp": {
+      "bytes": 1358,
+      "sha256": "2d3da0f412b471be314c55c630add295453d5ea06178927b77e62f753c87e8b1"
+    },
+    "build/publication_attempt01/source_snapshot/observer/src/shadow/task_time_profile_v1.hpp": {
+      "bytes": 5139,
+      "sha256": "45d6c2b608128178dbffece080247546f97b42a665ef225589e61247273cc4e3"
+    },
+    "build/publication_attempt01/source_snapshot/observer/tests/data/parent_activation_prefixes_v1.json": {
+      "bytes": 3671000,
+      "sha256": "1665863947727d618bbba0c41bd10f63bc62efb785e1d5b1a593b441758a7568"
+    },
+    "build/publication_attempt01/source_snapshot/observer/tests/test_projected_profile_time_v1.cpp": {
+      "bytes": 3747,
+      "sha256": "4e016ff65c50463193da460423f952119f61f6c4aaa8736a1bf966aa3d35c1e4"
+    },
+    "build/publication_attempt01/source_snapshot/observer/tests/test_publication_component.cpp": {
+      "bytes": 9569,
+      "sha256": "32433b7419962598957ad3ad0c860f65451591cecd210ffef259baf8aa3f954e"
+    },
+    "build/publication_attempt01/source_snapshot/observer/tests/test_reference_activation_alignment.cpp": {
+      "bytes": 16253,
+      "sha256": "55679ef490c20a58a042a46e63715dc5c54c04e98f7861c259a95fd02d2364d8"
+    },
+    "build/publication_attempt01/source_snapshot/observer/tests/test_reference_pair_callbacks.cpp": {
+      "bytes": 15579,
+      "sha256": "6507b9868f31d8fd243fa6747d4807049615936356c2f97a66cf097077f42983"
+    },
+    "build/publication_attempt01/source_snapshot/observer/tests/test_task_time_entry_contract_v1.cpp": {
+      "bytes": 1892,
+      "sha256": "c3a595186d67b163094daea5ec5fc91edb380d512ec22c20b467fb11ef16b8b5"
+    },
+    "build/publication_attempt01/source_snapshot/observer/tests/test_task_time_profile_v1.cpp": {
+      "bytes": 4311,
+      "sha256": "25209c032205713a3de776677104d265366b30d5fc8fd9eb0028a5ca5fc258e8"
+    },
+    "build/publication_attempt01/source_snapshot/phase_protocol.hpp": {
+      "bytes": 14075,
+      "sha256": "4154de28c10fc9525d669de7561e38cc233a7a814dbfa7f2e9226f2654a02075"
+    },
+    "build/publication_attempt01/static_archive_snapshots/000_libmpc_core_lib.a": {
+      "bytes": 32114,
+      "sha256": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020"
+    },
+    "build/publication_attempt01/static_archive_snapshots/001_libfoonathan_memory-0.7.3.a": {
+      "bytes": 693124,
+      "sha256": "508b15eb2c96ed381f5374a7167c04bb858b410537ff8cd47d97d9326c66506d"
+    },
+    "build/publication_attempt01/static_link_inputs_after.json": {
+      "bytes": 2141,
+      "sha256": "89de36fd0ef3f4c06ada3bef692f1d17d88392c4f6d27ab9862ca6fa1741d8dc"
+    },
+    "build/publication_attempt01/static_link_inputs_before.json": {
+      "bytes": 3959,
+      "sha256": "3d0c38ce5a2c3d8044324e0a7879eb6b00f2aadbff51e26eb3143047d055b4f3"
+    },
+    "build_component_v1.py": {
+      "bytes": 6181,
+      "sha256": "0af6a4f9f2bff87d2b402f3f3e1277fc4fe040d70c733c7c26d026c95524ab99"
+    },
+    "documents/next_implementation_plan_v1.md": {
+      "bytes": 1595,
+      "sha256": "087f95d0da2ddf9913354023ea2b11c961421a4dd39cbbd58a94bf1477777125"
+    },
+    "documents/方案A_发布锚点与关闭结果组件_实施验证_2026-10-19.md": {
+      "bytes": 6144,
+      "sha256": "24e33771ea421543d0fa0fe6557e5b9b84f920588c70b22b39e7b1451321f721"
+    },
+    "evidence/candidate_version_v1.json": {
+      "bytes": 3819,
+      "sha256": "d58994857a20bed03d40f87959b2ed9c3308042ea440bd66a9a9fad1471379c1"
+    },
+    "evidence/parent_CMakeLists.txt.snapshot": {
+      "bytes": 3629,
+      "sha256": "8f7dd99071a38a55574dbed7acfba9cb1f2c1232adc07acf91d65f5d77a08a77"
+    },
+    "evidence/parent_regulator_shadow_observer.cpp.snapshot": {
+      "bytes": 138892,
+      "sha256": "94ff1c55685ee41ffd341161542ef948a7166fc07bda92b1d0e97667cbc43356"
+    },
+    "finalize_component_v1.py": {
+      "bytes": 7376,
+      "sha256": "aca2154a645db4fa9745e5b5abde6b9f92121db381f8c87e7688a14fcf1b5766"
+    },
+    "postrun/retro.md": {
+      "bytes": 949,
+      "sha256": "6914d058ea820906b886f4cddbd99efe9e0e6875db3cc532c30a2126712cb2d1"
+    },
+    "preflight/CURRENT_initial_v1.md.snapshot": {
+      "bytes": 242,
+      "sha256": "54cec906021b249d2e57caf8f1c14170ce4411defde7e889ad5c7b116ac08716"
+    },
+    "preflight/component_plan_v1.json": {
+      "bytes": 1204,
+      "sha256": "5925646478509cf92c9df9c3ace5634c44f8e588e4ccb7a7f6f1477431588fdd"
+    },
+    "preflight/workspace_final_local_v1.json": {
+      "bytes": 22033854,
+      "sha256": "dc8463debd2ec50a317e24e1de557b6de7e6f20c32850a69ca064b86c45ff0d4"
+    },
+    "preflight/workspace_initial_local_v1.json": {
+      "bytes": 22022126,
+      "sha256": "42fbccc8df1d013e5713c704bda749aa4ad4095f45dfd25a3db5cf9b2b42547b"
+    },
+    "protection_local_v1.py": {
+      "bytes": 96846,
+      "sha256": "329e7aabaad11b8ecb4f1a52d44523f1bdb66fa46bcc031569b62443fb3146f6"
+    },
+    "verification/component_scope_audit_v1.json": {
+      "bytes": 2769,
+      "sha256": "30aea1fb569be55387b87c532a54d12ca5021111108ccd4a8d2e5e39a9e7edc3"
+    }
+  },
+  "initial_protection_sha256": "42fbccc8df1d013e5713c704bda749aa4ad4095f45dfd25a3db5cf9b2b42547b",
+  "local_old_asset_bytes": 5146759919,
+  "local_old_asset_paths": 41298,
+  "new_Observer_owned_qualification": false,
+  "new_ROS_runs": 0,
+  "new_build_attempts": 1,
+  "old_real_launch_exception_preserved": true,
+  "original_failure_reports_preserved": true,
+  "passed": true,
+  "passed_semantics": "new source-derived component and exact local/archive verification only",
+  "research_conclusion": false,
+  "runtime_binary_sha256": "ada12f87305c266f53eccce249548ab882ad0e907f9865182a2c7315a0f50177",
+  "runtime_loader_inputs": 54,
+  "runtime_publish_branch_executed": false,
+  "schema": "publication-component-local-QA/v1",
+  "source_bundle_sha256": "71b1bcff743091a931af075df3a34bd549b0930d0093e55d08ea99519f02b2a9",
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

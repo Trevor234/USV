@@ -1,0 +1,20 @@
+{
+  "actual_dds_writers_matched": true,
+  "armed_ns": 1253244960213838,
+  "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+  "contract_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+  "physical_endpoints": 0,
+  "pid": 310385,
+  "publisher_match_counts": {
+    "clock": 2,
+    "imu": 2,
+    "odom": 2,
+    "path": 2,
+    "profile": 2
+  },
+  "required_subscribers": [
+    "recorder",
+    "p1_regulator"
+  ],
+  "schema": "p1-synthetic-fixture-arm-v1"
+}

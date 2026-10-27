@@ -1,0 +1,157 @@
+{
+  "schema": "T3-case-registration/v1",
+  "batch_registered": null,
+  "tree_base": {
+    "source": "experiments/scheme_A_M4_g4c_fix_20261025_91/implementation/t2_author",
+    "bundle_sha256": null,
+    "note": "实施批经freeze.py重建ELF/registry后回填实际SHA"
+  },
+  "obligation_binding": {
+    "register": "experiments/scheme_A_M4_fixture_gap_20261024_67/postrun/case_applicability_v1.md",
+    "rows": ["publication_exit.09", "publication_exit.10", "actual_source_recording.03"],
+    "governance": "experiments/scheme_A_M4_t1_review_20261024_69/documents/下一步实施计划_T1有限补证与T2三场景族_2026-10-24.md#T3"
+  },
+  "cases": [
+    {
+      "case_id": "T3-Q1d",
+      "family": "queue_pressure_component",
+      "target": "DiagSink::add/loop/close (observer/src/shadow/p1_diag_sink.hpp)",
+      "harness": "observer/tests/test_t3_queue_pressure.cpp",
+      "stimulus": {
+        "producer_threads": 1,
+        "attempts": "capacity+K",
+        "K": null,
+        "publisher_mode": "blocking_until_released",
+        "v1_armed": false
+      },
+      "budget_seconds": 60,
+      "assertions": [
+        "accepted==capacity+1",
+        "rejected==K and dropped==K",
+        "failed()==true terminal after overflow",
+        "peak_depth==capacity",
+        "witness QueueOverflow phase exactly once",
+        "witness SourceFailure phase exactly once",
+        "publisher.calls==capacity+1",
+        "file event rows==capacity+1",
+        "source_summary generated==emitted+dropped",
+        "normal_source_complete==false"
+      ],
+      "result_schema": "T3-queue-pressure/v1",
+      "qualification_flags": {"ROS_context_created": false, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    },
+    {
+      "case_id": "T3-Q1r",
+      "family": "queue_pressure_component",
+      "target": "DiagSink add/loop under racing drain",
+      "stimulus": {"producer_threads": 1, "attempts": "capacity+K", "publisher_mode": "delay", "delay_ms": 2, "v1_armed": false},
+      "budget_seconds": 60,
+      "assertions": [
+        "generated==attempts",
+        "accepted+dropped==generated",
+        "emitted==accepted after close",
+        "peak_depth<=capacity",
+        "dropped>0",
+        "QueueOverflow exactly once",
+        "failed terminal",
+        "balance generated==emitted+dropped"
+      ],
+      "result_schema": "T3-queue-pressure/v1",
+      "qualification_flags": {"ROS_context_created": false, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    },
+    {
+      "case_id": "T3-Q2",
+      "family": "queue_pressure_component_concurrent",
+      "stimulus": {"producer_threads": 4, "attempts_per_thread": "M with 4*M>capacity+K", "publisher_mode": "delay", "delay_ms": 2},
+      "budget_seconds": 60,
+      "assertions": ["all Q1r invariants", "bounded join of all producer threads", "no crash, no duplicate QueueOverflow"],
+      "result_schema": "T3-queue-pressure/v1",
+      "qualification_flags": {"ROS_context_created": false, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    },
+    {
+      "case_id": "T3-Q3",
+      "family": "queue_pressure_component_drain_completeness",
+      "stimulus": "Q1d stimulus then stop production, bounded wait publisher.calls==accepted, then close",
+      "budget_seconds": 60,
+      "assertions": [
+        "each accepted event delivered to publisher exactly once",
+        "file rows==accepted(+summary)",
+        "dropped==rejected count",
+        "normal_source_complete==false (abnormal qualification rejected)"
+      ],
+      "result_schema": "T3-queue-pressure/v1",
+      "qualification_flags": {"ROS_context_created": false, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    },
+    {
+      "case_id": "T3-Q4",
+      "family": "queue_pressure_negative_control",
+      "stimulus": "no pressure, normal rate, normal close",
+      "budget_seconds": 60,
+      "assertions": ["all emitted", "dropped==0", "normal_source_complete==true"],
+      "result_schema": "T3-queue-pressure/v1",
+      "qualification_flags": {"ROS_context_created": false, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    },
+    {
+      "case_id": "T3-C1",
+      "family": "cleanup_group_boundary_driver",
+      "target": "Driver stop() ladder + probe (owned_m4_diagnostic_driver_v1.py L226-238)",
+      "injection": {
+        "mechanism": "role_side_survivor",
+        "role": "recorder",
+        "variant_binary": "T3 recorder survivor variant via freeze registry",
+        "survivor_spec": {"ignores": ["SIGINT", "SIGTERM"], "self_deadline_ms": 3000, "killable": true, "no_ptrace_no_sigstop_no_dstate": true},
+        "fallback": "driver_seam_simulated (requires marker injection:\"driver_seam_simulated\", evidence not merged with primary)"
+      },
+      "budget_seconds": 120,
+      "assertions": [
+        "owned_role_closed(recorder).group_empty==false",
+        "run passed==false",
+        "survivor liveness recorded",
+        "named cleanup_failed event with role/pid/signals/group_empty/check_deadline_ns/finished_ns",
+        "run originals SHA-stable under audit re-hash"
+      ],
+      "result_schema": "T3-cleanup-boundary/v1",
+      "qualification_flags": {"ROS_context_created": true, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    },
+    {
+      "case_id": "T3-C2",
+      "family": "cleanup_group_boundary_driver_no_restart",
+      "injection": "same run as T3-C1 (close tail observed end-to-end)",
+      "assertions": [
+        "exactly 4 role_spawned events, one per role",
+        "no new process after cleanup_failed",
+        "run terminal failure, no silent retry (auto-retry 0)",
+        "static check of frozen driver: spawn call sites fixed 4, no loop/retry wrapper"
+      ],
+      "budget_seconds": 0,
+      "budget_note": "same run as C1, no separate execution",
+      "result_schema": "T3-cleanup-boundary/v1",
+      "qualification_flags": {"ROS_context_created": true, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    },
+    {
+      "case_id": "T3-C3",
+      "family": "cleanup_group_boundary_negative_control",
+      "injection": "none, all four roles original batch-91 binaries",
+      "assertions": [
+        "4 roles rc==0, ladder==[SIGINT], all group_empty==true",
+        "common_ok holds (batch-66 healthy-close scope reproduced, no new qualification claimed)"
+      ],
+      "budget_seconds": 120,
+      "result_schema": "T3-cleanup-boundary/v1",
+      "qualification_flags": {"ROS_context_created": true, "stage_qualified": false, "execute_qualified": false, "research_conclusion": false}
+    }
+  ],
+  "governance": {
+    "pre_registration_required": true,
+    "single_finite_execution": true,
+    "auto_retry": 0,
+    "failure_originals_preserved": true,
+    "assertion_change_policy": "changing any assertion after registration requires a new case_id and new registration"
+  },
+  "not_claimed": [
+    "four-role Stored reconciliation in Q-family (publisher seam stands in for delivery observation)",
+    "kernel-level absolutely bounded exit (P1 contract: KILL does not prove it)",
+    "T2-B new-generation positive control (scoped Epoch design, separate batch)",
+    "any stage qualification or research conclusion; M4/F6/P1/plant/hard-realtime remain false"
+  ]
+}

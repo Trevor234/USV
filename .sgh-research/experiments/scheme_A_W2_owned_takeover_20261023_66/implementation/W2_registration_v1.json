@@ -1,0 +1,105 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "audit_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/implementation/w2_author/audit_w2.py",
+    "sha256": "cc93b24bb4ea7815c51b90bd5d904d3c11fa970e49258ba7795a5190afd1a9fc"
+  },
+  "automatic_retries": 0,
+  "boundary": "The Worker reaches the registered inner call boundary and waits for a single private-pipe release. The Driver observes at least two complete Regulator business ticks after that entry and then writes one frame. By then the Job's original 150 ms deadline has passed, so the final guard refuses the C call: the release is verified, the Job is expired, and the target Job's native call count stays zero.",
+  "case": "W2-native-boundary-hold",
+  "channel": {
+    "binding_fixed_at_runtime": [
+      "device",
+      "inode",
+      "nonce",
+      "job_id",
+      "ordinal",
+      "wait_budget_ns"
+    ],
+    "driver_holds": "write_end",
+    "kind": "private_pipe",
+    "siblings_inherit": "none",
+    "static_registration_predicts_inode": false,
+    "worker_inherits": "read_end"
+  },
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "declared_exceptions": [],
+  "domain_id": 120,
+  "expected": {
+    "active_job_cleared": true,
+    "backend_terminal": true,
+    "exit_codes": {
+      "fixture": 0,
+      "recorder": 0,
+      "regulator": 0,
+      "worker": 2
+    },
+    "pending_discard_required": true,
+    "signals": {
+      "fixture": [
+        "SIGINT"
+      ],
+      "recorder": [
+        "SIGINT"
+      ],
+      "regulator": [],
+      "worker": [
+        "SIGINT"
+      ]
+    },
+    "target_job_candidate_published": false,
+    "target_job_candidate_registered": false,
+    "target_job_native_calls": 0,
+    "transition_reason": "fatal_capability",
+    "w2_exit_codes": {
+      "worker": 2
+    },
+    "w2_isolation_reason": "fatal_capability",
+    "w2_terminal_reasons": [
+      "w2_boundary_expired"
+    ],
+    "w2_worker_signals": [
+      "SIGINT"
+    ]
+  },
+  "fault_injection_enabled": true,
+  "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "index_sha256": "d1a9f0e2b7c4a8536e0f2b9d4c7a1e5836b0d9f2c4a7e1b8369d0c5f2a8e4b71",
+  "launch_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/implementation/launch_owned_once.py",
+    "sha256": "af45f6e8602587b68577855f60171ea852c3d657eece9dc79f1f54e5e9ba3023"
+  },
+  "max_seconds": 45,
+  "old_normal_or_fault_qualifications_transferred": false,
+  "outer_timeout_seconds": 90,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/implementation/runs/W2_01",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/implementation/selected_runtime_registry_w2_v1.json",
+  "registry_sha256": "3df732789544f019510b467a0980aa2ece9293770c989ea27b179c15d25102db",
+  "release_preconditions": {
+    "active_watchdog_ns": 1000000000,
+    "capability_lease_ns": 600000000,
+    "release_must_precede_active_watchdog": true,
+    "required_complete_ticks_after_entry": 2
+  },
+  "run_id": "M4_diagnostic_W2_20261023_66_01",
+  "schema": "M4-owned-diagnostic-run-v1",
+  "scope": "M4_owned_diagnostic_worker_only_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87",
+  "two_deadlines": {
+    "gate_wait_budget_ns": 1500000000,
+    "gate_window_extends_job_deadline": false,
+    "job_deadline_ns_after_origin": 150000000
+  },
+  "w2_release": {
+    "job_id": 2,
+    "nonce": 20261023,
+    "ordinal": 1,
+    "ticks_before_release": 2,
+    "wait_budget_ns": 1500000000
+  }
+}

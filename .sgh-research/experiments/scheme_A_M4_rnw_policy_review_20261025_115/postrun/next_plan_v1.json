@@ -1,0 +1,65 @@
+{
+  "schema": "RNW-after-114-independent-review-plan-v115",
+  "scope": "review and proposed next implementation; no B2/B0 implementation performed in 115",
+  "supersedes_current_interpretation_of": ["batch113/CURRENT.md", "batch114/CURRENT.md", "batch114/documents/resume policy design"],
+  "historical_files_rewritten": false,
+  "mainline": ["S0", "S1", "S2", "S4"],
+  "steps": [
+    {
+      "id": "S0",
+      "status": "next_implementation_input",
+      "task": "Use correct per-attempt source identity and distinguish raw clock, Fixture writer pair and projected output history; retain failures and correct current explanation",
+      "no_new_advance_zero_trial": true,
+      "owned_runs": 0
+    },
+    {
+      "id": "S1",
+      "status": "before_new_owned",
+      "task": "Extract pure RNW audit and repair admission before touching live-run execution",
+      "acceptance": [
+        "real pause confirmation and expected schedule changes; monotonic resume need not change clock_epoch",
+        "scoped generation ledger and full Job version correlation; no requirement that task_generation equals scoped generation",
+        "same gen2 Job submits, produces actual candidate, registers accepted and activates accepted with control_source=candidate after real resume/open",
+        "API/Applied/CDR/Stored, source flush, witness and exact role/spawn/closure accounting",
+        "old-candidate rejection and non-revival distinguished from absent evidence and explicitly scoped reuse",
+        "required hold/resume order, clause values, policy/parameter domain and observation/termination window checked before spawn",
+        "legal positives pass; false candidate, fallback-only, missing actions, wrong order or false clauses reject through intended named assertions",
+        "parse/compiler/unexecuted/unprepared failures cannot count as caught mutations"
+      ],
+      "owned_runs": 0
+    },
+    {
+      "id": "S2",
+      "status": "single_factor_B2_candidate",
+      "task": "Derive new silent-only Fixture profile using actual last published (stamp, writer steady target); actual writer calls the tested pure mapping helper",
+      "mapping_candidate": "S_next=S_last+(T_next-T_last), with one explicit last_target accounting update",
+      "tests": ["real retained time sequence", "timer/action edge phase mismatch", "hold longer than minimum", "duplicate or missing resume", "no double count", "raw clock and projected-history continuity separately", "400ms RTF revalidation window", "ordinary no-hold and same_stamp compatibility", "catch-up limit and integer overflow"],
+      "regulator_L630_or_OutputAuthority_modified_for_this_candidate": false,
+      "existing_consistency_fail_closed_preserved": true,
+      "all_existing_business_budgets_unchanged": true,
+      "owned_runs": 0
+    },
+    {
+      "id": "S3",
+      "status": "independent_optional_B0_design_branch",
+      "gates_B2_run": false,
+      "task": "Only if genuine clock-epoch recovery is required, separately design output-thread-owned transition, irreversible steady API facts, sim-history qualification and deterministic pair interleavings",
+      "not_a_reusable_interface": "OutputAuthority has no change_version; shadow CommandAnchor method is not a substitute",
+      "B1_time_window_exemption_is_default": false,
+      "owned_runs": 0
+    },
+    {
+      "id": "S4",
+      "status": "conditional_after_B2_related_S1_S2",
+      "task": "Freeze unique new case/policy/source/bundle/Driver/ELF/audit/registry/registration identities, then one finite B2 positive run",
+      "B0_completion_required": false,
+      "automatic_retries": 0,
+      "failure_originals_preserved": true,
+      "pass_requires": "genuine same-Job post-resume new-generation registration, activation and actual output; not rc0, event presence or generation open alone"
+    }
+  ],
+  "baseline_reuse": "Old M0 is historical evidence only; verify changed default/no-hold component behavior first, and add owned M0 only when the original claim/contract requires it",
+  "current_state": {"resume_NW": "not_covered", "B2_implemented": false, "B0_design_accepted": false, "M4": false, "F6": false, "P1": false, "plant": false, "hard_realtime": false},
+  "new_resource_prerequisites_added": false,
+  "production_B_mode": "MANUAL+RC override"
+}

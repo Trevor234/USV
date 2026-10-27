@@ -1,0 +1,11 @@
+{
+  "schema": "C3.6-bounded-compile-completion-recipe/v1",
+  "client_date": "2026-10-14",
+  "old_build_status": "failed: compiler budget600s, returncode124 during final test target",
+  "operation": "same-source build02 last target test_c34_lease_matrix only",
+  "compile_completion_budget_s": 180,
+  "source_bundle_sha256": "82b4ce2c96882ef0772e0db494ea0b253ec96bdb7983f5fed7d20cd59d281db7",
+  "runtime_contract_unchanged": true,
+  "old_result_overwritten": false,
+  "helper_sha256": "4ade3e2b402ee3ca9c883cadd7c1dc19a646a17f53f6c1dde270cb3b4aa3b15c"
+}

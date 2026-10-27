@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="32" failures="0" disabled="0" errors="0" time="0.019" timestamp="2026-10-07T11:59:00.175" name="AllTests">
+  <testsuite name="Deadline" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="EqualityRegistrationSurvivesEitherCutoffOrder" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="8" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Deadline" />
+    <testcase name="BeforeAndAfterHaveDifferentResults" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="9" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Deadline" />
+    <testcase name="RegistrationCompletionAfterDeadlineRetractsSlot" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="23" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Deadline" />
+  </testsuite>
+  <testsuite name="Admission" tests="3" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="WrongTargetDuplicateAndVersion" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="10" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Admission" />
+    <testcase name="ClearBetweenCutoffAndActivationInvalidates" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="11" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Admission" />
+    <testcase name="FixedCapacityAndMissedTickNeverRollsForward" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="12" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Admission" />
+  </testsuite>
+  <testsuite name="Activation" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="SourceSequenceDoesNotReplaceStateAndVersionGate" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="13" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Activation" />
+  </testsuite>
+  <testsuite name="Anchor" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="14" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Anchor" />
+  </testsuite>
+  <testsuite name="Command" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="AmplitudeAndActualSteadySpacing" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="15" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Command" />
+  </testsuite>
+  <testsuite name="Fallback" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="FifthMissRampsAndNeverInstantlyDropsLargeThrust" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="16" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.Fallback" />
+  </testsuite>
+  <testsuite name="InputCore" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="EligibilityPreservesF5ReasonPriority" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="17" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.InputCore" />
+    <testcase name="NumericAndMixedRate" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="18" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.InputCore" />
+    <testcase name="MappingMatchesDeclaredPhysicalClamp" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="19" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.InputCore" />
+    <testcase name="TargetReferenceIsRebuiltFromPredictedNearestPoint" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="20" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.InputCore" />
+    <testcase name="PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="21" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.InputCore" />
+  </testsuite>
+  <testsuite name="SourceTime" tests="5" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.175">
+    <testcase name="ReceiveAgeAndPhysicalLagAreIndependent" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="26" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.SourceTime" />
+    <testcase name="LagAndFutureLimitsAreInclusive" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="32" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.SourceTime" />
+    <testcase name="PhysicalNowExtrapolatesClockToCommitAtOneToOne" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="39" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.SourceTime" />
+    <testcase name="OnlyMixedStateUsesImuPhysicalAge" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="45" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.SourceTime" />
+    <testcase name="InvalidChronologyAndExtrapolationOverflowAreRejected" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="52" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.SourceTime" />
+  </testsuite>
+  <testsuite name="ClockWindow" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0.019" timestamp="2026-10-07T11:59:00.175">
+    <testcase name="HighRateClockRetainsRequiredDurationAtFiniteCapacity" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.175" classname="usv_research_safety_cpp.ClockWindow" />
+    <testcase name="DurationAndRealtimeRatioBoundariesAreInclusive" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="71" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.176" classname="usv_research_safety_cpp.ClockWindow" />
+    <testcase name="RepeatedSimulationTimeCannotKeepPreviousValidRatio" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="81" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.176" classname="usv_research_safety_cpp.ClockWindow" />
+    <testcase name="ReceiveGapRemovesStaleValidityAndNeedsNewCoverage" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="88" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.176" classname="usv_research_safety_cpp.ClockWindow" />
+    <testcase name="ResetBackwardJumpAndDuplicateReceiveRequireFreshWindow" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="95" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.176" classname="usv_research_safety_cpp.ClockWindow" />
+    <testcase name="InvalidInputsAndBurstsCannotClaimEstablishedAlignment" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="107" status="run" result="completed" time="0.018" timestamp="2026-10-07T11:59:00.176" classname="usv_research_safety_cpp.ClockWindow" />
+  </testsuite>
+  <testsuite name="PublicationHistory" tests="6" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-07T11:59:00.194">
+    <testcase name="SameValueRepetitionPreservesInputAssumption" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="127" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.194" classname="usv_research_safety_cpp.PublicationHistory" />
+    <testcase name="ChangedThenReturnedIsNotSameInputHistory" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="133" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.194" classname="usv_research_safety_cpp.PublicationHistory" />
+    <testcase name="MissingChannelOrSequenceCannotProveEquivalence" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="139" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.194" classname="usv_research_safety_cpp.PublicationHistory" />
+    <testcase name="UnknownAndNonfinitePublicationsInvalidateProof" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="143" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.194" classname="usv_research_safety_cpp.PublicationHistory" />
+    <testcase name="WrongTimeAndOutOfOrderRecordsAreRejected" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="147" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.194" classname="usv_research_safety_cpp.PublicationHistory" />
+    <testcase name="EvictedFreezeAnchorDoesNotAuthorizeCurrentValue" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_admission.cpp" line="153" status="run" result="completed" time="0." timestamp="2026-10-07T11:59:00.194" classname="usv_research_safety_cpp.PublicationHistory" />
+  </testsuite>
+</testsuites>

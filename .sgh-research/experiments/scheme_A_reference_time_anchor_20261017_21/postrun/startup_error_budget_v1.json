@@ -1,0 +1,23 @@
+{
+  "G_T_first_actual_command_latency_difference_s": 0.081815833,
+  "T_last5_position_RMSE_reduction_fraction_vs_diagnostic_G": 0.9980299488186899,
+  "T_peak_relative_overshoot": 0.2944011196208334,
+  "actual_T_samples": 1015,
+  "actual_first2s_over_full_allowed_SSE": 1.5694278882655452,
+  "actual_first2s_sample_SSE": 0.08705416926782855,
+  "actual_total_sample_SSE": 0.09743572967126875,
+  "allowed_total_sample_SSE": 0.05546872839378211,
+  "arithmetic_audit_passed": true,
+  "client_date": "2026-10-18",
+  "even_if_remaining_samples_had_zero_error_whole_RMSE_lower_bound_m_s": 0.009261082790422653,
+  "execute_qualified": false,
+  "interpretation": "Current first2s error already exceeds the complete allowed SSE budget. A perfect terminal window cannot retroactively pass this run. G/T have different first-command latency and six interior missing preparations in T; only finite observations and native selected-Job reference effects are established.",
+  "original_RMSE_limit_m_s": 0.007392495755251466,
+  "passed_semantics": "arithmetic audit, not a performance pass",
+  "post_hoc_diagnostic": true,
+  "reference_only_causal_RMSE_effect_proven": false,
+  "repair_of_missing_wakeup_alone_proven_sufficient_for_RMSE_gate": false,
+  "research_conclusion": false,
+  "schema": "scheme-A-task-time-startup-error-budget/v1",
+  "stage_qualified": false
+}

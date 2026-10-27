@@ -1,0 +1,118 @@
+{
+  "cases": [
+    {
+      "change": null,
+      "id": "default",
+      "normal_pilot_required": true
+    },
+    {
+      "from": 14.2,
+      "id": "plant_mass_only",
+      "invariant": "all actual controller parameters and nominal_effective SHA unchanged",
+      "key": "vehicle.mass",
+      "normal_pilot_required": true,
+      "side": "plant",
+      "to": 17.04
+    },
+    {
+      "from": 14.2,
+      "id": "nominal_mass_only",
+      "invariant": "plant raw source, effective nineteen parameters and actuator limits unchanged; canonicalized generated SDF unchanged",
+      "key": "vehicle.mass",
+      "normal_pilot_required": true,
+      "side": "nominal",
+      "to": 17.04
+    },
+    {
+      "from": 25.0,
+      "id": "plant_thruster_only",
+      "invariant": "B solver T_max/T_min and nominal identity unchanged",
+      "key": "thruster.T_max_forward",
+      "normal_pilot_required": false,
+      "purpose": "helper/actual launch wiring test; intentional plant clamp change kept outside three normal pilots",
+      "side": "plant",
+      "to": 20.0
+    },
+    {
+      "from": 25.0,
+      "id": "nominal_thruster_only",
+      "invariant": "plant actual command bounds remain +/-25 N",
+      "key": "thruster.T_max_forward",
+      "normal_pilot_required": false,
+      "purpose": "helper/actual launch wiring test; not a tracking-performance claim",
+      "side": "nominal",
+      "to": 20.0
+    }
+  ],
+  "default_nominal_parameters": {
+    "Iz": 2.13,
+    "Nr": -3.105,
+    "Nr_dot": -3.41,
+    "Nrr": -0.71,
+    "Nv": 0.0,
+    "Nv_dot": -0.1817725,
+    "Nvv": 0.0,
+    "Xu": -2.272063,
+    "Xu_dot": -2.0,
+    "Xuu": -11.571784,
+    "Yr": 0.0,
+    "Yr_dot": -0.1817725,
+    "Yrr": 0.0,
+    "Yv": -2.629019,
+    "Yv_dot": -8.0,
+    "Yvv": -0.05,
+    "d_thruster": 0.25,
+    "mass": 14.2,
+    "xg": 0.12
+  },
+  "default_nominal_solver_bounds_N": {
+    "T_max": 25.0,
+    "T_min": -25.0
+  },
+  "default_physical_plant_bounds_N": {
+    "max": 25.0,
+    "min": -25.0
+  },
+  "defaults_sha256": {
+    "p0_nominal_f3.yaml": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+    "p0_plant_f3.yaml": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35"
+  },
+  "f3_manifest_sha256": "9c64426cc68d3eb1949fa63d564725499870bbb02d649022a2116088a0bfeb35",
+  "metadata_sha256": "f597cfc3f4a8826d6b721205bfb97cc399014225b957b7cece4438545d68c80a",
+  "nominal_projection": "none; directly use nineteen effective F3 values",
+  "normal_pilot_protocol": {
+    "dt_s": 0.2,
+    "duration_wall_s": 60.0,
+    "fallback_u_m_s": 0.6,
+    "fresh_directories": true,
+    "horizon": 20,
+    "independent_domains": true,
+    "profile_u_m_s": 0.8,
+    "retain_all_failures": true,
+    "scheme": "B",
+    "weights": "unchanged from F3"
+  },
+  "not_proven": [
+    "plant response equivalence",
+    "P1 independent scheduling",
+    "safety certificate",
+    "performance improvement",
+    "exact execution timing",
+    "GP label readiness"
+  ],
+  "plant_projection": "symmetric_mean on raw Yr_dot=0,Nv_dot=-0.363545; effective both=-0.1817725",
+  "required_evidence": [
+    "immutable config_sources.json and nominal_effective.yaml SHA",
+    "actual controller ROS parameter dump and exact file SHA",
+    "generated plant model_report/effective YAML/SDF hashes and projected nineteen values",
+    "independent solver input constraints and physical plant command limits",
+    "config-only comparisons exclude run/baseline/output/producer identity and observational switches, with excluded keys explicitly listed",
+    "cross-run SDF comparisons canonicalize only generated mesh/output paths; retain exact raw SHA separately",
+    "new frozen source/install/model baseline and real runtime overlay hashes",
+    "reference_prediction stream source/recorded counts and actual nominal hash binding",
+    "original thirteen-topic raw bags read-only checker and final end_unknown intervals"
+  ],
+  "schema": "p0-config-decoupling-preregistration/1",
+  "simulation_source_sha256": "edcd9d129357651c8bc9c0ca9d081e91bc6467db5420fd88e305e3e77281093a",
+  "status": "planned; no production mutation or Ubuntu experiment executed by this generator"
+}

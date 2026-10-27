@@ -1,0 +1,40 @@
+{
+  "cases": [
+    {
+      "budget": "一个有界触发；30s总墙钟；Source总量≤100MiB",
+      "evidence": "Source+Witness同一次失败→stopping/候选pending失效→owned关闭；旧R5只按旧版本引用",
+      "id": "V1",
+      "scope": "当前Observer与日志链；不授予M4输出资格",
+      "trigger": "当前Sink/延后materialization压力，第一次真实入队失败"
+    },
+    {
+      "budget": "一次阻塞场景及一次全新run恢复；每run≤30s",
+      "evidence": "绝对150ms deadline不延后、旧实例不恢复资格、active≤1/pending≤1、owned退出及明确新身份",
+      "id": "V2",
+      "scope": "最终候选/能力/监督版本；不是源发送新鲜度保证",
+      "trigger": "Worker阻塞后租约超时；迟到candidate/capability；关闭后新run"
+    },
+    {
+      "budget": "复用现有针对性Native前提；一个有界实际交错确认；≤30s",
+      "evidence": "32历史选择、最多2次校验；过期/混源/变化输入不能激活；来源、held history和task/ref策略失效一致",
+      "id": "V3",
+      "scope": "选定名义域，mixed/转弯需独立来源前提；旧测试不累加成全域",
+      "trigger": "来源/参考或时钟epoch失效与一次激活重验交错"
+    },
+    {
+      "budget": "组件事件表先行；M4专用run在正式前置闭合后另预注册，当前不运行",
+      "evidence": "每侧实际API结果、失败侧unknown、已发布动作不撤回；斜坡按已知锚点及时间；close success与zero-target分账",
+      "id": "V4",
+      "scope": "当前shadow不执行此路径：先派生可复核共享发布组件并验证；M4时再核验新regulator独占出口",
+      "trigger": "新共享发布实现左成功右失败；无候选跨hold和连续5拍；shutdown"
+    }
+  ],
+  "execute_qualified": false,
+  "freeze_automatically_granted": false,
+  "late_candidate_executions_required": 0,
+  "research_conclusion": false,
+  "schema": "B4-final-version-confirmation-design/v1",
+  "stage_qualified": false,
+  "status": "design_not_executed",
+  "wrong_version_executions_required": 0
+}

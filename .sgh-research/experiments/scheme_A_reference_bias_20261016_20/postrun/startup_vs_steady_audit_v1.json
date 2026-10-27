@@ -1,0 +1,731 @@
+{
+  "ROS_nodes_started": false,
+  "audit_client_date": "2026-10-17",
+  "audit_passed": true,
+  "cases": [
+    {
+      "accepted": 102,
+      "actual_Job_reference_x_lead_m": {
+        "count": 103,
+        "maximum": 0.023721677915386943,
+        "mean": 0.019796231786670327,
+        "minimum": 0.015385754623900067
+      },
+      "actual_SQLite": [
+        {
+          "bytes": 4960256,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/recorder/bag/bag_0.db3",
+          "sha256": "519869024823d8391765343031d111cef956f242fefee69bf376d7dd1076a24e"
+        }
+      ],
+      "all_five_role_returncodes": {
+        "observer": 0,
+        "publisher": 0,
+        "recorder": 0,
+        "synthetic_source": 0,
+        "worker": 0
+      },
+      "audit_checks_passed": true,
+      "candidate_attempts": 102,
+      "case": "parent",
+      "first20s_supplement_not_used_as_gate": {
+        "IAE_m": 0.26942460830225073,
+        "ISE_m2_per_s": 0.004435480231506731,
+        "duration_s": 20.0,
+        "signed_integrated_velocity_error_m": 0.19257169433131915,
+        "time_weighted_MSE_m2_per_s2": 0.00022177401157533655,
+        "time_weighted_RMSE_m_s": 0.014892078819806741
+      },
+      "first2s_accepted_commands": [
+        {
+          "after_Ready_s": 0.346182435,
+          "thrust_n": [
+            0.45646052475647997,
+            0.45646052475646837
+          ]
+        },
+        {
+          "after_Ready_s": 0.544137397,
+          "thrust_n": [
+            0.5724134187723646,
+            0.5724134187723611
+          ]
+        },
+        {
+          "after_Ready_s": 0.74414726,
+          "thrust_n": [
+            0.5203191335118181,
+            0.5203224567834497
+          ]
+        },
+        {
+          "after_Ready_s": 0.944150338,
+          "thrust_n": [
+            0.44094588405155993,
+            0.44095091263273173
+          ]
+        },
+        {
+          "after_Ready_s": 1.144176065,
+          "thrust_n": [
+            0.35473082830255964,
+            0.35473574507305267
+          ]
+        },
+        {
+          "after_Ready_s": 1.344172535,
+          "thrust_n": [
+            0.2737889056114942,
+            0.2737925770134841
+          ]
+        },
+        {
+          "after_Ready_s": 1.544120326,
+          "thrust_n": [
+            0.20359447867225974,
+            0.2035965626462051
+          ]
+        },
+        {
+          "after_Ready_s": 1.744196824,
+          "thrust_n": [
+            0.14695233039520414,
+            0.14695227738788477
+          ]
+        },
+        {
+          "after_Ready_s": 1.944194591,
+          "thrust_n": [
+            0.10310999265090232,
+            0.10310843056758792
+          ]
+        }
+      ],
+      "first_accepted_actual_command": {
+        "after_Ready_s": 0.346182435,
+        "command_is_force_measurement": false,
+        "control_source": "controlled_C_decision",
+        "thrust_n": [
+          0.45646052475647997,
+          0.45646052475646837
+        ]
+      },
+      "initial_state_observation": {
+        "first_sample_after_Ready_s": 0.01949815,
+        "first_surge_m_s": 0.0
+      },
+      "integral_method": "piecewise-linear interpolation among pre-close samples; final pre-close value held to exact request boundary; no post-request sample used",
+      "locked_raw_file_count": 95,
+      "measurement_sensor_count": 1035,
+      "measurement_window_s": 20.709847203,
+      "parent_full_checker_report": {
+        "bytes": 186475,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/runs/s005_01/check_result.json",
+        "sha256": "84052635295fc420706e56b46edbdfa7bc3ede0f4722bb7541e2b9defb5e13e0"
+      },
+      "raw_input_SHA_manifest_digest": "6156e38aea1942eee07cc0af49cdf17b03b3eae2bf17b084de4c8d2313f5f8a8",
+      "sample_gate_metrics": {
+        "last5s_mean_surge_m_s": 0.062491690170501255,
+        "last5s_relative_mean_error": 0.24983380341002503,
+        "whole_RMSE_m_s": 0.014784991510502932
+      },
+      "segments": [
+        {
+          "IAE_m": 0.037117857305951386,
+          "ISE_m2_per_s": 0.0015551862392037766,
+          "actual_publisher_command_pairs": 5,
+          "duration_s": 1.0,
+          "end_after_Ready_s": 1.0,
+          "integral_ISAE_fraction_of_whole": 0.3420677090103284,
+          "maximum_command_n": 0.5724134187723646,
+          "mean_command_n_per_channel": 0.39802862740372336,
+          "mean_signed_error_m_s": -0.036779966000122497,
+          "mean_surge_m_s": 0.013220033999877508,
+          "sample_RMSE_m_s": 0.03917716398992048,
+          "sample_SSE_fraction_of_whole": 0.33919815751051724,
+          "sample_SSE_m2_per_s2": 0.07674250891465609,
+          "sample_full_window_MSE_contribution_m2_per_s2": 7.414735160836338e-05,
+          "samples": 50,
+          "segment": "0_to_1s",
+          "signed_integrated_velocity_error_m": -0.037117857305951386,
+          "start_after_Ready_s": 0.0,
+          "time_weighted_MSE_m2_per_s2": 0.0015551862392037766,
+          "time_weighted_RMSE_m_s": 0.039435849670113314
+        },
+        {
+          "IAE_m": 0.007260736512181779,
+          "ISE_m2_per_s": 6.596585243009603e-05,
+          "actual_publisher_command_pairs": 5,
+          "duration_s": 1.0,
+          "end_after_Ready_s": 2.0,
+          "integral_ISAE_fraction_of_whole": 0.014509379934604527,
+          "maximum_command_n": 0.35473574507305267,
+          "mean_command_n_per_channel": 0.21643621283206346,
+          "mean_signed_error_m_s": 0.00484197210512845,
+          "mean_surge_m_s": 0.05484197210512845,
+          "sample_RMSE_m_s": 0.008138080650123704,
+          "sample_SSE_fraction_of_whole": 0.014636305793500639,
+          "sample_SSE_m2_per_s2": 0.0033114178333958915,
+          "sample_full_window_MSE_contribution_m2_per_s2": 3.199437520189267e-06,
+          "samples": 50,
+          "segment": "1_to_2s",
+          "signed_integrated_velocity_error_m": 0.004643537153152886,
+          "start_after_Ready_s": 1.0,
+          "time_weighted_MSE_m2_per_s2": 6.596585243009603e-05,
+          "time_weighted_RMSE_m_s": 0.008121936495078993
+        },
+        {
+          "IAE_m": 0.03765491959633658,
+          "ISE_m2_per_s": 0.0004728667040680365,
+          "actual_publisher_command_pairs": 15,
+          "duration_s": 3.0,
+          "end_after_Ready_s": 5.0,
+          "integral_ISAE_fraction_of_whole": 0.10400839851221427,
+          "maximum_command_n": 0.11766200438015018,
+          "mean_command_n_per_channel": 0.09466120454057987,
+          "mean_signed_error_m_s": 0.012553316249725065,
+          "mean_surge_m_s": 0.06255331624972507,
+          "sample_RMSE_m_s": 0.0125564213868552,
+          "sample_SSE_fraction_of_whole": 0.10452989501493025,
+          "sample_SSE_m2_per_s2": 0.023649557706641202,
+          "sample_full_window_MSE_contribution_m2_per_s2": 2.284981420931517e-05,
+          "samples": 150,
+          "segment": "2_to_5s",
+          "signed_integrated_velocity_error_m": 0.03765491959633658,
+          "start_after_Ready_s": 2.0,
+          "time_weighted_MSE_m2_per_s2": 0.00015762223468934552,
+          "time_weighted_RMSE_m_s": 0.012554769400086388
+        },
+        {
+          "IAE_m": 0.06243956322440712,
+          "ISE_m2_per_s": 0.0007798859582155791,
+          "actual_publisher_command_pairs": 25,
+          "duration_s": 5.0,
+          "end_after_Ready_s": 10.0,
+          "integral_ISAE_fraction_of_whole": 0.17153817098633187,
+          "maximum_command_n": 0.10506354193309438,
+          "mean_command_n_per_channel": 0.09293190843572026,
+          "mean_signed_error_m_s": 0.012487781003418054,
+          "mean_surge_m_s": 0.06248778100341806,
+          "sample_RMSE_m_s": 0.012488956539276253,
+          "sample_SSE_fraction_of_whole": 0.1723494129555389,
+          "sample_SSE_m2_per_s2": 0.038993508859982776,
+          "sample_full_window_MSE_contribution_m2_per_s2": 3.7674887787422975e-05,
+          "samples": 250,
+          "segment": "5_to_10s",
+          "signed_integrated_velocity_error_m": 0.06243956322440712,
+          "start_after_Ready_s": 5.0,
+          "time_weighted_MSE_m2_per_s2": 0.0001559771916431158,
+          "time_weighted_RMSE_m_s": 0.012489082898400339
+        },
+        {
+          "IAE_m": 0.07136662041506402,
+          "ISE_m2_per_s": 0.0008921639512562798,
+          "actual_publisher_command_pairs": 28,
+          "duration_s": 5.709847203,
+          "end_after_Ready_s": 15.709847203,
+          "integral_ISAE_fraction_of_whole": 0.196234040126335,
+          "maximum_command_n": 0.10486246535275669,
+          "mean_command_n_per_channel": 0.09360266919907889,
+          "mean_signed_error_m_s": 0.012498941172453074,
+          "mean_surge_m_s": 0.062498941172453075,
+          "sample_RMSE_m_s": 0.01250008351748982,
+          "sample_SSE_fraction_of_whole": 0.1968285896553844,
+          "sample_SSE_m2_per_s2": 0.04453184506410289,
+          "sample_full_window_MSE_contribution_m2_per_s2": 4.302593726000279e-05,
+          "samples": 285,
+          "segment": "10s_to_last5_start",
+          "signed_integrated_velocity_error_m": 0.07136662041506402,
+          "start_after_Ready_s": 10.0,
+          "time_weighted_MSE_m2_per_s2": 0.00015625005705713625,
+          "time_weighted_RMSE_m_s": 0.012500002282285242
+        },
+        {
+          "IAE_m": 0.06245846605948902,
+          "ISE_m2_per_s": 0.0007803593797900174,
+          "actual_publisher_command_pairs": 25,
+          "duration_s": 5.0,
+          "end_after_Ready_s": 20.709847203,
+          "integral_ISAE_fraction_of_whole": 0.17164230143018602,
+          "maximum_command_n": 0.10485496897165426,
+          "mean_command_n_per_channel": 0.09403446071033401,
+          "mean_signed_error_m_s": 0.012491690170501257,
+          "mean_surge_m_s": 0.062491690170501255,
+          "sample_RMSE_m_s": 0.012492877118688472,
+          "sample_SSE_fraction_of_whole": 0.17245763907012868,
+          "sample_SSE_m2_per_s2": 0.0390179946756625,
+          "sample_full_window_MSE_contribution_m2_per_s2": 3.769854558035024e-05,
+          "samples": 250,
+          "segment": "last5s",
+          "signed_integrated_velocity_error_m": 0.06245846605948902,
+          "start_after_Ready_s": 15.709847203,
+          "time_weighted_MSE_m2_per_s2": 0.00015607187595800348,
+          "time_weighted_RMSE_m_s": 0.012492873006558719
+        }
+      ],
+      "settling": {
+        "0.05": {
+          "absolute_band_m_s": 0.0025000000000000005,
+          "definition": "sampled entry and all later pre-request samples within band; no infinite-time or inter-sample guarantee",
+          "entry_and_remain_until_close_request_s": null,
+          "first_sampled_entry_s": 1.19934536,
+          "observation_end_s": 20.709847203,
+          "relative_band": 0.05,
+          "remained_inside_through_end": false
+        },
+        "0.1": {
+          "absolute_band_m_s": 0.005000000000000001,
+          "definition": "sampled entry and all later pre-request samples within band; no infinite-time or inter-sample guarantee",
+          "entry_and_remain_until_close_request_s": null,
+          "first_sampled_entry_s": 1.139498656,
+          "observation_end_s": 20.709847203,
+          "relative_band": 0.1,
+          "remained_inside_through_end": false
+        }
+      },
+      "source_and_manifest_bindings": {
+        "inputs.json": {
+          "bytes": 59199,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/inputs.json",
+          "sha256": "8497e89cee7a20ed921f5593109e4dc805591f6d9f0ee41baa516d0bf2ccb9da"
+        },
+        "observer/owned_manifest.json": {
+          "bytes": 28082,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/observer/owned_manifest.json",
+          "sha256": "7af50c514869f93a845a49f7222f0eb2d022beabc3d30b56e4f2c3783e45a9af"
+        },
+        "observer/source.jsonl": {
+          "bytes": 19362532,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/observer/source.jsonl",
+          "sha256": "f1ae6d8318c1b5768f3ead453c46636f9e283827f040b2387edcbbafd841ee64"
+        },
+        "publisher/controlled_source.jsonl": {
+          "bytes": 1525439,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/publisher/controlled_source.jsonl",
+          "sha256": "5fe1020d7636951dae85acdf1361a1f9122d884aba356dab4983238365d02e73"
+        },
+        "recorder/bag/metadata.yaml": {
+          "bytes": 15007,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/recorder/bag/metadata.yaml",
+          "sha256": "159d350be1ac5a2179cc005f100c9c676b7d66ff7a4bd57ef694b4e3f027fd4c"
+        },
+        "result.json": {
+          "bytes": 4300,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/result.json",
+          "sha256": "8cc61cf5a84257d3636047f794ee93717a505581bf1d72947ba7d9ce73fb77bb"
+        },
+        "synthetic_source/nominal_steps.jsonl": {
+          "bytes": 14901806,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/synthetic_source/nominal_steps.jsonl",
+          "sha256": "5a5e4b5e3428fe470ac3718dd83bc2c29bbd4bfe0350dbd324fafd8b2446f3da"
+        },
+        "synthetic_source/owned_manifest.json": {
+          "bytes": 14520,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/synthetic_source/owned_manifest.json",
+          "sha256": "e3944ceed6989fca1b1a1fd99c5bf0193e1346e93100674d127c6c4c93fe6337"
+        },
+        "worker/source.jsonl": {
+          "bytes": 2047951,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/runs/longitudinal_s005_01/worker/source.jsonl",
+          "sha256": "c5786967eca59f9ede708b94b2dfb72b148fc752d814f6dcdc06c51208a5a3e0"
+        }
+      },
+      "speed_reference_m_s": 0.05,
+      "stored_total_model_sensor_count": 1219,
+      "whole_integrals": {
+        "IAE_m": 0.27829816311342975,
+        "ISE_m2_per_s": 0.004546428084963785,
+        "duration_s": 20.709847203,
+        "signed_integrated_velocity_error_m": 0.20144524914249817,
+        "time_weighted_MSE_m2_per_s2": 0.00021952977443045527,
+        "time_weighted_RMSE_m_s": 0.014816537194312822
+      }
+    },
+    {
+      "accepted": 101,
+      "actual_Job_reference_x_lead_m": {
+        "count": 102,
+        "maximum": 1.1102230246251565e-16,
+        "mean": -4.591915083468019e-19,
+        "minimum": -1.1102230246251565e-16
+      },
+      "actual_SQLite": [
+        {
+          "bytes": 4755456,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/recorder/bag/bag_0.db3",
+          "sha256": "0de3b4ba46ae5ef791368e545db77ef95cea0951591eb736bee88f637bdd8450"
+        }
+      ],
+      "all_five_role_returncodes": {
+        "observer": 0,
+        "publisher": 0,
+        "recorder": 0,
+        "synthetic_source": 0,
+        "worker": 0
+      },
+      "audit_checks_passed": true,
+      "candidate_attempts": 101,
+      "case": "projected",
+      "first20s_supplement_not_used_as_gate": {
+        "IAE_m": 0.043334249811730584,
+        "ISE_m2_per_s": 0.001581632671081513,
+        "duration_s": 20.0,
+        "signed_integrated_velocity_error_m": -0.041301981776052016,
+        "time_weighted_MSE_m2_per_s2": 7.908163355407565e-05,
+        "time_weighted_RMSE_m_s": 0.008892785477794663
+      },
+      "first2s_accepted_commands": [
+        {
+          "after_Ready_s": 0.278013112,
+          "thrust_n": [
+            0.3645576181771613,
+            0.36455761817717686
+          ]
+        },
+        {
+          "after_Ready_s": 0.478027677,
+          "thrust_n": [
+            0.45705215902702345,
+            0.45705215902702795
+          ]
+        },
+        {
+          "after_Ready_s": 0.677793476,
+          "thrust_n": [
+            0.43025384768441427,
+            0.43026063124948727
+          ]
+        },
+        {
+          "after_Ready_s": 0.877776832,
+          "thrust_n": [
+            0.3568966593442427,
+            0.35690622703983743
+          ]
+        },
+        {
+          "after_Ready_s": 1.077809338,
+          "thrust_n": [
+            0.2766147004725377,
+            0.27662429220370194
+          ]
+        },
+        {
+          "after_Ready_s": 1.277794253,
+          "thrust_n": [
+            0.20720558103580253,
+            0.20721363773728674
+          ]
+        },
+        {
+          "after_Ready_s": 1.477798341,
+          "thrust_n": [
+            0.15431360118045254,
+            0.15431940207295103
+          ]
+        },
+        {
+          "after_Ready_s": 1.677855723,
+          "thrust_n": [
+            0.11755092628940232,
+            0.11755444553978668
+          ]
+        },
+        {
+          "after_Ready_s": 1.877957993,
+          "thrust_n": [
+            0.09400687895103554,
+            0.09400830687273327
+          ]
+        }
+      ],
+      "first_accepted_actual_command": {
+        "after_Ready_s": 0.278013112,
+        "command_is_force_measurement": false,
+        "control_source": "controlled_C_decision",
+        "thrust_n": [
+          0.3645576181771613,
+          0.36455761817717686
+        ]
+      },
+      "initial_state_observation": {
+        "first_sample_after_Ready_s": 0.019301927,
+        "first_surge_m_s": 0.0
+      },
+      "integral_method": "piecewise-linear interpolation among pre-close samples; final pre-close value held to exact request boundary; no post-request sample used",
+      "locked_raw_file_count": 99,
+      "measurement_sensor_count": 1016,
+      "measurement_window_s": 20.335614338,
+      "parent_full_checker_report": {
+        "bytes": 223695,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/runs/s005_01/check_result.json",
+        "sha256": "fcaea35f0d3d2587643d31106a8b2c254b9228b74c4709f2daa8f5e5976bb097"
+      },
+      "raw_input_SHA_manifest_digest": "2f5d2aed0c5083a5154ea50cc0535e00693bb4a8225d0eeebf4151c41a9b082b",
+      "sample_gate_metrics": {
+        "last5s_mean_surge_m_s": 0.05003420093703309,
+        "last5s_relative_mean_error": 0.0006840187406617626,
+        "whole_RMSE_m_s": 0.008758759754530695
+      },
+      "segments": [
+        {
+          "IAE_m": 0.03741157603998031,
+          "ISE_m2_per_s": 0.001537564369402433,
+          "actual_publisher_command_pairs": 5,
+          "duration_s": 1.0,
+          "end_after_Ready_s": 1.0,
+          "integral_ISAE_fraction_of_whole": 0.9721372199018046,
+          "maximum_command_n": 0.45705215902702795,
+          "mean_command_n_per_channel": 0.32175369197263715,
+          "mean_signed_error_m_s": -0.03709894281923569,
+          "mean_surge_m_s": 0.012901057180764317,
+          "sample_RMSE_m_s": 0.0389496986484685,
+          "sample_SSE_fraction_of_whole": 0.9731936619482792,
+          "sample_SSE_m2_per_s2": 0.07585395124032543,
+          "sample_full_window_MSE_contribution_m2_per_s2": 7.465940082709195e-05,
+          "samples": 50,
+          "segment": "0_to_1s",
+          "signed_integrated_velocity_error_m": -0.03741157603998031,
+          "start_after_Ready_s": 0.0,
+          "time_weighted_MSE_m2_per_s2": 0.001537564369402433,
+          "time_weighted_RMSE_m_s": 0.039211788653444934
+        },
+        {
+          "IAE_m": 0.004906613874785002,
+          "ISE_m2_per_s": 4.38972125596383e-05,
+          "actual_publisher_command_pairs": 5,
+          "duration_s": 1.0,
+          "end_after_Ready_s": 2.0,
+          "integral_ISAE_fraction_of_whole": 0.02775435944561491,
+          "maximum_command_n": 0.27662429220370194,
+          "mean_command_n_per_channel": 0.16994117723556904,
+          "mean_signed_error_m_s": -0.0047607885514631635,
+          "mean_surge_m_s": 0.04523921144853684,
+          "sample_RMSE_m_s": 0.006451043585344885,
+          "sample_SSE_fraction_of_whole": 0.02669629669657077,
+          "sample_SSE_m2_per_s2": 0.002080798167000969,
+          "sample_full_window_MSE_contribution_m2_per_s2": 2.048029691930088e-06,
+          "samples": 50,
+          "segment": "1_to_2s",
+          "signed_integrated_velocity_error_m": -0.004906465633036968,
+          "start_after_Ready_s": 1.0,
+          "time_weighted_MSE_m2_per_s2": 4.38972125596383e-05,
+          "time_weighted_RMSE_m_s": 0.006625497155658457
+        },
+        {
+          "IAE_m": 0.0005041731857192089,
+          "ISE_m2_per_s": 1.5361892762176392e-07,
+          "actual_publisher_command_pairs": 15,
+          "duration_s": 3.0,
+          "end_after_Ready_s": 5.0,
+          "integral_ISAE_fraction_of_whole": 9.712678063719561e-05,
+          "maximum_command_n": 0.08013079148579483,
+          "mean_command_n_per_channel": 0.07099743267510075,
+          "mean_signed_error_m_s": 0.00016808784976864906,
+          "mean_surge_m_s": 0.05016808784976865,
+          "sample_RMSE_m_s": 0.00022634320799642198,
+          "sample_SSE_fraction_of_whole": 9.859326675148334e-05,
+          "sample_SSE_m2_per_s2": 7.684687170916731e-06,
+          "sample_full_window_MSE_contribution_m2_per_s2": 7.563668475311743e-09,
+          "samples": 150,
+          "segment": "2_to_5s",
+          "signed_integrated_velocity_error_m": 0.0005041731857192089,
+          "start_after_Ready_s": 2.0,
+          "time_weighted_MSE_m2_per_s2": 5.120630920725464e-08,
+          "time_weighted_RMSE_m_s": 0.0002262881110603353
+        },
+        {
+          "IAE_m": 0.00016987735336473914,
+          "ISE_m2_per_s": 5.773151732665325e-09,
+          "actual_publisher_command_pairs": 25,
+          "duration_s": 5.0,
+          "end_after_Ready_s": 10.0,
+          "integral_ISAE_fraction_of_whole": 3.6501207930863715e-06,
+          "maximum_command_n": 0.07135021381530325,
+          "mean_command_n_per_channel": 0.07132832845611993,
+          "mean_signed_error_m_s": 3.398016345583979e-05,
+          "mean_surge_m_s": 0.050033980163455845,
+          "sample_RMSE_m_s": 3.398439754838557e-05,
+          "sample_SSE_fraction_of_whole": 3.704420025808884e-06,
+          "sample_SSE_m2_per_s2": 2.887348191816787e-07,
+          "sample_full_window_MSE_contribution_m2_per_s2": 2.8418781415519554e-10,
+          "samples": 250,
+          "segment": "5_to_10s",
+          "signed_integrated_velocity_error_m": 0.00016987735336473914,
+          "start_after_Ready_s": 5.0,
+          "time_weighted_MSE_m2_per_s2": 1.154630346533065e-09,
+          "time_weighted_RMSE_m_s": 3.397985206755711e-05
+        },
+        {
+          "IAE_m": 0.00018248299752381022,
+          "ISE_m2_per_s": 6.2410890809922545e-09,
+          "actual_publisher_command_pairs": 27,
+          "duration_s": 5.335614338,
+          "end_after_Ready_s": 15.335614338,
+          "integral_ISAE_fraction_of_whole": 3.945977878450256e-06,
+          "maximum_command_n": 0.0713249544855475,
+          "mean_command_n_per_channel": 0.0713249534661442,
+          "mean_signed_error_m_s": 3.420093478040466e-05,
+          "mean_surge_m_s": 0.05003420093478041,
+          "sample_RMSE_m_s": 3.420093478040592e-05,
+          "sample_SSE_fraction_of_whole": 3.991890805608118e-06,
+          "sample_SSE_m2_per_s2": 3.111412480010521e-07,
+          "sample_full_window_MSE_contribution_m2_per_s2": 3.062413858278072e-10,
+          "samples": 266,
+          "segment": "10s_to_last5_start",
+          "signed_integrated_velocity_error_m": 0.00018248299752381022,
+          "start_after_Ready_s": 10.0,
+          "time_weighted_MSE_m2_per_s2": 1.169703933911322e-09,
+          "time_weighted_RMSE_m_s": 3.420093469353319e-05
+        },
+        {
+          "IAE_m": 0.00017100468516372867,
+          "ISE_m2_per_s": 5.8485204695891905e-09,
+          "actual_publisher_command_pairs": 25,
+          "duration_s": 5.0,
+          "end_after_Ready_s": 20.335614338,
+          "integral_ISAE_fraction_of_whole": 3.6977732724483587e-06,
+          "maximum_command_n": 0.07132495344515108,
+          "mean_command_n_per_channel": 0.07132495340194876,
+          "mean_signed_error_m_s": 3.420093703308669e-05,
+          "mean_surge_m_s": 0.05003420093703309,
+          "sample_RMSE_m_s": 3.420093703308669e-05,
+          "sample_SSE_fraction_of_whole": 3.7517775671695127e-06,
+          "sample_SSE_m2_per_s2": 2.924260234852901e-07,
+          "sample_full_window_MSE_contribution_m2_per_s2": 2.878208892571753e-10,
+          "samples": 250,
+          "segment": "last5s",
+          "signed_integrated_velocity_error_m": 0.00017100468516372867,
+          "start_after_Ready_s": 15.335614338,
+          "time_weighted_MSE_m2_per_s2": 1.169704093917838e-09,
+          "time_weighted_RMSE_m_s": 3.4200937032745726e-05
+        }
+      ],
+      "settling": {
+        "0.05": {
+          "absolute_band_m_s": 0.0025000000000000005,
+          "definition": "sampled entry and all later pre-request samples within band; no infinite-time or inter-sample guarantee",
+          "entry_and_remain_until_close_request_s": 1.598235175,
+          "first_sampled_entry_s": 1.598235175,
+          "observation_end_s": 20.335614338,
+          "relative_band": 0.05,
+          "remained_inside_through_end": true
+        },
+        "0.1": {
+          "absolute_band_m_s": 0.005000000000000001,
+          "definition": "sampled entry and all later pre-request samples within band; no infinite-time or inter-sample guarantee",
+          "entry_and_remain_until_close_request_s": 1.41900339,
+          "first_sampled_entry_s": 1.41900339,
+          "observation_end_s": 20.335614338,
+          "relative_band": 0.1,
+          "remained_inside_through_end": true
+        }
+      },
+      "source_and_manifest_bindings": {
+        "inputs.json": {
+          "bytes": 62216,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/inputs.json",
+          "sha256": "7fddedbf50a449bda98b288db724d5143d25ee54539604908e6dc783ddd30cec"
+        },
+        "observer/owned_manifest.json": {
+          "bytes": 27991,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/observer/owned_manifest.json",
+          "sha256": "5e7f325b9902ae6b938e2500adc091e3ce663b7768f7e8766f1116fb4e58cc5c"
+        },
+        "observer/source.jsonl": {
+          "bytes": 18679257,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/observer/source.jsonl",
+          "sha256": "904255964ddd6c105ea4b3e450656382d97b5b18aba978348e33cd05c890efe2"
+        },
+        "publisher/controlled_source.jsonl": {
+          "bytes": 1473227,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/publisher/controlled_source.jsonl",
+          "sha256": "cf6bd122471921e91cef48c463c3229cd19b16e736b847d506ab69584d4c370e"
+        },
+        "recorder/bag/metadata.yaml": {
+          "bytes": 15007,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/recorder/bag/metadata.yaml",
+          "sha256": "af4cc58fe9bd1d744b5c3e5b549abcb486722fa5265b39ca7e78c7b1b654d035"
+        },
+        "result.json": {
+          "bytes": 4291,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/result.json",
+          "sha256": "52d436021de21695b3d84f91c078998cea2471d18558c6f8a238e45c95cd2cdc"
+        },
+        "synthetic_source/nominal_steps.jsonl": {
+          "bytes": 13987011,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/synthetic_source/nominal_steps.jsonl",
+          "sha256": "ce1c4b065b0e0f51b381ff82d89dda0603afd95587ab75c2afc4ffc4b52b4334"
+        },
+        "synthetic_source/owned_manifest.json": {
+          "bytes": 14495,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/synthetic_source/owned_manifest.json",
+          "sha256": "b3ae73988bd41ae71c41644eb88090041dd19e22f33ef1fd44db0bb6e333eec0"
+        },
+        "worker/source.jsonl": {
+          "bytes": 2028792,
+          "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/runs/projected_s005_01/worker/source.jsonl",
+          "sha256": "039dec40b8c0be23cfbc236a97468995c31a2135af57dd8575955136893dbe3c"
+        }
+      },
+      "speed_reference_m_s": 0.05,
+      "stored_total_model_sensor_count": 1170,
+      "whole_integrals": {
+        "IAE_m": 0.0433457281365367,
+        "ISE_m2_per_s": 0.0015816330636509754,
+        "duration_s": 20.335614338,
+        "signed_integrated_velocity_error_m": -0.0412905034512459,
+        "time_weighted_MSE_m2_per_s2": 7.777650762659618e-05,
+        "time_weighted_RMSE_m_s": 0.008819099025784673
+      }
+    }
+  ],
+  "comparison": {
+    "RMSE_improvement_fraction": 0.40759115429260384,
+    "RMSE_new_over_parent": 0.5924088457073962,
+    "first2s_ISE_projected_over_parent": 0.9755170968371022,
+    "last5s_mean_relative_error_passed": true,
+    "new_error_sample_SSE_fraction_first2s": 0.99988995864485,
+    "new_error_sample_SSE_fraction_first5s": 0.9999885519116014,
+    "observed_projected_RMSE_m_s": 0.008758759754530695,
+    "observed_projected_RMSE_passed": false,
+    "parent_first2s_ISE_m2_per_s": 0.0016211520916338726,
+    "projected_first2s_ISE_m2_per_s": 0.0015814615819620713,
+    "projected_only_issue": "projected_preregistered_whole_measurement_RMSE_halved_parent",
+    "required_RMSE_limit_m_s": 0.007392495755251466,
+    "required_improvement_fraction": 0.5,
+    "required_whole_sample_MSE_fraction": 0.25,
+    "startup_error_worsened_claim_supported": false,
+    "startup_timing_confound": "The projected first accepted command is smaller but occurs earlier relative to Ready in this pair. This is an observed timing difference, not a matched-phase acceleration experiment.",
+    "whole_sample_MSE_projected_over_parent": 0.3509482404723695
+  },
+  "comparison_scope": "one closed projected run versus one closed D19 parent run; actual StoredOdom is an authenticated nominal-model sensor stream, not a real Plant measurement",
+  "decision": {
+    "mean_bias_component_observation_passed": true,
+    "next_reference_speeds_m_s": [
+      0.1,
+      0.3,
+      0.6
+    ],
+    "next_reference_speeds_status": "NoGo; not executed",
+    "projected_overall_preregistered_performance_passed": false,
+    "threshold_or_CPP_change_performed": false
+  },
+  "execute_qualified": false,
+  "interpretation": [
+    "The observed last-five-second mean bias is much smaller with projected reference, but the full preregistered RMSE improvement requirement failed.",
+    "Temporal decomposition distinguishes startup tracking error from the terminal observation window. It does not replace the predefined whole-window gate.",
+    "Changes in initial command and approach timing are observations for this pair of nominal diagnostic runs, not a physical acceleration limit or proof that cost weights must change.",
+    "No claim of true Plant performance, formal stage qualification, universal superiority or statistical significance is made."
+  ],
+  "issues": [],
+  "reference_speed_m_s": 0.05,
+  "research_conclusion": false,
+  "review_recipe": {
+    "bytes": 18450,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/postrun/startup_vs_steady_audit_v1.py",
+    "sha256": "b44fc1399dd6c2b91615e0d3c3d53442039ebbe65df039772bb3b87d4962108d"
+  },
+  "schema": "p1-startup-versus-steady-audit-v1",
+  "stage_qualified": false
+}

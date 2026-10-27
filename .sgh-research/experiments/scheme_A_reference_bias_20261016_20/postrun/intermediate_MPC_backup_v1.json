@@ -1,0 +1,28 @@
+{
+  "all_three_intermediate_files_preserved": true,
+  "count": 3,
+  "files": [
+    {
+      "bytes": 349,
+      "original": "/home/trevor/MPC/scheme_A_reference_bias_20261016_20/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "0c2f53e5aa5b8fe4567235f68da221d1102510bb3c0cf5116342289e716c609b",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/intermediate_MPC_backup_v1/CURRENT.md"
+    },
+    {
+      "bytes": 335,
+      "original": "/home/trevor/MPC/scheme_A_reference_bias_20261016_20/preflight/parent_selection_v1.json",
+      "relative_path": "preflight/parent_selection_v1.json",
+      "sha256": "8252a07090700aacec38fb7cfc6f7270c3719cfe9eafe35da89db57ed39784fa",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/intermediate_MPC_backup_v1/preflight/parent_selection_v1.json"
+    },
+    {
+      "bytes": 2602,
+      "original": "/home/trevor/MPC/scheme_A_reference_bias_20261016_20/preflight/preflight_reflection_reference_v1.md",
+      "relative_path": "preflight/preflight_reflection_reference_v1.md",
+      "sha256": "8c892332b5563616949b2ef91eabc9d474d0625fbca43f43efe88953279de9de",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_bias_20261016_20/intermediate_MPC_backup_v1/preflight/preflight_reflection_reference_v1.md"
+    }
+  ],
+  "schema": "reference-bias-intermediate-MPC-backup/v1"
+}

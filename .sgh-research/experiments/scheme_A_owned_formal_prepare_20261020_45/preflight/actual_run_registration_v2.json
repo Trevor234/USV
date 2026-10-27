@@ -1,0 +1,48 @@
+{
+  "Applied_permitted": 0,
+  "Decisions_permitted": 0,
+  "acceptance": [
+    "actual4role config/proc/GID binding",
+    "actual native grant and replay rejection",
+    "zero forbiddenWriters/jobs",
+    "allSource+bag closed,INTonly,groupsEmpty",
+    "external source/bag/raw-input accounting and source-lock recheck"
+  ],
+  "close_budget_seconds": 10,
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/author_r2/formal_pre_freeze_contract_v1.json",
+  "contract_sha256": "1faedd4bbf7338ffbd3bc1f9b049285e58d7c3605816d416ac2b83fbfd5365fb",
+  "domain_id": 197,
+  "execute_qualified": false,
+  "fault_injection_enabled": false,
+  "max_seconds": 35,
+  "not_qualified": [
+    "fullRegulatorNoOutput",
+    "B5freeze",
+    "M0b",
+    "M4",
+    "modelTransaction",
+    "P1"
+  ],
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/runs/formal_prepare_02",
+  "physical_execute_release_enabled": false,
+  "physical_publishers_permitted": 0,
+  "prepared_hold_seconds": 1,
+  "registered_ns": 461483026870766,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/build/native_formal_attempt04/runtime_registry_v1.json",
+  "registry_sha256": "6bd5fcb021b1e7bedb6b5d88041b368494bfca36748457cfa36e858ee926d5f8",
+  "research_conclusion": false,
+  "run_id": "formal_prepare_02",
+  "schema": "formal-owned-prepare-run-v1",
+  "solver_jobs_permitted": 0,
+  "source_lock": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/preflight/actual_source_lock_v2.json",
+  "source_lock_sha256": "01ac400d1aa4280ecd37e4001cda15f0946e7f63b835919617122d52fe92065e",
+  "stage_qualified": false,
+  "stop_order": [
+    "preparer",
+    "fixture",
+    "worker",
+    "recorder"
+  ],
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/preflight/formal_topics_v2.json",
+  "topics_sha256": "7a5a83b0e9722f5feaff1319678e4945dd30445b1e1b6d47fc15fea49ff451bd"
+}

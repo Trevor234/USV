@@ -1,0 +1,47 @@
+{
+  "kind": "planning_document_consistency_check_v2",
+  "source_inputs": 19,
+  "test_declarations_checked": {
+    "test_reference_cold_backend.cpp": 9,
+    "test_w2_backend_wiring.cpp": 13,
+    "test_w2_native_boundary.cpp": 15
+  },
+  "steps_present": 10,
+  "implementation_started": false,
+  "builds_started": 0,
+  "new_ROS_or_owned_runs": 0,
+  "review_corrections": [
+    "128 result explicitly candidate/component only",
+    "create itself inside constructor exception protection; unknown partial-create failure stops",
+    "N01/N02 real solve called before rewriting the reported status"
+  ],
+  "main_document": {
+    "path": "/home/trevor/USV/.sgh-research/plans/scheme_A_RawBackend_shared_setter_20261027_v1/documents/方案A_下一步RawBackend共享初始化_详细修改与验收计划_2026-10-27.md",
+    "pin": {
+      "bytes": 26019,
+      "sha256": "90c54b1e9a88da80559c61377fe575b759dffbb6a100f646f56fd85bd5dd07be"
+    }
+  },
+  "input_readback_unchanged": true,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "input_drift": [],
+  "input_manifest": {
+    "path": "/home/trevor/USV/.sgh-research/plans/scheme_A_RawBackend_shared_setter_20261027_v1/planning_inputs_v1.json",
+    "pin": {
+      "bytes": 7745,
+      "sha256": "b050cf1bd23ec336696f4fcb40626d52fd78e69c9f0df6055764c4afe7cfa9ed"
+    }
+  },
+  "input_population_verified": 19,
+  "superseded_review": {
+    "path": "superseded/plan_review_v1_invalid_readback_check.json",
+    "reason": "The v1 readback expression compared each current pin with itself, which is tautological. It provides no readback evidence. v2 compares each current file against the previously stored input manifest."
+  },
+  "source_or_component_execution_changed": false
+}

@@ -1,0 +1,88 @@
+{
+  "clear": [
+    {
+      "event": "old task ready before deadline",
+      "task_generation": 7,
+      "time_ns": 1140000000
+    },
+    {
+      "event": "clear invalidates task before activation",
+      "task_generation": 8,
+      "time_ns": 1190000000
+    },
+    {
+      "event": "old task rejected, invalid bypasses HOLD",
+      "task_generation": 8,
+      "time_ns": 1200000000
+    }
+  ],
+  "late": [
+    {
+      "event": "origin",
+      "time_ns": 1000000000
+    },
+    {
+      "event": "ready completion after cutoff, rejected",
+      "time_ns": 1150000001
+    },
+    {
+      "event": "no candidate; HOLD/ramp from actual side anchors, no deadline extension",
+      "time_ns": 1200000000
+    }
+  ],
+  "normal": [
+    {
+      "event": "freeze and submit origin",
+      "time_ns": 1000000000
+    },
+    {
+      "event": "ready validation completed at equality, allowed",
+      "time_ns": 1150000000
+    },
+    {
+      "event": "strictly after deadline cutoff",
+      "time_ns": 1150000001
+    },
+    {
+      "event": "activation target with unchanged identity/state/anchor",
+      "time_ns": 1200000000
+    }
+  ],
+  "not_a_live_execute_observation": true,
+  "schema": "P1-M0b-normal-late-clear-timelines/v1",
+  "truth_table": [
+    {
+      "business_admission": true,
+      "condition": "all identity/version/time/anchor/state/resource checks valid"
+    },
+    {
+      "business_admission": true,
+      "condition": "at deadline and validation complete"
+    },
+    {
+      "business_admission": false,
+      "condition": "ready completes after deadline"
+    },
+    {
+      "business_admission": false,
+      "condition": "wrong target/old task/model/config/schedule/boot/producer"
+    },
+    {
+      "business_admission": false,
+      "condition": "failed/invalid/nonfinite candidate"
+    },
+    {
+      "business_admission": false,
+      "condition": "unknown/changed/incomplete per-side history"
+    },
+    {
+      "business_admission": false,
+      "condition": "activation beyond tolerance/source stale/future/clock invalid"
+    },
+    {
+      "business_admission": false,
+      "condition": "sole owner/bootstrap live gate incomplete"
+    }
+  ],
+  "units": "CLOCK_MONOTONIC ns; sim uses separate source contract"
+}

@@ -1,0 +1,26 @@
+{
+  "schema": "M4-plan-v81",
+  "recorded_at": "2026-10-25T16:35:54.083020+08:00",
+  "steps": [
+    {
+      "id": "T2-B boundary",
+      "status": "COMPLETE",
+      "detail": "13/13 clauses; version_mismatch rejection; C call real"
+    },
+    {
+      "id": "T2-C",
+      "status": "next",
+      "task": "Driver shutdown interleave (rev8→rev12 identity re-registration)"
+    },
+    {
+      "id": "T2-A re-evidence",
+      "status": "after_T2C",
+      "task": "silent/same_stamp/resume new-window on rev12"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

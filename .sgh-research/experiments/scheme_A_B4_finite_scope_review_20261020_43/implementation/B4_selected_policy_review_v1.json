@@ -1,0 +1,685 @@
+{
+  "B4_selected_choices_adopted_for_B5_implementation": true,
+  "B4_selected_source_policy_review_complete": true,
+  "B4_unrestricted_or_physical_calibration_qualified": false,
+  "B5_compatibility_implementation_may_proceed": true,
+  "B5_current_assets_formal_freeze_ready": false,
+  "M4_forward_obligations": [
+    {
+      "current_qualified": false,
+      "evidence_available": "当前prepare图/GID和controlled Publisher证据",
+      "id": "M4-own-outputs",
+      "requirement": "新regulator独占两侧实际Writer，旧Publisher不并发拥有；当前Observer物理0。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32纯组件与当前成功API观测",
+      "id": "M4-per-side-anchor",
+      "requirement": "每侧实际publish-start/返回结果更新，失败侧unknown；跨owner bootstrap须明确权威。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "当前共享组件源码/32事件表；非当前owned实际故障API",
+      "id": "M4-partial-API",
+      "requirement": "未来所选shared publish_pair两侧均尝试；和旧Publisher同try块左失败跳过右不同。分支不得混用，成功侧不可回滚。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32共享纯组件；非M4执行链",
+      "id": "M4-hold-ramp-five-misses",
+      "requirement": "非零HOLD边界、invalid立即ramp、连续5拍无候选、unknown和每侧率限分别验证。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32组件、40 fault close、42 normal controlled tail",
+      "id": "M4-shutdown-accounting",
+      "requirement": "zero requested、双API成功、进程退出、plant不混；关到zero请求不等于测得零推力。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "43完整API流gap复核",
+      "id": "M4-bootstrap-gap",
+      "requirement": "初始known-zero/owner交接到业务输出的cadence与gap门须事前设计，当前1.4..1.6s首gap不能剪掉后声称240ms。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "32组件、当前tick/controlled API有限样本",
+      "id": "M4-timing-API",
+      "requirement": "原5ms span/240ms gap/20ms tick门在新实际执行分支确认，有限调度假设和域外失效明示。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "39 Native、37实际输入交错与当前实际数据",
+      "id": "M4-source-domain",
+      "requirement": "在候选正式域下重核源/clock/1:1与mixed/未来/失效义务；当前名义短窗不扩到一般plant。"
+    },
+    {
+      "current_qualified": false,
+      "evidence_available": "39～42绑定各自版本的证据",
+      "id": "M4-qualification-regression",
+      "requirement": "新runtime/合同/入口改变后按真实差集回归，不能继承旧bin身份，不能无差集重跑所有旧case。"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "trusted_source_graph",
+      "text": "startup时五owned身份/图/GID匹配；后续传感器来源与本地DDS图保持所选部署前提，未证明全局持续排他性。"
+    },
+    {
+      "id": "clock_1_to_1_engineering",
+      "text": "近1:1仿真时钟仅工程外推假设；平均RTF带不作为短时间误差硬界。"
+    },
+    {
+      "id": "nominal_point_model",
+      "text": "固定19水动力参数的RK4名义点模型；不是真实船/VRX6DOF或可达集。"
+    },
+    {
+      "id": "bounded_local_scheduling",
+      "text": "本地Linux/ROS有限观测和工程检查；无WCET、精确600ms停止或自动恢复时延保证。"
+    }
+  ],
+  "based_on_batch": 42,
+  "contract_sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72",
+  "current_contract_promoted": false,
+  "evidence_refs": {
+    "compatibility_probe": {
+      "bytes": 5732,
+      "sha256": "3495cc7ef96963cac46a6156370bec3262cd0109cc469c10b0d3c73dd3b8ae4c"
+    },
+    "current_register": {
+      "bytes": 259118,
+      "sha256": "d5ad41a9bc8e784f27aa979134a62163d0b71f653e774afd5b61c63d570adb7e"
+    },
+    "full_command_gaps": {
+      "bytes": 3159,
+      "sha256": "e115b28f7262423602b2651384134caf95358f22ed8433a6e3adf386c156683d"
+    },
+    "parent_profile_freeze": {
+      "bytes": 1016496,
+      "sha256": "3026b7f220f84311a70d806370c6766209ee30122eec9b8a984683c033d01a51"
+    },
+    "source_facts": {
+      "bytes": 159075,
+      "sha256": "1d4059d558270dde0c2fba93baeadf8c0adff26fd14401e40f8a4cb4b2b36383"
+    }
+  },
+  "execute_qualified": false,
+  "groups": [
+    {
+      "M4_obligations": [
+        "M4-own-outputs",
+        "M4-per-side-anchor",
+        "M4-partial-API",
+        "M4-bootstrap-gap"
+      ],
+      "boundary_semantics": "按每侧实际publish-start间隔计算；activation预检查要求now>anchor.time；unknown/bootstrap/partial不把rho_available写true。",
+      "contract_values": {
+        "backend_rate_n_s": 80,
+        "command_max_n": 25,
+        "command_min_n": -25,
+        "map_scale": 1,
+        "rho_n_s": 80
+      },
+      "evidence_basis": [
+        "32:14 cases/117 assertions; component only",
+        "42:Stored full API start rate and amplitude check"
+      ],
+      "id": "rho_n_s",
+      "out_of_domain_handling": [
+        "候选越幅/率/unknown锚点拒绝",
+        "failed side标记unknown，成功侧已发命令不可撤回",
+        "未知初始实际推力不在物理率限保证内"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "固定nominal hydro、map_scale1、受控命令API；新regulator尚无实际出口资格。",
+      "selection_reason": "沿用F5动态后端80N/s及±25N应用命令界，保证候选/后备/观测使用同一数值；是工程选择，不由新短窗反推推进器物理率限。",
+      "source_refs": [
+        "rho_hold_state_gate",
+        "publication_per_side_results",
+        "output_API_calls"
+      ],
+      "whole_runtime_domain_proven": false
+    },
+    {
+      "M4_obligations": [
+        "M4-hold-ramp-five-misses",
+        "M4-shutdown-accounting",
+        "M4-partial-API"
+      ],
+      "boundary_semantics": "无candidate且非invalid时now-last_accepted<=600ms允许HOLD；失效绕过HOLD；之后按已知每侧锚点ramp；unknown只请求0，不证明已知零。",
+      "contract_values": {
+        "hold_ns": 600000000,
+        "rho_n_s": 80,
+        "shutdown_grace_ns": 2500000000
+      },
+      "evidence_basis": [
+        "32:five misses/hold boundary and invalid source ramp cases",
+        "39/41:post-terminal fallback Source observations"
+      ],
+      "id": "hold_ns",
+      "out_of_domain_handling": [
+        "invalid立即转向ramp_zero政策",
+        "no_output/synthetic0不能确认非零物理HOLD",
+        "close可因zero requested或grace退出；publish success另记"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "当前命令观察+共享纯组件；非船体安全包络。",
+      "selection_reason": "600ms=3个T的有限应用HOLD需求；寿命从最后accepted activation计，拒绝重发续命。选择独立于真实安全保持时长。",
+      "source_refs": [
+        "rho_hold_state_gate",
+        "terminal_transition",
+        "shutdown_result"
+      ],
+      "whole_runtime_domain_proven": false
+    },
+    {
+      "M4_obligations": [
+        "M4-qualification-regression"
+      ],
+      "boundary_semantics": "yaw差wrap后abs(error)>tolerance拒绝，等号接受；未来frame、异版本、history缺失拒绝；最多2次，原20ms jitter不延长。",
+      "contract_values": {
+        "activation_sensor_history_capacity": 32,
+        "activation_state_policy": "latest_causal_sensor_frame_then_one_revalidation_v1",
+        "activation_tolerance": [
+          0.25,
+          0.25,
+          0.15,
+          0.3,
+          0.2,
+          0.15
+        ],
+        "activation_validation_attempts": 2
+      },
+      "evidence_basis": [
+        "39:38 source-linked Native including causal/mixed/future/invalidation/retry cases",
+        "37:one real source interleave, no real clock-epoch run",
+        "42:3 accepted activations full Source/Witness joins"
+      ],
+      "id": "activation_tolerance",
+      "out_of_domain_handling": [
+        "state mismatch拒绝本候选并按失效理由回退",
+        "一般mixed/转弯/0..1.2m/s全域不由当前短窗覆盖",
+        "扩域必须补来源和独立条件，不缩容差凑通过"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "固定名义低速直线profile0.05，当前四案例mixed accepted0；Native混合输入是局部种入前提。",
+      "selection_reason": "沿用六维[.25,.25,.15,.3,.2,.15]选择阈值与32帧/最多2次验证的有限资源政策；小误差样本支持所选轨迹，不用于宣称阈值为校准误差上界。",
+      "source_refs": [
+        "rho_hold_state_gate",
+        "activation_history_selection",
+        "causal_selection"
+      ],
+      "whole_runtime_domain_proven": false
+    },
+    {
+      "M4_obligations": [
+        "M4-source-domain"
+      ],
+      "boundary_semantics": "receipt、sim-lag、future独立，>阈值拒绝，等号允许；IMU仅mixed时受age/lag/skew约束；源stamp须对目标因果。",
+      "contract_values": {
+        "clock_age_ns": 100000000,
+        "imu_age_ns": 100000000,
+        "imu_sim_lag_ns": 100000000,
+        "mixed_skew_ns": 100000000,
+        "odom_age_ns": 100000000,
+        "odom_sim_lag_ns": 100000000,
+        "source_future_slack_ns": 20000000,
+        "target_sim_slack_ns": 20000000
+      },
+      "evidence_basis": [
+        "39:StaleOrFutureReceiptRejects / CommitRechecksOriginalSourceAge / RetryCannotBypassTargetSimSlack",
+        "39..42:finite original source ages"
+      ],
+      "id": "source ages",
+      "out_of_domain_handling": [
+        "旧/future/clock invalid/unknown anchor拒绝授权",
+        "图/源身份在准备后变化的全局唯一性未证明，正式入口必须约束/监视而非声称已证",
+        "速度范数1.2m/s、stamp gap250ms为既有外部门，非当前完整覆盖域"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "owned nominal Fixture、固定frame/topic与prepare时图绑定；图在准备后保持及本地数据来源可信作为环境前提，不声称持续图排他性。",
+      "selection_reason": "100ms receipt/lag/skew与20ms future/target slack保留既有工程预算，显式假设近1:1仿真时钟；不是由平均RTF证明的最坏误差预算。",
+      "source_refs": [
+        "source_age_comparison",
+        "source_eligibility",
+        "causal_selection",
+        "mixed_callbacks"
+      ],
+      "whole_runtime_domain_proven": false
+    },
+    {
+      "M4_obligations": [
+        "M4-source-domain",
+        "M4-qualification-regression"
+      ],
+      "boundary_semantics": "ClockWindow span>=400ms、存储窗口<=600ms、锚点间隔10ms；带内等号接受。>400ms未前进才pause；clock回退或跳>5s推进epoch/schedule并清历史/锚点。",
+      "contract_values": {
+        "clock_age_ns": 100000000,
+        "clock_pause_confirm_ns": 400000000,
+        "rtf_high": 1.05,
+        "rtf_low": 0.95,
+        "target_sim_slack_ns": 20000000
+      },
+      "evidence_basis": [
+        "39:V3ActualClockRollbackInvalidatesHistoryAndCandidate Native",
+        "37:actual clock epoch interleave explicitly untested",
+        "39..42:accepted RTF finite samples"
+      ],
+      "id": "RTF and pause",
+      "out_of_domain_handling": [
+        "RTF invalid拒绝准备/接纳",
+        "epoch/pause重置version/history，旧ticket不继承",
+        "若源/时钟假设不足，只保留诊断/拒绝扩域，不授予硬界"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "CLOCK_MONOTONIC同boot与独立sim clock，非硬实时外推；不将平均RTF带解释为瞬时斜率界。",
+      "selection_reason": "RTF .95..1.05为近实时仿真工程筛选；400ms不前进确认pause，与100ms clock receipt stale门分离。明确平均窗口不足以界定短时外推误差。",
+      "source_refs": [
+        "clock_window",
+        "clock_epoch_invalidation",
+        "pause_and_watchdog",
+        "source_age_comparison"
+      ],
+      "whole_runtime_domain_proven": false
+    },
+    {
+      "M4_obligations": [
+        "M4-own-outputs",
+        "M4-bootstrap-gap",
+        "M4-timing-API"
+      ],
+      "boundary_semantics": "deadline为逐job origin+150ms，不是重置预算；cutoff在>deadline关闭。timing检查是观测，不是WCET。API gap与tick gap不是同一指标。",
+      "contract_values": {
+        "T_ns": 200000000,
+        "deadline_ns": 150000000,
+        "publish_budget_ns": 5000000,
+        "publish_gap_ns": 240000000,
+        "tick_jitter_ns": 20000000
+      },
+      "evidence_basis": [
+        "39..42:Source/Witness tick and original job deadline observations",
+        "32:span/gap/rate/partial component",
+        "43 full_command_gap_scope:startup zero to first business 1.4..1.6s"
+      ],
+      "id": "jitter/gap/publish",
+      "out_of_domain_handling": [
+        "当前不宣称完整API gap合格",
+        "首次bootstrap/prepare/zero-to-business边界必须明示，不悄悄剪窗",
+        "future M4超span/gap/rate后失效，已经调用的API不可回滚"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "当前Observer只shadow、实际API来自受控Publisher。包含prepare的完整API流不满足240ms，不能以tick约200ms替代。",
+      "selection_reason": "T200ms/ready150ms为固定协议，20ms jitter=0.1T工程检查，240ms gap为稳态输出连续性要求，5ms为双API span预算；选择来源与真实当前分支分开。",
+      "source_refs": [
+        "publication_per_side_results",
+        "shadow_publish_early_return",
+        "pause_and_watchdog"
+      ],
+      "whole_runtime_domain_proven": false
+    },
+    {
+      "M4_obligations": [
+        "M4-shutdown-accounting",
+        "M4-qualification-regression"
+      ],
+      "boundary_semantics": "active job持续时间>1s触发；owned waits逐阶段计预算与实际返回；内部zero request、zero API success、owned group empty、plant分别记账。",
+      "contract_values": {
+        "active_watchdog_ns": 1000000000,
+        "kill_postcheck_ns": 1000000000,
+        "recording_ready_timeout_ns": 10000000000,
+        "shutdown_grace_ns": 2500000000,
+        "term_grace_ns": 1000000000,
+        "worker_grace_ns": 500000000
+      },
+      "evidence_basis": [
+        "39:ordinary active stop without SIGSTOP",
+        "40:actual queue refusal and distinct fault close",
+        "41:ordinary lease stop",
+        "42:fresh exact identity and original normal tail",
+        "36:forced escalation profile separately scoped"
+      ],
+      "id": "watchdog and cleanup",
+      "out_of_domain_handling": [
+        "未验证身份不发送信号",
+        "组不空/证据失败不允许后续链取得资格",
+        "旧实例不可复活，完整new run/prepare/gate才恢复；无自动恢复时延保证"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "Linux pidfd/owned registry同boot；支持原因仅已实现策略范围；不是自然native永久挂死或所有fatal原因证明。",
+      "selection_reason": "1s active watchdog与600ms receipt lease独立；.5s/1s/1s是owned分段等待需求，2.5s为内部关闭grace；选择明确有限清理，不宣称整个进程.5s退出。",
+      "source_refs": [
+        "pause_and_watchdog",
+        "terminal_transition",
+        "shutdown_result",
+        "owned_entry_intersection"
+      ],
+      "whole_runtime_domain_proven": false
+    },
+    {
+      "M4_obligations": [
+        "M4-qualification-regression"
+      ],
+      "boundary_semantics": "只有有效回调commit可renew；now-last>600ms且reason锁存，等号尚未过期；未arm不会伪称已收到；startup_ns不是packet time。",
+      "contract_values": {
+        "worker_capability_lease_policy": "valid_identity_capability_callback_receipt_lease_terminal_until_new_run",
+        "worker_capability_receipt_timeout_ns": 600000000,
+        "worker_capability_source_freshness_available": false
+      },
+      "evidence_basis": [
+        "41:actual receipt age608.425323ms + ordinary immediate dispatch and queued old pidfd rejection",
+        "35:late valid-identity terminal callbacks in old scoped Observer",
+        "42:exact new-instance recovery"
+      ],
+      "id": "worker capability validated callback receipt lease; no source packet sequence/send time",
+      "out_of_domain_handling": [
+        "terminal后无renew/new submit/accepted",
+        "不把及时到达的旧payload当已证新鲜",
+        "如需发送新鲜度应新增接口/时钟映射/实际验证，当前false保留"
+      ],
+      "physical_calibration_claimed": false,
+      "review_status": "complete_for_selected_engineering_design",
+      "selected_domain": "精确run/boot/contract/nominal/PID/Worker instance与GID/pidfd，当前v1 bounded wire接口。",
+      "selection_reason": "600ms=3T的有效身份回调receipt租约；与active进度看门狗并列，不假设wire有发送序号/发送时刻。",
+      "source_refs": [
+        "capability_wire_fields",
+        "worker_callback_authentication",
+        "capability_validation_and_renewal",
+        "capability_latch",
+        "terminal_transition"
+      ],
+      "whole_runtime_domain_proven": false
+    }
+  ],
+  "metadata_bindings": [
+    {
+      "binding_kind": "actual_endpoint_and_effective_parameter_binding",
+      "explanation": "合同left/right与42 Publisher两个实际唯一端点及vrx_left/right_thrust_topic值相同；Observer entry只允许shadow且publish提前返回。该字段声明接口，不能伪造当前Observer物理Writer。",
+      "key": "output_topics",
+      "limits": [
+        "M4新regulator必须另证唯一实际双路出口",
+        "当前已关闭run的端点快照不构成连续DDS图唯一性保证"
+      ],
+      "literal_key_read_required": false,
+      "resolved_for_selected_review": true,
+      "source_refs": [
+        "output_publisher_creation",
+        "output_API_calls",
+        "shadow_entry_mode",
+        "shadow_publish_early_return"
+      ],
+      "value": {
+        "left": "/wamv/thrusters/left/thrust",
+        "right": "/wamv/thrusters/right/thrust"
+      }
+    },
+    {
+      "binding_kind": "declarative_semantics_bound_to_executable_point_predictor",
+      "explanation": "从选定odom stamp开始，按两侧已知发布历史分段改变held输入，未来段沿用最后held；USVDynamicModel每段4个RK4子步；目标早于源或传播超过1s拒绝。IMU回调会覆盖r并标记mixed，odom回调重置为完整odom；混合初始分量及各自stamp保留，不把两个时间的测量重构成同步真值。",
+      "key": "propagation_semantics",
+      "limits": [
+        "名义点预测，不是可达集/误差上界",
+        "当前39～42接纳的mixed均0，不能据此授予一般mixed/转弯域",
+        "当前版本按publisher API侧输入史假设，非测得推进器输入"
+      ],
+      "literal_key_read_required": false,
+      "resolved_for_selected_review": true,
+      "source_refs": [
+        "propagation_call",
+        "nominal_RK4_history",
+        "mixed_callbacks",
+        "activation_history_selection",
+        "causal_selection"
+      ],
+      "value": "publisher-side piecewise held history from accepted odom stamp, mixed r retained with separate IMU stamp; future held current command; RK4 nominal point prediction"
+    },
+    {
+      "binding_kind": "declarative_semantics_bound_to_two_independent_time_tests",
+      "explanation": "先检查CLOCK_MONOTONIC receipt age，再用clock_sim+(now-clock_receive)的1:1外推检查源stamp lag/future；>门限才拒绝，等号保留。IMU age/lag只在mixed时检查，另有skew；clock age、pause、RTF独立。",
+      "key": "source_age_semantics",
+      "limits": [
+        "1:1外推是工程假设，平均RTF合格不证明短区间误差硬界",
+        "Source stamp不是独立测得物理采样时刻",
+        "域外实现拒绝和未被代码保证的环境假设分别登记"
+      ],
+      "literal_key_read_required": false,
+      "resolved_for_selected_review": true,
+      "source_refs": [
+        "source_age_comparison",
+        "source_eligibility",
+        "clock_window",
+        "clock_epoch_invalidation"
+      ],
+      "value": "receipt age uses CLOCK_MONOTONIC; physical source lag/future uses clock sim plus 1:1 monotonic elapsed; IMU only when mixed"
+    },
+    {
+      "binding_kind": "declarative_semantics_bound_to_authenticated_renewal_and_terminal_latch",
+      "explanation": "实际GID/pidfd与resource guard先于语义回调；身份、schema、backend/N/dt/permission/fatal通过且run未terminal才renew(now)。check采用now-last>timeout；reason锁存、unusable锁存；重复到达不证明发送新鲜或进度，active watchdog独立。",
+      "key": "worker_capability_lease_policy",
+      "limits": [
+        "41实证608.425323ms时观测lease终结，不是600ms精确stop",
+        "39～42是支持的选定场景，非所有终结原因全集",
+        "旧run不能复活，新身份需完整新prepare/gate"
+      ],
+      "literal_key_read_required": false,
+      "resolved_for_selected_review": true,
+      "source_refs": [
+        "worker_callback_authentication",
+        "capability_validation_and_renewal",
+        "capability_latch",
+        "terminal_transition"
+      ],
+      "value": "valid_identity_capability_callback_receipt_lease_terminal_until_new_run"
+    },
+    {
+      "binding_kind": "explicit_observation_limit_bound_to_wire_schema_and_consumer",
+      "explanation": "当前生成的能力接口19字段没有包发送序号/发送时刻；startup_ns为实例启动时刻，completed_jobs/active_job为状态。DDS元数据即使出现timestamp/sequence，也未用于已验证的发送年龄政策。当前renew使用本地有效回调commit时间，所以false必须保留。",
+      "key": "worker_capability_source_freshness_available",
+      "limits": [
+        "receipt lease不等于source packet freshness",
+        "不修改接口/时钟映射和实际证据前不可把false改true"
+      ],
+      "literal_key_read_required": false,
+      "resolved_for_selected_review": true,
+      "source_refs": [
+        "capability_wire_fields",
+        "worker_callback_authentication",
+        "capability_validation_and_renewal",
+        "capability_latch"
+      ],
+      "value": false
+    }
+  ],
+  "old_pending_array_preserved": [
+    "rho_n_s",
+    "hold_ns",
+    "activation_tolerance",
+    "source ages",
+    "RTF and pause",
+    "jitter/gap/publish",
+    "watchdog and cleanup",
+    "worker capability validated callback receipt lease; no source packet sequence/send time"
+  ],
+  "research_conclusion": false,
+  "schema": "B4-selected-finite-engineering-policy-review/v1",
+  "selected_domain": {
+    "continuous_20s_trace_claimed": false,
+    "continuous_DDS_graph_exclusivity_proven": false,
+    "current_Observer_physical_publishers": 0,
+    "current_domain_is_bounded_examples_and_engineering_assumptions": true,
+    "current_modes": [
+      "shadow"
+    ],
+    "full_velocity_gate_domain_0_to_1_2_m_s_proven": false,
+    "plant_connected": false,
+    "plant_input_or_safety_error_bound_proven": false,
+    "qualified_general_mixed": false,
+    "qualified_turning": false,
+    "real_actuator_control": false,
+    "reference_geometry": "current straight profile",
+    "reference_speed_m_s": 0.05,
+    "sensor_clock_hard_error_bound_proven": false,
+    "simulation_source": "exact owned nominal Fixture19"
+  },
+  "selected_profile": "owned_nominal_controlled_C_current_shadow_engineering_v1",
+  "stage_qualified": false,
+  "structured_non_claims": {
+    "Observer_actual_publication_branch_exercised": false,
+    "RTF_average_is_instantaneous_hard_bound": false,
+    "current_assets_formal_freeze_ready": false,
+    "current_physical_calibration_qualified": false,
+    "full_command_stream_gap240ms_qualified": false,
+    "hold_lifetime_refreshed_by_republication": false,
+    "mixed_general_domain_qualified": false,
+    "new_short_runs_form_one_20s_domain_trace": false,
+    "receipt_and_source_age_are_equivalent": false,
+    "source_packet_freshness_proven": false,
+    "unknown_anchor_authorizes_rate_claim": false
+  },
+  "unchanged_contract_values": {
+    "N": 20,
+    "Q": [
+      20,
+      20,
+      50,
+      8,
+      1,
+      8
+    ],
+    "Qf_scale": 8,
+    "R": [
+      0.05,
+      0.05
+    ],
+    "Rd": [
+      0.2,
+      0.2
+    ],
+    "T_ns": 200000000,
+    "activation_sensor_history_capacity": 32,
+    "activation_state_policy": "latest_causal_sensor_frame_then_one_revalidation_v1",
+    "activation_tolerance": [
+      0.25,
+      0.25,
+      0.15,
+      0.3,
+      0.2,
+      0.15
+    ],
+    "activation_validation_attempts": 2,
+    "active_watchdog_ns": 1000000000,
+    "backend_rate_n_s": 80,
+    "baseline_input": "CONTROLLED_PHASE_20261015_DIAGNOSTIC_01",
+    "candidate_cdr_max_bytes": 8204,
+    "clock": "CLOCK_MONOTONIC",
+    "clock_age_ns": 100000000,
+    "clock_pause_confirm_ns": 400000000,
+    "cold_start_policy": "current_job_free_once_then_fixed050_three_rti_v1",
+    "command_max_n": 25,
+    "command_min_n": -25,
+    "cruise_speed": 0.6,
+    "dds_depth": 1,
+    "deadline_ns": 150000000,
+    "diagnostic_contract_revision": 10,
+    "dt": 0.2,
+    "execute_qualified": false,
+    "expected_child_frame": "wamv/base_link",
+    "expected_imu_frame": "wamv/wamv/base_link/imu_sensor",
+    "expected_pose_frame": "map",
+    "fault_injection_enabled": true,
+    "history_capacity": 256,
+    "hold_ns": 600000000,
+    "hydro": {
+      "Iz": 2.13,
+      "Nr": -3.105,
+      "Nr_dot": -3.41,
+      "Nrr": -0.71,
+      "Nv": 0,
+      "Nv_dot": -0.1817725,
+      "Nvv": 0,
+      "Xu": -2.272063,
+      "Xu_dot": -2,
+      "Xuu": -11.571784,
+      "Yr": 0,
+      "Yr_dot": -0.1817725,
+      "Yrr": 0,
+      "Yv": -2.629019,
+      "Yv_dot": -8,
+      "Yvv": -0.05,
+      "d_thruster": 0.25,
+      "mass": 14.2,
+      "xg": 0.12
+    },
+    "imu_age_ns": 100000000,
+    "imu_sim_lag_ns": 100000000,
+    "input_topics": {
+      "imu": "/wamv/sensors/imu/imu/data",
+      "odom": "/wamv/sensors/position/ground_truth_odometry",
+      "path": "/path/reference",
+      "profile": "/path/reference_profile"
+    },
+    "job_cdr_max_bytes": 6460,
+    "kill_postcheck_ns": 1000000000,
+    "log_capacity": 512,
+    "map_scale": 1,
+    "max_candidate_bytes": 16384,
+    "max_job_bytes": 8192,
+    "max_path_frame_bytes": 128,
+    "max_path_points": 2048,
+    "max_profile_dims": 4,
+    "max_profile_label_bytes": 64,
+    "max_profile_rows": 2048,
+    "mixed_skew_ns": 100000000,
+    "nominal_hash": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+    "odom_age_ns": 100000000,
+    "odom_sim_lag_ns": 100000000,
+    "output_topics": {
+      "left": "/wamv/thrusters/left/thrust",
+      "right": "/wamv/thrusters/right/thrust"
+    },
+    "parameters_are_diagnostic_only": true,
+    "pending_final_calibration": [
+      "rho_n_s",
+      "hold_ns",
+      "activation_tolerance",
+      "source ages",
+      "RTF and pause",
+      "jitter/gap/publish",
+      "watchdog and cleanup",
+      "worker capability validated callback receipt lease; no source packet sequence/send time"
+    ],
+    "preparation_retry_policy": "authenticated_phase_reference_pair_completion_v1",
+    "propagation_semantics": "publisher-side piecewise held history from accepted odom stamp, mixed r retained with separate IMU stamp; future held current command; RK4 nominal point prediction",
+    "publish_budget_ns": 5000000,
+    "publish_gap_ns": 240000000,
+    "publisher_max_n": 100,
+    "qualification": "temporary_shadow_diagnostic",
+    "recording_ready_timeout_ns": 10000000000,
+    "reference_epoch_policy": "first_successful_job_submit_completion_target_sim_v1",
+    "reference_sampling_policy": "first_target_task_time_profile_v1",
+    "reference_start_offset": 0,
+    "resource_budget_scope": "application_typed_domain_cdr1_with_4_byte_encapsulation",
+    "resource_policy": "typed_domain_bounds_before_copy_v1",
+    "rho_n_s": 80,
+    "rtf_high": 1.05,
+    "rtf_low": 0.95,
+    "schema": "p1-execution-contract-v2",
+    "shutdown_grace_ns": 2500000000,
+    "source_age_semantics": "receipt age uses CLOCK_MONOTONIC; physical source lag/future uses clock sim plus 1:1 monotonic elapsed; IMU only when mixed",
+    "source_future_slack_ns": 20000000,
+    "target_sim_slack_ns": 20000000,
+    "term_grace_ns": 1000000000,
+    "tick_jitter_ns": 20000000,
+    "worker_capability_lease_policy": "valid_identity_capability_callback_receipt_lease_terminal_until_new_run",
+    "worker_capability_receipt_timeout_ns": 600000000,
+    "worker_capability_source_freshness_available": false,
+    "worker_failure_policy": "terminal_on_failed_or_invalid_native_result",
+    "worker_grace_ns": 500000000
+  }
+}

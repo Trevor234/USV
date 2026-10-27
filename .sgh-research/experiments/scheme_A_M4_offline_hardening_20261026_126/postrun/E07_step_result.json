@@ -1,0 +1,166 @@
+{
+  "step_id": "E07",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "11 bounded cases + original16 arithmetic controls; 2 actual-header mutations; checked Fixture publication and compilation.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E07/attempt01",
+  "observed_facts": {
+    "cases_registered": 11,
+    "legacy_arithmetic_assertions": 16,
+    "helper_pin": {
+      "bytes": 4249,
+      "sha256": "678a73d849bc0ba41cf8aef4ad6d25f5b8fbcb5552d7098dd1f408280857fa9f"
+    },
+    "actual_fixture_compile_only": true,
+    "limitations_preserved": [
+      "4000000ns receive-skew regression",
+      "1100000000ns capped-hold regression"
+    ]
+  },
+  "run_accepted": {
+    "accepted": true,
+    "scope": "this offline suite only"
+  },
+  "coverage": {
+    "checks": [
+      {
+        "name": "build.mapping",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-01-LEGAL",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-16-NO-HOLD",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-17a-MAX",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-17b-MIN",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-17c-CAP-EDGE",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-17d-PLUS",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-18-UBSAN",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-19-CAP",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-20a-LONG-HOLD",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-20b-RX-SKEW",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "B2V-21-ROS-RANGE",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.existing16",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "existing_arithmetic_16_controls",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.prepared.overflow",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_overflow",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.overflow",
+        "passed": true,
+        "detail": {
+          "mode": "UBSan",
+          "failed": []
+        }
+      },
+      {
+        "name": "mutation.prepared.cap",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "build.mut_cap",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "mutation.caught.cap",
+        "passed": true,
+        "detail": {
+          "mode": "named_assertion",
+          "failed": [
+            "cap_is_not_normal_recovery"
+          ]
+        }
+      },
+      {
+        "name": "actual_fixture_compiles",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "actual_publish_requires_valid_uncapped_representable",
+        "passed": true,
+        "detail": null
+      }
+    ],
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [
+    "implementation/author/fixture/resume_stamp_mapping_v1.hpp",
+    "implementation/author/fixture/synthetic_source_m4.cpp",
+    "implementation/tests/test_resume_boundaries.cpp",
+    "implementation/tests/run_e07.py"
+  ],
+  "remaining_obligations": [
+    "Receive skew can still produce a 4ms history regression; capped long holds outside normal NW recovery."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

@@ -1,0 +1,11 @@
+{
+  "EDA_PPA_and_timing_signoff": "not applicable to this local control research offline batch",
+  "actual_observation": "Both archived shutdown_zero commands join successful per-side APIs, exact Fixture GID and full Stored values; old normal close failures retained.",
+  "causal_limit": "Witness closure does not timestamp process exit. Old r2 cleanup record order differs from the new driver.",
+  "execute_qualified": false,
+  "next_experiment_scope": "Separate pre-native work-thread block/active watchdog from capability callback receipt lease. No acados internal-hang claim.",
+  "research_conclusion": false,
+  "review_repair": "Candidate metadata now reports actual explicit fault cleanup order; initial source/checks retained.",
+  "stage_qualified": false,
+  "unnecessary_repeat_avoided": "No new V1 live run, weight/RTI change or old base-component matrix."
+}

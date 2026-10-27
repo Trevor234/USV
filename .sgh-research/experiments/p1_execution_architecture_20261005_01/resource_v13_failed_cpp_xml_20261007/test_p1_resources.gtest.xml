@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="15" failures="1" disabled="0" errors="0" time="0.249" timestamp="2026-10-07T11:56:21.454" name="AllTests">
+  <testsuite name="Resources" tests="15" failures="1" disabled="0" skipped="0" errors="0" time="0.249" timestamp="2026-10-07T11:56:21.454">
+    <testcase name="FixedNativeErrorBufferRequiresTerminatorWithinCapacity" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="14" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.454" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="InstalledSerializationAtFullJobAndCandidateBoundary" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="22" status="run" result="completed" time="0.241" timestamp="2026-10-07T11:56:21.454" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="ActualSizeMatchesSerializationAcrossPaddingAndHistory" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="28" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.695" classname="usv_research_safety_cpp.Resources">
+      <failure message="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp:29&#x0A;Expected equality of these values:&#x0A;  serialized(j)&#x0A;    Which is: 1948&#x0A;  p1::job_cdr_bytes(j)&#x0A;    Which is: 1944&#x0A;" type=""><![CDATA[/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp:29
+Expected equality of these values:
+  serialized(j)
+    Which is: 1948
+  p1::job_cdr_bytes(j)
+    Which is: 1944
+]]></failure>
+    </testcase>
+    <testcase name="EveryJobStringAllowsBoundaryAndRejectsOneByteOver" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="31" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.695" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="EveryCandidateStringRejectsOverLimitBeforeCopy" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="36" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.695" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="EveryCapabilityStringRejectsOverLimit" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="40" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.695" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="Utf8ReasonUsesBytes" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="43" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.696" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="HistoryUsesContractCapacityAndDoesNotReplaceShapeGate" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="48" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.696" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="ContractMustBeIntegralAndWithinHardCaps" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="52" status="run" result="completed" time="0.007" timestamp="2026-10-07T11:56:21.696" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="56" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.703" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="ContractPoliciesAreExact" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="60" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.703" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="SmallerCacheDoesNotShrinkWireSchemaBudget" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="62" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.703" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="PathMetadataBoundaryAndCountRejection" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="65" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.703" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="ProfileDimensionsLabelsAndDataBoundaries" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="69" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.703" classname="usv_research_safety_cpp.Resources" />
+    <testcase name="ExistingProducerLayoutsRemainAllowedIncludingClear" file="/home/trevor/USV/usv_mpc_ws/src/usv_research_safety_cpp/test_p1_resources.cpp" line="74" status="run" result="completed" time="0." timestamp="2026-10-07T11:56:21.703" classname="usv_research_safety_cpp.Resources" />
+  </testsuite>
+</testsuites>

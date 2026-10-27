@@ -1,0 +1,51 @@
+{
+  "schema": "C3.8-owned-close-preregister/v1",
+  "cases": [
+    "normal",
+    "queued_tail",
+    "late_tail",
+    "pre_request_tail",
+    "malformed_close",
+    "wrong_driver",
+    "duplicate_close",
+    "ack_missing",
+    "forced_cleanup"
+  ],
+  "source_bundle": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_8_20261014_v15/observer_source_bundle_C38_v1.json",
+    "sha256": "4658cca9df11c9d7ffeb9524082260448443b64f43a72f31a555781c825784b7",
+    "files": 43
+  },
+  "mode": "shadow",
+  "publisher": "exactsealedN10F5",
+  "diagnostic_applied_group_pause": "actual executor callbackgroup detached; DDS reader persists; Worker/other callbacks continue",
+  "gate_ttl_ns": 3500000000,
+  "normal_integer_hooks": 0,
+  "measurement_s": 4,
+  "prepare_s": 25,
+  "overall_s": 60,
+  "close_s": 15,
+  "release_s": 3,
+  "case_deadline_s": 75,
+  "normal_case_domain": 141,
+  "domains": [
+    141,
+    142,
+    143,
+    144,
+    145,
+    146,
+    147,
+    148,
+    149
+  ],
+  "fake_nonzero_shutdown_wire_case": "not_run; needsnewproducer scope",
+  "foreign_postclose_wire": "not_run; needsmultiwriter recording scope",
+  "Worker_postexit_queued_matrix": "not_run; separatefollowup",
+  "qualifications": {
+    "stage": false,
+    "execute": false,
+    "research": false
+  },
+  "accepted_count_is_preregistered": false
+}

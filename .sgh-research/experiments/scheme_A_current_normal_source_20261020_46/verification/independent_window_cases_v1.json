@@ -1,0 +1,75 @@
+{
+  "schema": "independent-normal20s-checker-cases-v1",
+  "passed": true,
+  "case_count": 11,
+  "cases": [
+    {
+      "name": "independent20s_positive",
+      "expected_accept": true,
+      "accepted": true,
+      "passed": true
+    },
+    {
+      "name": "no_short_segment_promote",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "origin_reselection_denied",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "planar_v_not_only_u",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "source_gap_cannot_hide",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "wrong_absolute_deadline",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "receipt_age_exceeded",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "wrong_Worker",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "no_actual_nonzero_commands",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "fault_transition_not_normal",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    },
+    {
+      "name": "no_performance_gate_in_recipe",
+      "expected_accept": false,
+      "accepted": false,
+      "passed": true
+    }
+  ],
+  "seeded_component_only": true,
+  "stage_qualified": false
+}

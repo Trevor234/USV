@@ -1,0 +1,25 @@
+{
+  "schema": "p1-resource-metadata-batch-v1",
+  "failure": "AssertionError()",
+  "result": null,
+  "steps": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_metadata_01.runner.log",
+      "returncode": 1,
+      "sha256": "6de7508381e44fa4a89e98c1640c9bac9b99098cb17329febd0461aac7c14a31"
+    }
+  ],
+  "asset_final": {
+    "manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_prelaunch_assets_20261007.json",
+    "manifest_sha256": "d2a4b4d348fe30c05118e83fc057c591781c40a44379b4f8d952e5dfe5931a98",
+    "count": 1196,
+    "drift": []
+  },
+  "host_final": {
+    "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+    "monotonic_ns": 1126897506954764,
+    "existing_controller_gazebo_count": 0,
+    "unreadable_cmdline_count": 0
+  },
+  "execute_qualified": false
+}

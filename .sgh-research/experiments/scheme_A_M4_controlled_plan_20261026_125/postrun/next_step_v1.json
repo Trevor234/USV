@@ -1,0 +1,15 @@
+{
+  "plan_ready": true,
+  "implementation_started": false,
+  "next_on_execution_instruction": "E00",
+  "execution_package": "new unique package to be allocated by E00",
+  "no_automatic_owned": true,
+  "no_production_changes": true,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

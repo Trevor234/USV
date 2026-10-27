@@ -1,0 +1,17 @@
+{
+  "A_component_passed": true,
+  "basis": "prior visible tool results and agent status; no fabricated program execution evidence",
+  "current_status": "first root exec and observer build invocation recovered",
+  "date": "2026-10-16",
+  "observed_error": "failed to spawn code-mode host: Resource temporarily unavailable (os error 11)",
+  "program_started_during_failed_tool_invocations": false,
+  "remaining_order": [
+    "A2",
+    "B",
+    "C"
+  ],
+  "research_conclusion": false,
+  "runtime_or_compile_failure_claimed": false,
+  "schema": "ordered-chain-environment-interruption/v1",
+  "stage_qualified": false
+}

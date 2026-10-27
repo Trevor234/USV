@@ -1,0 +1,47 @@
+{
+  "schema": "scheme-A-C3.4-execution-preregister/v1",
+  "client_date": "2026-10-13",
+  "scope": "A/B/C/D/E bounded implementation; no stage promotion",
+  "author": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+  "parent_N9": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9",
+  "preserve": [
+    "old source/binaries",
+    "old expected",
+    "old failed runs",
+    "dirty workspace",
+    "frozen reports",
+    "old ledger"
+  ],
+  "fixed_policy": {
+    "T_ns": 200000000,
+    "ready_ns": 150000000,
+    "release_validity_ns": 3000000000,
+    "prepare_ns": 25000000000,
+    "overall_ns": 60000000000,
+    "close_ns": 15000000000,
+    "normal_fault_hooks": 0
+  },
+  "separate_evidence_classes": [
+    "source-linked native",
+    "offline types/lease",
+    "authenticated bounded wire",
+    "owned whole fixture"
+  ],
+  "stage_qualification": {
+    "strict_full_chain": false,
+    "C3_general": false,
+    "D1": false,
+    "B4": false,
+    "B5": false,
+    "M0b": false,
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "execute": false,
+    "dynamic_20s_R5": false,
+    "mixed_turn": false,
+    "true_master_clock": false,
+    "research_conclusion": false
+  },
+  "no_Gazebo_plant_or_hardware_launch": true
+}

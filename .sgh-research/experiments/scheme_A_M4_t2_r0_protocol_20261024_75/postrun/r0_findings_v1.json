@@ -1,0 +1,28 @@
+{
+  "schema": "M4-T2-R0-findings-v75",
+  "recorded_at": "2026-10-24T23:36:04.655926+08:00",
+  "fixes": {
+    "driver": "统一完整证据构造器(t2.make_evidence,phase↔source_role绑定,真实Source事件时刻);job_received读嵌套job.job_id;attempt_record_ns用于solve_active;ready_commit_ns用于ready_window;命令记录真实字节SHA;排水精确集合;C停止回执绑定关闭阶梯中发给regulator的实际SIGINT sent_ns",
+    "contract": "make_evidence+check_receipts外来action拒绝+命令集合相等+回执绑定精确命令字节SHA",
+    "fixture": "执行门独立等价:下一action_id必须是表序下一项+按action_id去重(保留dot边车跳过)",
+    "audit": "逐条款fail-closed重写:每条款显式谓词或not_covered;缺文件/损坏JSON明确失败;决策/Applied序列连续性门;关闭与witness组合门(允许登记声明的有限诊断终局且须精确匹配);T2C用真实guard行+shutdown观察决策行校验ready_commit<request<=stopping_observed<=activation_guard;74批全部保留反例被具名断言拒绝;真实T2A_14被新审计拒收"
+  },
+  "rev9": {
+    "bundle": "de7d7aed9802a4620d26fa7f7c89d4b7474319bf8acf9f04eccf950ee5afd1ad",
+    "driver": "ce94bc2550e51719002a3004f100dffdd4bc1d967555065f292709e534b16345",
+    "roles": {
+      "worker": "48f6d1abb4dcb3bc40f9cbd4e68185c78bcfa1dbdac830823553befcb43e1af9",
+      "regulator": "f6f5b4d27e8893960a1e9ff2a556e7e6ef5623a4d8a2fca2bd0d0ab88f916a9a",
+      "fixture": "168237767822090d8495190f8b2500980c405c4e6d5d52c5a3fb98e7a71e7b71",
+      "recorder": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002"
+    },
+    "delta_vs_rev8": [
+      "audit_t2.py",
+      "fixture/synthetic_source_m4.cpp",
+      "t2_action_contract.py",
+      "t2_scenario_driver_v1.py"
+    ]
+  },
+  "owned_runs": 0,
+  "regulator_worker_sources_unchanged": true
+}

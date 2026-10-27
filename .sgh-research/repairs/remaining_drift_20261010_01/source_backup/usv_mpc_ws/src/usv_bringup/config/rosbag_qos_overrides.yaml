@@ -1,0 +1,20 @@
+# rosbag2 subscription overrides for MAVROS sensor-data publishers.
+/mavros/local_position/odom:
+  reliability: best_effort
+  durability: volatile
+  history: keep_last
+  depth: 5
+
+/mavros/imu/data:
+  reliability: best_effort
+  durability: volatile
+  history: keep_last
+  depth: 5
+
+# 2026-10-09: raw/fix 发布端为 BEST_EFFORT (与 odom/imu 同为 MAVROS 传感器流),
+# 录制器必须以 best_effort 订阅才能收到。gpsstatus/gps1/raw 是 RELIABLE, 无需覆盖。
+/mavros/global_position/raw/fix:
+  reliability: best_effort
+  durability: volatile
+  history: keep_last
+  depth: 5

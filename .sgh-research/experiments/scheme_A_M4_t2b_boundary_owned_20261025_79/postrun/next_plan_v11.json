@@ -1,0 +1,16 @@
+{
+  "schema": "M4-plan-v79",
+  "recorded_at": "2026-10-25T13:21:44.530606+08:00",
+  "steps": [
+    {
+      "id": "T2-B boundary",
+      "status": "debugging",
+      "task": "fixture ExactPeer identity alignment"
+    },
+    {
+      "id": "T2-C/T2A/T3/N3/F6/P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

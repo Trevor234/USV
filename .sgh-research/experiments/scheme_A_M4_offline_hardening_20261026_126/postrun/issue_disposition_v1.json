@@ -1,0 +1,99 @@
+{
+  "findings": [
+    {
+      "id": "F124-01",
+      "disposition": "FIXED_SCOPE",
+      "implemented_or_corrected": "Q2 capture, producer identity, partition and multiset; ASAN/LSAN plus actual capture mutant.",
+      "remaining": "No general queue theorem.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Q",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-02",
+      "disposition": "FIXED_SCOPE",
+      "implemented_or_corrected": "V3 full Job echo, Worker actual C/timing, both API sides, full typed Stored 44/14/57/39 and required close/source gates.",
+      "remaining": "Historical absent old-in-flight rejection stays not_covered; raw Source-CDR bytes not proved equal.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/RNW",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-03",
+      "disposition": "FIXED_SCOPE",
+      "implemented_or_corrected": "Actual Driver.main -> complete preflight tested; one physical rule source; strict action IDs/types and clause values.",
+      "remaining": "Test identity fixture does not register the new tree as an owned source.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/RNW_entry",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-04",
+      "disposition": "FIXED_SCOPE",
+      "implemented_or_corrected": "Strict bool, non-tautological bindings, per-item bundle verification; harness references labelled.",
+      "remaining": "Historical close ledger absent; E04 transient protected write is a separate permanent process finding.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/A105",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-05",
+      "disposition": "FIXED_SCOPE",
+      "implemented_or_corrected": "Authoritative instance/generation/serial/consumption; no public raw commit; real Regulator wired and compiled.",
+      "remaining": "No new owned proof for the new credential wiring.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Epoch",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-06",
+      "disposition": "FIXED_SCOPE",
+      "implemented_or_corrected": "Nonzero generation, has_committed, finite model/input, correct shape and true-C-entry rejection tests.",
+      "remaining": "Finite is not a physical-validity proof for arbitrary GP models.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Model",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-07",
+      "disposition": "PARTIAL_WITH_DECLARED_INTEGRATION_GAPS",
+      "implemented_or_corrected": "Single-owner state machine; publish generation after setter/reset; faulted/abort policies.",
+      "remaining": "Full mixed identity, actual tick commit, generated internal failures, production fallback parity remain deferred.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/Model",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-08",
+      "disposition": "FIXED_SCOPE_AND_CLAIM_CORRECTED",
+      "implemented_or_corrected": "Checked integer math, explicit cap/error, actual Fixture publication guards.",
+      "remaining": "4ms receive-skew and 1.1s capped-hold regressions retained; no arbitrary-delay guarantee.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/B2",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-09",
+      "disposition": "CLAIM_CORRECTED",
+      "implemented_or_corrected": "Sticky qualification vs later enqueue; actual C12/C3 and audit provenance.",
+      "remaining": "Generic survivor fd/fork-failure handling and absolute kernel exit remain open.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/History",
+      "stage_qualified": false
+    },
+    {
+      "id": "F124-10",
+      "disposition": "CLAIM_CORRECTED",
+      "implemented_or_corrected": "Six current-scope append-only revisions, exact sources and limits.",
+      "remaining": "No academic novelty or paper-writing conclusion.",
+      "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E10/attempt01",
+      "stage_qualified": false
+    }
+  ],
+  "count": 10,
+  "historical_process_findings": [
+    {
+      "id": "PROC126-E04-ORIGINAL-WRITE",
+      "status": "FAIL_STOP_NOT_WAIVED",
+      "fact": "Pre-takeover E04 wrote then restored B103/CMakeLists.txt. SHA restoration does not prove zero writes."
+    }
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

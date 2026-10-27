@@ -1,0 +1,59 @@
+{
+  "all_runtime_hooks": 0,
+  "allowed_result": "default-build and finite native/actual negative components only",
+  "build_attempt": "observer_attempt02",
+  "client_date": "2026-10-14",
+  "close_budget_seconds": 15,
+  "default_build_required": true,
+  "execute_qualified": false,
+  "finite_checker_expected_count": 40,
+  "frozen_other_roles": "exact N10 identities unchanged",
+  "guard_policy": "keep early rejection before full CDR or semantic callbacks; six business fields unchanged per rejected callback",
+  "helper_registry": "helper_pins_v2.json",
+  "measurement_seconds": 4,
+  "native_count_authority": "actual GTest XML, 239 historical + 12 Gate",
+  "native_expected_tests": 251,
+  "native_suites": 15,
+  "new_author": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_9_20261014_v16",
+  "not_run": [
+    "same_owner_nonzero_shutdown actual independent producer",
+    "foreign_after_close multiwriter",
+    "actual close file IO failure",
+    "per-channel actual IO transaction",
+    "20s/turnmixed/pressure/recovery",
+    "M4/F6/P1 physical endpoint handover"
+  ],
+  "overall_budget_seconds": 60,
+  "owned_cases": [
+    {
+      "case": "normal",
+      "checker": "check_c38_owned_close.py",
+      "domain": 151,
+      "run_id": "owned_C39_normal_01"
+    },
+    {
+      "case": "worker_post_exit",
+      "checker": "check_c39_worker_close.py",
+      "domain": 152,
+      "run_id": "owned_C39_worker_post_exit_01"
+    }
+  ],
+  "owned_check_causal_source_binding_revision": "standalone all-role spawn/preparation/current-config + preclose publications",
+  "post_close_committed_Job_settle_wait_ns": 400000000,
+  "postexit_actual_callback_wait_ns": 1000000000,
+  "prepare_budget_seconds": 25,
+  "prior_attempt_retained": true,
+  "prior_error": "c34_lease_wire unique_ptr executor interface compile error",
+  "rejected_received_payload_identity": "unobserved by preserved early rejection policy",
+  "repair_scope": "use get_node_base_interface for native executor add/remove; all runtime ownership/guard predicates retained",
+  "research_conclusion": false,
+  "schema": "C3.9-preregister-scope/v3",
+  "source_bundle": {
+    "files": 44,
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_9_20261014_v16/observer_source_bundle_C39_v2.json",
+    "sha256": "b1cbad440910521db0cb0784d270be172ddc9da0a960de0f944320ab786f74b6"
+  },
+  "stage_qualified": false,
+  "worker_gate_ttl_ns": 3500000000,
+  "worker_paused_publication_wait_ns": 450000000
+}

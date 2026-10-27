@@ -1,0 +1,964 @@
+{
+  "all_pairs_verified": true,
+  "bytes": 57682658,
+  "file_count": 136,
+  "files": [
+    {
+      "bytes": 26903,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/audit_all_rejected_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/audit_all_rejected_v1.py",
+      "sha256": "92f6013fd4b939d8c28cf32bf72094410f093d78e95f477e7ef23322d2c9189d"
+    },
+    {
+      "bytes": 7390,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/build_atomic_observer_v7.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/build_atomic_observer_v7.py",
+      "sha256": "d5a12a1d3fd8fb91d94d669df50510e3990d0020598ac6e1190ce2cced1a9d80"
+    },
+    {
+      "bytes": 5854,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/build_c33_v9.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/build_c33_v9.py",
+      "sha256": "391800763411ce2ee345e95e834589acd05f06a2ff71ddcade2fa2f5e6201107"
+    },
+    {
+      "bytes": 5444,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/build_manifest_current.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/build_manifest_current.json",
+      "sha256": "1e7139c5776b72f0a3384efeedf341e2d50f020f78d9d7aea84613a9c308baa0"
+    },
+    {
+      "bytes": 3985,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/build_manifest_parent_v8.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/build_manifest_parent_v8.json",
+      "sha256": "9fc2a1b9837f9bb82890db246fc653d1563e01116f3c5a19ee54ee221ae9b4f3"
+    },
+    {
+      "bytes": 44335,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/check_activation_provenance_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/check_activation_provenance_v1.py",
+      "sha256": "33ffaee9097942b30ccb7af55892845709bd647b1498f40bbcb751a69fc1421e"
+    },
+    {
+      "bytes": 68615,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/check_atomic_observation_v2.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/check_atomic_observation_v2.py",
+      "sha256": "bebbc5ae02a7b1e36c3f347440af2d5b4c1d14cb32e9f80ae95660f1d489acf7"
+    },
+    {
+      "bytes": 15196,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/check_config_identity_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/check_config_identity_v1.py",
+      "sha256": "d981ba6a2cc4ad3ac85376d59f684e88fc57523b24a814d2c292328f192ae8d3"
+    },
+    {
+      "bytes": 20732,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/check_owned_fixture.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/check_owned_fixture.py",
+      "sha256": "c0ab40a15370f8dafa7fe1fd4806789b364ca46ade02fdb2d83abe66cb0f325e"
+    },
+    {
+      "bytes": 34293,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/check_release_observation_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/check_release_observation_v1.py",
+      "sha256": "79d832cdb9851caa60a22ff3b8b78de766dafe467921ced3ff6afe4485ac81d7"
+    },
+    {
+      "bytes": 26467,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/check_source_components_v4.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/check_source_components_v4.py",
+      "sha256": "c1e9a072a519b952902e628108627632c0e04d6136affe3302d9204cbae05a99"
+    },
+    {
+      "bytes": 13061,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/common/p1_owned_identity.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/common/p1_owned_identity.hpp",
+      "sha256": "c48aae5e403d4ebaf511b2141a963de0d7baabb344c4eaa6320608fb170f86b7"
+    },
+    {
+      "bytes": 7478,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/consolidate_current_v5.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/consolidate_current_v5.py",
+      "sha256": "4963cbf71290b94eb2165832b4aed086e59276897c9785c560d1d2bb5ee76e65"
+    },
+    {
+      "bytes": 3152,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/consolidate_current_v6.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/consolidate_current_v6.py",
+      "sha256": "0a742cd2eb514cef11e4cb723070cc68a8e71a517377b94927d70278fd000457"
+    },
+    {
+      "bytes": 911,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/formatter_probe.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/formatter_probe.cpp",
+      "sha256": "3caf14c62a70a15fcb8607e2a93d9af294a6e5a67503cc9739a24f7d9f3aba95"
+    },
+    {
+      "bytes": 2017,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/CMakeLists.txt",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/CMakeLists.txt",
+      "sha256": "85eff920e1531db36d21350527c1de7d90f917180f762f98e28c3e0f9928f780"
+    },
+    {
+      "bytes": 1931,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/callback_raw_v4.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/callback_raw_v4.hpp",
+      "sha256": "70391feb6be9e5797d6a11b1b4e8ce6db9615607b5af45aebbe32ee400214398"
+    },
+    {
+      "bytes": 8297,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_admission.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_admission.hpp",
+      "sha256": "14c6087674c6c906e0353b556a8c712bde7b6d7a6cef6f18e5047a1f90c5b557"
+    },
+    {
+      "bytes": 1020,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_capability_lease.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_capability_lease.hpp",
+      "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c"
+    },
+    {
+      "bytes": 1902,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_clock_window.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_clock_window.hpp",
+      "sha256": "0ce65ca1ac3986e1d77214fa408be2b719fc9f17f64486048fa4ce3b5660ecdc"
+    },
+    {
+      "bytes": 7522,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_d0_observation.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_d0_observation.hpp",
+      "sha256": "ddbc4df6ffad4260499269415dce4e9674cd0a141427c16a0b05c0cad572251f"
+    },
+    {
+      "bytes": 5305,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_diag_sink.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_diag_sink.hpp",
+      "sha256": "4a607820a5e7ce1f047d559bcde72965926f4e9d7d86a8ec20cd39add03c2a79"
+    },
+    {
+      "bytes": 11798,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_full_contract.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_full_contract.hpp",
+      "sha256": "aec70ea9951dbf5c176ab79f93883d2759e8a1751d9208fd0a3cdb0d082740ea"
+    },
+    {
+      "bytes": 723,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_preparation_barrier.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_preparation_barrier.hpp",
+      "sha256": "997bab5623fd15e3100c3f3746579985178f6358a20e3647c69e550a1c87b0cc"
+    },
+    {
+      "bytes": 13624,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_resources.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_resources.hpp",
+      "sha256": "44122c26ed1bd6e4d4d683e9ec5ee6014bd545d3969f7048d1bcd9911f7d8cb2"
+    },
+    {
+      "bytes": 7551,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_shadow_entry.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_shadow_entry.hpp",
+      "sha256": "e5f952cb29c9c975f584b1ce4be456a06c9e3dcac6d7435bed81fdaf1c9bae6b"
+    },
+    {
+      "bytes": 708,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_tick_barrier.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_tick_barrier.hpp",
+      "sha256": "66114a2c03c483802ebb2fa818fc7ae60f3ddf3c6b1841a34f3d62c68cffcac4"
+    },
+    {
+      "bytes": 24118,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_witness.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_witness.hpp",
+      "sha256": "c114df7d6c587e389ebdacc7344536e7f00dca81cc8dea2d352dac4ada6d6a93"
+    },
+    {
+      "bytes": 1227,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/p1_worker_liveness.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/p1_worker_liveness.hpp",
+      "sha256": "d9d7527b72d6c13c8f566c1d16de0e5dcd89706ea7bff11286fce34d9592fc28"
+    },
+    {
+      "bytes": 6581,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/protocol.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/protocol.hpp",
+      "sha256": "f565b4a9b6867e27c7d3ab395a6d91163d02a8d2bbe49fc6134010afd64bb7db"
+    },
+    {
+      "bytes": 87839,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/src/shadow/regulator_shadow_observer.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/src/shadow/regulator_shadow_observer.cpp",
+      "sha256": "a96757f0a75c44f5999240be4afd05002d77ef59f04971aeae7426bd9c956d29"
+    },
+    {
+      "bytes": 17779,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/tests/test_atomic_observation.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/tests/test_atomic_observation.cpp",
+      "sha256": "2d2949f02e0d30c1db23a54218648dd29eaa863c8c9cbc614b8cecd387778e75"
+    },
+    {
+      "bytes": 29236,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/tests/test_c33_input_matrix.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/tests/test_c33_input_matrix.cpp",
+      "sha256": "55b23d94e1839198eecc651200e2f1c6943e596483ef7f12d7052af221597bac"
+    },
+    {
+      "bytes": 6402,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/tests/test_d0_observation.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/tests/test_d0_observation.cpp",
+      "sha256": "6c9e4606670f35ec5069f998769cf7fba7ffde9815fd5e740a4f5bf1f3ed5955"
+    },
+    {
+      "bytes": 8704,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/tests/test_enqueue_branch.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/tests/test_enqueue_branch.cpp",
+      "sha256": "9909f8892ef84891519842056d05afa4f984311e9976ff4801554e88932494bc"
+    },
+    {
+      "bytes": 17124,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/tests/test_legacy_ready.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/tests/test_legacy_ready.cpp",
+      "sha256": "c90c1a5d01d7aadeeab5f72fd92cb1e9c43a68c71a0b37ba0a3c9cfe866d2456"
+    },
+    {
+      "bytes": 19441,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer/tests/test_shadow_entry.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/tests/test_shadow_entry.cpp",
+      "sha256": "66064b802b53a30521b87308fd0ce40a28546da29736c5266024722115d5f18a"
+    },
+    {
+      "bytes": 8176,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer_source_bundle_v13_C3_3.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer_source_bundle_v13_C3_3.json",
+      "sha256": "6ea3ae9f0d5461836f6f192854cd937150db08667f8f03f55683e7e29871fefe"
+    },
+    {
+      "bytes": 8334,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer_source_bundle_v14_C3_3.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer_source_bundle_v14_C3_3.json",
+      "sha256": "e4fcaa9b34b3ceb48bde4386bb8f53733402a6408c2b40e851399809c3020d53"
+    },
+    {
+      "bytes": 8321,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/observer_source_bundle_v15_C3_3.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer_source_bundle_v15_C3_3.json",
+      "sha256": "d4792e77c443ef25562841d2a2d216b924ad299eb0eed5370432645a605ccced"
+    },
+    {
+      "bytes": 16124,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/owned_auth.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/owned_auth.py",
+      "sha256": "112e128c0462d717de3eff38005babf4595f3a262a65297b7eed2c76aa6a6753"
+    },
+    {
+      "bytes": 13384,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/owned_release.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/owned_release.py",
+      "sha256": "689faf811493d97f4d09670d201a544d94577df2031b9e6d37d136feac3e4f8c"
+    },
+    {
+      "bytes": 32818,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/prepare_fixture.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/prepare_fixture.py",
+      "sha256": "f6564d552d3b83398b77bfb50bec3c73592e9e9be6d37db9ab78c7d62f988b2c"
+    },
+    {
+      "bytes": 6009,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher/CMakeLists.txt",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/CMakeLists.txt",
+      "sha256": "f222bd5164251bab0a4f32de67186f8205e4e98ad378c2e22db294ffa1e4919c"
+    },
+    {
+      "bytes": 11771,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/include/usv_mpc_cpp/mpc_node.hpp",
+      "sha256": "59e710623e4ae75b5dd00adaaf6de6cf4655f3651ac4091099d8f7c73eec9e59"
+    },
+    {
+      "bytes": 25616,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/include/usv_mpc_cpp/p1_startup_gate.hpp",
+      "sha256": "a14519d0284b056c9411c3f3fef011af732d0ca71607db3459b4b643cffa6285"
+    },
+    {
+      "bytes": 10857,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher/include/usv_mpc_cpp/research_logger.hpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/include/usv_mpc_cpp/research_logger.hpp",
+      "sha256": "01755d675ea0ab8295918df14308e7e41157888b4f3cecfea35df3c73ab90661"
+    },
+    {
+      "bytes": 61671,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher/src/mpc_node.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/src/mpc_node.cpp",
+      "sha256": "c3b985ad4a2f1ad6a95a2855803ca4cea882c7b4cca49ae22df70e9607c44d4b"
+    },
+    {
+      "bytes": 3200,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher/src/mpc_node_main.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/src/mpc_node_main.cpp",
+      "sha256": "d87aa820c2e047c2c2a0b64720684803986cef8b89eb1135ae83ca8b6d4156ed"
+    },
+    {
+      "bytes": 48774,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher/tests/test_publisher_startup.cpp",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/tests/test_publisher_startup.cpp",
+      "sha256": "6566fd5a922511022b6c391c8395af96585ed4cc6040ec33cc47b2fb9737eff0"
+    },
+    {
+      "bytes": 3155,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/publisher_source_bundle_v7_C3_3.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher_source_bundle_v7_C3_3.json",
+      "sha256": "890e92595bad104542169b7d78d5c267b5b399ae2b8e837106042ecb22d67885"
+    },
+    {
+      "bytes": 3777,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/candidate_fault_spec.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/candidate_fault_spec.py",
+      "sha256": "6c32e64474976d03ffc187140754923ca1b2b06f419bf055ad6fe60f4e011ff2"
+    },
+    {
+      "bytes": 9660,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_C0_gates.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_C0_gates.py",
+      "sha256": "287caa5253b7d983a70b9a3758b677f1a09c9a6230327a08a5d0aa035eb705be"
+    },
+    {
+      "bytes": 12802,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_candidate_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_candidate_matrix.py",
+      "sha256": "9df990fe0d3481c3ac6423e64f89598d80f684aac10c6f418d2dca527bc9f9f1"
+    },
+    {
+      "bytes": 14760,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_live_worker_loss.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_live_worker_loss.py",
+      "sha256": "e270d82e28ca6fd0630ecab34755f0dd6eed223b2c52a83150369cc184f4f974"
+    },
+    {
+      "bytes": 23629,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_p1_C0_comparison.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_p1_C0_comparison.py",
+      "sha256": "3738f668b5609b18f14bfb3cab9e0b590a131d6c02ce994663896aad26105b59"
+    },
+    {
+      "bytes": 76366,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_p1_execution.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_p1_execution.py",
+      "sha256": "469563fb55523e0202725fdc6fc18af446ece84b612c79ee85794e0288829262"
+    },
+    {
+      "bytes": 24789,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_p1_witness.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_p1_witness.py",
+      "sha256": "fb13fe66b8f996f96bac72e96eaa6a1b1f21f27af19a8b62b2dac13bc273596f"
+    },
+    {
+      "bytes": 8446,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_preparation_pending.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_preparation_pending.py",
+      "sha256": "e207b72241c62992b31209409d18a5994cf865e0ca0f308e279c1bc6abba576a"
+    },
+    {
+      "bytes": 12701,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_regulator_fault_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_regulator_fault_matrix.py",
+      "sha256": "d50260927af8595cfcba387066c3151ffdbbfd5ac8e85004514c66081297e46c"
+    },
+    {
+      "bytes": 9131,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_resource_delivery.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_resource_delivery.py",
+      "sha256": "b84d33025f53c92c5af211c5a388cccfa432f0ba825fe41a7975ed13866805aa"
+    },
+    {
+      "bytes": 11742,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_scheduler_preparation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_scheduler_preparation.py",
+      "sha256": "e800a9b79bc2e260d229bc7ecdaa4ae42db0dec2991bbffb21f15cae5c87338c"
+    },
+    {
+      "bytes": 13029,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_time_task_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_time_task_matrix.py",
+      "sha256": "c4c02f690b5dd67afda5263b97f9d4e0bb891673afc5791158fd75c1262cba7c"
+    },
+    {
+      "bytes": 15915,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/check_worker_fault_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/check_worker_fault_matrix.py",
+      "sha256": "de46d02498b629997f3eca5d73933d70d7deebc89f6c923fb75d78929f34fc3e"
+    },
+    {
+      "bytes": 18329,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/cleanup_C0_inner.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/cleanup_C0_inner.py",
+      "sha256": "2cb39d74440bda285089e061ae282ad4b48e4d0805192cfc9746447922603b82"
+    },
+    {
+      "bytes": 10711,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/owned_process_supervisor.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/owned_process_supervisor.py",
+      "sha256": "643200100c12f9bcace6926f0497fdfeb0969fea40d45b6336b398438e4b40fe"
+    },
+    {
+      "bytes": 1683,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/p1_capability_observer_accounting.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/p1_capability_observer_accounting.py",
+      "sha256": "93523bb8e0a6cc6e6a334c2f5ab1325d51f2f063141bc7a175b1e6bb698b9744"
+    },
+    {
+      "bytes": 3015,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/p1_contract_revision.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/p1_contract_revision.py",
+      "sha256": "97fb9766238e0eb570d265ac0203564289cfa7f55adf056f6e1ef5f9491718e9"
+    },
+    {
+      "bytes": 6558,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/p1_contract_spec_v1.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/p1_contract_spec_v1.json",
+      "sha256": "33fb4a5eef93aa6abce5a61e7549dd7217f90c9572e5097791731fbb89661ffd"
+    },
+    {
+      "bytes": 8625,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/p1_full_contract.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/p1_full_contract.py",
+      "sha256": "380e6aebcf68c9cf1466feba0ea1a02e55847f14080cf8b89aa55fa67cab568a"
+    },
+    {
+      "bytes": 1333,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/p1_live_loss_cleanup.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/p1_live_loss_cleanup.py",
+      "sha256": "8bc257d4536bc2ec7f00ba5e9a1d8346c0d12c8c2208eb330e34fa30d66f8f6b"
+    },
+    {
+      "bytes": 1173,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/p1_payload_digest.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/p1_payload_digest.py",
+      "sha256": "80969c86cbe72aa238c24503be9d5d69c257ff111a2cc0a5787f966b4af4b6c5"
+    },
+    {
+      "bytes": 6158,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/patch_watchdog_observation_v12.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/patch_watchdog_observation_v12.py",
+      "sha256": "9d0fed8f18187d894eaeed03ac03137ad5b2b16af4f5de4181808d8f9ae6011b"
+    },
+    {
+      "bytes": 18232,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_candidate_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_candidate_matrix.py",
+      "sha256": "6b01bb8fdfbbd8acc52bbc63f30f03021801aa8d09aff45c8172ae616ac3b51f"
+    },
+    {
+      "bytes": 39783,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_formal_no_output_validation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_formal_no_output_validation.py",
+      "sha256": "d8098c64defe3b477363c94a959de29eb60c899039885ac13cfd3ce2f5da01cb"
+    },
+    {
+      "bytes": 18817,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_live_worker_loss.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_live_worker_loss.py",
+      "sha256": "9774f2423b5976456d218ed377a361818fcb5fe524eb74bfe76601d0660b0d83"
+    },
+    {
+      "bytes": 40462,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_no_output_calibration.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_no_output_calibration.py",
+      "sha256": "48db472183bffe6d6ec13704fcf9162ddfa6b7fd5dab0da3a6e8854e267786ef"
+    },
+    {
+      "bytes": 61149,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_p1_vrx_validation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_p1_vrx_validation.py",
+      "sha256": "27e9eaa4e24b7a7fd4191f7892edf8929a2d4c0ccd0caeb14b56f8fc0c0e855b"
+    },
+    {
+      "bytes": 16563,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_preparation_pending.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_preparation_pending.py",
+      "sha256": "be6e9d8d1b4f332d006c2518e80444aa67d2d975e9735927bfd66cffe860f76c"
+    },
+    {
+      "bytes": 54329,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_r5_diag_validation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_r5_diag_validation.py",
+      "sha256": "c8bc0141e3ad7b37ff07b1e3ce440c47b01e4386b90bf9f362beda1922ea0766"
+    },
+    {
+      "bytes": 16644,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_regulator_fault_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_regulator_fault_matrix.py",
+      "sha256": "0d8582698035d0dcc1b29596281112a570f3cea1d47cbf47e08d3333ef785d5c"
+    },
+    {
+      "bytes": 18817,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_time_task_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_time_task_matrix.py",
+      "sha256": "ae9b460c293e4e722508f5b0ef8514c96fb8a6fef5a677758d72ac9203da9521"
+    },
+    {
+      "bytes": 20018,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/run_worker_fault_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/run_worker_fault_matrix.py",
+      "sha256": "3d38813af7fd9af79481434d940bdc98b456b971a77158603fdfb22b1c52d1f3"
+    },
+    {
+      "bytes": 8476,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_C0_gates.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_C0_gates.py",
+      "sha256": "d53a50577e5b427af0963c967ba23ec88d19993dff1637c8eb88fc3eadf198dd"
+    },
+    {
+      "bytes": 12664,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_C0_inner_cleanup.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_C0_inner_cleanup.py",
+      "sha256": "1f076891c2ef49670915913b57d839eaef6baeb693df7a09600ea4c062deb061"
+    },
+    {
+      "bytes": 6061,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_candidate_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_candidate_matrix.py",
+      "sha256": "37a68500aff0c10c17d37385a1b4ec2254d04e9b724d1dd257a748ce224d002a"
+    },
+    {
+      "bytes": 2101,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_capability_observer_accounting.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_capability_observer_accounting.py",
+      "sha256": "6d0a9c0325b9a96c6ccb658919e5ddf75648011cabb5c164c51c8b90e9efa6b5"
+    },
+    {
+      "bytes": 37242,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_check_p1_execution.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_check_p1_execution.py",
+      "sha256": "c3341fcf35d7001241836a3b533c024d7b5a6aae9d4bdcf0b0c09268a981d9ec"
+    },
+    {
+      "bytes": 10070,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_contract_revision.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_contract_revision.py",
+      "sha256": "3e42e46a59784ab7c439374d5476b502c2d0c2b0e117e89e2d6bc7ff4b66a64f"
+    },
+    {
+      "bytes": 7343,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_fault_mechanisms.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_fault_mechanisms.py",
+      "sha256": "e934fb8fc0e762f4751dae7beea0fdd806b5bb0fcb4d8782b33ddc63fb882d6a"
+    },
+    {
+      "bytes": 16371,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_full_contract.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_full_contract.py",
+      "sha256": "52abfd9aa3ed05bb5dff5addfc766fa0b7eae27017ca9394a80839c81d887def"
+    },
+    {
+      "bytes": 1634,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_live_loss_cleanup.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_live_loss_cleanup.py",
+      "sha256": "f8a43f3d99e9a98dd910fbd0c1a8e8a18faa6a5fff3bda290d854a1b7691cf16"
+    },
+    {
+      "bytes": 3922,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_live_worker_loss.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_live_worker_loss.py",
+      "sha256": "ec2f8f797c2ac58d5b363ca02576565c542479416cc924d7efd0c8bc07339b49"
+    },
+    {
+      "bytes": 5138,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_owned_process_supervisor.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_owned_process_supervisor.py",
+      "sha256": "dd61df35b1731f817124bdad12c6d3f78d3a6de9a942cd4cff3afe1dfcceaeec"
+    },
+    {
+      "bytes": 23828,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_p1_C0_comparison.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_p1_C0_comparison.py",
+      "sha256": "bad376d3345358995fe20672e085d3e518a91459bde4cf6ed28ad9edc139a39f"
+    },
+    {
+      "bytes": 25436,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_p1_witness.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_p1_witness.py",
+      "sha256": "4f8ba630029edbde9af77cd1aa69bd4891bef6ba4d0f708022ee0d4f123711e4"
+    },
+    {
+      "bytes": 3567,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_preparation_pending.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_preparation_pending.py",
+      "sha256": "35465233e4d65aebb32783751e76f32715fbb3ba06342ecdeddd08c9d7e8f327"
+    },
+    {
+      "bytes": 4720,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_publication_history.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_publication_history.py",
+      "sha256": "7862cb5330332112042cc68c25981d31b80e6708710c97775d5ac527edbfc684"
+    },
+    {
+      "bytes": 17531,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_r5_diag_runner.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_r5_diag_runner.py",
+      "sha256": "929a94df22dfbb3ee95ffee259055fb226e90f782a56ce4f9067b14e09bfdcd6"
+    },
+    {
+      "bytes": 3523,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_regulator_fault_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_regulator_fault_matrix.py",
+      "sha256": "a51ab6c6947bac638f8f03e6dd40ea88f27209b1b0f42ecd12853dcb49c19283"
+    },
+    {
+      "bytes": 4923,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_resource_delivery.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_resource_delivery.py",
+      "sha256": "8a43938bc85272c29836994f9edff70abb412f383f86d59a5181f1efe9567ea2"
+    },
+    {
+      "bytes": 6563,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_scheduler_preparation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_scheduler_preparation.py",
+      "sha256": "961f51972ba69a6919807120648b01b85a7fdbee4cb2a3f3fcbe2e54da620d2e"
+    },
+    {
+      "bytes": 5440,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_time_task_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_time_task_matrix.py",
+      "sha256": "a6da6c065c026fbcb8e7b5087ceaf92b67e675fd9673c2796129d3a2aaba20ef"
+    },
+    {
+      "bytes": 8631,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_vrx_runtime_gates.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_vrx_runtime_gates.py",
+      "sha256": "b6a56292ac934bb60b7fc6cb17f8db61718e86d131f05c280d05dc3330ca9e43"
+    },
+    {
+      "bytes": 1050,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_watchdog_observation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_watchdog_observation.py",
+      "sha256": "b268edd7d24f96475e949768228be1157218b6fb28c9727e08d7f5a6bfcfffeb"
+    },
+    {
+      "bytes": 10444,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/runtime/test_worker_fault_matrix.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/runtime/test_worker_fault_matrix.py",
+      "sha256": "951a56bcf1ef335f07aa8a3c5336caa8dab4b60b01ad4eea48551c91e6eaa3dc"
+    },
+    {
+      "bytes": 1420,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/source_bundles_current.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/source_bundles_current.json",
+      "sha256": "ab89939573ac5910c5fdb07c23d45ffe7462f42c6f9372cc7ff47464d4890c6a"
+    },
+    {
+      "bytes": 1444,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/source_bundles_parent_v8.json",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/source_bundles_parent_v8.json",
+      "sha256": "1691c2c7ff31107498aa885c1b1800e803aab959da8e68f8d9c2360e73c13e0e"
+    },
+    {
+      "bytes": 15126,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_activation_provenance_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_activation_provenance_v1.py",
+      "sha256": "4e2384fb03bf11befc7d8f844cf037e74510520581a81880e92a53170b570bc6"
+    },
+    {
+      "bytes": 10497,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_actual_unknown_child.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_actual_unknown_child.py",
+      "sha256": "62672ab949d74e20fa1031294832cf69cd6cb07e77576afb18d6ecb7cb6905b1"
+    },
+    {
+      "bytes": 5042,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_all_rejected_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_all_rejected_v1.py",
+      "sha256": "55c02de788385610e50352757ab98f687fb648cd6bbda39773c88a77191449d5"
+    },
+    {
+      "bytes": 27827,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_atomic_observation_v2.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_atomic_observation_v2.py",
+      "sha256": "769a3e4805904ad3f0591b4b5681d20a3e0634b2fe22db165ec3b56861187fcc"
+    },
+    {
+      "bytes": 13300,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_config_and_current_v5.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_config_and_current_v5.py",
+      "sha256": "288db1acebfeed7cb68448d31bc311d5b01aa6714f0cd8a20f7ce19fb8178b52"
+    },
+    {
+      "bytes": 4188,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_config_full_fanout_v2.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_config_full_fanout_v2.py",
+      "sha256": "338cd7613267443a60d31ea07a91bc4cb2df95e302bc9c7edc5331e84344c622"
+    },
+    {
+      "bytes": 7689,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_current_supervision_qualification.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_current_supervision_qualification.py",
+      "sha256": "e2ba49f15b8789727519da3a35e1867c9fbe690a9bcf205065b2aa3767ff916a"
+    },
+    {
+      "bytes": 6379,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_owned_auth.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_owned_auth.py",
+      "sha256": "cfaf09937a97542d086b1f6c93a09986645edf3a7092d68882c665c2347337d0"
+    },
+    {
+      "bytes": 15374,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_readiness_v3_copies.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_readiness_v3_copies.py",
+      "sha256": "0989cd586210dc8b54e12f4e7fc0b319886140cf9419d4450acc94c6c62465e1"
+    },
+    {
+      "bytes": 11217,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_release_observation_v1.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_release_observation_v1.py",
+      "sha256": "abf96499490453ac39783e7761415e30c8fa7856f992a53c3c83707a3ddaa092"
+    },
+    {
+      "bytes": 5124,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_release_publication_observation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_release_publication_observation.py",
+      "sha256": "f1e9c2a1aaac6f8852ec504f5bc5f1753ac4e47b8644c7909852efeb9efc6b24"
+    },
+    {
+      "bytes": 10042,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_source_components_v4.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_source_components_v4.py",
+      "sha256": "b0b3cfa41ea164f0d2a1daa21fd4908ce91ed2383f6dd328cb2b7b65b662d320"
+    },
+    {
+      "bytes": 10774,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/test_supervision_failure_paths.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/test_supervision_failure_paths.py",
+      "sha256": "492ddcb32f40e24d8a3614e841a926cd92986dda3f33b50707c69fab6953214a"
+    },
+    {
+      "bytes": 50802,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/validate_current_legacy_rules_v5.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/validate_current_legacy_rules_v5.py",
+      "sha256": "515927912d27d22a8f0854adf9753014f7e508036cdd86bf5c350cfe5eca63b3"
+    },
+    {
+      "bytes": 50725,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/validate_readiness_v3.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/validate_readiness_v3.py",
+      "sha256": "0ece9096a9d5c3925215cc801d091c261790d2b361471a57db6d81d4cfae95d3"
+    },
+    {
+      "bytes": 4768,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/verify_negative_and_mutation.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/verify_negative_and_mutation.py",
+      "sha256": "847095098bbeb0a05aa1866aa5eb7b1f4a5d8f7bc61265150cb51921da5d506d"
+    },
+    {
+      "bytes": 10061,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/source/verify_prepare_close.py",
+      "kind": "source",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/verify_prepare_close.py",
+      "sha256": "e66b60b4a0148d093518c78ceaabc0c2c9a6e75c2620d3905786d8fd9d7d8e09"
+    },
+    {
+      "bytes": 4777520,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/runtime_binaries/publisher/p1_F5_held_publisher",
+      "kind": "active_runtime_binary",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/build01/p1_F5_held_publisher",
+      "sha256": "cd8b3633d2a64cc061b11b8f133d1fe161a16bf118e593f5b56ddc9ca321b35a"
+    },
+    {
+      "bytes": 7314744,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/native_binaries/publisher/test_publisher_startup",
+      "kind": "active_native_binary",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/publisher/build01/test_publisher_startup",
+      "sha256": "4b2ea2302241fcb7c61e32208cb17b763623319ede2538a71b6682b6bca05403"
+    },
+    {
+      "bytes": 6190712,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/runtime_binaries/observer/p1_regulator_shadow_observer_owned_v2",
+      "kind": "active_runtime_binary",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/build03/p1_regulator_shadow_observer_owned_v2",
+      "sha256": "d495e2f62d9e214c5048ba91513e68a2661667ac60a268fc319f17fe72c6fb6b"
+    },
+    {
+      "bytes": 7169560,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/native_binaries/observer/test_c33_input_matrix",
+      "kind": "active_native_binary",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/build03/test_c33_input_matrix",
+      "sha256": "a3823522c975e910ac6974a7137fd3b84934e6a5471485c5ac5e216fd0807d96"
+    },
+    {
+      "bytes": 2035240,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/runtime_binaries/worker/p1_solver_worker_owned_v2",
+      "kind": "active_runtime_binary",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_strict_source_20261011_v4/worker/build/p1_solver_worker_owned_v2",
+      "sha256": "acff3455b1f3dee9e3160ca491545bae0ca29d9e027f2c5a73bc7232b4f6b535"
+    },
+    {
+      "bytes": 567056,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/runtime_binaries/recorder/p1_owned_recorder",
+      "kind": "active_runtime_binary",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/recorder/build/p1_owned_recorder",
+      "sha256": "301bfb597975805a24063402329fa7e3cd2d43a060bcb4de9c6f5fe0135d59b3"
+    },
+    {
+      "bytes": 996784,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/runtime_binaries/fixture/p1_synthetic_source",
+      "kind": "active_runtime_binary",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_endpoints_20261010_v2/fixture/build/p1_synthetic_source",
+      "sha256": "ca4ca6291b584977d235bf909986e23eff6fb33fda56eb58398b17710d5fb4af"
+    },
+    {
+      "bytes": 6190712,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/historical_binaries/observer_build01/p1_regulator_shadow_observer_owned_v2",
+      "kind": "historical_binary_not_current_source_qualification",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/build01/p1_regulator_shadow_observer_owned_v2",
+      "sha256": "b10af692d2a6b48a5221e98fb8c967df395f4d8310d75563891d00f69d7264a7"
+    },
+    {
+      "bytes": 7169560,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/historical_binaries/observer_build01/test_c33_input_matrix",
+      "kind": "historical_binary_not_current_source_qualification",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/build01/test_c33_input_matrix",
+      "sha256": "299751104b975328f146c1aa122ffc5971b08457ed37d8fc43ec3433054af97d"
+    },
+    {
+      "bytes": 6190712,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/historical_binaries/observer_build02/p1_regulator_shadow_observer_owned_v2",
+      "kind": "historical_binary_not_current_source_qualification",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/build02/p1_regulator_shadow_observer_owned_v2",
+      "sha256": "1626ead21e01d86ff74f3c7496decd6e88164df2ff327f2bcf44a7e79d6e3da6"
+    },
+    {
+      "bytes": 7169560,
+      "copy": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/final_frozen_snapshot_batch07/historical_binaries/observer_build02/test_c33_input_matrix",
+      "kind": "historical_binary_not_current_source_qualification",
+      "original": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_3_20261012_v9/observer/build02/test_c33_input_matrix",
+      "sha256": "42e698600a7e0c5b5c85c91f7dfcf5c4efc711741a2aa3f49d4a9260e0c5bd45"
+    }
+  ],
+  "research_conclusion": false,
+  "schema": "C3.3-final-source-binary-snapshot/v1",
+  "source_count": 125,
+  "stage_qualified": false,
+  "superseded_source_bundles": "v13/v14 remain historical input declarations; their changed native source is retained in D7/failures snapshots. They do not authenticate current modified source."
+}

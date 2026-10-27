@@ -1,0 +1,257 @@
+{
+  "static_configuration_files": [
+    {
+      "path": ".sgh-research/experiments/p0_contract_straight_20261004_03/model/effective_vehicle.yaml",
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/p0_contract_straight_20261004_03/model/effective_vehicle.yaml",
+      "symlink": false,
+      "bytes": 584,
+      "sha256": "f94f67e1b99c5f4b9bbce18f1301188119d7800e9de6401b141b7e6e7d14d345",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/artifacts/vrx_model/effective_vehicle.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/artifacts/vrx_model/effective_vehicle.yaml",
+      "symlink": false,
+      "bytes": 584,
+      "sha256": "f94f67e1b99c5f4b9bbce18f1301188119d7800e9de6401b141b7e6e7d14d345",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+      "symlink": false,
+      "bytes": 362,
+      "sha256": "9d52bdbff5c3fa02c6a98aa1ecbdde29f5178f0163cf36dfed9c31c6ea750a7c",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params.yaml",
+      "symlink": false,
+      "bytes": 2881,
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/mpc_params_A.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_A.yaml",
+      "symlink": false,
+      "bytes": 1786,
+      "sha256": "1732b009c4f137d5c4efe844fc891726297e331760a11b329e8c7ee2c7c0b325",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_B.yaml",
+      "symlink": false,
+      "bytes": 2881,
+      "sha256": "aea30af2cc8cb47e393d1e6cbcaa4c0d20b216ab2990579d36ec49f438f49bf9",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/mpc_params_vrx.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/mpc_params_vrx.yaml",
+      "symlink": false,
+      "bytes": 2418,
+      "sha256": "df426364e7512e8ba6dfc366d98c26d8510f041f15aac650dbbe82f40202e3ef",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/path_config.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/path_config.yaml",
+      "symlink": false,
+      "bytes": 2027,
+      "sha256": "53086a2ed0cbc60a7670a2137ac1d6f589ed7c54c564f969cccd3654b15dcb3a",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/research_bag_topics.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/research_bag_topics.yaml",
+      "symlink": false,
+      "bytes": 1006,
+      "sha256": "46d9e54a99e95edea2804c1e981e3d8827f7b814ce3e12c715e4d42967037bdd",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "symlink": false,
+      "bytes": 280,
+      "sha256": "b7f27e9b02464efb113f9df57639bab63e8ac1aae3fee91b38f3ab64089e8138",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+      "symlink": false,
+      "bytes": 1402,
+      "sha256": "c524fbff72bf80efa908ae96c72e01195972ed91b7d0b89a535ab01723cd6ba0",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+      "symlink": false,
+      "bytes": 6249,
+      "sha256": "eb870101513ca2de04ceb3bbf166572fc66b78bc9aa4a816c53c45d038f9c925",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/usv_params.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params.yaml",
+      "symlink": false,
+      "bytes": 4268,
+      "sha256": "a96c5c62c4f9421d3e9fd9e267ae5da4432dea147597121cad23dc41f2e19428",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/usv_params_A.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_A.yaml",
+      "symlink": false,
+      "bytes": 2147,
+      "sha256": "c5334585225d81810f2ecd24e4b064190c764a083db1455d6b2c69d5da2f0bb2",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/usv_params_B.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_B.yaml",
+      "symlink": false,
+      "bytes": 4336,
+      "sha256": "9425eb3fd68b8b9392affbe41b7bd7f36c0b12e8656c230adcfc75305aa7600a",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/usv_params_sim.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/usv_params_sim.yaml",
+      "symlink": false,
+      "bytes": 2942,
+      "sha256": "39ee9a22f71b66c9a8c805d34cb939ab657f871a24fa97a10ca49d8121892d35",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_circle.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_circle.yaml",
+      "symlink": false,
+      "bytes": 2478,
+      "sha256": "6d89acf959792d0f941ab798ae4cd890eebdb9f6aa3c086d7000ced756848ee1",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_s_curve.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_s_curve.yaml",
+      "symlink": false,
+      "bytes": 287,
+      "sha256": "b686540b8105fe1de2d01ec42f6671232c2f62f000fae58ed914168c24b8a53b",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_straight.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_straight.yaml",
+      "symlink": false,
+      "bytes": 148,
+      "sha256": "d7796ce9f963aceb54d0c428f721a0d6963ca35b303e5481bb44661f04e1241c",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_turn.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints/vrx_b_turn.yaml",
+      "symlink": false,
+      "bytes": 687,
+      "sha256": "5b05eb8c19eb78144163653465a1f73d7cbb98dfb374cb9cc17918f8ec95950a",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_calm.yaml",
+      "symlink": false,
+      "bytes": 519,
+      "sha256": "25c9620799f611e6f619d4af2d9ed555c3fb8341f398b637ca53711e69c273e2",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml",
+      "symlink": false,
+      "bytes": 851,
+      "sha256": "4228677782ad0d17d2506c593043fb3680e066c3588730e92fb901ff9b7a3529",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/src/usv_simulation/config/vrx_model.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/config/vrx_model.yaml",
+      "symlink": false,
+      "bytes": 1145,
+      "sha256": "edcd9d129357651c8bc9c0ca9d081e91bc6467db5420fd88e305e3e77281093a",
+      "valid": true
+    },
+    {
+      "path": "usv_rl/configs/env.yaml",
+      "resolved_path": "/home/trevor/USV/usv_rl/configs/env.yaml",
+      "symlink": false,
+      "bytes": 2633,
+      "sha256": "e8589c9b0fbb2bd1ae5235a13b0742f7b5f9168b6fedf22f721e4e587496fa0c",
+      "valid": true
+    }
+  ],
+  "generated_configuration": [
+    {
+      "path": ".sgh-research/experiments/p0_contract_straight_20261004_03/model/effective_vehicle.yaml",
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/p0_contract_straight_20261004_03/model/effective_vehicle.yaml",
+      "symlink": false,
+      "bytes": 584,
+      "sha256": "f94f67e1b99c5f4b9bbce18f1301188119d7800e9de6401b141b7e6e7d14d345",
+      "valid": true
+    },
+    {
+      "path": ".sgh-research/experiments/p0_contract_straight_20261004_03/model/model.sdf",
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/p0_contract_straight_20261004_03/model/model.sdf",
+      "symlink": false,
+      "bytes": 15254,
+      "sha256": "15babac58c11e5bde8eef6c0fa20867578b06e03e49a94e5fa51d02f4ed916fc",
+      "valid": true
+    },
+    {
+      "path": ".sgh-research/experiments/p0_contract_straight_20261004_03/model/model_report.json",
+      "resolved_path": "/home/trevor/USV/.sgh-research/experiments/p0_contract_straight_20261004_03/model/model_report.json",
+      "symlink": false,
+      "bytes": 1179,
+      "sha256": "46f7d61a9eb18f18a6951ec4e46c468c75ac0b8a6f12c9386b30a93f1fc96bf4",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/artifacts/vrx_model/effective_vehicle.yaml",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/artifacts/vrx_model/effective_vehicle.yaml",
+      "symlink": false,
+      "bytes": 584,
+      "sha256": "f94f67e1b99c5f4b9bbce18f1301188119d7800e9de6401b141b7e6e7d14d345",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/artifacts/vrx_model/model.sdf",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/artifacts/vrx_model/model.sdf",
+      "symlink": false,
+      "bytes": 15220,
+      "sha256": "07ea4fa58a58f6f2a847222943cbe18588e4fb5689bf9c284690918e3f8e976f",
+      "valid": true
+    },
+    {
+      "path": "usv_mpc_ws/artifacts/vrx_model/model_report.json",
+      "resolved_path": "/home/trevor/USV/usv_mpc_ws/artifacts/vrx_model/model_report.json",
+      "symlink": false,
+      "bytes": 1123,
+      "sha256": "ea243e367f3e9d91c5cb3cfe93d777659ffc4600c2b170d4a3b5b7342389773e",
+      "valid": true
+    }
+  ],
+  "explicit_effective_config_dir": "/home/trevor/USV/.sgh-research/experiments/p0_contract_straight_20261004_03/model",
+  "generated_configuration_evidence_kind": "static/prior-run source; current runtime loading unverified",
+  "controller_nominal_plant_actual_relation": "shared effective_vehicle launch source; runtime loading unverified",
+  "runtime_effective_verified": false,
+  "runtime_parameters": null,
+  "launch_arguments": null,
+  "time_contract": {
+    "compute_clock": "steady",
+    "physical_clock": "explicit /clock observations",
+    "runtime_use_sim_time_verified": false
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "input_SHA256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/check_c310_foreign_close.py.snapshot": "4c9cb7a341de6e62d5fb031f4d997dbf2ec0c75c5a9f94f4d987a562ece0f783",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/foreign/owned_manifest.json": "024ba54570229579762a81f09a380372a43ffccfb9d1c6119cb538abb8176c5e",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/foreign/source.jsonl": "3da668e45aa1db1ff1a454016af7fc07e2f7d7efc7f9f50d8053868d0831586f",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/recorder/bag/bag_0.db3": "43a04a188ae8d0f445df43e74db0bb2792eeae00184dd10e5c0c3af3d75e4d97",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/synthetic_source/transport_source.jsonl": "434a01c25b1aa0a64abe3c972cc73a94c94d376bd4af6b64cf8877888d2daaae",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_10_20261015_16/runs/foreign_after_close/check_result.json": "10c049c83afec281d93ca398dbc520bf9d8a7eb2635064f1a64ff8258a6e1ffb"
+  },
+  "input_SHA256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/check_c310_foreign_close.py.snapshot": "4c9cb7a341de6e62d5fb031f4d997dbf2ec0c75c5a9f94f4d987a562ece0f783",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/foreign/owned_manifest.json": "024ba54570229579762a81f09a380372a43ffccfb9d1c6119cb538abb8176c5e",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/foreign/source.jsonl": "3da668e45aa1db1ff1a454016af7fc07e2f7d7efc7f9f50d8053868d0831586f",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/recorder/bag/bag_0.db3": "43a04a188ae8d0f445df43e74db0bb2792eeae00184dd10e5c0c3af3d75e4d97",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/runs/owned_C310_foreign_after_close_01/synthetic_source/transport_source.jsonl": "434a01c25b1aa0a64abe3c972cc73a94c94d376bd4af6b64cf8877888d2daaae",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_10_20261015_16/runs/foreign_after_close/check_result.json": "10c049c83afec281d93ca398dbc520bf9d8a7eb2635064f1a64ff8258a6e1ffb"
+  },
+  "interpretation": "Observed three Source buffers match received buffers only after exact zero append to next multiple of four. This is an observed byte relation; this audit alone does not establish which middleware operation caused it or a general CDR normalization rule.",
+  "original_SQLite_row_writer_assignment_performed": false,
+  "original_failure_preserved": true,
+  "original_prerun_checker_passed": false,
+  "passed": true,
+  "population": [
+    {
+      "Source_CDR_SHA256": "8b0374d059836b335d37a9ebe226cab14eccae98b74ac81d3c0cff7cd0a41510",
+      "Source_CDR_bytes": 589,
+      "Source_prefix_byte_exact": true,
+      "Source_publish_before_transport_receive": true,
+      "actual_SQLite_matching_occurrence_count": 2,
+      "actual_appended_hex": [
+        "000000"
+      ],
+      "actual_encapsulation4_unchanged": true,
+      "append_zero_bytes": 3,
+      "expected_padded_CDR_SHA256": "7bc3bbacbd3b945e154fb85432b4175ab278bb5bd9c94ca765ef5d5d3a8e55eb",
+      "packet_index": 1,
+      "padded_bytes_exact_actual_SQLite": true,
+      "transport_CDR_SHA256": "7bc3bbacbd3b945e154fb85432b4175ab278bb5bd9c94ca765ef5d5d3a8e55eb",
+      "transport_CDR_bytes": 592,
+      "transport_GID_exact_foreign": true
+    },
+    {
+      "Source_CDR_SHA256": "916631636020ea4fae4fb51258d30d5ade5aa1abf6f56a91d85665785dcefcaf",
+      "Source_CDR_bytes": 589,
+      "Source_prefix_byte_exact": true,
+      "Source_publish_before_transport_receive": true,
+      "actual_SQLite_matching_occurrence_count": 1,
+      "actual_appended_hex": [
+        "000000"
+      ],
+      "actual_encapsulation4_unchanged": true,
+      "append_zero_bytes": 3,
+      "expected_padded_CDR_SHA256": "cfdb691a751668f5bf1901f0a4ae9a7267a6ccb42dabb9721b86aca285544648",
+      "packet_index": 2,
+      "padded_bytes_exact_actual_SQLite": true,
+      "transport_CDR_SHA256": "cfdb691a751668f5bf1901f0a4ae9a7267a6ccb42dabb9721b86aca285544648",
+      "transport_CDR_bytes": 592,
+      "transport_GID_exact_foreign": true
+    },
+    {
+      "Source_CDR_SHA256": "8b0374d059836b335d37a9ebe226cab14eccae98b74ac81d3c0cff7cd0a41510",
+      "Source_CDR_bytes": 589,
+      "Source_prefix_byte_exact": true,
+      "Source_publish_before_transport_receive": true,
+      "actual_SQLite_matching_occurrence_count": 2,
+      "actual_appended_hex": [
+        "000000"
+      ],
+      "actual_encapsulation4_unchanged": true,
+      "append_zero_bytes": 3,
+      "expected_padded_CDR_SHA256": "7bc3bbacbd3b945e154fb85432b4175ab278bb5bd9c94ca765ef5d5d3a8e55eb",
+      "packet_index": 3,
+      "padded_bytes_exact_actual_SQLite": true,
+      "transport_CDR_SHA256": "7bc3bbacbd3b945e154fb85432b4175ab278bb5bd9c94ca765ef5d5d3a8e55eb",
+      "transport_CDR_bytes": 592,
+      "transport_GID_exact_foreign": true
+    }
+  ],
+  "posthoc_observation_only": true,
+  "qualifications": {
+    "F6": false,
+    "M4": false,
+    "P1": false,
+    "execute": false,
+    "research_conclusion": false,
+    "stage": false
+  },
+  "schema": "p1-C3.10-readonly-Source-wire-padding-observation-v1",
+  "unique_bag_row_writer_identity_proven": false
+}

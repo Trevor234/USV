@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """组会汇报图表：从 TensorBoard 事件文件生成训练曲线图。
 
-数据来源: usv_rl/runs/{v1..v5}/<run>_1/events.out.tfevents.* (每阶段一个文件, 按步数合并)。
+数据来源: <artifacts>/rl_runs/{v1..v5}/<run>_1/events.out.tfevents.* (每阶段一个文件, 按步数合并)。
+         <artifacts> 默认是仓库顶层 artifacts/，见 usv_rl.paths。
 用途: usv_rl/docs/ 组会汇报 PPT。运行: usv_rl/.venv/bin/python fig_curves.py
 """
 import glob
@@ -12,7 +13,9 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-ROOT = Path("/home/trevor/USV/usv_rl/runs")
+from usv_rl.paths import RL_RUNS
+
+ROOT = RL_RUNS
 OUT = Path(__file__).resolve().parent
 
 # 中文字体候选(按优先级), 渲染时若缺字形会有 warning, 用 -W error 可暴露

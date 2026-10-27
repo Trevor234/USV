@@ -1,0 +1,34 @@
+{
+  "safety/regulator.cpp": {
+    "sha256": "7d99a338690f83d6f1cc5d141d145df1760042045670f6eb6a224670078f9a0b",
+    "bytes": 48669
+  },
+  "safety/CMakeLists.txt": {
+    "sha256": "8a283ba8bb4def155115a0a38af4f955d67efff103aea8f68e263a44e6b5a186",
+    "bytes": 2236
+  },
+  "safety/p1_capability_lease.hpp": {
+    "sha256": "391c10d527ba9d111c0e54f00a61e33d913bdbd1c05c7b217d550a105f0dd27c",
+    "bytes": 1020
+  },
+  "safety/test_p1_capability_lease.cpp": {
+    "sha256": "31cef1b98e6cf6ea6f9846f448f46916690550b99dadc7d79e6b5f13dab0e94d",
+    "bytes": 2495
+  },
+  "runtime/p1_contract_revision.py": {
+    "sha256": "a54e5edff884f87e3bdd1a91eab8ba676bf6ca04e1d952a07f6c6706a39b0692",
+    "bytes": 1228
+  },
+  "runtime/test_contract_revision.py": {
+    "sha256": "22167cb4b57d32663eb8e293e559c44dca8d9b69ad7ddf316b79f0d676f49b28",
+    "bytes": 3122
+  },
+  "p1_shadow_contract_v4.json": {
+    "sha256": "d2178741bcdd82a53089e08ffe508c16526c3782b4d4b99a8c5d22109e731e0f",
+    "bytes": 3479
+  },
+  "preflight_reflection_20261006_live_worker_repair.md": {
+    "sha256": "ee798b2c82f7356c1a112ca8ec2673a428e2944ef1aa71eeb67e64205b5b16fb",
+    "bytes": 2178
+  }
+}

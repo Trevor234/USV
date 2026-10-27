@@ -1,0 +1,424 @@
+{
+  "MPC_delivery_complete": false,
+  "all_faster_nonworsening_cases": [
+    "once__first_refined",
+    "once__n050"
+  ],
+  "all_material_pulses_faster_and_cost_worse": false,
+  "all_ten_exact_registered_cases_checked": true,
+  "cases": [
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__first_once",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.0,
+        "stage_control_increment_dt_scaled": 0.0,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.0,
+        "stage_velocity_dt_scaled": 0.0,
+        "terminal_state_not_dt_scaled": 0.0,
+        "total": 0.0
+      },
+      "cost_delta_from_own_baseline": 0.0,
+      "cost_relative_delta_from_own_baseline": 0.0,
+      "cost_total": 0.08798126433645495,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "first_once",
+      "first_control_n": [
+        0.3645576181771613,
+        0.36455761817717686
+      ],
+      "first_interval_position_m": [
+        0.0008915959936209555,
+        -1.1683632804687858e-18
+      ],
+      "first_interval_speed_improved": false,
+      "first_interval_surge_gain_m_s": 0.0,
+      "first_interval_surge_m_s": 0.008872599171742542,
+      "material_cost_worsening": false,
+      "maximum_control_increment_n": 0.36455761817717686,
+      "original_objective_nonworsening": true,
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__first_refined",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 1.4470963998078346e-05,
+        "stage_control_increment_dt_scaled": 3.618103322109226e-05,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": -7.21172285655311e-05,
+        "stage_velocity_dt_scaled": -3.251603316756918e-06,
+        "terminal_state_not_dt_scaled": -0.00023628599388400215,
+        "total": -0.00026100282854712997
+      },
+      "cost_delta_from_own_baseline": -0.00026100282854712997,
+      "cost_relative_delta_from_own_baseline": -0.0029665728324727394,
+      "cost_total": 0.08772026150790782,
+      "faster_and_original_objective_nonworsening": true,
+      "first_control_id": "first_refined",
+      "first_control_n": [
+        0.36554863584879443,
+        0.36554863584879443
+      ],
+      "first_interval_position_m": [
+        0.0008940192046692462,
+        0.0
+      ],
+      "first_interval_speed_improved": true,
+      "first_interval_surge_gain_m_s": 2.4109160301113985e-05,
+      "first_interval_surge_m_s": 0.008896708332043656,
+      "material_cost_worsening": false,
+      "maximum_control_increment_n": 0.36554863584879443,
+      "original_objective_nonworsening": true,
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__n050",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.0023419548605797882,
+        "stage_control_increment_dt_scaled": 0.007858527767717182,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": -0.007447562084781433,
+        "stage_velocity_dt_scaled": -0.00027307792722947553,
+        "terminal_state_not_dt_scaled": -0.019220299612193105,
+        "total": -0.016740456995907052
+      },
+      "cost_delta_from_own_baseline": -0.016740456995907052,
+      "cost_relative_delta_from_own_baseline": -0.1902729759814404,
+      "cost_total": 0.0712408073405479,
+      "faster_and_original_objective_nonworsening": true,
+      "first_control_id": "n050",
+      "first_control_n": [
+        0.5,
+        0.5
+      ],
+      "first_interval_position_m": [
+        0.001222750419737756,
+        0.0
+      ],
+      "first_interval_speed_improved": true,
+      "first_interval_surge_gain_m_s": 0.00329448564754946,
+      "first_interval_surge_m_s": 0.012167084819292002,
+      "material_cost_worsening": false,
+      "maximum_control_increment_n": 0.5,
+      "original_objective_nonworsening": true,
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__n100",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.017341954860579788,
+        "stage_control_increment_dt_scaled": 0.08770451182923039,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.006161946382048335,
+        "stage_velocity_dt_scaled": 0.001634680535156188,
+        "terminal_state_not_dt_scaled": 0.1313200774175958,
+        "total": 0.24416317102461052
+      },
+      "cost_delta_from_own_baseline": 0.24416317102461052,
+      "cost_relative_delta_from_own_baseline": 2.7751723377251096,
+      "cost_total": 0.33214443536106547,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "n100",
+      "first_control_n": [
+        1.0,
+        1.0
+      ],
+      "first_interval_position_m": [
+        0.0024447920916765556,
+        0.0
+      ],
+      "first_interval_speed_improved": true,
+      "first_interval_surge_gain_m_s": 0.015447484668705661,
+      "first_interval_surge_m_s": 0.024320083840448203,
+      "material_cost_worsening": true,
+      "maximum_control_increment_n": 1.0,
+      "original_objective_nonworsening": false,
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "once__first_once",
+      "case_id": "once__n200",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.07734195486057974,
+        "stage_control_increment_dt_scaled": 0.4873964799522566,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.21681099084525537,
+        "stage_velocity_dt_scaled": 0.018383791085770627,
+        "terminal_state_not_dt_scaled": 1.403203274709297,
+        "total": 2.2031364914531593
+      },
+      "cost_delta_from_own_baseline": 2.2031364914531593,
+      "cost_relative_delta_from_own_baseline": 25.040973303452425,
+      "cost_total": 2.2911177557896143,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "n200",
+      "first_control_n": [
+        2.0,
+        2.0
+      ],
+      "first_interval_position_m": [
+        0.004886753132958631,
+        0.0
+      ],
+      "first_interval_speed_improved": true,
+      "first_interval_surge_gain_m_s": 0.03971134281265509,
+      "first_interval_surge_m_s": 0.04858394198439763,
+      "material_cost_worsening": true,
+      "maximum_control_increment_n": 2.0,
+      "original_objective_nonworsening": false,
+      "tail_id": "once"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__first_once",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": -1.4470963998078346e-05,
+        "stage_control_increment_dt_scaled": -3.5721493558547174e-05,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 4.6915579976426064e-05,
+        "stage_velocity_dt_scaled": 9.519340633187823e-07,
+        "terminal_state_not_dt_scaled": 3.3391880024794626e-06,
+        "total": 1.014244485592064e-06
+      },
+      "cost_delta_from_own_baseline": 1.014244485592064e-06,
+      "cost_relative_delta_from_own_baseline": 1.5431327929048945e-05,
+      "cost_total": 0.06572733995380992,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "first_once",
+      "first_control_n": [
+        0.3645576181771613,
+        0.36455761817717686
+      ],
+      "first_interval_position_m": [
+        0.0008915959936209555,
+        -1.1683632804687858e-18
+      ],
+      "first_interval_speed_improved": false,
+      "first_interval_surge_gain_m_s": -2.4109160301113985e-05,
+      "first_interval_surge_m_s": 0.008872599171742542,
+      "material_cost_worsening": false,
+      "maximum_control_increment_n": 0.36455761817717686,
+      "original_objective_nonworsening": false,
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__first_refined",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.0,
+        "stage_control_increment_dt_scaled": 0.0,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.0,
+        "stage_velocity_dt_scaled": 0.0,
+        "terminal_state_not_dt_scaled": 0.0,
+        "total": 0.0
+      },
+      "cost_delta_from_own_baseline": 0.0,
+      "cost_relative_delta_from_own_baseline": 0.0,
+      "cost_total": 0.06572632570932432,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "first_refined",
+      "first_control_n": [
+        0.36554863584879443,
+        0.36554863584879443
+      ],
+      "first_interval_position_m": [
+        0.0008940192046692462,
+        0.0
+      ],
+      "first_interval_speed_improved": false,
+      "first_interval_surge_gain_m_s": 0.0,
+      "first_interval_surge_m_s": 0.008896708332043656,
+      "material_cost_worsening": false,
+      "maximum_control_increment_n": 0.36554863584879443,
+      "original_objective_nonworsening": true,
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__n050",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.0023274838965817064,
+        "stage_control_increment_dt_scaled": 0.007760000990035831,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": -0.0039738448537980885,
+        "stage_velocity_dt_scaled": 3.98775891751451e-05,
+        "terminal_state_not_dt_scaled": 0.012421871868766601,
+        "total": 0.01857538949076118
+      },
+      "cost_delta_from_own_baseline": 0.01857538949076118,
+      "cost_relative_delta_from_own_baseline": 0.2826171901486038,
+      "cost_total": 0.0843017152000855,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "n050",
+      "first_control_n": [
+        0.5,
+        0.5
+      ],
+      "first_interval_position_m": [
+        0.001222750419737756,
+        0.0
+      ],
+      "first_interval_speed_improved": true,
+      "first_interval_surge_gain_m_s": 0.003270376487248346,
+      "first_interval_surge_m_s": 0.012167084819292002,
+      "material_cost_worsening": true,
+      "maximum_control_increment_n": 0.5,
+      "original_objective_nonworsening": false,
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__n100",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.01732748389658172,
+        "stage_control_increment_dt_scaled": 0.08737413264583403,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.021988748125230082,
+        "stage_velocity_dt_scaled": 0.003060746162699853,
+        "terminal_state_not_dt_scaled": 0.27641470241865723,
+        "total": 0.4061658132490029
+      },
+      "cost_delta_from_own_baseline": 0.4061658132490029,
+      "cost_relative_delta_from_own_baseline": 6.1796518954258515,
+      "cost_total": 0.47189213895832727,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "n100",
+      "first_control_n": [
+        1.0,
+        1.0
+      ],
+      "first_interval_position_m": [
+        0.0024447920916765556,
+        0.0
+      ],
+      "first_interval_speed_improved": true,
+      "first_interval_surge_gain_m_s": 0.015423375508404547,
+      "first_interval_surge_m_s": 0.024320083840448203,
+      "material_cost_worsening": true,
+      "maximum_control_increment_n": 1.0,
+      "original_objective_nonworsening": false,
+      "tail_id": "refined"
+    },
+    {
+      "baseline_case_id": "refined__first_refined",
+      "case_id": "refined__n200",
+      "cost_component_deltas": {
+        "stage_absolute_control_dt_scaled": 0.07732748389658169,
+        "stage_control_increment_dt_scaled": 0.48660239595743066,
+        "stage_heading_dt_scaled": 0.0,
+        "stage_position_dt_scaled": 0.2560327085609094,
+        "stage_velocity_dt_scaled": 0.02186810888526873,
+        "terminal_state_not_dt_scaled": 1.7606312275896456,
+        "total": 2.6024619248898366
+      },
+      "cost_delta_from_own_baseline": 2.6024619248898366,
+      "cost_relative_delta_from_own_baseline": 39.59542689788053,
+      "cost_total": 2.6681882505991608,
+      "faster_and_original_objective_nonworsening": false,
+      "first_control_id": "n200",
+      "first_control_n": [
+        2.0,
+        2.0
+      ],
+      "first_interval_position_m": [
+        0.004886753132958631,
+        0.0
+      ],
+      "first_interval_speed_improved": true,
+      "first_interval_surge_gain_m_s": 0.03968723365235398,
+      "first_interval_surge_m_s": 0.04858394198439763,
+      "material_cost_worsening": true,
+      "maximum_control_increment_n": 2.0,
+      "original_objective_nonworsening": false,
+      "tail_id": "refined"
+    }
+  ],
+  "execute_qualified": false,
+  "independent_cost_max_abs_error": 2.6645352591003757e-15,
+  "independent_rollout_max_abs_error": 1.3877787807814457e-16,
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/actual_first_control_input_v1.json": "24f23593c3134c8729e3f130c40fa217517acfb8c714495a3e98fd2e0293ec26",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/independent_model_v1.py": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/verify_first_control_v1.py": "8bee09c604dd963510fd492bbdf812a3782d2e0b9a9f07da72b9a7e1fd8d3a47",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preregister/first_control_v1.json": "53145f3c8e1b17c02629e8ab99a6dceb08d2b6db28a24d8245bb98806b465753",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preregister/offline_invocation_lock_v1.json": "012571e5f332fd089b22db2ec4aa6864886ece9b97661542220c152464727adf",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/native_first_control_v1.json": "5955bd8a382eb3598d318a290e5704ff5650d07ba09af13b30b633e6f75ba27f",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/offline_invocation_v1.json": "0f3ee1c27ed7de8a9578c43c9b8f811424a96337e72ff65af4d8004b1be99963"
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/actual_first_control_input_v1.json": "24f23593c3134c8729e3f130c40fa217517acfb8c714495a3e98fd2e0293ec26",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/independent_model_v1.py": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/postrun/verify_first_control_v1.py": "8bee09c604dd963510fd492bbdf812a3782d2e0b9a9f07da72b9a7e1fd8d3a47",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preregister/first_control_v1.json": "53145f3c8e1b17c02629e8ab99a6dceb08d2b6db28a24d8245bb98806b465753",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/preregister/offline_invocation_lock_v1.json": "012571e5f332fd089b22db2ec4aa6864886ece9b97661542220c152464727adf",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/native_first_control_v1.json": "5955bd8a382eb3598d318a290e5704ff5650d07ba09af13b30b633e6f75ba27f",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/replay/offline_invocation_v1.json": "0f3ee1c27ed7de8a9578c43c9b8f811424a96337e72ff65af4d8004b1be99963"
+  },
+  "material_pulses": [
+    "once__n050",
+    "once__n100",
+    "once__n200",
+    "refined__n050",
+    "refined__n100",
+    "refined__n200"
+  ],
+  "native_baselines": {
+    "once": {
+      "expected_parent_iteration": 1,
+      "max_X_abs_error": 0.0,
+      "max_cost_part_abs_error": 0.0,
+      "tail_id": "once"
+    },
+    "refined": {
+      "expected_parent_iteration": 12,
+      "max_X_abs_error": 0.0,
+      "max_cost_part_abs_error": 0.0,
+      "tail_id": "refined"
+    }
+  },
+  "negative_audit_boundaries": [
+    {
+      "name": "changed_tail",
+      "reason": "tail must remain bit-exact",
+      "rejected": true
+    },
+    {
+      "name": "wrong_cost",
+      "reason": "independent original cost mismatch",
+      "rejected": true
+    },
+    {
+      "name": "wrong_rollout",
+      "reason": "independent full nonlinear rollout mismatch",
+      "rejected": true
+    },
+    {
+      "name": "cross_tail_baseline",
+      "reason": "case identity or cross-tail baseline changed",
+      "rejected": true
+    },
+    {
+      "name": "nonfinite_control",
+      "reason": "finite matrix and exact shape",
+      "rejected": true
+    }
+  ],
+  "new_closed_loop_performance_qualified": false,
+  "passed": true,
+  "research_conclusion": false,
+  "schema": "scheme-A-first-control-independent-audit/v1",
+  "source_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/delivery_verification.json": "6a634b922a6bed6cc8f32047d4eaec9d428f59836b14c21ce30ae1bcaf5030fc",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/documents/next_objective_mechanism_plan_v1.md": "a1901f1716cfd8b09bca856cce51d622d1fecc4622c7f5da7459a13e5b7635dc",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/postrun/final_QA_v1.json": "b7218e596383b16b8a2dfcaca5b631d5bfe7844d6989c8f4f83f8f1f28a56c41",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/postrun/startup_mechanism_audit_v2.json": "b27f0e6d88ed01dd121200d11b4fc02268ec1bfd4e42c70dbaf0dc7ff26e54b9",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/native_startup_v1.json": "e4f77f5618228d7df9dfbd3807d3a727f1fb7240a74480f8757a4dbfd3376ee0"
+  },
+  "stage_qualified": false
+}

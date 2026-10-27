@@ -1,0 +1,46 @@
+{
+  "step_id": "E04",
+  "status": "PASS",
+  "scope": "functional offline checks only",
+  "description": "Strict-bool fact computed; six component-result clauses honestly harness-referenced; private tamper only; original-write incident retained.",
+  "evidence": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/A105",
+  "observed_facts": {
+    "bundle_entry_tamper_detected": true,
+    "bundle_manifest_sha_blind_to_tamper": true,
+    "false_source_comparison_now_false": true,
+    "neg_no_generation_open": true,
+    "pos_task_2_to_6_detected": true,
+    "protected_original_untouched": true,
+    "provenance_split": {
+      "recomputed_from_primary_evidence": 14,
+      "references_harness_result": 8
+    },
+    "reaudit_clauses": 22,
+    "reaudit_passed": true,
+    "same_binding_not_different": true,
+    "strict_bool_enforced": true
+  },
+  "run_accepted": {
+    "accepted": true
+  },
+  "coverage": {
+    "checks": null,
+    "verification_schema": "plan126-E04-verification-v1",
+    "verification_reference": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/evidence/E09/attempt02/A105/verification.json",
+    "owned_runtime": "not_covered"
+  },
+  "changed_files": [],
+  "remaining_obligations": [
+    "Historical E04 process failure prevents blanket OFFLINE_HARDENING_ACCEPTED."
+  ],
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "stage_qualified": false,
+  "batch_process_conformance": false,
+  "process_note": "E04 pre-takeover attempt wrote then restored a protected original. It remains a historical FAIL_STOP process finding; component PASS does not waive it."
+}

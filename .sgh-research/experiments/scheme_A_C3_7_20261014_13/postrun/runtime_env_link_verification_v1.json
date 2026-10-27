@@ -1,0 +1,226 @@
+{
+  "passed": true,
+  "pins": {
+    "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1877_libusv_research_interfaces__rosidl_generator_c.so",
+      "sha256": "6c58c758420099f1aca6e0f70d6fb39c22094b4004f65792056520c5558d63c5"
+    },
+    "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/libusv_research_interfaces__rosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1855_libusv_research_interfaces__rosidl_typesupport_cpp.so",
+      "sha256": "cbcec13d312b0b6dada73d29a1621ceca9ae832a1fd85d43770aaeecd7f31a4c"
+    },
+    "/opt/ros/jazzy/lib/libament_index_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1869_libament_index_cpp.so",
+      "sha256": "bb0be3b8f451661297707fff0ba6372ea7c88e3eea0c3d30f785025eadf8cbcb"
+    },
+    "/opt/ros/jazzy/lib/libbuiltin_interfaces__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1893_libbuiltin_interfaces__rosidl_generator_c.so",
+      "sha256": "23c822418f29a41bf43cca9bd98aacab1fc5c4c8c5194cc69a3f32c38a4cb64d"
+    },
+    "/opt/ros/jazzy/lib/libfastcdr.so.2.2.7": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1884_libfastcdr.so.2.2.7",
+      "sha256": "0eeb1f3d1859db07e7551be9df814053a8a4805c9feb9cb990363e43ac45cd69"
+    },
+    "/opt/ros/jazzy/lib/libfastrtps.so.2.14.6": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1859_libfastrtps.so.2.14.6",
+      "sha256": "8d39de86a55a92e1be92640a22e6322f099227930d4fc98bd821b6effd7a3eaa"
+    },
+    "/opt/ros/jazzy/lib/libgeometry_msgs__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1904_libgeometry_msgs__rosidl_generator_c.so",
+      "sha256": "d7757c0f4868dd39d178c2237c53f94ea4ca8a56da3f347466c654fbe2dbb51f"
+    },
+    "/opt/ros/jazzy/lib/liblibstatistics_collector.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1864_liblibstatistics_collector.so",
+      "sha256": "5bc095f55a81252a889adb93e8a186a041ab15c424774447cdfadb8b2892061e"
+    },
+    "/opt/ros/jazzy/lib/libnav_msgs__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1901_libnav_msgs__rosidl_generator_c.so",
+      "sha256": "14a07b20dc64688adc0173f71c7dfe09b752c143976bd00e7d384cee56c2000f"
+    },
+    "/opt/ros/jazzy/lib/libnav_msgs__rosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1898_libnav_msgs__rosidl_typesupport_cpp.so",
+      "sha256": "c7fb67b236cee7d75d16001abcffa49610d1faeb94921d9cd37b9e4f150a0737"
+    },
+    "/opt/ros/jazzy/lib/librcl.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1856_librcl.so",
+      "sha256": "543e6383df334885beca54e547d12c974d7dc7478be3689d53a7722c8c9251ba"
+    },
+    "/opt/ros/jazzy/lib/librcl_interfaces__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1890_librcl_interfaces__rosidl_generator_c.so",
+      "sha256": "27fb7accdf508c0a0fd2e04f26c9c9a284b84dc9c685067fe07231274f5aeb5c"
+    },
+    "/opt/ros/jazzy/lib/librcl_interfaces__rosidl_typesupport_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1880_librcl_interfaces__rosidl_typesupport_c.so",
+      "sha256": "f2274940cc73b378eb4000eeb188aa518c7df0f5aa381330a5cd3367225c926f"
+    },
+    "/opt/ros/jazzy/lib/librcl_interfaces__rosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1871_librcl_interfaces__rosidl_typesupport_cpp.so",
+      "sha256": "4e0cc52a744101f5fbc575df294c3502a4da567b081809ffdccb6cadba10e0c5"
+    },
+    "/opt/ros/jazzy/lib/librcl_logging_interface.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1868_librcl_logging_interface.so",
+      "sha256": "f8f258a13ff9bf6ee1b419c49c41ce60e2ea41ba4d62b75c48e2f1b6c70bb6be"
+    },
+    "/opt/ros/jazzy/lib/librcl_logging_spdlog.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1879_librcl_logging_spdlog.so",
+      "sha256": "f8dd0c37a603eae9450af9416d30934deb78463060a12811b18fed5571585ba8"
+    },
+    "/opt/ros/jazzy/lib/librcl_yaml_param_parser.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1865_librcl_yaml_param_parser.so",
+      "sha256": "4dbd6ca19621dd0889c460179aed3a49f600872b8b22acee427fcda909272b0e"
+    },
+    "/opt/ros/jazzy/lib/librclcpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1854_librclcpp.so",
+      "sha256": "ddc36a2bce397e2eba9e20452a3733b9ed646a2267e7e48b216d29814e11802f"
+    },
+    "/opt/ros/jazzy/lib/librcpputils.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1874_librcpputils.so",
+      "sha256": "859e9d590d439b93d08de772c7dd8862721b4d5cc462364276aa283f83b9fd64"
+    },
+    "/opt/ros/jazzy/lib/librcutils.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1861_librcutils.so",
+      "sha256": "5baa0a38a693794edae9376242bccc2edc9c9eea642454e1da2e57d881eef3b7"
+    },
+    "/opt/ros/jazzy/lib/librmw.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1860_librmw.so",
+      "sha256": "defb216f9b2e9a20bcaa17b134dbc3a06d00bcf906cc41e071abebaebe825aff"
+    },
+    "/opt/ros/jazzy/lib/librmw_implementation.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1857_librmw_implementation.so",
+      "sha256": "b62da4c8cf62b4636ab02d24d5ded40a80c9f433cd2766081ee4bedd089b4981"
+    },
+    "/opt/ros/jazzy/lib/librosgraph_msgs__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1887_librosgraph_msgs__rosidl_generator_c.so",
+      "sha256": "20fc14ad5f9c464ab7dcda1215deddf748cfa8b6db5ee977330800c7d031e899"
+    },
+    "/opt/ros/jazzy/lib/librosgraph_msgs__rosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1866_librosgraph_msgs__rosidl_typesupport_cpp.so",
+      "sha256": "65a839ba256c30b7a9fdc6a89bb0d2f1f4629c401d170e6a7989683aa67ba210"
+    },
+    "/opt/ros/jazzy/lib/librosidl_dynamic_typesupport.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1872_librosidl_dynamic_typesupport.so",
+      "sha256": "16b26d3e91e91ed5cc4bbef0d5ac494e3aa07497b08df10d3bf43fbdbfc1a28f"
+    },
+    "/opt/ros/jazzy/lib/librosidl_runtime_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1875_librosidl_runtime_c.so",
+      "sha256": "0820bac681d3aadefc15cf243f958653d13d34c0aa480398765c74e479819b88"
+    },
+    "/opt/ros/jazzy/lib/librosidl_typesupport_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1889_librosidl_typesupport_c.so",
+      "sha256": "f8794330dfaacc8c144cacc20d9715da4f1756e9c76a629908a0796419656192"
+    },
+    "/opt/ros/jazzy/lib/librosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1878_librosidl_typesupport_cpp.so",
+      "sha256": "2ce1166747b2fc59bf32ec72fdb2a56f9d90ff025c4301399d95ebce3582ed89"
+    },
+    "/opt/ros/jazzy/lib/librosidl_typesupport_introspection_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1873_librosidl_typesupport_introspection_cpp.so",
+      "sha256": "c7cb622ab2e82d355eafc59e6370b49a681005e917e61c67347a65e781c0e875"
+    },
+    "/opt/ros/jazzy/lib/libsensor_msgs__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1902_libsensor_msgs__rosidl_generator_c.so",
+      "sha256": "e06e471bf95129e522725d53cff4d45eb9e93af7c80365605444fc99ead7b43f"
+    },
+    "/opt/ros/jazzy/lib/libsensor_msgs__rosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1899_libsensor_msgs__rosidl_typesupport_cpp.so",
+      "sha256": "638fb13d34bf53d71ec88f079979f327cff40db1d1eaee81a3f13a78783deda6"
+    },
+    "/opt/ros/jazzy/lib/libservice_msgs__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1892_libservice_msgs__rosidl_generator_c.so",
+      "sha256": "1da806a963c7359b7d6d9af5e44c174ea48b25681063e8a790abc43497d630a7"
+    },
+    "/opt/ros/jazzy/lib/libstatistics_msgs__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1888_libstatistics_msgs__rosidl_generator_c.so",
+      "sha256": "c2b249ae72b4f2ef66ad59a65dee41c9c2d5068c9da6a2a8a1acff2ebe626cfb"
+    },
+    "/opt/ros/jazzy/lib/libstatistics_msgs__rosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1867_libstatistics_msgs__rosidl_typesupport_cpp.so",
+      "sha256": "cdc69c0da7a9a6349afffb6fc79f8e0a45e915c777eb345503563e0bfae6afea"
+    },
+    "/opt/ros/jazzy/lib/libstd_msgs__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1903_libstd_msgs__rosidl_generator_c.so",
+      "sha256": "b309a28dc298d0a3793362bc88fdca7868bda0eac1d66147c62dbe53651cbfd2"
+    },
+    "/opt/ros/jazzy/lib/libstd_msgs__rosidl_typesupport_cpp.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1900_libstd_msgs__rosidl_typesupport_cpp.so",
+      "sha256": "6a5708e149f530ac8f8c4ed344c7b5aa2524160e7ba8e23ea3019f09cc332d48"
+    },
+    "/opt/ros/jazzy/lib/libtracetools.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1858_libtracetools.so",
+      "sha256": "03b82a25885ddd4f51a0a8bd6f8f380aa9376a2066987bd661d3936e02cdebaa"
+    },
+    "/opt/ros/jazzy/lib/libtype_description_interfaces__rosidl_generator_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1881_libtype_description_interfaces__rosidl_generator_c.so",
+      "sha256": "bce7216b70adc5290aafdfe30129c684ad7d73d6ed16b83557009cc7acebdc6d"
+    },
+    "/opt/ros/jazzy/lib/libtype_description_interfaces__rosidl_typesupport_c.so": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1870_libtype_description_interfaces__rosidl_typesupport_c.so",
+      "sha256": "1c7f38366e676e6e40eb565ae86c1b7a0cfcf482e9949aef1c621d95c15be0e9"
+    },
+    "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1852_ld-linux-x86-64.so.2",
+      "sha256": "c20a2dc8917c755f02b94049356320fe1f62ac7d9f8994731f807d9df39302da"
+    },
+    "/usr/lib/x86_64-linux-gnu/libc.so.6": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1851_libc.so.6",
+      "sha256": "3a15d66867d83762c7f2f1e37359cb8f6c5743edb369c65285cb0b1c4f7498bf"
+    },
+    "/usr/lib/x86_64-linux-gnu/libcrypto.so.3": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1853_libcrypto.so.3",
+      "sha256": "6866ed711dab8927e1bf82bf1cd30e828bdfc34f3cc1e83b1c9eb01ce6c37d9a"
+    },
+    "/usr/lib/x86_64-linux-gnu/libfmt.so.9.1.0": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1897_libfmt.so.9.1.0",
+      "sha256": "da008b908b32e428eaa1c09e36d6894c8f88362e254b503c7c2c6112b4ec9ed0"
+    },
+    "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1863_libgcc_s.so.1",
+      "sha256": "d93224d2b0dab4247598be683adca02f5cf00586f99c187579cd7e92058fb7cb"
+    },
+    "/usr/lib/x86_64-linux-gnu/liblttng-ust-common.so.1.0.0": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1895_liblttng-ust-common.so.1.0.0",
+      "sha256": "28c3025315634619a7d278fff9e5bfa85ef85a58db8a52ce3ecf0054093fe0be"
+    },
+    "/usr/lib/x86_64-linux-gnu/liblttng-ust-tracepoint.so.1.0.0": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1896_liblttng-ust-tracepoint.so.1.0.0",
+      "sha256": "c5a75aea47fbfa1380e75fad869a00e225a947bbfa99edc6c62c2241959e1eb8"
+    },
+    "/usr/lib/x86_64-linux-gnu/liblttng-ust.so.1.0.0": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1883_liblttng-ust.so.1.0.0",
+      "sha256": "3dda3aff8ce04c7a1d5f1c5f20bd725d63e686a2042ee4834d8c25cde288f27b"
+    },
+    "/usr/lib/x86_64-linux-gnu/libm.so.6": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1876_libm.so.6",
+      "sha256": "fce00b6f25f459cf4ae0b7fae4257909a1a8a86f9149e7c029a5d617baf1ccd0"
+    },
+    "/usr/lib/x86_64-linux-gnu/libnuma.so.1.0.0": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1894_libnuma.so.1.0.0",
+      "sha256": "02d7582c5d391e460e56aa67a414360e3183b968206645b9123f9dc7bff5d009"
+    },
+    "/usr/lib/x86_64-linux-gnu/libspdlog.so.1.12.0": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1891_libspdlog.so.1.12.0",
+      "sha256": "62bb2fbc92edc05b35888e624882b78f5b38c0aca6a3df7ab7db32bb9c2629b6"
+    },
+    "/usr/lib/x86_64-linux-gnu/libssl.so.3": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1886_libssl.so.3",
+      "sha256": "a40e7b67489bbd257e432c700ff8f6a1ad796425b5eccecdc2930127fdd86624"
+    },
+    "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1862_libstdc++.so.6.0.33",
+      "sha256": "1fd75fe70354a416d75aef22bcae68c47bd25d20e2d0568c30b1a9838cf62f11"
+    },
+    "/usr/lib/x86_64-linux-gnu/libtinyxml2.so.10.0.0": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1885_libtinyxml2.so.10.0.0",
+      "sha256": "f9e01d87fb78af744a426af8c992e94abf8cd3810a256e117bcc94cd84d2be6d"
+    },
+    "/usr/lib/x86_64-linux-gnu/libyaml-0.so.2.0.9": {
+      "copy": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/final_frozen_snapshot/1882_libyaml-0.so.2.0.9",
+      "sha256": "a518a0ec7ee915fbeabe80551b8c9573b34e37b9402cc3e3eeab0fe346ba6ef0"
+    }
+  },
+  "runtime_env_missing_libraries": false,
+  "runtime_link_metadata": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_7_20261014_13/postrun/runtime_shared_library_pins.json",
+  "schema": "C3.7-runtime-environment-link-verification/v1",
+  "scope": "ldd within actual ROS build SETUP and linked-file bytes at finalization; no runtime continuity, complete OS or WCET qualification",
+  "within_build_SETUP": true
+}

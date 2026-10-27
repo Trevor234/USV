@@ -1,0 +1,184 @@
+{
+  "schema": "p0-publisher-contract-report/1",
+  "passed": true,
+  "exit_code": 0,
+  "source_event_contract_valid": true,
+  "recorded_stream_complete": true,
+  "published_command_timing_available": true,
+  "frozen_baseline_verified": true,
+  "frozen_baseline_verification_source": "external run_context; message identity agreement checked here",
+  "plant_acceptance_observed": false,
+  "force_measured": false,
+  "execution_atomicity_proven": false,
+  "exact_execution_timing_available": false,
+  "gp_labels_ready": false,
+  "source_received_sequences_prove_precallback_completeness": false,
+  "actual_message_counts": {
+    "/wamv/sensors/imu/imu/data": 8213,
+    "/clock": 20532,
+    "/wamv/sensors/position/ground_truth_odometry": 4106,
+    "/mpc/predicted_trajectory": 55,
+    "/wamv/thrusters/left/thrust": 362,
+    "/wamv/thrusters/right/thrust": 362,
+    "/mpc/status": 362,
+    "/path/reference": 74,
+    "/path/reference_profile": 74,
+    "/research/control/applied": 302,
+    "/research/reference_prediction": 215,
+    "/research/cycle_timing": 301,
+    "/research/state_snapshot": 3004
+  },
+  "decoded_message_counts": {
+    "/wamv/sensors/imu/imu/data": 8213,
+    "/clock": 20532,
+    "/wamv/sensors/position/ground_truth_odometry": 4106,
+    "/wamv/thrusters/left/thrust": 362,
+    "/wamv/thrusters/right/thrust": 362,
+    "/mpc/status": 362,
+    "/path/reference": 74,
+    "/path/reference_profile": 74,
+    "/research/control/applied": 302,
+    "/research/cycle_timing": 301,
+    "/research/state_snapshot": 3004
+  },
+  "metadata_message_counts": {
+    "/research/reference_prediction": 215,
+    "/path/reference": 74,
+    "/research/cycle_timing": 301,
+    "/path/reference_profile": 74,
+    "/mpc/status": 362,
+    "/research/state_snapshot": 3004,
+    "/research/control/applied": 302,
+    "/mpc/predicted_trajectory": 55,
+    "/wamv/thrusters/right/thrust": 362,
+    "/wamv/sensors/position/ground_truth_odometry": 4106,
+    "/wamv/thrusters/left/thrust": 362,
+    "/wamv/sensors/imu/imu/data": 8213,
+    "/clock": 20532
+  },
+  "source_stream_counts": {
+    "applied": {
+      "dropped": 0,
+      "emitted": 302,
+      "first_sequence": 1,
+      "generated": 302,
+      "last_sequence": 302
+    },
+    "cycle": {
+      "dropped": 0,
+      "emitted": 301,
+      "first_sequence": 1,
+      "generated": 301,
+      "last_sequence": 301
+    },
+    "reference_prediction": {
+      "dropped": 0,
+      "emitted": 215,
+      "first_sequence": 1,
+      "generated": 215,
+      "last_sequence": 215
+    },
+    "state": {
+      "dropped": 0,
+      "emitted": 3004,
+      "first_sequence": 1,
+      "generated": 3004,
+      "last_sequence": 3004
+    }
+  },
+  "physical_matching": {
+    "left": {
+      "actual_raw_count": 362,
+      "source_successful_calls": 302,
+      "matched_count": 302,
+      "outside_armed_matched_span_count": 60,
+      "interior_unmatched_count": 0,
+      "max_bag_receive_offset_ms": 0.184939,
+      "strict_match_window_ns": 20000000,
+      "outside_span_claim": "retained raw outputs outside source capture; no completeness claim for these"
+    },
+    "right": {
+      "actual_raw_count": 362,
+      "source_successful_calls": 302,
+      "matched_count": 302,
+      "outside_armed_matched_span_count": 60,
+      "interior_unmatched_count": 0,
+      "max_bag_receive_offset_ms": 0.175541,
+      "strict_match_window_ns": 20000000,
+      "outside_span_claim": "retained raw outputs outside source capture; no completeness claim for these"
+    }
+  },
+  "source_stream_loss_diagnostics": {
+    "state": {
+      "generated": 3004,
+      "emitted": 3004,
+      "recorded_decoded": 3004,
+      "source_to_recorded_missing_fraction": 0
+    },
+    "applied": {
+      "generated": 302,
+      "emitted": 302,
+      "recorded_decoded": 302,
+      "source_to_recorded_missing_fraction": 0
+    },
+    "cycle": {
+      "generated": 301,
+      "emitted": 301,
+      "recorded_decoded": 301,
+      "source_to_recorded_missing_fraction": 0
+    }
+  },
+  "run_id": "p0_f4_config_baseline_20261005_02",
+  "producer_instance_id": "p0_f4_config_baseline_20261005_02:914347300589477",
+  "baseline_id": "F4_20261005_config_reference_01",
+  "topic_types": {
+    "/research/reference_prediction": "usv_research_interfaces/msg/ReferencePrediction",
+    "/path/reference": "nav_msgs/msg/Path",
+    "/research/cycle_timing": "usv_research_interfaces/msg/CycleTiming",
+    "/path/reference_profile": "std_msgs/msg/Float64MultiArray",
+    "/mpc/status": "std_msgs/msg/String",
+    "/research/state_snapshot": "usv_research_interfaces/msg/StateSnapshot",
+    "/research/control/applied": "usv_research_interfaces/msg/AppliedControl",
+    "/mpc/predicted_trajectory": "nav_msgs/msg/Path",
+    "/wamv/thrusters/right/thrust": "std_msgs/msg/Float64",
+    "/wamv/sensors/position/ground_truth_odometry": "nav_msgs/msg/Odometry",
+    "/wamv/thrusters/left/thrust": "std_msgs/msg/Float64",
+    "/wamv/sensors/imu/imu/data": "sensor_msgs/msg/Imu",
+    "/clock": "rosgraph_msgs/msg/Clock"
+  },
+  "failures": [],
+  "warnings": [
+    {
+      "code": "controller_snapshot_precedes_armed_window",
+      "message": "prearm source is bound to raw odom; no synthetic snapshot added",
+      "scope": "source",
+      "received_odom_sequence": 617
+    }
+  ],
+  "limitations": [
+    "AppliedControl describes local publisher calls; publish return is not a DDS or plant acknowledgment.",
+    "The two Float64 channels are not proven atomic, and physical thrust is not measured.",
+    "Callback-local receive sequences cannot prove no sensor loss before callback reception.",
+    "Steady times describe this producer/boot only; the local callback-to-publish path is not sensor-to-actuator end-to-end latency.",
+    "The last interval has no observed right boundary; bag end is not a substitute.",
+    "Publisher-side records alone do not authorize exact residual labels or GP training."
+  ],
+  "reading": {
+    "bag": "/home/trevor/USV/data/sim_bags/p0_f4_config_baseline_20261005_02",
+    "storage_id": "mcap",
+    "storage_files": [
+      "p0_f4_config_baseline_20261005_02_0.mcap"
+    ],
+    "metadata_total_message_count": 37962,
+    "recorder_time_domain": "see external run_context; not inferred from numeric timestamps"
+  },
+  "bag_hash_before": {
+    "metadata.yaml": "7ac31515c6d9a21e2166b0ce80df03e61e8b71efa03e07eafd20459c841b0982",
+    "p0_f4_config_baseline_20261005_02_0.mcap": "6a2548c2ae62fee442a8e8c54d0d4fc3e5990e4cbaba57579d608d203764de0c"
+  },
+  "bag_hash_after": {
+    "metadata.yaml": "7ac31515c6d9a21e2166b0ce80df03e61e8b71efa03e07eafd20459c841b0982",
+    "p0_f4_config_baseline_20261005_02_0.mcap": "6a2548c2ae62fee442a8e8c54d0d4fc3e5990e4cbaba57579d608d203764de0c"
+  },
+  "original_bag_unchanged": true
+}

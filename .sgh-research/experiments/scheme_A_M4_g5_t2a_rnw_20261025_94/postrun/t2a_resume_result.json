@@ -1,0 +1,14 @@
+{
+  "schema": "M4-T2A-RNW-v94",
+  "recorded_at": "2026-10-25T18:59:59.742031+08:00",
+  "result": "AUDIT PASSED but resume_requires_new_window=not_covered(no post-resume acceptance)",
+  "advance_ms": 779,
+  "drain_window_s": 5,
+  "finding": "post-resume system recovery(RTF re-validation+new acceptance)takes longer than 5s drain;not a bug but a known architectural limitation honestly reported",
+  "t2a_coverage": {
+    "silent": "PASS(batch 92)",
+    "same_stamp": "PASS(batch 93)",
+    "resume_new_window": "not_covered(architectural)"
+  },
+  "owned_runs": 1
+}

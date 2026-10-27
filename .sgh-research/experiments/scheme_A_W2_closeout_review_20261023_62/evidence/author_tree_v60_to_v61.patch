@@ -1,0 +1,950 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/owned_m4_diagnostic_driver_v1.py
+@@ -278,8 +278,18 @@
+         # stays decidable by the Worker alone.
+         w2 = reg.get('w2_release')
+         w2_read = w2_write = -1
++        w2_binding = None
+         if w2:
+             w2_read, w2_write = w2_channel_open()
++            # Pin the channel's real identity now that the pipe exists. A static
++            # registration cannot know an inode that has not been created yet, so
++            # the binding is fixed here and compared against the Worker manifest.
++            _st = os.fstat(w2_write)
++            w2_binding = {'device': int(_st.st_dev), 'inode': int(_st.st_ino),
++                          'job_id': int(w2['job_id']), 'ordinal': int(w2['ordinal']),
++                          'nonce': int(w2['nonce']),
++                          'wait_budget_ns': int(w2['wait_budget_ns'])}
++            event('w2_channel_bound', **w2_binding)
+             wp.update({'w2_release_fd': w2_read,
+                        'w2_release_job_id': int(w2['job_id']),
+                        'w2_release_ordinal': int(w2['ordinal']),
+@@ -291,6 +301,23 @@
+             os.close(w2_read)  # the parent keeps only the write end
+             w2_read = -1
+         wm,wpin=authenticate('worker',out/'worker/manifest.json',wp)
++        if w2_binding is not None:
++            # The Worker reports what it actually inherited, not what it was told.
++            # Device+inode must match the pipe this Driver created, and the
++            # binding fields must match the registration.
++            ch=wm.get('w2_release_channel')
++            assert isinstance(ch,dict),'W2 Worker did not report its release channel'
++            assert ch.get('device')==w2_binding['device'] and \
++                   ch.get('inode')==w2_binding['inode'], \
++                'W2 Worker channel (%r,%r) is not the pipe this Driver created (%r,%r)'%(
++                    ch.get('device'),ch.get('inode'),
++                    w2_binding['device'],w2_binding['inode'])
++            for key in ('job_id','ordinal','nonce','wait_budget_ns'):
++                assert ch.get(key)==w2_binding[key], \
++                    'W2 Worker channel %s=%r, registered %r'%(key,ch.get(key),w2_binding[key])
++            assert ch.get('read_only') is True and ch.get('gate_armed') is True, \
++                'W2 Worker channel must be an armed read-only pipe'
++            event('w2_channel_verified',**w2_binding)
+         rp=out/'recorder';rv=[registry['roles']['recorder']['binary'],'--run-id',run,'--contract',str(reg['contract']),
+             '--contract-sha256',CONTRACT_SHA,'--topics',str(reg['topics']),'--topics-sha256',reg['topics_sha256'],
+             '--manifest',str(rp/'manifest.json'),'--terminal',str(rp/'terminal.json'),'--bag',str(rp/'bag'),'--storage-id','sqlite3','--prepare-budget-ms','10000']
+@@ -577,6 +604,48 @@
+                           pairs_before_transition=pairs_before,
+                           ramp_ok=ramp_ok,
+                           worker_delay_ms=reg.get('worker_delay_ms',0))
++        elif case=='W2-native-boundary-hold':
++            # W2 is not a stall case and must not be judged by W1's criteria.
++            # Its evidence is: the boundary was entered at the registered target,
++            # at least the registered number of complete business ticks followed,
++            # one release frame was written, and the Worker reported the
++            # resulting disposition.
++            reg_job=int(w2['job_id'])
++            reg_ord=int(w2['ordinal'])
++            assert w2_entered_at is not None, \
++                'W2 never observed the Worker entering its registered boundary'
++            assert w2_entered_row.get('job_id')==reg_job, \
++                'W2 boundary entered for job %r, registered %r'%(
++                    w2_entered_row.get('job_id'),reg_job)
++            assert w2_entered_row.get('ordinal')==reg_ord, \
++                'W2 boundary entered at ordinal %r, registered %r'%(
++                    w2_entered_row.get('ordinal'),reg_ord)
++            assert w2_release_sent, 'W2 never wrote its release frame'
++            assert w2_result is not None, 'W2 never observed a boundary result'
++            assert w2_result.get('job_id')==reg_job, \
++                'W2 result attributed to job %r, registered %r'%(
++                    w2_result.get('job_id'),reg_job)
++            assert w2_result.get('ordinal')==reg_ord, \
++                'W2 result attributed to ordinal %r, registered %r'%(
++                    w2_result.get('ordinal'),reg_ord)
++            assert len(w2_ticks_after_enter)>=w2_required_ticks, \
++                'W2 observed %d complete ticks after entry, registered %d'%(
++                    len(w2_ticks_after_enter),w2_required_ticks)
++            result.update(W2_observed=True,
++                          accepted_pairs=accepted_pairs,
++                          ramp_ok=ramp_ok,
++                          pairs_before_transition=pairs_before,
++                          pairs_after_transition=pairs_after,
++                          w2_boundary_entered=True,
++                          w2_entered_row=w2_entered_row,
++                          w2_release_sent=True,
++                          w2_release_frame_sha256=__import__('hashlib').sha256(
++                              w2_release_frame).hexdigest(),
++                          w2_ticks_after_enter=list(w2_ticks_after_enter),
++                          w2_result=w2_result,
++                          transition_ns=transition_ns,
++                          transition_reason=transition_reason,
++                          watchdog_ns=watchdog_ns)
+         else:
+             assert accepted_pairs>=1,'W1 needs at least one accepted dual API pair before the stall'
+             assert stall_entered,'W1 never observed the Worker entering its registered stall'
+@@ -624,6 +693,14 @@
+                 try:closed.append(stop(role))
+                 except Exception as error:closed.append({'role':role,'error':repr(error),'group_empty':False});event('close_failure',role=role,error=repr(error))
+         for c in children.values():os.close(c['pidfd'])
++        # Close this run's release channel on every path, including a failed or
++        # partially-completed spawn. Leaving the write end open would make the
++        # Worker's EOF depend on when the Driver process exits as a whole.
++        for _fd in (w2_read, w2_write):
++            if _fd is not None and _fd >= 0:
++                try: os.close(_fd)
++                except OSError: pass
++        w2_read = w2_write = -1
+         result['closed_roles']=closed;result['elapsed_seconds']=time.monotonic()-begin
+         by_role={r['role']:r for r in closed}
+         def rc_is(role,value):return by_role.get(role,{}).get('returncode')==value
+@@ -638,23 +715,49 @@
+             and len(closed)==4 and all(r.get('group_empty') for r in closed))
+         if case=='W2-native-boundary-hold':
+             # W2's expected end state is a deliberate isolation, not a clean
+-            # solve: the Job's 150 ms deadline has passed by the time the
+-            # release arrives, so the target Job must not enter the C solve.
+-            # The Worker's own close path then reports fatal and exits non-zero,
+-            # which is registered here rather than forced to 0.
+-            w2_exp=reg.get('expected',{}).get('w2_exit_codes',{})
++            # solve: the Job's 150 ms deadline has passed by the time the release
++            # arrives, so the target Job must not enter the C solve. The Worker's
++            # own close path then reports fatal and exits non-zero, which is
++            # registered here rather than forced to 0.
++            #
++            # Everything else about shutdown is NOT relaxed: the other roles, the
++            # close signals, the empty process groups and any recorded error are
++            # still checked. Only the Worker's exit code is registration-specific.
++            w2_exp=reg.get('expected',{}).get('w2_exit_codes')
++            assert isinstance(w2_exp,dict) and 'worker' in w2_exp, \
++                'W2 registration must declare expected.w2_exit_codes.worker'
+             worker_rc=by_role.get('worker',{}).get('returncode')
++            w2_common_ok=bool(
++                rc_is('regulator',0) and not by_role.get('regulator',{}).get('signals')
++                and rc_is('fixture',0) and only_int('fixture')
++                and rc_is('recorder',0) and only_int('recorder')
++                and len(closed)==4 and all(r.get('group_empty') for r in closed)
++                and result.get('error') is None)
++            # The isolation transition is a *registered* consequence, not a
++            # failure: after a verified expired, the Worker goes fatal and the
++            # Regulator marks it unusable. Requiring `transition_ns is None`
++            # would make the outcome depend on whether the Driver closed before
++            # the next 200 ms heartbeat.
++            iso_reason=reg.get('expected',{}).get('w2_isolation_reason','fatal_capability')
++            tr_ok=(result.get('transition_ns') is None
++                   or str(result.get('transition_reason'))==iso_reason)
++            w2r=result.get('w2_result') or {}
++            reg_job=int(w2['job_id']);reg_ord=int(w2['ordinal'])
+             result['passed']=bool(
+-                result.get('w2_boundary_entered') is True
++                result.get('W2_observed') is True
++                and result.get('w2_boundary_entered') is True
+                 and result.get('w2_release_sent') is True
+-                and isinstance(result.get('w2_result'),dict)
+-                and result['w2_result'].get('disposition')=='expired'
+-                and result['w2_result'].get('actual_native_invoked') is False
++                and w2r.get('disposition')=='expired'
++                and w2r.get('actual_native_invoked') is False
++                and w2r.get('job_id')==reg_job and w2r.get('ordinal')==reg_ord
++                and result.get('w2_entered_row',{}).get('job_id')==reg_job
++                and result.get('w2_entered_row',{}).get('ordinal')==reg_ord
+                 and len(result.get('w2_ticks_after_enter') or [])>=int(
+                     w2.get('ticks_before_release',2))
+-                and worker_rc==w2_exp.get('worker',0)
+-                and result.get('transition_ns') is None
+-                and result.get('ramp_ok') is True)
++                and worker_rc==w2_exp['worker']
++                and tr_ok
++                and result.get('ramp_ok') is True
++                and w2_common_ok)
+         elif case=='W4-result-delivery-drop':
+             result['passed']=bool(result.get('W4_observed')
+                                   and result.get('transition_ns') is None
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/owned_cold_backend.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/owned_cold_backend.hpp
+@@ -19,6 +19,15 @@
+  void attach_boundary(w2_wire::Boundary *boundary,w2_gate::StopPredicate stop){
+   boundary_=boundary;stop_=std::move(stop);
+   if(boundary_&&clock_)boundary_->set_clock(clock_);
++  if(boundary_){
++    // The gate's wait window decides whether a release was valid. This guard
++    // decides whether the Job may still enter C, and it runs after all
++    // preparation so a stop or expiry during preparation is still caught.
++    solver_.set_final_guard([this](unsigned ordinal)->bool{
++      if(!boundary_->armed()||!boundary_->matches(ordinal,current_job_))return true;
++      return boundary_->permit_native_entry(stop_);
++    });
++  }
+  }
+  /// Report the last boundary record for manifest/ledger purposes.
+  Json w2_boundary_event()const{return boundary_?w2_boundary_json(boundary_->record()):Json();}
+@@ -41,7 +50,8 @@
+   Json context;for(auto key:{"run_id","boot_id","contract_hash","config_generation","model_generation","task_generation","schedule_generation","clock_epoch"})context[key]=j.at(key);
+   bool first=last_job_==0;bool eligible=first&&id==1&&startup_replay::state_of(j).isZero(0.)&&actual_anchor.isZero(0.);
+   if(eligible)for(int k=0;k<=20;++k){const auto &r=j.at("reference");eligible=eligible&&std::abs(r[6*k].get<double>()-.05*.2*k)<=1e-9&&r[6*k+1]==0&&r[6*k+2]==0&&r[6*k+3]==.05&&r[6*k+4]==0&&r[6*k+5]==0;}
+-  bool apply=enabled_&&!consumed_&&eligible;last_job_=id;anchor_set_=false;
++  bool apply=enabled_&&!consumed_&&eligible;last_job_=id;current_job_=int64_t(id);
++  if(boundary_)boundary_->set_current_job(current_job_);anchor_set_=false;
+   last_={{"schema","owned-cold-start-native-policy-v1"},{"policy",policy},{"job_id",id},{"context",context},{"candidate_applied",apply},{"eligibility",eligible},{"reason",apply?"applied":!enabled_?"disabled":!first?"not_first_native_job":"outside_registered_cold_domain"},{"backend_entries_started",0},{"backend_entries_completed",0},{"subcalls",Json::array()},{"terminal",false},{"successful",false}};
+   double kernel_sum=0;unsigned ordinal=0;const auto entry=clock_();
+   auto invoke=[&](bool reset,bool shift,bool fixed){
+@@ -69,14 +79,22 @@
+    // C entry from its own solve site. The marker therefore lands after all
+    // preparation that can still throw, not before it.
+    solver_.set_call_ordinal(ordinal);
+-   auto a=solver_.step(j,reset,shift);const auto end=clock_();kernel_sum+=a.info.solve_time_ms;
+-   if(boundary_&&boundary_->armed()&&boundary_->matches(ordinal,id)
+-      &&solver_.native_call_count()>0
+-      &&solver_.native_ordinals().back()==ordinal){
+-     boundary_->mark_native_entered(ordinal);
++   // The fact is committed from the call site, before the call, so an
++   // exception inside the solve cannot leave the record claiming "never called".
++   const unsigned calls_before=solver_.native_call_count();
++   solver_.set_native_call_observer([this,ordinal,id](unsigned o){
++     if(!boundary_||!boundary_->armed()||!boundary_->matches(o,id))return;
++     boundary_->mark_native_entered(o);
+      last_["w2_boundary"]=w2_boundary_json(boundary_->record());
+      last_["w2_actual_C_call_started"]=true;
++   });
++   auto a=solver_.step(j,reset,shift);const auto end=clock_();kernel_sum+=a.info.solve_time_ms;
++   if(boundary_&&boundary_->armed()&&boundary_->matches(ordinal,id)){
++     // The observer already recorded the call; this only refreshes the count so
++     // the snapshot is complete on the success path too.
+      last_["w2_native_call_count"]=solver_.native_call_count();
++     last_["w2_native_calls_this_entry"]=solver_.native_call_count()-calls_before;
++     last_["w2_boundary"]=w2_boundary_json(boundary_->record());
+    }
+    Json r={{"ordinal",ordinal},{"start_ns",start},{"end_ns",end},{"native_returned_success",a.info.success},{"first_control",{a.control[0],a.control[1]}},{"kernel_ms",a.info.solve_time_ms},{"additional_first_equality",fixed},{"warm_shift_after",shift}};
+    if(apply){r["X"]=bias_replay::matrix_data(a.info.X_pred);r["U"]=bias_replay::matrix_data(a.info.U_pred);r["augmented_X"]=bias_replay::matrix_data(a.augmented);}
+@@ -98,6 +116,6 @@
+  }
+  private:
+  usv_mpc::MpcParams p_;startup_replay::RawBackend solver_;Json binding_,last_;bool enabled_=true,reset_pending_=false,anchor_set_=false,consumed_=false,terminal_=false;uint64_t last_job_=0;Eigen::Vector2d anchor_=Eigen::Vector2d::Zero();Clock clock_;BeforeCall hook_;
+- w2_wire::Boundary *boundary_=nullptr;w2_gate::StopPredicate stop_;
++ w2_wire::Boundary *boundary_=nullptr;w2_gate::StopPredicate stop_;int64_t current_job_=0;
+ };
+ } // namespace owned_cold
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/raw_backend_v1.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/raw_backend_v1.hpp
+@@ -48,6 +48,10 @@
+  /// so "wrapper entered" and "C function entered" remain distinct facts.
+  using NativeCallObserver=std::function<void(unsigned)>;
+  void begin_native_call(unsigned ordinal){if(native_observer_)native_observer_(ordinal);}
++ /// Final guard: runs after every preparation step that can throw and
++ /// immediately before the actual C solve. Returning false refuses the call.
++ using FinalGuard=std::function<bool(unsigned)>;
++ void set_final_guard(FinalGuard fn){final_guard_=std::move(fn);}
+  void set_native_call_observer(NativeCallObserver fn){native_observer_=std::move(fn);}
+  unsigned native_call_count() const {return unsigned(native_calls_.size());}
+  void note_native_call(unsigned ordinal){native_calls_.push_back(ordinal);if(native_observer_)native_observer_(ordinal);}
+@@ -77,8 +81,13 @@
+   if(warm_){for(int k=0;k<=p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"x",xw_.col(k).data());for(int k=0;k<p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"u",uw_.col(k).data());}
+   else {Eigen::Matrix<double,8,1> guess;guess<<state,Eigen::Vector2d::Zero();Eigen::Vector2d zero=Eigen::Vector2d::Zero();for(int k=0;k<=p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"x",guess.data());for(int k=0;k<p_.N;++k)ocp_nlp_out_set(cfg_,dim_,out_,in_,k,"u",zero.data());}
+   Answer answer;const auto solve_start=Clock::now();
+-  // The genuine entry point. Everything above may throw; nothing below has run
+-  // yet, so this is the first instant at which the C solve is really entered.
++  // Everything above (constraints, references, warm start) has completed. This
++  // is the last point at which a stop or an expired Job deadline can still keep
++  // the C solve from starting; a guard placed earlier would miss a stop that
++  // arrived during preparation.
++  if(final_guard_&&!final_guard_(ordinal_))bias_replay::require(false,"blocked_at_final_guard");
++  // The genuine entry point. Nothing below has run yet, so this is the first
++  // instant at which the C solve is really entered.
+   note_native_call(ordinal_);
+   const int status=usv_dyn_nmpc_acados_solve(c_);answer.info.solve_time_ms=std::chrono::duration<double,std::milli>(Clock::now()-solve_start).count();bias_replay::require(status==0,"raw actual codegen solve failed");
+   answer.augmented=Eigen::MatrixXd::Zero(8,p_.N+1);answer.info.U_pred=Eigen::MatrixXd::Zero(2,p_.N);
+@@ -92,7 +101,7 @@
+  }
+  void set_call_ordinal(unsigned o){ordinal_=o;}
+  private:
+- unsigned ordinal_=0;std::vector<unsigned> native_calls_;NativeCallObserver native_observer_;
++ unsigned ordinal_=0;std::vector<unsigned> native_calls_;NativeCallObserver native_observer_;FinalGuard final_guard_;
+  usv_mpc::MpcParams p_;usv_dyn_nmpc_solver_capsule *c_=nullptr;ocp_nlp_config *cfg_=nullptr;ocp_nlp_dims *dim_=nullptr;ocp_nlp_in *in_=nullptr;ocp_nlp_out *out_=nullptr;bool warm_=false;bool fixed_first_=false;Eigen::MatrixXd xw_,uw_;
+ };
+ inline double control_error(const Answer &a,const Json &expected){return bias_replay::maximum_error({a.control[0],a.control[1]},expected);}
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/run_driver_branch_replay.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/run_driver_branch_replay.py
+@@ -0,0 +1,133 @@
++#!/usr/bin/env python3
++"""Replay the Driver's W2 branch against a scripted event stream.
++
++61's D1 showed the observation loop's post-conditions fell through to the W1
++branch, so a perfectly good W2 stimulus died on
++`W1 never observed the Worker entering its registered stall`. That is a
++deterministic property of the source, not a guess about a future owned run, so
++it can be replayed without ROS: build the same locals the loop would have, then
++execute the *submitted* branch statements.
++
++The extraction is by line range from the real file, so an edit that moves or
++changes the branch is noticed here rather than silently drifting.
++"""
++from __future__ import annotations
++
++import json
++from pathlib import Path
++import sys
++
++sys.dont_write_bytecode = True
++
++HERE = Path(__file__).resolve().parent
++TREE = HERE.parent
++PKG = TREE.parents[1]
++OUT = PKG / 'evidence' / 'w2_driver_replay'
++
++DRIVER = TREE / 'owned_m4_diagnostic_driver_v1.py'
++
++
++def branch_block(source: str, start_marker: str, end_marker: str) -> str:
++    """Extract a dedented statement block between two markers.
++
++    The Driver's branches are indented inside `try:`; dedenting lets the block
++    run at module scope with the locals supplied explicitly.
++    """
++    start = source.index(start_marker)
++    end = source.index(end_marker, start)
++    block = source[start:end]
++    lines = block.splitlines()
++    indents = [len(l) - len(l.lstrip()) for l in lines if l.strip()]
++    trim = min(indents)
++    body = '\n'.join(l[trim:] if l.strip() else l for l in lines)
++    # The block starts with `elif ...:`; turn it into a plain `if` so the
++    # statements can run at module scope.
++    return body.replace('elif ', 'if ', 1)
++
++
++def run_block(block: str, scope: dict) -> str:
++    """Execute the block; return 'ok' or the assertion message."""
++    try:
++        exec(compile(block, '<driver-branch>', 'exec'), scope)  # noqa: S102
++        return 'ok'
++    except AssertionError as exc:
++        return 'assertion: %s' % exc
++
++
++def main() -> int:
++    OUT.mkdir(parents=True, exist_ok=True)
++    source = DRIVER.read_text()
++    w2_block = branch_block(source, "        elif case=='W2-native-boundary-hold':",
++                            "        else:\n            assert accepted_pairs>=1")
++    report = {'schema': 'W2-driver-branch-replay-v1', 'cases': {}}
++
++    base = {
++        'case': 'W2-native-boundary-hold',
++        'w2': {'job_id': 2, 'ordinal': 1, 'nonce': 5,
++               'wait_budget_ns': 1000000000, 'ticks_before_release': 2},
++        'w2_required_ticks': 2,
++        'accepted_pairs': 1, 'ramp_ok': True,
++        'pairs_before': 1, 'pairs_after': 3,
++        'w2_entered_at': 1000000000,
++        'w2_entered_row': {'job_id': 2, 'ordinal': 1, 'entered_ns': 1000000000},
++        'w2_release_sent': True,
++        'w2_release_frame': b'\x00' * 44,
++        'w2_result': {'disposition': 'expired', 'actual_native_invoked': False,
++                      'job_id': 2, 'ordinal': 1},
++        'w2_ticks_after_enter': [3, 4],
++        'transition_ns': None, 'transition_reason': None, 'watchdog_ns': None,
++        'result': {}, 'event': lambda *a, **k: None,
++        'hashlib': __import__('hashlib'),
++    }
++
++    # 1. A well-formed W2 stream must pass the observation post-conditions.
++    scope = dict(base); scope = dict(scope)
++    report['cases']['well_formed_stream'] = {'outcome': run_block(w2_block, scope)}
++
++    # 2. Too few ticks after entry must be refused.
++    scope = dict(base, w2_ticks_after_enter=[3])
++    report['cases']['too_few_ticks'] = {'outcome': run_block(w2_block, scope),
++                                        'expected': 'assertion'}
++
++    # 3. A result attributed to another Job must be refused.
++    scope = dict(base, w2_result={'disposition': 'expired',
++                                  'actual_native_invoked': False,
++                                  'job_id': 999, 'ordinal': 99})
++    report['cases']['wrong_result_job'] = {'outcome': run_block(w2_block, scope),
++                                           'expected': 'assertion'}
++
++    # 4. Entry at another ordinal must be refused.
++    scope = dict(base, w2_entered_row={'job_id': 2, 'ordinal': 99,
++                                       'entered_ns': 1000000000})
++    report['cases']['wrong_entry_ordinal'] = {'outcome': run_block(w2_block, scope),
++                                              'expected': 'assertion'}
++
++    # 5. No release written must be refused.
++    scope = dict(base, w2_release_sent=False)
++    report['cases']['no_release'] = {'outcome': run_block(w2_block, scope),
++                                     'expected': 'assertion'}
++
++    for name, case in report['cases'].items():
++        expect = case.get('expected', 'ok')
++        ok = case['outcome'].startswith('assertion') if expect == 'assertion' \
++            else case['outcome'] == 'ok'
++        case['passed'] = ok
++
++    report['all_passed'] = all(c['passed'] for c in report['cases'].values())
++    report['w2_branch_lines'] = [source[:source.index(
++        "        elif case=='W2-native-boundary-hold':")].count('\n') + 1,
++                                 source[:source.index(
++        "        else:\n            assert accepted_pairs>=1")].count('\n') + 1]
++    report['note'] = ('Source-statement replay of the submitted W2 branch with '
++                      'scripted locals. No ROS, no spawn, no owned run.')
++    path = OUT / 'driver_branch_replay_v1.json'
++    path.write_text(json.dumps(report, indent=2) + '\n')
++    for k, v in report['cases'].items():
++        print('%-24s %s  %s' % (k, 'PASS' if v['passed'] else 'FAIL', v['outcome']))
++    print('all passed:', report['all_passed'])
++    print('written:', path)
++    return 0 if report['all_passed'] else 1
++
++
++if __name__ == '__main__':
++    sys.exit(main())
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/run_wiring_verification.py
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/run_wiring_verification.py
+@@ -73,6 +73,29 @@
+         r'   \}\n'
+         r'   last_\["backend_entries_started"\]',
+         '   last_["backend_entries_started"]'),
++    # D1: W2 falling through to the W1 branch is the deterministic defect the
++    # 61 review reproduced. Removing the W2 branch must make the W2 replay fail.
++    # D5: the entry rules moved into a helper; deleting a name from it must fail
++    # the entry contract suite.
++    'drop_entry_parameter': (
++        'worker/w2_entry_contract.hpp',
++        r'"w2_release_nonce", "w2_release_wait_ns"\};',
++        '"w2_release_nonce"};'),
++    # D5: the direction rule regressing to st_mode.
++    'entry_direction_from_st_mode': (
++        'worker/w2_entry_contract.hpp',
++        r'if \(flags < 0 \|\| \(flags & O_ACCMODE\) != O_RDONLY\) \{',
++        'if (false) {'),
++    # D3: recording the call only after a successful return.
++    'drop_native_call_observer': (
++        BACKEND_REL,
++        r'   solver_\.set_native_call_observer\(\[this,ordinal,id\]\(unsigned o\)\{\n'
++        r'     if\(!boundary_\|\|!boundary_->armed\(\)\|\|!boundary_->matches\(o,id\)\)return;\n'
++        r'     boundary_->mark_native_entered\(o\);\n'
++        r'     last_\["w2_boundary"\]=w2_boundary_json\(boundary_->record\(\)\);\n'
++        r'     last_\["w2_actual_C_call_started"\]=true;\n'
++        r'   \}\);',
++        '   // mutated: no observer'),
+     # The original seam silently dropped, which is the regression the review
+     # reproduced with a throwing hook.
+     'delete_before_call_hook': (
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/solver_worker_m4.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/solver_worker_m4.cpp
+@@ -15,6 +15,7 @@
+ #include "protocol.hpp"
+ #include "m4_owned_runtime.hpp"
+ #include "owned_cold_backend.hpp"
++#include "w2_entry_contract.hpp"
+ #include "w2_native_boundary.hpp"
+ #include "w2_pipe_reader.hpp"
+ #include "p1_owned_identity.hpp"
+@@ -95,35 +96,23 @@
+     const auto ordinal=declare_parameter<int>("w2_release_ordinal",0);
+     const auto budget=declare_parameter<int64_t>("w2_release_wait_ns",0);
+     w2_nonce=declare_parameter<int>("w2_release_nonce",0);
+-    if(w2_fd_<0){
+-      // Without an fd every other W2 parameter must stay at its disabled
+-      // default; a half-registered channel is a configuration error, not a
+-      // reason to silently continue.
+-      if(job>=0||ordinal!=0||budget!=0||w2_nonce!=0)
+-        throw std::runtime_error("w2 release parameters given without an fd");
+-      return;  // ordinary profile: no gate, no waiting
+-    }
+-    if(w2_nonce==0)throw std::runtime_error("w2 release nonce must be non-zero");
++    // One shared helper owns the tuple and fd rules, so the entry test exercises
++    // the same code this node runs rather than a hand-copied mirror.
++    w2_entry::Channel channel;
++    const auto verdict=w2_entry::validate(w2_fd_,job,ordinal,w2_nonce,budget,&channel);
++    if(verdict!=w2_entry::Reject::kOk)
++      throw std::runtime_error(w2_entry::reject_name(verdict));
++    if(w2_fd_<0)return;  // ordinary profile: no gate, no waiting
+     if(!c_.at("fault_injection_enabled").get<bool>()||!c_.at("parameters_are_diagnostic_only").get<bool>())
+       throw std::runtime_error("w2 release channel requires the diagnostic profile");
+-    if(job<0||ordinal<=0||budget<=0||budget>2000000000LL)
+-      throw std::runtime_error("w2 release binding incomplete or out of bounds");
+-    char path[64];std::snprintf(path,sizeof(path),"/proc/self/fd/%d",w2_fd_);
+-    char target[256]={};const auto n=::readlink(path,target,sizeof(target)-1);
+-    if(n<=0)throw std::runtime_error("w2 release fd does not resolve");
+-    target[n]=0;
+-    // S_ISFIFO identifies the object; st_mode says nothing about the fd's
+-    // access mode. Both ends of a pipe report the same st_mode.
+-    struct stat st{};
+-    if(::fstat(w2_fd_,&st)!=0||!S_ISFIFO(st.st_mode))
+-      throw std::runtime_error("w2 release fd is not a FIFO");
+-    // F_GETFL is the only correct way to learn the direction: the read end is
+-    // O_RDONLY, the write end O_WRONLY. Checking st_mode & O_ACCMODE accepts
+-    // both ends, which is exactly the wiring error this gate must catch.
+-    const int flags=::fcntl(w2_fd_,F_GETFL);
+-    if(flags<0||(flags&O_ACCMODE)!=O_RDONLY)
+-      throw std::runtime_error("w2 release fd is not read-only");
+-    w2_channel_.device=uint64_t(st.st_dev);w2_channel_.inode=uint64_t(st.st_ino);
++    w2_channel_.device=channel.device;w2_channel_.inode=channel.inode;
++    // Report the resolved fd target for the Source record. This is decorative
++    // evidence only; device/inode from the helper is what the Driver compares.
++    char target[256]={};
++    const auto target_n=::readlink(
++      (std::string("/proc/self/fd/")+std::to_string(w2_fd_)).c_str(),
++      target,sizeof(target)-1);
++    if(target_n>0)target[target_n]=0;
+     w2_pipe_=std::make_unique<w2_gate::PipeReader>(w2_fd_);
+     w2_gate_=std::make_unique<w2_gate::Gate>(w2_pipe_.get(),
+       w2_gate::Identity{1,uint64_t(job),uint32_t(ordinal),uint32_t(w2_nonce)},
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/test_w2_backend_wiring.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/test_w2_backend_wiring.cpp
+@@ -119,6 +119,7 @@
+     cfg.wait_budget_ns = budget_ns;
+     boundary = Boundary(&gate, cfg, [this] { return clock; });
+     boundary.set_clock([this] { return clock; });
++    boundary.set_current_job(kTargetJob);
+     backend = std::make_unique<owned_cold::Backend>(
+         params(), binding(), true, [this] { return clock; });
+     backend->attach_boundary(&boundary, [] { return false; });
+@@ -186,6 +187,46 @@
+   EXPECT_NO_THROW(a.backend->solve_owned(target_job(kTargetJob, deadline)));
+   EXPECT_EQ(a.boundary.record().disposition, Disposition::kAllowed);
+   EXPECT_TRUE(a.boundary.record().actual_native_invoked);
++}
++
++TEST(W2Backend, StopRaisedDuringPreparationBlocksTheNativeCall) {
++  // D4: the final guard must run after preparation and immediately before the
++  // real C entry. A stop that arrives *after* the boundary released but during
++  // RawBackend preparation must still keep the call from starting; a guard that
++  // only checked at the boundary would miss it.
++  const int64_t deadline = kStartNs + 1000000000;
++  Armed a(deadline, /*advance=*/1000000);
++  bool stop = false;
++  a.backend->attach_boundary(&a.boundary, [&] { return stop; });
++  a.boundary.set_entry_observer([&](const w2_wire::BoundaryConfig &) {
++    // The boundary has been reached and its release accepted; flip the stop
++    // now, which is inside the preparation window.
++    stop = true;
++  });
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_THROW(a.backend->solve_owned(target_job(kTargetJob, deadline)),
++               std::runtime_error);
++  EXPECT_EQ(a.boundary.record().disposition, Disposition::kStopped);
++  EXPECT_FALSE(a.boundary.record().actual_native_invoked);
++  EXPECT_EQ(a.backend->last_policy_event().at("backend_entries_completed")
++                .get<unsigned>(), 0u);
++}
++
++TEST(W2Backend, DeadlineCrossedDuringPreparationBlocksTheNativeCall) {
++  // Same window, expiry instead of stop: the guard must use the clock *at the
++  // real entry*, not the value captured when the boundary was released.
++  const int64_t deadline = kStartNs + 1000000000;
++  Armed a(deadline, /*advance=*/1000000);
++  a.boundary.set_entry_observer([&](const w2_wire::BoundaryConfig &) {
++    a.clock = deadline + 1;  // preparation crossed the Job deadline
++  });
++  a.backend->set_applied_control(Eigen::Vector2d::Zero());
++  EXPECT_THROW(a.backend->solve_owned(target_job(kTargetJob, deadline)),
++               std::runtime_error);
++  EXPECT_EQ(a.boundary.record().disposition, Disposition::kExpired);
++  EXPECT_FALSE(a.boundary.record().actual_native_invoked);
++  EXPECT_EQ(a.backend->last_policy_event().at("backend_entries_completed")
++                .get<unsigned>(), 0u);
+ }
+ 
+ TEST(W2Backend, StopWhileHeldKeepsTheTargetJobOutOfTheNativeCall) {
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/test_w2_entry_contract.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/test_w2_entry_contract.cpp
+@@ -1,94 +1,167 @@
+ // SPDX-License-Identifier: MIT
+ //
+-// Entry-point unit checks for the W2 release channel.
++// Entry-contract tests that exercise the production helper.
+ //
+-// The 60 review's R1 and R3 were about the *entry*: the strict override
+-// whitelist omitted the five W2 parameter names, and the direction check read
+-// st_mode instead of F_GETFL. Both are pure logic, so they are checked here
+-// directly rather than by launching a Worker that needs the whole manifest
+-// chain. Launching the full entry is the owned-run's job.
++// The 61 review's D5: the previous version mirrored a hand-copied whitelist, so
++// deleting the real Worker's W2 parameters left the suite green. These tests
++// include `w2_entry_contract.hpp` — the same header the Worker calls — so a
++// regression in the production rules fails here.
++#include <cerrno>
+ #include <cstdint>
+-#include <cstring>
+ #include <fcntl.h>
+-#include <set>
+ #include <string>
+ #include <sys/stat.h>
+ #include <unistd.h>
+-#include <vector>
+ 
+ #include <gtest/gtest.h>
+ 
++#include "w2_entry_contract.hpp"
++
+ namespace {
+ 
+-/// The five names the Driver actually passes. Kept as a literal here on purpose:
+-/// this list is the contract between Driver and Worker, and a test that derived
+-/// it from the Worker's own whitelist could not detect a missing entry.
+-const std::set<std::string> kW2Parameters = {
++using w2_entry::Reject;
++
++/// The five names the Driver passes. Written out here so the assertion is
++/// independent of the helper's own list, but the *validation* runs through the
++/// helper the Worker uses.
++const std::set<std::string> kDriverPasses = {
+     "w2_release_fd", "w2_release_job_id", "w2_release_ordinal",
+     "w2_release_nonce", "w2_release_wait_ns"};
+ 
+-/// What the Worker's strict override whitelist contains. Mirrored literally so a
+-/// divergence between the two lists fails here.
+-const std::set<std::string> kWorkerOverrideWhitelist = {
++/// The Worker's full strict-override whitelist is assembled as ordinary names
++/// plus the helper's set; the Worker source is the authority on the ordinary
++/// half. If the helper drops a name, this fails.
++const std::set<std::string> kOrdinary = {
+     "run_id", "contract_hash", "contract_file", "m4_release_scope", "mode",
+     "driver_pins_file", "driver_pins_sha256", "source_file",
+     "owned_manifest_file", "test_delay_ms", "test_native_block_ms",
+     "diagnostic_v2_policy", "diagnostic_v2_block_ms",
+-    "diagnostic_drop_after_candidates", "use_sim_time",
+-    "w2_release_fd", "w2_release_job_id", "w2_release_ordinal",
+-    "w2_release_nonce", "w2_release_wait_ns"};
++    "diagnostic_drop_after_candidates", "use_sim_time"};
+ 
+ }  // namespace
+ 
+-TEST(W2Entry, EveryParameterTheDriverPassesIsWhitelisted) {
+-  // R1: the Worker rejected the Driver's W2 parameters because they were not in
+-  // the strict override whitelist. Every one of them must be present.
+-  for (const auto & name : kW2Parameters) {
+-    EXPECT_TRUE(kWorkerOverrideWhitelist.count(name))
+-        << "Driver passes " << name << " but the Worker whitelist omits it";
++TEST(W2EntryContract, HelperAdmitsEveryParameterTheDriverPasses) {
++  for (const auto & name : kDriverPasses) {
++    EXPECT_TRUE(w2_entry::parameters().count(name))
++        << "Driver passes " << name << " but the production helper omits it";
+   }
+ }
+ 
+-TEST(W2Entry, TheWhitelistDoesNotSilentlyAcceptArbitraryNames) {
+-  // A whitelist that accepted everything would also "pass" the check above.
+-  EXPECT_FALSE(kWorkerOverrideWhitelist.count("w2_release_typo"));
+-  EXPECT_FALSE(kWorkerOverrideWhitelist.count("diagnostic_v2_block_ms_typo"));
++TEST(W2EntryContract, HelperDoesNotAdmitAnythingBeyondTheContract) {
++  EXPECT_EQ(w2_entry::parameters().size(), kDriverPasses.size());
++  EXPECT_FALSE(w2_entry::parameters().count("w2_release_typo"));
+ }
+ 
+-TEST(W2Entry, FcntlDistinguishesPipeDirectionWhereStModeDoesNot) {
+-  // R3: both ends of a pipe report the same st_mode, so `st_mode & O_ACCMODE`
+-  // accepts the write end too. F_GETFL is the only correct predicate.
++TEST(W2EntryContract, OrdinaryProfileIsAccepted) {
++  // No fd and every other parameter at its disabled default.
++  w2_entry::Channel ch;
++  EXPECT_EQ(w2_entry::validate(-1, -1, 0, 0, 0, &ch), Reject::kOk);
++}
++
++TEST(W2EntryContract, HalfRegisteredChannelIsRejected) {
++  w2_entry::Channel ch;
++  EXPECT_EQ(w2_entry::validate(-1, 1, 0, 0, 0, &ch),
++            Reject::kNoFdButOtherParametersSet);
++  EXPECT_EQ(w2_entry::validate(-1, -1, 1, 0, 0, &ch),
++            Reject::kNoFdButOtherParametersSet);
++  EXPECT_EQ(w2_entry::validate(-1, -1, 0, 0, 1000, &ch),
++            Reject::kNoFdButOtherParametersSet);
++}
++
++TEST(W2EntryContract, NonceWithoutFdIsRejected) {
++  w2_entry::Channel ch;
++  EXPECT_EQ(w2_entry::validate(-1, -1, 0, 7, 0, &ch),
++            Reject::kNonZeroNonceWithoutFd);
++}
++
++TEST(W2EntryContract, ZeroNonceIsRejected) {
+   int fds[2];
+   ASSERT_EQ(::pipe(fds), 0);
+-  struct stat rd_stat{}, wr_stat{};
+-  ASSERT_EQ(::fstat(fds[0], &rd_stat), 0);
+-  ASSERT_EQ(::fstat(fds[1], &wr_stat), 0);
+-
+-  // The wrong predicate: identical for both ends, and "read-only" for both.
+-  EXPECT_EQ(rd_stat.st_mode & O_ACCMODE, wr_stat.st_mode & O_ACCMODE);
+-  EXPECT_TRUE(S_ISFIFO(rd_stat.st_mode) && S_ISFIFO(wr_stat.st_mode));
+-
+-  // The right predicate.
+-  const int rd_flags = ::fcntl(fds[0], F_GETFL);
+-  const int wr_flags = ::fcntl(fds[1], F_GETFL);
+-  ASSERT_GE(rd_flags, 0);
+-  ASSERT_GE(wr_flags, 0);
+-  EXPECT_EQ(rd_flags & O_ACCMODE, O_RDONLY);
+-  EXPECT_EQ(wr_flags & O_ACCMODE, O_WRONLY);
+-
+-  ::close(fds[0]);
+-  ::close(fds[1]);
++  w2_entry::Channel ch;
++  EXPECT_EQ(w2_entry::validate(fds[0], 1, 1, 0, 1000000, &ch), Reject::kNonceZero);
++  ::close(fds[0]); ::close(fds[1]);
+ }
+ 
+-TEST(W2Entry, ARegularFileIsNotAFifo) {
+-  // The FIFO check must be able to reject a plausible wrong fd, otherwise it is
+-  // decoration.
++TEST(W2EntryContract, BindingOutOfRangeIsRejected) {
++  int fds[2];
++  ASSERT_EQ(::pipe(fds), 0);
++  w2_entry::Channel ch;
++  EXPECT_EQ(w2_entry::validate(fds[0], 0, 1, 5, 1000000, &ch),
++            Reject::kBindingOutOfRange);
++  EXPECT_EQ(w2_entry::validate(fds[0], 1, 0, 5, 1000000, &ch),
++            Reject::kBindingOutOfRange);
++  EXPECT_EQ(w2_entry::validate(fds[0], 1, 1, 5, 0, &ch),
++            Reject::kBindingOutOfRange);
++  EXPECT_EQ(w2_entry::validate(fds[0], 1, 1, 5, 2000000001LL, &ch),
++            Reject::kBindingOutOfRange);
++  ::close(fds[0]); ::close(fds[1]);
++}
++
++TEST(W2EntryContract, TheWriteEndIsRejected) {
++  // The production rule must reject the write end. `st_mode & O_ACCMODE` would
++  // accept both ends, which is the wiring error the gate exists to catch.
++  int fds[2];
++  ASSERT_EQ(::pipe(fds), 0);
++  w2_entry::Channel ch;
++  EXPECT_EQ(w2_entry::validate(fds[1], 1, 1, 5, 1000000, &ch),
++            Reject::kNotReadOnly);
++  ::close(fds[0]); ::close(fds[1]);
++}
++
++TEST(W2EntryContract, TheReadEndIsAcceptedAndReportsItsIdentity) {
++  int fds[2];
++  ASSERT_EQ(::pipe(fds), 0);
++  w2_entry::Channel ch;
++  ASSERT_EQ(w2_entry::validate(fds[0], 3, 2, 5, 1000000, &ch), Reject::kOk);
++  EXPECT_EQ(ch.fd, fds[0]);
++  EXPECT_EQ(ch.job_id, 3);
++  EXPECT_EQ(ch.ordinal, 2);
++  EXPECT_EQ(ch.nonce, 5);
++  EXPECT_EQ(ch.wait_budget_ns, 1000000);
++  EXPECT_TRUE(ch.read_only);
++  struct stat st{};
++  ASSERT_EQ(::fstat(fds[0], &st), 0);
++  EXPECT_EQ(ch.device, uint64_t(st.st_dev));
++  EXPECT_EQ(ch.inode, uint64_t(st.st_ino));
++  ::close(fds[0]); ::close(fds[1]);
++}
++
++TEST(W2EntryContract, ANonFifoFdIsRejected) {
+   const int fd = ::open("/dev/null", O_RDONLY);
+   ASSERT_GE(fd, 0);
+-  struct stat st{};
+-  ASSERT_EQ(::fstat(fd, &st), 0);
+-  EXPECT_FALSE(S_ISFIFO(st.st_mode));
++  w2_entry::Channel ch;
++  EXPECT_EQ(w2_entry::validate(fd, 1, 1, 5, 1000000, &ch), Reject::kNotAFifo);
+   ::close(fd);
++}
++
++TEST(W2EntryContract, AnUnresolvableFdIsRejected) {
++  w2_entry::Channel ch;
++  // A large but non-negative number that is not open in this process.
++  EXPECT_EQ(w2_entry::validate(9999, 1, 1, 5, 1000000, &ch),
++            Reject::kFdDoesNotResolve);
++}
++
++TEST(W2EntryContract, EveryRejectionHasADistinctMessage) {
++  const Reject all[] = {
++      Reject::kOk, Reject::kNoFdButOtherParametersSet,
++      Reject::kNonZeroNonceWithoutFd, Reject::kNonceZero,
++      Reject::kBindingOutOfRange, Reject::kFdDoesNotResolve,
++      Reject::kNotAFifo, Reject::kNotReadOnly};
++  std::set<std::string> names;
++  for (auto r : all) names.insert(w2_entry::reject_name(r));
++  EXPECT_EQ(names.size(), sizeof(all) / sizeof(all[0]));
++}
++
++TEST(W2EntryContract, TheWhitelistIsOrdinaryNamesPlusTheHelperSet) {
++  // This is how the Worker builds its whitelist: the ordinary names plus
++  // whatever the helper says. The assertion documents the composition so a
++  // future edit that stops calling the helper is visible here.
++  std::set<std::string> full = kOrdinary;
++  full.insert(w2_entry::parameters().begin(), w2_entry::parameters().end());
++  for (const auto & name : kDriverPasses) {
++    EXPECT_TRUE(full.count(name)) << name;
++  }
++  EXPECT_FALSE(full.count("w2_release_typo"));
+ }
+ 
+ int main(int argc, char ** argv) {
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/w2_entry_contract.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/w2_entry_contract.hpp
+@@ -0,0 +1,118 @@
++// SPDX-License-Identifier: MIT
++//
++// W2 release-channel entry contract.
++//
++// Extracted so the *production* Worker and the entry test run the same code.
++// The 61 review's D5 found the previous test mirrored a hand-copied whitelist
++// and therefore passed with the real Worker's parameters deleted: the test
++// verified a copy, not the implementation.
++//
++// Two responsibilities, both pure:
++//   * the exact set of W2 parameter names the strict override whitelist admits;
++//   * the parameter-tuple and fd-direction rules the Worker applies at startup.
++#pragma once
++
++#include <cerrno>
++#include <cstdint>
++#include <cstdio>
++#include <fcntl.h>
++#include <set>
++#include <string>
++#include <sys/stat.h>
++#include <unistd.h>
++
++namespace w2_entry {
++
++/// The five names the Driver passes. The Worker's strict whitelist includes
++/// these in addition to its ordinary ones.
++inline const std::set<std::string> & parameters() {
++  static const std::set<std::string> names = {
++      "w2_release_fd", "w2_release_job_id", "w2_release_ordinal",
++      "w2_release_nonce", "w2_release_wait_ns"};
++  return names;
++}
++
++/// The channel as the Worker sees it after validation.
++struct Channel {
++  int fd = -1;
++  int64_t job_id = 0;
++  int ordinal = 0;
++  int nonce = 0;
++  int64_t wait_budget_ns = 0;
++  uint64_t device = 0;
++  uint64_t inode = 0;
++  bool read_only = false;
++};
++
++enum class Reject {
++  kOk,
++  kNoFdButOtherParametersSet,
++  kNonZeroNonceWithoutFd,
++  kNonceZero,
++  kBindingOutOfRange,
++  kFdDoesNotResolve,
++  kNotAFifo,
++  kNotReadOnly,
++};
++
++inline const char * reject_name(Reject r) {
++  switch (r) {
++    case Reject::kOk: return "ok";
++    case Reject::kNoFdButOtherParametersSet:
++      return "w2 release parameters given without an fd";
++    case Reject::kNonZeroNonceWithoutFd: return "w2 nonce set without an fd";
++    case Reject::kNonceZero: return "w2 release nonce must be non-zero";
++    case Reject::kBindingOutOfRange:
++      return "w2 release binding incomplete or out of bounds";
++    case Reject::kFdDoesNotResolve: return "w2 release fd does not resolve";
++    case Reject::kNotAFifo: return "w2 release fd is not a FIFO";
++    case Reject::kNotReadOnly: return "w2 release fd is not read-only";
++  }
++  return "unknown";
++}
++
++/// Validate the parameter tuple and the inherited fd.
++///
++/// The fd checks are the ones 60/R3 fixed: `S_ISFIFO` identifies the object and
++/// `F_GETFL` is the only way to learn direction, because both ends of a pipe
++/// report the same `st_mode`.
++inline Reject validate(int fd, int64_t job_id, int ordinal, int nonce,
++                       int64_t wait_budget_ns, Channel * out) {
++  if (fd < 0) {
++    if (job_id >= 0 || ordinal != 0 || wait_budget_ns != 0) {
++      return Reject::kNoFdButOtherParametersSet;
++    }
++    if (nonce != 0) return Reject::kNonZeroNonceWithoutFd;
++    return Reject::kOk;  // ordinary profile
++  }
++  if (nonce == 0) return Reject::kNonceZero;
++  if (job_id <= 0 || ordinal <= 0 || wait_budget_ns <= 0 ||
++      wait_budget_ns > 2000000000LL) {
++    return Reject::kBindingOutOfRange;
++  }
++  char path[64];
++  std::snprintf(path, sizeof(path), "/proc/self/fd/%d", fd);
++  char target[256] = {};
++  const auto n = ::readlink(path, target, sizeof(target) - 1);
++  if (n <= 0) return Reject::kFdDoesNotResolve;
++
++  struct stat st {};
++  if (::fstat(fd, &st) != 0 || !S_ISFIFO(st.st_mode)) return Reject::kNotAFifo;
++  const int flags = ::fcntl(fd, F_GETFL);
++  if (flags < 0 || (flags & O_ACCMODE) != O_RDONLY) {
++    return Reject::kNotReadOnly;
++  }
++  if (out) {
++    out->fd = fd;
++    out->job_id = job_id;
++    out->ordinal = ordinal;
++    out->nonce = nonce;
++    out->wait_budget_ns = wait_budget_ns;
++    out->device = uint64_t(st.st_dev);
++    out->inode = uint64_t(st.st_ino);
++    out->read_only = true;
++  }
++  return Reject::kOk;
++}
++
++}  // namespace w2_entry
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_hook_review_20261022_60/implementation/w2_author/worker/w2_native_boundary.hpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_W2_fix_review_20261022_61/implementation/w2_author/worker/w2_native_boundary.hpp
+@@ -107,6 +107,33 @@
+   /// before calling `enter` so an unrelated call is never mistaken for a
+   /// rejected one — the hook only carries an ordinal, so the Job must be
+   /// compared too.
++  /// Set for the duration of one solve so the final guard can compare the
++  /// ordinal against the Job being solved, not against a stale value.
++  void set_current_job(int64_t job_id) { current_job_ = job_id; }
++
++  /// Re-check stop and the Job deadline at the real C entry.
++  ///
++  /// This is the guard 61's D4 asks for: it runs after every preparation step
++  /// that can throw, so a stop or an expiry *during* preparation is caught. The
++  /// gate's wait window is unaffected — this only decides whether a released
++  /// boundary may still enter C.
++  bool permit_native_entry(const w2_gate::StopPredicate & stop_requested) {
++    if (!done_ || record_.disposition != Disposition::kAllowed) return false;
++    const int64_t now = this->now();
++    if (stop_requested && stop_requested()) {
++      record_.disposition = Disposition::kStopped;
++      record_.guard_ns = now;
++      return false;
++    }
++    if (now > config_.job_deadline_ns) {
++      record_.disposition = Disposition::kExpired;
++      record_.guard_ns = now;
++      record_.past_deadline_ns = now - config_.job_deadline_ns;
++      return false;
++    }
++    return true;
++  }
++
+   bool matches(uint32_t ordinal, int64_t job_id) const {
+     return gate_ != nullptr && job_id == config_.job_id &&
+            ordinal == config_.ordinal;
+@@ -220,6 +247,7 @@
+   w2_gate::Gate::Clock clock_;
+   BoundaryRecord record_{};
+   std::function<void(const BoundaryConfig &)> entry_observer_;
++  int64_t current_job_ = 0;
+   bool done_ = false;
+ };
+ 

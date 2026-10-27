@@ -1,0 +1,28 @@
+{
+  "actual_Applied_and_phase_CDR_GID_authentication_checked": true,
+  "actual_DDS_Job_delivery_matches_actual_Source": true,
+  "actual_changed_reference_CDR_GID_checked": true,
+  "actual_order_Source_indices": {
+    "Applied2": 8,
+    "freeze": 14,
+    "job": 18,
+    "path101": 13,
+    "phase": 12,
+    "profile101": 6
+  },
+  "actual_wire_result_sha256": "5f7c6a0ca7440ec999e1ba466186c40289ccabdc2c35688e2f296edbe5450b5c",
+  "audit_passed": true,
+  "client_date": "2026-10-18",
+  "component_premises": "worker/odom/clock/RTF/readiness seeded; real owner-process/pidfd and real DDS messages; not an independent five-role controlled-interleaving experiment",
+  "exactly_one_freeze_and_Job": true,
+  "execute_qualified": false,
+  "freeze_remaining_original_deadline_ns": 143357349,
+  "full_five_role_run_interleaving_positive_branch_observed": false,
+  "original_first_speed_performance_result_changed": false,
+  "recipe_sha256": "60341bf818930246f806cab4804dc36325a5f249bf0eb765e038204920517168",
+  "research_conclusion": false,
+  "schema": "scheme-A-real-wire-reference-pair-wakeup-audit/v1",
+  "source_sha256": "5813c06528add773299399af06071cfcd8cdcfc7ace7a21f81e23d0ed7dc58fc",
+  "stage_qualified": false,
+  "submit_remaining_original_deadline_ns": 143199619
+}

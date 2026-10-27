@@ -1,0 +1,49 @@
+{
+  "schema": "M4-after-T2-independent-review-plan-v76",
+  "recorded_at": "2026-10-25T12:52:30.411969+08:00",
+  "steps": [
+    {
+      "id": "74镜像",
+      "status": "complete"
+    },
+    {
+      "id": "R0(75批)",
+      "status": "complete"
+    },
+    {
+      "id": "R1(本批76)",
+      "status": "complete",
+      "owned_runs": 0,
+      "evidence": [
+        "evidence/harness_gtest.json",
+        "evidence/detector_proof_v1.json",
+        "evidence/freeze_rev10/freeze_rev10_report_v1.json"
+      ]
+    },
+    {
+      "id": "R2",
+      "status": "next",
+      "task": "T2 scoped诊断variant有限边界保持(74批R2时序:boundary ACK→Fixture动作回执→Regulator path_version提交ACK→唯一release→C入口guard→真实C调用→同Job及时版本拒绝;deadline=tick_origin+150ms不续期;过期释放独立负控;Epoch换代单列未闭合)"
+    },
+    {
+      "id": "T2-B",
+      "status": "after_R2",
+      "task": "单次有限及时在途case;expired/late/wrong_tick/终端隔离不冒充"
+    },
+    {
+      "id": "T2-C",
+      "status": "after_R2",
+      "task": "R0已修字段/实际请求时刻/真实停止观察;先离线Source重放"
+    },
+    {
+      "id": "T2-A补证",
+      "status": "after_R2",
+      "task": "silent/same_stamp/resume新窗口分别登记有限覆盖;witness连续性与API/Applied账本在rev10上复核"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

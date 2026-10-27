@@ -65,7 +65,7 @@ REQUIRED_SOURCE = (
     "usv_rl/usv_rl/export_policy.py", "usv_rl/usv_rl/dynamics.py",
     "usv_rl/configs/env.yaml", "usv_rl/tests/test_export_scaling.py",
 )
-MODEL_ROOT = "usv_rl/models/v5/s4_dr"
+MODEL_ROOT = "artifacts/rl_models/v5/s4_dr"
 MODEL_FILES = ("model.zip", "policy.onnx", "vecnormalize.pkl",
                "policy_physical_n.onnx", "policy_physical_n.manifest.json")
 GENERATED_FILES = ("effective_vehicle.yaml", "model_report.json", "model.sdf", "hull.dae")

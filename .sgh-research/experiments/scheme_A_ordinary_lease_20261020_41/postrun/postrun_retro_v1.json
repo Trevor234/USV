@@ -1,0 +1,14 @@
+{
+  "EDA_route_STA_WNS_PPA": "not applicable",
+  "next": "one precise healthy fresh-identity start after lease41 then B4 source/domain/policy closure",
+  "next_confidence": "medium",
+  "next_cost": "low",
+  "next_impact": "high",
+  "next_risk": "low",
+  "primary_mechanism": "flow_policy_mismatch resolved by immediate monitor after actual gate ACK",
+  "research_conclusion": false,
+  "same_lease_active_V1_rerun_justified": false,
+  "selected_hypothesis_passed": true,
+  "stage_qualified": false,
+  "stop_condition": "any new identity gate healthy candidate or normal tail prerequisite missing"
+}

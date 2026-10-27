@@ -1,0 +1,41 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "case": "R2",
+  "case_summary": {
+    "jobs_after_transition": 0,
+    "pairs_after_transition": 6,
+    "shutdown_grace_exceeded": false,
+    "shutdown_zero_published": true,
+    "stimulus_to_transition_ns": 175674321,
+    "transition_reason": "worker_process_exited",
+    "worker_summary_present": false
+  },
+  "input_continuity": 41,
+  "mutation_rejections": [
+    "r2_transition_removed:IndexError",
+    "r2_normal_complete_fabricated",
+    "r2_worker_rc_fabricated"
+  ],
+  "mutations_tested": 3,
+  "passed": true,
+  "plant_acceptance_observed": false,
+  "research_conclusion": false,
+  "run_id": "M4_owned_fault_20261021_53_R2",
+  "schema": "M4-owned-fault-audit/v1",
+  "stored_counts": {
+    "/clock": 115,
+    "/p1/execution_decision": 9,
+    "/p1/solve_candidate": 2,
+    "/p1/solve_job": 2,
+    "/p1/worker_capability": 5,
+    "/path/reference": 5,
+    "/path/reference_profile": 5,
+    "/research/control/applied": 9,
+    "/wamv/sensors/imu/imu/data": 115,
+    "/wamv/sensors/position/ground_truth_odometry": 115,
+    "/wamv/thrusters/left/thrust": 9,
+    "/wamv/thrusters/right/thrust": 9
+  }
+}

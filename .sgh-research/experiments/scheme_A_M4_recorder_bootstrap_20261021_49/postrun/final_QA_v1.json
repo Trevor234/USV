@@ -1,0 +1,147 @@
+{
+  "B5_M0b_frozen_parent_preserved": true,
+  "F6_qualified": false,
+  "GP_data_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "Recorder_internal_storage_accounting_flag_retained_false": true,
+  "Witness_qualification_scope": "Witness records and first real accepted activation/BusinessReady consistency only; no control or phase qualification",
+  "actual_control_API_calls": 210,
+  "actual_normal_run_passed": true,
+  "actual_registered_normal_runs": 1,
+  "actual_roles": 4,
+  "all_DDS_publications_received_by_Regulator_claimed": false,
+  "all_historical_original_paths_unchanged": false,
+  "all_roles_RC0_INT_only_group_empty": true,
+  "batch_deliverable_integrity_passed": true,
+  "built_targets": 6,
+  "existing_status_porcelain_retained": "## codex/scheme-c-rl...origin/codex/scheme-c-rl\n M ardurover-argus\n?? .zcodeignore\n",
+  "existing_untracked_zcodeignore_and_submodule_status_retained": true,
+  "explicit_preexisting_path_changes": [
+    "two pre_reference_prediction_v1 active backup headers absent; exact F5 bytes recovered in sealed48, active paths not restored",
+    ".gitignore changed with resumed committed HEAD; old full bytes not reconstructed"
+  ],
+  "external_storage_accounting_passed": true,
+  "final_preservation_interrupted_session_not_inferred_as_pass": true,
+  "first_pair_rho_available": false,
+  "frozen47_files_checked": 4103,
+  "full_stream_max_pair_span_ns": 100671,
+  "full_stream_max_per_side_gap_ns": [
+    200139220,
+    200174616
+  ],
+  "hard_realtime_or_WCET_qualified": false,
+  "main_repository_tracked_file_diff_and_staging_empty": true,
+  "max_actual_per_side_rate_n_s": [
+    2.499833986024988,
+    2.499986262575487
+  ],
+  "max_tick_start_jitter_ns": 840588,
+  "native_entry_refusals": 14,
+  "native_policy_cases": 52,
+  "normal_owned_outlet_component_qualified": true,
+  "normal_run_id": "M4_owned_nominal_20261021_49_01",
+  "normal_window": {
+    "accepted": 100,
+    "decisions": 100,
+    "dynamic_jobs": 101,
+    "first_job_id": 3,
+    "last_job_id": 103,
+    "odom_sim_span_ns": 20000079766,
+    "planar_speed_max_m_s": 0.06192810449330271,
+    "planar_speed_min_m_s": 0.01122007070295855,
+    "source_span_ns": 20001765169
+  },
+  "old_failures_and_sealed_parents_retained": true,
+  "one_tail_capability_after_Fixture_close_accounted": true,
+  "ordinary_production_release_enabled": false,
+  "original24_now_committed_content_equal": true,
+  "original_F5_plant_reference_identity_qualified": false,
+  "outer_emergency_signals_sent": 0,
+  "passed": true,
+  "physical_API_pairs": 105,
+  "plant_zero_or_hold_end_proven": false,
+  "proofs": {
+    "build/m4_attempt01/build_manifest_v1.json": {
+      "bytes": 284659,
+      "sha256": "68f6d7a931ea9894fa3f48c36b02abded6f747ebfdccfb454147c01ff47588f3"
+    },
+    "evidence/normal_launch_v1.json": {
+      "bytes": 3306,
+      "sha256": "2e2ce74d42851de60629762d5e243d8f29002c315df8ae19f37e646a705d9607"
+    },
+    "postrun/M4_current_fault_coverage_v1.json": {
+      "bytes": 5526,
+      "sha256": "43234026af7a486f18d457de369a2800efd538789bd333aa44f1e3fd676f8d44"
+    },
+    "postrun/actual_normal_audit_v1.json": {
+      "bytes": 380936,
+      "sha256": "78f2c3eb79185af640c318eb41713344ce4211670f44b5d006313a9fbc6ad6fc"
+    },
+    "postrun/callback_capture_scope_v1.json": {
+      "bytes": 823,
+      "sha256": "17c522ebfc5e23d985def855e31ee62b3060a00309219f224355619813b78302"
+    },
+    "postrun/next_implementation_plan_v1.json": {
+      "bytes": 2212,
+      "sha256": "d7ccf3c25a06e16f0b382fe5cbc950596b5ea47546ef95c285e654997a047a55"
+    },
+    "preflight/execution_tool_input_lock_v1.json": {
+      "bytes": 2398,
+      "sha256": "4cd5bc0aabc958003924b92f6b3898a7937fd8eebf7768d1d5a77cedaed65fe5"
+    },
+    "preflight/frozen47_verification_v1.json": {
+      "bytes": 707,
+      "sha256": "b0ce26ae347d6cff411b14e381443f879c7e55ad3ce0f3c8dc74071fc2cf2b7b"
+    },
+    "preflight/prerun_source_lock_v1.json": {
+      "bytes": 358948,
+      "sha256": "829590a1ab7e5222e93c8eeaae19632095c368811b74d1a3d8bb946a108b8efd"
+    },
+    "preflight/workspace_final_v2.json": {
+      "bytes": 7002219,
+      "sha256": "f9c9ee98aa9cd8f70be7650cf6c9b537248f31e958aaf1d40c404a5f6e5223a0"
+    },
+    "preflight/workspace_initial_v1.json": {
+      "bytes": 7002219,
+      "sha256": "3ff33337f704fbd69c91df6cbfc1ca11d15e8a6bd667388bdf124845c6cd77d3"
+    },
+    "verification/actual_loader_closure_v1.json": {
+      "bytes": 42388,
+      "sha256": "a50e0be2e2d3dadd466a2277821eac00cbe6830411b5f19ea30fa831dbee117c"
+    },
+    "verification/component_verification_v1.json": {
+      "bytes": 17185,
+      "sha256": "7767da5319231e5cb777222538f9ddfa4047a4d3b75332d40defa9088212cb9f"
+    },
+    "verification/native_entry_rejections_v1.json": {
+      "bytes": 24230,
+      "sha256": "04e2394532f9fdd97328100c44892ac398b3518aee64cab34132a4191eccb1af"
+    },
+    "verification/recorder_process_verification_v1.json": {
+      "bytes": 5088,
+      "sha256": "fab4e4fcf4a2652e112407c9c27578730e2b396eee1cabbe458cab613af96161"
+    },
+    "verification/source_core_reuse_v1.json": {
+      "bytes": 2764,
+      "sha256": "dedcf37cf79d23be349a881106041f40757674c3682134d1568625b2e2a6c83e"
+    }
+  },
+  "qualification_layer": "isolated nominal normal sole owned outlet component only",
+  "real_Recorder_process_component_incomplete_RC2_retained": true,
+  "real_Recorder_process_pin_cases": 14,
+  "registered_inputs_checked_unchanged": 1840,
+  "research_conclusion": false,
+  "runtime_audit_inputs_checked_unchanged": 41,
+  "same_registration_retried": false,
+  "schema": "SchemeA-M4-normal-owned-outlet-batch-integrity-QA/v1",
+  "shutdown_zero_API_success": true,
+  "source_linked_GTest_cases": 38,
+  "source_thresholds_model_RTI_cost_tuned": false,
+  "stage_qualified": false,
+  "stored_messages": 4053,
+  "whole_workspace_clean_claimed": false,
+  "wire_transport_matched_messages": 4052,
+  "workspace_branch": "codex/scheme-c-rl",
+  "workspace_resumed_HEAD": "feb50823a07054879e3c6f8d437c02595ce26976"
+}

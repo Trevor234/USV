@@ -1,0 +1,35 @@
+{
+  "documents": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/documents/第126批_模型事务_单项集成评审输入_2026-10-26.md": {
+      "bytes": 4861,
+      "sha256": "fa0b2697cc962e1e4883035c78f34dd45f8dbf2ede972afe724092b9167f4777"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/documents/第126批_Epoch生命周期_单项集成评审输入_2026-10-26.md": {
+      "bytes": 3938,
+      "sha256": "c92123480da40b3784141630926669d39220b501f9b3f34e3660f2cce56dc7c7"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_offline_hardening_20261026_126/documents/第126批_B2实验时钟_单项集成评审输入_2026-10-26.md": {
+      "bytes": 2938,
+      "sha256": "f074b70527807e405dfc767c6b11ae0d1b5eb25a159c93f27b7953c0b81d13b6"
+    }
+  },
+  "status": "REVIEW_INPUT_READY_NOT_APPROVED",
+  "separate_candidates": true,
+  "production_files_modified": 0,
+  "new_owned_runs": 0,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "required_before_any_future_landing": [
+    "concrete per-candidate diff",
+    "one maintained source location",
+    "default-disabled behavior negative control",
+    "unique identity freeze and per-item registry",
+    "explicit target-tick/error/close contract"
+  ],
+  "do_not_bundle_candidates": true
+}

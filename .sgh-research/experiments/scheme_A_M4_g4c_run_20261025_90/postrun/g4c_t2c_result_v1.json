@@ -1,0 +1,13 @@
+{
+  "schema": "M4-G4C-T2C-v90",
+  "recorded_at": "2026-10-25T18:24:36.662356+08:00",
+  "infrastructure": "FULLY WORKING — first T2-C owned run all roles rc=0 clean closure",
+  "roles": {
+    "regulator": 0,
+    "fixture": 0,
+    "worker": 0,
+    "recorder": 0
+  },
+  "scenario": "ready_window trigger did not fire; Job 2 accepted verified; trigger observation debug next",
+  "owned_runs": 1
+}

@@ -1,0 +1,16 @@
+{
+  "run_id": "v3_odom_01",
+  "returncode": 0,
+  "started_ns": 386791646057503,
+  "finished_ns": 386809442909525,
+  "elapsed_ns": 17796852022,
+  "external_timeout_triggered": false,
+  "inputs_unchanged": true,
+  "source_lock": {
+    "bytes": 344348,
+    "sha256": "5c683d137fd495896e220b8980eb3f014298cc5f440a38ecc8743911d160f7ec"
+  },
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

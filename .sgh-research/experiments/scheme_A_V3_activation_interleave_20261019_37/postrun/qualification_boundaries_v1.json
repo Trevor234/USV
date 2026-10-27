@@ -1,0 +1,27 @@
+{
+  "B4_B5_M4_F6_P1_stage_qualified": false,
+  "Decision_false_reason": "source condition includes mode_==execute; shadow keeps this false even healthy accepted activations",
+  "Decision_normal_contract_complete_all_false": true,
+  "Source_regulator_shutdown": [
+    {
+      "finished_ns": 386808081684392,
+      "last_decision_sequence": 53,
+      "normal_contract_complete": true,
+      "plant_hold_end_known": false,
+      "shutdown_grace_exceeded": false,
+      "type": "regulator_shutdown",
+      "zero_target_published": false
+    }
+  ],
+  "V3_selected_actual_source_case_completed": true,
+  "Witness_business_ready_observed": true,
+  "Witness_normal_contract_qualified": true,
+  "Witness_normal_contract_scope": "Witness records and first real accepted activation/BusinessReady consistency only; no control or phase qualification",
+  "Witness_observation_complete": true,
+  "actual_clock_or_reference_invalidation_not_this_run": true,
+  "component_validation_passed": true,
+  "driver_passed_is_finite_fixture_prepare_and_close": true,
+  "research_conclusion": false,
+  "source_condition_file": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/observer/src/shadow/regulator_shadow_observer.cpp",
+  "source_condition_line": 1067
+}

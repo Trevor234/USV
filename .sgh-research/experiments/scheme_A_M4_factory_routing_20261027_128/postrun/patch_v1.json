@@ -1,0 +1,23 @@
+{
+  "base_factory": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_factory_routing_20261027_128/implementation/current/src/mpc_solver.cpp",
+    "pin": {
+      "bytes": 2461,
+      "sha256": "75273493aa36ebb167f441e57150ba4b92e03d0bb15624c93b2b52185edc67f2"
+    }
+  },
+  "candidate_factory": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_factory_routing_20261027_128/implementation/admission_guard/src/mpc_solver.cpp",
+    "pin": {
+      "bytes": 2925,
+      "sha256": "054f184ecbe210eacb70522102a51419e2719f613336c7decf850087891a3715"
+    }
+  },
+  "patch": {
+    "bytes": 1101,
+    "sha256": "9723f05a1db95c195f7c286cf82d4ac4a21866ca551a50d4531fcf4d2a3736f6"
+  },
+  "requires_batch127": "01 pure packing + 02 checked initialization; no production application",
+  "finite_fallback_policy": "unchanged; reported status17 may choose Casadi when compiled in",
+  "physical_parameter_validity": "not established by a finite check"
+}

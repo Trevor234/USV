@@ -1,0 +1,13 @@
+{
+  "schema": "M4-G1-findings-v84",
+  "recorded_at": "2026-10-25T17:39:51.290437+08:00",
+  "fixes": {
+    "G1-A_B_audit": "Worker Source消费(job_received/boundary_entered/boundary_result/candidate);7个新谓词(boundary_entered_for_target/disposition_allowed/actual_native_invoked/c_call_completed/same_job_identity/rejection_job_identity/timely_within_deadline);Stored gate;精确API类型(owned_applied_publication非failed);全角色group_empty",
+    "G1-B_driver": "版本ACK绑定(严格task_generation递增+processed_ns>action_executed_ns);每动作重置path_version_committed;无关path_version记录为ignored事件",
+    "G1-C_contract": "命令SHA从固定字节复算(非自报值);完整trigger比对(phase/job/source_role);序列唯一有序;Fixture触发域(4精确字段/正整数observed_ns/phase-role绑定/job绑定)",
+    "G1-D_C_timing": "请求后接纳用activation_commit_ns(非ready_commit);stopping用tick_start_ns(非end_ns);C去重command_record",
+    "G1-E_A_predicates": "silent用边界推导(最后有效→恢复首条);resume无接纳→not_covered(非true);完整5维版本身份(非仅task);same_stamp核对实际stamp不变"
+  },
+  "validation": "17/17离线测试全过;82批全部反例具名拒绝;正控+合法案例通过;真实T2A_14拒收",
+  "owned_runs": 0
+}

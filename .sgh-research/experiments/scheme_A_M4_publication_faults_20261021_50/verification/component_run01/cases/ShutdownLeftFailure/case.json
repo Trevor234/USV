@@ -1,0 +1,353 @@
+{
+  "M4_stage_qualified": false,
+  "actuator_topic_publishers": 0,
+  "case": "ShutdownLeftFailure",
+  "case_failed": false,
+  "exact_production_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/author/observer/src/shadow/regulator_owned_execute.cpp",
+  "exact_production_source_sha256": "94bbcb25c356c992111c1779d685bdb3da7dca2f5a0bf301d1f745ea4c2f9bf0",
+  "extra": {
+    "finish_exit_tick": true,
+    "finish_now_ns": 523071113555951,
+    "stop_start_ns": 523071113555951
+  },
+  "observed_DDS_fault_claimed": false,
+  "plant_guarantee": false,
+  "production_owned_gate_exercised": false,
+  "schema": "M4-source-linked-private-publication-fault-case/v1",
+  "seeded_owned_readiness_context": true,
+  "steps": [
+    {
+      "after": {
+        "authority_initialized": true,
+        "authority_known": [
+          true,
+          true
+        ],
+        "authority_n": [
+          0.0,
+          0.0
+        ],
+        "authority_sequence": [
+          1,
+          1
+        ],
+        "authority_start_ns": [
+          523071095629998,
+          523071095642390
+        ],
+        "authority_terminal": false,
+        "business_permitted": true,
+        "candidate_present": false,
+        "held_history_size": 2,
+        "known": [
+          true,
+          true
+        ],
+        "n": [
+          0.0,
+          0.0
+        ],
+        "normal_complete": true,
+        "pending_present": false,
+        "publication_history_size": 2,
+        "sequence": [
+          1,
+          1
+        ],
+        "start_ns": [
+          523071095629998,
+          523071095642390
+        ],
+        "stop_requested": false,
+        "worker_unusable": false
+      },
+      "before": {
+        "authority_initialized": false,
+        "authority_known": [
+          false,
+          false
+        ],
+        "authority_n": [
+          0.0,
+          0.0
+        ],
+        "authority_sequence": [
+          0,
+          0
+        ],
+        "authority_start_ns": [
+          0,
+          0
+        ],
+        "authority_terminal": false,
+        "business_permitted": false,
+        "candidate_present": false,
+        "held_history_size": 0,
+        "known": [
+          false,
+          false
+        ],
+        "n": [
+          0.0,
+          0.0
+        ],
+        "normal_complete": true,
+        "pending_present": false,
+        "publication_history_size": 0,
+        "sequence": [
+          0,
+          0
+        ],
+        "start_ns": [
+          0,
+          0
+        ],
+        "stop_requested": false,
+        "worker_unusable": false
+      },
+      "calls": [
+        {
+          "begin_ns": 523071095630235,
+          "command": 0.0,
+          "delegated_to_actual_RCL": true,
+          "end_ns": 523071095641399,
+          "injected": false,
+          "rc": 0,
+          "side": 0
+        },
+        {
+          "begin_ns": 523071095642526,
+          "command": 0.0,
+          "delegated_to_actual_RCL": true,
+          "end_ns": 523071095645576,
+          "injected": false,
+          "rc": 0,
+          "side": 1
+        },
+        {
+          "begin_ns": 523071095660629,
+          "command": 0.0,
+          "delegated_to_actual_RCL": true,
+          "end_ns": 523071095668411,
+          "injected": false,
+          "rc": 0,
+          "side": 2
+        }
+      ],
+      "decision": {
+        "accepted": false,
+        "command": [
+          0.0,
+          0.0
+        ],
+        "ends": [
+          523071095641619,
+          523071095645727
+        ],
+        "returned": [
+          true,
+          true
+        ],
+        "rho_available": false,
+        "sequence": 1,
+        "starts": [
+          523071095629998,
+          523071095642390
+        ]
+      },
+      "injected_sides": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "after": {
+        "authority_initialized": true,
+        "authority_known": [
+          false,
+          true
+        ],
+        "authority_n": [
+          0.0,
+          0.0
+        ],
+        "authority_sequence": [
+          1,
+          2
+        ],
+        "authority_start_ns": [
+          523071095629998,
+          523071112185009
+        ],
+        "authority_terminal": true,
+        "business_permitted": false,
+        "candidate_present": false,
+        "held_history_size": 3,
+        "known": [
+          false,
+          true
+        ],
+        "n": [
+          0.0,
+          0.0
+        ],
+        "normal_complete": false,
+        "pending_present": false,
+        "publication_history_size": 3,
+        "sequence": [
+          1,
+          2
+        ],
+        "start_ns": [
+          523071095629998,
+          523071112185009
+        ],
+        "stop_requested": true,
+        "worker_unusable": true
+      },
+      "before": {
+        "authority_initialized": true,
+        "authority_known": [
+          true,
+          true
+        ],
+        "authority_n": [
+          0.0,
+          0.0
+        ],
+        "authority_sequence": [
+          1,
+          1
+        ],
+        "authority_start_ns": [
+          523071095629998,
+          523071095642390
+        ],
+        "authority_terminal": false,
+        "business_permitted": true,
+        "candidate_present": false,
+        "held_history_size": 2,
+        "known": [
+          true,
+          true
+        ],
+        "n": [
+          0.0,
+          0.0
+        ],
+        "normal_complete": true,
+        "pending_present": false,
+        "publication_history_size": 2,
+        "sequence": [
+          1,
+          1
+        ],
+        "start_ns": [
+          523071095629998,
+          523071095642390
+        ],
+        "stop_requested": false,
+        "worker_unusable": false
+      },
+      "calls": [
+        {
+          "begin_ns": 523071112127747,
+          "command": 0.0,
+          "delegated_to_actual_RCL": false,
+          "end_ns": 523071112150376,
+          "injected": true,
+          "rc": 1,
+          "side": 0
+        },
+        {
+          "begin_ns": 523071112185255,
+          "command": 0.0,
+          "delegated_to_actual_RCL": true,
+          "end_ns": 523071112238747,
+          "injected": false,
+          "rc": 0,
+          "side": 1
+        },
+        {
+          "begin_ns": 523071112258242,
+          "command": 0.0,
+          "delegated_to_actual_RCL": true,
+          "end_ns": 523071112273579,
+          "injected": false,
+          "rc": 0,
+          "side": 2
+        }
+      ],
+      "decision": {
+        "accepted": false,
+        "command": [
+          0.0,
+          0.0
+        ],
+        "ends": [
+          523071112174807,
+          523071112238970
+        ],
+        "returned": [
+          false,
+          true
+        ],
+        "rho_available": false,
+        "sequence": 2,
+        "starts": [
+          523071112127173,
+          523071112185009
+        ]
+      },
+      "injected_sides": [
+        true,
+        false,
+        false
+      ]
+    }
+  ],
+  "test_only_return_seam": true,
+  "wire": [
+    {
+      "bytes": 557,
+      "cdr_hex": "000100000f00000070302d636f6e74726163742d763100001a000000736861646f772d736f757263652d6c696e6b65642d7465737400000013000000636f6d706f6e656e7435305f39333731383000002e00000046355f4e4f4d494e414c5f534f555243455f4f574e45445f524547554c41544f525f32303236313032305f3031000000410000003139643639363262383539353333313334663739376630303564666137616632623334333464616531366364366264353530653936653137636166646332336100000000010000000000000000000000000000009c8d8f48170000009fe5d8fabadb0100000000000000000013000000656e67696e656572696e675f315f746f5f3100003200000039363634356263312d663665302d343966662d623636652d3830393631313830336564353a7374656164795f636c6f636b00000001000000000000000a00000072616d705f7a65726f0000001b00000061637475616c5f7065725f736964655f4150495f726573756c74000100000000000000000000000000000000000000000000000000000000000000000101000000000000aee8d8fabadb01001316d9fabadb01001619d9fabadb01001f26d9fabadb0100ab908f481700000013c18f4817000000000000000000000000000000000000000f030000000000007733000000000000000000000000f03f00000000000039c00000000000003940000000000000000000000000000000000000000000000000000000000100000000",
+      "received_ns": 523071095714753,
+      "side": 2,
+      "topic": "/p1_m4_component_937180/ShutdownLeftFailure/applied",
+      "type": "usv_research_interfaces/msg/AppliedControl"
+    },
+    {
+      "bytes": 12,
+      "cdr_hex": "000100000000000000000000",
+      "received_ns": 523071095735107,
+      "side": 1,
+      "topic": "/p1_m4_component_937180/ShutdownLeftFailure/right",
+      "type": "std_msgs/msg/Float64"
+    },
+    {
+      "bytes": 12,
+      "cdr_hex": "000100000000000000000000",
+      "received_ns": 523071095739109,
+      "side": 0,
+      "topic": "/p1_m4_component_937180/ShutdownLeftFailure/left",
+      "type": "std_msgs/msg/Float64"
+    },
+    {
+      "bytes": 586,
+      "cdr_hex": "000100000f00000070302d636f6e74726163742d763100001a000000736861646f772d736f757263652d6c696e6b65642d7465737400000013000000636f6d706f6e656e7435305f39333731383000002e00000046355f4e4f4d494e414c5f534f555243455f4f574e45445f524547554c41544f525f32303236313032305f3031000000410000003139643639363262383539353333313334663739376630303564666137616632623334333464616531366364366264353530653936653137636166646332336100000000020000000000000000000000000000009e408b4917000000a198d4fbbadb0100000000000000000013000000656e67696e656572696e675f315f746f5f3100003200000039363634356263312d663665302d343966662d623636652d3830393631313830336564353a7374656164795f636c6f636b00000002000000000000000e00000073687574646f776e5f7a65726f0000001b00000061637475616c5f7065725f736964655f4150495f726573756c7400010000000000000000000000000000000000000000000000000000000000000000000000000001d8fabadb0100c5a2d4fbbadb0100d75cd5fbbadb0100b184d5fbbadb01007a57d6fbbadb0100c24a8b4917000000ae2c8c491700000000000000000000000000000000000000240a00000000000010ec000000000000000000000000f03f00000000000039c0000000000000394001000000000000000000000000000000000000000000000000000000160000007061727469616c5f6f725f6661696c65645f41504900",
+      "received_ns": 523071112359261,
+      "side": 2,
+      "topic": "/p1_m4_component_937180/ShutdownLeftFailure/applied",
+      "type": "usv_research_interfaces/msg/AppliedControl"
+    },
+    {
+      "bytes": 12,
+      "cdr_hex": "000100000000000000000000",
+      "received_ns": 523071112381416,
+      "side": 1,
+      "topic": "/p1_m4_component_937180/ShutdownLeftFailure/right",
+      "type": "std_msgs/msg/Float64"
+    }
+  ]
+}

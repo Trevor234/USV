@@ -1,0 +1,32 @@
+{
+  "action_table": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2b_boundary_owned_20261025_79/implementation/T2B_boundary_table.json",
+  "action_table_sha256": "c5bf75582d4014916f8df692dcc8c3fd051d7779f181d16cb045c53152acbe8a",
+  "audit_tool": {
+    "path": "../scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_author_r3/audit_t2.py",
+    "sha256": "72644f6a7cc2c058d87b242e989e9364874877973d9d03341debd8660de03946"
+  },
+  "automatic_retries": 0,
+  "boundary_release": {
+    "job_id": 2,
+    "nonce": 1749532001,
+    "ordinal": 1,
+    "wait_budget_ns": 2000000000
+  },
+  "case": "T2B-inflight-clear-replace",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/p1_execution_contract_v4.json",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "domain_id": 120,
+  "executed": false,
+  "fault_injection_enabled": true,
+  "freeze_revision": "rev11 boundary mode: t2_boundary_scope + v4 contract + boundary_release Job2/ordinal1",
+  "max_seconds": 45,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2_r2_driver_20261025_78/implementation/runs/T2B_B11",
+  "production_physical_release_enabled": false,
+  "registry": "../scheme_A_M4_t2_r2_driver_20261025_78/implementation/t2_registry_v11.json",
+  "registry_sha256": "5b145f384a09e3ae75bf92ea2955ee84cb69288c240f524084321f4586fdd475",
+  "run_id": "T2-T2B-B01",
+  "schema": "M4-owned-t2-scenario-run-v1",
+  "scope": "M4_owned_t2_boundary_diagnostic_v1",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

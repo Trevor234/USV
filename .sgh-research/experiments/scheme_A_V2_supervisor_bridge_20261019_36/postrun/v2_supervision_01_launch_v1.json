@@ -1,0 +1,16 @@
+{
+  "run_id": "v2_supervision_01",
+  "case": "active",
+  "returncode": 0,
+  "started_ns": 385621823254869,
+  "finished_ns": 385635110442442,
+  "elapsed_ns": 13287187573,
+  "external_timeout_triggered": false,
+  "source_lock_sha256": "ef48b5d2b8046312efead8cce6db75c2007dc2f4e7e944fdbcb68b75573ffe30",
+  "launcher_sha256": "80f710fd6807a41198a3eb2ead7f1827a5699601380340b8b36ec7667d5dc82b",
+  "complete_setup_sha256": "9745e047df05b264d40b8332f338f7d751654898f48bc8310f046fd1dbf4c6f7",
+  "inputs_unchanged": true,
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

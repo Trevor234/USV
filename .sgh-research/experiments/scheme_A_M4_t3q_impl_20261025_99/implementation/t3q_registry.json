@@ -1,0 +1,19 @@
+{
+  "compiler": "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "physical_production_release": false,
+  "ros_context": false,
+  "schema": "T3-queue-native-registry/v1",
+  "scope": "T3_queue_pressure_component_v1",
+  "sink_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/src/shadow/p1_diag_sink.hpp",
+  "sink_source_sha256": "f564be94d9ab80add4bb5e2f812552b519dc76c03fb172ada49f3992511054be",
+  "source_bundle": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/evidence/freeze/source_bundle.json",
+    "sha256": "fa77feeed4e3ebf4af44672aee69515a987c3ae90303185ae2067a4bb59c90d6"
+  },
+  "test_binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/build_t3q/test_t3_queue_pressure",
+  "test_binary_sha256": "011b1d46ea3f96e3610f34a173150419e9d46e0fb1478c974e0f614ef10d87fd",
+  "test_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/tests/test_t3_queue_pressure.cpp",
+  "test_source_sha256": "f43551e791be89cfedba19d9144797d871295cd6dfc74e484aff1d1ed8530a32",
+  "witness_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3q_impl_20261025_99/implementation/t2_author/observer/src/shadow/p1_witness.hpp",
+  "witness_source_sha256": "1cc9e0e8b92d375fd0d551a73f69cd8ee9c337a1ae317225ce81a2c6fa0a398e"
+}

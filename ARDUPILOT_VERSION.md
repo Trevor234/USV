@@ -5,9 +5,11 @@
 ## 当前版本
 
 - **仓库**: https://github.com/ArduPilot/ardupilot.git
-- **版本标签**: `Plane-4.6.3`
+- **版本标签**: `Plane-4.6.3`（同 commit 另有 `Rover-4.6.3`、`Tracker-4.6.3`，三个 tag 指向同一个提交）
 - **Commit SHA**: `3fc7011a7d3dc047cbb17d8bd98ee94577d144c6`
-- **分支**: `master`
+- **分支**: `master`（仅用于 `git submodule update --remote` 跟踪；实际工作区 checkout 在 tag 上，处于 detached HEAD）
+
+> **注意**：本项目跑的是 **ArduRover** 固件（`rover` SITL），核对参数与行为时请以 `Rover-4.6.3` 的文档为准。`Plane-4.6.3` 只是同一提交上的等价 tag，ArduCopter/ArduPlane 的参数表不适用。
 
 ## 管理方式
 
@@ -19,7 +21,7 @@ git submodule update --init --recursive
 
 # 切换到指定版本（首次克隆后需要执行）
 cd ardurover-argus
-git checkout Plane-4.6.3
+git checkout Rover-4.6.3
 ```
 
 ## 符号链接
@@ -38,7 +40,8 @@ git checkout Plane-4.6.3
 2. 拉取最新标签并切换：
    ```bash
    git fetch --tags
-   git checkout <new-tag>  # 例如 Plane-4.7.0
+   git checkout <new-tag>  # 例如 Rover-4.7.0（ArduPilot 会同时打 Plane/Copter/Rover/Tracker 的 tag，
+                           # USV 请用 Rover-* 前缀的那个；同一提交的 tag 内容完全相同）
    ```
 
 3. 返回主仓库，提交 submodule 变更：

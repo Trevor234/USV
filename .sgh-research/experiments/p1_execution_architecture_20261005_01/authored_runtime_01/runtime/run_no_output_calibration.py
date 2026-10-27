@@ -1,0 +1,506 @@
+"""Create-only P1 diagnostic runs with synthetic inputs and zero physical endpoints.
+
+Run on the authorized Linux ROS host after the build has passed. The invoking
+shell must source Jazzy and this workspace's install/setup.bash first.
+"""
+
+from __future__ import annotations
+
+import argparse
+from collections import Counter
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import re
+import signal
+import shutil
+import sys
+import time
+
+from owned_process_supervisor import Supervisor, proc_table, sha256_file, boot_id
+
+
+REQUESTED_STOP = False
+
+
+def stop_signal(_signum, _frame):
+    global REQUESTED_STOP
+    REQUESTED_STOP = True
+
+
+def exclusive_json(path: Path, data: dict, compact: bool = False) -> None:
+    with path.open("x") as stream:
+        json.dump(data, stream, indent=None if compact else 2, sort_keys=True)
+        stream.write("\n")
+
+
+def load_contract(path: Path, expected: str | None = None) -> tuple[dict, str]:
+    data = path.read_bytes()
+    actual = hashlib.sha256(data).hexdigest()
+    if expected is not None and actual != expected:
+        raise RuntimeError("contract hash changed")
+    c = json.loads(data)
+    if (c.get("execute_qualified") is not False
+            or c.get("parameters_are_diagnostic_only") is not True
+            or c.get("clock") != "CLOCK_MONOTONIC"
+            or c.get("N") != 20 or c.get("dt") != .2):
+        raise RuntimeError("temporary diagnostic-only F5 contract required")
+    for key in ("worker_grace_ns", "term_grace_ns", "kill_postcheck_ns",
+                "shutdown_grace_ns", "active_watchdog_ns"):
+        value = c[key]
+        if not isinstance(value, int) or isinstance(value, bool) or not 0 < value <= 60_000_000_000:
+            raise RuntimeError("invalid finite cleanup/watchdog bound: " + key)
+    return c, actual
+
+
+def host_preflight() -> dict:
+    if sys.platform != "linux":
+        raise RuntimeError("this runner requires the Linux ROS host")
+    forbidden = {"mpc_node", "p1_regulator", "p1_solver_worker", "rl_policy_node",
+                 "rl_policy_node.py", "gzserver", "gzclient", "gazebo"}
+    found = []
+    unreadable = []
+    for item in proc_table():
+        if item["pid"] == os.getpid() or item["state"] == "Z":
+            continue
+        try:
+            raw = (Path("/proc") / str(item["pid"]) / "cmdline").read_bytes()
+            args = [v.decode(errors="replace") for v in raw.split(b"\0") if v]
+        except FileNotFoundError:
+            continue
+        except PermissionError:
+            unreadable.append(item["pid"])
+            continue
+        names = {Path(arg).name for arg in args[:3]}
+        is_gz_sim = "gz" in names and "sim" in args[:5]
+        prior_fixture = ("run_no_output_calibration.py" in names
+                         and "--fixture-child" in args)
+        if names & forbidden or is_gz_sim or prior_fixture:
+            found.append({"pid": item["pid"], "exe": item["exe"],
+                          "start_ticks": item["start_ticks"]})
+    if found:
+        raise RuntimeError("existing controller/Gazebo/fixture prevents startup: "
+                           + json.dumps(found, sort_keys=True))
+    if unreadable:
+        raise RuntimeError("process preflight incomplete; unreadable cmdline PIDs: "
+                           + str(unreadable))
+    return {"boot_id": boot_id(), "monotonic_ns": time.monotonic_ns(),
+            "existing_controller_gazebo_count": 0, "unreadable_cmdline_count": 0}
+
+
+def fixture_child(args) -> int:
+    c, digest = load_contract(args.contract, args.contract_hash)
+    import rclpy
+    from rclpy.signals import SignalHandlerOptions
+    from rclpy.qos import QoSProfile, ReliabilityPolicy
+    from rosgraph_msgs.msg import Clock
+    from nav_msgs.msg import Odometry, Path as RosPath
+    from sensor_msgs.msg import Imu
+    from std_msgs.msg import Float64MultiArray, MultiArrayDimension
+    from geometry_msgs.msg import PoseStamped
+    rclpy.init(args=[], signal_handler_options=SignalHandlerOptions.NO)
+    signal.signal(signal.SIGINT, stop_signal)
+    signal.signal(signal.SIGTERM, stop_signal)
+    node = rclpy.create_node("p1_synthetic_input_fixture")
+    qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE)
+    topics = c["input_topics"]
+    publishers = {"clock": node.create_publisher(Clock, "/clock", qos),
+                  "odom": node.create_publisher(Odometry, topics["odom"], qos),
+                  "imu": node.create_publisher(Imu, topics["imu"], qos),
+                  "path": node.create_publisher(RosPath, topics["path"], qos),
+                  "profile": node.create_publisher(Float64MultiArray, topics["profile"], qos)}
+    path = RosPath()
+    path.header.frame_id = c["expected_pose_frame"]
+    path.header.stamp.sec = 1
+    profile = Float64MultiArray()
+    for label in ("stamp_sec:1", "stamp_nanosec:0"):
+        dim = MultiArrayDimension()
+        dim.label = label
+        profile.layout.dim.append(dim)
+    for i in range(20):
+        pose = PoseStamped()
+        pose.header = path.header
+        pose.pose.position.x = i * .5
+        pose.pose.orientation.w = 1.
+        path.poses.append(pose)
+        profile.data.extend([.6, 0., 0., i * .5 / .6])
+    counts = Counter()
+    started = time.monotonic_ns()
+    next_tick = started
+    next_reference = started
+    error = None
+    try:
+        while not REQUESTED_STOP:
+            now = time.monotonic_ns()
+            if now < next_tick:
+                time.sleep(min(.005, (next_tick - now) / 1e9))
+                continue
+            if now - next_tick > 20_000_000:
+                counts["skipped_input_slots"] += (now - next_tick) // 20_000_000
+            next_tick = now + 20_000_000
+            sim = 1_000_000_000 + now - started  # Explicit synthetic RTF=1.
+            clock = Clock()
+            clock.clock.sec, clock.clock.nanosec = divmod(sim, 1_000_000_000)
+            odom = Odometry()
+            odom.header.frame_id = c["expected_pose_frame"]
+            odom.child_frame_id = c["expected_child_frame"]
+            odom.header.stamp = clock.clock
+            odom.pose.pose.orientation.w = 1.
+            imu = Imu()
+            imu.header.stamp = clock.clock
+            imu.header.frame_id = c["expected_child_frame"]
+            imu.angular_velocity.z = 0.
+            for name, message in (("clock", clock), ("odom", odom), ("imu", imu)):
+                publishers[name].publish(message)
+                counts[name] += 1
+            if now >= next_reference:
+                publishers["path"].publish(path)
+                publishers["profile"].publish(profile)
+                counts["path"] += 1
+                counts["profile"] += 1
+                next_reference = now + 1_000_000_000
+            rclpy.spin_once(node, timeout_sec=0)
+    except BaseException as exc:
+        error = repr(exc)
+    finally:
+        exclusive_json(args.fixture_source, {
+            "type": "fixture_summary", "schema": "p1-synthetic-fixture-v1",
+            "contract_sha256": digest, "pid": os.getpid(), "boot_id": boot_id(),
+            "started_ns": started, "finished_ns": time.monotonic_ns(),
+            "counts": dict(counts), "error": error, "physical_endpoints": 0,
+            "sim_semantics": "one-second origin + CLOCK_MONOTONIC elapsed; RTF1",
+            "zero_state_static": True, "actual_plant": False,
+            "publisher_side_counts_only": True}, compact=True)
+        node.destroy_node()
+        rclpy.shutdown()
+    return 1 if error else 0
+
+
+def source_observation(path: Path) -> dict:
+    observation = {"path": path.name, "exists": path.exists(), "types": {},
+                   "parse_errors": [], "summaries": [], "completeness_proven": False}
+    if not path.exists():
+        return observation
+    counts = Counter()
+    with path.open(errors="replace") as stream:
+        for number, line in enumerate(stream, 1):
+            try:
+                item = json.loads(line)
+                counts[item.get("type", "unknown")] += 1
+                if item.get("type") in {"source_summary", "worker_summary", "fixture_summary"}:
+                    observation["summaries"].append(item)
+            except (json.JSONDecodeError, AttributeError) as error:
+                observation["parse_errors"].append({"line": number, "error": str(error)})
+    observation["types"] = dict(counts)
+    observation["sha256"] = sha256_file(path)
+    return observation
+
+
+def run(args) -> int:
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,119}", args.run_id):
+        raise ValueError("invalid explicit run_id")
+    if not math.isfinite(args.duration) or not 1 <= args.duration <= 60:
+        raise ValueError("duration must be finite in [1,60] seconds")
+    c, contract_hash = load_contract(args.contract, args.contract_hash)
+    clock_info = time.get_clock_info("monotonic")
+    if ("CLOCK_MONOTONIC" not in clock_info.implementation
+            or not clock_info.monotonic or clock_info.adjustable):
+        raise RuntimeError("Python monotonic implementation is not the declared native clock")
+    if (args.test_delay_ms or args.test_native_block_ms) and not c["fault_injection_enabled"]:
+        raise RuntimeError("fault injection disabled by contract")
+    directory = args.experiment_root.resolve() / args.run_id
+    directory.mkdir(parents=False, exist_ok=False)
+    source_paths = {name: directory / (name + "_source.jsonl")
+                    for name in ("worker", "regulator", "fixture")}
+    # The fixture has one JSON summary, despite the common source filename suffix.
+    worker = (args.workspace / "install/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_solver_worker").resolve(strict=True)
+    regulator = worker.with_name("p1_regulator").resolve(strict=True)
+    python = Path(sys.executable).resolve(strict=True)
+    ros2 = Path(shutil.which("ros2") or "").resolve(strict=True)
+    if not ros2.is_file() or ros2.name != "ros2":
+        raise RuntimeError("source ROS Jazzy and workspace setup before invoking runner")
+    binaries = {"worker": {"path": str(worker), "sha256": sha256_file(worker)},
+                "regulator": {"path": str(regulator), "sha256": sha256_file(regulator)},
+                "python": {"path": str(python), "sha256": sha256_file(python)},
+                "ros2_cli": {"path": str(ros2), "sha256": sha256_file(ros2)}}
+    for name, expected in (("worker", args.worker_sha256), ("regulator", args.regulator_sha256)):
+        if expected and expected.lower() != binaries[name]["sha256"]:
+            raise RuntimeError("predeclared executable hash mismatch: " + name)
+    env = dict(os.environ, ROS_DOMAIN_ID="96", ROS_LOCALHOST_ONLY="1")
+    topics = {"inputs": {**c["input_topics"], "clock": "/clock"},
+              "p1": {"job": "/p1/solve_job", "candidate": "/p1/solve_candidate",
+                     "capability": "/p1/worker_capability", "decision": "/p1/execution_decision",
+                     "stop": "/p1/stop"}}
+    expected_fault = ("controlled_pre_native_barrier_watchdog" if args.test_native_block_ms
+                      else "post_native_result_delay" if args.test_delay_ms else "none")
+    context = {"schema": "p1-no-output-calibration-context-v1", "run_id": args.run_id,
+               "mode": "no_output", "boot_id": boot_id(), "contract_file": str(args.contract.resolve()),
+               "contract_sha256": contract_hash, "source_files": {k: v.name for k, v in source_paths.items()},
+               "python_monotonic_clock": {"implementation": clock_info.implementation,
+                   "resolution_s": clock_info.resolution, "monotonic": clock_info.monotonic,
+                   "adjustable": clock_info.adjustable, "domain": "CLOCK_MONOTONIC"},
+               "bag_relative_path": "raw_bag", "topics": topics,
+               "binaries": binaries, "runner_sha256": sha256_file(Path(__file__)),
+               "supervisor_sha256": sha256_file(Path(__file__).with_name("owned_process_supervisor.py")),
+               "ros_environment": {"ROS_DOMAIN_ID": "96", "ROS_LOCALHOST_ONLY": "1"},
+               "declaration": {"duration_s": args.duration, "test_delay_ms": args.test_delay_ms,
+                               "test_native_block_ms": args.test_native_block_ms,
+                               "expected_fault": expected_fault, "execute_qualified": False},
+               "normal_contract_complete": False, "plant_acceptance_observed": False,
+               "created_ns": time.monotonic_ns()}
+    exclusive_json(directory / "run_context.json", context)
+    supervisor = Supervisor(directory)
+    node = None
+    rclpy = None
+    cleanup = {}
+    failure = None
+    stop_reason = "not_started"
+    no_endpoints = None
+    observations = {"capability_count": 0, "decision_count": 0, "watchdog_seen": False}
+    latest = {"capability": None, "active_since": None, "active_job": 0, "owned_identity": None}
+    try:
+        preflight = host_preflight()
+        exclusive_json(directory / "host_preflight.json", preflight)
+        # Domain isolation applies to the driver as well as each owned child.
+        os.environ.update(ROS_DOMAIN_ID="96", ROS_LOCALHOST_ONLY="1")
+        import rclpy
+        from rclpy.signals import SignalHandlerOptions
+        from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy
+        from std_msgs.msg import Bool, Float64MultiArray
+        from rosgraph_msgs.msg import Clock
+        from nav_msgs.msg import Odometry, Path as RosPath
+        from sensor_msgs.msg import Imu
+        from usv_research_interfaces.msg import WorkerCapability, ExecutionDecision, SolveJob, SolveCandidate
+        rclpy.init(args=[], signal_handler_options=SignalHandlerOptions.NO)
+        signal.signal(signal.SIGINT, stop_signal)
+        signal.signal(signal.SIGTERM, stop_signal)
+        node = rclpy.create_node("p1_calibration_driver")
+        qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE)
+        stop_pub = node.create_publisher(Bool, "/p1/stop", qos)
+
+        def capability(message):
+            if (message.run_id != args.run_id or message.contract_hash != contract_hash
+                    or message.boot_id != context["boot_id"]):
+                return
+            identity = latest["owned_identity"]
+            if identity is not None and (message.pid, message.worker_instance) != identity:
+                return
+            observations["capability_count"] += 1
+            latest["capability"] = message
+            if message.active_job != latest["active_job"]:
+                latest["active_since"] = time.monotonic_ns() if message.active_job else None
+                latest["active_job"] = message.active_job
+
+        def decision(message):
+            if message.run_id == args.run_id:
+                observations["decision_count"] += 1
+
+        caps_qos = QoSProfile(depth=1, reliability=ReliabilityPolicy.RELIABLE,
+                              durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        node.create_subscription(WorkerCapability, "/p1/worker_capability", capability, caps_qos)
+        node.create_subscription(ExecutionDecision, "/p1/execution_decision", decision, qos)
+
+        def assert_no_endpoints():
+            nonlocal no_endpoints
+            counts = {name: node.count_publishers(topic) for name, topic in c["output_topics"].items()}
+            if any(counts.values()):
+                no_endpoints = False
+                raise RuntimeError("physical publisher endpoint detected: " + str(counts))
+            if no_endpoints is None:
+                no_endpoints = True
+
+        def spin_wait(predicate, timeout):
+            deadline = time.monotonic() + timeout
+            while time.monotonic() < deadline:
+                rclpy.spin_once(node, timeout_sec=.02)
+                if REQUESTED_STOP:
+                    raise RuntimeError("operator interrupted startup")
+                assert_no_endpoints()
+                if predicate():
+                    return
+            raise TimeoutError("bounded ROS startup condition not satisfied")
+
+        # Let discovery run before launch and preserve graph facts.
+        discover_end = time.monotonic() + 1.
+        while time.monotonic() < discover_end:
+            rclpy.spin_once(node, timeout_sec=.02)
+            assert_no_endpoints()
+        observed_nodes = node.get_node_names_and_namespaces()
+        if any(name in {"p1_regulator", "p1_solver_worker", "mpc_node", "p1_synthetic_input_fixture"}
+               for name, _namespace in observed_nodes):
+            raise RuntimeError("existing ROS controller/fixture in diagnostic domain")
+        supervisor.event("ros_graph_preflight", nodes=observed_nodes, physical_endpoints=0)
+        bag_topics = list(topics["inputs"].values()) + list(topics["p1"].values())
+        # Declare input and typed topics before recording, without publishing data.
+        # Otherwise rosbag cannot subscribe to an undiscovered /clock topic.
+        declarations = [(Clock, "/clock"), (Odometry, c["input_topics"]["odom"]),
+                        (Imu, c["input_topics"]["imu"]), (RosPath, c["input_topics"]["path"]),
+                        (Float64MultiArray, c["input_topics"]["profile"]),
+                        (SolveJob, "/p1/solve_job"), (SolveCandidate, "/p1/solve_candidate"),
+                        (ExecutionDecision, "/p1/execution_decision")]
+        declaration_publishers = [node.create_publisher(kind, topic, qos)
+                                  for kind, topic in declarations]
+        declaration_publishers.append(node.create_publisher(WorkerCapability,
+                                      "/p1/worker_capability", caps_qos))
+        supervisor.event("topic_types_declared", topics=bag_topics,
+                         data_published=False, physical_endpoints=0)
+        # Execute the CLI through the verified Python interpreter. ros2 is a
+        # Python entrypoint; this removes interpreter/launcher identity ambiguity.
+        recorder = supervisor.spawn("recorder", [str(python), str(ros2), "bag", "record",
+                    "--storage", "mcap", "--output", str(directory / "raw_bag"), *bag_topics],
+                    env, python, binaries["python"]["sha256"])
+        spin_wait(lambda: recorder.process.poll() is None
+                  and (directory / "raw_bag").is_dir()
+                  and all(any("recorder" in info.node_name
+                              for info in node.get_subscriptions_info_by_topic(topic))
+                          for topic in bag_topics), 10.)
+        base = ["--ros-args", "-p", "run_id:=" + args.run_id,
+                "-p", "contract_file:=" + str(args.contract.resolve()),
+                "-p", "contract_hash:=" + contract_hash]
+        worker_child = supervisor.spawn("worker", [str(worker), *base,
+                    "-p", "source_file:=" + str(source_paths["worker"]),
+                    "-p", "test_delay_ms:=" + str(args.test_delay_ms),
+                    "-p", "test_native_block_ms:=" + str(args.test_native_block_ms)],
+                    env, worker, binaries["worker"]["sha256"])
+        spin_wait(lambda: latest["capability"] is not None, 10.)
+        cap = latest["capability"]
+        if (cap.pid != worker_child.process.pid or cap.backend != "acados" or cap.fatal
+                or cap.clock_name != "CLOCK_MONOTONIC" or cap.horizon_steps != 20
+                or cap.prediction_dt != .2 or cap.nominal_hash != c["nominal_hash"]
+                or cap.fault_injection_enabled != c["fault_injection_enabled"]):
+            raise RuntimeError("worker capability startup mismatch")
+        latest["owned_identity"] = (cap.pid, cap.worker_instance)
+        supervisor.event("worker_capability_verified", pid=cap.pid,
+                          worker_instance=cap.worker_instance, backend=cap.backend,
+                          fault_injection_enabled=cap.fault_injection_enabled)
+        regulator_child = supervisor.spawn("regulator", [str(regulator), *base,
+                    "-p", "mode:=no_output", "-p", "worker_pid:=" + str(worker_child.process.pid),
+                    "-p", "source_file:=" + str(source_paths["regulator"])],
+                    env, regulator, binaries["regulator"]["sha256"])
+        fixture = supervisor.spawn("fixture", [str(python), str(Path(__file__).resolve()),
+                    "--fixture-child", "--contract", str(args.contract.resolve()),
+                    "--contract-hash", contract_hash, "--fixture-source", str(source_paths["fixture"])],
+                    env, python, binaries["python"]["sha256"])
+        started = time.monotonic_ns()
+        deadline = started + int(args.duration * 1e9)
+        supervisor.event("calibration_window_start", planned_duration_s=args.duration,
+                          expected_fault=expected_fault, physical_endpoints=0)
+        stop_reason = "declared_duration_elapsed"
+        while time.monotonic_ns() < deadline:
+            rclpy.spin_once(node, timeout_sec=.02)
+            assert_no_endpoints()
+            if supervisor.evidence_failed:
+                raise RuntimeError("supervision ledger IO failure")
+            if REQUESTED_STOP:
+                stop_reason = "operator_stop"
+                break
+            for child in (worker_child, regulator_child, recorder, fixture):
+                if child.process.poll() is not None:
+                    raise RuntimeError("owned child exited during calibration: " + child.name)
+            cap = latest["capability"]
+            if cap is not None and cap.fatal:
+                stop_reason = "worker_fatal"
+                if expected_fault == "none":
+                    raise RuntimeError("unexpected fatal worker in baseline calibration")
+                break
+            active_since = latest["active_since"]
+            if active_since is not None and time.monotonic_ns() - active_since > c["active_watchdog_ns"]:
+                observations["watchdog_seen"] = True
+                stop_reason = "owned_worker_active_watchdog"
+                if expected_fault == "none":
+                    raise RuntimeError("unexpected worker watchdog in baseline calibration")
+                break
+        supervisor.event("calibration_window_end", reason=stop_reason,
+                          duration_ns=time.monotonic_ns() - started, observations=observations)
+        # The logical stop precedes signals; keep clock/recorder alive for the
+        # regulator's shutdown decisions and all worker source/publication tail.
+        stop_deadline = time.monotonic() + c["shutdown_grace_ns"] / 1e9
+        while regulator_child.process.poll() is None and time.monotonic() < stop_deadline:
+            message = Bool()
+            message.data = True
+            stop_pub.publish(message)
+            rclpy.spin_once(node, timeout_sec=.02)
+            time.sleep(.03)
+        supervisor.event("logical_stop_requested", regulator_exit=regulator_child.process.poll(),
+                          shutdown_grace_ns=c["shutdown_grace_ns"])
+    except BaseException as error:
+        failure = repr(error)
+        stop_reason = "startup_or_runtime_exception"
+        supervisor.event("run_exception", error=failure)
+        # No external/unowned process is stopped on a preflight violation.
+    finally:
+        for name in ("regulator", "worker", "fixture", "recorder"):
+            child = supervisor.owned.get(name)
+            if child is None:
+                continue
+            if name == "recorder":
+                # Recorder sees the full source/node shutdown tail before SIGINT.
+                time.sleep(.25)
+            cleanup[name] = supervisor.stop(child, c["worker_grace_ns"] / 1e9,
+                                            c["term_grace_ns"] / 1e9,
+                                            c["kill_postcheck_ns"] / 1e9)
+        if node is not None:
+            node.destroy_node()
+        if rclpy is not None and rclpy.ok():
+            rclpy.shutdown()
+        sources = {}
+        for name, path in source_paths.items():
+            try:
+                sources[name] = source_observation(path)
+            except OSError as error:
+                sources[name] = {"path": path.name, "read_error": repr(error),
+                                 "completeness_proven": False}
+        supervisor.close()
+        if supervisor.evidence_failed and failure is None:
+            failure = "supervision ledger write/close failure"
+        summary = {"schema": "p1-no-output-calibration-runner-summary-v1", "run_id": args.run_id,
+                   "calibration_status": "cleanup_failed" if supervisor.cleanup_failed
+                       else "failed" if failure else "diagnostic_data_collected",
+                   "failure": failure, "stop_reason": stop_reason, "expected_fault": expected_fault,
+                   "cleanup_complete": not supervisor.cleanup_failed,
+                   "cleanup_failed": supervisor.cleanup_failed, "cleanup": cleanup,
+                   "supervision_evidence_complete": not supervisor.evidence_failed,
+                   "supervision_memory_tail": supervisor.memory_tail if supervisor.evidence_failed else [],
+                   "graph_no_physical_publishers": no_endpoints, "observations": observations,
+                   "sources": sources, "bag_exists": (directory / "raw_bag").is_dir(),
+                   "bag_metadata_exists": (directory / "raw_bag/metadata.yaml").is_file(),
+                   "normal_contract_complete": False, "execute_qualified": False,
+                   "plant_acceptance_observed": False, "source_completeness_proven": False,
+                   "finished_ns": time.monotonic_ns()}
+        exclusive_json(directory / "runner_summary.json", summary)
+    print(json.dumps({"run_id": args.run_id, "directory": str(directory),
+                      "status": summary["calibration_status"],
+                      "cleanup_failed": summary["cleanup_failed"]}))
+    return 2 if supervisor.cleanup_failed else 1 if failure else 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--contract", type=Path, required=True)
+    parser.add_argument("--contract-hash")
+    parser.add_argument("--experiment-root", type=Path)
+    parser.add_argument("--workspace", type=Path, default=Path("/home/trevor/USV/usv_mpc_ws"))
+    parser.add_argument("--run-id")
+    parser.add_argument("--duration", type=float, default=10.)
+    parser.add_argument("--test-delay-ms", type=int, choices=(0, 50, 150, 250, 400), default=0)
+    parser.add_argument("--test-native-block-ms", type=int, default=0)
+    parser.add_argument("--worker-sha256")
+    parser.add_argument("--regulator-sha256")
+    parser.add_argument("--fixture-child", action="store_true")
+    parser.add_argument("--fixture-source", type=Path)
+    args = parser.parse_args()
+    if not 0 <= args.test_native_block_ms <= 60000:
+        parser.error("controlled pre-native barrier must be in [0,60000] ms")
+    if args.fixture_child:
+        if args.fixture_source is None or args.contract_hash is None:
+            parser.error("fixture source and frozen contract hash required")
+        return fixture_child(args)
+    if args.run_id is None or args.experiment_root is None:
+        parser.error("explicit create-only run-id and existing experiment-root required")
+    return run(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

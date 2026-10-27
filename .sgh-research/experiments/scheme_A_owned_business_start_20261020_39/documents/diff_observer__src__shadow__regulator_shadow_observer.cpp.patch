@@ -1,0 +1,144 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_ordinary_supervision_20261020_38/author/observer/src/shadow/regulator_shadow_observer.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/author/observer/src/shadow/regulator_shadow_observer.cpp
+@@ -1,4 +1,5 @@
+ #include "c38_diagnostic_gate.hpp"
++#include "business_start_gate_v1.hpp"
+ #include "task_time_profile_v1.hpp"
+ #include "task_time_entry_contract_v1.hpp"
+ #include "../../../phase_protocol.hpp"
+@@ -99,6 +100,10 @@
+     v3_policy_=declare_parameter<std::string>("diagnostic_v3_input_policy","none");
+     const auto v3_budget=declare_parameter<int64_t>("diagnostic_v3_wait_ns",0);
+     activation_interleave::validate(v3_policy_,v3_budget,mode_,audit,c_.at("fault_injection_enabled").get<bool>(),v1_enabled_);
++    business_start_policy_=declare_parameter<std::string>("business_start_policy","immediate");
++    business_start_file_=declare_parameter<std::string>("business_start_file","");
++    const auto business_timeout=declare_parameter<int64_t>("business_start_timeout_ns",0);
++    business_start::validate_policy(business_start_policy_,business_start_file_,business_timeout,mode_,audit,c_.at("fault_injection_enabled").get<bool>());
+     p1::shadow::EntryPolicy policy{mode_,run_,boot_,source_file,witness_file_,source_path,expected_source,expected_binary,expected_worker,instance,
+       expected_worker_pid_,audit,hooks,expected_legacy_identity_};
+     policy.validate(); // All application publisher/sink creation is below this gate.
+@@ -202,16 +207,68 @@
+       p1_owned::subscription_endpoint(*applied_,"usv_research_interfaces/msg/AppliedControl"),
+       p1_owned::subscription_endpoint(*controlled_phase_subscription_,"std_msgs/msg/String")});
+     p1_owned::write_create_only(owned_file,p1_owned::role_manifest(*this,"observer",run_,hash_,P1_OWNED_SOURCE_BUNDLE_SHA256,endpoints,
+-      {{"source_fd",p1_owned::source_fd_identity(source_file)},{"contract_configuration",c_},{"diagnostic_v1_sink_policy",v1_policy_},{"diagnostic_v1_fault_file",v1_fault_file_},{"diagnostic_v3_input_policy",v3_policy_},{"diagnostic_v3_wait_ns",v3_budget},
++      {{"source_fd",p1_owned::source_fd_identity(source_file)},{"contract_configuration",c_},{"diagnostic_v1_sink_policy",v1_policy_},{"diagnostic_v1_fault_file",v1_fault_file_},{"diagnostic_v3_input_policy",v3_policy_},{"diagnostic_v3_wait_ns",v3_budget},{"business_start_policy",business_start_policy_},
+        {"worker_instance",instance},{"runtime_hook_values",hooks},{"expected_legacy_identity",expected_legacy_identity_.json()},
+        {"physical_publisher_endpoints",0},{"adapter_peer_binding",owner_peer_->evidence()},{"worker_peer_binding",worker_peer_->evidence()},{"adapter_pins_sha256",peer_sha},{"controlled_phase_peer_binding",controlled_owner_phase_peer_->evidence()},{"controlled_phase_enabled",true},{"controlled_phase_baseline",controlled_phase::baseline}}));
+     wait_recording_ready();
+     p1_owned::write_create_only(owned_file+".reader_ready.json",{{"schema","p1-owned-native-reader-ready-v1"},{"role","observer"},{"run_id",run_},{"contract_sha256",hash_},{"boot_id",boot_},{"pid",getpid()},{"process_start_ticks",p1_owned::process_start_ticks()},{"owned_manifest_sha256",p1_owned::file_sha256(owned_file)},{"checked_steady_ns",p1_owned::steady_ns()},{"applied_matched_publishers",applied_->get_publisher_count()},{"applied_endpoint",p1_owned::subscription_endpoint(*applied_,"usv_research_interfaces/msg/AppliedControl")},{"fixture_only",true},{"execute_qualified",false}});
+     legacy_prepare_start_ns_=p1::monotonic_ns();legacy_prepare_deadline_ns_=legacy_prepare_start_ns_+legacy_ready_timeout_ns_;
+-    prep_=std::thread([this]{prepare_loop();});tick_=std::thread([this]{tick_loop();});
++    if(business_start_policy_==business_start::policy){
++      business_manifest_file_=owned_file;business_manifest_sha_=p1_owned::file_sha256(owned_file);
++      const auto &d=adapter_pins_.at("driver");
++      business_start_gate_=std::make_unique<business_start::Gate>(business_start::Identity{run_,boot_,hash_,
++        adapter_pins_.at("driver_tool_sha256"),business_manifest_sha_,peer_pins.manifest_sha256,
++        d.at("pid"),d.at("start_ticks")},p1::monotonic_ns());
++      if(!sink_->add({{"type","business_start_waiting"},{"gate",business_start_gate_->evidence()},
++        {"owned_manifest_sha256",business_manifest_sha_},{"business_threads_started",false},{"physical_publisher_endpoints",0}}))
++        throw std::runtime_error("business waiting Source unavailable");
++    }else {prep_=std::thread([this]{prepare_loop();});tick_=std::thread([this]{tick_loop();});}
+     sink_->add({{"type","startup"},{"schema","p1-regulator-v1"},{"run_id",run_},{"mode",mode_},{"pid",getpid()},{"boot",boot_},{"clock","CLOCK_MONOTONIC"},{"contract_hash",hash_},{"physical_publisher_endpoints",0},{"worker_liveness_policy","linux_pidfd_no_wait"},{"publication_history_policy","full_consecutive_publisher_history"},{"input_anchor_source","legacy_publisher"},{"diagnostic_only",true},{"entry_policy",p1::shadow::entry_policy},{"fault_hook_values",hooks},{"fault_capability_flag",c_.at("fault_injection_enabled")},{"legacy_expected_identity",expected_legacy_identity_.json()},{"external_worker_zero_hook_argv_verified",false},{"reference_sampling_policy",c_.at("reference_sampling_policy")},{"readiness_policy","p1-D1-legacy-ready-v1"},{"legacy_ready_timeout_ns",legacy_ready_timeout_ns_},{"legacy_prepare_start_ns",legacy_prepare_start_ns_},{"legacy_prepare_deadline_ns",legacy_prepare_deadline_ns_}});
+   }
+   ~Regulator(){stop_requested=true;prep_stop_=true;prep_cv_.notify_all();if(tick_.joinable())tick_.join();if(prep_.joinable())prep_.join();sink_->close();}
++  bool business_start_failed()const{return business_start_failed_;}
++  void poll_business_start(){
++    if(!business_start_gate_||business_start_gate_->state()!=business_start::State::waiting)return;
++    const auto now=p1::monotonic_ns();
++    if(stop_requested||stopping_||adapter_->closing()){
++      finish_business_before_start("shutdown_before_business_start",false,business_start::State::cancelled);return;
++    }
++    if(business_start_gate_->expired(now)){
++      finish_business_before_start("business_start_timeout",true,business_start::State::expired);return;
++    }
++    try{
++      if(!std::filesystem::exists(business_start_file_))return;
++      const auto status=std::filesystem::symlink_status(business_start_file_);
++      p1_owned::require(std::filesystem::is_regular_file(status)&&std::filesystem::file_size(business_start_file_)<=business_start::max_bytes,"business request regular bounded file");
++      const auto raw=c36_owned::detail::read_manifest(business_start_file_);
++      p1_owned::require(p1_owned::file_sha256(business_manifest_file_)==business_manifest_sha_,"business Observer manifest changed");
++      const auto &driver=adapter_pins_.at("driver");c36_owned::PeerPins pins;
++      pins.boot_id=boot_;pins.pid=driver.at("pid");pins.process_start_ticks=driver.at("start_ticks");
++      pins.exe=driver.at("exe");pins.binary_sha256=driver.at("exe_sha256");
++      c36_owned::detail::authenticate_process(pins,driver);
++      const auto tool=driver.at("argv").at(1).get<std::string>();
++      p1_owned::require(std::filesystem::path(tool).is_absolute()&&file_sha(tool)==adapter_pins_.at("driver_tool_sha256"),"business live driver source hash");
++      {
++        std::lock_guard<std::mutex> lock(mutex_);const auto checked=p1::monotonic_ns();check_worker_locked(checked);
++        business_start::Context c;c.ready=legacy_ready_issued_&&legacy_measurement_eligible_;c.worker_valid=worker_valid_;
++        c.worker_unusable=worker_unusable_;c.stopping=stopping_||stop_requested;c.sink_failed=sink_->failed();
++        c.owner_alive=owner_peer_->alive();c.worker_alive=worker_peer_->alive();c.owner_open=!adapter_->closing();
++        c.source_eligible=eligible(snapshot_locked(checked),checked).empty();c.anchor_known=anchor_.known;c.anchor_n=anchor_.n;
++        c.anchor_sequence=anchor_.seq;c.version=p1::d0::version_json(version_);
++        const auto grant=business_start_gate_->open(raw,checked,c);
++        p1_owned::require(sink_->add({{"type","business_start_authorized"},{"request_sha256",grant.sha256},
++          {"issued_ns",grant.issued_ns},{"authorized_ns",grant.authorized_ns},
++          {"driver_attested_Publisher_bound_ns",grant.publisher_bound_ns},{"initial_applied_sequence",grant.applied_sequence},
++          {"gate",business_start_gate_->evidence()},{"decision_sequence_before",decision_seq_},{"job_id_before",job_id_},
++          {"version",c.version},{"actual_anchor_n",anchor_.n},{"actual_anchor_sequence",anchor_.seq},
++          {"physical_publisher_endpoints",0},{"business_threads_started",false}}),"business authorization Source failed");
++      }
++    }catch(const std::exception &e){finish_business_before_start(e.what(),true,business_start::State::rejected);return;}
++      prep_=std::thread([this]{prepare_loop();});tick_=std::thread([this]{tick_loop();});
++      sink_->add({{"type","business_threads_started"},{"observed_ns",p1::monotonic_ns()},
++        {"gate",business_start_gate_->evidence()},{"first_tick_lead_ns",1000000000},
++        {"job_deadline_ns",150000000},{"period_ns",p1::T}});
++  }
+   bool finished()const{return finished_;}
+   bool audit_closed()const{return audit_closed_;}
+   void register_diagnostic_group(rclcpp::Executor &exec){if(c38_diagnostic_group_){exec.add_callback_group(c38_diagnostic_group_,get_node_base_interface());c38_group_registered_=true;}}
+@@ -260,6 +317,15 @@
+     fprintf(stdout,"WITNESS_OBSERVATION_COMPLETE=%s\n",audit_closed_&&witness_->summary().observation_complete?"true":"false");
+     fprintf(stdout,"WITNESS_BUSINESS_READY_OBSERVED=%s\n",witness_->summary().business_ready_observed?"true":"false");return !sink_->failed();}
+  private:
++  void finish_business_before_start(const std::string &reason,bool failed,business_start::State state){
++    std::lock_guard<std::mutex> lock(mutex_);const auto now=p1::monotonic_ns();
++    business_start_failed_=failed;normal_complete_=false;stopping_=true;prep_stop_=true;prep_cv_.notify_all();
++    business_start_gate_->close(now,state);if(adapter_)adapter_->request_close(now);invalidate_locked();
++    sink_->add({{"type","business_start_closed_before_tick"},{"reason",reason},{"failed",failed},{"closed_ns",now},
++      {"gate",business_start_gate_->evidence()},{"decision_sequence",decision_seq_},{"job_id",job_id_},
++      {"business_threads_started",tick_.joinable()||prep_.joinable()},{"physical_publisher_endpoints",0}});
++    finished_=true;
++  }
+ #ifdef P1_C37_WORKER_CALLBACK_TEST
+   friend class C37WorkerCallbackAccess;
+ #endif
+@@ -736,7 +802,7 @@
+     sink_->add({{"type","reference_pair_retry"},{"policy","authenticated_phase_reference_pair_completion_v1"},{"trigger",trigger},{"input_commit_ordinal",input_commit_ordinal_},{"path_sequence",ref_->path_sequence},{"profile_sequence",ref_->profile_sequence},{"path_stamp_ns",int64_t(ref_->path_stamp.first)*1000000000LL+ref_->path_stamp.second},{"profile_stamp_ns",int64_t(ref_->profile_stamp.first)*1000000000LL+ref_->profile_stamp.second},{"started_ns",start},{"completed_ns",p1::monotonic_ns()},{"phase_still_awaiting",controlled_phase_state_->awaiting()},{"froze",!controlled_phase_state_->awaiting()},{"stage_qualified",false}});
+   }
+   void maybe_enqueue_controlled_locked(int64_t now){
+-    if(!controlled_phase_state_||stopping_||worker_unusable_||!worker_valid_||sink_->failed()||!legacy_measurement_eligible_||adapter_->closing()||!owner_peer_->alive())return;
++    if((business_start_gate_&&!business_start_gate_->started())||!controlled_phase_state_||stopping_||worker_unusable_||!worker_valid_||sink_->failed()||!legacy_measurement_eligible_||adapter_->closing()||!owner_peer_->alive())return;
+     auto next=snapshot_locked(now);if(!eligible(next,next.freeze).empty())return;
+     auto grant=controlled_phase_state_->freeze(job_id_+1,now);if(!grant)return;
+     if(grant->job.target_tick!=current_tick_+1||grant->applied.sequence!=legacy_sequence_||grant->applied.command!=anchor_.n){unusable_locked("controlled_phase_native_anchor_or_tick_differs",now);return;}
+@@ -1035,7 +1101,12 @@
+       saved.raw=std::move(s);capture.decision_commit_ns=d.activation_commit_ns;break;
+     }
+   }
+-  void tick_loop(){int64_t origin=p1::monotonic_ns()+1000000000,stop_start=0;uint64_t tick=0,last_schedule=0;
++  void tick_loop(){
++    if(business_start_gate_&&!business_start_gate_->started()){
++      business_start_failed_=true;normal_complete_=false;finished_=true;
++      sink_->add({{"type","business_tick_without_start_blocked"},{"checked_ns",p1::monotonic_ns()},{"decision_sequence",decision_seq_},{"job_id",job_id_}});return;
++    }
++    int64_t origin=p1::monotonic_ns()+1000000000,stop_start=0;uint64_t tick=0,last_schedule=0;
+     while(true){auto planned=origin+tick*p1::T;p1::sleep_until_monotonic(planned);
+       if(tick_barrier_->take()){
+         const auto start=p1::monotonic_ns();sink_->add({{"type","diagnostic_tick_barrier_enter"},{"expected_tick",tick},{"planned_ns",planned},{"start_ns",start},{"maximum_ms",tick_barrier_->milliseconds()},{"physical_output",false}});
+@@ -1080,6 +1151,8 @@
+     }
+     prep_stop_=true;prep_cv_.notify_all();finished_=true;
+   }
++  std::string business_start_policy_="immediate",business_start_file_,business_manifest_file_,business_manifest_sha_;
++  std::unique_ptr<business_start::Gate> business_start_gate_;bool business_start_failed_=false;
+   std::string v3_policy_="none";activation_interleave::Once v3_interleave_;
+   std::string v1_policy_,v1_fault_file_;uint64_t v1_await_sequence_=0;bool v1_enabled_=false,v1_armed_=false,v1_report_written_=false;
+   bool controlled_phase_enabled_=false,controlled_previous_hold_changed_=false;
+@@ -1114,4 +1187,4 @@
+   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_;rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_;rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_;rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr profile_;rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_;rclcpp::Subscription<p1::Candidate>::SharedPtr candidates_;rclcpp::Subscription<p1::Capability>::SharedPtr capabilities_;rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr stop_;rclcpp::Subscription<usv_research_interfaces::msg::AppliedControl>::SharedPtr applied_;
+ };
+ int main(int argc,char **argv){rclcpp::init(argc,argv,rclcpp::InitOptions(),rclcpp::SignalHandlerOptions::None);std::signal(SIGINT,stop_signal);std::signal(SIGTERM,stop_signal);
+-try{auto node=std::make_shared<Regulator>();rclcpp::executors::SingleThreadedExecutor exec;exec.add_node(node);node->register_diagnostic_group(exec);while(!node->finished()&&rclcpp::ok()){node->poll_diagnostic_gate(exec);exec.spin_some(std::chrono::milliseconds(10));node->poll_diagnostic_gate(exec);std::this_thread::sleep_for(std::chrono::milliseconds(1));}node->remove_diagnostic_group(exec);exec.remove_node(node);node->mark_executor_detached();bool closed=node->close_source();bool audit=node->audit_closed();node.reset();rclcpp::shutdown();return closed?(audit?0:3):2;}catch(const std::exception & e){fprintf(stderr,"regulator fatal: %s\n",e.what());rclcpp::shutdown();return 1;}}
++try{auto node=std::make_shared<Regulator>();rclcpp::executors::SingleThreadedExecutor exec;exec.add_node(node);node->register_diagnostic_group(exec);while(!node->finished()&&rclcpp::ok()){node->poll_business_start();node->poll_diagnostic_gate(exec);exec.spin_some(std::chrono::milliseconds(10));node->poll_diagnostic_gate(exec);std::this_thread::sleep_for(std::chrono::milliseconds(1));}node->remove_diagnostic_group(exec);exec.remove_node(node);node->mark_executor_detached();bool closed=node->close_source();bool audit=node->audit_closed();bool start_failed=node->business_start_failed();node.reset();rclcpp::shutdown();return start_failed?5:(closed?(audit?0:3):2);}catch(const std::exception & e){fprintf(stderr,"regulator fatal: %s\n",e.what());rclcpp::shutdown();return 1;}}

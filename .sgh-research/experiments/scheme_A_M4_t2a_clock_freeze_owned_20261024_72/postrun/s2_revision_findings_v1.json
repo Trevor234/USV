@@ -1,0 +1,71 @@
+{
+  "schema": "M4-S2-freeze-revision-findings-v72",
+  "recorded_at": "2026-10-24T21:31:47.547270+08:00",
+  "revisions": [
+    {
+      "rev": "v1 table flaw (offline, pre-run)",
+      "finding": "resume delay_ms=0 fires in the same sweep as the hold, collapsing the 600ms hold",
+      "fix": "registration-layer delay reissue"
+    },
+    {
+      "rev": "tool preparation",
+      "finding": "attempts 1-4: unsourced env (rc127), venv python in scrubbed wrapper (rc126), missing bash $0 placeholder (rc126), missing -B flag rejected by role driver-peer auth",
+      "fix": "SETUP wrapper + $0 + /usr/bin/python3 -B"
+    },
+    {
+      "rev": 2,
+      "finding": "frozen Driver passed an empty diagnostic_case override; rcl cannot parse -p diagnostic_case:=",
+      "fix": "drop the key; ELFs rebuilt (compiled cross-check demands it)"
+    },
+    {
+      "rev": 3,
+      "finding": "Fixture command poll consumed the atomic-publish .tmp sidecar twice (declared-order check fired)",
+      "fix": "skip dot-prefixed entries"
+    },
+    {
+      "rev": 4,
+      "finding": "generated from rev2 by mistake; lost the rev3 fixture fix",
+      "fix": "rev5 restored it"
+    },
+    {
+      "rev": 5,
+      "finding": "T2A_08 NameError: drain_deadline used before init",
+      "fix": "rev6 initializes it beside grant_ns"
+    },
+    {
+      "rev": 6,
+      "finding": "stray global declaration after assignment (SyntaxError)",
+      "fix": "rev7 removes it"
+    },
+    {
+      "rev": 7,
+      "finding": "clean owned self-exit (rc 0) raised as early-exit",
+      "fix": "rev8 records it via closed_by_wait (W-series expect_dead semantics)"
+    },
+    {
+      "rev": "table v9",
+      "finding": "T2A_11/12: +100ms step jump and pure resume both land the first post-resume RTF sample across the hold gap (low band); rtf_unaligned then the owned 600ms-hold zero-close fires. REAL system behavior, preserved",
+      "fix": "v10/v11 delay the hold to grant+1200ms so BusinessReady binds from pre-hold accepted activations"
+    },
+    {
+      "rev": "bootstrap",
+      "finding": "T2A_13 died in the 2s Fixture start discovery budget (variance)",
+      "fix": "single retry v11 -> T2A_14 complete"
+    }
+  ],
+  "runs_preserved": [
+    "T2A_05",
+    "T2A_06",
+    "T2A_07",
+    "T2A_08",
+    "T2A_10",
+    "T2A_11",
+    "T2A_12",
+    "T2A_13",
+    "T2A_14",
+    "T2A_02",
+    "T2A_03",
+    "T2A_04"
+  ],
+  "regulator_worker_sources_unchanged": true
+}

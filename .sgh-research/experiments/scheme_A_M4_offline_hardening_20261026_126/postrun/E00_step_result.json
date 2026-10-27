@@ -1,0 +1,93 @@
+{
+  "schema": "plan126-E00-verification-v1",
+  "step_id": "E00",
+  "title": "冻结输入、派生作者树和执行约束",
+  "status": "PASS",
+  "attempt": "attempt01",
+  "observed_facts": {
+    "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+    "contract_matches_plan_pin": true,
+    "budgets_ns_match_plan": true,
+    "inputs_pinned": 100,
+    "component_lineage_components": 9,
+    "author_tree_files": 108,
+    "derived_tree_byte_identical_to_B119": true,
+    "identical_headers_proven": {
+      "observer/src/shadow/p1_diag_sink.hpp": true,
+      "observer/src/shadow/p1_witness.hpp": true
+    },
+    "protected_population_from_B124": 1355,
+    "protected_population_missing": 0,
+    "protected_population_changed": 0,
+    "workspace_ordinary_files": 22,
+    "git_porcelain_lines": 23,
+    "git_porcelain_unchanged": true,
+    "expected_cases_locked": 89,
+    "steps_total": 13,
+    "steps_started": 0
+  },
+  "run_accepted": {
+    "accepted": true,
+    "basis": "all 11 release-gate clauses PASS with complete evidence",
+    "not_included": [
+      "no component was compiled or executed at E00",
+      "no ROS context, no DDS graph, no owned run",
+      "dirty submodule contents are recorded by state only and are NOT claimed frozen"
+    ]
+  },
+  "coverage": {
+    "inputs_readable": "covered",
+    "identity_consistent": "covered",
+    "single_lineage_per_component": "covered",
+    "whitelist_and_expected_cases": "covered",
+    "zero_write_to_originals": "covered (1355 protected files, 0 missing, 0 changed)",
+    "dirty_submodule_content": "not_covered — state only",
+    "old_intermediate_builds": "not_covered — outside the declared protection scope"
+  },
+  "stage_qualified": false,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "artifacts": {
+    "input_manifest": "evidence/inputs/input_manifest_v1.json",
+    "component_lineage": "evidence/inputs/component_lineage_v1.json",
+    "git_porcelain": "evidence/inputs/git_porcelain_v1.txt",
+    "workspace_files": "evidence/inputs/workspace_files_v1.json",
+    "contract_pin": "evidence/inputs/contract_pin_v1.json",
+    "allowed_changes": "evidence/inputs/allowed_changes.json",
+    "expected_cases": "evidence/inputs/expected_cases.json",
+    "step_status": "postrun/step_status_v1.json",
+    "gate": "evidence/E00/attempt01/verification_gate.json",
+    "commands": "evidence/E00/attempt01/commands.json",
+    "init_stdout": "evidence/E00/attempt01/init_stdout.txt",
+    "gate_stdout": "evidence/E00/attempt01/gate_stdout.txt"
+  },
+  "scope_corrections": [
+    {
+      "what": "D.derived_components_match_origin initially FAILED on author_tree",
+      "why": "the clause compared a directory component as if it were a single file",
+      "fix": "split single-file components from directory components; the directory is proven file-by-file by D2 (108/108 exact)",
+      "verdict": "verifier defect, not a baseline defect; no original file was involved"
+    },
+    {
+      "what": "author tree source had a stale __pycache__ (4 .pyc)",
+      "why": "B119 tree carried interpreter cache from earlier runs",
+      "fix": "compiled caches excluded from the derivation; declared and proven by D3",
+      "verdict": "derivation hygiene, no source content changed"
+    }
+  ],
+  "assumptions_recorded": {
+    "q2_harness_relocation": "test_t3_queue_pressure.cpp moves from B99 into the derived author tree; valid only because its two headers are byte-identical between B99 and B119 (proven, clause E)",
+    "rnw_audit_origin": "declared as B117 although F124-02 names B119; the two copies are byte-identical (sha256 840ea1839daac54e6b79360c349893e05707c7ac2f414738c15e88b59f3e885f, 11300 B), verified by sha256sum, so the origin choice cannot change behaviour"
+  },
+  "failure_originals": [],
+  "remaining_obligations": [
+    "E01—E12 all NOT_STARTED",
+    "owned runs: 0 (not permitted in this batch)"
+  ],
+  "next_step": "E01"
+}

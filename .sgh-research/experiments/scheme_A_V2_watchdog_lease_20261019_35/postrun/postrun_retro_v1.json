@@ -1,0 +1,28 @@
+{
+  "EDA_route_WNS_PPA": "not applicable to this control experiment",
+  "execute_qualified": false,
+  "mechanisms": [
+    "launcher_environment_omission_before_release",
+    "diagnostic_literal_reason_mismatch",
+    "flow_policy_mismatch_between_business_anchors_and_terminal_reception"
+  ],
+  "more_V2_local_same_case_runs_in_this_batch_justified": false,
+  "next": {
+    "acceptance": "separately timestamp notification visibility, actual signals, waits and group empty; keep 500ms/1s/500ms contract values",
+    "confidence": "high",
+    "cost": "bounded implementation plus one affected confirmation",
+    "impact": "high",
+    "objective": "bridge authenticated Observer terminal event to exact-owned Supervisor finite stop before V3",
+    "risk": "isolated localhost diagnostic only",
+    "stop_condition": "no repeat without new mechanism evidence; preserve forced-exit and incomplete Source rather than normalizing them"
+  },
+  "observations": {
+    "active_component": "1189.326ms active expiry with 188.537ms receipt age; pre-native blocked job does not call native late",
+    "lease_component": "655.887ms strict receipt expiry; live Worker publication while callbacks paused; no same-run revival",
+    "recovery": "same ELF/new identity forms actual accepted prefix before its own separate barrier",
+    "supervision_gap": "barrier released 505.910ms after terminal; Worker group empty 2180.917ms after terminal; no 500ms supervisory qualification"
+  },
+  "research_conclusion": false,
+  "scope_stop_condition_met": true,
+  "stage_qualified": false
+}

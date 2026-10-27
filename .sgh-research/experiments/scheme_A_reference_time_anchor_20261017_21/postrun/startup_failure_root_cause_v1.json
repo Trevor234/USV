@@ -1,0 +1,24 @@
+{
+  "all_owned_processes_reaped": true,
+  "cause": "Regulator constructor retained inline projected diag6 gate although full strict contract and resource gates were updated to diag7",
+  "change": "new source root revision02; replace stale inline entry gate with tested shared exact task-time entry validator; old runs, binary and prereg remain fixed",
+  "client_date": "2026-10-18",
+  "execute_qualified": false,
+  "experimental_case_passed": false,
+  "frozen_revision01": {
+    "files": 272,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/postrun/revision01_author_freeze_v1.json",
+    "sha256": "93c285567872ef4602175f3cad4105f6d9c14ae6a2bc1dfe95e6b9c80757534c"
+  },
+  "not_a_performance_rejection": true,
+  "passed": true,
+  "phase": "before release and sensor start",
+  "raw_failure_result": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261017_v21/runs/task_time_s005_01/result.json",
+    "sha256": "a21c76e5ee795edd935800ddc7c29eb6dca7d0c4d8cf8ebc4ead9637957f393a"
+  },
+  "research_conclusion": false,
+  "schema": "scheme-A-task-time-startup-root-cause/v1",
+  "stage_qualified": false,
+  "unchanged": "contract bytes, objective, model, deadlines, input and identity gates, RMSE limits"
+}

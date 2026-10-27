@@ -1,0 +1,70 @@
+{
+  "CXX_builds": 0,
+  "Native_cases_reused": 38,
+  "Observer_V1": "none",
+  "Observer_V3": "none/0",
+  "Observer_callback_gate": "worker-gate",
+  "Worker_V2": "none/0",
+  "actual_raw_negative_cases": [
+    "unknown_cause",
+    "duplicate_dispatch",
+    "foreign_signal_group",
+    "injected_SIGSTOP",
+    "notification_budget_exceeded",
+    "inconsistent_wait_budget",
+    "Worker_summary_missing",
+    "new_submit_after_terminal",
+    "accepted_after_terminal",
+    "Source_inode_mismatch",
+    "monitor_after_terminal",
+    "resume_before_owned_cleanup",
+    "post_exit_semantic_callback",
+    "lease_not_expired"
+  ],
+  "authenticated_to_INT_budget_ns": 100000000,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "business_start": "owned-prepare-before-business-v1/20s/2sTTL",
+  "close_budget_ns": 15000000000,
+  "close_profile": "worker-terminal-reception-v1",
+  "execute_qualified": false,
+  "expected_terminal_cause": "worker_capability_expired",
+  "gate_TTL_ns": 3500000000,
+  "loader": {
+    "bytes": 107453,
+    "sha256": "c51e41ea1e171b3a209dbe4cef1ebe279949a23c27dc53fb2cb0cbc8db5ec611"
+  },
+  "monitor_before_terminal_required": true,
+  "native_C_hang_claimed": false,
+  "new_orchestration_negative_cases": 13,
+  "notice_budget_ns": 250000000,
+  "ordinary_policy_components_reused": 44,
+  "overall_budget_ns": 45000000000,
+  "post_exit_queue_guard_required": true,
+  "profile": "source-terminal-owned-stop-v1",
+  "raw_budget_bytes": 134217728,
+  "receipt_lease_ns": 600000000,
+  "research_conclusion": false,
+  "resume_only_after_owned_Worker_stop": true,
+  "role_returncodes": {
+    "observer": 0,
+    "publisher": 0,
+    "recorder": 0,
+    "synthetic_source": 0,
+    "worker": 0
+  },
+  "run_id": "ordinary_lease_01",
+  "runner": {
+    "bytes": 2510,
+    "sha256": "c61b84d96dff612a6d408da4409426049b59254898d7abf40e3120b29d61c8bd"
+  },
+  "selected_actual_runs": 1,
+  "selected_plan": "A",
+  "source_lock": {
+    "bytes": 401614,
+    "sha256": "d934b542a1ed58e3a7bd6857170f27a030320d0487161e83f678f2cf70d005a2"
+  },
+  "source_packet_freshness_claimed": false,
+  "stage_qualified": false,
+  "true_plant_qualified": false,
+  "verdict": "GO"
+}

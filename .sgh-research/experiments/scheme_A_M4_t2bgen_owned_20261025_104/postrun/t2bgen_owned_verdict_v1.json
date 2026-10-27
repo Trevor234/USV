@@ -1,0 +1,231 @@
+{
+  "batch": 104,
+  "cases": {
+    "T2BGEN_NEG": {
+      "driver_passed": true,
+      "driver_rc": 0,
+      "elapsed_seconds": 3.47,
+      "ok": true,
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/runs/T2BGEN_NEG",
+      "stderr_tail": "",
+      "stdout_tail": "{\"passed\": true, \"error\": null, \"elapsed_seconds\": 3.0523890919284895, \"output\": \"/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/runs/T2BGEN_NEG\"}\n"
+    },
+    "T2BGEN_POS": {
+      "driver_passed": true,
+      "driver_rc": 0,
+      "elapsed_seconds": 8.406,
+      "ok": false,
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/runs/T2BGEN_POS",
+      "stderr_tail": "",
+      "stdout_tail": "{\"passed\": true, \"error\": null, \"elapsed_seconds\": 7.975487212999724, \"output\": \"/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2bgen_owned_20261025_104/implementation/runs/T2BGEN_POS\"}\n"
+    }
+  },
+  "checks": [
+    {
+      "detail": {
+        "closed": 4,
+        "elapsed": 8.406
+      },
+      "name": "POS.driver_completed",
+      "passed": true
+    },
+    {
+      "detail": [
+        "fixture",
+        "worker",
+        "recorder",
+        "regulator"
+      ],
+      "name": "POS.exactly_four_single_spawns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "POS.no_restart_events",
+      "passed": true
+    },
+    {
+      "detail": {
+        "fixture": {
+          "empty": true,
+          "rc": 0
+        },
+        "recorder": {
+          "empty": true,
+          "rc": 0
+        },
+        "regulator": {
+          "empty": true,
+          "rc": 0
+        },
+        "worker": {
+          "empty": true,
+          "rc": 0
+        }
+      },
+      "name": "POS.roles_closed_clean",
+      "passed": true
+    },
+    {
+      "detail": {
+        "fingerprints": 2,
+        "points": [
+          201
+        ]
+      },
+      "name": "POS.path_fingerprint_changed",
+      "passed": true
+    },
+    {
+      "detail": {
+        "generations_seen": [
+          2,
+          2,
+          4,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ]
+      },
+      "name": "POS.task_generation_bumped",
+      "passed": true
+    },
+    {
+      "detail": {
+        "generation": 2,
+        "new_binding_version": [
+          6,
+          1,
+          1,
+          1,
+          0
+        ],
+        "new_path_fingerprint": "a9cb3d549fff339dc3d98a495ffa82e1deb4e9fb43761f314435e65d8f730f44",
+        "new_profile_fingerprint": "f7df4fd5498479ae162f505e08136d0b33dbc0a5a3bd958fa884a7acd2811535",
+        "opened_ns": 895743188937546,
+        "policy": "scoped_generation_first_target_task_time_profile_v2",
+        "previous_first_job_id": 1,
+        "previous_generation": 1,
+        "previous_last_job_id": 2,
+        "previous_last_target_sim_ns": 101144181545,
+        "previous_terminal_reason": "epoch_binding_changed",
+        "type": "reference_epoch_generation_opened"
+      },
+      "name": "POS.single_generation_opened",
+      "passed": true
+    },
+    {
+      "detail": {
+        "generations": [
+          1,
+          2
+        ]
+      },
+      "name": "POS.two_epoch_commits_distinct_generations",
+      "passed": false
+    },
+    {
+      "detail": {
+        "count": 1
+      },
+      "name": "POS.scoped_resubmit_after_open",
+      "passed": true
+    },
+    {
+      "detail": {
+        "job_ids_after_open": [
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      },
+      "name": "POS.jobs_submitted_in_generation_2",
+      "passed": true
+    },
+    {
+      "detail": {
+        "count": 0
+      },
+      "name": "POS.no_epoch_unusable_after_open",
+      "passed": true
+    },
+    {
+      "detail": {
+        "closed": 4,
+        "elapsed": 3.47
+      },
+      "name": "NEG.driver_completed",
+      "passed": true
+    },
+    {
+      "detail": [
+        "fixture",
+        "worker",
+        "recorder",
+        "regulator"
+      ],
+      "name": "NEG.exactly_four_single_spawns",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "NEG.no_restart_events",
+      "passed": true
+    },
+    {
+      "detail": {
+        "fixture": {
+          "empty": true,
+          "rc": 0
+        },
+        "recorder": {
+          "empty": true,
+          "rc": 0
+        },
+        "regulator": {
+          "empty": true,
+          "rc": 0
+        },
+        "worker": {
+          "empty": true,
+          "rc": 0
+        }
+      },
+      "name": "NEG.roles_closed_clean",
+      "passed": true
+    },
+    {
+      "detail": {
+        "count": 0
+      },
+      "name": "NEG.no_generation_opened",
+      "passed": true
+    },
+    {
+      "detail": {
+        "count": 1
+      },
+      "name": "NEG.single_generation_one_commit",
+      "passed": true
+    },
+    {
+      "detail": {
+        "fingerprints": 1
+      },
+      "name": "NEG.no_fingerprint_change",
+      "passed": true
+    }
+  ],
+  "passed": false,
+  "schema": "T2B-GEN-owned-run-verdict/v1"
+}

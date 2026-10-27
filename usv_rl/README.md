@@ -25,7 +25,7 @@
 | 单次推理 | — | 0.03 ms (ONNX) |
 | 能耗均值 | 2416 N²·s | 7338 N²·s（精度换能耗的权衡，见教程 6.7） |
 
-部署模型：`models/v5/s4_dr/policy_physical_n.onnx` + `policy_physical_n.manifest.json`（契约式导出：VecNormalize 折叠进图，图内 `clip(±1)×25N`，输出直接为物理推力 N；manifest 记录单位/维数/缩放/SHA256/对拍记录，部署节点加载时硬校验，不符即 STANDBY 零推力。经 domain randomization ±20% 水动力/推力延迟/观测噪声训练）。旧 `policy.onnx` 输出归一化动作 [-1,1]（缺物理缩放，2026-10-03 审计发现），仅留作诊断对照，勿再部署。
+部署模型：`../artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx` + `policy_physical_n.manifest.json`（契约式导出：VecNormalize 折叠进图，图内 `clip(±1)×25N`，输出直接为物理推力 N；manifest 记录单位/维数/缩放/SHA256/对拍记录，部署节点加载时硬校验，不符即 STANDBY 零推力。经 domain randomization ±20% 水动力/推力延迟/观测噪声训练）。旧 `policy.onnx` 输出归一化动作 [-1,1]（缺物理缩放，2026-10-03 审计发现），仅留作诊断对照，勿再部署。
 
 ## 激励设计教训（五轮迭代，每轮一个 reward hacking）
 
@@ -53,6 +53,9 @@ usv_rl/export_policy.py   契约式 ONNX 导出（图内 ×25N + manifest + 独�
 tests/                    对拍 + API + 等价性 + 导出契约测试（pytest 收集 53 例）
 ```
 
+训练产物不在本目录：`models/` → `../artifacts/rl_models/`，`runs/` → `../artifacts/rl_runs/`。
+路径由 `usv_rl/paths.py` 统一解析（可用 `USV_ARTIFACTS_DIR` 覆盖）。
+
 ## 使用
 
 ```bash
@@ -64,16 +67,17 @@ pip install -e .[train,deploy]   # 或按 pyproject 手动装
 pytest tests/ -q
 
 # 训练（全课程 10M 步：直航→Z字→随机→DR）
+# 默认 device=cpu（见 configs/ppo.yaml 的说明）；试 GPU 加 --device cuda，实测约 1.28x
 python -m usv_rl.train --run-name v1 --n-envs 16
-tensorboard --logdir runs/
+tensorboard --logdir ../artifacts/rl_runs/
 
 # 评估（PPO vs LOS 基线；s4_dr 与上方成果表同源）
 python -m usv_rl.evaluate --baseline los --episodes 50
-python -m usv_rl.evaluate --model models/v5/s4_dr/model.zip \
-    --vecnorm models/v5/s4_dr/vecnormalize.pkl --episodes 50
+python -m usv_rl.evaluate --model ../artifacts/rl_models/v5/s4_dr/model.zip \
+    --vecnorm ../artifacts/rl_models/v5/s4_dr/vecnormalize.pkl --episodes 50
 
 # 导出 ONNX（契约式；--thrust-scale-n 必填且只接受 25.0）
-python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip --thrust-scale-n 25.0
+python -m usv_rl.export_policy --model ../artifacts/rl_models/v5/s4_dr/model.zip --thrust-scale-n 25.0
 ```
 
 ## VRX 验证（scheme C）
@@ -81,7 +85,7 @@ python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip --thrust-scale-
 ```bash
 # 三层 source：/opt/ros/jazzy → vrx_ws/install → usv_mpc_ws/install
 ros2 launch usv_bringup vrx.launch.py scheme:=C \
-    rl_model:=$(pwd)/usv_rl/models/v5/s4_dr/policy_physical_n.onnx
+    rl_model:=$(pwd)/artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx
 # 对比方案 B（MPC）：
 ros2 launch usv_bringup vrx.launch.py scheme:=B record_bag:=true run_id:=mpc_b_001
 ```

@@ -1,0 +1,91 @@
+{
+  "binary_sha256": "71cd36c0aed989e281d492eb2aafdff8ca92e15ed6dd4484ae3e0e54730c2da8",
+  "boot_id": "b4f820cc-bcd4-4274-9a7f-45f7ad98c9a4",
+  "component_verification_only": true,
+  "evidence_producer_role": "explicitly-seeded-source-linked-component; not production Worker or native solver",
+  "expected": {
+    "boot_id": "b4f820cc-bcd4-4274-9a7f-45f7ad98c9a4",
+    "contract_hash": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+    "fault_injection_enabled": true,
+    "nominal_hash": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+    "pid": 129707,
+    "run_id": "shadow-source-linked-test"
+  },
+  "observer_subscription": {
+    "gid": [
+      1,
+      15,
+      151,
+      211,
+      171,
+      250,
+      229,
+      188,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      14,
+      4
+    ],
+    "kind": "subscription",
+    "topic": "/p1_C34_component/worker_capability",
+    "type": "usv_research_interfaces/msg/WorkerCapability"
+  },
+  "packet_freshness": false,
+  "physical_publisher_endpoints": 0,
+  "pid": 129707,
+  "production_owned_startup_qualified": false,
+  "publisher": {
+    "gid": [
+      1,
+      15,
+      151,
+      211,
+      171,
+      250,
+      229,
+      188,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      13,
+      3
+    ],
+    "kind": "publisher",
+    "topic": "/p1_C34_component/worker_capability",
+    "type": "usv_research_interfaces/msg/WorkerCapability"
+  },
+  "recorder_subscription": {
+    "gid": [
+      1,
+      15,
+      151,
+      211,
+      171,
+      250,
+      229,
+      188,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      15,
+      4
+    ],
+    "kind": "subscription",
+    "topic": "/p1_C34_component/worker_capability",
+    "type": "usv_research_interfaces/msg/WorkerCapability"
+  },
+  "scenario": "duplicate",
+  "schema": "p1-C3.4-capability-wire-component-v1",
+  "source_bundle_sha256": "1e0e77ed38d71f686646c21841fcc1a3b0fc42833d300420228662dfe8f18c9b",
+  "timeout_ns": 600000000
+}

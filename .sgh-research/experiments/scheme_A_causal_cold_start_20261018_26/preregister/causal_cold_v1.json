@@ -1,0 +1,62 @@
+{
+  "actual_baseline_input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json",
+  "actual_baseline_input_sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+  "actual_worker": {
+    "binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/build/pair_wakeup_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+    "binary_sha256": "0465265e62315da5e4feeb5d79f80f61c0c07b27e0ed0476f13aecf927a17fc1",
+    "link_recipe": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/build/pair_wakeup_worker_attempt01/cmake_build/CMakeFiles/p1_solver_worker_owned_v2.dir/link.txt",
+    "link_recipe_sha256": "5d143478a3e5b35ba8da92eebb3b163d3671534e4bae00bd8483269f91ca95d4"
+  },
+  "baseline_max_X_U_abs_error": 1e-09,
+  "baseline_max_control_abs_error_n": 1e-10,
+  "benchmark_final_X_U_abs_error": 1e-08,
+  "benchmark_final_cost_abs_error": 1e-08,
+  "candidate_calls": 4,
+  "cost_nonworsening_abs_tolerance": 1e-10,
+  "execute_qualified": false,
+  "extra_RTI_calls_for_tuning_forbidden": true,
+  "final_dynamic_defect_abs_tolerance": 1e-08,
+  "fixed_first_equality_abs_tolerance_n": 1e-10,
+  "independent_abs_tolerance": 1e-11,
+  "original_RMSE_gate_unchanged": true,
+  "policy": {
+    "fixed_first_control_n": [
+      0.5,
+      0.5
+    ],
+    "free_RTI_calls": 1,
+    "post_candidate_same_Job_free_probe_calls": 1,
+    "restricted_RTI_calls": 3,
+    "shift_warm_once_after_last_restricted": true,
+    "withdraw_first_equality_before_return": true
+  },
+  "post_candidate_free_probe_calls": 1,
+  "research_conclusion": false,
+  "restoration_probe_distance_from_050_min_n": 1e-06,
+  "runtime_input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/runtime_job_v1.json",
+  "runtime_input_sha256": "3e4ffc927d5603725b73c11ebcd41c3082e19ca8325394f80a7c8f764f598cd6",
+  "runtime_program_reads_only_runtime_input": true,
+  "schema": "scheme-A-causal-cold-preregistration/v1",
+  "source_MPC_pending_batches": [
+    24,
+    25
+  ],
+  "source_pins": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/documents/next_causal_cold_start_candidate_plan_v1.md": "2472aecb196dfd20c98b7c063350c50405eb1eca8280445d458483f7da9ad389",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/final_QA_v1.json": "8decd30227c9b0ab63fd60e9a999bd063800c4e1d0dcfa4cdc525175fe2523c4",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/postrun/fixed_first_audit_v2.json": "076c664cd1f1d7504ec50d37d6078bc859eb5e638c5b4d52957f1d76237e0ea2",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/replay/native_fixed_first_v2.json": "b9527a06506858903c6dce2a6ba7ac638adce0e91a7ec90592b3447458ebe5c2",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/native_startup_v1.json": "e4f77f5618228d7df9dfbd3807d3a727f1fb7240a74480f8757a4dbfd3376ee0"
+  },
+  "stage_qualified": false,
+  "static_libraries": {
+    "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libcodegen_lib.a": "7431a9cbdd7b8a6d47719ceda2e44b977f2649fbcbb4592771dac99abd2a38dd",
+    "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libmpc_core_lib.a": "b4279533c459fcdd5026fd19f293da7063e3d1a54cfcfe11dccf9aa22e8c8020",
+    "/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/lib/libmpc_solver_lib.a": "5c4a8d70cc6812b36693a5b68cb13a7a812dae828f983b4446a5564ff996d5d1"
+  },
+  "surge_gain_tolerance_m_s": 1e-12,
+  "trace_file_opens_requested": true,
+  "validation_input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/causal_validation_v1.json",
+  "validation_input_sha256": "f1558872ed28df5f62ebc48026386c9e111910601fec2ad548f8ece437944de7"
+}

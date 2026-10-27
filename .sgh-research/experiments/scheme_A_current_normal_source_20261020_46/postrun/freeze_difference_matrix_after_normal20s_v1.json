@@ -1,0 +1,106 @@
+{
+  "B5_formal_freeze_qualified": false,
+  "P1_qualified": false,
+  "based_on_prerun_matrix_sha256": "2446451ba5543ea475fbdf6edc16db4cde32a77549bf3ca55f90da200d5c560e",
+  "candidate_evidence_ledger": "implementation/B5_candidate_evidence_ledger_v1.json",
+  "extra_full_no_output_business_stage_is_not_original_M0b_requirement": true,
+  "original_requirement_refs": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_B4_finite_scope_review_20261020_43/implementation/B4_selected_policy_review_v1.json": {
+      "bytes": 29643,
+      "sha256": "89a0b72bebe640e122ad32c147411d62e2122d246f8e069c1a9a0800e0d4930c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/postrun/final_QA_v1.json": {
+      "bytes": 3202,
+      "sha256": "a75c090de2d9f46303d532042533953dbbc029a02799152f9b7f8228f2bb92f0"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_post_lease_fresh_recovery_20261020_42/postrun/selected_profile_evidence_freeze_v1.json": {
+      "bytes": 1016496,
+      "sha256": "3026b7f220f84311a70d806370c6766209ee30122eec9b8a984683c033d01a51"
+    },
+    "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/source_docs/P1_时间与候选接纳契约及独立执行架构_最小实施计划_2026-10-05.md": {
+      "bytes": 79145,
+      "sha256": "372051418da9b8363fefee2c57210257849b297de6e4346133352cb8ff63d75d"
+    },
+    "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/方案A_UbuntuCodex交接与全面推进计划_2026-10-10.md": {
+      "bytes": 37342,
+      "sha256": "296cc1b3149d2bfe0c33f43d38ed642abf0ba12ad32e79e31b0055d4d0782cf6"
+    }
+  },
+  "physical_execute_release_enabled": false,
+  "research_conclusion": false,
+  "rows": [
+    {
+      "current": "diagnostic5roles39–42 and formal prepare-only4roles45 have actual records",
+      "id": "owned-interface",
+      "original": "handoff S0–S5: actual owned endpoints/effective config/prepare-close",
+      "remaining": "none for proved prepare component; no expansion",
+      "stage": "component_closed"
+    },
+    {
+      "current": "44 same Native spec317ec56f;385 parity +45 actualformal84/fault=false preparation",
+      "id": "B0-current-spec",
+      "original": "full fields/types/profile/mode and no accidental release",
+      "remaining": "binding to frozen artifact/M4 entry as affected; no new schema",
+      "stage": "component_closed"
+    },
+    {
+      "current": "46同五ELF正常来源20.002935074s，101个动态非零来源Job，完整7节独立审计通过",
+      "id": "current-normal-window",
+      "original": "handoff4.3: investigate current recipe/domain; continuous20s source cannot be spliced from short/zero tails",
+      "remaining": "该选定nominal来源窗缺项已闭合；不自动扩大plant/turn/mixed或阶段范围",
+      "stage": "selected_component_closed"
+    },
+    {
+      "current": "43 eight groups+five metadata reviewed in finite engineering domain, 81fields/19hydro unchanged",
+      "id": "B4-selected-values",
+      "original": "P1 §6/§7M0b: all required fields and policy/time/source justification",
+      "remaining": "bind selected current normal evidence to exactdomain/assumptions; unsupported plant/hard-clock/turn/mixed claims remain prohibited",
+      "stage": "selected_policy_review_closed_not_general"
+    },
+    {
+      "current": "Observer39, Worker35, Publisher18, Fixture19, RecorderC3.4; V1final40, ordinarylease41, fresh42 source-bound",
+      "id": "current-fault-versions",
+      "original": "handoff4.3.4: final affected pressure/recovery/exit evidence is version-bound",
+      "remaining": "正常Source20s已补；新Driver纯观察差集有界验证通过，Native实现未改变，保留各fault已声明范围",
+      "stage": "case_bound"
+    },
+    {
+      "current": "45 plans separately noted fullRegulator no_output absent",
+      "id": "no-output-extra-gate",
+      "original": "original §7M0b permits independent shadow OR no_output calibration; firstexecute observation is not prerequisite",
+      "remaining": "do not invent independent full-no_output-business run as mandatoryM0b stage; formal/execution source-mode interface compatibility remains actual implementation issue when required",
+      "stage": "scope_correction"
+    },
+    {
+      "current": "当前normal20s与43/44/45、40/41/42各自资格已汇成可追溯候选台账，pre-freeze不变",
+      "id": "B5-frozen-contract",
+      "original": "immutable contract/policy/source/bin/model/config/tool and real evidencehash, pending8 only cleared on realqualification",
+      "remaining": "正式execute目标profile的来源/owner/启动保持字段语义与不可变冻结提交；不是再跑已证准备/正常数据",
+      "stage": "policy_and_freeze_commit_pending"
+    },
+    {
+      "current": "Observer physicalWriter0;45zeroJob/prep; olddiagnosticPublisher controlled output only",
+      "id": "M4-output-proof",
+      "original": "original§7M4 unique new regulator physical API outlet, per-side anchors/hold/ramp/partial/shutdown/fullgap",
+      "remaining": "separate finite isolated takeover after M0b; no backdating requiredfirstexecute evidence intoM0b",
+      "stage": "future_original_gate"
+    },
+    {
+      "current": "one immutablebackend/run; limited transaction design30 only",
+      "id": "F6-model-transaction",
+      "original": "handoff4.3.7 under sole execution chain, real knownnumeric model prepare/atomic model+plan commit",
+      "remaining": "realM0/M1 numeric transaction, old/mixed reject, immutable savedplan,warmstartseparate",
+      "stage": "pending"
+    },
+    {
+      "current": "P1partial; no general research/control superiority conclusion",
+      "id": "P1-vs-P2",
+      "original": "P1 original time/version/ownership/normalfault matrix; P2 later backup/collision/GP semantics",
+      "remaining": "joint finalP1 review afterabove; no halfRMSE/newRTI/GP/PPO gate imposed",
+      "stage": "not_complete"
+    }
+  ],
+  "schema": "original-P1-freeze-difference-matrix-v1",
+  "selected_action": "one current normal nominal source20s; no CXX/parameter changes",
+  "stage_qualified": false
+}

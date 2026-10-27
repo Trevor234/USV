@@ -1,0 +1,420 @@
+{
+  "schema": "schemeA-controlled-execution-plan-v125",
+  "recorded_at": "2026-10-26T12:50:06.074559+08:00",
+  "planning_complete": true,
+  "execution_started": false,
+  "document": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_controlled_plan_20261026_125/documents/方案A_第125批_严格执行顺序与逐步验收计划_2026-10-26.md",
+  "document_pin": {
+    "bytes": 30407,
+    "sha256": "8065aad787e42aa127aed6c92dadd6735c8b56c58afebd16d85dac2e09ca3ab2"
+  },
+  "precedence": "最新明确用户指令优先；本MD为执行条款，JSON逐步原文必须与MD一致；发现分歧先停止依赖动作并登记",
+  "source_review": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_session_code_review_20261026_124",
+  "default_scope_on_future_execute_request": "E00–E12 offline hardening only",
+  "sequential": true,
+  "automatic_owned_runs": false,
+  "future_execution_package": "E00分配唯一新目录，不能在125或旧冻结包内执行整改",
+  "steps": [
+    {
+      "id": "E00",
+      "title": "冻结输入、派生作者树和执行约束",
+      "status": "NOT_STARTED",
+      "depends_on": [],
+      "addresses": [],
+      "allowed_changes": "唯一新执行包内的基线、派生副本、manifest和执行约束；原件只读",
+      "requirements_verbatim_markdown": "**依赖：** 无。**解决问题：** 防止读错版本、污染原件及中途换标准。\n\n**必须做：**\n\n1. 读取本计划与B124全部问题/正事实；核对当前源文件和所引用工具/ELF/库的SHA。发现漂移先记录，不自动还原他人文件。\n2. 保存当前git porcelain、所有普通未提交文件SHA，标明dirty子模块仅记录状态、未声称其内容全量冻结。\n3. 新包派生B119主树；B108模型组件、B99 Q测试、B103测试、B105审计各自单独登记来源。禁止不加说明地混用相近版本。\n4. 定义必选条款、合法正控、错误负例、限制反例和允许剩余项。锁定每个case的预期结果与具名原因。\n5. 保存`allowed_changes.json`、`input_manifest.json`、`expected_cases.json`与预算合同pin；创建步骤状态表，所有后续步骤初始为NOT_STARTED。\n\n**验收：** 输入可读、身份一致或差额已解释；主树与各独立组件谱系唯一；E01—E12白名单和预期case齐全；旧文件零写入。\n\n**停止条件：** 基线关键字节与B124不符且无法确定来源；旧证据缺失；需要换合同或参数。不得直接开始代码修复掩盖基线问题。",
+      "requirements_sha256": "ff47ed13008fd789cd5f9f92e8c45cee03f2df32baf6bc86ff334e08f90acbc7",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E00/attemptNN/commands.json",
+        "evidence/E00/attemptNN/verification.json",
+        "postrun/E00_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E01",
+      "title": "修Q2悬空捕获及逐事件记账",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E00"
+      ],
+      "addresses": [
+        "F124-01"
+      ],
+      "allowed_changes": "B99派生的`test_t3_queue_pressure.cpp`及其测试辅助代码。DiagSink业务行为不改。",
+      "requirements_verbatim_markdown": "**依赖：** E00 PASS。**白名单：** B99派生的`test_t3_queue_pressure.cpp`及其测试辅助代码。DiagSink业务行为不改。\n\n**必须做：**\n\n1. 将每个生产者的base按值捕获；每条测试事件带明确producer身份和局部单调序号。\n2. 使用有限开始屏障，使线程在捕获变量作用域结束后再开始工作；禁止用任意sleep掩盖生命周期问题。\n3. 分别记录offered、accepted、rejected；accepted与rejected须是offered的互斥完备分区。\n4. 比较accepted、publisher实际投递、文件实际事件的**多重集**，不能只比较数量或集合。summary另计，不混进业务事件。\n5. 在私有新目录运行普通/ASAN版本及定向变异；旧513条/163唯一ID原件保留为负例。\n\n| 验收case | 必须结果 |\n|---|---|\n| Q2-LIFETIME | 修后ASAN无stack-use-after-scope或其他内存错误 |\n| Q2-IDENTITY | 每个offered身份唯一；accepted内部无非预期重复 |\n| Q2-BALANCE | offered=accepted⊎rejected，发布与落盘等于accepted多重集 |\n| Q2-RAW-OLD | 旧Q2_r2重复350条被新身份审计明确发现，不修改旧14/14记录 |\n| Q2-MUT-CAPTURE | 恢复引用捕获后，生命周期负控能捕获；不得因编译失败算捕获 |\n| Q2-REGRESSION | Q1d的受控capacity+1性质保留；Q2不要求固定接纳513条或固定线程比例 |\n\n**验收产物：** 修复diff、输入/输出ID对账、ASAN日志、变异准备与捕获记录。**禁止：** 为保持旧数量而降低压力、改容量、删线程或改Source的failed政策。",
+      "requirements_sha256": "f00a110ac11a69fbd1306ed5a186f77bccd75222cffbfca8a79be697315b9391",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E01/attemptNN/commands.json",
+        "evidence/E01/attemptNN/verification.json",
+        "postrun/E01_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E02",
+      "title": "修RNW纯审计：身份、时间、必要门分开",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E01"
+      ],
+      "addresses": [
+        "F124-02"
+      ],
+      "allowed_changes": "B119派生的`rnw_audit_v1.py`、纯测试、只读证据适配器。",
+      "requirements_verbatim_markdown": "**依赖：** E01 PASS。**白名单：** B119派生的`rnw_audit_v1.py`、纯测试、只读证据适配器。\n\n**必须做：**\n\n1. 分开输出R4正事实、完整run接受、覆盖状态和阶段资格。完整run必须聚合全部事前登记的必选条件。\n2. 对同一目标Job比较完整echo及run/boot/contract/worker/版本/目标tick；将reference_epoch.generation与该Job账本关联，不能仅job_id相等。\n3. 由真实逻辑时刻验证submit→Worker求解/候选→ready→activation→API→Applied。最终Decision JSON晚于API落盘是合法现象，不能按文件行序误拒。\n4. 要求accepted_registration=true、Decision.accepted=true且control_source=candidate；API成功及Applied必须对应同一Decision sequence。\n5. 核对真实resume与换代、解析完整性、精确角色/启动/关闭人口；需要的Worker、Source、witness、Stored证据缺失则不得给完整run接受。\n6. 旧候选拒绝是独立覆盖项。RNW3本身可保留R4正事实且旧在途拒绝not_covered；不得制造旧候选、不得把空集合改成拒绝证据。\n\n**最低验收矩阵：**\n\n| case组 | 必须结果 |\n|---|---|\n| RNW-POS-119 | 真实RNW3 Job7/seq18链仍成立；完整run按各必选门逐项给结果 |\n| RNW-OLD-112 | 两次历史失败run不能获得R4新窗口接纳 |\n| RNW-MISSING | 缺关闭、clock、Worker或必需Stored，R4观测位与run接受正确分离，run拒绝 |\n| RNW-IDENTITY | foreign run、旧schedule、错误generation、重复/混拼同id事件具名拒绝 |\n| RNW-TIME | ready早于submit、activation早于ready、API早于activation具名拒绝 |\n| RNW-FACT | rejected candidate、fallback-only、partial API、缺对应Applied不能构成R4 |\n| RNW-LEGAL | clock_epoch保持0而schedule变化合法；合法Source落盘顺序和真实无旧在途不误判 |\n\n**证据缺口处理：** 旧证据缺少新要求字段时，停止给出依赖该字段的完整run结论；区分“历史未记录”和“行为失败”，不能给旧JSON补字段。审计器正确返回not_covered/拒绝完整签收可作为审计功能的正控，不能作为旧run已满足新要求的证明。审计功能本身或必需正负控未通过，才阻止进入E03。",
+      "requirements_sha256": "e19e070393d9a94a9e6f70ee3ec6cddfead232f11d1ccdfade60f0652e3f361a",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E02/attemptNN/commands.json",
+        "evidence/E02/attemptNN/verification.json",
+        "postrun/E02_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E03",
+      "title": "让硬准入成为实际Driver启动前的唯一入口",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E02"
+      ],
+      "addresses": [
+        "F124-03"
+      ],
+      "allowed_changes": "派生的`rnw_admission_v2.py`、`t2b_gen_admission.py`、freeze与Driver准入调用点及测试。",
+      "requirements_verbatim_markdown": "**依赖：** E02 PASS。**白名单：** 派生的`rnw_admission_v2.py`、`t2b_gen_admission.py`、freeze与Driver准入调用点及测试。\n\n**必须做：**\n\n1. RNW族的freeze与真实registration_preflight调用同一个物理准入模块。记录模块绝对路径与SHA，禁止复制两套规则。\n2. 精确检查动作人口、hold→resume顺序、唯一性、参数域、clause逐值、身份及观察/终止窗口。\n3. 从真实preflight调用路径测试，拦截任何spawn调用并将其视为失败。不得直接运行live runner的main。\n4. 构造合法身份夹具，确保负例由目标动作/条款规则拒绝，不能以无关SHA不符“代替捕获”。\n\n**验收：** 合法表通过；all-false条款、missing_hold、resume-before-hold、重复/未知动作、身份不符均具名拒绝；所有负控spawn计数为0；freeze与Driver结果一致。其他case族既有准入规则保持。\n\n**禁止：** 增加宽松回退入口、忽略未知字段、放宽普通scope、让旧弱入口仍可绕过硬准入。",
+      "requirements_sha256": "e109b0ebf9a057732025bb34a0e3eebb40bb05588cff95acc39ab747340f06f7",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E03/attemptNN/commands.json",
+        "evidence/E03/attemptNN/verification.json",
+        "postrun/E03_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E04",
+      "title": "修105审计的恒真比较并重判其有限结论",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E03"
+      ],
+      "addresses": [
+        "F124-04"
+      ],
+      "allowed_changes": "新派生`audit_t2bgen.py`及测试；旧105工具只读。",
+      "requirements_verbatim_markdown": "**依赖：** E03 PASS。**白名单：** 新派生`audit_t2bgen.py`及测试；旧105工具只读。\n\n**必须做：**\n\n1. `ok`使用keyword-only且要求真正bool；字符串、整数、错位参数不得被bool()转换成通过。\n2. 修来源字节比较的参数顺序。\n3. 比较完整binding时排除必定变化的scoped generation编号，保留真正的版本/指纹/身份字段。\n4. 逐项重算必要SHA和事实；不能把清单文件SHA当作清单内全部源文件的SHA核验。\n5. 标明哪些是原始证据重算，哪些只是引用旧harness结果；缺失run-close ledger不得伪造为已记录。\n\n**验收：** 比较为false必定拒绝；相同binding但generation1/2不得通过“不同binding”；实际POS task2→6仍识别为不同，NEG无换代仍成立。将旧“20/20”保留为历史报告，新结果另存。",
+      "requirements_sha256": "c5efa120465ba4b5186129798847728dcb6034fcea689af776656baf0b79d9b6",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E04/attemptNN/commands.json",
+        "evidence/E04/attemptNN/verification.json",
+        "postrun/E04_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E05",
+      "title": "修ScopedEpoch Proposal身份与退役ledger负控",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E04"
+      ],
+      "addresses": [
+        "F124-05"
+      ],
+      "allowed_changes": "派生`scoped_epoch_v1.hpp`、其纯组件测试、Regulator为新Proposal接口所需的最小调用点适配。冻结`task_time_profile_v1.hpp`不改。",
+      "requirements_verbatim_markdown": "**依赖：** E04 PASS。**白名单：** 派生`scoped_epoch_v1.hpp`、其纯组件测试、Regulator为新Proposal接口所需的最小调用点适配。冻结`task_time_profile_v1.hpp`不改。\n\n**必须做：**\n\n1. Proposal携带并认证wrapper generation/open身份、唯一proposal token及expected binding；commit前核对，一次性消费有效提交凭据。\n2. 旧token、旧binding、已消费Proposal、跨实例Proposal不得改变当前代、anchor、ledger或max_job_id。诊断拒绝计数可增加。\n3. 保持单prepare线程及原失效/最终提交临界区；不新增并发多事务框架，不修改Job/Candidate wire。\n4. 保持G1—G6和默认8代上限；公开版本差异用完整binding定义，允许登记内的schedule变化，不硬造clock_epoch差异。\n\n| 必须覆盖的状态序列 | 验收结果 |\n|---|---|\n| 保存A首Proposal→提交A→退役A→打开未提交B→重放A | 拒绝旧Proposal，B仍可用正确Proposal提交 |\n| 同Proposal再次用更大Job ID提交 | 拒绝重复，状态不变 |\n| A→B已提交→B终态/quiesce→再尝试完整旧A绑定 | 由退役ledger的指定原因拒绝 |\n| 未quiesce、同当前binding、静态域失败、代数上限 | 既有门保留，不放宽 |\n| 合法新binding及同指纹/新schedule | 按已登记政策允许，Job单调 |\n| 删除token门/删除ledger循环的变异 | 被对应具名断言捕获，不能再32/32全绿 |\n\n**验收：** 原6 case保留其合法语义，新反例正确拒绝；Regulator真实调用点编译通过。未运行ROS的情况下不得宣称完整owned接线已重新验证。",
+      "requirements_sha256": "c10910884368e0f9fb6855fde1f1c9c56cab45f5a1c5913451985a51f308ea02",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E05/attemptNN/commands.json",
+        "evidence/E05/attemptNN/verification.json",
+        "postrun/E05_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E06",
+      "title": "修模型事务的初始、提交、输入与所有者状态",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E05"
+      ],
+      "addresses": [
+        "F124-06",
+        "F124-07"
+      ],
+      "allowed_changes": "派生`model_transaction_v1.hpp`、F6组件测试、有限测试adapter。生产AcadosBackend和生成C代码只读。",
+      "requirements_verbatim_markdown": "**依赖：** E05 PASS。**白名单：** 派生`model_transaction_v1.hpp`、F6组件测试、有限测试adapter。生产AcadosBackend和生成C代码只读。\n\n**状态契约固定为：** UNCOMMITTED、READY、PREPARED、FAULTED。允许的主路径为UNCOMMITTED/READY→PREPARED→READY；setter/reset已开始后发生不可确认失败进入FAULTED，不能假装仍是旧模型可解算。\n\n**必须做：**\n\n1. generation0拒绝；增加显式已提交状态，注册成功不等于已应用。首次commit成功前任何solve都拒绝且C solve计数为0。\n2. 校验参数长度/有限性、state/reference形状与有限性；已有生产参数域校验可复用并标明来源。不得自行发明GP物理范围，也不将“有限数”称为“物理有效模型”。\n3. setter及所需reset成功之后才发布current generation；reset结果必须处理。PREPARED但尚未触碰capsule时可取消，恢复之前的UNCOMMITTED或READY；已触碰capsule后的失败不得用abort假装回滚成功。FAULTED在本段内只能拒绝后续prepare/commit/solve，销毁后新建实例才可重新开始，不增设自动修复通道。\n4. 明确单所有者线程契约。当前组件采用构造线程为所有者；错误线程调用必须在触碰可变状态/capsule前拒绝。不得把一个bool preparing_称作跨线程原子性。\n5. 保留原有限M0/M1数值、warm按代分离、准备期间拒绝/stale拒绝；不直接复制或替换生产Backend失败路径。\n\n**必需case：** 注册后未提交、零代际、unknown/stale、NaN/Inf、同代内容改写、prepare期间solve、合法commit/回切、错误线程、setter/reset失败后的FAULTED及禁止solve。拒绝路径应证明未调用C solve，合法有限对拍继续满足原门限。\n\n**证明限制固定：** 当前生成setter内部固定返回0且未传播所有内部失败。本步可用明确标注的测试adapter验证包装层面对错误返回的状态策略，不能把它说成真实native故障注入；内部错误传播、完整reference-model mixed身份、固定tick激活和生产fallback对拍留给集成评审，不能顺手修改codegen。",
+      "requirements_sha256": "942aab33aa5f4091615768138aebc46e3050c3857f7499a6b16e8a60d9ebb1da",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E06/attemptNN/commands.json",
+        "evidence/E06/attemptNN/verification.json",
+        "postrun/E06_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E07",
+      "title": "修B2整数边界，保留时延/cap限制",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E06"
+      ],
+      "addresses": [
+        "F124-08"
+      ],
+      "allowed_changes": "派生`resume_stamp_mapping_v1.hpp`、Fixture实际调用点、同一helper测试及对应策略说明。",
+      "requirements_verbatim_markdown": "**依赖：** E06 PASS。**白名单：** 派生`resume_stamp_mapping_v1.hpp`、Fixture实际调用点、同一helper测试及对应策略说明。\n\n**必须做：**\n\n1. 加减前校验输入与int64边界，避免先溢出再判断；错误必须有明确结果，Fixture不得发布无效stamp或继续声称正常恢复。\n2. 成功域内保留原配对公式、一次应用、无hold路径和same_stamp语义；不得改变4.9s cap或5s clock-epoch阈值。\n3. cap触发必须显式标记。cap外情况不纳入本计划的正常NW恢复资格；数学裁剪结果与“成功恢复”分开记录。\n4. 保留4ms接收错相和1.1s长hold反例，作为适用域限制证据。合法时延输入不应为了全绿被伪装成非法参数。\n5. 禁止加入`max(last_history, new_stamp)`强制截断、修改接收时间、重置输出权威锚或增加B1窗口豁免。\n\n**验收：** 既有合法映射正例继续成立；INT64边界错误具名处理且UBSan无溢出；normal/resume两条路径均覆盖；4ms反例仍能说明限制，登记不再声称普遍消除历史回退。若调整原超域测试的“成功”标签，须在运行前写明是范围纠正，保留旧结果。\n\n**停止条件：** 需要改变Regulator时间映射、L844/L630、OutputAuthority或控制预算才可通过。这属于新政策设计，不能在本步处理。",
+      "requirements_sha256": "fb3d211b9db11b76dffe4aa5288ff90104f136041f3b11e59e2691c1ea592e29",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E07/attemptNN/commands.json",
+        "evidence/E07/attemptNN/verification.json",
+        "postrun/E07_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E08",
+      "title": "收敛T3契约、survivor和审计声明",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E07"
+      ],
+      "addresses": [
+        "F124-09"
+      ],
+      "allowed_changes": "新派生T3只读审计、契约说明及有限测试。survivor角色实现与DiagSink业务策略本步不修改。",
+      "requirements_verbatim_markdown": "**依赖：** E07 PASS。**白名单：** 新派生T3只读审计、契约说明及有限测试。survivor角色实现与DiagSink业务策略本步不修改。\n\n**必须做：**\n\n1. 明确failed资格sticky与后续诊断enqueue不是同一件事；保留“溢出→排空→add可成功但资格仍false”的实际测试。\n2. 修订survivor说明为主循环fork，记录fd3—255和fork失败处理缺口。\n3. 原C12/C3只读复判：按实际信号梯、group_empty、cleanup_failed和Driver spawn记录说明有限证据。\n4. 明确101审计哪些性质独立重算、哪些引用harness；不以15/15扩大为通用生产restart证明。\n\n**验收：** 结论与代码/原始事实一致；Q2问题由E01新证据处理；原C12失败事实不被改写。fork失败/全部fd清理的通用survivor复用仍标开放，不得叫“已修复”。",
+      "requirements_sha256": "98cb9e478ed96af84acb9a72713296dedd7248a4a61509d0bbc2856cdd174295",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E08/attemptNN/commands.json",
+        "evidence/E08/attemptNN/verification.json",
+        "postrun/E08_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E09",
+      "title": "运行组合离线回归，复判历史正例",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E08"
+      ],
+      "addresses": [],
+      "allowed_changes": "回归清单、只读复判器、结果聚合。除已定位回归缺陷外不得新增功能。",
+      "requirements_verbatim_markdown": "**依赖：** E08 PASS。**白名单：** 回归清单、只读复判器、结果聚合。除已定位回归缺陷外不得新增功能。\n\n**固定验证顺序：** Q队列→RNW纯审计/准入→105审计→Epoch→模型事务→B2→历史数据复判。\n\n1. 在全部最新代码上各跑一次登记的最小回归集。数量不作目标；必须匹配case名称、执行状态、断言和预期终局。\n2. RNW3保留Job7/seq18正事实；112失败run继续拒绝R4。完整run接受还须满足其必选证据门。\n3. 104 POS/NEG按GEN家族规则复判，不能套用RNW的pause必需项；缺run-close ledger应标未记录，不补写旧Source。\n4. F6已有正例重新在派生组件上有限对拍，保持输入/门限，记录真实差值和生产库SHA。\n5. Source/API/Applied/Stored按完整身份和同一事件对账。只读CDR解码必须使用与记录相符的Python/native类型支持并记录来源；混版TypeError先判验证环境错误，旧schema投影不能冒充全字段校验。\n6. 历史Q2的错误载荷保留为失败证据；新Q2结果单独保存，不回写旧14/14。\n\n**验收：** 所有本阶段必需项通过；合法正例无新增误拒；每个真实负例有预期拒因；未覆盖项落在事前允许剩余集合内。无需新owned即可证明的事项不得追加owned。",
+      "requirements_sha256": "b132a1adfdd31448bc3667c63a5ba06f7c3122a56eaa53b539a6a87285c472a9",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E09/attemptNN/commands.json",
+        "evidence/E09/attemptNN/verification.json",
+        "postrun/E09_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E10",
+      "title": "修订单一创新登记簿与问题处置表",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E09"
+      ],
+      "addresses": [
+        "F124-10"
+      ],
+      "allowed_changes": "新工作包文档，以及项目唯一`.sgh-research/research-innovations.md`。",
+      "requirements_verbatim_markdown": "**依赖：** E09 PASS。**白名单：** 新工作包文档，以及项目唯一`.sgh-research/research-innovations.md`。\n\n**必须做：**\n\n1. 保存登记簿更新前原文/SHA；追加注明日期、来源和替代范围的审核性修订，不删除历史叙述。\n2. 按B124六项修订建议更新当前性质与适用域：Epoch不混模型事务；B2加时延/cap；F6改有限数值等价/串行契约；survivor改主循环fork；R4说明完整门实际范围；Q1d不替代Q2。\n3. 每条给真实绝对路径/版本/SHA、正例、反例、未覆盖项。D-01/D-02仍为未验证/未写作，不擅自升级学术创新结论。\n4. 对F124-01—10逐项填写处置状态与证据，禁止用一句“全部修好”代替。\n\n**验收：** 单簿没有分叉；原文可恢复；所有“已证”均有对应证据域；生产未集成、阶段全false写清楚。",
+      "requirements_sha256": "115a92a3bc8e7a001e966fa9789bde6540dc0d735086c3d57e1df564a86fe603",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E10/attemptNN/commands.json",
+        "evidence/E10/attemptNN/verification.json",
+        "postrun/E10_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E11",
+      "title": "形成三个独立集成评审输入包",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E10"
+      ],
+      "addresses": [
+        "F124-07"
+      ],
+      "allowed_changes": "评审文档、接口表、拟变更文件清单、测试/登记草案。不得改生产源文件或启动角色。",
+      "requirements_verbatim_markdown": "**依赖：** E10 PASS。**白名单：** 评审文档、接口表、拟变更文件清单、测试/登记草案。不得改生产源文件或启动角色。\n\n| 包 | 必须交付 | 本步禁止 |\n|---|---|---|\n| B2基础设施 | clock所有者、有效输入域、接收时延/cap限制、Fixture落位点及默认路径负控 | 改实船clock、引入B0/B1 |\n| 模型事务 | 共享setter/packing方案、Worker唯一所有者、prepare/commit/abort、模型/参考/Job身份、固定tick提交语义、失败fallback对拍计划 | 直接用实验wrapper替换生产Backend、并行改capsule |\n| Epoch政策 | full binding定义、opt-in入口、默认旧政策、新政策条件、Proposal身份与ledger收尾schema | 默认启用新生命周期、删除旧终态门 |\n\n**验收：** 三包分别可审查，明确哪些问题E00—E10已解决、哪些尚未实现；生产改动尚为0。控制链评审次序固定为模型事务共享setter先，Epoch后；B2仅归实验基础设施。",
+      "requirements_sha256": "12970b3a326ec45a782b6383a8ff35583e813651159841d540b8f9e6dcd7699b",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E11/attemptNN/commands.json",
+        "evidence/E11/attemptNN/verification.json",
+        "postrun/E11_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    },
+    {
+      "id": "E12",
+      "title": "只读终审、封存和MPC交付",
+      "status": "NOT_STARTED",
+      "depends_on": [
+        "E11"
+      ],
+      "addresses": [],
+      "allowed_changes": "终审/manifest/交付脚本、CURRENT、回执；不再顺手修改业务实现。",
+      "requirements_verbatim_markdown": "**依赖：** E11 PASS。**白名单：** 终审/manifest/交付脚本、CURRENT、回执；不再顺手修改业务实现。\n\n**必须做：**\n\n1. 对输入、原件、未提交文件做前后hash与git状态核对，标注任何并发外部变化，不自动覆盖。\n2. 独立重算结果人口、指定正负控、变异准备/捕获、源码/编译产物/库身份；不能只再次调用同一待测函数拿passed自证。\n3. 封存当前源、测试、工具、结果与其关系；只给`OFFLINE_HARDENING_ACCEPTED`，不给生产、owned或阶段资格。\n4. 更新CURRENT、`issue_disposition.json`、`next_step.json`。MPC排除编译产物按惯例交付源码/证据/文档，精确人口与SHA两轮读回。\n\n**总体验收：** E00—E12全部达到各自条件；允许剩余项逐项在册；输入未被污染；MPC回执完备。任何必需项未过，交付状态必须是失败/部分完成，不能用“报告已写完”代替执行完成。",
+      "requirements_sha256": "708c22f889042e06058410e75e1cd98cb12cc9553b21e81b4117577a572e86de",
+      "release_gate": "all_mandatory_requirements_and_expected_cases_pass_with_complete_evidence",
+      "evidence_required": [
+        "evidence/E12/attemptNN/commands.json",
+        "evidence/E12/attemptNN/verification.json",
+        "postrun/E12_step_result.json",
+        "CURRENT.md"
+      ],
+      "skip_allowed": false,
+      "owned_runs_allowed": 0
+    }
+  ],
+  "allowed_remaining_gaps": [
+    {
+      "id": "G01",
+      "scope": "F6完整mixed参考/模型身份、真实tick激活、生产故障对拍",
+      "next": "模型事务集成评审"
+    },
+    {
+      "id": "G02",
+      "scope": "生成setter内部不可观测错误传播",
+      "next": "单独API/生成码适配评审"
+    },
+    {
+      "id": "G03",
+      "scope": "B2任意接收抖动/长hold的普遍恢复",
+      "next": "新需求触发的时域政策设计"
+    },
+    {
+      "id": "G04",
+      "scope": "survivor全部fd清理/fork失败的通用复用",
+      "next": "专项工具硬化"
+    },
+    {
+      "id": "G05",
+      "scope": "B0真实clock-epoch恢复、B1豁免",
+      "next": "独立需求/设计"
+    },
+    {
+      "id": "G06",
+      "scope": "GP采集、plant、RT平台、P1联合验收",
+      "next": "资源决策与独立计划"
+    },
+    {
+      "id": "G07",
+      "scope": "论文新颖性与写作",
+      "next": "文献与写作工作流"
+    }
+  ],
+  "outcome_dimensions": [
+    "observed_facts",
+    "run_accepted",
+    "coverage",
+    "stage_qualified"
+  ],
+  "statuses": [
+    "NOT_STARTED",
+    "RUNNING",
+    "PASS",
+    "FAIL_STOP",
+    "BLOCKED_SPEC",
+    "NOT_COVERED",
+    "N/A"
+  ],
+  "mandatory_coverage_cannot_be_demoted_after_run": true,
+  "final_execution_state_if_all_steps_pass": "OFFLINE_HARDENING_ACCEPTED",
+  "mutations_require": [
+    "prepared",
+    "executed",
+    "intended_assertion_or_sanitizer_finding",
+    "no_unrelated_prerequisite_failure"
+  ],
+  "failed_attempt_policy": {
+    "create_only": true,
+    "retain_all": true,
+    "unchanged_retry": false,
+    "unexplained_consecutive_failure_pause_threshold": 2
+  },
+  "normal_next_step_requires_new_confirmation": false,
+  "contract": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+    "pin": {
+      "bytes": 4242,
+      "sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a"
+    },
+    "budgets_ns": {
+      "T_ns": 200000000,
+      "deadline_ns": 150000000,
+      "hold_ns": 600000000,
+      "active_watchdog_ns": 1000000000,
+      "worker_capability_receipt_timeout_ns": 600000000,
+      "publish_budget_ns": 5000000,
+      "publish_gap_ns": 240000000,
+      "tick_jitter_ns": 20000000,
+      "shutdown_grace_ns": 2500000000,
+      "worker_grace_ns": 500000000
+    },
+    "other_profiles_keep_own_pins": true
+  },
+  "model_dimensions": {
+    "NX": 8,
+    "NU": 2,
+    "N": 20,
+    "NP": 6,
+    "NPG": 30
+  },
+  "finite_F6_existing_tolerance": 1e-08,
+  "project_level_write_exception": {
+    "only_at": "E10",
+    "path": "/home/trevor/USV/.sgh-research/research-innovations.md",
+    "append_corrective_review_only": true,
+    "preimage_pin_diff_required": true
+  },
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  },
+  "production_B_mode": "MANUAL+RC override"
+}

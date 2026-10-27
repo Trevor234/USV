@@ -1,0 +1,68 @@
+{
+  "CXX_builds": 1,
+  "Observer_V1": "none",
+  "Observer_V3": "none/0",
+  "Observer_business_start": "owned-prepare-before-business-v1/20s/2sTTL",
+  "actual_ROS_run_limit": 1,
+  "actual_lease_ordinary_stop_claimed": false,
+  "authenticated_to_INT_budget_ns": 100000000,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "business_gate_negative_cases": [
+    "pre_gate_decision",
+    "driver_start_mismatch",
+    "early_first_tick",
+    "stale_gate_request",
+    "wrong_initial_anchor",
+    "first_phase_late"
+  ],
+  "case": "active",
+  "checker_negative_cases": [
+    "unknown_cause",
+    "duplicate_dispatch",
+    "foreign_signal_group",
+    "injected_SIGSTOP",
+    "notification_budget_exceeded",
+    "inconsistent_wait_budget",
+    "Worker_summary_missing",
+    "new_submit_after_terminal",
+    "accepted_after_terminal",
+    "Source_inode_mismatch"
+  ],
+  "diagnostic_SIGSTOP_allowed": false,
+  "diagnostic_Worker_stimulus": "pre_native_once_after_completed_v1/1700ms",
+  "driver_budget_seconds": 45,
+  "execute_qualified": false,
+  "expected_selected_Worker_returncode": 0,
+  "expected_terminal_cause": "active_watchdog",
+  "kill_signal_not_required": true,
+  "loader": {
+    "bytes": 107453,
+    "sha256": "cb88a84516b34e51de35a32abe130a1b597d6183b427b5d62f9fe5bb545003e4"
+  },
+  "max_raw_bytes": 134217728,
+  "native_C_hang_claimed": false,
+  "new_Observer_and_four_reused_ELFs": true,
+  "normal_Worker_Source_required": true,
+  "notification_observation_budget_ns": 250000000,
+  "ordinary_healthy_Worker_profile": "none/0; fault enabled only for this selected stimulus",
+  "profile": "source-terminal-owned-stop-v1",
+  "research_conclusion": false,
+  "run_id": "business_active_01",
+  "runner": {
+    "bytes": 2593,
+    "sha256": "a6f201d4d394d242251e311aee700450ac66416a79c32e595b02ccf523e7ab67"
+  },
+  "selected_plan": "A",
+  "source_lock": {
+    "bytes": 344972,
+    "sha256": "10f4cd67ef55cd5aadd9ea6b050a6e8eb09eb58af39c40b2aa9aa49271917a59"
+  },
+  "stage_qualified": false,
+  "stop_waits_ns": {
+    "kill_postcheck": 1000000000,
+    "term_grace": 1000000000,
+    "worker_grace": 500000000
+  },
+  "verdict": "GO",
+  "wait_observation_slack_ns": 100000000
+}

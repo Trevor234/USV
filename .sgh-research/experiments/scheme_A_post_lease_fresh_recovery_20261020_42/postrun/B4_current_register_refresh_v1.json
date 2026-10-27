@@ -1,0 +1,66 @@
+{
+  "schema": "B4-current-role-register-refresh/v1",
+  "passed": true,
+  "current_actual_run": "fresh_after_lease_01",
+  "fields": 81,
+  "hydro_fields": 19,
+  "roles": 5,
+  "sealed_batch31_checker_reused_unchanged": {
+    "bytes": 16915,
+    "sha256": "4623b47feb82c6f646797548be7533044f5b9159b161f7111ac3ded153348677"
+  },
+  "context_overrides": {
+    "author": "/home/trevor/USV/.sgh-research/experiments/scheme_A_post_lease_fresh_recovery_20261020_42/author",
+    "run": "/home/trevor/USV/.sgh-research/experiments/scheme_A_post_lease_fresh_recovery_20261020_42/author/runs/fresh_after_lease_01",
+    "role_index": {
+      "publisher": 0,
+      "worker": 1,
+      "synthetic_source": 2,
+      "observer": 3,
+      "recorder": 4
+    }
+  },
+  "new_register": {
+    "bytes": 259118,
+    "sha256": "d5ad41a9bc8e784f27aa979134a62163d0b71f653e774afd5b61c63d570adb7e"
+  },
+  "results": [
+    {
+      "mode": "build",
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_post_lease_fresh_recovery_20261020_42/verification/B4_register_build_v1.json",
+      "pin": {
+        "bytes": 55537,
+        "sha256": "aedcbcb263be31b5336f37d1a7532d703f8e66b4a0547ea67f7c39744f39ae59"
+      }
+    },
+    {
+      "mode": "check",
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_post_lease_fresh_recovery_20261020_42/verification/B4_register_check_v1.json",
+      "pin": {
+        "bytes": 55961,
+        "sha256": "5a28c2c1c906e6ff25340c3bf0cefa9402d49ef5bb64ffaf1bc90da920a2d48e"
+      }
+    }
+  ],
+  "original_targeted_register_negatives_reused": 13,
+  "new_targeted_register_tests_executed": 0,
+  "pending_original_groups": [
+    "rho_n_s",
+    "hold_ns",
+    "activation_tolerance",
+    "source ages",
+    "RTF and pause",
+    "jitter/gap/publish",
+    "watchdog and cleanup",
+    "worker capability validated callback receipt lease; no source packet sequence/send time"
+  ],
+  "literal_refs_are_not_automatic_runtime_domain_qualification": true,
+  "only_register_integrity_checked": true,
+  "new_ROS_runs": 0,
+  "new_CXX_builds": 0,
+  "B4_phase_qualified": false,
+  "formal_B5_freeze": false,
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

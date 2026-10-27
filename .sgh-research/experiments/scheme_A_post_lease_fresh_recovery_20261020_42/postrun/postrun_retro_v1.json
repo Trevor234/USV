@@ -1,0 +1,15 @@
+{
+  "EDA_route_STA_WNS_PPA": "not applicable",
+  "next": "B4 source domain and policy review on current81 field register then B5/M0b",
+  "next_confidence": "high",
+  "next_cost": "low",
+  "next_impact": "high",
+  "next_risk": "low",
+  "primary_mechanism": "insufficient_evidence resolved for exact post-lease41 fresh identity and original normal tail",
+  "research_conclusion": false,
+  "same_recovery_active_lease_V1_rerun_justified": false,
+  "secondary_mechanism": "versioned postrun checker origin semantic error corrected from actual registered source without runtime changes",
+  "selected_hypothesis_passed": true,
+  "stage_qualified": false,
+  "stop_condition": "one specific consumer source or domain/unknown policy gap needs evidence; do not repeat already confirmed cases"
+}

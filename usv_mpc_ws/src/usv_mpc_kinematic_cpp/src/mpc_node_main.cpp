@@ -39,7 +39,16 @@
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<usv_mpc::MpcControllerNode>();
+  // 构造期校验失败会抛异常；未捕获即 abort，systemd 记为 crash 且无退出码。
+  // 转成干净的 1，使配置错误在日志里可区分于运行时故障。
+  std::shared_ptr<usv_mpc::MpcControllerNode> node;
+  try {
+    node = std::make_shared<usv_mpc::MpcControllerNode>();
+  } catch (const std::exception & e) {
+    fprintf(stderr, "[mpc_node] 启动配置被拒绝: %s\n", e.what());
+    rclcpp::shutdown();
+    return 1;
+  }
 
   // SIGINT 时 rclcpp 信号处理器在 spin 返回前就触发 context shutdown;
   // on_shutdown 回调是发布安全停车指令的最后时机 (此刻 context 仍可用)。

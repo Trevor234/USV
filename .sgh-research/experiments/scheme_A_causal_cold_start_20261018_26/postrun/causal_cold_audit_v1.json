@@ -1,0 +1,108 @@
+{
+  "MPC_delivery_complete": false,
+  "actual_original_first_bounds_restored": true,
+  "all_five_recorded_calls_independently_checked": true,
+  "candidate_RTI_calls": 4,
+  "candidate_component_gates_passed": true,
+  "candidate_cost_premium_over_refined_free_fraction": 0.05185193599740756,
+  "candidate_cost_reduction_fraction": 0.21421494150200288,
+  "candidate_feasible_cost": 0.069134362943349,
+  "candidate_first_control_n": [
+    0.5,
+    0.5
+  ],
+  "candidate_surge_at_dt_m_s": 0.012167084819292002,
+  "cold_baseline_feasible_cost": 0.08798126433645495,
+  "cold_baseline_first_control_n": [
+    0.3645576181771613,
+    0.36455761817717686
+  ],
+  "cold_surge_at_dt_m_s": 0.008872599171742542,
+  "durable_journal_records": 9,
+  "exact_one_final_warm_shift_verified": true,
+  "execute_qualified": false,
+  "final_dynamic_defect": 2.7755575615628914e-17,
+  "free_probe_distance_from_050_n": 0.13643704146081342,
+  "free_probe_first_control_n": [
+    0.3635629585391866,
+    0.3635629585391853
+  ],
+  "independent_cost_max_abs_error": 9.71445146547012e-17,
+  "independent_rollout_max_abs_error": 5.551115123125783e-17,
+  "independent_seed_max_abs_error": 5.551115123125783e-17,
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/causal_validation_v1.json": "f1558872ed28df5f62ebc48026386c9e111910601fec2ad548f8ece437944de7",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/runtime_job_v1.json": "3e4ffc927d5603725b73c11ebcd41c3082e19ca8325394f80a7c8f764f598cd6",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/postrun/independent_model_v1.py": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/postrun/verify_causal_cold_v1.py": "b1b9799cf29efd5d65a9d26bf410db088914302527049bcedf12b130b3d36560",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/preregister/causal_cold_v1.json": "37700b10fb1c50f4959ea6ea231e8d746dcdcbb743d218a336e8d3cd5b876c3c",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/preregister/offline_invocation_lock_v1.json": "b19e1162bb1e088757dedffc4d3a14597219e4ce958615ba1944dbffe372ad7b",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/native_causal_cold_v1.json": "64a94b463f5eaacca2703646e44065e4a4a91cd347e74eb4ddc8c4c4d30af514",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/offline_invocation_v1.json": "0588cc5f2a89b22ea5e79336b77e9896a9d6745531fbfad49a16ca1127392d52"
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/causal_validation_v1.json": "f1558872ed28df5f62ebc48026386c9e111910601fec2ad548f8ece437944de7",
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/runtime_job_v1.json": "3e4ffc927d5603725b73c11ebcd41c3082e19ca8325394f80a7c8f764f598cd6",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/postrun/independent_model_v1.py": "cba58f44390ace388ba2feda4b2a6b537f6c4f89750e3d656f1705fb4aa4c742",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/postrun/verify_causal_cold_v1.py": "b1b9799cf29efd5d65a9d26bf410db088914302527049bcedf12b130b3d36560",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/preregister/causal_cold_v1.json": "37700b10fb1c50f4959ea6ea231e8d746dcdcbb743d218a336e8d3cd5b876c3c",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/preregister/offline_invocation_lock_v1.json": "b19e1162bb1e088757dedffc4d3a14597219e4ce958615ba1944dbffe372ad7b",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/native_causal_cold_v1.json": "64a94b463f5eaacca2703646e44065e4a4a91cd347e74eb4ddc8c4c4d30af514",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/offline_invocation_v1.json": "0588cc5f2a89b22ea5e79336b77e9896a9d6745531fbfad49a16ca1127392d52"
+  },
+  "maximum_initial_residual": 5.924845508124942e-15,
+  "maximum_previous_control_memory_residual": 3.392034918285715e-17,
+  "native_file_open_trace": {
+    "data_open_paths": [
+      "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/runtime_job_v1.json",
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/native_causal_cold_v1.json",
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/native_causal_cold_v1.json.journal.jsonl"
+    ],
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/native_causal_cold_v1.opens.log",
+    "runtime_input_open_count": 3,
+    "sha256": "3f536e3f55918eabc459e1a52ff5107b76195b5515f8c603580581f810792a67",
+    "total_open_attempts": 260,
+    "validation_or_benchmark_open_attempts": 0
+  },
+  "negative_audit_boundaries": [
+    {
+      "name": "wrong_cost",
+      "reason": "independent objective failed",
+      "rejected": true
+    },
+    {
+      "name": "hidden_constraint",
+      "reason": "status or changed feasible set misrepresented",
+      "rejected": true
+    },
+    {
+      "name": "false_equality_diagnostic",
+      "reason": "first equality diagnostic mismatch",
+      "rejected": true
+    },
+    {
+      "name": "mutated_restored_warm_cache",
+      "reason": "mode withdrawal changed final warm cache",
+      "rejected": true
+    },
+    {
+      "name": "oracle_file_open_injected",
+      "reason": "candidate attempted validation/benchmark file open",
+      "rejected": true
+    }
+  ],
+  "new_closed_loop_performance_qualified": false,
+  "passed": true,
+  "refined_benchmark_errors": {
+    "U": 1.1260570254023605e-10,
+    "X": 8.163414388917545e-12,
+    "feasible_cost": 1.3877787807814457e-17
+  },
+  "research_conclusion": false,
+  "schema": "scheme-A-causal-cold-independent-audit/v1",
+  "separate_restoration_probe_calls": 1,
+  "stage_qualified": false,
+  "surge_gain_m_s": 0.00329448564754946,
+  "surge_relative_gain": 0.3713100956979708,
+  "withdrawal_preserves_warm_exactly": true
+}

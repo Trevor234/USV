@@ -1,0 +1,345 @@
+{
+  "all_actual_102_job_output_tuples_equal": true,
+  "baseline": {
+    "jobs": 102,
+    "public_vs_actual": {
+      "U": 0.0,
+      "X": 0.0,
+      "control": 0.0
+    },
+    "public_vs_raw_shift": {
+      "U": 0.0,
+      "X": 0.0,
+      "control": 0.0
+    },
+    "raw_shift_vs_actual": {
+      "U": 0.0,
+      "X": 0.0,
+      "control": 0.0
+    }
+  },
+  "cases": [
+    {
+      "job_id": 1,
+      "methods": {
+        "public_shift": {
+          "defect_iteration1": 0.0005625209629438049,
+          "defect_iteration12": 2.0119110024623826e-05,
+          "feasible_cost_iteration1": 0.08798126433645495,
+          "feasible_cost_iteration12": 0.0657343078032656,
+          "first_control_iteration12_n": [
+            0.3641044867538388,
+            0.3641044867538383
+          ],
+          "first_control_iteration1_n": [
+            0.3645576181771613,
+            0.36455761817717686
+          ],
+          "kernel_ms_max": 0.123432,
+          "kernel_ms_min": 0.109378,
+          "max_control_delta_from_iteration1_n": 0.0004533057999265844,
+          "max_control_relative_delta": 0.0012434407548336445,
+          "max_feasible_cost_relative_delta": 0.2528646211202845,
+          "nearly_unchanged": false
+        },
+        "raw_shift": {
+          "defect_iteration1": 0.0005625209629438049,
+          "defect_iteration12": 2.0119110024623826e-05,
+          "feasible_cost_iteration1": 0.08798126433645495,
+          "feasible_cost_iteration12": 0.0657343078032656,
+          "first_control_iteration12_n": [
+            0.3641044867538388,
+            0.3641044867538383
+          ],
+          "first_control_iteration1_n": [
+            0.3645576181771613,
+            0.36455761817717686
+          ],
+          "kernel_ms_max": 0.112505,
+          "kernel_ms_min": 0.106473,
+          "max_control_delta_from_iteration1_n": 0.0004533057999265844,
+          "max_control_relative_delta": 0.0012434407548336445,
+          "max_feasible_cost_relative_delta": 0.2528646211202845,
+          "nearly_unchanged": false
+        },
+        "raw_unshifted": {
+          "defect_iteration1": 0.0005625209629438049,
+          "defect_iteration12": 2.7755575615628914e-17,
+          "feasible_cost_iteration1": 0.08798126433645495,
+          "feasible_cost_iteration12": 0.06572632570932432,
+          "first_control_iteration12_n": [
+            0.36554863584879443,
+            0.36554863584879443
+          ],
+          "first_control_iteration1_n": [
+            0.3645576181771613,
+            0.36455761817717686
+          ],
+          "kernel_ms_max": 0.110507,
+          "kernel_ms_min": 0.106057,
+          "max_control_delta_from_iteration1_n": 0.001000649115903307,
+          "max_control_relative_delta": 0.0027448311762257194,
+          "max_feasible_cost_relative_delta": 0.25295088442948577,
+          "nearly_unchanged": false
+        }
+      },
+      "warm_prefix_jobs": 0
+    },
+    {
+      "job_id": 2,
+      "methods": {
+        "public_shift": {
+          "defect_iteration1": 1.1599877698664773e-07,
+          "defect_iteration12": 1.949139714868542e-05,
+          "feasible_cost_iteration1": 0.04680316713520352,
+          "feasible_cost_iteration12": 0.04680792180923162,
+          "first_control_iteration12_n": [
+            0.49760643835761625,
+            0.4976064383576204
+          ],
+          "first_control_iteration1_n": [
+            0.4986562644217963,
+            0.49865626442180055
+          ],
+          "kernel_ms_max": 0.113274,
+          "kernel_ms_min": 0.108272,
+          "max_control_delta_from_iteration1_n": 0.0010527186786033482,
+          "max_control_relative_delta": 0.002111110906876887,
+          "max_feasible_cost_relative_delta": 0.00010248993849282454,
+          "nearly_unchanged": false
+        },
+        "raw_shift": {
+          "defect_iteration1": 1.1599877698664773e-07,
+          "defect_iteration12": 1.949139714868542e-05,
+          "feasible_cost_iteration1": 0.04680316713520352,
+          "feasible_cost_iteration12": 0.04680792180923162,
+          "first_control_iteration12_n": [
+            0.49760643835761625,
+            0.4976064383576204
+          ],
+          "first_control_iteration1_n": [
+            0.4986562644217963,
+            0.49865626442180055
+          ],
+          "kernel_ms_max": 0.111136,
+          "kernel_ms_min": 0.106576,
+          "max_control_delta_from_iteration1_n": 0.0010527186786033482,
+          "max_control_relative_delta": 0.002111110906876887,
+          "max_feasible_cost_relative_delta": 0.00010248993849282454,
+          "nearly_unchanged": false
+        },
+        "raw_unshifted": {
+          "defect_iteration1": 1.1599877698664773e-07,
+          "defect_iteration12": 5.551115123125783e-17,
+          "feasible_cost_iteration1": 0.04680316713520352,
+          "feasible_cost_iteration12": 0.046803166787179704,
+          "first_control_iteration12_n": [
+            0.49862163895708833,
+            0.4986216389570929
+          ],
+          "first_control_iteration1_n": [
+            0.4986562644217963,
+            0.49865626442180055
+          ],
+          "kernel_ms_max": 0.110143,
+          "kernel_ms_min": 0.105491,
+          "max_control_delta_from_iteration1_n": 3.472253996628094e-05,
+          "max_control_relative_delta": 6.96322145005884e-05,
+          "max_feasible_cost_relative_delta": 7.435903746593142e-09,
+          "nearly_unchanged": true
+        }
+      },
+      "warm_prefix_jobs": 1
+    },
+    {
+      "job_id": 5,
+      "methods": {
+        "public_shift": {
+          "defect_iteration1": 2.1849265591233902e-08,
+          "defect_iteration12": 6.943811438668568e-06,
+          "feasible_cost_iteration1": 0.0251471361371379,
+          "feasible_cost_iteration12": 0.02514736662285051,
+          "first_control_iteration12_n": [
+            0.3969640891217646,
+            0.3969679229285126
+          ],
+          "first_control_iteration1_n": [
+            0.39714630146011176,
+            0.3971501397443321
+          ],
+          "kernel_ms_max": 0.112171,
+          "kernel_ms_min": 0.109754,
+          "max_control_delta_from_iteration1_n": 0.0001822248496344825,
+          "max_control_relative_delta": 0.0004588311356299431,
+          "max_feasible_cost_relative_delta": 9.165485539853977e-06,
+          "nearly_unchanged": false
+        },
+        "raw_shift": {
+          "defect_iteration1": 2.1849265591233902e-08,
+          "defect_iteration12": 6.943811438668568e-06,
+          "feasible_cost_iteration1": 0.0251471361371379,
+          "feasible_cost_iteration12": 0.02514736662285051,
+          "first_control_iteration12_n": [
+            0.3969640891217646,
+            0.3969679229285126
+          ],
+          "first_control_iteration1_n": [
+            0.39714630146011176,
+            0.3971501397443321
+          ],
+          "kernel_ms_max": 0.113615,
+          "kernel_ms_min": 0.107401,
+          "max_control_delta_from_iteration1_n": 0.0001822248496344825,
+          "max_control_relative_delta": 0.0004588311356299431,
+          "max_feasible_cost_relative_delta": 9.165485539853977e-06,
+          "nearly_unchanged": false
+        },
+        "raw_unshifted": {
+          "defect_iteration1": 2.1849265591233902e-08,
+          "defect_iteration12": 2.7755575615628914e-17,
+          "feasible_cost_iteration1": 0.0251471361371379,
+          "feasible_cost_iteration12": 0.025147136134413,
+          "first_control_iteration12_n": [
+            0.39714863232851905,
+            0.3971524706354803
+          ],
+          "first_control_iteration1_n": [
+            0.39714630146011176,
+            0.3971501397443321
+          ],
+          "kernel_ms_max": 0.112187,
+          "kernel_ms_min": 0.107584,
+          "max_control_delta_from_iteration1_n": 2.3333920739498915e-06,
+          "max_control_relative_delta": 5.875339929257049e-06,
+          "max_feasible_cost_relative_delta": 1.0835923573507227e-10,
+          "nearly_unchanged": true
+        }
+      },
+      "warm_prefix_jobs": 4
+    },
+    {
+      "job_id": 10,
+      "methods": {
+        "public_shift": {
+          "defect_iteration1": 2.3963773188029336e-09,
+          "defect_iteration12": 3.20027465659789e-07,
+          "feasible_cost_iteration1": 0.005783905741987022,
+          "feasible_cost_iteration12": 0.005783909727958599,
+          "first_control_iteration12_n": [
+            0.08425357641567531,
+            0.08425164523687775
+          ],
+          "first_control_iteration1_n": [
+            0.08425959591553381,
+            0.08425766477047837
+          ],
+          "kernel_ms_max": 0.104155,
+          "kernel_ms_min": 0.098679,
+          "max_control_delta_from_iteration1_n": 6.019533990819781e-06,
+          "max_control_relative_delta": 7.144033774923481e-05,
+          "max_feasible_cost_relative_delta": 6.892863282178187e-07,
+          "nearly_unchanged": true
+        },
+        "raw_shift": {
+          "defect_iteration1": 2.3963773188029336e-09,
+          "defect_iteration12": 3.20027465659789e-07,
+          "feasible_cost_iteration1": 0.005783905741987022,
+          "feasible_cost_iteration12": 0.005783909727958599,
+          "first_control_iteration12_n": [
+            0.08425357641567531,
+            0.08425164523687775
+          ],
+          "first_control_iteration1_n": [
+            0.08425959591553381,
+            0.08425766477047837
+          ],
+          "kernel_ms_max": 0.102576,
+          "kernel_ms_min": 0.097655,
+          "max_control_delta_from_iteration1_n": 6.019533990819781e-06,
+          "max_control_relative_delta": 7.144033774923481e-05,
+          "max_feasible_cost_relative_delta": 6.892863282178187e-07,
+          "nearly_unchanged": true
+        },
+        "raw_unshifted": {
+          "defect_iteration1": 2.3963773188029336e-09,
+          "defect_iteration12": 5.551115123125783e-17,
+          "feasible_cost_iteration1": 0.005783905741987022,
+          "feasible_cost_iteration12": 0.005783905741330783,
+          "first_control_iteration12_n": [
+            0.08425984953078108,
+            0.08425791841948302
+          ],
+          "first_control_iteration1_n": [
+            0.08425959591553381,
+            0.08425766477047837
+          ],
+          "kernel_ms_max": 0.102416,
+          "kernel_ms_min": 0.097587,
+          "max_control_delta_from_iteration1_n": 2.5383787267962976e-07,
+          "max_control_relative_delta": 3.012569309424294e-06,
+          "max_feasible_cost_relative_delta": 1.1345993234113266e-10,
+          "nearly_unchanged": true
+        }
+      },
+      "warm_prefix_jobs": 9
+    }
+  ],
+  "execute_qualified": false,
+  "independent_cost_max_abs_error": 9.71445146547012e-17,
+  "independent_rollout_max_abs_error": 1.3877787807814457e-16,
+  "independently_checked_answers": 144,
+  "initial_state_exact_equality_claimed": false,
+  "initial_state_max_abs_error": 2.2526709664294486e-10,
+  "initial_state_residual_exceeds_1e_10_count": 36,
+  "input_bound_violation_n": 0.0,
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/postrun/verify_startup_mechanism_v2.py": "ed9de103ff30b3e70fcfbc781b045f3d4b7f247aa9229f13a2e6012c1a776d3a",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/preregister/offline_invocation_lock_v1.json": "0a086a2e6f1856308dfc016826bf39134e2d8bc8fe9b61bfe3a0a3a75620c1ad",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/preregister/selected_solver_scope_v1.json": "5893e90f53afd6f1e875e5daf99b77a4249e8979e88f65be073ced96d7e36c0e",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/native_startup_v1.json": "e4f77f5618228d7df9dfbd3807d3a727f1fb7240a74480f8757a4dbfd3376ee0",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/offline_invocation_v1.json": "74e9ab6ddd4b3c1ac699bf98919ef2f231e2fd818b2efc4a430f3d85ded07cad"
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/postrun/verify_startup_mechanism_v2.py": "ed9de103ff30b3e70fcfbc781b045f3d4b7f247aa9229f13a2e6012c1a776d3a",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/preregister/offline_invocation_lock_v1.json": "0a086a2e6f1856308dfc016826bf39134e2d8bc8fe9b61bfe3a0a3a75620c1ad",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/preregister/selected_solver_scope_v1.json": "5893e90f53afd6f1e875e5daf99b77a4249e8979e88f65be073ced96d7e36c0e",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/native_startup_v1.json": "e4f77f5618228d7df9dfbd3807d3a727f1fb7240a74480f8757a4dbfd3376ee0",
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/replay/offline_invocation_v1.json": "74e9ab6ddd4b3c1ac699bf98919ef2f231e2fd818b2efc4a430f3d85ded07cad"
+  },
+  "largest_control_increment_n": 0.3655582672930646,
+  "negative_boundaries": [
+    {
+      "name": "nonfinite_prediction",
+      "reason": "finite matrix and exact shape",
+      "rejected": true
+    },
+    {
+      "name": "wrong_first_control",
+      "reason": "first control differs from U0",
+      "rejected": true
+    },
+    {
+      "name": "wrong_cost",
+      "reason": "independent cost mismatch: objective_self_computed/total",
+      "rejected": true
+    },
+    {
+      "name": "wrong_rollout",
+      "reason": "independent nonlinear rollout mismatch",
+      "rejected": true
+    },
+    {
+      "name": "unearned_KKT_claim",
+      "reason": "unearned solver claims",
+      "rejected": true
+    }
+  ],
+  "new_closed_loop_performance_qualified": false,
+  "passed": true,
+  "primary_mechanism_nearly_unchanged": false,
+  "research_conclusion": false,
+  "schema": "scheme-A-startup-RTI-independent-audit/v1",
+  "stage_qualified": false
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "normal-source-explicit-reader-budget-cases-v1",
+  "passed": true,
+  "cases": [
+    {
+      "name": "old16MiB_refuses_actual20MB_source",
+      "passed": true
+    },
+    {
+      "name": "new64MiB_reads_same_bounded_source",
+      "passed": true
+    },
+    {
+      "name": "reader_remains_below_total128MiB_output_budget",
+      "passed": true
+    }
+  ],
+  "actual_regular_file_operations": true,
+  "control_parameters_or_ELFs_changed": false,
+  "stage_qualified": false
+}

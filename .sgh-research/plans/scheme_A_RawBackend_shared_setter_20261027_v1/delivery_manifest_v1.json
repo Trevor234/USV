@@ -1,0 +1,32 @@
+{
+  "kind": "planning_document_delivery",
+  "source": "/home/trevor/USV/.sgh-research/plans/scheme_A_RawBackend_shared_setter_20261027_v1",
+  "mirror": "/home/trevor/MPC/scheme_A_RawBackend_shared_setter_20261027_v1",
+  "files": {
+    "documents/方案A_下一步RawBackend共享初始化_详细修改与验收计划_2026-10-27.md": {
+      "bytes": 26019,
+      "sha256": "90c54b1e9a88da80559c61377fe575b759dffbb6a100f646f56fd85bd5dd07be"
+    },
+    "execution_sequence_v1.json": {
+      "bytes": 2516,
+      "sha256": "096b0e602a3814c440fc1bb1b425b196eda2c9d1959d8064b3863e36c9da958a"
+    },
+    "plan_review_v2.json": {
+      "bytes": 1793,
+      "sha256": "c1b988b2e5ee5bb106ae42c6cb07edd896d5f35bc7bd9855a7d2ccfd8febddf8"
+    },
+    "planning_inputs_v1.json": {
+      "bytes": 7745,
+      "sha256": "b050cf1bd23ec336696f4fcb40626d52fd78e69c9f0df6055764c4afe7cfa9ed"
+    },
+    "superseded/plan_review_v1_invalid_readback_check.json": {
+      "bytes": 1098,
+      "sha256": "e5ff211ab6c6ecd0a3da97d0f85188737531e1d8c92be4242412e1d235c3ad4f"
+    }
+  },
+  "active_plan": "documents/方案A_下一步RawBackend共享初始化_详细修改与验收计划_2026-10-27.md",
+  "active_review": "plan_review_v2.json",
+  "not_execution_result": true,
+  "builds_started": 0,
+  "new_ROS_or_owned_runs": 0
+}

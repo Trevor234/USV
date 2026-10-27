@@ -1,0 +1,21 @@
+{
+  "kind": "planning_document_readback",
+  "rounds": [
+    {
+      "round": 1,
+      "files": 6,
+      "exact_population": true,
+      "mismatches": []
+    },
+    {
+      "round": 2,
+      "files": 6,
+      "exact_population": true,
+      "mismatches": []
+    }
+  ],
+  "mirror": "/home/trevor/MPC/scheme_A_RawBackend_shared_setter_20261027_v1",
+  "files_verified": 6,
+  "not_execution_result": true,
+  "active_review": "plan_review_v2.json"
+}

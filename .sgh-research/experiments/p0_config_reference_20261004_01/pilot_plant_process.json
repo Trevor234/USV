@@ -1,0 +1,1 @@
+{"pid": 215563, "command": ["/usr/bin/python3", "/home/trevor/USV/.sgh-research/experiments/p0_config_reference_20261004_01/run_f4_pilot_v2.py", "plant_mass", "--attempt", "01", "--duration", "60"]}

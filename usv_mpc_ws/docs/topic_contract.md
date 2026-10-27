@@ -2,6 +2,18 @@
 
 本文档是 USV MPC 控制软件栈的权威接口映射规范。所有 Launch 启动文件、YAML 参数以及节点默认值均需与本契约保持严格对齐。
 
+## 飞控模式契约（FCU mode contract）
+
+输出后端与飞控模式必须成对出现；两者错配时 MPC 会永久 `wrong_mode` STANDBY（关闭 FCU 状态检查时则输出到不被飞控采用的通道）。
+
+| 方案 | `output_mode` | `allowed_fcu_modes` | 原因 |
+| --- | --- | --- | --- |
+| 方案 A（运动学，速度 setpoint） | 不适用（恒发 `cmd_vel`） | `["GUIDED"]` | ArduRover GUIDED 消费 setpoint 速度指令 |
+| 方案 B（动力学 NMPC，RC 覆写） | `rc_override` | `["MANUAL"]` | RC 覆写只在 MANUAL 下经 pilot 输入链成为 steering/throttle 主控制 |
+| 方案 B（VRX 直驱推力） | `vrx_thrust` | 任意（`require_fcu_state=false` 时短路） | 仿真无飞控状态流 |
+
+`mpc_node` 在启动时强制校验：`output_mode=rc_override` 且 `allowed_fcu_modes` 不等于 `["MANUAL"]` 时**拒绝启动**（抛 `std::invalid_argument`）。关闭 `require_fcu_state` 不会绕过该校验。模式管理器 `mode_manager_node` 的 `mpc_fcu_mode` 按方案取 `GUIDED`（A）或 `MANUAL`（B），`auto_mode_switch` 默认关闭、由 launch 显式传入。详见 [方案B MANUAL+RC覆写契约](scheme_B_manual_rc_contract.md)。
+
 ## 通用接口
 
 | 接口名称 | 默认话题 / 坐标系 | 消息类型 / 说明 |

@@ -30,8 +30,10 @@
 
 #include <chrono>
 #include <cmath>
-#include <functional>
 #include <cstring>
+#include <functional>
+#include <stdexcept>
+
 #include <nlohmann/json.hpp>
 
 #include "usv_mpc_cpp/p1_input_core.hpp"
@@ -221,7 +223,7 @@ void MpcControllerNode::declare_parameters_()
   this->declare_parameter("publish_predicted", true);
   this->declare_parameter("max_solve_time_ms", 200.0);
   this->declare_parameter("solver_hold_threshold", 5);
-  this->declare_parameter("allowed_fcu_modes", std::vector<std::string>{"GUIDED"});
+  this->declare_parameter("allowed_fcu_modes", std::vector<std::string>{"MANUAL"});
   this->declare_parameter("state_timeout_s", 5.0);
   this->declare_parameter("odom_timeout_s", 1.0);
   this->declare_parameter("reference_start_offset", 3);
@@ -311,25 +313,14 @@ void MpcControllerNode::load_config_()
   vrx_thrust_scale_ = this->get_parameter("vrx_thrust_scale").as_double();
   vrx_thrust_cmd_max_ = this->get_parameter("vrx_thrust_cmd_max").as_double();
 
-  // 输出后端 × FCU 模式契约自检: rc_override 组合 (ArduRover GUIDED 接受
-  // RC override, 2026-07 实船验证) 依赖 allowed_fcu_modes 与部署的模式切换
-  // 逻辑一致。若列表不含 GUIDED, MPC 将永远 wrong_mode STANDBY —— 启动时
-  // 显式告警, 避免配置漂移静默生效。
-  if (output_mode_ == "rc_override" && !allowed_fcu_modes_.empty()) {
-    bool has_guided = false;
-    for (const auto & m : allowed_fcu_modes_) {
-      if (m == "GUIDED") {has_guided = true; break;}
-    }
-    if (!has_guided) {
-      std::string modes;
-      for (const auto & m : allowed_fcu_modes_) {
-        modes += (modes.empty() ? "" : ",") + m;
-      }
-      RCLCPP_WARN(this->get_logger(),
-                  "output_mode=rc_override 但 allowed_fcu_modes=[%s] 不含 "
-                  "GUIDED: 确认该组合与模式管理器的切换逻辑一致",
-                  modes.c_str());
-    }
+  // 实船方案 B 契约: NMPC -> RC override -> ArduRover MANUAL 输入链。
+  // MAVLink 接收 RC 覆写不等于 GUIDED 将其用作 steering/throttle 主控制。
+  // require_fcu_state=false 仅供独立仿真/组件测试，不能授予实船模式资格。
+  if (output_mode_ == "rc_override" &&
+    allowed_fcu_modes_ != std::vector<std::string>{"MANUAL"})
+  {
+    throw std::invalid_argument(
+            "Scheme B rc_override requires allowed_fcu_modes=[MANUAL]");
   }
   if (!require_fcu_state_) {
     RCLCPP_WARN(this->get_logger(),

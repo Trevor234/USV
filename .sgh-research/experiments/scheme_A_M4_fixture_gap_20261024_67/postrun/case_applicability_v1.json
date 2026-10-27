@@ -1,0 +1,1845 @@
+{
+  "schema": "M4-original-case-layered-applicability-v67",
+  "matrix": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/M4_fault_matrix_v1.json",
+    "bytes": 6332,
+    "sha256": "58c7eccb51eb463a3012de09b4e78d4f4397317025d5618be4cf798a9d0fbd74"
+  },
+  "original_clause_count": 18,
+  "group_count": 9,
+  "atom_count": 69,
+  "status_labels": {
+    "reusable_component": "可复用组件",
+    "reusable_owned_subitem": "可复用owned子项",
+    "needs_wiring_validation": "需补接线验证",
+    "uncovered_current_path": "当前路径未覆盖"
+  },
+  "status_counts": {
+    "reusable_component": 30,
+    "reusable_owned_subitem": 13,
+    "needs_wiring_validation": 23,
+    "uncovered_current_path": 3
+  },
+  "groups": [
+    {
+      "acceptance": "same reused core; exact declared future-reference semantics; no hidden writer",
+      "current_M4_qualified": false,
+      "id": "compatibility_input",
+      "required_cases": [
+        "F5 source/reference/mapping qualified old regression and logging off/on",
+        "new target-reference independent fixture, no implicit physical writer"
+      ],
+      "status_counts": {
+        "reusable_component": 5,
+        "reusable_owned_subitem": 1
+      },
+      "case_atoms": 6,
+      "ready_for_layered_joint_review": true,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "complete absolute 150ms cutoff equality allowed, strict-after cutoff; target remains origin+200ms; no deadline extension or late activation",
+      "current_M4_qualified": false,
+      "id": "time_boundaries",
+      "required_cases": [
+        "50/150/250/400ms; ready before/equal/after deadline",
+        "early ready, wrong target, delayed tick"
+      ],
+      "status_counts": {
+        "reusable_component": 10
+      },
+      "case_atoms": 10,
+      "ready_for_layered_joint_review": true,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "multiple complete regulator ticks while worker blocked; active/pending/ready bounded; one backend only; delivery delay not called native block",
+      "current_M4_qualified": false,
+      "id": "native_block_and_delivery",
+      "required_cases": [
+        "worker held at native boundary until independent release",
+        "separate result delivery delay/drop"
+      ],
+      "status_counts": {
+        "reusable_owned_subitem": 5
+      },
+      "case_atoms": 5,
+      "ready_for_layered_joint_review": true,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "invalid selection or normal output count=0; each candidate consumed at most once; bounded slots and explicit reason",
+      "current_M4_qualified": false,
+      "id": "candidate_identity_shape",
+      "required_cases": [
+        "failed, invalid shape, NaN, duplicate, old/reordered IDs",
+        "foreign producer/boot/version"
+      ],
+      "status_counts": {
+        "needs_wiring_validation": 8
+      },
+      "case_atoms": 8,
+      "ready_for_layered_joint_review": false,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "semantic task generation only; old task rejected before activation; new odom does not unconditionally starve",
+      "current_M4_qualified": false,
+      "id": "task_reference",
+      "required_cases": [
+        "clear/single point before freeze, clear/replacement during solve",
+        "same content republish, path/profile mismatch, ordinary new odom"
+      ],
+      "status_counts": {
+        "needs_wiring_validation": 7
+      },
+      "case_atoms": 7,
+      "ready_for_layered_joint_review": false,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "separate receipt/sim ages, IMU only if mixed; selected tolerances; epoch/schedule invalidation; no cross-domain subtraction or resurrection",
+      "current_M4_qualified": false,
+      "id": "state_clock",
+      "required_cases": [
+        "source stale/future, mixed skew, activation mismatch",
+        "pause/resume/reset/jump and RTF band"
+      ],
+      "status_counts": {
+        "reusable_component": 3,
+        "needs_wiring_validation": 6
+      },
+      "case_atoms": 9,
+      "ready_for_layered_joint_review": false,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "actual per-side history; H=600ms from last accepted activation; rho80 each actual interval; missing anchor unavailable; no instant-zero rate fiction",
+      "current_M4_qualified": false,
+      "id": "anchor_fallback",
+      "required_cases": [
+        "mid-interval change/same-value republish/different API intervals/missing history",
+        "five misses, HOLD equality/after, invalid bypass, unknown side"
+      ],
+      "status_counts": {
+        "reusable_component": 9
+      },
+      "case_atoms": 9,
+      "ready_for_layered_joint_review": true,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "sole new owner; both calls attempted; successful side irreversible; unknown failed side; finite cleanup attempt/no restart until old group empty; request/API/process/plant flags separate",
+      "current_M4_qualified": false,
+      "id": "publication_exit",
+      "required_cases": [
+        "clear/shutdown before/after submit; left/right partial API outcomes",
+        "worker death, active watchdog, capability lease and cleanup failed"
+      ],
+      "status_counts": {
+        "reusable_owned_subitem": 4,
+        "needs_wiring_validation": 2,
+        "reusable_component": 2,
+        "uncovered_current_path": 2
+      },
+      "case_atoms": 10,
+      "ready_for_layered_joint_review": false,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    },
+    {
+      "acceptance": "normal source/Witness/raw/Stored accounting complete, full startup/business/fallback/shutdown API stream; fault flags follow declared exception, extra unexplained loss/error/overrun fails",
+      "current_M4_qualified": false,
+      "id": "actual_source_recording",
+      "required_cases": [
+        "new isolated normal straight0.05 then controlled faults",
+        "log queue pressure, source/emit/bag counts and before/after assets"
+      ],
+      "status_counts": {
+        "reusable_owned_subitem": 3,
+        "uncovered_current_path": 1,
+        "reusable_component": 1
+      },
+      "case_atoms": 5,
+      "ready_for_layered_joint_review": false,
+      "qualification_note": "Case evidence/applicability inventory; whole M4 is decided at N3, not by counting tests"
+    }
+  ],
+  "original_clauses": [
+    {
+      "group": "compatibility_input",
+      "clause_index": 0,
+      "original_verbatim": "F5 source/reference/mapping qualified old regression and logging off/on",
+      "atom_ids": [
+        "compatibility_input.01",
+        "compatibility_input.02",
+        "compatibility_input.03",
+        "compatibility_input.04"
+      ]
+    },
+    {
+      "group": "compatibility_input",
+      "clause_index": 1,
+      "original_verbatim": "new target-reference independent fixture, no implicit physical writer",
+      "atom_ids": [
+        "compatibility_input.05",
+        "compatibility_input.06"
+      ]
+    },
+    {
+      "group": "time_boundaries",
+      "clause_index": 0,
+      "original_verbatim": "50/150/250/400ms; ready before/equal/after deadline",
+      "atom_ids": [
+        "time_boundaries.01",
+        "time_boundaries.02",
+        "time_boundaries.03",
+        "time_boundaries.04",
+        "time_boundaries.05",
+        "time_boundaries.06",
+        "time_boundaries.10"
+      ]
+    },
+    {
+      "group": "time_boundaries",
+      "clause_index": 1,
+      "original_verbatim": "early ready, wrong target, delayed tick",
+      "atom_ids": [
+        "time_boundaries.07",
+        "time_boundaries.08",
+        "time_boundaries.09"
+      ]
+    },
+    {
+      "group": "native_block_and_delivery",
+      "clause_index": 0,
+      "original_verbatim": "worker held at native boundary until independent release",
+      "atom_ids": [
+        "native_block_and_delivery.01",
+        "native_block_and_delivery.02",
+        "native_block_and_delivery.03"
+      ]
+    },
+    {
+      "group": "native_block_and_delivery",
+      "clause_index": 1,
+      "original_verbatim": "separate result delivery delay/drop",
+      "atom_ids": [
+        "native_block_and_delivery.04",
+        "native_block_and_delivery.05"
+      ]
+    },
+    {
+      "group": "candidate_identity_shape",
+      "clause_index": 0,
+      "original_verbatim": "failed, invalid shape, NaN, duplicate, old/reordered IDs",
+      "atom_ids": [
+        "candidate_identity_shape.01",
+        "candidate_identity_shape.02",
+        "candidate_identity_shape.03",
+        "candidate_identity_shape.04",
+        "candidate_identity_shape.05"
+      ]
+    },
+    {
+      "group": "candidate_identity_shape",
+      "clause_index": 1,
+      "original_verbatim": "foreign producer/boot/version",
+      "atom_ids": [
+        "candidate_identity_shape.06",
+        "candidate_identity_shape.07",
+        "candidate_identity_shape.08"
+      ]
+    },
+    {
+      "group": "task_reference",
+      "clause_index": 0,
+      "original_verbatim": "clear/single point before freeze, clear/replacement during solve",
+      "atom_ids": [
+        "task_reference.01",
+        "task_reference.02",
+        "task_reference.03",
+        "task_reference.04"
+      ]
+    },
+    {
+      "group": "task_reference",
+      "clause_index": 1,
+      "original_verbatim": "same content republish, path/profile mismatch, ordinary new odom",
+      "atom_ids": [
+        "task_reference.05",
+        "task_reference.06",
+        "task_reference.07"
+      ]
+    },
+    {
+      "group": "state_clock",
+      "clause_index": 0,
+      "original_verbatim": "source stale/future, mixed skew, activation mismatch",
+      "atom_ids": [
+        "state_clock.01",
+        "state_clock.02",
+        "state_clock.03"
+      ]
+    },
+    {
+      "group": "state_clock",
+      "clause_index": 1,
+      "original_verbatim": "pause/resume/reset/jump and RTF band",
+      "atom_ids": [
+        "state_clock.04",
+        "state_clock.05",
+        "state_clock.06",
+        "state_clock.07",
+        "state_clock.08",
+        "state_clock.09"
+      ]
+    },
+    {
+      "group": "anchor_fallback",
+      "clause_index": 0,
+      "original_verbatim": "mid-interval change/same-value republish/different API intervals/missing history",
+      "atom_ids": [
+        "anchor_fallback.01",
+        "anchor_fallback.02",
+        "anchor_fallback.03",
+        "anchor_fallback.04"
+      ]
+    },
+    {
+      "group": "anchor_fallback",
+      "clause_index": 1,
+      "original_verbatim": "five misses, HOLD equality/after, invalid bypass, unknown side",
+      "atom_ids": [
+        "anchor_fallback.05",
+        "anchor_fallback.06",
+        "anchor_fallback.07",
+        "anchor_fallback.08",
+        "anchor_fallback.09"
+      ]
+    },
+    {
+      "group": "publication_exit",
+      "clause_index": 0,
+      "original_verbatim": "clear/shutdown before/after submit; left/right partial API outcomes",
+      "atom_ids": [
+        "publication_exit.01",
+        "publication_exit.02",
+        "publication_exit.03",
+        "publication_exit.04",
+        "publication_exit.05"
+      ]
+    },
+    {
+      "group": "publication_exit",
+      "clause_index": 1,
+      "original_verbatim": "worker death, active watchdog, capability lease and cleanup failed",
+      "atom_ids": [
+        "publication_exit.06",
+        "publication_exit.07",
+        "publication_exit.08",
+        "publication_exit.09",
+        "publication_exit.10"
+      ]
+    },
+    {
+      "group": "actual_source_recording",
+      "clause_index": 0,
+      "original_verbatim": "new isolated normal straight0.05 then controlled faults",
+      "atom_ids": [
+        "actual_source_recording.01",
+        "actual_source_recording.02"
+      ]
+    },
+    {
+      "group": "actual_source_recording",
+      "clause_index": 1,
+      "original_verbatim": "log queue pressure, source/emit/bag counts and before/after assets",
+      "atom_ids": [
+        "actual_source_recording.03",
+        "actual_source_recording.04",
+        "actual_source_recording.05"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "compatibility_input.01",
+      "group": "compatibility_input",
+      "original_clause_index": 0,
+      "case": "F5输入资格/数值准入核心",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "F5_mapping",
+        "current_core58"
+      ],
+      "proven_scope": "原F5冻结源码/XML/ELF可对应，9项同源oracle与当前7项数学源码匹配；3项日志开关原回归保留。",
+      "remaining_current_path_obligation": "不声称当前legacy wrapper整文件相同，不关闭M4强制Source/Witness来冒充旧logging测试。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "compatibility_input.02",
+      "group": "compatibility_input",
+      "original_clause_index": 0,
+      "case": "F5参考构造与全部metadata",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "F5_mapping",
+        "current_core58"
+      ],
+      "proven_scope": "原F5冻结源码/XML/ELF可对应，9项同源oracle与当前7项数学源码匹配；3项日志开关原回归保留。",
+      "remaining_current_path_obligation": "不声称当前legacy wrapper整文件相同，不关闭M4强制Source/Witness来冒充旧logging测试。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "compatibility_input.03",
+      "group": "compatibility_input",
+      "original_clause_index": 0,
+      "case": "F5输入映射/scale/clamp",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "F5_mapping",
+        "current_core58"
+      ],
+      "proven_scope": "原F5冻结源码/XML/ELF可对应，9项同源oracle与当前7项数学源码匹配；3项日志开关原回归保留。",
+      "remaining_current_path_obligation": "不声称当前legacy wrapper整文件相同，不关闭M4强制Source/Witness来冒充旧logging测试。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "compatibility_input.04",
+      "group": "compatibility_input",
+      "original_clause_index": 0,
+      "case": "原F5 logging off/on回归",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "F5_mapping",
+        "current_core58"
+      ],
+      "proven_scope": "原F5冻结源码/XML/ELF可对应，9项同源oracle与当前7项数学源码匹配；3项日志开关原回归保留。",
+      "remaining_current_path_obligation": "不声称当前legacy wrapper整文件相同，不关闭M4强制Source/Witness来冒充旧logging测试。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "compatibility_input.05",
+      "group": "compatibility_input",
+      "original_clause_index": 1,
+      "case": "新target-reference独立fixture及共享数学核心",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "current_core58",
+        "source_ranges"
+      ],
+      "proven_scope": "目标参考独立解析/预测组件与共享构造器，名义hydro19及nominal hash完全相同。",
+      "remaining_current_path_obligation": "来源明确为.05 nominal RK4，原F5 VRX/plant/reference整体同一性不转移。",
+      "current_GTest_cases": [
+        "InputCore.TargetReferenceIsRebuiltFromPredictedNearestPoint"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "compatibility_input.06",
+      "group": "compatibility_input",
+      "original_clause_index": 1,
+      "case": "输入与输出owner分离，无隐藏输出writer",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "66_W2",
+        "49_normal"
+      ],
+      "proven_scope": "已运行四角色身份/端点与Stored对账；Fixture无左右控制writer。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.01",
+      "group": "time_boundaries",
+      "original_clause_index": 0,
+      "case": "ready50ms",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58"
+      ],
+      "proven_scope": "实际Admission头文件的确定性注册/消费，保留原150ms截止及200ms目标。",
+      "remaining_current_path_obligation": "这些是合成ready时刻，不改称实际native solve持续了对应毫秒数。",
+      "current_GTest_cases": [
+        "DeadlineMatrix.Ready50msKeepsOriginal200msTarget"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.02",
+      "group": "time_boundaries",
+      "original_clause_index": 0,
+      "case": "ready150ms等号",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58"
+      ],
+      "proven_scope": "实际Admission头文件的确定性注册/消费，保留原150ms截止及200ms目标。",
+      "remaining_current_path_obligation": "这些是合成ready时刻，不改称实际native solve持续了对应毫秒数。",
+      "current_GTest_cases": [
+        "DeadlineMatrix.Ready150msEqualityIsAllowed"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.03",
+      "group": "time_boundaries",
+      "original_clause_index": 0,
+      "case": "ready150ms+1ns",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58"
+      ],
+      "proven_scope": "实际Admission头文件的确定性注册/消费，保留原150ms截止及200ms目标。",
+      "remaining_current_path_obligation": "这些是合成ready时刻，不改称实际native solve持续了对应毫秒数。",
+      "current_GTest_cases": [
+        "DeadlineMatrix.Ready150msPlusOneNanosecondIsLate"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.04",
+      "group": "time_boundaries",
+      "original_clause_index": 0,
+      "case": "ready250ms",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58"
+      ],
+      "proven_scope": "实际Admission头文件的确定性注册/消费，保留原150ms截止及200ms目标。",
+      "remaining_current_path_obligation": "这些是合成ready时刻，不改称实际native solve持续了对应毫秒数。",
+      "current_GTest_cases": [
+        "DeadlineMatrix.Ready250msIsNotRescheduled"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.05",
+      "group": "time_boundaries",
+      "original_clause_index": 0,
+      "case": "ready400ms",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58"
+      ],
+      "proven_scope": "实际Admission头文件的确定性注册/消费，保留原150ms截止及200ms目标。",
+      "remaining_current_path_obligation": "这些是合成ready时刻，不改称实际native solve持续了对应毫秒数。",
+      "current_GTest_cases": [
+        "DeadlineMatrix.Ready400msIsNotRescheduled"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.06",
+      "group": "time_boundaries",
+      "original_clause_index": 0,
+      "case": "完整注册完成点before/equal/after",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "source_ranges"
+      ],
+      "proven_scope": "finalize_ready等号保留、strict-after撤销；实际candidate函数仍在工作之后重读完成时间。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [
+        "Deadline.EqualityRegistrationSurvivesEitherCutoffOrder",
+        "Deadline.RegistrationCompletionAfterDeadlineRetractsSlot"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.07",
+      "group": "time_boundaries",
+      "original_clause_index": 1,
+      "case": "early ready不得提前激活",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58"
+      ],
+      "proven_scope": "到200ms前不能take且只消费一次。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [
+        "DeadlineMatrix.Ready50msKeepsOriginal200msTarget"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.08",
+      "group": "time_boundaries",
+      "original_clause_index": 1,
+      "case": "wrong target/错版本/重复",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58"
+      ],
+      "proven_scope": "Ticket准入拒绝，未替代typed Candidate完整接线。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [
+        "Admission.WrongTargetDuplicateAndVersion"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.09",
+      "group": "time_boundaries",
+      "original_clause_index": 1,
+      "case": "delayed tick/错过tick不追赶",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92"
+      ],
+      "proven_scope": "实际due_tick和OutputAuthority错拍/jitter规则已验证，固定槽位不滚到新目标。",
+      "remaining_current_path_obligation": "current tick_loop调度外壳的受控250/400ms交错由T1源链接检查补齐。",
+      "current_GTest_cases": [
+        "Admission.FixedCapacityAndMissedTickNeverRollsForward",
+        "SchedulerBoundary.ExactAndAdjacentDueTicks"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "time_boundaries.10",
+      "group": "time_boundaries",
+      "original_clause_index": 0,
+      "case": "不延长deadline/target",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "66_W2"
+      ],
+      "proven_scope": "改deadline/target即time_contract；真实W2释放后仍依原截止拒绝C。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [
+        "DeadlineMatrix.ExtendingDeadlineIsAContractFailure",
+        "DeadlineMatrix.ExtendingTargetIsAContractFailure"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "native_block_and_delivery.01",
+      "group": "native_block_and_delivery",
+      "original_clause_index": 0,
+      "case": "native边界独立release",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "66_W2"
+      ],
+      "proven_scope": "Job2/ordinal1驻留417.85ms；独立pipe释放验证成功，原截止已过，C调用0。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "native_block_and_delivery.02",
+      "group": "native_block_and_delivery",
+      "original_clause_index": 0,
+      "case": "驻留期间多完整tick及真实心跳",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "66_W2"
+      ],
+      "proven_scope": "tick3/4及2次续租，未失租约/触发watchdog。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "native_block_and_delivery.03",
+      "group": "native_block_and_delivery",
+      "original_clause_index": 0,
+      "case": "active/pending/ready有界与单backend",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "本次实际Job多重集1 delivered/2 expired/3 replaced/4 discarded；单计算线程/backend，ready最大1。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "native_block_and_delivery.04",
+      "group": "native_block_and_delivery",
+      "original_clause_index": 1,
+      "case": "投递延迟与native驻留分离",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "56_W3",
+        "historical_raw_reaudit",
+        "historical_identity",
+        "source_ranges"
+      ],
+      "proven_scope": "W3_05原始Source/Stored重审通过；投递与正常收尾片段逐字节相同；当前未arm的W2路径不等待。",
+      "remaining_current_path_obligation": "复用原登记case及相同投递层，不声称本次又运行了新66二进制W3。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "native_block_and_delivery.05",
+      "group": "native_block_and_delivery",
+      "original_clause_index": 1,
+      "case": "生成后单次丢弃、no_candidate、恢复",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "56_W4",
+        "historical_raw_reaudit",
+        "historical_identity",
+        "source_ranges"
+      ],
+      "proven_scope": "W4_05原始记录重审通过；原Job3丢弃与目标tick4/恢复完整，当前同投递片段保留。",
+      "remaining_current_path_obligation": "连续多次drop不在原这一子句的单次case内，另列未扩展边界，不新增为必经前置。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.01",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 0,
+      "case": "failed/solver_invoked=false",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.02",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 0,
+      "case": "invalid原生prediction shape/available=false",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.03",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 0,
+      "case": "预测或首控制NaN",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.04",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 0,
+      "case": "重复Candidate",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.05",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 0,
+      "case": "旧/乱序Job ID",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.06",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 1,
+      "case": "外来producer/Worker",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.07",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 1,
+      "case": "外来boot",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "candidate_identity_shape.08",
+      "group": "candidate_identity_shape",
+      "original_clause_index": 1,
+      "case": "旧task/model/config/schedule/epoch版本",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "现candidate()、资源/Job/finite/echo/Ticket门可定位；Ticket级重复/版本组件成立。",
+      "remaining_current_path_obligation": "T1必须驱动当前真实candidate()/Worker结果准入，逐项断言不注册/不接受及明确原因；不得用Ticket测试冒充整个Candidate路径。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "task_reference.01",
+      "group": "task_reference",
+      "original_clause_index": 0,
+      "case": "freeze前clear",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "50_publication16",
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "共享数学/直接invalidate/旧同源callback与selector证据保留，原F5是同步语义。",
+      "remaining_current_path_obligation": "T1补当前path/profile→task→pending/ready/activation交错；需要跨进程事实的最小部分再用T2已拥有的Fixture writer刺激。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "task_reference.02",
+      "group": "task_reference",
+      "original_clause_index": 0,
+      "case": "freeze前single point",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "50_publication16",
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "共享数学/直接invalidate/旧同源callback与selector证据保留，原F5是同步语义。",
+      "remaining_current_path_obligation": "T1补当前path/profile→task→pending/ready/activation交错；需要跨进程事实的最小部分再用T2已拥有的Fixture writer刺激。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "task_reference.03",
+      "group": "task_reference",
+      "original_clause_index": 0,
+      "case": "求解/ready期间clear",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "50_publication16",
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "共享数学/直接invalidate/旧同源callback与selector证据保留，原F5是同步语义。",
+      "remaining_current_path_obligation": "T1补当前path/profile→task→pending/ready/activation交错；需要跨进程事实的最小部分再用T2已拥有的Fixture writer刺激。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "task_reference.04",
+      "group": "task_reference",
+      "original_clause_index": 0,
+      "case": "求解期间reference replacement",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "50_publication16",
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "共享数学/直接invalidate/旧同源callback与selector证据保留，原F5是同步语义。",
+      "remaining_current_path_obligation": "T1补当前path/profile→task→pending/ready/activation交错；需要跨进程事实的最小部分再用T2已拥有的Fixture writer刺激。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "task_reference.05",
+      "group": "task_reference",
+      "original_clause_index": 1,
+      "case": "相同内容重发不改语义task",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "50_publication16",
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "共享数学/直接invalidate/旧同源callback与selector证据保留，原F5是同步语义。",
+      "remaining_current_path_obligation": "T1补当前path/profile→task→pending/ready/activation交错；需要跨进程事实的最小部分再用T2已拥有的Fixture writer刺激。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "task_reference.06",
+      "group": "task_reference",
+      "original_clause_index": 1,
+      "case": "path/profile stamp或长度不匹配",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "50_publication16",
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "共享数学/直接invalidate/旧同源callback与selector证据保留，原F5是同步语义。",
+      "remaining_current_path_obligation": "T1补当前path/profile→task→pending/ready/activation交错；需要跨进程事实的最小部分再用T2已拥有的Fixture writer刺激。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "task_reference.07",
+      "group": "task_reference",
+      "original_clause_index": 1,
+      "case": "普通new odom不无条件饿死",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "F5_mapping",
+        "49_components",
+        "50_publication16",
+        "source_ranges",
+        "current_core58"
+      ],
+      "proven_scope": "共享数学/直接invalidate/旧同源callback与selector证据保留，原F5是同步语义。",
+      "remaining_current_path_obligation": "T1补当前path/profile→task→pending/ready/activation交错；需要跨进程事实的最小部分再用T2已拥有的Fixture writer刺激。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.01",
+      "group": "state_clock",
+      "original_clause_index": 0,
+      "case": "odom stale/future与独立receive/sim age",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "源时间/激活selector同源，当前纯组件和旧源链接激活拒绝证据可复用。",
+      "remaining_current_path_obligation": "若需认证topic到callback到epoch的联合刺激，由T1/T2明确补交错，组件不称新owned故障。",
+      "current_GTest_cases": [
+        "SourceTime.ReceiveAgeAndPhysicalLagAreIndependent",
+        "SourceTime.LagAndFutureLimitsAreInclusive"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.02",
+      "group": "state_clock",
+      "original_clause_index": 0,
+      "case": "IMU只在mixed时适用age/skew",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "源时间/激活selector同源，当前纯组件和旧源链接激活拒绝证据可复用。",
+      "remaining_current_path_obligation": "若需认证topic到callback到epoch的联合刺激，由T1/T2明确补交错，组件不称新owned故障。",
+      "current_GTest_cases": [
+        "SourceTime.OnlyMixedStateUsesImuPhysicalAge"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.03",
+      "group": "state_clock",
+      "original_clause_index": 0,
+      "case": "激活状态不匹配/finite/yaw wrap",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "源时间/激活selector同源，当前纯组件和旧源链接激活拒绝证据可复用。",
+      "remaining_current_path_obligation": "若需认证topic到callback到epoch的联合刺激，由T1/T2明确补交错，组件不称新owned故障。",
+      "current_GTest_cases": [
+        "Activation.SourceSequenceDoesNotReplaceStateAndVersionGate"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.04",
+      "group": "state_clock",
+      "original_clause_index": 1,
+      "case": "clock pause",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "ClockWindow reset/jump/ratio与旧真实clock callback回退组件可复用。",
+      "remaining_current_path_obligation": "T1核当前clock/tick的schedule/epoch失效及不可复活；当前Fixture不能登记这些刺激，T2只补必要跨进程子集。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.05",
+      "group": "state_clock",
+      "original_clause_index": 1,
+      "case": "clock resume",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "ClockWindow reset/jump/ratio与旧真实clock callback回退组件可复用。",
+      "remaining_current_path_obligation": "T1核当前clock/tick的schedule/epoch失效及不可复活；当前Fixture不能登记这些刺激，T2只补必要跨进程子集。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.06",
+      "group": "state_clock",
+      "original_clause_index": 1,
+      "case": "clock reset/backward",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "ClockWindow reset/jump/ratio与旧真实clock callback回退组件可复用。",
+      "remaining_current_path_obligation": "T1核当前clock/tick的schedule/epoch失效及不可复活；当前Fixture不能登记这些刺激，T2只补必要跨进程子集。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.07",
+      "group": "state_clock",
+      "original_clause_index": 1,
+      "case": "clock大jump",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "ClockWindow reset/jump/ratio与旧真实clock callback回退组件可复用。",
+      "remaining_current_path_obligation": "T1核当前clock/tick的schedule/epoch失效及不可复活；当前Fixture不能登记这些刺激，T2只补必要跨进程子集。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.08",
+      "group": "state_clock",
+      "original_clause_index": 1,
+      "case": "RTF低边界",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "ClockWindow reset/jump/ratio与旧真实clock callback回退组件可复用。",
+      "remaining_current_path_obligation": "T1核当前clock/tick的schedule/epoch失效及不可复活；当前Fixture不能登记这些刺激，T2只补必要跨进程子集。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "state_clock.09",
+      "group": "state_clock",
+      "original_clause_index": 1,
+      "case": "RTF高边界",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "current_core58",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "ClockWindow reset/jump/ratio与旧真实clock callback回退组件可复用。",
+      "remaining_current_path_obligation": "T1核当前clock/tick的schedule/epoch失效及不可复活；当前Fixture不能登记这些刺激，T2只补必要跨进程子集。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.01",
+      "group": "anchor_fallback",
+      "original_clause_index": 0,
+      "case": "区间内改变后回到原值不能伪称等价",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [
+        "PublicationHistory.ChangedThenReturnedIsNotSameInputHistory"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.02",
+      "group": "anchor_fallback",
+      "original_clause_index": 0,
+      "case": "same-value republish保留连续历史",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [
+        "PublicationHistory.SameValueRepetitionPreservesInputAssumption"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.03",
+      "group": "anchor_fallback",
+      "original_clause_index": 0,
+      "case": "不同左右实际API间隔分别rate",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [
+        "Command.AmplitudeAndActualSteadySpacing"
+      ],
+      "current_policy_cases": [
+        "invalid_bypasses_hold_each_side_elapsed"
+      ],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.04",
+      "group": "anchor_fallback",
+      "original_clause_index": 0,
+      "case": "missing/evicted history不能授权",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [
+        "PublicationHistory.MissingChannelOrSequenceCannotProveEquivalence",
+        "PublicationHistory.EvictedFreezeAnchorDoesNotAuthorizeCurrentValue"
+      ],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.05",
+      "group": "anchor_fallback",
+      "original_clause_index": 1,
+      "case": "连续五次miss",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [
+        "five_misses_hold_then_per_side_ramp"
+      ],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.06",
+      "group": "anchor_fallback",
+      "original_clause_index": 1,
+      "case": "HOLD等号及重发不续期",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [
+        "hold_equality_then_ramp_republish_does_not_renew"
+      ],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.07",
+      "group": "anchor_fallback",
+      "original_clause_index": 1,
+      "case": "HOLD之后ramp",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [
+        "hold_equality_then_ramp_republish_does_not_renew"
+      ],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.08",
+      "group": "anchor_fallback",
+      "original_clause_index": 1,
+      "case": "invalid立即绕过HOLD",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [
+        "invalid_bypasses_hold_each_side_elapsed"
+      ],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "anchor_fallback.09",
+      "group": "anchor_fallback",
+      "original_clause_index": 1,
+      "case": "unknown侧零请求无已知零资格",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "current_core58",
+        "current_policy92",
+        "50_publication16",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "当前真实policy/header组件成立；50逐侧真实API组件及49/66完整API对账可与该层联合使用。",
+      "remaining_current_path_obligation": "不将合成五次miss说成五次实际owned缺解；联合复判要保留层次与Source适用范围。",
+      "current_GTest_cases": [
+        "Anchor.PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack"
+      ],
+      "current_policy_cases": [
+        "initial_numeric_zero_is_unknown"
+      ],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.01",
+      "group": "publication_exit",
+      "original_clause_index": 0,
+      "case": "shutdown before submit",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "53_R1",
+        "source_ranges"
+      ],
+      "proven_scope": "原R1实际owned pre-grant取消/零API，核心准备与submit函数沿用。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.02",
+      "group": "publication_exit",
+      "original_clause_index": 0,
+      "case": "clear/shutdown after committed submit",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "50_publication16",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "旧clear直接helper及ShutdownDuringValidation组件已有；未把它扩成所有真实提交交错。",
+      "remaining_current_path_obligation": "T1用同一当前Regulator接线覆盖提交前/后及最终activation拒绝；按义务层次决定T2最小case。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.03",
+      "group": "publication_exit",
+      "original_clause_index": 0,
+      "case": "shutdown与ready/activation交错",
+      "status": "needs_wiring_validation",
+      "status_label": "需补接线验证",
+      "evidence_keys": [
+        "50_publication16",
+        "53_components",
+        "source_ranges"
+      ],
+      "proven_scope": "旧clear直接helper及ShutdownDuringValidation组件已有；未把它扩成所有真实提交交错。",
+      "remaining_current_path_obligation": "T1用同一当前Regulator接线覆盖提交前/后及最终activation拒绝；按义务层次决定T2最小case。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.04",
+      "group": "publication_exit",
+      "original_clause_index": 0,
+      "case": "left API partial failure",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "50_publication16",
+        "current_policy92",
+        "source_ranges"
+      ],
+      "proven_scope": "50真实rcl publish seam组件16例；publish与OutputAuthority逻辑保留，成功侧不可回滚。",
+      "remaining_current_path_obligation": "这是实际API源链接组件，非本次新增四角色部分发布故障run。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.05",
+      "group": "publication_exit",
+      "original_clause_index": 0,
+      "case": "right API partial failure",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "50_publication16",
+        "current_policy92",
+        "source_ranges"
+      ],
+      "proven_scope": "50真实rcl publish seam组件16例；publish与OutputAuthority逻辑保留，成功侧不可回滚。",
+      "remaining_current_path_obligation": "这是实际API源链接组件，非本次新增四角色部分发布故障run。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.06",
+      "group": "publication_exit",
+      "original_clause_index": 1,
+      "case": "Worker真实死亡",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "53_R2",
+        "source_ranges"
+      ],
+      "proven_scope": "原R2实际owned死亡与有限ramp/关闭；check_worker_locked保持同源。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.07",
+      "group": "publication_exit",
+      "original_clause_index": 1,
+      "case": "active watchdog与心跳/租约互斥",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "56_W1",
+        "historical_raw_reaudit",
+        "source_ranges"
+      ],
+      "proven_scope": "W1_05重审通过，转移时真实租约仍有效，不能再沿用53外部信号无法隔离的历史阻塞结论。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.08",
+      "group": "publication_exit",
+      "original_clause_index": 1,
+      "case": "capability receipt lease到期",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "53_R3",
+        "current_core58",
+        "source_ranges"
+      ],
+      "proven_scope": "原R3实际owned失租约；当前14项lease组件覆盖等号/续租/终端不可恢复。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.09",
+      "group": "publication_exit",
+      "original_clause_index": 1,
+      "case": "cleanup_failed正确失败",
+      "status": "uncovered_current_path",
+      "status_label": "当前路径未覆盖",
+      "evidence_keys": [
+        "66_W2"
+      ],
+      "proven_scope": "66证明的是健康有限关闭和group为空；自动重试0不是cleanup_failed分支已经验证。",
+      "remaining_current_path_obligation": "T3对当前关闭/监督实际消费函数注入有界失败并证明无新spawn；保留真实进程与模拟失败范围，不制造不可杀进程。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "publication_exit.10",
+      "group": "publication_exit",
+      "original_clause_index": 1,
+      "case": "旧group未空禁止restart",
+      "status": "uncovered_current_path",
+      "status_label": "当前路径未覆盖",
+      "evidence_keys": [
+        "66_W2"
+      ],
+      "proven_scope": "66证明的是健康有限关闭和group为空；自动重试0不是cleanup_failed分支已经验证。",
+      "remaining_current_path_obligation": "T3对当前关闭/监督实际消费函数注入有界失败并证明无新spawn；保留真实进程与模拟失败范围，不制造不可杀进程。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "actual_source_recording.01",
+      "group": "actual_source_recording",
+      "original_clause_index": 0,
+      "case": "隔离normal straight .05真实完整窗",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "49_normal",
+        "F5_mapping",
+        "source_ranges"
+      ],
+      "proven_scope": "49实际20s正常窗/105 API pairs保留；.05来源和数值core对齐。",
+      "remaining_current_path_obligation": "不把66短W2正常前缀改称新的20s正常资格。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "actual_source_recording.02",
+      "group": "actual_source_recording",
+      "original_clause_index": 0,
+      "case": "controlled faults与完整Source/Stored",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "historical_raw_reaudit",
+        "66_W2",
+        "source_ranges"
+      ],
+      "proven_scope": "三例旧诊断重新读原始Source/Stored；66W2独立全流对账成立。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "actual_source_recording.03",
+      "group": "actual_source_recording",
+      "original_clause_index": 1,
+      "case": "log queue pressure及声明drop",
+      "status": "uncovered_current_path",
+      "status_label": "当前路径未覆盖",
+      "evidence_keys": [
+        "49_normal",
+        "66_W2"
+      ],
+      "proven_scope": "正常/故障无丢失是已知事实，不等于施加队列压力。",
+      "remaining_current_path_obligation": "T3以当前enqueue/drain路径施加有界压力，分清generated/emitted/dropped/Stored，异常资格及未解释差额必须拒绝。",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "actual_source_recording.04",
+      "group": "actual_source_recording",
+      "original_clause_index": 1,
+      "case": "Source/emit/Stored/API计数及身份",
+      "status": "reusable_owned_subitem",
+      "status_label": "可复用owned子项",
+      "evidence_keys": [
+        "66_W2",
+        "historical_raw_reaudit"
+      ],
+      "proven_scope": "66完整306条Stored、11条心跳、6组API及三个旧case的原始多重集合重新核对。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    },
+    {
+      "id": "actual_source_recording.05",
+      "group": "actual_source_recording",
+      "original_clause_index": 1,
+      "case": "before/after资产保护",
+      "status": "reusable_component",
+      "status_label": "可复用组件",
+      "evidence_keys": [
+        "source_ranges",
+        "F5_mapping"
+      ],
+      "proven_scope": "本批886项66原件、381项源码审计输入、21个普通工作区文件及最终读回将逐项核对。",
+      "remaining_current_path_obligation": "",
+      "current_GTest_cases": [],
+      "current_policy_cases": [],
+      "source_range_evidence": "source_ranges",
+      "whole_stage_qualification_implied": false
+    }
+  ],
+  "evidence": {
+    "47_policy92": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/entry_policy_cases_v2.json",
+      "bytes": 237560,
+      "sha256": "8cbcfd0ec1fb2614f291b57bfde2528b16a4cd543854bae139cd2f39dcc90402"
+    },
+    "49_components": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/verification/component_verification_v1.json",
+      "bytes": 17185,
+      "sha256": "7767da5319231e5cb777222538f9ddfa4047a4d3b75332d40defa9088212cb9f"
+    },
+    "49_source_core": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/verification/source_core_reuse_v1.json",
+      "bytes": 2764,
+      "sha256": "dedcf37cf79d23be349a881106041f40757674c3682134d1568625b2e2a6c83e"
+    },
+    "49_normal": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/postrun/actual_normal_audit_v1.json",
+      "bytes": 380936,
+      "sha256": "78f2c3eb79185af640c318eb41713344ce4211670f44b5d006313a9fbc6ad6fc"
+    },
+    "49_F5_scope": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/evidence/F5_and_calibrated_nominal_scope_v1.json",
+      "bytes": 980,
+      "sha256": "fb1fec031c9346d3d70affec716ca584681efdaa11053b8fa553380170a21913"
+    },
+    "50_publication16": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_publication_faults_20261021_50/postrun/publication_fault_audit_v1.json",
+      "bytes": 27731,
+      "sha256": "72fba6e7a8c7b5661a87502a6ff718cb823cb14a7cf11df4e624db60b7c0fff3"
+    },
+    "53_components": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/verification/component_verification_v5.json",
+      "bytes": 17089,
+      "sha256": "40b067af08f5fd74c25a2e72774f3700b0c197fe45d2652e85a1268dc3ec6dd5"
+    },
+    "53_R1": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/postrun/R1_audit_v1.json",
+      "bytes": 1188,
+      "sha256": "44ba0d2a0733250bb0e9e8e5f3535dfa867f844fa33d1ab8d2287acaeda85b77"
+    },
+    "53_R2": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/postrun/R2_audit_v1.json",
+      "bytes": 1189,
+      "sha256": "151ef1207121e9ce532bf986ee80e5a504081f5526c5ba7d3053297450058e58"
+    },
+    "53_R3": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/postrun/R3_audit_v1.json",
+      "bytes": 1166,
+      "sha256": "7c6122fbe2209c5451cc856b625f379d4113a910632b14ca39ec398432351139"
+    },
+    "53_matrix": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/postrun/M4_fault_coverage_v1.json",
+      "bytes": 9477,
+      "sha256": "6c9e00e3b986d9f1927bfe5fc6fb585ab757cda35aabbea7860e4460ce344f00"
+    },
+    "56_W1": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/postrun/W1_audit_v1.json",
+      "bytes": 8429,
+      "sha256": "126650fece008b3b37c64d62c12f7cf111044be016cb989460e9034da015472d"
+    },
+    "56_W3": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/postrun/W3_audit_v1.json",
+      "bytes": 4337,
+      "sha256": "316e75f61d5adebabc9650fc008e5dd586ba78d572247a4cef0e770e2e6c2447"
+    },
+    "56_W4": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/postrun/W4_audit_v1.json",
+      "bytes": 5911,
+      "sha256": "02a60742fcf438037d54a36f99e35329ed604186299eae080bb36c1a2a5e6f8a"
+    },
+    "66_W2": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/evidence/owned_audit_v1.json",
+      "bytes": 7768,
+      "sha256": "511422cf61f1fc665fdf8076ae102e883b6db92c89db412fa81619cd364beab7"
+    },
+    "source_ranges": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/source_applicability_v1.json",
+      "bytes": 154969,
+      "sha256": "2590391888ad907fe14d6a5c0bb22e9f1663d0b7eae976aae91d04adfdf108c6"
+    },
+    "F5_mapping": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/F5_fixture_applicability_v1.json",
+      "bytes": 9470,
+      "sha256": "558e5916edcbe7bd270ed805e33e8b001d592d88603241403546d9027c31fc18"
+    },
+    "current_policy92": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/policy92_replay/verification_v1.json",
+      "bytes": 153556,
+      "sha256": "283bd374421f1f20e65a5b6c0da46df57bd05479521eebd6d4f7bf08848b619a"
+    },
+    "current_core58": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/core_components_attempt02/verification_v1.json",
+      "bytes": 67777,
+      "sha256": "a15cc5951b41bc2191c1368c03009615cfe3878260aad58ae2a7e3aff7c6423b"
+    },
+    "historical_identity": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/historical_case_identity_v1.json",
+      "bytes": 5881,
+      "sha256": "870463290580bba653fec9d77f5af6d481f0ae0089af674cc35a5c9aff855eec"
+    },
+    "historical_raw_reaudit": {
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_fixture_gap_20261024_67/evidence/historical_reaudit/verification_v1.json",
+      "bytes": 2827,
+      "sha256": "b8327483c1b085a8fcf09cf4bb31837090c8ef1879996dea4c9f2279e361c06c"
+    }
+  },
+  "N1_inventory_complete": true,
+  "N2_deterministic_component_slice_complete": true,
+  "new_ROS_or_owned_runs": 0,
+  "no_new_prerequisites": [
+    "acados C-internal permanent hang",
+    "duplicate release protocol",
+    "continuous multiple delivery drops",
+    "plant/hardware qualification"
+  ],
+  "M4_stage_qualified": false,
+  "F6_qualified": false,
+  "P1_qualified": false,
+  "plant_acceptance": false,
+  "hard_realtime": false,
+  "research_conclusion": false
+}

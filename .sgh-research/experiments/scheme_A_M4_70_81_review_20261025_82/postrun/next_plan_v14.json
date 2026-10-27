@@ -1,0 +1,78 @@
+{
+  "schema": "M4-after-70-81-independent-review-plan-v82",
+  "supersedes_current_interpretation_of": "batch81/postrun/next_plan_v13.json",
+  "historical_files_rewritten": false,
+  "review_report": "documents/方案A_第82批_70至81批代码复审与下一步实施计划_2026-10-25.md",
+  "steps": [
+    {
+      "id": "G0",
+      "status": "first_implementation_gate",
+      "task": "Stabilize immutable source, audit, build, bundle, registry and registration paths; preserve current hashes, historical gaps and recovered P01 source population",
+      "do_not_promote": "A retrospective P01 audit is independent observation review, not a pass under the original registered audit",
+      "owned_runs": 0
+    },
+    {
+      "id": "G1",
+      "status": "after_G0_no_owned",
+      "task": "Repair evidence-consuming T2 audits, bound Driver version ACK, scoped queued trigger, command bytes and receipt bindings, Fixture independent trigger checks, exact closure/API/Stored gates, A/C timing predicates",
+      "files": ["audit_t2.py", "t2_action_contract.py", "t2_scenario_driver_v1.py", "fixture/synthetic_source_m4.cpp", "w2_runtime_contract.py", "corresponding offline tests"],
+      "acceptance": [
+        "positive controls and previously wrongly rejected legal cases pass",
+        "actual invalid cases reject through intended named assertions",
+        "missing Worker/original Job/real boundary/real native invocation fails",
+        "expired, foreign identity, future unrelated version or old version ACK cannot pass timely rejection",
+        "C uses actual activation and stop observation, not ready or decision end timestamps",
+        "API failure rows cannot count as successful Applied publications",
+        "missing Stored or any role group not empty fails",
+        "command SHA is recomputed from fixed bytes and full trigger/sequence/multiplicity match",
+        "malformed inputs, unprepared mutation or unexecuted test cannot count as caught"
+      ],
+      "deadline_ns_from_origin": 150000000,
+      "other_frozen_budgets_relaxed": false,
+      "owned_runs": 0
+    },
+    {
+      "id": "G2",
+      "status": "finite_runtime_and_test_cleanup",
+      "task": "Return actual Applied attempt/result, bind consistency labels to that result, repair target seq2 ledger regression and clock attempt scope",
+      "acceptance": ["seq1 first agrees", "target seq2 API/Applied/consistency outcome explicitly reconciled", "deleting target emit fails named assertion", "publication failure remains fail-closed and cannot claim applied_emitted=true", "witness monotonicity remains strict"],
+      "owned_runs": 0
+    },
+    {
+      "id": "G3/T2-B",
+      "status": "partial_valid_P01_observation_retained_family_incomplete",
+      "task": "Retrospectively re-audit P01 with new honest evidence gates; retain timely replace progress, list clear/new-generation/expired differences",
+      "new_formal_run": "Only if original stage contract requires a new preregistered pass: freeze new identities and run one finite minimal case after all offline gates pass",
+      "automatic_retries": 0,
+      "evidence_reuse": "First inspect existing W2 and retained failures for identity/scope/obligation compatibility; do not infer lost registry/ELF or mechanically rerun every old attempt",
+      "epoch_policy": "retain ordinary static Epoch; same-run new-generation recovery requires an explicit scoped lifecycle design"
+    },
+    {
+      "id": "G4/T2-C",
+      "status": "not_ready_by_registration_only",
+      "task": "Prove target ticket, actual stop observation and final guard ordering on real code path offline; if needed assess existing finite activation interleave in explicit scope; then re-register and execute once",
+      "ordering": "ready_commit<request<=stopping_observed<=activation_guard",
+      "forbidden_substitutes": ["Job0 guard", "decision.end_ns as stopping observation", "ready_commit as activation", "widened original budgets"],
+      "automatic_retries": 0
+    },
+    {
+      "id": "G5/T2-A",
+      "status": "after_predicate_repairs_and_runtime_cleanup",
+      "task": "Finite silent/same_stamp/resume-new-window coverage with explicit sim-wall-history mapping, multi-tick witness and complete output ledger"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained_after_required_T2_obligations",
+      "task": "Queue/cleanup/group boundaries, finite union reassessment, finite model transactions and original P1 contract"
+    }
+  ],
+  "current_status": {
+    "P01_timely_replace_observation": true,
+    "P01_original_registered_audit_pass": false,
+    "T2B_full_family_qualified": false,
+    "T2C_ready_for_owned_now": false,
+    "M4": false, "F6": false, "P1": false, "plant": false, "hard_realtime": false
+  },
+  "new_prerequisites_added": {"native_C_internal_hang": false, "plant": false, "hard_realtime": false},
+  "production_B_mode": "MANUAL+RC override"
+}

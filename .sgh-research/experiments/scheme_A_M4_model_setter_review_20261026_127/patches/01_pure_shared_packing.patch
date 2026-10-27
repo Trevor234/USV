@@ -1,0 +1,97 @@
+--- /dev/null
++++ b/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/p_global_pack.hpp
+@@ -0,0 +1,34 @@
++// SPDX-License-Identifier: MIT
++#pragma once
++
++#include <array>
++#include <cstddef>
++#include "usv_mpc_cpp/mpc_solver.hpp"
++
++namespace usv_mpc::p_global
++{
++inline constexpr std::size_t count = 30;
++inline constexpr std::size_t hydro_count = 19;
++inline constexpr std::size_t q_offset = 19, r_offset = 25, rd_offset = 27, qf_offset = 29;
++using Packed = std::array<double, count>;
++
++// Packing is a value-preserving layout operation. Validation belongs to the
++// caller/checked application boundary; this function does not change inputs.
++inline Packed pack(const MpcParams & p)
++{
++  Packed pg{};
++  const auto & h = p.hydro;
++  pg[0] = h.mass; pg[1] = h.Iz; pg[2] = h.xg; pg[3] = h.d_thruster;
++  pg[4] = h.Xu_dot; pg[5] = h.Yv_dot; pg[6] = h.Yr_dot; pg[7] = h.Nv_dot;
++  pg[8] = h.Nr_dot; pg[9] = h.Xu; pg[10] = h.Yv; pg[11] = h.Yr;
++  pg[12] = h.Nv; pg[13] = h.Nr; pg[14] = h.Xuu; pg[15] = h.Yvv;
++  pg[16] = h.Yrr; pg[17] = h.Nvv; pg[18] = h.Nrr;
++  for (std::size_t i = 0; i < 6; ++i) pg[q_offset + i] = p.Q_diag(i);
++  for (std::size_t i = 0; i < 2; ++i) {
++    pg[r_offset + i] = p.R_diag(i);
++    pg[rd_offset + i] = p.Rd_diag(i);
++  }
++  pg[qf_offset] = p.Qf_scale;
++  return pg;
++}
++}  // namespace usv_mpc::p_global
+--- a/usv_mpc_ws/src/usv_mpc_cpp/src/acados_backend.cpp
++++ b/usv_mpc_ws/src/usv_mpc_cpp/src/acados_backend.cpp
+@@ -36,35 +36,19 @@
+ 
+ #include "usv_mpc_cpp/acados_backend.hpp"
+ #include "usv_mpc_cpp/utils.hpp"
++#include "usv_mpc_cpp/p_global_pack.hpp"
+ 
+ namespace usv_mpc
+ {
+ 
+ namespace
+ {
+-// p_global 布局索引 (与 mpc_dynamic.py _pg_indices_weights 一致)
+-constexpr int N_HYDRO = 19;
+-constexpr int PG_N_Q = 6, PG_N_R = 2, PG_N_RD = 2, PG_N_QF = 1;
+-constexpr int PG_OFF_Q = N_HYDRO;
+-constexpr int PG_OFF_R = N_HYDRO + PG_N_Q;
+-constexpr int PG_OFF_RD = N_HYDRO + PG_N_Q + PG_N_R;
+-constexpr int PG_OFF_QF = N_HYDRO + PG_N_Q + PG_N_R + PG_N_RD;
+-
+ // NONLINEAR_LS 残差布局：5 个线性状态 + 2 个单位圆航向 + 2 个控制
+ // + 2 个控制增量；终端只保留 5 个状态和 2 个航向残差。
+ static_assert(USV_DYN_NMPC_NY0 == 11, "unexpected stage-0 residual dimension");
+ static_assert(USV_DYN_NMPC_NY == 11, "unexpected stage residual dimension");
+ static_assert(USV_DYN_NMPC_NYN == 7, "unexpected terminal residual dimension");
+ 
+-// hydro 参数 -> p_global 前 19 维 (顺序与 usv_model_dynamic.hydro_dict_to_p_global 一致)
+-void fill_hydro(double * pg, const HydroParams & h)
+-{
+-  pg[0] = h.mass;       pg[1] = h.Iz;        pg[2] = h.xg;     pg[3] = h.d_thruster;
+-  pg[4] = h.Xu_dot;     pg[5] = h.Yv_dot;    pg[6] = h.Yr_dot; pg[7] = h.Nv_dot;
+-  pg[8] = h.Nr_dot;     pg[9] = h.Xu;        pg[10] = h.Yv;     pg[11] = h.Yr;
+-  pg[12] = h.Nv;         pg[13] = h.Nr;        pg[14] = h.Xuu;    pg[15] = h.Yvv;
+-  pg[16] = h.Yrr;        pg[17] = h.Nvv;       pg[18] = h.Nrr;
+-}
+ }  // namespace
+ 
+ AcadosBackend::AcadosBackend(const MpcParams & params)
+@@ -148,19 +132,7 @@
+ 
+ std::array<double, 30> AcadosBackend::build_p_global_() const
+ {
+-  std::array<double, 30> pg{};
+-  fill_hydro(pg.data(), params_.hydro);
+-  for (int i = 0; i < PG_N_Q; ++i) {
+-    pg[PG_OFF_Q + i] = params_.Q_diag(i);
+-  }
+-  for (int i = 0; i < PG_N_R; ++i) {
+-    pg[PG_OFF_R + i] = params_.R_diag(i);
+-  }
+-  for (int i = 0; i < PG_N_RD; ++i) {
+-    pg[PG_OFF_RD + i] = params_.Rd_diag(i);
+-  }
+-  pg[PG_OFF_QF] = params_.Qf_scale;
+-  return pg;
++  return p_global::pack(params_);
+ }
+ 
+ std::pair<Eigen::Vector2d, SolveInfo>

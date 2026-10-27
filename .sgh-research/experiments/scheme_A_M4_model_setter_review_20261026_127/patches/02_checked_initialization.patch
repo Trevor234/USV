@@ -1,0 +1,79 @@
+--- /dev/null
++++ b/usv_mpc_ws/src/usv_mpc_cpp/include/usv_mpc_cpp/p_global_apply.hpp
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: MIT
++#pragma once
++
++#include <algorithm>
++#include <cmath>
++#include <utility>
++#include "acados_solver_usv_dyn_nmpc.h"
++#include "usv_mpc_cpp/p_global_pack.hpp"
++
++namespace usv_mpc::p_global
++{
++static_assert(USV_DYN_NMPC_NP_GLOBAL == count, "generated p_global layout differs");
++using Capsule = usv_dyn_nmpc_solver_capsule;
++using NativeSetter = int (*)(Capsule *, double *, int);
++enum class ApplyCode { applied, null_capsule, null_setter, nonfinite_parameters, native_error };
++struct ApplyResult {
++  ApplyCode code = ApplyCode::null_capsule;
++  int native_status = 0;
++  bool native_called = false;
++  bool ok() const { return code == ApplyCode::applied; }
++};
++
++// The caller owns capsule lifetime and serializes all capsule access. Returning
++// zero from the generated setter is only its reported result: its present C
++// implementation does not propagate every internal precompute failure.
++// This helper neither resets warm state nor commits a model generation.
++template<class Setter>
++ApplyResult apply_with(Capsule * capsule, const Packed & values, Setter && setter)
++{
++  if (!capsule) return {ApplyCode::null_capsule, 0, false};
++  if (!std::all_of(values.begin(), values.end(), [](double x) { return std::isfinite(x); }))
++    return {ApplyCode::nonfinite_parameters, 0, false};
++  auto writable = values;
++  const int status = std::forward<Setter>(setter)(capsule, writable.data(), int(count));
++  return {status == 0 ? ApplyCode::applied : ApplyCode::native_error, status, true};
++}
++
++inline ApplyResult apply(Capsule * capsule, const Packed & values,
++                        NativeSetter setter = usv_dyn_nmpc_acados_set_p_global_and_precompute_dependencies)
++{
++  if (!setter) return {ApplyCode::null_setter, 0, false};
++  return apply_with(capsule, values, setter);
++}
++}  // namespace usv_mpc::p_global
+--- a/usv_mpc_ws/src/usv_mpc_cpp/src/acados_backend.cpp
++++ b/usv_mpc_ws/src/usv_mpc_cpp/src/acados_backend.cpp
+@@ -37,6 +37,7 @@
+ #include "usv_mpc_cpp/acados_backend.hpp"
+ #include "usv_mpc_cpp/utils.hpp"
+ #include "usv_mpc_cpp/p_global_pack.hpp"
++#include "usv_mpc_cpp/p_global_apply.hpp"
+ 
+ namespace usv_mpc
+ {
+@@ -114,8 +115,19 @@
+ 
+   // 初始化 p_global 运行时值 (30 维)
+   auto pg = build_p_global_();
+-  usv_dyn_nmpc_acados_set_p_global_and_precompute_dependencies(
+-      capsule_, const_cast<double *>(pg.data()), 30);
++  try {
++    const auto applied = p_global::apply(capsule_, pg);
++    if (!applied.ok()) {
++      throw std::runtime_error("acados p_global initialization failed code=" +
++        std::to_string(static_cast<int>(applied.code)) +
++        " native_status=" + std::to_string(applied.native_status));
++    }
++  } catch (...) {
++    usv_dyn_nmpc_acados_free(capsule_);
++    usv_dyn_nmpc_acados_free_capsule(capsule_);
++    capsule_ = nullptr;
++    throw;
++  }
+ 
+   X_warm_ = Eigen::MatrixXd::Zero(8, params_.N + 1);
+   U_warm_ = Eigen::MatrixXd::Zero(2, params_.N);

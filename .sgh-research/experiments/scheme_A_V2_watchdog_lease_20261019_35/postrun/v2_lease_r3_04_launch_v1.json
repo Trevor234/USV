@@ -1,0 +1,16 @@
+{
+  "run_id": "v2_lease_r3_04",
+  "case": "lease",
+  "returncode": 0,
+  "started_ns": 383579214791051,
+  "finished_ns": 383592854262675,
+  "elapsed_ns": 13639471624,
+  "external_timeout_triggered": false,
+  "source_lock_sha256": "699eef59f009f6e99dd063a53a5d210492649ed9d0b8de21cd2926bd5c4c7a6e",
+  "launcher_sha256": "f62064d7f78ad6c6bfeb7ba888c3bbc35b8005a89d0e835f6f1af75e9d5ec4fa",
+  "complete_setup_sha256": "9745e047df05b264d40b8332f338f7d751654898f48bc8310f046fd1dbf4c6f7",
+  "inputs_unchanged": true,
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

@@ -1,0 +1,12 @@
+# VRX usv_calm 世界演示航点（map 坐标系，出生在原点，无波浪干扰）
+#
+# 用法:
+#   ros2 launch usv_bringup vrx.launch.py scheme:=C world:=usv_calm \
+#       waypoints_file:=$HOME/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_calm.yaml ...
+waypoints:
+  - {x: 0.0, y: 0.0}         # 出生点
+  - {x: 30.0, y: 0.0}        # 直航 30m
+  - {x: 50.0, y: 15.0}       # 左转
+  - {x: 45.0, y: 40.0}       # 上行
+  - {x: 15.0, y: 45.0}       # 顶部
+  - {x: 0.0, y: 20.0}        # 回收直线

@@ -1,0 +1,53 @@
+{
+  "Sink_fault_disabled": true,
+  "active_barrier_ms": 1700,
+  "active_watchdog_ns": 1000000000,
+  "boot_id": "96645bc1-f6e0-49ff-b66e-809611803ed5",
+  "close_budget_ns": 15000000000,
+  "close_profile": "worker-terminal-reception-v1",
+  "controlled_case": "C",
+  "created_ns": 383557116192782,
+  "deadline_ns": 150000000,
+  "domain": 196,
+  "each_case_must_preserve_first_reason_and_same_run_terminal": true,
+  "engineering_start_gap_limit_ns": 240000000,
+  "engineering_tick_jitter_limit_ns": 20000000,
+  "execute_qualified": false,
+  "external_guard_seconds": 55,
+  "first_cause_semantics": "raw direct known cause OR exact legacy_ready_invalidated:worker_unusable:<known cause> with unique earlier same-check_ns legacy_ready_invalidated Source record",
+  "gate_TTL_ns": 3500000000,
+  "lease_pause_target_ms": 900,
+  "loader_environment_sha256": "cc1149e3d54625258a0f0ffa3d07441c0fd2feb0fe7d1a2c8834f52146892157",
+  "localhost": true,
+  "native_C_hang_claimed": false,
+  "normal_business_status_expected": false,
+  "observation_budget_ns": 8000000000,
+  "ordinary_two_Worker_hooks_zero": true,
+  "original_literal_reason_gate_reclassified": false,
+  "original_normal_anchor_tail_qualified": false,
+  "overall_budget_ns": 45000000000,
+  "period_ns": 200000000,
+  "prepare_budget_ns": 20000000000,
+  "raw_budget_bytes": 134217728,
+  "reason_for_new_run_ids": "Fix diagnostic causal interpretation and terminal-reception closure; original literal-gate/normal-tail failure retained",
+  "receipt_timeout_ns": 600000000,
+  "reference_speed_m_s": 0.05,
+  "research_conclusion": false,
+  "runner_sha256": "f62064d7f78ad6c6bfeb7ba888c3bbc35b8005a89d0e835f6f1af75e9d5ec4fa",
+  "runs": [
+    {
+      "case": "lease",
+      "run_id": "v2_lease_r3_04"
+    },
+    {
+      "case": "active",
+      "run_id": "v2_active_r3_05"
+    }
+  ],
+  "schema": "V2-separate-watchdog-lease-preregistration/v1",
+  "source_lock_sha256": "699eef59f009f6e99dd063a53a5d210492649ed9d0b8de21cd2926bd5c4c7a6e",
+  "source_packet_freshness_claimed": false,
+  "stage_qualified": false,
+  "true_plant_qualified": false,
+  "verdict": "GO"
+}

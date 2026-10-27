@@ -1,0 +1,161 @@
+{
+  "B4_all_eight_groups_qualified": false,
+  "CXX_builds": 0,
+  "MPC_delivery_pending_at_QA": true,
+  "Native_cases_executed_this_batch": 0,
+  "Native_cases_reused": 38,
+  "Recorder_builtin_stream_accounting_claim": false,
+  "SIGSTOP_used": false,
+  "TERM_KILL_paths_exercised": false,
+  "Worker_normal_Source_complete": true,
+  "actual_ROS_runs": 1,
+  "actual_raw_copy_negative_cases": 14,
+  "actual_signals": [
+    {
+      "role": "worker",
+      "signal": 2
+    },
+    {
+      "role": "publisher",
+      "signal": 2
+    },
+    {
+      "role": "observer",
+      "signal": 2
+    },
+    {
+      "role": "synthetic_source",
+      "signal": 2
+    },
+    {
+      "role": "recorder",
+      "signal": 2
+    }
+  ],
+  "all_five_current_registered_ELFs_reused": true,
+  "all_five_owned_groups_empty": true,
+  "all_five_role_returncodes_zero": true,
+  "all_old_failures_preserved": true,
+  "audit_inputs_unchanged": 2168,
+  "audit_pin": {
+    "bytes": 872511,
+    "sha256": "e2d6d742869e29878856c1edfe506a23a5c029dded4a0126f61241af70d70c17"
+  },
+  "current_active39_and_V1_40_parent_successes_retained": true,
+  "current_selected_ordinary_lease_case_passed": true,
+  "delivery_authority": "delivery_verification.json",
+  "execute_qualified": false,
+  "execution_authorization_requests": 2,
+  "existing_same_ELF_identity_links_verified": 2,
+  "first_authorization_review_timed_out_before_start": true,
+  "host_global_process_absence_claimed": false,
+  "host_unreadable_processes": 275,
+  "independent_SQL_metadata_verified": true,
+  "metrics": {
+    "gate": {
+      "actual_gated_start_confirmed": true,
+      "authorized_ns": 442103342264961,
+      "duplicate_create_rejected": true,
+      "execute_qualified": false,
+      "first_phase_decision_sequence": 1,
+      "first_phase_publish_delay_ns": 2678977,
+      "first_tick_planned_ns": 442104342446865,
+      "parameter_queries_completed_ns": 442101214472604,
+      "passed": true,
+      "prestart_callbacks_live": true,
+      "prestart_decisions": 0,
+      "prestart_jobs": 0,
+      "research_conclusion": false,
+      "stage_qualified": false
+    },
+    "lease": {
+      "Worker_stop_completed_before_resume": true,
+      "actual_capability_publish_returns_while_paused_before_terminal": 3,
+      "actual_terminal_ns": 442105342501456,
+      "execute_qualified": false,
+      "last_valid_receipt_ns": 442104734076133,
+      "monitor_entered_before_terminal_ns": 411334748,
+      "native_C_hang_proven": false,
+      "ordinary_lease_case": true,
+      "passed": true,
+      "pause_elapsed_ns": 1109601103,
+      "pause_ns": 442104738739776,
+      "post_exit_all_worker_callbacks": 2,
+      "post_exit_capability_callbacks": 1,
+      "queued_payload_full_CDR_identity_claimed": false,
+      "receipt_age_at_expiry_ns": 608425323,
+      "research_conclusion": false,
+      "resume_ns": 442105848340879,
+      "same_run_revival": false,
+      "source_packet_freshness_proven": false,
+      "stage_qualified": false
+    },
+    "stop": {
+      "SIGINT_to_group_empty_observed_ns": 165155552,
+      "Worker_normal_Source_complete": true,
+      "Worker_returncode": 0,
+      "active_job_at_terminal": 0,
+      "actual_lease_ordinary_stop_case_completed": true,
+      "actual_signal_sequence": [
+        2
+      ],
+      "authenticated_to_SIGINT_start_ns": 42399181,
+      "cause": "worker_capability_expired",
+      "contract_waits_ns": {
+        "kill_postcheck": 1000000000,
+        "term_grace": 1000000000,
+        "worker_grace": 500000000
+      },
+      "diagnostic_SIGSTOP_injected": false,
+      "fallback_Decisions_during_owned_stop": 3,
+      "max_start_or_activation_jitter_ns": 138442,
+      "max_tick_start_gap_ns": 200002088,
+      "native_C_hang_proven": false,
+      "notification_to_authenticated_ns": 185093197,
+      "ongoing_Decisions_in_gate_interval": 6,
+      "ordinary_lease_stop_case_completed": true,
+      "passed": true,
+      "read_visibility_upper_observation_ns": 103863125,
+      "stage_qualified": false,
+      "terminal_to_SIGINT_start_ns": 227492378,
+      "terminal_to_Worker_cleanup_ns": 413747832,
+      "universal_notification_WCET_qualified": false,
+      "used_wait_stages": [
+        "natural",
+        "worker_grace"
+      ]
+    },
+    "storage": {
+      "Recorder_builtin_stream_accounting_claim": false,
+      "Stored_Applied": 13,
+      "Stored_Decisions": 14,
+      "Stored_capabilities": 42,
+      "Stored_capabilities_without_complete_Worker_Source_attempt_match": 0,
+      "Stored_messages": 1202,
+      "Worker_Source_is_forced_incomplete": false,
+      "Worker_Source_trailing_bytes": 0,
+      "actual_GID_and_full_value_binding_verified": true,
+      "command_amplitude_and_API_start_rate_verified": true,
+      "independent_SQL_metadata_verified": true,
+      "plant_or_force_acknowledgement": false,
+      "shutdown_zero_sequence": 13
+    }
+  },
+  "native_C_hang_proven": false,
+  "new_orchestration_negative_cases": 13,
+  "normal_business_qualified": false,
+  "old_local_bytes_rechecked": 5994754345,
+  "old_local_paths_rechecked": 47556,
+  "ordinary_policy_component_negatives_reused": 44,
+  "ordinary_policy_implementation_unchanged": true,
+  "passed": true,
+  "passed_scope": "one current shadow receipt-lease immediate ordinary owned stop, post-exit queued callback guard and independent command data closure",
+  "prerun_inputs_unchanged": 2043,
+  "queued_old_payload_full_CDR_identity_proven": false,
+  "research_conclusion": false,
+  "schema": "current-ordinary-receipt-lease-final-QA/v1",
+  "selected_exact_post_lease41_new_run_recovery_qualified": false,
+  "source_packet_freshness_proven": false,
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

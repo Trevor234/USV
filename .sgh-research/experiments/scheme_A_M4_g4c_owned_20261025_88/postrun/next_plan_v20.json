@@ -1,0 +1,26 @@
+{
+  "schema": "M4-G4C-plan-v88",
+  "recorded_at": "2026-10-25T18:06:36.687408+08:00",
+  "steps": [
+    {
+      "id": "G4 offline",
+      "status": "complete",
+      "detail": "C positive+negative controls verified"
+    },
+    {
+      "id": "G4 owned",
+      "status": "blocked",
+      "task": "freeze script path parameterization + ELF rebuild + single execution"
+    },
+    {
+      "id": "G5/T2-A",
+      "status": "next",
+      "task": "can proceed with repaired A predicates independently"
+    },
+    {
+      "id": "T3→N3/M4→F6→P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

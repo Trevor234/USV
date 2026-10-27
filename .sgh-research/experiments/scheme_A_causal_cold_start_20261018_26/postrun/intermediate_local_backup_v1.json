@@ -1,0 +1,14 @@
+{
+  "count": 1,
+  "files": [
+    {
+      "bytes": 386,
+      "original": "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "f6e5edd280a43ff1dee5e3e984ae6b79f4bd52594195d1a3a35e447c8749a3ab",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/intermediate_local_backup_v1/CURRENT.md"
+    }
+  ],
+  "remote_intermediate_not_available": true,
+  "schema": "first-control-initial-local-current-backup/v1"
+}

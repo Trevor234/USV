@@ -1,0 +1,8 @@
+{
+  "schema": "M4-G5-T2A-v92",
+  "recorded_at": "2026-10-25T18:50:55.525363+08:00",
+  "status": "BLOCKED on stale bundle (audit_t2.py modified post-freeze in batch 91; bundle pins old SHA)",
+  "fix": "re-run freeze in batch 91 tree to update bundle; then T2-A registration can pass preflight",
+  "t2a_table_created": true,
+  "owned_runs": 0
+}

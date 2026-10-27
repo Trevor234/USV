@@ -1,0 +1,184 @@
+{
+  "schema": "M4-original-nine-group-derived-delta-v66",
+  "parent_matrix": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/M4_fault_matrix_v1.json",
+    "bytes": 6332,
+    "sha256": "58c7eccb51eb463a3012de09b4e78d4f4397317025d5618be4cf798a9d0fbd74"
+  },
+  "prior_coverage": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/postrun/M4_fault_coverage_v1.json",
+    "bytes": 9477,
+    "sha256": "6c9e00e3b986d9f1927bfe5fc6fb585ab757cda35aabbea7860e4460ce344f00"
+  },
+  "groups": [
+    {
+      "acceptance": "same reused core; exact declared future-reference semantics; no hidden writer",
+      "current_M4_qualified": false,
+      "id": "compatibility_input",
+      "required_cases": [
+        "F5 source/reference/mapping qualified old regression and logging off/on",
+        "new target-reference independent fixture, no implicit physical writer"
+      ],
+      "remaining_obligation": "核对F5 source/reference/mapping及logging off/on适用性；独立Fixture的输入契约与旧core逐项绑定。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": []
+    },
+    {
+      "acceptance": "complete absolute 150ms cutoff equality allowed, strict-after cutoff; target remains origin+200ms; no deadline extension or late activation",
+      "current_M4_qualified": false,
+      "id": "time_boundaries",
+      "required_cases": [
+        "50/150/250/400ms; ready before/equal/after deadline",
+        "early ready, wrong target, delayed tick"
+      ],
+      "remaining_obligation": "本次只实测一个严格过期点；50/150/250/400ms、等号、early ready、wrong target、delayed tick须逐案映射已有证据或补最小差集。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/evidence/owned_audit_v1.json"
+      ]
+    },
+    {
+      "acceptance": "multiple complete regulator ticks while worker blocked; active/pending/ready bounded; one backend only; delivery delay not called native block",
+      "current_M4_qualified": false,
+      "id": "native_block_and_delivery",
+      "required_cases": [
+        "worker held at native boundary until independent release",
+        "separate result delivery delay/drop"
+      ],
+      "remaining_obligation": "边界独立释放子项已通过；56的W3/W4_05需对66的投递路径给出来源/行为差异适用性判定，不能直接转移资格。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/evidence/owned_audit_v1.json"
+      ]
+    },
+    {
+      "acceptance": "invalid selection or normal output count=0; each candidate consumed at most once; bounded slots and explicit reason",
+      "current_M4_qualified": false,
+      "id": "candidate_identity_shape",
+      "required_cases": [
+        "failed, invalid shape, NaN, duplicate, old/reordered IDs",
+        "foreign producer/boot/version"
+      ],
+      "remaining_obligation": "failed/shape/NaN/duplicate/reordered/foreign身份的原case，需同源码准入证据与当前接线路径的适用性对账。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": []
+    },
+    {
+      "acceptance": "semantic task generation only; old task rejected before activation; new odom does not unconditionally starve",
+      "current_M4_qualified": false,
+      "id": "task_reference",
+      "required_cases": [
+        "clear/single point before freeze, clear/replacement during solve",
+        "same content republish, path/profile mismatch, ordinary new odom"
+      ],
+      "remaining_obligation": "clear/single point、求解中clear/replace、same-content、path/profile不一致与new odom的未覆盖差集。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": []
+    },
+    {
+      "acceptance": "separate receipt/sim ages, IMU only if mixed; selected tolerances; epoch/schedule invalidation; no cross-domain subtraction or resurrection",
+      "current_M4_qualified": false,
+      "id": "state_clock",
+      "required_cases": [
+        "source stale/future, mixed skew, activation mismatch",
+        "pause/resume/reset/jump and RTF band"
+      ],
+      "remaining_obligation": "旧组件/正常段证据保留；当前路径stale/future/mixed skew、pause/reset/jump/RTF差集尚待核对。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": []
+    },
+    {
+      "acceptance": "actual per-side history; H=600ms from last accepted activation; rho80 each actual interval; missing anchor unavailable; no instant-zero rate fiction",
+      "current_M4_qualified": false,
+      "id": "anchor_fallback",
+      "required_cases": [
+        "mid-interval change/same-value republish/different API intervals/missing history",
+        "five misses, HOLD equality/after, invalid bypass, unknown side"
+      ],
+      "remaining_obligation": "本次全API流间隔/跨度/rate通过；不等于五次miss、HOLD等号/之后、invalid bypass、unknown-side矩阵全闭合。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/evidence/owned_audit_v1.json"
+      ]
+    },
+    {
+      "acceptance": "sole new owner; both calls attempted; successful side irreversible; unknown failed side; finite cleanup attempt/no restart until old group empty; request/API/process/plant flags separate",
+      "current_M4_qualified": false,
+      "id": "publication_exit",
+      "required_cases": [
+        "clear/shutdown before/after submit; left/right partial API outcomes",
+        "worker death, active watchdog, capability lease and cleanup failed"
+      ],
+      "remaining_obligation": "本次健康有限隔离与清理通过；50/53/56历史子项须适用性核对，cleanup_failed及清理失败禁止重启仍未实证闭合。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/evidence/owned_audit_v1.json"
+      ]
+    },
+    {
+      "acceptance": "normal source/Witness/raw/Stored accounting complete, full startup/business/fallback/shutdown API stream; fault flags follow declared exception, extra unexplained loss/error/overrun fails",
+      "current_M4_qualified": false,
+      "id": "actual_source_recording",
+      "required_cases": [
+        "new isolated normal straight0.05 then controlled faults",
+        "log queue pressure, source/emit/bag counts and before/after assets"
+      ],
+      "remaining_obligation": "本次306条Stored及Source/Witness闭合；没有施加log queue pressure，也未替代所有原正常/故障配置。",
+      "historical_evidence_automatically_transferred": false,
+      "new66_evidence": [
+        "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/evidence/owned_audit_v1.json"
+      ]
+    }
+  ],
+  "closed_subitems_this_batch": [
+    {
+      "group": "native_block_and_delivery",
+      "required_case_verbatim": "worker held at native boundary until independent release",
+      "qualified": true,
+      "run_id": "M4_diagnostic_W2_20261023_66_01",
+      "independent_audit": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_W2_owned_takeover_20261023_66/evidence/owned_audit_v1.json",
+        "bytes": 7768,
+        "sha256": "511422cf61f1fc665fdf8076ae102e883b6db92c89db412fa81619cd364beab7"
+      },
+      "complete_ticks": [
+        3,
+        4
+      ],
+      "held_renewals": 2,
+      "target_C_calls": 0,
+      "scope": "registered finite native-boundary wait; not a hang within acados C"
+    }
+  ],
+  "historical_not_reaudited_this_batch": {
+    "W1_W3_W4": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/documents/第56批收尾_W4修正与独立审计_2026-10-22.md",
+    "runs": [
+      "W1_05",
+      "W3_05",
+      "W4_05"
+    ],
+    "superseded_runs_are_not_delivery_evidence": [
+      "W1_01",
+      "W3_01",
+      "W4_01"
+    ],
+    "R1_R2_R3": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_owned_faults_20261021_53/postrun/M4_fault_coverage_v1.json",
+    "note": "53的active_watchdog不可隔离结论是当时外部信号路径的历史限制；56的诊断W1已另有证据，不据此重复宣称仍结构性阻塞。"
+  },
+  "all_nine_groups_require_new_long_ROS_runs": false,
+  "new_owned_runs": 1,
+  "automatic_retries": 0,
+  "M4_stage_qualified": false,
+  "F6_qualified": false,
+  "P1_qualified": false,
+  "plant_acceptance": false,
+  "hard_realtime": false,
+  "research_conclusion": false,
+  "next_order": [
+    "source/applicability and Fixture difference inventory",
+    "minimum uncovered deterministic and owned cases",
+    "M4 joint reassessment",
+    "finite model transaction/F6",
+    "P1"
+  ]
+}

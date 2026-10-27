@@ -1,0 +1,46 @@
+{
+  "schema": "M4-after-T1-review-minimum-plan-v72",
+  "recorded_at": "2026-10-24T21:31:47.547604+08:00",
+  "steps": [
+    {
+      "id": "S0/S1/S2",
+      "status": "complete",
+      "task": "69/70/71批"
+    },
+    {
+      "id": "T2-A",
+      "status": "clause_verified_observation",
+      "verdict": "postrun/t2a_family_verdict_v1.json: 全部冻结条款通过; 五次accepted激活+BizReady绑定; 静默stale逐事件; pause-resume调度重置; resume后RTF间隙样本失效→owned零关停为真实行为证据",
+      "open_items": [
+        "冻结Driver的W式close门(regulator rc 0)与场景判定的语义分工: T2-B/C执行前决定是否rev9 (per-family expected exit codes) 或保持driver_passed仅作编排判定",
+        "witness records_consistent 对时钟冻结场景给出rc 3属预期资格结论, 已在verdict中记录"
+      ]
+    },
+    {
+      "id": "T2-B",
+      "status": "next",
+      "task": "在途clear/replace场景族 owned执行",
+      "registration": "implementation/t2_registrations_v8/T2B_v8.json (freeze rev8)",
+      "checks": [
+        "solve_active触发在途(词表已冻结); stale结果version_mismatch; 新代际正控",
+        "过期/Worker终端不冒充task拒绝; 截止150ms不延长"
+      ]
+    },
+    {
+      "id": "T2-C",
+      "status": "planned",
+      "task": "Driver shutdown交错场景族 owned执行",
+      "registration": "implementation/t2_registrations_v8/T2C_v8.json",
+      "checks": [
+        "ready_window绑定真实完成点; ready_commit<request<=stopping_observed<=guard",
+        "API零请求/返回/Source flush/Recorder/退出各自对账"
+      ]
+    },
+    {
+      "id": "T3→N3→F6→P1",
+      "status": "retained",
+      "task": "保留主线义务"
+    }
+  ],
+  "stage_qualified": false
+}

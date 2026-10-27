@@ -1,0 +1,15 @@
+# 第50批复盘：发布/退出组合的故障证据
+
+control-postrun-retro结构用于本地USV组件，EDA指标不适用；按用户要求将本批材料归档MPC。
+
+假设成立：单独政策核和正常日志不足以替代Regulator实际异常组合，直接源码包含+精确私有handle返回seam能隔离该缺口。16项源码关联组件、43控制/27 Applied真实接收及4个检查器篡改反例通过。生产源码/ELF无变化，未消耗一次重复正常M4运行。
+
+主机制insufficient_evidence已在partial/Applied/zero/grace/clear子范围补齐。次要flow_policy_mismatch风险由类型明确化避免：成功返回不等于plant；失败侧失去authority但最后数值保留；zero请求允许退出不等于dual成功；Applied失败不能撤销控制历史。正常源记录完整与normal业务资格false是不同字段。
+
+初轮测试夹具构建因unique_ptr/Executor接口失败；保留原源码和日志，独立v2只修节点接口后通过。没有修改生产代码或阈值。stderr旧typesupport错误状态被注入setter覆盖的8块提示及2个SDK环境告警保留并分类，不把推断的旧状态产生路径称已证明，不为消除日志盲目重跑。
+
+候选A（选定）：实际owned准备取消及Worker退出监督；confidence高、impact高、cost中、risk中，必须逐case注册真实身份、刺激、退出/记录例外和有限预算。候选B：当前就声明publication_exit整组或M4通过；缺运行时监督证据，不支持该结论。候选C：重跑全部准备、正常和旧故障；没有对应差集信息增益，不选。
+
+新经验：源码关联组件可同时保留真实RCL成功路径与显式注入失败，独立CDR解码比只信GTest状态更有力；但seeded authority不证明现场门禁，私有wire不替代完整Stored。当前剩余是不同义务，不能靠重复本组件闭合。
+
+下一步STOP：身份/配置/图不符、grant前API、非法激活、未声明丢失/超期、successful receipt回滚、cleanup_failed或旧owned组不空。只增加受影响实现和验证，旧失败及封存不覆盖。M4故障闭合后才进入已知模型事务/F6/P1。

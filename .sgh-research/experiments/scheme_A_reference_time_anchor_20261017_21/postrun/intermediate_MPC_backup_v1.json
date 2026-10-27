@@ -1,0 +1,35 @@
+{
+  "all_intermediate_files_preserved": true,
+  "count": 4,
+  "files": [
+    {
+      "bytes": 375,
+      "original": "/home/trevor/MPC/scheme_A_reference_time_anchor_20261017_21/CURRENT.md",
+      "relative_path": "CURRENT.md",
+      "sha256": "82d185d42b341c6b6ba735755fc7fbbef4ba8a47d42370c4f7dfdb8477df8cec",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/intermediate_MPC_backup_v1/CURRENT.md"
+    },
+    {
+      "bytes": 1893,
+      "original": "/home/trevor/MPC/scheme_A_reference_time_anchor_20261017_21/documents/revision02_startup_fix_v1.md",
+      "relative_path": "documents/revision02_startup_fix_v1.md",
+      "sha256": "2c162e48725a7700b085417942dcf752d644040d71401e70d7e49afa6c0f171f",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/intermediate_MPC_backup_v1/documents/revision02_startup_fix_v1.md"
+    },
+    {
+      "bytes": 2118,
+      "original": "/home/trevor/MPC/scheme_A_reference_time_anchor_20261017_21/documents/selected_plan_v1.md",
+      "relative_path": "documents/selected_plan_v1.md",
+      "sha256": "47bd51cc6f163159d9847569f614d34d465827558e6d1e5792ba2231db4deecc",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/intermediate_MPC_backup_v1/documents/selected_plan_v1.md"
+    },
+    {
+      "bytes": 51691,
+      "original": "/home/trevor/MPC/scheme_A_reference_time_anchor_20261017_21/protection_v1.py",
+      "relative_path": "protection_v1.py",
+      "sha256": "665003fae69da7ce98cd57ae756ee80e63d8146b7cb4eaf517fceae6fc226fab",
+      "snapshot": "/home/trevor/USV/.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/intermediate_MPC_backup_v1/protection_v1.py"
+    }
+  ],
+  "schema": "reference-time-anchor-intermediate-MPC-backup/v1"
+}

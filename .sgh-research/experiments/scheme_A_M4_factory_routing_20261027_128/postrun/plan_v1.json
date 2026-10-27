@@ -1,0 +1,33 @@
+{
+  "scope": "Actual factory routing of batch127 checked constructor in two standalone build modes",
+  "sequence": [
+    "freeze input/protection population",
+    "real CasADi ABI link probes",
+    "unchanged factory baseline and checked constructor matrix",
+    "only if reproduced: isolated finite-p_global factory admission patch",
+    "behavior parity, targeted runtime assertion mutations, patch replay",
+    "protection and MPC exact-population readback"
+  ],
+  "requirements": [
+    "real current factory source compiled",
+    "actual CasADi constructor and finite solves, no fake backend",
+    "every capsule allocation/free counted",
+    "no timing qualification",
+    "timeout/crash/build failure never counted as mutation rejection"
+  ],
+  "limits": {
+    "production_edits": 0,
+    "ROS_initializations": 0,
+    "owned_runs": 0,
+    "no_RawBackend_or_Worker_change": true,
+    "no_codegen": true,
+    "no_fallback_policy_redesign": true
+  },
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "C3.7-positive02-recipe/v1",
+  "preregistered_before_run": true,
+  "reason": "checker v1 falsely looked for fault_injection_enabled ROS parameter; actual field is in full pinned Worker contract_configuration",
+  "prior_driver_result": "runs/positive01/result.json",
+  "prior_original_check": "runs/positive01/check_result.json",
+  "prior_failure_retained": true,
+  "run_id": "owned_C37_positive_02",
+  "domain": 133,
+  "source_bundle": {
+    "files": 41,
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_7_20261014_v14/observer_source_bundle_C37_v2.json",
+    "sha256": "9b888dd51213ce0ffe2a311fd24160062377ef8b1e13cf5ae36e039336552aee"
+  },
+  "observer_binary_sha256": "9e99b527571d626ca4765fcab0700a3206b1db13aae110a66fd78496245026fd",
+  "Cplusplus_runtime_unchanged_after_native239": true,
+  "profile": "closed_shadow_observation",
+  "checker": "check_c37_owned_run_v2.py",
+  "measurement_seconds": 4,
+  "normal_hooks": 0,
+  "prepare_seconds": 25,
+  "overall_seconds": 60,
+  "close_seconds": 15,
+  "release_seconds": 3,
+  "accepted_count_preregistered": false,
+  "publication_populations_window_clipped": false,
+  "stage_qualified": false,
+  "execute_qualified": false,
+  "research_conclusion": false
+}

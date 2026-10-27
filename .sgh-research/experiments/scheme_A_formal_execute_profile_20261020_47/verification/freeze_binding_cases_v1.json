@@ -1,0 +1,443 @@
+{
+  "M4_qualified": false,
+  "actual_frozen_assets_edited": false,
+  "actual_submitted_package_passed": true,
+  "case_count": 24,
+  "cases": [
+    {
+      "accepted": true,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+      "expected_accepted": true,
+      "expected_contract": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "actual submitted package",
+      "name": "actual_submitted_full_package",
+      "output": {
+        "B5_contract_freeze_qualified": true,
+        "F6_qualified": false,
+        "M0b_selected_engineering_freeze_qualified": true,
+        "M4_qualified": false,
+        "P1_qualified": false,
+        "artifact_bytes": 373401307,
+        "artifact_count": 4103,
+        "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+        "elapsed_seconds": 1.1503692099940963,
+        "filesystem_locked": false,
+        "index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+        "passed": true,
+        "physical_execute_release_enabled": false,
+        "plant_qualified": false,
+        "profile_id": "P1_owned_nominal_execution_20261020_01",
+        "research_conclusion": false,
+        "schema": "P1-M0b-frozen-package-verification/v1"
+      },
+      "passed": true
+    },
+    {
+      "accepted": true,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/exact_contract_copy.json",
+      "expected_accepted": true,
+      "expected_contract": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/exact_index_copy.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "exact_byte_copies_keep_binding",
+      "output": {
+        "B5_contract_freeze_qualified": true,
+        "F6_qualified": false,
+        "M0b_selected_engineering_freeze_qualified": true,
+        "M4_qualified": false,
+        "P1_qualified": false,
+        "artifact_bytes": 373401307,
+        "artifact_count": 4103,
+        "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+        "elapsed_seconds": 1.0565495879855007,
+        "filesystem_locked": false,
+        "index_sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+        "passed": true,
+        "physical_execute_release_enabled": false,
+        "plant_qualified": false,
+        "profile_id": "P1_owned_nominal_execution_20261020_01",
+        "research_conclusion": false,
+        "schema": "P1-M0b-frozen-package-verification/v1"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+      "expected_accepted": false,
+      "expected_contract": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "actual submitted package",
+      "name": "execute_still_refused",
+      "output": {
+        "error": "B5/M4 release not enabled"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+      "expected_accepted": false,
+      "expected_contract": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+      "expected_index": "0000000000000000000000000000000000000000000000000000000000000000",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "actual submitted package",
+      "name": "unknown_index_trust_pin",
+      "output": {
+        "error": "freeze index SHA mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+      "expected_accepted": false,
+      "expected_contract": "0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "actual submitted package",
+      "name": "unknown_contract_trust_pin",
+      "output": {
+        "error": "frozen contract SHA mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/invented_hex_marker.json",
+      "expected_accepted": false,
+      "expected_contract": "6932428f4181cd181b5b6f1905129c8f403021790dfabcd60f7d8292a41e0283",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "invented_hex_marker",
+      "output": {
+        "error": "contract/index evidence binding mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/retained_pending.json",
+      "expected_accepted": false,
+      "expected_contract": "a1200392d83ce43eed5794a93d28db9308bb759c5648dab926f7240b8daebc84",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "retained_pending",
+      "output": {
+        "error": "array shape mismatch: pending_final_calibration"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/execute_bool_not_int.json",
+      "expected_accepted": false,
+      "expected_contract": "97ce436ed205beab86a77c93aeb537504fbabdca5b8641755743b420df95183a",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "execute_bool_not_int",
+      "output": {
+        "error": "unsupported profile value/type: execute_qualified"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/numeric_threshold_changed.json",
+      "expected_accepted": false,
+      "expected_contract": "8928fb3f5693bfa9e1ef7afb173ed05b88ccbc2ddfcd47a9efb7f6b9165d6e2f",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "numeric_threshold_changed",
+      "output": {
+        "error": "unsupported numeric profile: rho_n_s"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/resource_shape_valid_but_not_frozen_value.json",
+      "expected_accepted": false,
+      "expected_contract": "b1a67b970d899fe2efbbf6a9c37f3474e9129dfcc5e6f0287193502c85d1dc57",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "resource_shape_valid_but_not_frozen_value",
+      "output": {
+        "error": "frozen contract template mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/wrong_target_profile.json",
+      "expected_accepted": false,
+      "expected_contract": "8b8dd246a47b99f9db728f1492c87a90c966e383a90678681e87cd7efa799f7c",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "wrong_target_profile",
+      "output": {
+        "error": "unsupported profile value/type: baseline_input"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/missing_required_field.json",
+      "expected_accepted": false,
+      "expected_contract": "bfa4d9916b966db2c1601ce3066127d877bdc040a076bbbbc1dbd361b8acdf9b",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "missing_required_field",
+      "output": {
+        "error": "contract field set mismatch: missing=['N'], extra=[]"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/duplicate_contract_key.json",
+      "expected_accepted": false,
+      "expected_contract": "7347afb70d53788dad170ea71f590abf8176a7cd490ad395be98f6f93bcab9e7",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "duplicate_contract_key",
+      "output": {
+        "error": "duplicate JSON key: N"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/old_pre_freeze.json",
+      "expected_accepted": false,
+      "expected_contract": "69c0f4839cf6d46a04efb666ccf4fd72acc9d1000114366f6d7d6db48cd4116c",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "old_pre_freeze_not_frozen",
+      "output": {
+        "error": "owned frozen profile required"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+      "expected_accepted": false,
+      "expected_contract": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+      "expected_index": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/index_changed_whitespace.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "index_bytes_are_exact",
+      "output": {
+        "error": "freeze index SHA mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/wrong_spec_pin_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "bb133cb006e4c1e0012ff1cfac2d0716cac9192a0d37c8821e8c17c9b1f57938",
+      "expected_index": "1ef5bb94aba0d1d4abd1b32f4a6dcb0617cbbdf42b0fbeed61f2a585f0f478ab",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/wrong_spec_pin_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "wrong_spec_pin",
+      "output": {
+        "error": "spec/policy pin mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/wrong_policy_pin_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "443d927fd1abb71ac15a44331cb9c5fdfd11d16b7052ce38c3f17fbb817727c4",
+      "expected_index": "4315d7cc387b2b0c5c5f53bd1f28987fb62a1a4d3c8948435943eec7f315bf97",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/wrong_policy_pin_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "wrong_policy_pin",
+      "output": {
+        "error": "spec/policy pin mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/inflated_M4_scope_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "508b14f26eb4a84fbc45aca7e35cd65efa783581ae7bf45ceef39774485b79c5",
+      "expected_index": "79f21f859a98fa9650de7c93babe4b1d9f3806b01bfdb23ace65ad166886be60",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/inflated_M4_scope_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "inflated_M4_scope",
+      "output": {
+        "error": "qualification scope mismatch"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/inflated_M4_obligation_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "00d159bcca773a6dae13ad12605192dba44b2de00266190dd21c34f4edea9780",
+      "expected_index": "00a64b72d11d88c19cfdfa4cdddde03f6ccf1be80b7b6ce930d2c3798202f379",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/inflated_M4_obligation_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "inflated_M4_obligation",
+      "output": {
+        "error": "M4 obligations must remain unqualified"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/physical_release_in_index_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "28434116fc0f29330c70f03024e67882c2eac5c9e3bcb7503cd74fa0af690b70",
+      "expected_index": "c21caf99a3be9e0234836ec8c192c1523683cdc348a80202a350b5611e102d30",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/physical_release_in_index_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "physical_release_in_index",
+      "output": {
+        "error": "physical release or wrong freeze order"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/artifact_size_bool_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "e36c9bd4ce3c80ef3f12711dd79a2f40481121510587caf7750fdc7b9ac3cf27",
+      "expected_index": "65d5f321696ec09a6d32c9250a617bd5bc32eeca45ee78f2641c2510f8116f31",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/artifact_size_bool_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "artifact_size_bool",
+      "output": {
+        "error": "artifact hash/size type"
+      },
+      "passed": true
+    },
+    {
+      "accepted": true,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/payload_integrity_contract.json",
+      "expected_accepted": true,
+      "expected_contract": "72f4b1fc618a2b517955d4fead65ec2be25d85e4fd7bf4fd9d30a4e5cb8188a9",
+      "expected_index": "d361bef577302850ea3293b81d678f9155c8f5750c3fe8628782571025a98358",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/payload_integrity_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "rebound_payload_exact_bytes",
+      "output": {
+        "B5_contract_freeze_qualified": true,
+        "F6_qualified": false,
+        "M0b_selected_engineering_freeze_qualified": true,
+        "M4_qualified": false,
+        "P1_qualified": false,
+        "artifact_bytes": 373401307,
+        "artifact_count": 4103,
+        "contract_sha256": "72f4b1fc618a2b517955d4fead65ec2be25d85e4fd7bf4fd9d30a4e5cb8188a9",
+        "elapsed_seconds": 1.1195845500333235,
+        "filesystem_locked": false,
+        "index_sha256": "d361bef577302850ea3293b81d678f9155c8f5750c3fe8628782571025a98358",
+        "passed": true,
+        "physical_execute_release_enabled": false,
+        "plant_qualified": false,
+        "profile_id": "P1_owned_nominal_execution_20261020_01",
+        "research_conclusion": false,
+        "schema": "P1-M0b-frozen-package-verification/v1"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/payload_integrity_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "72f4b1fc618a2b517955d4fead65ec2be25d85e4fd7bf4fd9d30a4e5cb8188a9",
+      "expected_index": "d361bef577302850ea3293b81d678f9155c8f5750c3fe8628782571025a98358",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/payload_integrity_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "actual_same_size_payload_tamper",
+      "output": {
+        "error": "artifact byte/hash mismatch: /home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/actual_payload_copy.hpp"
+      },
+      "passed": true
+    },
+    {
+      "accepted": false,
+      "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/noncanonical_alias_contract.json",
+      "expected_accepted": false,
+      "expected_contract": "da033ee2c2f46df04e108bb3d6998887237e5b128836c92be2df731f38375aa0",
+      "expected_index": "5abdaafc26f36eafc9b4fa8d6c63c4f104b19f224fa391d333ef4c149da01458",
+      "index": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_copies_v1/noncanonical_alias_index.json",
+      "input_kind": "altered-copy component fixture; no stage submission",
+      "name": "noncanonical_symlink_path",
+      "output": {
+        "error": "canonical path without symlink required"
+      },
+      "passed": true
+    }
+  ],
+  "expected_accept_count": 3,
+  "expected_reject_count": 21,
+  "failed_cases": [],
+  "input_sha256_after": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json": {
+      "bytes": 1229059,
+      "sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_submission_v1.json": {
+      "bytes": 990,
+      "sha256": "d6c5a44b68d1a7fa4c0f1b46fb52c73135d5cc5793deb1ca5de593173028ee0c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json": {
+      "bytes": 4242,
+      "sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/implementation/python/freeze_binding_v1.py": {
+      "bytes": 11861,
+      "sha256": "ad1c3e9a1e8969ae1264b0f75857730c88a71ed0cdcef5215d9adf20805e3b83"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_cases_v1.py": {
+      "bytes": 7314,
+      "sha256": "6d7b843282fee486866b22582bc6d1695155bff1507710bb2dcc1853e94a8385"
+    }
+  },
+  "input_sha256_before": {
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_index_v1.json": {
+      "bytes": 1229059,
+      "sha256": "1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/freeze_submission_v1.json": {
+      "bytes": 990,
+      "sha256": "d6c5a44b68d1a7fa4c0f1b46fb52c73135d5cc5793deb1ca5de593173028ee0c"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json": {
+      "bytes": 4242,
+      "sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/implementation/python/freeze_binding_v1.py": {
+      "bytes": 11861,
+      "sha256": "ad1c3e9a1e8969ae1264b0f75857730c88a71ed0cdcef5215d9adf20805e3b83"
+    },
+    "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/verification/freeze_binding_cases_v1.py": {
+      "bytes": 7314,
+      "sha256": "6d7b843282fee486866b22582bc6d1695155bff1507710bb2dcc1853e94a8385"
+    }
+  },
+  "passed": true,
+  "physical_execute_release_enabled": false,
+  "research_conclusion": false,
+  "schema": "P1-frozen-binding-actual-and-altered-copy-cases/v1"
+}

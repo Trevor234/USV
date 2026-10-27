@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="6" time="0.258" timestamp="2026-10-21T19:36:44.756685" hostname="trevor-Vostro-5880-China-HDD-Protection"><testcase classname="test.test_fcu_mode_contract" name="test_dynamic_rc_yaml_uses_manual[mpc_params.yaml]" time="0.004" /><testcase classname="test.test_fcu_mode_contract" name="test_dynamic_rc_yaml_uses_manual[mpc_params_B.yaml]" time="0.004" /><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[A-GUIDED-real.launch.py]" time="0.002"><failure message="OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-904807-trevor-Vostro-5880-China-HDD-Protection-4'">launch_name = 'real.launch.py', scheme = 'A', target = 'GUIDED'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+&gt;       description = module.generate_launch_description()
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usv_mpc_ws/src/usv_bringup/launch/real.launch.py:38: in generate_launch_description
+    use_cpp_arg = DeclareLaunchArgument(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/actions/declare_launch_argument.py:117: in __init__
+    self.__logger = launch.logging.get_logger(__name__)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:350: in get_logger
+    launch_log_file_handler = launch_config.get_log_file_handler()
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:324: in get_log_file_handler
+    file_path = self.get_log_file_path(file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:310: in get_log_file_path
+    return os.path.join(self.log_dir, file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:137: in log_dir
+    self._log_dir = _make_unique_log_dir(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:81: in _make_unique_log_dir
+    os.makedirs(log_dir, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = '/home/trevor/.ros/log/2026-10-21-19-36-44-904807-trevor-Vostro-5880-China-HDD-Protection-4'
+mode = 511, exist_ok = True
+
+&gt;   ???
+E   OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-904807-trevor-Vostro-5880-China-HDD-Protection-4'
+
+&lt;frozen os&gt;:225: OSError</failure></testcase><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[A-GUIDED-sitl.launch.py]" time="0.002"><failure message="OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-947713-trevor-Vostro-5880-China-HDD-Protection-4'">launch_name = 'sitl.launch.py', scheme = 'A', target = 'GUIDED'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+&gt;       description = module.generate_launch_description()
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py:27: in generate_launch_description
+    scheme_arg = DeclareLaunchArgument(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/actions/declare_launch_argument.py:117: in __init__
+    self.__logger = launch.logging.get_logger(__name__)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:350: in get_logger
+    launch_log_file_handler = launch_config.get_log_file_handler()
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:324: in get_log_file_handler
+    file_path = self.get_log_file_path(file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:310: in get_log_file_path
+    return os.path.join(self.log_dir, file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:137: in log_dir
+    self._log_dir = _make_unique_log_dir(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:81: in _make_unique_log_dir
+    os.makedirs(log_dir, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = '/home/trevor/.ros/log/2026-10-21-19-36-44-947713-trevor-Vostro-5880-China-HDD-Protection-4'
+mode = 511, exist_ok = True
+
+&gt;   ???
+E   OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-947713-trevor-Vostro-5880-China-HDD-Protection-4'
+
+&lt;frozen os&gt;:225: OSError</failure></testcase><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[B-MANUAL-real.launch.py]" time="0.002"><failure message="OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-979357-trevor-Vostro-5880-China-HDD-Protection-4'">launch_name = 'real.launch.py', scheme = 'B', target = 'MANUAL'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+&gt;       description = module.generate_launch_description()
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usv_mpc_ws/src/usv_bringup/launch/real.launch.py:38: in generate_launch_description
+    use_cpp_arg = DeclareLaunchArgument(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/actions/declare_launch_argument.py:117: in __init__
+    self.__logger = launch.logging.get_logger(__name__)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:350: in get_logger
+    launch_log_file_handler = launch_config.get_log_file_handler()
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:324: in get_log_file_handler
+    file_path = self.get_log_file_path(file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:310: in get_log_file_path
+    return os.path.join(self.log_dir, file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:137: in log_dir
+    self._log_dir = _make_unique_log_dir(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:81: in _make_unique_log_dir
+    os.makedirs(log_dir, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = '/home/trevor/.ros/log/2026-10-21-19-36-44-979357-trevor-Vostro-5880-China-HDD-Protection-4'
+mode = 511, exist_ok = True
+
+&gt;   ???
+E   OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-979357-trevor-Vostro-5880-China-HDD-Protection-4'
+
+&lt;frozen os&gt;:225: OSError</failure></testcase><testcase classname="test.test_fcu_mode_contract" name="test_effective_launch_mode_contract[B-MANUAL-sitl.launch.py]" time="0.001"><failure message="OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-999026-trevor-Vostro-5880-China-HDD-Protection-4'">launch_name = 'sitl.launch.py', scheme = 'B', target = 'MANUAL'
+
+    @pytest.mark.parametrize("launch_name", ["real.launch.py", "sitl.launch.py"])
+    @pytest.mark.parametrize("scheme,target", [("A", "GUIDED"), ("B", "MANUAL")])
+    def test_effective_launch_mode_contract(launch_name, scheme, target):
+        spec = importlib.util.spec_from_file_location("mode_contract_launch", PACKAGE / "launch" / launch_name)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+&gt;       description = module.generate_launch_description()
+
+usv_mpc_ws/src/usv_bringup/test/test_fcu_mode_contract.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+usv_mpc_ws/src/usv_bringup/launch/sitl.launch.py:27: in generate_launch_description
+    scheme_arg = DeclareLaunchArgument(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/actions/declare_launch_argument.py:117: in __init__
+    self.__logger = launch.logging.get_logger(__name__)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:350: in get_logger
+    launch_log_file_handler = launch_config.get_log_file_handler()
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:324: in get_log_file_handler
+    file_path = self.get_log_file_path(file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:310: in get_log_file_path
+    return os.path.join(self.log_dir, file_name)
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:137: in log_dir
+    self._log_dir = _make_unique_log_dir(
+/opt/ros/jazzy/lib/python3.12/site-packages/launch/logging/__init__.py:81: in _make_unique_log_dir
+    os.makedirs(log_dir, exist_ok=True)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+name = '/home/trevor/.ros/log/2026-10-21-19-36-44-999026-trevor-Vostro-5880-China-HDD-Protection-4'
+mode = 511, exist_ok = True
+
+&gt;   ???
+E   OSError: [Errno 30] Read-only file system: '/home/trevor/.ros/log/2026-10-21-19-36-44-999026-trevor-Vostro-5880-China-HDD-Protection-4'
+
+&lt;frozen os&gt;:225: OSError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,174 @@
+{
+  "schema": "p0-publisher-contract-report/1",
+  "passed": true,
+  "exit_code": 0,
+  "source_event_contract_valid": true,
+  "recorded_stream_complete": true,
+  "published_command_timing_available": true,
+  "frozen_baseline_verified": true,
+  "frozen_baseline_verification_source": "external run_context; message identity agreement checked here",
+  "plant_acceptance_observed": false,
+  "force_measured": false,
+  "execution_atomicity_proven": false,
+  "exact_execution_timing_available": false,
+  "gp_labels_ready": false,
+  "source_received_sequences_prove_precallback_completeness": false,
+  "actual_message_counts": {
+    "/wamv/sensors/imu/imu/data": 8497,
+    "/clock": 21240,
+    "/wamv/sensors/position/ground_truth_odometry": 4248,
+    "/path/reference": 78,
+    "/path/reference_profile": 78,
+    "/wamv/thrusters/left/thrust": 376,
+    "/wamv/thrusters/right/thrust": 376,
+    "/mpc/status": 376,
+    "/mpc/predicted_trajectory": 55,
+    "/research/control/applied": 301,
+    "/research/cycle_timing": 300,
+    "/research/state_snapshot": 2999
+  },
+  "decoded_message_counts": {
+    "/wamv/sensors/imu/imu/data": 8497,
+    "/clock": 21240,
+    "/wamv/sensors/position/ground_truth_odometry": 4248,
+    "/path/reference": 78,
+    "/path/reference_profile": 78,
+    "/wamv/thrusters/left/thrust": 376,
+    "/wamv/thrusters/right/thrust": 376,
+    "/mpc/status": 376,
+    "/research/control/applied": 301,
+    "/research/cycle_timing": 300,
+    "/research/state_snapshot": 2999
+  },
+  "metadata_message_counts": {
+    "/path/reference": 78,
+    "/research/cycle_timing": 300,
+    "/path/reference_profile": 78,
+    "/mpc/status": 376,
+    "/research/state_snapshot": 2999,
+    "/research/control/applied": 301,
+    "/mpc/predicted_trajectory": 55,
+    "/wamv/thrusters/right/thrust": 376,
+    "/wamv/sensors/position/ground_truth_odometry": 4248,
+    "/wamv/thrusters/left/thrust": 376,
+    "/wamv/sensors/imu/imu/data": 8497,
+    "/clock": 21240
+  },
+  "source_stream_counts": {
+    "applied": {
+      "dropped": 0,
+      "emitted": 301,
+      "first_sequence": 1,
+      "generated": 301,
+      "last_sequence": 301
+    },
+    "cycle": {
+      "dropped": 0,
+      "emitted": 300,
+      "first_sequence": 1,
+      "generated": 300,
+      "last_sequence": 300
+    },
+    "state": {
+      "dropped": 0,
+      "emitted": 2999,
+      "first_sequence": 1,
+      "generated": 2999,
+      "last_sequence": 2999
+    }
+  },
+  "physical_matching": {
+    "left": {
+      "actual_raw_count": 376,
+      "source_successful_calls": 301,
+      "matched_count": 301,
+      "outside_armed_matched_span_count": 75,
+      "interior_unmatched_count": 0,
+      "max_bag_receive_offset_ms": 0.217529,
+      "strict_match_window_ns": 20000000,
+      "outside_span_claim": "retained raw outputs outside source capture; no completeness claim for these"
+    },
+    "right": {
+      "actual_raw_count": 376,
+      "source_successful_calls": 301,
+      "matched_count": 301,
+      "outside_armed_matched_span_count": 75,
+      "interior_unmatched_count": 0,
+      "max_bag_receive_offset_ms": 0.211258,
+      "strict_match_window_ns": 20000000,
+      "outside_span_claim": "retained raw outputs outside source capture; no completeness claim for these"
+    }
+  },
+  "source_stream_loss_diagnostics": {
+    "state": {
+      "generated": 2999,
+      "emitted": 2999,
+      "recorded_decoded": 2999,
+      "source_to_recorded_missing_fraction": 0
+    },
+    "applied": {
+      "generated": 301,
+      "emitted": 301,
+      "recorded_decoded": 301,
+      "source_to_recorded_missing_fraction": 0
+    },
+    "cycle": {
+      "generated": 300,
+      "emitted": 300,
+      "recorded_decoded": 300,
+      "source_to_recorded_missing_fraction": 0
+    }
+  },
+  "run_id": "p0_f3_gate_straight_20261004_03",
+  "producer_instance_id": "p0_f3_gate_straight_20261004_03:898318487270154",
+  "baseline_id": "F3_20261004_quaternion_gate_01",
+  "topic_types": {
+    "/path/reference": "nav_msgs/msg/Path",
+    "/research/cycle_timing": "usv_research_interfaces/msg/CycleTiming",
+    "/path/reference_profile": "std_msgs/msg/Float64MultiArray",
+    "/mpc/status": "std_msgs/msg/String",
+    "/research/state_snapshot": "usv_research_interfaces/msg/StateSnapshot",
+    "/research/control/applied": "usv_research_interfaces/msg/AppliedControl",
+    "/mpc/predicted_trajectory": "nav_msgs/msg/Path",
+    "/wamv/thrusters/right/thrust": "std_msgs/msg/Float64",
+    "/wamv/sensors/position/ground_truth_odometry": "nav_msgs/msg/Odometry",
+    "/wamv/thrusters/left/thrust": "std_msgs/msg/Float64",
+    "/wamv/sensors/imu/imu/data": "sensor_msgs/msg/Imu",
+    "/clock": "rosgraph_msgs/msg/Clock"
+  },
+  "failures": [],
+  "warnings": [
+    {
+      "code": "controller_snapshot_precedes_armed_window",
+      "message": "prearm source is bound to raw odom; no synthetic snapshot added",
+      "scope": "source",
+      "received_odom_sequence": 766
+    }
+  ],
+  "limitations": [
+    "AppliedControl describes local publisher calls; publish return is not a DDS or plant acknowledgment.",
+    "The two Float64 channels are not proven atomic, and physical thrust is not measured.",
+    "Callback-local receive sequences cannot prove no sensor loss before callback reception.",
+    "Steady times describe this producer/boot only; the local callback-to-publish path is not sensor-to-actuator end-to-end latency.",
+    "The last interval has no observed right boundary; bag end is not a substitute.",
+    "Publisher-side records alone do not authorize exact residual labels or GP training."
+  ],
+  "reading": {
+    "bag": "/home/trevor/USV/data/sim_bags/p0_f3_gate_straight_20261004_03",
+    "storage_id": "mcap",
+    "storage_files": [
+      "p0_f3_gate_straight_20261004_03_0.mcap"
+    ],
+    "metadata_total_message_count": 38924,
+    "recorder_time_domain": "see external run_context; not inferred from numeric timestamps"
+  },
+  "bag_hash_before": {
+    "metadata.yaml": "606ef35170228cbf6d4cbf198fdc5a93519e9e73216e431809db85144915a02a",
+    "p0_f3_gate_straight_20261004_03_0.mcap": "7647d321018fdf701f1d44008fb0fe3e0ffdea149c448db39a538e5039109a01"
+  },
+  "bag_hash_after": {
+    "metadata.yaml": "606ef35170228cbf6d4cbf198fdc5a93519e9e73216e431809db85144915a02a",
+    "p0_f3_gate_straight_20261004_03_0.mcap": "7647d321018fdf701f1d44008fb0fe3e0ffdea149c448db39a538e5039109a01"
+  },
+  "original_bag_unchanged": true
+}

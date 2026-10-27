@@ -1,0 +1,88 @@
+rosbag2_bagfile_information:
+  version: 9
+  storage_identifier: mcap
+  duration:
+    nanoseconds: 2169829490
+  starting_time:
+    nanoseconds_since_epoch: 1791260273123294352
+  message_count: 13
+  topics_with_message_count:
+    - topic_metadata:
+        name: /p1/solve_job
+        type: usv_research_interfaces/msg/SolveJob
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 0
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: RIHS01_a1b019e5de54c5fed6894f4a68d61399cffcffaadbb8b3453d1d579a1586dff0
+      message_count: 1
+    - topic_metadata:
+        name: /p1/worker_capability
+        type: usv_research_interfaces/msg/WorkerCapability
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 0
+            reliability: reliable
+            durability: transient_local
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: RIHS01_588856026077885c6cf98cb3cad6ce0e264882db704d02f438a6c89f3ac46973
+      message_count: 12
+    - topic_metadata:
+        name: /p1/solve_candidate
+        type: usv_research_interfaces/msg/SolveCandidate
+        serialization_format: cdr
+        offered_qos_profiles:
+          - history: unknown
+            depth: 0
+            reliability: reliable
+            durability: volatile
+            deadline:
+              sec: 9223372036
+              nsec: 854775807
+            lifespan:
+              sec: 9223372036
+              nsec: 854775807
+            liveliness: automatic
+            liveliness_lease_duration:
+              sec: 9223372036
+              nsec: 854775807
+            avoid_ros_namespace_conventions: false
+        type_description_hash: RIHS01_fa463da94f7fe1d952ddbfd62ec822558d3073804fa114931523c0c8960a2022
+      message_count: 0
+  compression_format: ""
+  compression_mode: ""
+  relative_file_paths:
+    - raw_bag_0.mcap
+  files:
+    - path: raw_bag_0.mcap
+      starting_time:
+        nanoseconds_since_epoch: 1791260273123294352
+      duration:
+        nanoseconds: 2169829490
+      message_count: 13
+  custom_data: ~
+  ros_distro: jazzy

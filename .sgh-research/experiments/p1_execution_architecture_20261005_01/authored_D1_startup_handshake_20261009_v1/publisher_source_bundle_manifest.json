@@ -1,0 +1,41 @@
+{
+  "files": {
+    "publisher/CMakeLists.txt": {
+      "bytes": 5894,
+      "sha256": "2eb7f2cc4ad757341d54c12ab92ee78b9b2e4c3c4d89c2259076f49417af4300"
+    },
+    "publisher/implementation_notes.md": {
+      "bytes": 6933,
+      "sha256": "f78b3a99d217548253463420e2999d8b1e5146a5c8b8d0cba61f0728b6c9e908"
+    },
+    "publisher/include/usv_mpc_cpp/mpc_node.hpp": {
+      "bytes": 11454,
+      "sha256": "93fbc4b2dd6bc480a61abf400b79108a6cd2f3812889b72651e6f5cdf9d07ad2"
+    },
+    "publisher/include/usv_mpc_cpp/p1_startup_gate.hpp": {
+      "bytes": 17606,
+      "sha256": "2406472fbc05b97e771c0d9545c92a5d843de4fe2a2bcfa4f57e5dc6b150907c"
+    },
+    "publisher/include/usv_mpc_cpp/research_logger.hpp": {
+      "bytes": 10021,
+      "sha256": "daa7147ba7335b5e28192fe1cc481bc02f9247b2ba1c5e9db30c7229fe4b9b25"
+    },
+    "publisher/lineage.json": {
+      "bytes": 2628,
+      "sha256": "541590624928c1dcf69d17afcbd645f8c242e70b435eeb81ab62a12e684ecadd"
+    },
+    "publisher/src/mpc_node.cpp": {
+      "bytes": 56197,
+      "sha256": "6fcd225da16536805dcc3d47b3ddc3d190cef0fba8ca586fc3ad88eb37b70226"
+    },
+    "publisher/src/mpc_node_main.cpp": {
+      "bytes": 3036,
+      "sha256": "43f95ae192e61f7e8433a33801a16bc9993ae6a47ae2d33306bdfe897bdd7cc8"
+    },
+    "publisher/tests/test_publisher_startup.cpp": {
+      "bytes": 26237,
+      "sha256": "6315050aa067587bbac50beb1586cd87416021706edce9240030b175afd69cd0"
+    }
+  },
+  "schema": "p1-D1-derived-publisher-source-bundle-v1"
+}

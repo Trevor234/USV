@@ -1,0 +1,47 @@
+{
+  "RMW_IMPLEMENTATION": "rmw_fastrtps_cpp",
+  "ROS_LOCALHOST_ONLY": "1",
+  "close_budget_ns": 15000000000,
+  "contract_sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72",
+  "control_deadline_ns": 150000000,
+  "criteria": [
+    "five fresh owned roles effective parameters and exact endpoint graph",
+    "one accepted Decision actually emitted before arm",
+    "first source queue overflow at a real next DecisionEnqueue capacity512, fill diagnostics explicit",
+    "same DecisionEnqueue stopping/invalidation Witness and empty admission/candidate/pending",
+    "failed Decision absent from Stored/Publisher output; earlier accepted one joins Observer/Source/Storage/Publisher",
+    "no later accepted activation or submit after failure stopping",
+    "owned groups all terminated, Recorder clean drain, Observer expected exit2 due failed Source",
+    "normal run status remains false; no performance or phase promotion"
+  ],
+  "diagnostic_profile": "decision_queue_saturation_v1",
+  "domain": 191,
+  "execute_qualified": false,
+  "external_INT_timeout_s": 55,
+  "fault_observation_budget_ns": 5000000000,
+  "normal_close_ACK_is_independently_recorded": true,
+  "normal_close_qualification_not_granted_by_fault_cleanup": true,
+  "observer_binary": {
+    "bytes": 7237248,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V1_sink_failure_20261019_33/build/publication_attempt02/cmake_build/p1_regulator_shadow_observer_owned_v2",
+    "resolved_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V1_sink_failure_20261019_33/build/publication_attempt02/cmake_build/p1_regulator_shadow_observer_owned_v2",
+    "sha256": "5b89ac3d23dd4d44bf3d247a5c0316c4bc738fa0b5db50e8a982741a4ca2faeb"
+  },
+  "observer_source_bundle": {
+    "files": 38,
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V1_sink_failure_20261019_33/build/publication_attempt02/source_bundle.json",
+    "sha256": "e91f9087a920b92c5b4cbbfe0a460d8bb19f06e2f8086af97ea67a3e5e7346d6"
+  },
+  "output_budget_bytes": 104857600,
+  "overall_observation_budget_ns": 45000000000,
+  "prepare_budget_ns": 20000000000,
+  "real_CPU_or_disk_stress_claimed": false,
+  "research_conclusion": false,
+  "run_count_limit": 1,
+  "run_id": "v1_sink_01",
+  "schema": "V1-real-queue-failure-preregistration/v1",
+  "stage_qualified": false,
+  "tick_period_ns": 200000000,
+  "timing_20ms_is_engineering_only": true,
+  "true_plant_qualified": false
+}

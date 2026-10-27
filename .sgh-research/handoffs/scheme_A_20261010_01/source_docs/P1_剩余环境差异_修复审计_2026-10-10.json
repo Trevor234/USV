@@ -1,0 +1,470 @@
+{
+  "schema": "remaining-environment-drift-repair-audit-v1",
+  "record_date": "2026-10-10",
+  "timezone": "Asia/Shanghai",
+  "remote_host": "trevor@192.168.1.222",
+  "scope": "Shared support minimal repairs, import verification and explicit asset identity declaration",
+  "deployment_started_utc": "2026-10-10T03:05:05.754212+00:00",
+  "deployment_finished_utc": "2026-10-10T03:06:37.582017+00:00",
+  "independent_readback_utc": "2026-10-10T03:14:50.333744+00:00",
+  "changed_files": [
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+      "before_sha256": "c9cd5286fa721ebab8aaf2a36f62495685272a63bf633f948e76d07cb1b3fac4",
+      "after_sha256": "6d578021c7b74f93031a303212e9d1069066b62bbe3181c76a8570c01eafb157",
+      "mode": 436,
+      "change_kind": "documentation_only"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+      "before_sha256": "6bcdb14ff6c682dc22896e194fe4d434655d7dc237678d1b8fd820868eb576a1",
+      "after_sha256": "234f3743cd61e2ca9a826872137b0e2a51643601785551f028e7e7f675227e08",
+      "mode": 436,
+      "change_kind": "documentation_only"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+      "before_sha256": "450c2a7af1bf797b046fc59de168421245de1cd0bff76439a0456a15f19dd548",
+      "after_sha256": "e97e63cb90fcbf9cb9e5bf9e5fbc61cd9985858381b432d205ee1ac616ebc018",
+      "mode": 436,
+      "change_kind": "documentation_only"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+      "before_sha256": "fdf66993763e1a4343cef9de99a50e370f55462d0eed4be82625af4d2db66f25",
+      "after_sha256": "eb8cbf7bf7eb4689c0c446c5f4413e38e651e429b811495ca3281d4a9d85797a",
+      "mode": 436,
+      "change_kind": "documentation_only"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/test/test_config_smoke.py",
+      "before_sha256": "d0344434efdbecc788cdfde5c60c16cc158a4d58ceab69df034ba7c5af57c22d",
+      "after_sha256": "6f8948040d937f32b4dcfce7fecc44553caf7c9935f5904465efbb2d1283d85f",
+      "mode": 436,
+      "change_kind": "documentation_only"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/visualizer.py",
+      "before_sha256": "6aef958e904405ec66f6a5e66f651ea24f074bd8206a55142aa4e98201fef2ae",
+      "after_sha256": "298f5af2f447090f37f1d9c1e3a5e799f9c05e9c24e6a086f91ac2023ae86cb9",
+      "mode": 420,
+      "change_kind": "runtime_cursor_bug_fix"
+    },
+    {
+      "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/telemetry_bridge.py",
+      "before_sha256": "28aecff3f465f6c807a13dbf76dba3a47c3fdc2044fcf79d814d640869b74306",
+      "after_sha256": "0455293cf5fdb46778f26063fb95e7c9f23312026b874492ec096ce0f2e23add",
+      "mode": 436,
+      "change_kind": "runtime_cursor_bug_fix"
+    }
+  ],
+  "guard": {
+    "asset_count": 3864,
+    "original_manifest_sha256": "27df4957d21c29a9d724bc97a1221f0fee814d99d53f9f7be041b1e23a7124a0",
+    "before_drift_count": 25,
+    "after_drift_count": 26,
+    "passed": false,
+    "expected_values_replaced": false,
+    "new_intentional_drift": [
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/telemetry_bridge.py",
+        "expected": "28aecff3f465f6c807a13dbf76dba3a47c3fdc2044fcf79d814d640869b74306",
+        "actual": "0455293cf5fdb46778f26063fb95e7c9f23312026b874492ec096ce0f2e23add"
+      }
+    ],
+    "after_drift": [
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup-0.1.0-py3.12.egg-info/PKG-INFO",
+        "expected": "d0baa6cc13aed11a2981c34310da7ee532966ffada7c754abf2cbf383ed337c3",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup-0.1.0-py3.12.egg-info/SOURCES.txt",
+        "expected": "979e5730471eb2708e384d8a9f5b2a20018dfee6d884e1e65f44d810d04fe84d",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup-0.1.0-py3.12.egg-info/dependency_links.txt",
+        "expected": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup-0.1.0-py3.12.egg-info/requires.txt",
+        "expected": "4e34d3b17ef5dd1e34865d1d3245f1a40158ec9bc19ea6d3547423a3fb96e916",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup-0.1.0-py3.12.egg-info/top_level.txt",
+        "expected": "ee768884d645d1e202ef7e2fe57277d6df0085db8c4e34d84a04225031c611da",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup-0.1.0-py3.12.egg-info/zip-safe",
+        "expected": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup/__init__.py",
+        "expected": "ce9a3f0908e838d0cf106415682df13079e580d91937a1068be5ae3d94cd4343",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages/usv_bringup/research_config_sources.py",
+        "expected": "2ca84993341269d39ad3a74f422d177ea0c76be73cda6343d8e66ab08c388c75",
+        "actual": "missing",
+        "disposition": "legacy_install_layout_migration_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/bag_topics.yaml",
+        "expected": "9d52bdbff5c3fa02c6a98aa1ecbdde29f5178f0163cf36dfed9c31c6ea750a7c",
+        "actual": "6d578021c7b74f93031a303212e9d1069066b62bbe3181c76a8570c01eafb157",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/ntrip_params.yaml",
+        "expected": "ccd44a467d1f47d98264b26c51e8094c9ba8700aeff29f016e3090b1515f5593",
+        "actual": "9bcb3421d2870f34fbbd1732e53642e58ebb74edb820b40c630f88280323cb7c",
+        "disposition": "hardware_configuration_retained_unused_in_reviewed_simulation_paths"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/rosbag_qos_overrides.yaml",
+        "expected": "b7f27e9b02464efb113f9df57639bab63e8ac1aae3fee91b38f3ab64089e8138",
+        "actual": "234f3743cd61e2ca9a826872137b0e2a51643601785551f028e7e7f675227e08",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/safety_params.yaml",
+        "expected": "c524fbff72bf80efa908ae96c72e01195972ed91b7d0b89a535ab01723cd6ba0",
+        "actual": "e97e63cb90fcbf9cb9e5bf9e5fbc61cd9985858381b432d205ee1ac616ebc018",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/config/topic_contract.yaml",
+        "expected": "eb870101513ca2de04ceb3bbf166572fc66b78bc9aa4a816c53c45d038f9c925",
+        "actual": "eb8cbf7bf7eb4689c0c446c5f4413e38e651e429b811495ca3281d4a9d85797a",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/launch/ntrip.launch.py",
+        "expected": "c2c7d5b33918c19cc923410942b92ac0e9133276ab3ed3b20c854f6417d9c09b",
+        "actual": "9935d2cd0ff3f3b7e9a19d072288ff06440a509ccf1a0197ba9228c6b345bc1a",
+        "disposition": "hardware_configuration_retained_unused_in_reviewed_simulation_paths"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.dsv",
+        "expected": "b2b3c61483bfe130318c94b35c3a88725fc4632c1d49c57272642bb478d80049",
+        "actual": "5af0f84f6ac7269e0a102a8de8782e7c568d29da3ce2fdf64b59baa3890a8b48",
+        "disposition": "shared_packaging_current_identity_declared_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup/package.sh",
+        "expected": "a75a755939926ec9382fe87297f6cccd88e3d3544c0d345fbe35dc3daccb2fb2",
+        "actual": "42053dc7d1fb4659cf598463d61ad5549cf64305d6d1deb5674933d2dc7e80ba",
+        "disposition": "shared_packaging_current_identity_declared_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/bag_topics.yaml",
+        "expected": "9d52bdbff5c3fa02c6a98aa1ecbdde29f5178f0163cf36dfed9c31c6ea750a7c",
+        "actual": "6d578021c7b74f93031a303212e9d1069066b62bbe3181c76a8570c01eafb157",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/ntrip_params.yaml",
+        "expected": "ccd44a467d1f47d98264b26c51e8094c9ba8700aeff29f016e3090b1515f5593",
+        "actual": "9bcb3421d2870f34fbbd1732e53642e58ebb74edb820b40c630f88280323cb7c",
+        "disposition": "hardware_configuration_retained_unused_in_reviewed_simulation_paths"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/rosbag_qos_overrides.yaml",
+        "expected": "b7f27e9b02464efb113f9df57639bab63e8ac1aae3fee91b38f3ab64089e8138",
+        "actual": "234f3743cd61e2ca9a826872137b0e2a51643601785551f028e7e7f675227e08",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/safety_params.yaml",
+        "expected": "c524fbff72bf80efa908ae96c72e01195972ed91b7d0b89a535ab01723cd6ba0",
+        "actual": "e97e63cb90fcbf9cb9e5bf9e5fbc61cd9985858381b432d205ee1ac616ebc018",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/config/topic_contract.yaml",
+        "expected": "eb870101513ca2de04ceb3bbf166572fc66b78bc9aa4a816c53c45d038f9c925",
+        "actual": "eb8cbf7bf7eb4689c0c446c5f4413e38e651e429b811495ca3281d4a9d85797a",
+        "disposition": "documentation_corrected_runtime_bag_qos_safety_values_preserved"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/ntrip.launch.py",
+        "expected": "c2c7d5b33918c19cc923410942b92ac0e9133276ab3ed3b20c854f6417d9c09b",
+        "actual": "9935d2cd0ff3f3b7e9a19d072288ff06440a509ccf1a0197ba9228c6b345bc1a",
+        "disposition": "hardware_configuration_retained_unused_in_reviewed_simulation_paths"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/setup.py",
+        "expected": "cd780084021f8514fb9814cde13634711149f4d925da170cb95dfc274e842c30",
+        "actual": "44a1a2a48d05ccd578212c15b895051c28d403f7e7ac57b115a4000ed01ce36f",
+        "disposition": "shared_packaging_current_identity_declared_real_import_validated"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/test/test_config_smoke.py",
+        "expected": "f7d588d46128dc3ad0f75af09aebaeb48ba958ec5d87f4c5ef9f4779c0601508",
+        "actual": "6f8948040d937f32b4dcfce7fecc44553caf7c9935f5904465efbb2d1283d85f",
+        "disposition": "test_comments_corrected_ast_unchanged_existing_5_checks_pass"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/telemetry_bridge.py",
+        "expected": "28aecff3f465f6c807a13dbf76dba3a47c3fdc2044fcf79d814d640869b74306",
+        "actual": "0455293cf5fdb46778f26063fb95e7c9f23312026b874492ec096ce0f2e23add",
+        "disposition": "absolute_cursor_bug_fixed_8_semantic_cases_pass"
+      },
+      {
+        "path": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/visualizer.py",
+        "expected": "64eab9538c26963a67a5f398c82660c5d2c925fd38a2cd08427418b048a703c2",
+        "actual": "298f5af2f447090f37f1d9c1e3a5e799f9c05e9c24e6a086f91ac2023ae86cb9",
+        "disposition": "absolute_cursor_bug_fixed_8_semantic_cases_pass"
+      }
+    ]
+  },
+  "verification": {
+    "fresh_real_imports": {
+      "modules": [
+        {
+          "name": "usv_bringup",
+          "file": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/__init__.py",
+          "origin": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/__init__.py",
+          "resolved": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/__init__.py",
+          "sha256": "ce9a3f0908e838d0cf106415682df13079e580d91937a1068be5ae3d94cd4343"
+        },
+        {
+          "name": "usv_bringup.research_config_sources",
+          "file": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/research_config_sources.py",
+          "origin": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/research_config_sources.py",
+          "resolved": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/research_config_sources.py",
+          "sha256": "2ca84993341269d39ad3a74f422d177ea0c76be73cda6343d8e66ab08c388c75"
+        },
+        {
+          "name": "usv_bringup.fix_qos_relay",
+          "file": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/fix_qos_relay.py",
+          "origin": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup/fix_qos_relay.py",
+          "resolved": "/home/trevor/USV/usv_mpc_ws/src/usv_bringup/usv_bringup/fix_qos_relay.py",
+          "sha256": "ca996d538cc8913eee9230960d3e77d20728b4c32de5aff78777a5e52807e559"
+        },
+        {
+          "name": "usv_simulation",
+          "file": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/__init__.py",
+          "origin": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/__init__.py",
+          "resolved": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/__init__.py",
+          "sha256": "0c80e2ef49e94f8dd0efd035fd46713e5c8300ce15bf9be1cfbb89bfc0d183eb"
+        },
+        {
+          "name": "usv_simulation.visualizer",
+          "file": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/visualizer.py",
+          "origin": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/visualizer.py",
+          "resolved": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/visualizer.py",
+          "sha256": "298f5af2f447090f37f1d9c1e3a5e799f9c05e9c24e6a086f91ac2023ae86cb9"
+        },
+        {
+          "name": "usv_simulation.telemetry_bridge",
+          "file": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/telemetry_bridge.py",
+          "origin": "/home/trevor/USV/usv_mpc_ws/build/usv_simulation/usv_simulation/telemetry_bridge.py",
+          "resolved": "/home/trevor/USV/usv_mpc_ws/src/usv_simulation/usv_simulation/telemetry_bridge.py",
+          "sha256": "0455293cf5fdb46778f26063fb95e7c9f23312026b874492ec096ce0f2e23add"
+        }
+      ],
+      "python_executable": "/usr/bin/python3",
+      "python_version": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "sys_path": [
+        "",
+        "/home/trevor/USV/usv_mpc_ws/build/usv_bringup",
+        "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/lib/python3.12/site-packages",
+        "/home/trevor/USV/usv_mpc_ws/build/usv_simulation",
+        "/home/trevor/USV/usv_mpc_ws/install/usv_simulation/lib/python3.12/site-packages",
+        "/home/trevor/USV/usv_mpc_ws/build/usv_rl_ros",
+        "/home/trevor/USV/usv_mpc_ws/install/usv_rl_ros/lib/python3.12/site-packages",
+        "/home/trevor/USV/usv_mpc_ws/install/usv_research_interfaces/lib/python3.12/site-packages",
+        "/home/trevor/USV/vrx_ws/install/vrx_gz/lib/python3.12/site-packages",
+        "/home/trevor/USV/vrx_ws/install/vrx_gazebo/lib/python3.12/site-packages",
+        "/opt/ros/jazzy/lib/python3.12/site-packages",
+        "/usr/lib/python312.zip",
+        "/usr/lib/python3.12",
+        "/usr/lib/python3.12/lib-dynload",
+        "/home/trevor/.local/lib/python3.12/site-packages",
+        "/usr/local/lib/python3.12/dist-packages",
+        "/usr/lib/python3/dist-packages",
+        "/usr/lib/python3.12/dist-packages"
+      ],
+      "metadata_path": "/home/trevor/USV/usv_mpc_ws/build/usv_bringup/usv_bringup.egg-info",
+      "version": "0.1.0",
+      "bringup_share": "/home/trevor/USV/usv_mpc_ws/install/usv_bringup/share/usv_bringup",
+      "relay_entry_callable": true,
+      "rclpy_ok_before": false,
+      "rclpy_ok_after": false,
+      "nodes_started": false,
+      "source_stderr": "",
+      "source_chain": [
+        "ROS Jazzy setup",
+        "VRX local_setup",
+        "MPC workspace local_setup"
+      ],
+      "manually_injected_source_path": false
+    },
+    "semantic_cases": [
+      {
+        "name": "normal delta at and across wrap",
+        "passed": true
+      },
+      {
+        "name": "startup backlog already exceeds retention",
+        "passed": true
+      },
+      {
+        "name": "gap after one published snapshot exceeds retention",
+        "passed": true
+      },
+      {
+        "name": "minimum capacity survives repeated overwrites",
+        "passed": true
+      },
+      {
+        "name": "fresh collector resets both sides together",
+        "passed": true
+      },
+      {
+        "name": "snapshot failure does not consume retained points",
+        "passed": true
+      },
+      {
+        "name": "serialization failure does not consume retained points",
+        "passed": true
+      },
+      {
+        "name": "server.update failure does not consume retained points",
+        "passed": true
+      }
+    ],
+    "semantic_passed": 8,
+    "repair_before_source_semantic_passed": 2,
+    "existing_config_smoke": {
+      "returncode": 0,
+      "stdout": ".....                                                                    [100%]\n5 passed in 0.09s",
+      "stderr": ""
+    },
+    "smoke_ast_unchanged": true,
+    "consumed_bag_qos_safety_yaml_values_unchanged": true,
+    "topic_contract_two_GPS_qos_document_fields_changed": true,
+    "v1_wire_track_keys": [
+      "append"
+    ],
+    "protected_assets": {
+      "frozen_source_matched": 146,
+      "mpc_interface_dependencies_matched": 280
+    },
+    "ntrip_configuration_preserved": true
+  },
+  "support_version": {
+    "version": "SIM_SHARED_SUPPORT_20261010_01",
+    "manifest_path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/SIM_SHARED_SUPPORT_20261010_01.json",
+    "manifest_sha256": "1016674dda427dba0b20ecfc31cb56500552300b26e7d330ea6f5c8ef3226d35",
+    "declared_paths": 141,
+    "distinct_resolved_paths": 94,
+    "asset_types": {
+      "file": 100,
+      "symlink_directory": 2,
+      "symlink_file": 39
+    },
+    "fixture_tests_run": 15,
+    "fixture_failures": 0,
+    "fixture_errors": 0,
+    "fixture_skipped": 0,
+    "fixture_result_path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/support_checker/fixture_run_02/test_results.json",
+    "fixture_result_sha256": "a2535696c9c9f26679eef72e13fcae07b7d367da91515b5fad75a3b57fd45247",
+    "independent_support_assets_match": true,
+    "independent_checker_failures": [],
+    "checker_files": {
+      "check_support_assets.py": {
+        "path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/support_checker/check_support_assets.py",
+        "sha256": "0700d7b3cb0e0b2f1eba0155bffe80f195a2cff0ea568b1426dcbcdcd90254ea"
+      },
+      "test_support_assets.py": {
+        "path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/support_checker/test_support_assets.py",
+        "sha256": "dda45797e77983e136eff5f0058655f420c98fc95595baabd138d0c5c7a70d73"
+      }
+    },
+    "not_F5_replacement": true,
+    "not_full_simulation_dependency_lock": true,
+    "not_functional_release_acceptance": true
+  },
+  "backup_root": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/source_backup",
+  "remote_deployment_result_byte_identity": {
+    "path": "/home/trevor/USV/.sgh-research/repairs/remaining_drift_20261010_01/deployment_result.json",
+    "bytes": 33931,
+    "sha256": "a09e36b71442ffca3f2d6119c655f6aac3b15b809d1b112406506d0476cdde65",
+    "semantic_json_sha256": "b2a9aa365a9b3b9feada9067e73c4876ca8f5c72f070315970d0712193e25917",
+    "ends_with_newline": false
+  },
+  "local_and_remote_deployment_JSON_semantics_identical": true,
+  "controller_or_simulation_nodes_started": false,
+  "ROS_context_initialized": false,
+  "build_performed": false,
+  "source_changes_apply_to_future_process_start": true,
+  "D1_qualified": false,
+  "unverified": [
+    "GUI rendering",
+    "live ROS callback threading",
+    "TCP client delivery",
+    "automatic retry after callback exception",
+    "actual DDS/GPS QoS endpoints",
+    "NTRIP/CORS connection and differential injection",
+    "FCU mode change and physical stop",
+    "complete recording/storage/Witness/control execution acceptance"
+  ],
+  "historical_25_item_machine_audit_preserved_sha256": "b68aadb2110fe6ddf4d0712c1e46df6c7c3a979cecd5a11aabc97d2390056e29",
+  "evidence": [
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/preflight_before.json",
+      "bytes": 86056,
+      "sha256": "0240ba57f417b8b252f5d662e07e60ad2dab5ea64cc0bf41e83437aa9a140c78"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/patch_manifest.json",
+      "bytes": 4382,
+      "sha256": "4e409264c3c49e310765785fb3b96a514036066b26c4f5ac60bbd0d58f512e08"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/candidate_regression_reviewed.json",
+      "bytes": 13722,
+      "sha256": "46e34a7c840951a4ce25d16bfc105592b8db614a58dda3e33a0dec94cac29e50"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/deployment_result.json",
+      "bytes": 27682,
+      "sha256": "95fc727b85fdf3dcae1410b94faaab935d804a395458640ab812415077d7c819"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/remote_result_identity.json",
+      "bytes": 316,
+      "sha256": "1246387edc34275bf4ae1c7f717d2d0615db39689fe2e9f8752610ca329e5e1e"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/support_declaration_evidence.json",
+      "bytes": 86278,
+      "sha256": "8c0f934ecf1e5704c5fc22cf0276d6be12fd1021265bdf1f94a5efcfa2ecec59"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/support_layout_readback.json",
+      "bytes": 30849,
+      "sha256": "dc1c8095942d8814cf4dac7626bb186baede1510b0b6ee9f51de1f5e1eaf429d"
+    },
+    {
+      "path": "C:/Users/sgh/Documents/Codex/2026-10-02/referenced-chatgpt-conversation-this-is-an-2/work/p1_execution_architecture_2026-10-05/remaining_drift_repair_20261010_01/support_readback_result.json",
+      "bytes": 64574,
+      "sha256": "92dab277e5593b42e0f226886405f00c20bdd4f372f7b0fdc59f1e36e19b3193"
+    }
+  ]
+}

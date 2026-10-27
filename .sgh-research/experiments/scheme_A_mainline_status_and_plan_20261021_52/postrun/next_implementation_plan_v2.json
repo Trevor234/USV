@@ -1,0 +1,81 @@
+{
+  "schema": "SchemeA-after52-mainline-next-implementation/v1",
+  "current_batch_scope": "read-only baseline adoption, independently reviewed mainline documentation and next code plan",
+  "current_completed_components": [
+    "47 selected B5/M0b freeze",
+    "49 isolated owned nominal normal outlet",
+    "50 exact-source private publication/exit fault subcomponent",
+    "51 MANUAL+RC source/config correction and30 checks",
+    "52 authorized dirty baseline adoption"
+  ],
+  "next_run_registered": false,
+  "next_files_to_derive": [
+    "author/owned_m4_fault_driver_v1.py",
+    "implementation/R1_registration_v1.json",
+    "implementation/R2_registration_v1.json",
+    "build_runtime_fault_v1.py",
+    "seal_selected_runtime_fault_v1.py",
+    "run_fault_once_v1.py",
+    "audit_fault_v1.py"
+  ],
+  "rebuild_required": [
+    "p1_m4_regulator_owned",
+    "p1_m4_worker_owned",
+    "p1_m4_fixture_owned"
+  ],
+  "rebuild_reason": "all3 authenticate actual Driver SHA against compiled macro; new fault Driver changes SHA",
+  "reuse_eligible": [
+    "p1_owned_recorder"
+  ],
+  "numerical_worker_work_model_reference_unchanged": true,
+  "cases": [
+    {
+      "order": 1,
+      "id": "R1",
+      "boundary": "actual full Recorder and Regulator ready; grant absent",
+      "stimulus": "authenticated Regulator SIGINT before grant",
+      "required": "API/Job/Decision0, no prep/tick business, precise recording/close outcomes, group empty"
+    },
+    {
+      "order": 2,
+      "id": "R2",
+      "boundary": "first real accepted dual API success",
+      "stimulus": "one preregistered authenticated Worker exit, e.g. SIGKILL",
+      "required": "expected Worker-9, declared incomplete Worker Source, actual unusable transition before no-new-submit/activate boundary, committed DDS tail causally allowed, bounded fallback/ramp ticks then Driver INT shutdown, group empty"
+    }
+  ],
+  "budget": {
+    "driver_seconds": 45,
+    "outer_seconds": 90,
+    "automatic_retries": 0,
+    "extra_normal20s_calibration_required": false
+  },
+  "after_cases": [
+    "remaining original nine-group exact obligations and F5 source/reference applicability",
+    "M4 scoped review",
+    "immutable finite numeric M0/M1 model+plan transaction at fixed tick",
+    "F6 freeze and original P1 joint review"
+  ],
+  "do_not_repeat": [
+    "49 successful normal",
+    "50 same16 without code change/new failure",
+    "45/46 closed preparation/source",
+    "old39-42 without actual code impact"
+  ],
+  "requirements_not_added": [
+    "full no_output business stage",
+    "half_RMSE or RTI/cost tuning",
+    "GP/PPO",
+    "P2 collision certificate as new P1 prerequisite"
+  ],
+  "new_ROS_runs_this_batch": 0,
+  "production_source_changes_this_batch": 0,
+  "M4_stage_qualified": false,
+  "F6_qualified": false,
+  "P1_qualified": false,
+  "research_conclusion": false,
+  "parallel_work_user_confirmed": true,
+  "current_source_snapshot": "evidence/parallel_snapshot_v2/manifest.json",
+  "historical_51_test_qualification_transferred_to_parallel_source": false,
+  "new_run_requires_frozen_selected_inputs_not_clean_whole_repository": true
+}

@@ -1,0 +1,116 @@
+{
+  "all_expected": true,
+  "cases": [
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "ordinary_regular"
+    },
+    {
+      "accepted": false,
+      "error": "OSError: [Errno 40] Too many levels of symbolic links: 'leaf'",
+      "expected_acceptance": false,
+      "name": "leaf_symlink"
+    },
+    {
+      "accepted": false,
+      "error": "NotADirectoryError: [Errno 20] Not a directory: 'parent'",
+      "expected_acceptance": false,
+      "name": "ancestor_symlink"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: bounded_regular_input_required",
+      "expected_acceptance": false,
+      "name": "FIFO_nonblocking"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: bounded_regular_input_required",
+      "expected_acceptance": false,
+      "name": "directory_not_file"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: fixed_input_SHA_differs:/tmp/c35_independent_reader_n0d6zvvo/actual/record.json",
+      "expected_acceptance": false,
+      "name": "incorrect_hash"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: bounded_regular_input_required",
+      "expected_acceptance": false,
+      "name": "single_file_budget"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: aggregate_reader_budget",
+      "expected_acceptance": false,
+      "name": "aggregate_byte_budget"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: input_changed_during_read",
+      "expected_acceptance": false,
+      "name": "FD_changes_during_read"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: nonfinite_json",
+      "expected_acceptance": false,
+      "name": "strict_JSON_NaN"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: nonfinite_json",
+      "expected_acceptance": false,
+      "name": "strict_JSON_Infinity"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: nonfinite_json",
+      "expected_acceptance": false,
+      "name": "strict_JSON_exponent_overflow"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: duplicate_json_key",
+      "expected_acceptance": false,
+      "name": "strict_JSON_duplicate_key"
+    },
+    {
+      "accepted": false,
+      "error": "ValueError: integer_out_of_native_domain",
+      "expected_acceptance": false,
+      "name": "strict_JSON_overflow_integer"
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "state_precedence_passed"
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "state_precedence_failed"
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "state_precedence_unknown"
+    },
+    {
+      "accepted": true,
+      "error": null,
+      "expected_acceptance": true,
+      "name": "state_precedence_not_run"
+    }
+  ],
+  "core_source_sha256": "9ff60cc3840b3a8b8998c4ed4db5b26897450697f3cc1999da4784d62cdef76a",
+  "schema": "scheme-A-C3.5-independent-reader-review/v1",
+  "scope": "deterministic temporary-file component checks only; no actual record mutation or runtime launch"
+}

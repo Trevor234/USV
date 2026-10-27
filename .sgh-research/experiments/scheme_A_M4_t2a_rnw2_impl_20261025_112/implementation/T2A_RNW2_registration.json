@@ -1,0 +1,26 @@
+{
+  "action_table": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/T2A_RNW2_table.json",
+  "action_table_sha256": "e40b9bad0e47fb153939b306e659dcd90753d2fbd91684c31d181e704e08cc3b",
+  "audit_tool": {
+    "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/t2_author/audit_t2.py",
+    "sha256": "d749b54bfade5683f8fc14230871a2e3081efc1f451fbda7e26f42e780bbef87"
+  },
+  "automatic_retries": 0,
+  "case": "T2A-gen-resume-new-window",
+  "contract": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/freeze/p1_execution_contract_v1.json",
+  "contract_sha256": "19d6962b859533134f797f005dfa7af2b3434dae16cd6bd550e96e17cafdc23a",
+  "domain_id": 120,
+  "executed": false,
+  "fault_injection_enabled": false,
+  "max_seconds": 45,
+  "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/runs/T2A_RNW2",
+  "production_physical_release_enabled": false,
+  "registry": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t2a_rnw2_impl_20261025_112/implementation/t2a_rnw2_registry.json",
+  "registry_sha256": "761c60a09576ef0d4c872b8765141f1d193547db7753a69d4297093de774ffb8",
+  "run_id": "T3-T2A-RNW2",
+  "schema": "M4-owned-t2bgen-scenario-run-v1",
+  "scope": "M4_owned_local_nominal_only_v1",
+  "t2arnw2_note": "batch 111 design rev2: attempt-1 proved actions execute and pause confirms (schedule bump) but the driver closes immediately after the LAST table action, leaving ~475ms post-resume; rev2 adds the registered termination action driver_shutdown_request at after_grant+9000ms giving ~6.3s observation. Negative control: batch 94 T2A_RNW (epoch_terminal, cited, not re-run). Attempt-1 run preserved at implementation/runs/T2A_RNW2_attempt1.",
+  "topics": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/m4_topics_v1.json",
+  "topics_sha256": "2d6199a56d136b201378da09bdba080e6462b1d522b250e3f33bcd830d724e87"
+}

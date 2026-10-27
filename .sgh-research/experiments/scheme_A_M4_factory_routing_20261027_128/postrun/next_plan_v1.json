@@ -1,0 +1,50 @@
+{
+  "next_step": "RawBackend common-header reuse draft and cold/native policy regression",
+  "ordered_steps": [
+    {
+      "id": "R1",
+      "do": "Pin the actual RawBackend, native policy and current Worker call graph; derive a new isolated author tree",
+      "accept": "All frozen inputs and workspace state recorded; separate current native failure policies enumerated",
+      "limits": "No production edit, no Worker owner or model/reference policy redesign"
+    },
+    {
+      "id": "R2",
+      "do": "Replace only duplicated parameter packing/setter admission with batch127 shared headers",
+      "accept": "Pure packing parity first; checked setter rejection separately consumes result and preserves capsule cleanup and cold policy",
+      "limits": "No hot-update API, no generation commit, no deadline extension or fallback relaxation"
+    },
+    {
+      "id": "R3",
+      "do": "Replay real cold/native policy and target boundary tests with normal and named fault controls",
+      "accept": "Normal/stop/deadline/nonfinite/reported-error branches, resource balance and API facts agree; meaningful runtime mutations caught",
+      "limits": "Compile error, timeout or missing event never counts as correct rejection; all failed evidence retained"
+    },
+    {
+      "id": "R4",
+      "do": "Write separate patch inventory, protection report and MPC exact readback",
+      "accept": "Component result distinct from M4/F6/P1 and production eligibility",
+      "limits": "Stop this package after review; no automatic production landing or owned run"
+    },
+    {
+      "id": "R5",
+      "do": "Then design Worker unique-owner creation/use/destruction and immutable capability readiness",
+      "accept": "Explicit lifecycle, bootstrap/discovery and stop/exception protocol with negative controls",
+      "limits": "Design and bounded component work before runtime adoption"
+    },
+    {
+      "id": "R6",
+      "do": "Then define model/reference binding and target-tick activation, then separately review landing/freeze/owned needs",
+      "accept": "Registered model table, full binding, pending job policy and activation evidence clear",
+      "limits": "No GP collection, plant or RT activity inferred from continue"
+    }
+  ],
+  "automatic_production_landing": false,
+  "automatic_owned_runs": 0,
+  "qualification": {
+    "M4": false,
+    "F6": false,
+    "P1": false,
+    "plant": false,
+    "hard_realtime": false
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "all_original_pending_groups_closed": false,
+  "backlog_bytes": 961294809,
+  "backlog_delivery_verified": true,
+  "backlog_files": 5411,
+  "current_delivery_authority": "delivery_verification.json",
+  "current_delivery_pending_at_QA": true,
+  "exact_validation_inputs": 123,
+  "execute_qualified": false,
+  "field_count": 81,
+  "final_protection_sha256": "58c8b10d4e9902cfaf37cf7e6f2585971fefa7d5a851cec69056f2f78f016296",
+  "fixed_file_count": 34,
+  "fixed_files": {
+    "CURRENT.md": {
+      "bytes": 1531,
+      "sha256": "70454a86f09c1e15b90e0577b46848e44774a9d426e3131667dfe20b11fa9fd1"
+    },
+    "batch_status_final.json": {
+      "bytes": 681,
+      "sha256": "b6104c2e2c528f124443a2fd5bbf499185818a3aa1ba8ca21a3f3e4407f15e67"
+    },
+    "documents/final_version_minimum_confirmation_design_v1.json": {
+      "bytes": 2132,
+      "sha256": "ed16c834acd5e58fc72ac80ff353c6d667a29c1c92432418d6ae8ba5b7edff20"
+    },
+    "documents/next_implementation_plan_v1.md": {
+      "bytes": 1185,
+      "sha256": "838cc687c9dc7c457ff44b731dd129620c72d517a9d5260febc384c71d6fb3a0"
+    },
+    "documents/方案A_B4当前配置政策登记与MPC恢复_2026-10-19.md": {
+      "bytes": 4886,
+      "sha256": "461e8e45c540cc7af373a59aaa85ba4a8a1dfaa0e89a86802b63648c8e6fd1d1"
+    },
+    "evidence/MPC_backlog_delivery_v1.json": {
+      "bytes": 4355,
+      "sha256": "20df747807e41f73dc9c9862b1963441e55fc60e7374c90d0dd45f5e20b9339b"
+    },
+    "evidence/MPC_backlog_progress_v1.jsonl": {
+      "bytes": 3487,
+      "sha256": "31f4560f77069c946bf0c19ee6c4b5b7c634e93b42eb2287c5a6ca084581be8a"
+    },
+    "finalize_B4_v1.py": {
+      "bytes": 6178,
+      "sha256": "0e45cc48beab73c7de89d3b13faaa2d7c7e0a3fee60be6426e83836b97c8aafb"
+    },
+    "implementation/B4_pending_gap_matrix_v1.json": {
+      "bytes": 3070,
+      "sha256": "a07c9d3035697a83a17126a32aaa30d6e1484caa1865ee5534a5f7225d52f05b"
+    },
+    "implementation/b4_applicability_v1.py": {
+      "bytes": 16915,
+      "sha256": "4623b47feb82c6f646797548be7533044f5b9159b161f7111ac3ded153348677"
+    },
+    "implementation/current_B4_applicability_v1.json": {
+      "bytes": 267060,
+      "sha256": "a0f13d47e5e015335ce5db41afba18c0d77b866f4569f8005a262e49c993d85d"
+    },
+    "postrun/implementation_scope_v1.json": {
+      "bytes": 390,
+      "sha256": "3b930286bda2f183014172b28bcf4e9aa1356f0c197f8c3e8e5a5a08b5fcd094"
+    },
+    "preflight/CURRENT_initial_v1.md.snapshot": {
+      "bytes": 208,
+      "sha256": "05d7d2fc70edf56fc97899e578677401491a96997339be2d6ba2a4aba535f164"
+    },
+    "preflight/MPC_host_write_probe_v1.json": {
+      "bytes": 822,
+      "sha256": "343e2a54d1ce9b2f5f72e1e02bec42aef28fc9e4bf9507f97db73b3c12df388a"
+    },
+    "preflight/b4_applicability_attempt01.py.snapshot": {
+      "bytes": 15546,
+      "sha256": "da8c51b0be447e65926e0cddb72f5752abeef3ae1313c3cf9c7994e37ea2d0f8"
+    },
+    "preflight/b4_applicability_attempt02.py.snapshot": {
+      "bytes": 15574,
+      "sha256": "7078637b30a412a070ac6133c8f99aad2382cf0db0930915d30bb69d3a7c824f"
+    },
+    "preflight/b4_checker_before_strict_types.py.snapshot": {
+      "bytes": 16597,
+      "sha256": "fe5b1f91272e5670c9fe0fae420fc77cd1020caf06c8f4130637e9dd26b08733"
+    },
+    "preflight/scope_decision_v1.json": {
+      "bytes": 891,
+      "sha256": "992a28f9ba20bb9740f907df3c685a14bcb6b8e596036e311dc453587b526158"
+    },
+    "preflight/workspace_final_local_v1.json": {
+      "bytes": 22020736,
+      "sha256": "58c8b10d4e9902cfaf37cf7e6f2585971fefa7d5a851cec69056f2f78f016296"
+    },
+    "preflight/workspace_initial_local_v1.json": {
+      "bytes": 22014467,
+      "sha256": "649132561da31acf514c4505014c3428a4a1309e1a94761e6ee5de283f3808c8"
+    },
+    "protection_local_v1.py": {
+      "bytes": 94779,
+      "sha256": "0b2cf293b0cd992e83fa7aaaabe5d79cb82949061d95f10ede70d95d46df0e07"
+    },
+    "sync_MPC_v1.py": {
+      "bytes": 4684,
+      "sha256": "a1d01de6003d040209a385124524d4fdcb25895d6b95575ea6d4b8ddff7ffbe3"
+    },
+    "verification/build_attempt01.log": {
+      "bytes": 1130,
+      "sha256": "274d08e55acc8da9c7b4729e519e51dba78a9faaa2c353631ac6af2fd758a6cb"
+    },
+    "verification/build_attempt02.log": {
+      "bytes": 1132,
+      "sha256": "d2396e9ba4b30ee014c537dd9a99bc8547a8d7f179e6063bacfb4fe9579f38f2"
+    },
+    "verification/build_attempt03.log": {
+      "bytes": 644,
+      "sha256": "6eb8806a41f77ae453d5c4538d7683f6fb27f7e3543b746e7f498e5499710918"
+    },
+    "verification/build_register_v1.json": {
+      "bytes": 57873,
+      "sha256": "33d821c210715d11cd332d4efb2f33890ce5842164c011057c8e4459041ddd94"
+    },
+    "verification/check_command_v1.json": {
+      "bytes": 1301,
+      "sha256": "140cbcc6ef01993581f7a59e31173dd15431e9eeae0b27f2a8deb8f1a87077eb"
+    },
+    "verification/check_command_v2.json": {
+      "bytes": 1301,
+      "sha256": "ac9b8b6472b897cb5f5af88a35b29102b259a2bd8907f3aef9f017f0f1eb0811"
+    },
+    "verification/targeted-checks_command_v1.json": {
+      "bytes": 1321,
+      "sha256": "59404f9a19a9173771ea853785e6920e34250390bcc65674708854eea50afc2b"
+    },
+    "verification/targeted-checks_command_v2.json": {
+      "bytes": 1321,
+      "sha256": "2b9d3034a14dceb1374e7fdb6261128a2ef1942ee411d6832436796cdba06e1c"
+    },
+    "verification/targeted_checks_v1.json": {
+      "bytes": 59539,
+      "sha256": "3291765aa2366e2041fad2686e27636e3d39ff474f0e4a33d0b7de89bacac940"
+    },
+    "verification/targeted_checks_v2.json": {
+      "bytes": 59768,
+      "sha256": "548ea0251e152101872f393c5a22c473757dcf1b041ce529d3ff009d0d47f1f9"
+    },
+    "verification/verify_register_v1.json": {
+      "bytes": 58279,
+      "sha256": "b7b2dfeb30581d07c9fb8f647536c8dbfba4a02f5857c6b15cb1ec93d3030156"
+    },
+    "verification/verify_register_v2.json": {
+      "bytes": 58279,
+      "sha256": "89bda45c9daf4d17c0d8b60652914b4418b9ff9215f31c3d960c43d4c0c35d69"
+    }
+  },
+  "hydro_count": 19,
+  "initial_protection_sha256": "649132561da31acf514c4505014c3428a4a1309e1a94761e6ee5de283f3808c8",
+  "local_old_asset_bytes": 5101947752,
+  "local_old_asset_paths": 41261,
+  "original_pending_groups": 8,
+  "owned_roles": 5,
+  "passed": true,
+  "passed_semantics": "current register integrity, targeted rejection and historical backlog delivery; no phase promotion",
+  "research_conclusion": false,
+  "schema": "B4-current-local-QA/v1",
+  "stage_qualified": false,
+  "targeted_rejected": 13,
+  "true_plant_qualified": false,
+  "typed_digests_recomputed": 5
+}

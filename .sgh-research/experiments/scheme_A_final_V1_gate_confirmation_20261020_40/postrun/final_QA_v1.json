@@ -1,0 +1,165 @@
+{
+  "B4_all_eight_groups_qualified": false,
+  "CXX_builds": 0,
+  "MPC_delivery_pending_at_QA": true,
+  "Native_cases_executed_this_batch": 0,
+  "Native_cases_reused": 38,
+  "Observer_natural_fault_exit": true,
+  "Observer_normal_Source_complete": false,
+  "Recorder_builtin_stream_accounting_claim": false,
+  "Stored_messages": 905,
+  "Worker_normal_Source_complete": true,
+  "actual_ROS_runs": 1,
+  "actual_raw_copy_negatives": 14,
+  "actual_signals": [
+    {
+      "name": "publisher",
+      "signal": 2
+    },
+    {
+      "name": "worker",
+      "signal": 2
+    },
+    {
+      "name": "synthetic_source",
+      "signal": 2
+    },
+    {
+      "name": "recorder",
+      "signal": 2
+    }
+  ],
+  "all_five_owned_groups_empty": true,
+  "all_five_parent39_registered_ELFs_reused": true,
+  "all_terminal_causes_qualified": false,
+  "audit_inputs_unchanged": 2145,
+  "audit_pin": {
+    "bytes": 867612,
+    "sha256": "49bbd9148b0bfdb979f454e96fc420490b38268313718b3969cef00b2a78ecc0"
+  },
+  "current_full_fresh_identity_recovery_qualified": false,
+  "current_ordinary_lease_qualified": false,
+  "current_selected_V1_case_passed": true,
+  "delivery_authority": "delivery_verification.json",
+  "exact_role_returncodes": {
+    "observer": 2,
+    "publisher": 0,
+    "recorder": 0,
+    "synthetic_source": 0,
+    "worker": 0
+  },
+  "execute_qualified": false,
+  "independent_SQL_metadata_verified": true,
+  "metrics": {
+    "close": {
+      "Observer_cleanup_observed_ns": 431942325798027,
+      "Observer_process_exit_time_from_Witness_known": false,
+      "Observer_received_SIGINT_after_fault": false,
+      "Recorder_builtin_stream_accounting_claim": false,
+      "Stored_messages": 905,
+      "Witness_close_ns": 431942102980811,
+      "cleanup_order_matches_new_driver": true,
+      "current_explicit_fault_profile_run": true,
+      "execute_qualified": false,
+      "independent_SQL_metadata_verified": true,
+      "new_driver_executed_live": true,
+      "normal_close_qualified": false,
+      "observed_cleanup_record_order": [
+        "observer",
+        "publisher",
+        "worker",
+        "synthetic_source",
+        "recorder"
+      ],
+      "original_V1_strict_order_passed": true,
+      "original_normal_close_errors": [],
+      "original_normal_status": false,
+      "passed": true,
+      "passed_scope": "current gated Observer actual Sink fault cleanup and independently Stored shutdown-zero command",
+      "research_conclusion": false,
+      "run_id": "final_V1_01",
+      "schema": "current-owned-Sink-fault-close/v1",
+      "stage_qualified": false,
+      "true_plant_qualified": false,
+      "zero_API_both_success": true,
+      "zero_Fixture_owner_GID_verified": true,
+      "zero_full_Stored_value_verified": true,
+      "zero_sequence": 5
+    },
+    "gate": {
+      "actual_gated_start_confirmed": true,
+      "authorized_ns": 431940502104972,
+      "duplicate_create_rejected": true,
+      "execute_qualified": false,
+      "first_phase_decision_sequence": 1,
+      "first_phase_publish_delay_ns": 1494398,
+      "first_tick_planned_ns": 431941502262075,
+      "parameter_queries_completed_ns": 431938401842802,
+      "passed": true,
+      "prestart_callbacks_live": true,
+      "prestart_decisions": 0,
+      "prestart_jobs": 0,
+      "research_conclusion": false,
+      "stage_qualified": false
+    },
+    "strict": {
+      "Source_extra_dropped_payload_identity": "not reconstructed",
+      "actual_accepted_prefix_joins": [
+        {
+          "Applied_before_arm_ns": 1264921,
+          "applied_sequence": 3,
+          "command": [
+            0.5,
+            0.5
+          ],
+          "decision": 2,
+          "job": 1
+        }
+      ],
+      "authenticated_arm": {
+        "applied_sequence": 3,
+        "armed": true,
+        "decision_sequence": 2,
+        "observed_ns": 431941704878019,
+        "phase_emitted_ns": 431941703718523,
+        "type": "diagnostic_v1_armed_after_ack"
+      },
+      "execute_qualified": false,
+      "first_failure": {
+        "decision": 3,
+        "depth_at_rejection": 512,
+        "filler_events": 470,
+        "job": 2,
+        "tick": 2
+      },
+      "invalidation_after_overflow_ns": 34980,
+      "nonempty_pre_failure_slot_interleaving_proven": false,
+      "passed": true,
+      "phase_CDR_binding": {
+        "Stored_wire_bytes": 640,
+        "Stored_wire_sha256": "255d771e37e070494437991b559581b94cce1250417b316945da87c5b33b793e",
+        "callback_bytes": 638,
+        "callback_sha256": "a5b3cdf15f8f904fa3f6998978bcae879d21984708cc3fc576c68faf58932dbd",
+        "declared_extent": 638,
+        "trailing_bytes_preserved": true
+      },
+      "research_conclusion": false,
+      "stage_qualified": false,
+      "stopping_after_overflow_ns": 29420,
+      "timing_is_observation_not_WCET": true
+    }
+  },
+  "normal_business_qualified": false,
+  "normal_close_qualified": false,
+  "old_failures_preserved": true,
+  "old_local_bytes_rechecked": 5931009394,
+  "old_local_paths_rechecked": 47191,
+  "passed": true,
+  "passed_scope": "one current gated shadow V1 strict actual fault, owned fault-profile cleanup and independent Stored shutdown command",
+  "prerun_inputs_unchanged": 2030,
+  "protection_invocation_path_error_retained": true,
+  "research_conclusion": false,
+  "schema": "current-gated-V1-real-fault-final-QA/v1",
+  "stage_qualified": false,
+  "true_plant_qualified": false
+}

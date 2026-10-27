@@ -1,0 +1,27 @@
+{
+  "schema": "M4-after-T2-independent-review-plan-v78",
+  "recorded_at": "2026-10-25T13:05:17.355878+08:00",
+  "steps": [
+    {
+      "id": "R0/R1/R2-scope/R2-driver",
+      "status": "complete"
+    },
+    {
+      "id": "T2-B boundary owned",
+      "status": "next",
+      "task": "单次有限及时在途case(v4合同+t2_boundary_scope+boundary_release绑Job2);过期释放独立负控",
+      "registration": "implementation/t2_registrations_v11/T2B_v11.json + boundary_release字段",
+      "automatic_retries": 0
+    },
+    {
+      "id": "T2-C",
+      "status": "after_T2B",
+      "task": "rev11身份重新登记;R0已修字段/实际请求时刻/真实停止观察"
+    },
+    {
+      "id": "T2-A补证/T3/N3/F6/P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

@@ -1,0 +1,1491 @@
+#!/usr/bin/env python3
+"""Read-only LOCAL full-byte preservation for V2 watchdog/lease batch35. Remote MPC mirrors are explicitly deferred, not revalidated.
+
+The historical semantic capture stays frozen. One explicitly pinned live-path
+delta observed before the resumed turn is preserved; its historical bytes are
+verified separately against the immutable Git HEAD and a new recovery snapshot. All captured input bytes and
+directory populations, both complete later archives, and analysis inputs are
+reread without running historical ROS processes or importing endpoint authority.
+The sealed eight-file analysis archive is projected out only while its exact
+population and bytes remain required. This batch's two new untracked roots are
+additionally excluded from the existing workspace projection; old source, staging, submodules and failures stay
+fixed. No recursive protection helper is invoked.
+"""
+import argparse
+import importlib.util
+import json
+import os
+import subprocess
+from pathlib import Path
+import sys
+import time
+
+sys.dont_write_bytecode = True
+D = Path(__file__).resolve().parent
+H = D.parent / 'scheme_A_positive_chain_20261015_18'
+J = D.parent / 'scheme_A_longitudinal_20261016_19'
+N19 = D.parent / 'p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19'
+N18 = D.parent / 'p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18'
+P = D.parent / 'scheme_A_C3_10_20261015_16'
+A = D.parent / 'scheme_A_rejection_analysis_20261015_17'
+M = Path('/home/trevor/MPC')
+DEFERRED_MPC_PINS = {}
+DEFERRED_MPC_DIRECTORIES = {}
+PARENT_ROOTS = (
+    '.sgh-research/experiments/scheme_A_positive_chain_20261015_18/',
+    '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/',
+    '.sgh-research/experiments/scheme_A_longitudinal_20261016_19/',
+    '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_longitudinal_20261016_v19/',
+)
+PARENT_ROOTS += (
+    '.sgh-research/experiments/scheme_A_reference_bias_20261016_20/',
+    '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20/',
+)
+PARENT_ROOTS += ('.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261017_v21/',)
+PARENT_ROOTS += (
+ '.sgh-research/experiments/scheme_A_reference_time_anchor_20261017_21/',
+ '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261018_v21r2/',
+)
+PARENT_ROOTS += (
+ '.sgh-research/experiments/scheme_A_reference_pair_wakeup_20261018_22/',
+ '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22/',
+)
+PARENT_ROOTS += (
+ '.sgh-research/experiments/scheme_A_startup_rti_mechanism_20261018_23/',
+ '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/',
+)
+PARENT_ROOTS += (
+ '.sgh-research/experiments/scheme_A_startup_first_control_20261018_24/',
+ '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24/',
+)
+PARENT_ROOTS += (
+ '.sgh-research/experiments/scheme_A_fixed_first_tail_optimization_20261018_25/',
+ '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_fixed_first_tail_optimization_20261018_v25/',
+)
+PARENT_ROOTS += (
+ '.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/',
+ '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26/',
+)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_owned_cold_start_20261018_27/', '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_owned_cold_start_20261018_v27/')
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_activation_alignment_20261019_28/', '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_alignment_20261019_v28/')
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_deferred_observation_20261019_29/', '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_deferred_observation_20261019_v29/')
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_P1_scope_audit_20261019_30/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_B4_applicability_20261019_31/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_publication_component_20261019_32/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_V1_sink_failure_20261019_33/','.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_V1_sink_failure_20261019_v33/','.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_V1_sink_failure_20261019_v33r2/')
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_fault_self_close_20261019_34/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_V2_supervisor_bridge_20261019_36/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_ordinary_supervision_20261020_38/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_final_V1_gate_confirmation_20261020_40/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_ordinary_lease_20261020_41/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_post_lease_fresh_recovery_20261020_42/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_B4_finite_scope_review_20261020_43/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_owned_formal_prepare_20261020_45/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/',)
+PARENT_ROOTS += ('.sgh-research/experiments/scheme_A_M4_owned_entry_20261021_48/',)
+NEW_ROOTS = ('.sgh-research/experiments/scheme_A_M4_recorder_bootstrap_20261021_49/',)
+SEALED_LATER_ROOTS = ('.sgh-research/experiments/scheme_A_rejection_analysis_20261015_17/',)
+OLD_ROOTS = (
+    '.sgh-research/experiments/scheme_A_C3_10_20261015_16/',
+    '.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_10_20261015_v17/',
+)
+PIN16 = {
+    'archive_inventory_v1.json': '8385def2158a9346ab38243ddb70f161a557d636c446b130a2b3a3f8b7886729',
+    'postrun/final_QA_current.json': 'c55ebe389318e9d24941e0a6702dc40c2c8a36d4978b22d04d9e1cdd842bffe0',
+    'delivery_verification.json': 'd761180125c2dd175eca57e76a30f7da236d0533589307158907f7daba2df761',
+    'batch_status_final.json': '4d89572d606d016ae4c7383ba40498c5511c13957a9a4a891dd6efd1f8165b0d',
+    'protection_v1.py': '7ea34af54149cd30ae455acbfffcbc5bbca9d5674989374a113e3ce91bd4c4c4',
+    'protection_v3.py': '22c95d6512fccf2a83d1301882e621e382fe1cba1dade5dd845e5be335bd0b9c',
+    'protection_v4.py': '2846776572d8237124c73c3c5469b0a22d95ca288b51d3efc76316e406d07f86',
+    'preflight/preservation_anchor_v3.json': '770dcf7f3ffd12944a1117c1145a6e13ace825623b34fef8ee77e4539dd1aadb',
+    'preflight/preservation_roster_v3.json': '4c9062d9033e2bd89ba34e3bf2c9490251b8bb0679a06018860fc74bc163583d',
+    'preflight/boot_transition_v4.json': '0f188c835aff8c1070cb421406085fbce3dbb779bbbad3c9d6ccf5ce69c6e279',
+}
+REAL = '/home/trevor/USV/usv_mpc_ws/src/usv_bringup/launch/real.launch.py'
+REAL_REL = 'usv_mpc_ws/src/usv_bringup/launch/real.launch.py'
+OLD_REAL = {'bytes': 15682, 'mode': 436, 'sha256': 'a4d0dd480bbcd3518c0d9ad40c34db86123fb7a772135dd44ac03d04e7a2420e'}
+NEW_REAL = {'bytes': 15602, 'mode': 436, 'sha256': 'f7d6f8a66ef834148da1a17aa71a93b86fca4f2a0ef5e0029f6aa4d039549b43'}
+DELTA_DIFF_SHA = '96cdf76e50289c687c36de0afcd159969de7b9c4ce624ab98a78eabf6a452d16'
+RESUMED_PINS = {
+ 'resumed_20261016_workspace_delta_v1.json': 'd31c2e1a4aa67b35cde641cc5e33a68599f671e8b06dbc1f0496c63266d04ae6',
+ 'resumed_20261016_real_launch.diff': DELTA_DIFF_SHA,
+ 'resumed_20261016_real_launch.py.snapshot': NEW_REAL['sha256'],
+ 'resumed_20261016_real_launch_HEAD_historical.py.snapshot': OLD_REAL['sha256'],
+ 'resumed_20261016_real_launch_historical_recovery_v1.json': '14a56bac7ba4cb364d32ff73cce584bed1dfdb9646302ba0e29d53cee49cb94c',
+}
+PIN17 = {
+    'archive_inventory_v1.json': '59ef7f3df168720079f1394536fec169b241b18bab818b6d2f6679a6a16f8ce2',
+    'delivery_verification.json': '0864ec5b6d3879d99d405f32df6a6a22edad3ab21b31213e0412aeeb299d7a29',
+    'evidence/analysis_QA_v1.json': 'b3918f644955d0921238f3d308daae9c7ed1e32c284e1e28d5e65102272fafed',
+    'evidence/rejection_audit_v1.json': '3a0e9a95ceee10b2bc122a2a4f4282d07eb4d52822f41475a7f6d9896fc7d30a',
+}
+
+# Import only stable-stream/workspace utilities from the pinned original helper.
+# Its protect/capture/parent-semantic subprocess functions are never invoked.
+spec = importlib.util.spec_from_file_location('ordered_parent_preservation_utilities', P / 'protection_v1.py')
+V = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(V)
+C = V.C
+
+
+def git(args, allow_failure=False):
+    result = subprocess.run(['git', '--no-optional-locks', *args], cwd='/home/trevor/USV',
+                            env=dict(os.environ, GIT_OPTIONAL_LOCKS='0'), capture_output=True, timeout=30)
+    C.require(len(result.stdout) + len(result.stderr) <= 8 * 1024**2, 'finite_git_output')
+    if not allow_failure:
+        C.require(result.returncode == 0, 'git_read_failed:' + args[0])
+    return result
+
+
+def verify_resumed_delta():
+    for name, sha in RESUMED_PINS.items():
+        C.require(V.stable_sha(H / 'preflight' / name)['sha256'] == sha, 'explicit_resume_record_changed:' + name)
+    current=V.stable_sha(REAL)
+    C.require(current==NEW_REAL,'preserved_real_bytes_or_mode_changed')
+    delta=git(['diff','78999cf380c0b0dd7f545e4dc8103b7c4c2f7b15','HEAD','--binary','--',REAL_REL]).stdout
+    C.require(delta==(H/'preflight/resumed_20261016_real_launch.diff').read_bytes() and C.digest(delta)==DELTA_DIFF_SHA,'committed_real_delta_changed')
+    C.require(git(['diff','--binary','--',REAL_REL]).stdout==b'' and git(['diff','--cached','--binary','--',REAL_REL]).stdout==b'','real_live_dirty_or_staged_change')
+    old=git(['show','78999cf380c0b0dd7f545e4dc8103b7c4c2f7b15:'+REAL_REL]).stdout
+    C.require(C.digest(old)==OLD_REAL['sha256'] and old==(H/'preflight/resumed_20261016_real_launch_HEAD_historical.py.snapshot').read_bytes(),'historical_real_blob_changed')
+    return current
+
+def workspace():
+    verify_resumed_delta()
+    old=json.loads((D.parent/'scheme_A_formal_execute_profile_20261020_47/preflight/workspace_final_v1.json').read_bytes())['workspace_after']
+    names=old['business_tracked_files']
+    head=git(['rev-parse','HEAD']).stdout.decode().strip();branch=git(['branch','--show-current']).stdout.decode().strip()
+    C.require(head=='feb50823a07054879e3c6f8d437c02595ce26976' and branch=='codex/scheme-c-rl','resumed_git_identity_changed')
+    C.require(git(['merge-base','--is-ancestor','78999cf380c0b0dd7f545e4dc8103b7c4c2f7b15','HEAD']).returncode==0,'historical_HEAD_not_ancestor')
+    content=git(['diff','78999cf380c0b0dd7f545e4dc8103b7c4c2f7b15','HEAD','--binary','--',*names]).stdout
+    dirty=git(['diff','--binary']).stdout;staged=git(['diff','--cached','--binary']).stdout
+    C.require(len(names)==24 and len(content)==151961 and C.digest(content)=='d901511293df5be4aecb988509e4c4107977dc7c05f042286869c36e0a239ba5','historical24_committed_content_changed')
+    C.require(dirty==staged==b'','new_live_tracked_change_or_staging')
+    status=git(['status','--porcelain=v1','--branch','--untracked-files=all']).stdout
+    sm=git(['submodule','status','--recursive'],allow_failure=True);ig=Path('/home/trevor/USV/.gitignore').read_bytes()
+    return {'HEAD':head,'branch':branch,'boot_id':Path('/proc/sys/kernel/random/boot_id').read_text().strip(),
+      'business_tracked_files':sorted(names),'business_tracked_count':len(names),'business_diff_bytes':len(content),'business_diff_sha256':C.digest(content),
+      'business_diff_basis':'historical oldHEAD to resumed committed HEAD; not a current dirty diff',
+      'live_tracked_diff_bytes':len(dirty),'staged_all_diff_bytes':len(staged),'staged_all_diff_sha256':C.digest(staged),
+      'gitignore_bytes':len(ig),'gitignore_sha256':C.digest(ig),'status_porcelain':status.decode(),'status_porcelain_sha256':C.digest(status),
+      'submodule_status_returncode':sm.returncode,'submodule_status':sm.stdout.decode(errors='replace'),'submodule_status_stderr':sm.stderr.decode(errors='replace'),
+      'git_optional_locks_disabled':True,'historical24_now_committed':True,'scope':'new explicit HEAD baseline; historical24 and real content unchanged; live clean state preserved'}
+
+
+
+
+def projection(value):
+    result = dict(value)
+    rows = []
+    for line in value['status_porcelain'].splitlines(keepends=True):
+        if line.rstrip('\n') == ' M ' + REAL_REL:
+            continue
+        path = line[3:]
+        if path.startswith('"'):
+            path = path[1:]
+        if line.startswith('?? ') and any(path.startswith(prefix) for prefix in OLD_ROOTS + SEALED_LATER_ROOTS + PARENT_ROOTS + NEW_ROOTS):
+            continue
+        rows.append(line)
+    result['status_porcelain'] = ''.join(rows)
+    result['status_porcelain_sha256'] = C.digest(result['status_porcelain'].encode())
+    return result
+
+
+def without_boot(value):
+    result = projection(value)
+    result.pop('boot_id')
+    return result
+
+
+RECOVERED_HEADERS=json.loads((D/'preflight/absent_historical_header_recovery_v1.json').read_bytes())['files']
+def alias_preserved(logical,target):
+    logical=Path(logical);target=str(target)
+    if target in RECOVERED_HEADERS:
+        row=RECOVERED_HEADERS[target]
+        C.require(not Path(target).exists() and not Path(target).is_symlink(),'declared_absent_path_changed')
+        C.require(V.stable_sha(row['snapshot'])=={k:row[k] for k in ['sha256','bytes','mode']},'recovered_historical_bytes_changed')
+        allowed={target,target.replace('/src/','/install/',1).replace('/usv_mpc_cpp/include/','/usv_mpc_cpp/include/',1)}
+        # Installed alias spelling is explicit; the existing dangling symlink is retained.
+        installed='/home/trevor/USV/usv_mpc_ws/install/usv_mpc_cpp/include/usv_mpc_cpp/'+Path(target).name
+        C.require(str(logical) in {target,installed},'unregistered_recovered_alias')
+        return str(logical)==target or (logical.is_symlink() and str(logical.resolve(strict=False))==target)
+    return str(logical.resolve(strict=True))==target
+
+def add_pin(pins, path, sha, size=None, mode=None):
+    if str(path) in RECOVERED_HEADERS:
+        row=RECOVERED_HEADERS[str(path)]
+        C.require(sha==row['sha256'] and (size is None or size==row['bytes']),'recovery_expected_bytes_mismatch')
+        path=row['snapshot']
+    if Path(path).is_relative_to(M):pins=DEFERRED_MPC_PINS
+    path = str(path)
+    row = {'sha256': sha}
+    if size is not None:
+        row['bytes'] = size
+    if mode is not None:
+        row['mode'] = mode
+    if path in pins:
+        for key in row.keys() & pins[path].keys():
+            C.require(row[key] == pins[path][key], 'inconsistent_sealed_pin:' + path)
+        pins[path].update(row)
+    else:
+        pins[path] = row
+
+
+def add_archive(pins, root, inv, extra_pins, metadata_names):
+    expected = set(metadata_names)
+    directories = set(inv.get('directories', []))
+    for row in inv['files']:
+        rel = Path(row['relative_path'])
+        C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in expected,
+                  'unique_normalized_archive_member')
+        expected.add(str(rel))
+        for parent in rel.parents:
+            if str(parent) != '.':
+                directories.add(str(parent))
+        for archive in (root, M / root.name):
+            # Archive copying historically selected its own output mode. The
+            # sealed archive byte/size identity, not original source mode, binds it.
+            add_pin(pins, archive / rel, row['sha256'], row['bytes'])
+    for archive in (root,):
+        C.require(V.population(archive) == (expected, directories), 'sealed_complete_population:' + str(archive))
+        for name in metadata_names:
+            add_pin(pins, archive / name, extra_pins[name])
+    return (expected, directories)
+
+
+PIN18 = {
+    'archive_inventory_v1.json': 'f643aa0a7b4ef77280d033277a5771aaa8ede5d771eab277d60f2ccf2927e0b0',
+    'delivery_verification.json': '8e7f89c15994afd0b537ee7566abf4d7568b59fe1a8279995b599781b3e7d460',
+    'postrun/final_QA_v1.json': 'e1e9e11908157afd4538196d14af5302219cdb104f7a969737b0f33dd5da7933',
+    'postrun/author_freeze_v1.json': '05bc2b2694e67cfb314e2024f0f1372a426a300371f26f200687b3e84527f97c',
+    'preflight/workspace_final_v4.json': 'e85d3300e41cd22560745572ea65df4889d0b0606e9bed8c0500f9c2733c3a2f',
+    'protection_v4.py': '27a72de6bfe655769a5f0a529424990f33d218587c6cb9d5dc3c7f063d0acf9d',
+    'finalize_positive_chain_v1.py': 'e2ac34d872ab6f3f20fd2f78174f1f2cd3993efc7bb6bd7fda39092fba5c2fa2',
+    'postrun/independent_sequence_review_v1.json': 'dbbf0a1d862ad916458feea76daebd8d012ec4900ce3f4d29b5a9af84476f771',
+}
+EMPTY_PARENT_BUILD_DIRS = {
+    'fixture/build01/CMakeFiles/3.28.3/CompilerIdC/tmp',
+    'fixture/build01/CMakeFiles/3.28.3/CompilerIdCXX/tmp',
+    'fixture/build01/CMakeFiles/CMakeScratch',
+    'fixture/build01/CMakeFiles/pkgRedirects',
+    'fixture/build02/CMakeFiles/3.28.3/CompilerIdC/tmp',
+    'fixture/build02/CMakeFiles/3.28.3/CompilerIdCXX/tmp',
+    'fixture/build02/CMakeFiles/CMakeScratch',
+    'fixture/build02/CMakeFiles/pkgRedirects',
+}
+
+
+DEPENDENCY_LOGICAL_ALIASES = {}
+
+
+def add_recorded_dependency(pins, row):
+    logical = Path(row['path'])
+    target = Path(row['resolved_path'])
+    C.require(logical.is_absolute() and target.is_absolute() and '..' not in logical.parts
+              and '..' not in target.parts, 'absolute_recorded_dependency_paths')
+    C.require(alias_preserved(logical,target), 'sealed_dependency_alias_resolution_changed:' + str(logical))
+    if logical != target:
+        key = str(logical)
+        C.require(key not in DEPENDENCY_LOGICAL_ALIASES or DEPENDENCY_LOGICAL_ALIASES[key] == str(target),
+                  'inconsistent_sealed_dependency_alias')
+        DEPENDENCY_LOGICAL_ALIASES[key] = str(target)
+    add_pin(pins, str(target), row['sha256'], row['bytes'])
+
+
+def check_dependency_aliases():
+    for path, target in DEPENDENCY_LOGICAL_ALIASES.items():
+        C.require(alias_preserved(path,target), 'sealed_dependency_alias_resolution_changed:' + path)
+
+
+def collect_parent18(pins, reader):
+    for rel, sha in PIN18.items():
+        C.require(C.digest(reader.raw(H / rel)) == sha, 'sealed_D18_metadata_changed:' + rel)
+        add_pin(pins, H / rel, sha)
+    inv = reader.json(H / 'archive_inventory_v1.json')
+    delivery = reader.json(H / 'delivery_verification.json')
+    qa = reader.json(H / 'postrun/final_QA_v1.json')
+    freeze = reader.json(H / 'postrun/author_freeze_v1.json')
+    old = reader.json(H / 'preflight/workspace_final_v4.json')
+    C.require(len(inv['files']) == 2501 and delivery['passed'] is True
+              and delivery['full_byte_readback'] is True and delivery['complete_population_equal'] is True
+              and delivery['files_before_delivery_receipt'] == 2502
+              and delivery['archive_inventory_sha256'] == PIN18['archive_inventory_v1.json']
+              and delivery['final_QA_sha256'] == PIN18['postrun/final_QA_v1.json']
+              and delivery['source'] == str(H) and delivery['destination'] == str(M / H.name), 'complete_D18_archive_scope')
+    C.require(qa['passed'] is True and qa['fixed_file_count'] == len(qa['fixed_files']) == 2499
+              and qa['author_frozen_files'] == 957 and qa['component_sequence_completed'] == ['A','A2','B','C']
+              and qa['stage_qualified'] is False and qa['research_conclusion'] is False
+              and qa['final_old_protection_sha256'] == PIN18['preflight/workspace_final_v4.json'], 'complete_D18_QA_scope')
+    C.require(old['passed'] is True and old['protection']['schema'] == 'SchemeA-ordered-positive-preservation/v4'
+              and old['protection']['unique_raw_files_reread'] == 39781
+              and old['protection']['raw_paths_equal_recorded_old_bytes'] == 39780
+              and old['protection']['all_historical_original_path_bytes_unchanged'] is False
+              and old['protection']['explicit_live_original_path_exceptions'] == [{
+                'path': REAL, 'old_pin': OLD_REAL, 'current_pin': NEW_REAL, 'diff_bytes':515,
+                'diff_sha256':DELTA_DIFF_SHA, 'origin':'unknown; present before resumed turn',
+                'current_live_file_edited_or_restored_by_this_batch':False,
+                'old_bytes_retained_in_original_Git_HEAD':True,
+                'historical_recovery_snapshot_written_at_resume':True}], 'archived_V4_explicit_scope_preserved')
+    archive_population = add_archive(pins, H, inv, PIN18, ('archive_inventory_v1.json','delivery_verification.json'))
+    for path, row in qa['fixed_files'].items():
+        C.require(Path(path).is_relative_to(H), 'D18_QA_fixed_scope')
+        add_pin(pins, path, row['sha256'], row['bytes'])
+    C.require(freeze['count'] == len(freeze['files']) == 957 and freeze['all_source_and_failed_attempts_preserved'] is True,
+              'entire_N18_author_snapshot_scope')
+    names, dirs = set(), set()
+    for row in freeze['files']:
+        rel = Path(row['relative_path'])
+        C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names, 'unique_N18_freeze_relative_path')
+        names.add(str(rel))
+        for parent in rel.parents:
+            if str(parent) != '.': dirs.add(str(parent))
+        C.require(row['original'] == str(N18 / rel) and row['snapshot'] == str(H / 'author_snapshot' / rel), 'exact_N18_freeze_original_copy_paths')
+        for field in ('original','snapshot'):
+            add_pin(pins, row[field], row['sha256'], row['bytes'])
+    C.require(len(dirs) == 95 and V.population(H / 'author_snapshot') == (names, dirs), 'exact_N18_snapshot_population')
+    author_population = (names, dirs | EMPTY_PARENT_BUILD_DIRS)
+    C.require(V.population(N18) == author_population, 'exact_N18_original_population_with_named_empty_build_dirs')
+    for rel in EMPTY_PARENT_BUILD_DIRS:
+        C.require(V.directory_entries(N18 / rel) == [], 'named_parent_build_directory_no_longer_empty')
+    for path, sha in qa['selected_assets'].items(): add_pin(pins, path, sha)
+    for role, selected in qa['selected_builds'].items():
+        directory = Path(selected['source_bundle']['path']).parent
+        C.require(directory.is_relative_to(H / 'build'), 'selected_parent_build_scope')
+        result_path = directory / 'result.json'
+        C.require(C.digest(reader.raw(result_path)) == selected['result_sha256'], 'selected_parent_build_result_identity')
+        result = reader.json(result_path)
+        C.require(result['passed'] is True and result['role'] == role
+                  and result['source_bundle'] == selected['source_bundle']
+                  and result['binary_sha256'] == selected['binary_sha256'], 'selected_parent_build_tuple')
+        add_pin(pins, result['binary'], result['binary_sha256'])
+        descriptor_path = Path(selected['source_bundle']['path'])
+        C.require(C.digest(reader.raw(descriptor_path)) == selected['source_bundle']['sha256'], 'selected_parent_source_bundle_identity')
+        descriptor = reader.json(descriptor_path)
+        for row in descriptor['files'].values(): add_pin(pins,row['path'],row['sha256'],row['bytes'])
+        for name in ('compiler_dependency_pins.json','runtime_library_pins.json'):
+            dependency = reader.json(directory / name)
+            for row in dependency['files'].values(): add_recorded_dependency(pins,row)
+    for name in ('A_preregistration_v1.json','controlled_preregistration_v1.json','controlled_preregistration_v2.json'):
+        pre = reader.json(H / 'preregister' / name)
+        for path, row in pre['helper_files'].items():
+            add_pin(pins,path,row['sha256']);add_pin(pins,row['snapshot'],row['sha256'])
+        for path, sha in pre['asset_sha256'].items(): add_pin(pins,path,sha)
+    for case, row in qa['cases'].items():
+        path = Path(row['path'])
+        C.require(path.is_relative_to(H / 'runs') and C.digest(reader.raw(path)) == row['sha256'], 'selected_parent_case_identity')
+        case_result = reader.json(path)
+        C.require(case_result['passed'] is True and case_result['issues'] == [], 'selected_parent_case_passed_record')
+        for path, sha in case_result['input_sha256_after'].items(): add_pin(pins,path,sha)
+    return archive_population, author_population, old['protection']
+
+
+PIN19 = {
+    'archive_inventory_v1.json': 'de2c4a78a05529be49d75ae0e00995459d939d2beae4061929f3dfb7a7c663a2',
+    'delivery_verification.json': 'bf621c6693ca15abe77b738005702545c6487fdba9d0fe64233d9f85d95142d7',
+    'postrun/final_QA_v1.json': 'fc7314451ca2ba5ee294b59de615696625853ffced4d7177cfc3208fab5c131d',
+    'postrun/author_freeze_v1.json': '9c76e4abe67837815ec89ecbcbadc19429d65e233efb7bf4384bb186b6189c98',
+    'preflight/workspace_final_v2.json': 'e80025daf55abd314105cbc768bd25e862ea27ad05c053c8ab5ad3b4248e7268',
+    'protection_v2.py': '585deadbb4043d7390f4c884b37c2caf040e61f90a199c712f7441acdf5eb27e',
+    'finalize_longitudinal_v1.py': 'e6d63e4f15f96287986e77b95fc6f291a67a218634669ddd6426dfa47c6c455d',
+}
+ADDITIONAL_COMPILER_ALIASES = {}
+
+
+def add_recorded_compiler_input(pins, row):
+    logical = Path(row['path'])
+    target = Path(row['resolved_path'])
+    C.require(logical.is_absolute() and target.is_absolute()
+              and alias_preserved(logical,target), 'recorded_compiler_alias_changed')
+    if logical != target:
+        key = str(logical)
+        C.require(key not in ADDITIONAL_COMPILER_ALIASES or ADDITIONAL_COMPILER_ALIASES[key] == str(target),
+                  'inconsistent_recorded_compiler_alias')
+        ADDITIONAL_COMPILER_ALIASES[key] = str(target)
+    add_pin(pins, str(target), row['sha256'], row['bytes'])
+
+
+def check_compiler_aliases():
+    for path, target in ADDITIONAL_COMPILER_ALIASES.items():
+        C.require(alias_preserved(path,target), 'recorded_compiler_alias_changed:' + path)
+
+
+def collect_parent19(pins, reader):
+    for rel, sha in PIN19.items():
+        C.require(C.digest(reader.raw(J / rel)) == sha, 'sealed_D19_metadata_changed:' + rel)
+        add_pin(pins, J / rel, sha)
+    inv = reader.json(J / 'archive_inventory_v1.json')
+    delivery = reader.json(J / 'delivery_verification.json')
+    qa = reader.json(J / 'postrun/final_QA_v1.json')
+    freeze = reader.json(J / 'postrun/author_freeze_v1.json')
+    old = reader.json(J / 'preflight/workspace_final_v2.json')
+    C.require(len(inv['files']) == 851 and delivery['passed'] is True
+              and delivery['full_byte_readback'] is True and delivery['full_second_SHA_readback'] is True
+              and delivery['complete_population_equal'] is True and delivery['final_regular_files_per_root'] == 853
+              and delivery['files_before_delivery_receipt'] == 852
+              and delivery['archive_inventory_sha256'] == PIN19['archive_inventory_v1.json']
+              and delivery['final_QA_sha256'] == PIN19['postrun/final_QA_v1.json']
+              and delivery['author_freeze_sha256'] == PIN19['postrun/author_freeze_v1.json']
+              and delivery['source'] == str(J) and delivery['destination'] == str(M / J.name), 'complete_D19_archive_scope')
+    C.require(qa['passed'] is True and qa['archive_integrity_passed'] is True
+              and qa['passed_semantics'] == 'archive integrity only; actual ordered component outcomes remain separate'
+              and qa['fixed_file_count'] == len(qa['fixed_files']) == 850 and qa['author_frozen_files'] == 528
+              and qa['cases_complete'] is True and qa['all_planned_cases_passed'] is True
+              and qa['ordered_execution_valid'] is True and len(qa['cases']) == 4
+              and qa['stage_qualified'] is False and qa['execute_qualified'] is False and qa['research_conclusion'] is False
+              and qa['final_protection_v2_sha256'] == PIN19['preflight/workspace_final_v2.json']
+              and qa['author_freeze_sha256'] == PIN19['postrun/author_freeze_v1.json'], 'complete_D19_QA_scope')
+    C.require(old['passed'] is True and old['protection']['schema'] == 'SchemeA-longitudinal-preservation/v2'
+              and old['protection']['unique_raw_files_reread'] == 45776
+              and old['protection']['raw_paths_equal_recorded_old_bytes'] == 45775
+              and old['protection']['parent_D18_archive_pairs'] == 2503
+              and old['protection']['parent_N18_author_pairs'] == 957
+              and old['protection']['parent_D18_recorded_dependency_logical_aliases_rechecked'] == 20
+              and old['protection']['all_historical_original_path_bytes_unchanged'] is False
+              and len(old['protection']['explicit_live_original_path_exceptions']) == 1
+              and old['protection']['explicit_live_original_path_exceptions'][0]['path'] == REAL
+              and old['protection']['explicit_live_original_path_exceptions'][0]['current_pin'] == NEW_REAL,
+              'archived_D19_full_protection_scope_preserved')
+    archive_population = add_archive(pins,J,inv,PIN19,('archive_inventory_v1.json','delivery_verification.json'))
+    for path,row in qa['fixed_files'].items():
+        C.require(Path(path).is_relative_to(J),'D19_fixed_QA_scope')
+        add_pin(pins,path,row['sha256'],row['bytes'])
+    C.require(freeze['count'] == len(freeze['files']) == 528
+              and freeze['all_sources_runs_failed_attempts_and_raw_Storage_preserved'] is True
+              and len(freeze['directories']) == 33,'complete_N19_author_freeze_scope')
+    names,dirs = set(),set(freeze['directories'])
+    C.require(len(dirs)==33 and all(not Path(p).is_absolute() and '..' not in Path(p).parts for p in dirs),'N19_directory_declarations')
+    for row in freeze['files']:
+        rel=Path(row['relative_path'])
+        C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'unique_N19_freeze_relative')
+        names.add(str(rel))
+        C.require(row['original']==str(N19/rel) and row['snapshot']==str(J/'author_snapshot'/rel),'N19_exact_original_snapshot_paths')
+        for field in ('original','snapshot'):add_pin(pins,row[field],row['sha256'],row['bytes'])
+    author_population=(names,dirs)
+    C.require(V.population(N19)==author_population and V.population(J/'author_snapshot')==author_population,'N19_complete_original_snapshot_population')
+    for path,sha in qa['selected_assets'].items():add_pin(pins,path,sha)
+    C.require(set(qa['selected_builds'])=={'publisher','worker','observer','fixture','recorder'},'D19_selected_five_role_scope')
+    for role,selected in qa['selected_builds'].items():
+        add_recorded_dependency(pins,selected['runtime'])
+        descriptor_path=Path(selected['source_bundle']['path'])
+        C.require(C.digest(reader.raw(descriptor_path))==selected['source_bundle']['sha256'],'D19_selected_bundle_identity')
+        descriptor=reader.json(descriptor_path)
+        for row in descriptor['files'].values():add_pin(pins,row['path'],row['sha256'],row['bytes'])
+        if 'result_path' in selected:
+            result_path=Path(selected['result_path'])
+            C.require(C.digest(reader.raw(result_path))==selected['result_sha256'],'D19_selected_build_result_identity')
+            result=reader.json(result_path)
+            C.require(result['passed'] is True and result['role']==role and result['source_bundle']==selected['source_bundle']
+                      and result['binary_sha256']==selected['runtime']['sha256'],'D19_selected_build_tuple')
+        else:C.require(role=='recorder' and selected['reused_from_parent'] is True,'D19_reused_Recorder_scope')
+        for name,row in selected['compiler_and_loader_manifests'].items():
+            path=Path(row['path']);C.require(C.digest(reader.raw(path))==row['sha256'],'D19_dependency_manifest_identity')
+            manifest=reader.json(path);C.require(len(manifest['files'])==row['verified_files'],'D19_dependency_manifest_population')
+            for value in manifest['files'].values():add_recorded_dependency(pins,value)
+            for key in ('compiler','compile_commands'):
+                if isinstance(manifest.get(key),dict) and 'path' in manifest[key]:add_recorded_compiler_input(pins,manifest[key])
+            for value in manifest.get('compiler_dependency_files',{}).values():add_recorded_compiler_input(pins,value)
+        for row in (selected.get('finite_native') or {}).get('GTest_XML',[]):add_pin(pins,row['path'],row['sha256'])
+    pre_path=J/'preregister/longitudinal_v1.json'
+    C.require(C.digest(reader.raw(pre_path))==qa['preregistration_sha256'],'D19_preregistration_identity')
+    pre=reader.json(pre_path)
+    C.require(pre['measurement_seconds']==20,'D19_recorded_measurement_scope')
+    for path,row in pre['helper_files'].items():add_pin(pins,path,row['sha256']);add_pin(pins,row['snapshot'],row['sha256'])
+    for path,sha in pre['asset_sha256'].items():add_pin(pins,path,sha)
+    for case,row in qa['cases'].items():
+        path=Path(row['path'])
+        C.require(path.is_relative_to(J/'runs') and row['status']=='passed' and row['driver_passed'] is True
+                  and C.digest(reader.raw(path))==row['sha256'],'D19_selected_actual_case_identity')
+        value=reader.json(path)
+        C.require(value['passed'] is True and value['issues']==[] and value['input_sha256_before']==value['input_sha256_after'],'D19_actual_case_readonly_record')
+        for path,sha in value['input_sha256_after'].items():add_pin(pins,path,sha)
+    return archive_population,author_population,old['protection']
+
+
+
+K=D.parent/'scheme_A_reference_bias_20261016_20'
+N20=D.parent/'p1_execution_architecture_20261005_01/authored_D1_reference_bias_20261016_v20'
+PIN20={'archive_inventory_v1.json': '9de68deca6254a9cc6211af8541d65fffcb2b2beacbce30c0bdc3dcb89065c6c', 'delivery_verification.json': '783afde630236564c57653dbac00b9b60a3b9dfb9e13f261e6cc7df99a423ea5', 'postrun/final_QA_v1.json': '635035ecd65547529ac4ce335ad882f5610f270bc1340bb0d9d2cb078e7985c7', 'postrun/author_freeze_v1.json': 'e022ab8758e8daa93de68c876c298396e3d4da52f3b6cffe2b1ce74e5c1f29dc', 'preflight/workspace_final_v1.json': '85be44b415ed3c75fddee133dc38f2eb64c256e5d34857b815c5533d89b91aff', 'protection_v1.py': 'c2dd72f8cee9abc4c6be2a5057701e0cd50d4a461bbd13ca1630272f4ab34d00', 'finalize_reference_bias_v1.py': '278c847c543196963d4671b189fa7b71c27dd1d887ee3145b59608d6d4218347'}
+
+def collect_parent20(pins,reader):
+    for rel,sha in PIN20.items():
+        C.require(C.digest(reader.raw(K/rel))==sha,'sealed_D20_metadata_changed:'+rel)
+        add_pin(pins,K/rel,sha)
+    inv=reader.json(K/'archive_inventory_v1.json');delivery=reader.json(K/'delivery_verification.json')
+    qa=reader.json(K/'postrun/final_QA_v1.json');freeze=reader.json(K/'postrun/author_freeze_v1.json')
+    old=reader.json(K/'preflight/workspace_final_v1.json')
+    C.require(len(inv['files'])==926 and delivery['passed'] is True and delivery['final_regular_files_per_root']==928
+        and delivery['full_byte_readback'] and delivery['full_second_SHA_readback'] and delivery['complete_population_equal']
+        and delivery['archive_inventory_sha256']==PIN20['archive_inventory_v1.json']
+        and delivery['final_QA_sha256']==PIN20['postrun/final_QA_v1.json']
+        and delivery['author_freeze_sha256']==PIN20['postrun/author_freeze_v1.json']
+        and delivery['source']==str(K) and delivery['destination']==str(M/K.name),'complete_D20_archive_scope')
+    C.require(qa['passed'] is True and qa['archive_integrity_passed'] is True
+        and qa['fixed_file_count']==len(qa['fixed_files'])==925 and qa['author_frozen_files']==291
+        and qa['cases_complete'] is False and qa['all_planned_cases_passed'] is False
+        and qa['batch_status']=='blocked_gate' and qa['blocked_gate']=='s005'
+        and qa['cases']['s005']['status']=='failed'
+        and len(qa['cases']['s005']['issues'])==1
+        and qa['cases']['s005']['issues'][0]['code']=='projected_preregistered_whole_measurement_RMSE_halved_parent'
+        and all(qa['cases'][k]['status']=='not_run' for k in ['s010','s030','s060'])
+        and qa['ordered_execution_valid'] and qa['stage_qualified'] is False
+        and qa['execute_qualified'] is False and qa['research_conclusion'] is False
+        and qa['final_protection_v1_sha256']==PIN20['preflight/workspace_final_v1.json'],'honest_D20_failed_performance_scope')
+    C.require(old['passed'] is True and old['protection']['unique_raw_files_reread']==48010
+        and old['protection']['raw_paths_equal_recorded_old_bytes']==48009
+        and old['protection']['all_historical_original_path_bytes_unchanged'] is False
+        and len(old['protection']['explicit_live_original_path_exceptions'])==1,'archived_D20_protection_scope')
+    archive_population=add_archive(pins,K,inv,PIN20,('archive_inventory_v1.json','delivery_verification.json'))
+    for path,row in qa['fixed_files'].items():
+        C.require(Path(path).is_relative_to(K),'D20_fixed_QA_scope');add_pin(pins,path,row['sha256'],row['bytes'])
+    C.require(freeze['count']==len(freeze['files'])==291 and freeze['bytes']==63903967
+        and len(freeze['directories'])==17 and freeze['all_sources_runs_failed_attempts_and_raw_Storage_preserved'],'complete_N20_freeze')
+    names=set();dirs=set(freeze['directories'])
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'N20_unique_relative_path')
+        names.add(str(rel));C.require(row['original']==str(N20/rel) and row['snapshot']==str(K/'author_snapshot'/rel),'N20_exact_original_snapshot')
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author_population=(names,dirs)
+    C.require(V.population(N20)==author_population==V.population(K/'author_snapshot'),'N20_exact_population')
+    for path,sha in qa['selected_assets'].items():add_pin(pins,path,sha)
+    for role,selected in qa['selected_builds'].items():
+        add_recorded_dependency(pins,selected['runtime'])
+        path=Path(selected['source_bundle']['path']);C.require(C.digest(reader.raw(path))==selected['source_bundle']['sha256'],'D20_selected_bundle')
+        descriptor=reader.json(path)
+        for row in descriptor['files'].values():add_pin(pins,row['path'],row['sha256'],row['bytes'])
+        if 'result_path' in selected:
+            path=Path(selected['result_path']);C.require(C.digest(reader.raw(path))==selected['result_sha256'],'D20_selected_result')
+            result=reader.json(path);C.require(result['passed'] is True and result['source_bundle']==selected['source_bundle'] and result['binary_sha256']==selected['runtime']['sha256'],'D20_build_tuple')
+        for row in selected['compiler_and_loader_manifests'].values():
+            path=Path(row['path']);C.require(C.digest(reader.raw(path))==row['sha256'],'D20_dependency_manifest')
+            manifest=reader.json(path);C.require(len(manifest['files'])==row['verified_files'],'D20_dependency_population')
+            for item in manifest['files'].values():add_recorded_dependency(pins,item)
+            for key in ['compiler','compile_commands']:
+                if isinstance(manifest.get(key),dict):add_recorded_compiler_input(pins,manifest[key])
+            for item in manifest.get('compiler_dependency_files',{}).values():add_recorded_compiler_input(pins,item)
+        if 'static_link_inputs_before' in selected:
+            row=selected['static_link_inputs_before'];path=Path(row['path']);C.require(C.digest(reader.raw(path))==row['sha256'],'D20_explicit_static_input_leaf')
+            manifest=reader.json(path);C.require(len(manifest['files'])==row['archives'],'D20_actual_archive_count')
+            for item in manifest['files'].values():
+                add_recorded_compiler_input(pins,item);add_pin(pins,item['snapshot']['path'],item['sha256'],item['bytes'])
+            for item in manifest['link_command_files'].values():add_pin(pins,item['path'],item['sha256'],item['bytes'])
+    pre=reader.json(K/'preregister/projected_v1.json')
+    C.require(C.digest(reader.raw(K/'preregister/projected_v1.json'))==qa['preregistration_sha256'],'D20_preregistration')
+    for path,row in pre['helper_files'].items():add_pin(pins,path,row['sha256']);add_pin(pins,row['snapshot'],row['sha256'])
+    for path,sha in pre['asset_sha256'].items():add_pin(pins,path,sha)
+    case=qa['cases']['s005'];value=reader.json(case['path'])
+    C.require(C.digest(reader.raw(case['path']))==case['sha256'] and value['passed'] is False and value['input_sha256_before']==value['input_sha256_after'],'D20_failed_case_exact_readonly')
+    for path,sha in value['input_sha256_after'].items():add_pin(pins,path,sha)
+    return archive_population,author_population
+
+
+
+K21=D.parent/'scheme_A_reference_time_anchor_20261017_21'
+N21=D.parent/'p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261018_v21r2'
+PIN21={'archive_inventory_v1.json': 'eb71e64d2f1b5201c14bc2dba2085e59c69abe7c58b4e56582e86794b25f47fc', 'delivery_verification.json': '9d7fe808d5680cf7cf27c54681d91c87ac2155d96b9fb18303628e121e6c238b', 'postrun/final_QA_v1.json': '315d829488a564ae39e50a2906ffb947c5e53b0c47e760c2ad2079ddf33829d3', 'postrun/author_freeze_v1.json': '18009522b2ce1515f6327b961f64afc76d320082da2b50ac3d269e6e96b34cb1', 'preflight/workspace_final_v2.json': '3f21c6695bd9c64137f2d82d124aeac0e1214144ebbd2d246779efbe6bd857a2', 'protection_v2.py': '660752ea54b74a9de0be5a126d36620fbd2527d8707cf77aa8fe49b0991ecdb9', 'finalize_reference_time_anchor_v2.py': '32eb838290d64381c33ec3f05b97c3854b39c6071ae428a8af8f95cd78579960', 'postrun/revision01_author_freeze_v1.json': '93c285567872ef4602175f3cad4105f6d9c14ae6a2bc1dfe95e6b9c80757534c'}
+
+def collect_parent21(pins,reader):
+    for rel,sha in PIN21.items():
+        C.require(C.digest(reader.raw(K21/rel))==sha,'sealed_D21_metadata_changed:'+rel);add_pin(pins,K21/rel,sha)
+    inv=reader.json(K21/'archive_inventory_v1.json');delivery=reader.json(K21/'delivery_verification.json');qa=reader.json(K21/'postrun/final_QA_v1.json');freeze=reader.json(K21/'postrun/author_freeze_v1.json');old=reader.json(K21/'preflight/workspace_final_v2.json')
+    C.require(len(inv['files'])==1674 and delivery['passed'] is True and delivery['final_regular_files_per_root']==1676 and delivery['full_byte_readback'] and delivery['full_second_SHA_readback'] and delivery['complete_population_equal'] and delivery['archive_inventory_sha256']==PIN21['archive_inventory_v1.json'] and delivery['final_QA_sha256']==PIN21['postrun/final_QA_v1.json'] and delivery['author_freeze_sha256']==PIN21['postrun/author_freeze_v1.json'],'D21_complete_archive_scope')
+    C.require(qa['passed'] is True and qa['archive_integrity_passed'] is True and qa['fixed_file_count']==len(qa['fixed_files'])==1673 and qa['author_frozen_files']==291 and qa['cases_complete'] is False and qa['all_planned_cases_passed'] is False and qa['batch_status']=='blocked_gate' and qa['blocked_gate']=='s005' and qa['cases']['s005']['status']=='failed' and {r['code'] for r in qa['cases']['s005']['issues']}=={'longitudinal_20s_all_candidates_accepted_90_consecutive_18s_coverage','projected_preregistered_whole_measurement_RMSE_halved_parent'} and all(qa['cases'][k]['status']=='not_run' for k in ['s010','s030','s060']) and qa['revision01_unreleased_startup_failure_preserved'] is True and qa['ordered_execution_valid'] and qa['stage_qualified'] is False and qa['execute_qualified'] is False and qa['research_conclusion'] is False,'D21_two_failed_gates_and_startup_failure_preserved')
+    C.require(old['passed'] and old['protection']['unique_raw_files_reread']==50703 and old['protection']['raw_paths_equal_recorded_old_bytes']==50702 and old['protection']['all_historical_original_path_bytes_unchanged'] is False,'D21_final_protection_preserved')
+    archive_population=add_archive(pins,K21,inv,PIN21,('archive_inventory_v1.json','delivery_verification.json'))
+    for path,row in qa['fixed_files'].items():C.require(Path(path).is_relative_to(K21),'D21_fixed_QA_scope');add_pin(pins,path,row['sha256'],row['bytes'])
+    C.require(freeze['count']==len(freeze['files'])==291 and freeze['bytes']==49042326 and len(freeze['directories'])==15,'N21_full_author_freeze_scope')
+    names=set();dirs=set(freeze['directories'])
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names and row['original']==str(N21/rel) and row['snapshot']==str(K21/'author_snapshot'/rel),'N21_exact_frozen_paths');names.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author_population=(names,dirs);C.require(V.population(N21)==author_population==V.population(K21/'author_snapshot'),'N21_frozen_population')
+    for path,sha in qa['selected_assets'].items():add_pin(pins,path,sha)
+    for selected in list(qa['selected_builds'].values())+list(qa['revision01_selected_builds'].values()):
+        add_recorded_dependency(pins,selected['runtime']);path=Path(selected['source_bundle']['path']);C.require(C.digest(reader.raw(path))==selected['source_bundle']['sha256'],'D21_source_bundle_identity');descriptor=reader.json(path)
+        for row in descriptor['files'].values():add_pin(pins,row['path'],row['sha256'],row['bytes'])
+        if 'result_path' in selected:
+            path=Path(selected['result_path']);C.require(C.digest(reader.raw(path))==selected['result_sha256'],'D21_selected_build_identity');result=reader.json(path);C.require(result['passed'] and result['source_bundle']==selected['source_bundle'] and result['binary_sha256']==selected['runtime']['sha256'],'D21_selected_build_tuple')
+        for row in selected['compiler_and_loader_manifests'].values():
+            path=Path(row['path']);C.require(C.digest(reader.raw(path))==row['sha256'],'D21_dependency_manifest');manifest=reader.json(path);C.require(len(manifest['files'])==row['verified_files'],'D21_dependency_count')
+            for item in manifest['files'].values():add_recorded_dependency(pins,item)
+            for key in ['compiler','compile_commands']:
+                if isinstance(manifest.get(key),dict):add_recorded_compiler_input(pins,manifest[key])
+            for item in manifest.get('compiler_dependency_files',{}).values():add_recorded_compiler_input(pins,item)
+        leaf=selected.get('static_link_inputs_before')
+        if leaf:
+            path=Path(leaf['path']);C.require(C.digest(reader.raw(path))==leaf['sha256'],'D21_static_leaf');manifest=reader.json(path)
+            for item in manifest['files'].values():add_recorded_compiler_input(pins,item);add_pin(pins,item['snapshot']['path'],item['sha256'],item['bytes'])
+            for item in manifest['link_command_files'].values():add_pin(pins,item['path'],item['sha256'],item['bytes'])
+    pre=reader.json(K21/'preregister/task_time_v2.json');C.require(C.digest(reader.raw(K21/'preregister/task_time_v2.json'))==qa['preregistration_sha256'],'D21_current_preregistration')
+    for path,row in pre['helper_files'].items():add_pin(pins,path,row['sha256']);add_pin(pins,row['snapshot'],row['sha256'])
+    case=qa['cases']['s005'];r=reader.json(case['path']);C.require(C.digest(reader.raw(case['path']))==case['sha256'] and r['passed'] is False and r['input_sha256_before']==r['input_sha256_after'],'D21_failed_readonly_case')
+    for path,sha in r['input_sha256_after'].items():add_pin(pins,path,sha)
+    return archive_population,author_population
+
+
+
+K22=D.parent/'scheme_A_reference_pair_wakeup_20261018_22'
+N22=D.parent/'p1_execution_architecture_20261005_01/authored_D1_reference_pair_wakeup_20261018_v22'
+PIN22={'archive_inventory_v1.json': '327998bd79e667ebec5e65fba91393586aacba67175bf282767bc0d3ecee91e8', 'delivery_verification.json': '730467a26b8b42a40106e2e4eae326a8ee28eef1f2a0c10e6128d151fe181525', 'postrun/final_QA_v1.json': '5b0dfc789b80a8249b2606f3f0cc604a91e8a85f40eab4147826b753049b2b56', 'postrun/author_freeze_v1.json': 'f7010d7d2f5146ff7a3a48b70164010cf97d4c4ee5e7adc25046b0204b13ddd0', 'preflight/workspace_final_v1.json': '08a9caf3871c5c13050d5f458bc5369390e5fb1091cb193102f11d00402e8ea3', 'protection_v1.py': 'd74ca524d7f430ae864f7a5e22c537bacf3f32ee9994aeaca973f47334a27fd6', 'finalize_pair_wakeup_v1.py': '003f3ebd25c1366f0fa81b4029245b58499a0705f5775fb719026e4b23bec107'}
+
+def collect_parent22(pins,reader):
+    for rel,sha in PIN22.items():C.require(C.digest(reader.raw(K22/rel))==sha,'D22_sealed_metadata_changed:'+rel);add_pin(pins,K22/rel,sha)
+    inv=reader.json(K22/'archive_inventory_v1.json');delivery=reader.json(K22/'delivery_verification.json');qa=reader.json(K22/'postrun/final_QA_v1.json');freeze=reader.json(K22/'postrun/author_freeze_v1.json');old=reader.json(K22/'preflight/workspace_final_v1.json')
+    C.require(len(inv['files'])==1883 and delivery['passed'] and delivery['full_byte_readback'] and delivery['full_second_SHA_readback'] and delivery['complete_population_equal'] and delivery['final_regular_files_per_root']==1885 and delivery['archive_inventory_sha256']==PIN22['archive_inventory_v1.json'] and delivery['final_QA_sha256']==PIN22['postrun/final_QA_v1.json'] and delivery['author_freeze_sha256']==PIN22['postrun/author_freeze_v1.json'],'D22_complete_archive')
+    C.require(qa['passed'] and qa['archive_integrity_passed'] and qa['fixed_file_count']==len(qa['fixed_files'])==1882 and qa['author_frozen_files']==301 and qa['cases_complete'] is False and qa['all_planned_cases_passed'] is False and qa['batch_status']=='blocked_gate' and qa['blocked_gate']=='s005' and qa['cases']['s005']['status']=='failed' and len(qa['cases']['s005']['issues'])==1 and qa['cases']['s005']['issues'][0]['code']=='projected_preregistered_whole_measurement_RMSE_halved_parent' and all(qa['cases'][k]['status']=='not_run' for k in ['s010','s030','s060']) and qa['source_callback_GTest_cases']==19 and qa['actual_DDS_wire_component_cases']==1 and qa['stage_qualified'] is False and qa['execute_qualified'] is False and qa['research_conclusion'] is False,'D22_component_scope_and_performance_failure_preserved')
+    C.require(old['passed'] and old['protection']['unique_raw_files_reread']==54073 and old['protection']['raw_paths_equal_recorded_old_bytes']==54072,'D22_final_full_protection')
+    archive_population=add_archive(pins,K22,inv,PIN22,('archive_inventory_v1.json','delivery_verification.json'))
+    for path,row in qa['fixed_files'].items():C.require(Path(path).is_relative_to(K22),'D22_fixed_QA_scope');add_pin(pins,path,row['sha256'],row['bytes'])
+    C.require(freeze['count']==len(freeze['files'])==301 and freeze['bytes']==47834749 and len(freeze['directories'])==15,'N22_full_author_freeze')
+    names=set();dirs=set(freeze['directories'])
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names and row['original']==str(N22/rel) and row['snapshot']==str(K22/'author_snapshot'/rel),'N22_exact_frozen_paths');names.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author_population=(names,dirs);C.require(V.population(N22)==author_population==V.population(K22/'author_snapshot'),'N22_frozen_population')
+    for path,sha in qa['selected_assets'].items():add_pin(pins,path,sha)
+    for selected in qa['selected_builds'].values():
+        add_recorded_dependency(pins,selected['runtime']);path=Path(selected['source_bundle']['path']);C.require(C.digest(reader.raw(path))==selected['source_bundle']['sha256'],'D22_source_bundle');bundle=reader.json(path)
+        for row in bundle['files'].values():
+            if 'resolved_path' in row:add_recorded_compiler_input(pins,row)
+            else:add_pin(pins,row['path'],row['sha256'],row['bytes'])
+        if 'result_path' in selected:
+            path=Path(selected['result_path']);C.require(C.digest(reader.raw(path))==selected['result_sha256'],'D22_selected_build');result=reader.json(path);C.require(result['passed'] and result['source_bundle']==selected['source_bundle'] and result['binary_sha256']==selected['runtime']['sha256'],'D22_selected_build_tuple')
+        for row in selected['compiler_and_loader_manifests'].values():
+            path=Path(row['path']);C.require(C.digest(reader.raw(path))==row['sha256'],'D22_dependency_manifest');data=reader.json(path)
+            for item in data['files'].values():add_recorded_dependency(pins,item)
+            for key in ['compiler','compile_commands']:
+                if isinstance(data.get(key),dict):add_recorded_compiler_input(pins,data[key])
+            for item in data.get('compiler_dependency_files',{}).values():add_recorded_compiler_input(pins,item)
+        leaf=selected.get('static_link_inputs_before')
+        if leaf:
+            path=Path(leaf['path']);C.require(C.digest(reader.raw(path))==leaf['sha256'],'D22_static_leaf');data=reader.json(path)
+            for item in data['files'].values():add_recorded_compiler_input(pins,item);add_pin(pins,item['snapshot']['path'],item['sha256'],item['bytes'])
+            for item in data['link_command_files'].values():add_pin(pins,item['path'],item['sha256'],item['bytes'])
+            for key in ['generated_vendor_sources_before_build','generated_archive_tools_before_build']:
+                for item in data.get(key,{}).values():add_recorded_compiler_input(pins,item)
+        for item in selected.get('generated_test_archives_after_build',{}).values():add_recorded_compiler_input(pins,item)
+    pre=reader.json(K22/'preregister/pair_wakeup_v1.json');C.require(C.digest(reader.raw(K22/'preregister/pair_wakeup_v1.json'))==qa['preregistration_sha256'],'D22_preregistration')
+    for path,row in pre['helper_files'].items():add_pin(pins,path,row['sha256']);add_pin(pins,row['snapshot'],row['sha256'])
+    case=qa['cases']['s005'];r=reader.json(case['path']);C.require(C.digest(reader.raw(case['path']))==case['sha256'] and r['passed'] is False and r['input_sha256_before']==r['input_sha256_after'] and r['window']['consecutive_accepted']==r['window']['accepted']==r['window']['attempts']==100,'D22_failed_performance_accepted_chain_record')
+    for path,sha in r['input_sha256_after'].items():add_pin(pins,path,sha)
+    wire=reader.json(K22/'build/wire_component_attempt01/result.json');C.require(wire['passed'] and wire['tests']['tests']==1,'D22_wire_positive_scope')
+    desc=reader.json(wire['source_bundle']['path']);C.require(C.digest(reader.raw(wire['source_bundle']['path']))==wire['source_bundle']['sha256'],'D22_wire_bundle')
+    for row in desc['files'].values():add_recorded_compiler_input(pins,row)
+    dep=reader.json(K22/'build/wire_component_attempt01/compiler_dependency_pins.json')
+    for row in dep['files'].values():add_recorded_compiler_input(pins,row)
+    return archive_population,author_population
+
+
+
+K23=D.parent/'scheme_A_startup_rti_mechanism_20261018_23'
+N23=D.parent/'p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23'
+PIN23={'archive_inventory_v1.json':'e3fe64aa3c5aa4868ba9724f71ef99ffe719affb61df5ecac113b6f5b3e0ce45','delivery_verification.json':'6a634b922a6bed6cc8f32047d4eaec9d428f59836b14c21ce30ae1bcaf5030fc','postrun/final_QA_v1.json':'b7218e596383b16b8a2dfcaca5b631d5bfe7844d6989c8f4f83f8f1f28a56c41','postrun/author_freeze_v1.json':'bfde4121ee4ba8883293f1963b9eb7e7662f53f3ee919026b2f4692665cdacca','preflight/workspace_final_v3.json':'25924d036627c9690c250ffc8c4035d129bcb164651763d05d5baf7372e0b2e6'}
+def collect_parent23(pins,reader):
+    for rel,h in PIN23.items():C.require(C.digest(reader.raw(K23/rel))==h,'D23_sealed_metadata:'+rel);add_pin(pins,K23/rel,h)
+    inv=reader.json(K23/'archive_inventory_v1.json');qa=reader.json(K23/'postrun/final_QA_v1.json');delivery=reader.json(K23/'delivery_verification.json');freeze=reader.json(K23/'postrun/author_freeze_v1.json')
+    C.require(len(inv['files'])==411 and delivery['passed'] and delivery['final_regular_files_per_root']==413 and delivery['archive_inventory_sha256']==PIN23['archive_inventory_v1.json'] and delivery['final_QA_sha256']==PIN23['postrun/final_QA_v1.json'],'D23_historical_delivery_identity_only')
+    C.require(qa['passed'] and qa['offline_mechanism_complete'] and qa['primary_mechanism_nearly_unchanged'] is False and qa['new_closed_loop_performance_qualified'] is False and qa['parent_first_RMSE_gate_failure_preserved'] and qa['native_GTest_cases']==10 and qa['independent_checked_answers']==144 and qa['fixed_file_count']==410,'D23_mechanism_and_qualification_scope')
+    population=add_archive(pins,K23,inv,PIN23,('archive_inventory_v1.json','delivery_verification.json'))
+    for path,row in qa['fixed_files'].items():C.require(Path(path).is_relative_to(K23),'D23_fixed_scope');add_pin(pins,path,row['sha256'],row['bytes'])
+    C.require(freeze['count']==len(freeze['files'])==6 and freeze['bytes']==1790179 and freeze['directories']==[],'N23_frozen_scope')
+    names=set()
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and row['original']==str(N23/rel) and row['snapshot']==str(K23/'author_snapshot'/rel),'N23_frozen_paths');names.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author=(names,set());C.require(V.population(N23)==author==V.population(K23/'author_snapshot'),'N23_frozen_population')
+    lock=reader.json(K23/'preregister/offline_invocation_lock_v1.json');C.require(len(lock['files'])==828,'D23_complete_actual_closure')
+    for path,h in lock['files'].items():add_pin(pins,path,h)
+    for logical,target in lock['aliases'].items():
+        C.require(alias_preserved(logical,target),'D23_sealed_alias')
+        if logical!=target:ADDITIONAL_COMPILER_ALIASES[logical]=target
+    return population,author
+
+
+
+K24=D.parent/'scheme_A_startup_first_control_20261018_24'
+N24=D.parent/'p1_execution_architecture_20261005_01/authored_D1_startup_first_control_20261018_v24'
+PIN24={'archive_inventory_v1.json':'64b528df3ad20ae12cfdc431f8d825c47975d66425daf754df00f4282f6d2c9a','postrun/final_QA_v1.json':'0938e9fc9397680502e606cd181745d1b72f13f2d2b6ffe4a6be0686b059403f','postrun/author_freeze_v1.json':'3e35d1fe5a9ee2fe5197c68b90564d683cad50be6f8453b4fd9d43982e3f8c71','preflight/workspace_final_local_v1.json':'49f734a68c18e794a9f47b3ba4ceadff3e9b5df39b40c4d168a4e5f66da2f254','postrun/first_control_audit_v1.json':'d4519ae492e00ccdb45496bfa5bc153e2336db3d15571c6cd4b338163d64313b'}
+def collect_parent24(pins,reader):
+    for rel,h in PIN24.items():C.require(C.digest(reader.raw(K24/rel))==h,'D24_sealed_metadata:'+rel);add_pin(pins,K24/rel,h)
+    inv=reader.json(K24/'archive_inventory_v1.json');qa=reader.json(K24/'postrun/final_QA_v1.json');freeze=reader.json(K24/'postrun/author_freeze_v1.json');audit=reader.json(K24/'postrun/first_control_audit_v1.json')
+    C.require(len(inv['files'])==401 and qa['passed'] and qa['all_ten_registered_probes_complete'] and qa['native_GTest_cases']==4 and qa['MPC_delivery_verified_at_QA'] is False and qa['remote_MPC_mirrors_currently_verified'] is False and qa['original_RMSE_failure_preserved'] and audit['all_material_pulses_faster_and_cost_worse'] is False,'D24_local_only_scope_and_counterexample')
+    names={'archive_inventory_v1.json'};dirs=set(inv['directories'])
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D24_local_archive_member');names.add(str(rel));add_pin(pins,K24/rel,row['sha256'],row['bytes'])
+    population=(names,dirs);C.require(V.population(K24)==population,'D24_complete_LOCAL_archive_no_remote_copy_claim')
+    C.require(freeze['count']==len(freeze['files'])==6 and freeze['bytes']==37936,'N24_frozen_source_scope');author_names=set()
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(row['original']==str(N24/rel) and row['snapshot']==str(K24/'author_snapshot'/rel),'N24_frozen_paths');author_names.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author=(author_names,set(freeze['directories']));C.require(V.population(N24)==author==V.population(K24/'author_snapshot'),'N24_complete_local_source')
+    lock=reader.json(K24/'preregister/offline_invocation_lock_v1.json');C.require(len(lock['files'])==826,'D24_actual_dependency_closure')
+    for path,h in lock['files'].items():add_pin(pins,path,h)
+    for logical,target in lock['aliases'].items():
+        C.require(alias_preserved(logical,target),'D24_sealed_alias')
+        if logical!=target:ADDITIONAL_COMPILER_ALIASES[logical]=target
+    return population,author
+
+
+
+K25=D.parent/'scheme_A_fixed_first_tail_optimization_20261018_25'
+N25=D.parent/'p1_execution_architecture_20261005_01/authored_D1_fixed_first_tail_optimization_20261018_v25'
+PIN25={'archive_inventory_v1.json':'51d1aca04b4bc343051a187a6a3d65811c38c40a0265fe24aa450e9af08f9137','postrun/final_QA_v1.json':'8decd30227c9b0ab63fd60e9a999bd063800c4e1d0dcfa4cdc525175fe2523c4','postrun/author_freeze_v1.json':'f50e93e05876b2eedabe339ffb95d434ed9dba0f5ec464d44f375acb14b10976','preflight/workspace_final_local_v1.json':'1ffb8650893a47e68058b3b4c487db32d538aa5b73bf0b36cac4eff6b0fc1160','postrun/fixed_first_audit_v2.json':'076c664cd1f1d7504ec50d37d6078bc859eb5e638c5b4d52957f1d76237e0ea2'}
+def collect_parent25(pins,reader):
+    for rel,h in PIN25.items():C.require(C.digest(reader.raw(K25/rel))==h,'D25_sealed_metadata:'+rel);add_pin(pins,K25/rel,h)
+    inv=reader.json(K25/'archive_inventory_v1.json');qa=reader.json(K25/'postrun/final_QA_v1.json');freeze=reader.json(K25/'postrun/author_freeze_v1.json');C.require(len(inv['files'])==419 and qa['passed'] and qa['all_24_iterations_checked'] and qa['native_GTest_cases']==3 and qa['source_rebuild_numerically_identical'] and qa['MPC_delivery_verified_at_QA'] is False and qa['original_RMSE_failure_preserved'],'D25_local_mechanism_scope')
+    names={'archive_inventory_v1.json'};dirs=set(inv['directories'])
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D25_local_member');names.add(str(rel));add_pin(pins,K25/rel,row['sha256'],row['bytes'])
+    population=(names,dirs);C.require(V.population(K25)==population,'D25_complete_local_archive')
+    C.require(freeze['count']==len(freeze['files'])==7 and freeze['bytes']==47042,'N25_frozen_scope');anames=set()
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(row['original']==str(N25/rel) and row['snapshot']==str(K25/'author_snapshot'/rel),'N25_frozen_paths');anames.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author=(anames,set(freeze['directories']));C.require(V.population(N25)==author==V.population(K25/'author_snapshot'),'N25_frozen_population')
+    lock=reader.json(K25/'preregister/offline_invocation_lock_v2.json');C.require(len(lock['files'])==831,'D25_final_selected_closure')
+    for path,h in lock['files'].items():add_pin(pins,path,h)
+    for logical,target in lock['aliases'].items():
+        C.require(alias_preserved(logical,target),'D25_selected_alias')
+        if logical!=target:ADDITIONAL_COMPILER_ALIASES[logical]=target
+    return population,author
+
+
+
+K26=D.parent/'scheme_A_causal_cold_start_20261018_26'
+N26=D.parent/'p1_execution_architecture_20261005_01/authored_D1_causal_cold_start_20261018_v26'
+PIN26={'archive_inventory_v1.json':'f6f0c633e5311d3e88295b038be23d5b3ab5997a58b9f8cdf8c6ed8e1d945b0c','postrun/final_QA_v1.json':'f359f903c58973681329de9f4ddb7037d4f344172474f57de872a290d0048eb2','postrun/author_freeze_v1.json':'2708d8bb8d25ce4b028c10e9d6576095a90f4bb3dc945514226cf00142892b2f','preflight/workspace_final_local_v1.json':'d8299630a5776fe4206f471292a99e07995a6dac474cf518810b82f6543bb4ce','postrun/causal_cold_audit_v1.json':'a011f0db0dda944e9fab23e20433eb0d2f695e9d0280818805a07febb761e847'}
+def collect_parent26(pins,reader):
+    for rel,h in PIN26.items():C.require(C.digest(reader.raw(K26/rel))==h,'D26_sealed_metadata:'+rel);add_pin(pins,K26/rel,h)
+    inv=reader.json(K26/'archive_inventory_v1.json');qa=reader.json(K26/'postrun/final_QA_v1.json');freeze=reader.json(K26/'postrun/author_freeze_v1.json');C.require(len(inv['files'])==229 and qa['passed'] and qa['candidate_component_gates_passed'] and qa['candidate_RTI_calls']==4 and qa['separate_restoration_probe_RTI_calls']==1 and qa['actual_oracle_open_attempts']==0 and qa['MPC_delivery_verified_at_QA'] is False and qa['original_RMSE_failure_preserved'],'D26_offline_component_scope')
+    names={'archive_inventory_v1.json'};dirs=set(inv['directories'])
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D26_archive_member');names.add(str(rel));add_pin(pins,K26/rel,row['sha256'],row['bytes'])
+    population=(names,dirs);C.require(V.population(K26)==population,'D26_complete_local_archive')
+    C.require(freeze['count']==len(freeze['files'])==8 and freeze['bytes']==77831,'N26_frozen_scope');anames=set()
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(row['original']==str(N26/rel) and row['snapshot']==str(K26/'author_snapshot'/rel),'N26_frozen_paths');anames.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author=(anames,set(freeze['directories']));C.require(V.population(N26)==author==V.population(K26/'author_snapshot'),'N26_frozen_population')
+    lock=reader.json(K26/'preregister/offline_invocation_lock_v1.json');C.require(len(lock['files'])==832,'D26_selected_closure')
+    for path,h in lock['files'].items():add_pin(pins,path,h)
+    for logical,target in lock['aliases'].items():
+        C.require(alias_preserved(logical,target),'D26_selected_alias')
+        if logical!=target:ADDITIONAL_COMPILER_ALIASES[logical]=target
+    return population,author
+
+
+K27=D.parent/'scheme_A_owned_cold_start_20261018_27'
+N27=D.parent/'p1_execution_architecture_20261005_01/authored_D1_owned_cold_start_20261018_v27'
+PIN27={'archive_inventory_v1.json':'f94c33e775b4aa274e23f1ff704dcc1c07ae63c7cc4ac848cdb06b3aa0640490','postrun/final_QA_v1.json':'dae9265524fb4fd0ce3c55fe2b4415514ae921deb1ff4561a4eee1636e52ce43','postrun/author_freeze_v1.json':'e64bf37f6c5d0a67d5da46e1914cca1d4fef97a35dcfa1095aaf6753d8b1a40f','postrun/activation_refusal_audit_v1.json':'20ea0048d8138edf227b8b94cce1341563bed1eaf7d3a2a460cf7c0ed5d14e4d','preflight/workspace_final_local_v1.json':'cbc70b888b39be5534ba177f213272237e72873340a3fc43d67f30872ff926be','runs/s005_01/check_result.json':'2949b0e109ea3f0ef40436be4c7fe3c78ebfc13633d2baf20ccdeec3167cf38f'}
+def collect_parent27(pins,reader):
+    for rel,h in PIN27.items():C.require(C.digest(reader.raw(K27/rel))==h,'D27_sealed_metadata:'+rel);add_pin(pins,K27/rel,h)
+    inv=reader.json(K27/'archive_inventory_v1.json');qa=reader.json(K27/'postrun/final_QA_v1.json');freeze=reader.json(K27/'postrun/author_freeze_v1.json')
+    C.require(len(inv['files'])==1557 and qa['passed'] and qa['component_validation_complete'] and qa['actual_case_passed'] is False and qa['first_050_command_applied'] is False and qa['MPC_delivery_verified_at_QA'] is False,'D27_qualification_boundaries')
+    names={'archive_inventory_v1.json'};dirs=set(inv['directories'])
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D27_member');names.add(str(rel));add_pin(pins,K27/rel,row['sha256'],row['bytes'])
+    population=(names,dirs);C.require(V.population(K27)==population,'D27_complete_local_archive')
+    C.require(freeze['count']==len(freeze['files'])==315 and freeze['bytes']==47598907,'N27_frozen_scope');anames=set()
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(row['original']==str(N27/rel) and row['snapshot']==str(K27/'author_snapshot'/rel),'N27_frozen_paths');anames.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author=(anames,set(freeze['directories']));C.require(V.population(N27)==author==V.population(K27/'author_snapshot'),'N27_source_and_raw_run_population')
+    for role in ['worker','observer']:
+        root=K27/('build/owned_cold_'+role+'_attempt02')
+        for leaf in ['compiler_dependency_pins.json','runtime_library_pins.json']:
+            data=reader.json(root/leaf)
+            for row in data['files'].values():add_recorded_compiler_input(pins,row)
+            if 'compiler' in data:add_recorded_compiler_input(pins,data['compiler'])
+    return population,author
+
+
+K28=D.parent/'scheme_A_activation_alignment_20261019_28'
+N28=D.parent/'p1_execution_architecture_20261005_01/authored_D1_activation_alignment_20261019_v28'
+PIN28={'archive_inventory_v1.json':'e8477ce4b2d0c0cfc56d2ebf7b1ae7dc3f06342a99af902472801ddc9670ff5c','postrun/final_QA_v1.json':'7519b6137f198b5a8084155bf468d556eba15e5bb2bc37bead52ce9b7fa250cf','postrun/author_freeze_v1.json':'951431530537116c99e43e57f4535091dcda61471e6808d58645328728767a31','postrun/activation_result_audit_v1.json':'0ed9637bebec29de8d0d97e92ecaf84883d9eaf17df1451d1023f7d99386baed','preflight/workspace_final_local_v1.json':'ff0e9ea6b6303e451323fecb2bd35ed9348c5c0a9fd3cde2fef56a30ff6a705c','runs/s005_01/check_result.json':'54190658651d15131d5648201b87ac5f1012cf5e798e3652748522997c1cfed9'}
+def collect_parent28(pins,reader):
+    for rel,h in PIN28.items():C.require(C.digest(reader.raw(K28/rel))==h,'D28_sealed_metadata:'+rel);add_pin(pins,K28/rel,h)
+    inv=reader.json(K28/'archive_inventory_v1.json');qa=reader.json(K28/'postrun/final_QA_v1.json');freeze=reader.json(K28/'postrun/author_freeze_v1.json')
+    C.require(len(inv['files'])==1764 and qa['passed'] and qa['component_validation_complete'] and qa['actual_case_passed'] is False and qa['first_050_command_applied'] is True and qa['MPC_delivery_verified_at_QA'] is False,'D28_qualification_boundaries')
+    names={'archive_inventory_v1.json'};dirs=set(inv['directories'])
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D28_member');names.add(str(rel));add_pin(pins,K28/rel,row['sha256'],row['bytes'])
+    population=(names,dirs);C.require(V.population(K28)==population,'D28_complete_local_archive')
+    C.require(freeze['count']==len(freeze['files'])==325 and freeze['bytes']==56477861,'N28_frozen_scope');anames=set()
+    for row in freeze['files']:
+        rel=Path(row['relative_path']);C.require(row['original']==str(N28/rel) and row['snapshot']==str(K28/'author_snapshot'/rel),'N28_frozen_paths');anames.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author=(anames,set(freeze['directories']));C.require(V.population(N28)==author==V.population(K28/'author_snapshot'),'N28_source_and_raw_run_population')
+    for role in ['worker','observer']:
+        root=K28/('build/activation_'+role+'_attempt02')
+        for leaf in ['compiler_dependency_pins.json','runtime_library_pins.json']:
+            data=reader.json(root/leaf)
+            for row in data['files'].values():add_recorded_compiler_input(pins,row)
+            if 'compiler' in data:add_recorded_compiler_input(pins,data['compiler'])
+    return population,author
+
+
+
+K29=D.parent/'scheme_A_deferred_observation_20261019_29'
+N29=D.parent/'p1_execution_architecture_20261005_01/authored_D1_deferred_observation_20261019_v29'
+PIN29={
+ 'archive_inventory_v1.json':'679a7efd70c2e7180b05cb8e7582b9684398900feb195e6021ce538c6d3f3ba0',
+ 'postrun/final_QA_v1.json':'4a75939044a6e4a166bf20b3d02a29bb82e438cce626623c72fc6ad298b5c941',
+ 'postrun/author_freeze_v1.json':'4603daeb04132e8a6df5de09f5b303303e2ea7c437f627e0710794416871a1aa',
+ 'postrun/deferred_result_audit_v1.json':'166e4c74deedff80cb71793f8a183229de855656217b0337bcb73708d922f5b1',
+ 'postrun/performance_gate_lineage_v1.json':'38ae1359cfd683e739c1f6aeb91e11757bb738b366bfeeb172f2426f4c703d86',
+ 'preflight/workspace_final_local_v1.json':'84fa3f43c232152a2a2173daade8061e2874dce0399d56297d1ab62dbd467b6f',
+ 'runs/s005_01/check_result.json':'e487980f7f6ee30f97017449e94a78df38df6571780b0e553a6af455ce3cddeb',
+ 'batch_status_final.json':'0163ffd4c532af7b145740eb57062e83adab1f8f20d5a8125f8b4140b9c873f9',
+}
+def collect_parent29(pins,reader):
+    for rel,h in PIN29.items():
+        C.require(C.digest(reader.raw(K29/rel))==h,'D29_sealed_metadata:'+rel)
+        add_pin(pins,K29/rel,h)
+    inv=reader.json(K29/'archive_inventory_v1.json')
+    qa=reader.json(K29/'postrun/final_QA_v1.json')
+    freeze=reader.json(K29/'postrun/author_freeze_v1.json')
+    C.require(len(inv['files'])==960 and qa['passed'] and qa['actual_case_passed'] is False
+        and qa['acceptance_component_observed'] and qa['accepted_candidates']==101
+        and qa['first_050_command_applied'] and not qa['stage_qualified']
+        and not qa['MPC_delivery_verified_at_QA'],'D29_scope_and_original_failure')
+    names={'archive_inventory_v1.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path'])
+        C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D29_member')
+        names.add(str(rel));add_pin(pins,K29/rel,row['sha256'],row['bytes'])
+    population=(names,set(inv['directories']))
+    C.require(V.population(K29)==population,'D29_complete_archive')
+    C.require(freeze['count']==len(freeze['files'])==331 and freeze['bytes']==56607053,'N29_frozen_scope')
+    anames=set()
+    for row in freeze['files']:
+        rel=Path(row['relative_path'])
+        C.require(row['original']==str(N29/rel) and row['snapshot']==str(K29/'author_snapshot'/rel),'N29_paths')
+        anames.add(str(rel))
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    author=(anames,set(freeze['directories']))
+    C.require(V.population(N29)==author==V.population(K29/'author_snapshot'),'N29_population')
+    for leaf in ['compiler_dependency_pins.json','runtime_library_pins.json']:
+        data=reader.json(K29/'build/deferred_observer_attempt01'/leaf)
+        for row in data['files'].values():add_recorded_compiler_input(pins,row)
+        if 'compiler' in data:add_recorded_compiler_input(pins,data['compiler'])
+    return population,author
+
+
+
+K30=D.parent/'scheme_A_P1_scope_audit_20261019_30'
+PIN30={'archive_inventory_v1.json':'d5dc9c90c84d80f57ef714a37fd14db1837559139fd8ef27a2f7431d5b70049a','postrun/final_QA_v1.json':'ecbefecb3024a2394378aa5a3c5ee78223ffe9add16a8360236ac782212f4d60'}
+def collect_parent30(pins,reader):
+    for rel,h in PIN30.items():
+        C.require(C.digest(reader.raw(K30/rel))==h,'D30_metadata:'+rel);add_pin(pins,K30/rel,h)
+    inv=reader.json(K30/'archive_inventory_v1.json');qa=reader.json(K30/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==74 and qa['passed'] and not qa['stage_qualified'] and qa['actual_new_control_runs']==0,'D30_scope')
+    names={'archive_inventory_v1.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D30_member');names.add(str(rel));add_pin(pins,K30/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K30)==pop,'D30_population')
+    lock=reader.json(K30/'evidence/audit_input_lock_v1.json')
+    C.require(lock['passed'] and lock['input_sha256_before']==lock['input_sha256_after'] and lock['input_count']==74,'D30_input_lock')
+    for path,row in lock['input_sha256_before'].items():
+        C.require(str(Path(path).resolve())==row['resolved_path'],'D30_alias');add_pin(pins,row['resolved_path'],row['sha256'],row['bytes'])
+    return pop
+
+
+
+K31=D.parent/'scheme_A_B4_applicability_20261019_31'
+PIN31={'archive_inventory_v1.json':'7c249ee3b031ae0b2cc4ab63b4b59c1772a40eaf02e789526cce651319a90a5f','postrun/final_QA_v1.json':'d969a62d9d3012368bb594eddac42c330a94e16e9af7791c3697d6af112b5c1a','delivery_verification.json':'594cfa6da55db92ae2d85e6981c9e5ee354ed1f13cf7e09d171b3effeae043f4','evidence/MPC_backlog_delivery_v1.json':'20df747807e41f73dc9c9862b1963441e55fc60e7374c90d0dd45f5e20b9339b'}
+def collect_parent31(pins,reader):
+    for rel,h in PIN31.items():
+        C.require(C.digest(reader.raw(K31/rel))==h,'D31_metadata:'+rel);add_pin(pins,K31/rel,h)
+    inv=reader.json(K31/'archive_inventory_v1.json');qa=reader.json(K31/'postrun/final_QA_v1.json');delivery=reader.json(K31/'delivery_verification.json')
+    C.require(len(inv['files'])==35 and qa['passed'] and qa['targeted_rejected']==13 and not qa['stage_qualified'] and delivery['passed'] and delivery['full_second_SHA_readback'],'D31_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D31_member');names.add(str(rel));add_pin(pins,K31/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K31)==pop,'D31_population')
+    check=reader.json(K31/'verification/verify_register_v2.json');C.require(check['passed'] and check['all_inputs_unchanged'] and len(check['input_pins'])==123,'D31_verified_input_scope')
+    for path,row in check['input_pins'].items():
+        C.require(str(Path(path).resolve())==row['resolved_path'],'D31_alias');add_pin(pins,row['resolved_path'],row['sha256'],row['bytes'])
+    return pop
+
+
+
+K32=D.parent/'scheme_A_publication_component_20261019_32'
+PIN32={'archive_inventory_v1.json':'043b1e09e2ccac6ae7af2f0039ed15d779756c0f9a4b164c71143d260d38acdf','postrun/final_QA_v1.json':'3086070dd02fb53a7254f7964793f844976fea4d357dea57c9829bbfb98121d7','delivery_verification.json':'f9c24a5078ca47224b30e5892a4b1df58e2cc9eda5aada3f3ed2277b23269577'}
+def collect_parent32(pins,reader):
+    for rel,h in PIN32.items():C.require(C.digest(reader.raw(K32/rel))==h,'D32_metadata:'+rel);add_pin(pins,K32/rel,h)
+    inv=reader.json(K32/'archive_inventory_v1.json');qa=reader.json(K32/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==173 and qa['passed'] and qa['Native_cases']==14 and not qa['stage_qualified'],'D32_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D32_member');names.add(str(rel));add_pin(pins,K32/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K32)==pop,'D32_population')
+    for leaf in ['compiler_dependency_pins.json','runtime_library_pins.json']:
+        data=reader.json(K32/'build/publication_attempt01'/leaf)
+        for row in data['files'].values():add_recorded_compiler_input(pins,row)
+        if 'compiler' in data:add_recorded_compiler_input(pins,data['compiler'])
+    return pop
+
+
+
+K33=D.parent/'scheme_A_V1_sink_failure_20261019_33'
+PIN33={'archive_inventory_v1.json':'788f88b7eb8917b6aaf3e63b3bd1bf84e60f90cfb1732d02e2db341c74931e0f','postrun/final_QA_v1.json':'09e892665d3bd0069a59e756f5e8fa9e218681567fa1ff0c67224072c0b3b5b0','delivery_verification.json':'e87e929e5eb1da0fc4b2425387564c81dba3ff227c9ef50ba06df6a70b49097b','postrun/author_freeze_v1.json':'9aee2925bc8b066d16b2f1a623b468f6ab010c410aaad048abfe825aa758f48b'}
+def collect_parent33(pins,reader):
+    for rel,h in PIN33.items():C.require(C.digest(reader.raw(K33/rel))==h,'D33_metadata:'+rel);add_pin(pins,K33/rel,h)
+    inv=reader.json(K33/'archive_inventory_v1.json');qa=reader.json(K33/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==1026 and qa['passed'] and not qa['normal_close_qualified'],'D33_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D33_member');names.add(str(rel));add_pin(pins,K33/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K33)==pop,'D33_population')
+    freeze=reader.json(K33/'postrun/author_freeze_v1.json');authors=[]
+    for rev in freeze['revisions']:
+        C.require(rev['count'] in [307,305] and len(rev['files'])==rev['count'],'D33_author_count')
+        apop=({r['relative_path'] for r in rev['files']},set(rev['directories']));root=Path(rev['author'])
+        C.require(V.population(root)==apop,'D33_author_population');authors.append((root,apop))
+        for r in rev['files']:
+            for path in [r['original'],r['snapshot']]:add_pin(pins,path,r['sha256'],r['bytes'])
+    for sub in ['publication_attempt02','publication_attempt03']:
+        for leaf in ['compiler_dependency_pins.json','runtime_library_pins.json']:
+            data=reader.json(K33/'build'/sub/leaf)
+            for row in data['files'].values():add_recorded_compiler_input(pins,row)
+            if 'compiler' in data:add_recorded_compiler_input(pins,data['compiler'])
+    for name in ['V1_actual_fault_audit_v1.json','V1_actual_fault_audit_r2_v1.json']:
+        data=reader.json(K33/'postrun'/name)
+        C.require(data['input_sha256_before']==data['input_sha256_after'],'D33_audit_input_changed')
+        for path,row in data['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop,authors
+
+
+K34=D.parent/'scheme_A_fault_self_close_20261019_34'
+PIN34={'archive_inventory_v1.json':'89b835f72a659734b2701b7d2e4e25580baa26de78daf4f5fe33e6bc1accbb26','postrun/final_QA_v1.json':'6bec407ffdf2c5bed1586ae6863deb2e782ccfb3d49a7e4e743aca69dabb955c','delivery_verification.json':'e3dd16f125ddfe1e2e76e77c0fa7bd227373744d2d3c901b5e30d16675ec34fa'}
+def collect_parent34(pins,reader):
+    for rel,h in PIN34.items():C.require(C.digest(reader.raw(K34/rel))==h,'D34_metadata:'+rel);add_pin(pins,K34/rel,h)
+    inv=reader.json(K34/'archive_inventory_v1.json');qa=reader.json(K34/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==243 and qa['passed'] and qa['targeted_rejected']==25 and qa['actual_new_control_runs']==0 and not qa['normal_close_qualified'],'D34_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D34_member');names.add(str(rel));add_pin(pins,K34/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K34)==pop,'D34_population')
+    return pop
+
+
+K35=D.parent/'scheme_A_V2_watchdog_lease_20261019_35'
+PIN35={'archive_inventory_v1.json':'111f1ec215feb838a99aa2123bfffd2db6f4996316918c6b4db71bced46e281e','postrun/final_QA_v1.json':'70a55a11ec039e87047e46fdc0295df299342ac069503097fc7be3a3e1c15582','delivery_verification.json':'9f39c7f0cf8312202bc7281d01d7fee31d2ac207f73e543fe639aa0ebeb26af5'}
+def collect_parent35(pins,reader):
+    for rel,h in PIN35.items():C.require(C.digest(reader.raw(K35/rel))==h,'D35_metadata:'+rel);add_pin(pins,K35/rel,h)
+    inv=reader.json(K35/'archive_inventory_v1.json');qa=reader.json(K35/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==1014 and qa['passed'] and qa['final_profile_passed_runs']==2 and not qa['watchdog_TERM_KILL_bound_qualified'],'D35_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D35_member');names.add(str(rel));add_pin(pins,K35/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K35)==pop,'D35_population')
+    for leaf in ['compiler_dependency_pins.json','runtime_library_pins.json']:
+        data=reader.json(K35/'build/v2_worker_attempt01'/leaf)
+        for row in data['files'].values():add_recorded_compiler_input(pins,row)
+        if 'compiler' in data:add_recorded_compiler_input(pins,data['compiler'])
+    for leaf in ['v2_lease_r3_audit_v1.json','v2_active_r3_audit_v1.json']:
+        audit=reader.json(K35/'postrun'/leaf);C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D35_audit')
+        for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K36=D.parent/'scheme_A_V2_supervisor_bridge_20261019_36'
+PIN36={'archive_inventory_v1.json':'b448d28ddcc307a722e00e24c1d37f96cdf398df528fc5e67c783642340a84d9','postrun/final_QA_v1.json':'68d36410ad8dc0ddc7c3dd7e286a39d76a9a77191b9799c3a90eb24eab51bce8','delivery_verification.json':'5f061d0203f6264480b3c9ecb83edb2351b5bde570031e280203b8778f8f160d'}
+def collect_parent36(pins,reader):
+    for rel,h in PIN36.items():C.require(C.digest(reader.raw(K36/rel))==h,'D36_metadata:'+rel);add_pin(pins,K36/rel,h)
+    inv=reader.json(K36/'archive_inventory_v1.json');qa=reader.json(K36/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==364 and qa['passed'] and not qa['stage_qualified'],'D36_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D36_member');names.add(str(rel));add_pin(pins,K36/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K36)==pop,'D36_population')
+    audit=reader.json(K36/'postrun/supervision_actual_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D36_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K37=D.parent/'scheme_A_V3_activation_interleave_20261019_37'
+PIN37={'archive_inventory_v1.json':'c82506f35dbbd119a58ef29aa2fac76875441811e86c8976d891428e5810ea07','postrun/final_QA_v1.json':'e3f8d7cbb63c5c9c9c0ea4b62bffd227b09213c1f4b4e2e6687643426077e6e4','delivery_verification.json':'2282edb29e967468b9d00da69a5ebdf7e04af1b7fc4f23408085be737c0d2ff8'}
+def collect_parent37(pins,reader):
+    for rel,h in PIN37.items():C.require(C.digest(reader.raw(K37/rel))==h,'D37_metadata:'+rel);add_pin(pins,K37/rel,h)
+    inv=reader.json(K37/'archive_inventory_v1.json');qa=reader.json(K37/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==817 and qa['passed'] and qa['selected_Native_cases']==29 and qa['selected_V3_actual_source_case_completed'] and not qa['stage_qualified'],'D37_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D37_member');names.add(str(rel));add_pin(pins,K37/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K37)==pop,'D37_population')
+    audit=reader.json(K37/'postrun/v3_actual_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D37_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K38=D.parent/'scheme_A_ordinary_supervision_20261020_38'
+PIN38={'archive_inventory_v1.json':'ee412ff24ca9c3e3a624ba99f64c4cfe81f60265d6295ee94007a89c2004c08e','postrun/final_QA_v1.json':'5d6db3e20d583285f21784f942ee9df158d3296435e88f0a2f9a3bbc45bf06cb','delivery_verification.json':'17da9a861fa3cbd9ce0f9556520bb777cf4ff8607961a5b4c33d590c20db5585'}
+def collect_parent38(pins,reader):
+    for rel,h in PIN38.items():C.require(C.digest(reader.raw(K38/rel))==h,'D38_metadata:'+rel);add_pin(pins,K38/rel,h)
+    inv=reader.json(K38/'archive_inventory_v1.json');qa=reader.json(K38/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==967 and qa['passed'] and not qa['ordinary_actual_Worker_case_passed'] and qa['actual_ROS_attempts']==3 and not qa['stage_qualified'],'D38_failed_scope_preserved')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D38_member');names.add(str(rel));add_pin(pins,K38/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K38)==pop,'D38_population')
+    audit=reader.json(K38/'postrun/failed_attempts_audit_v1.json')
+    C.require(audit['audit_passed'] and not audit['ordinary_supervision_actual_passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D38_failure_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K39=D.parent/'scheme_A_owned_business_start_20261020_39'
+PIN39={'archive_inventory_v1.json':'737d33ffe4ba388461a6716df25000c9803cb43ad4b50851b5ccf4365cd359c8','postrun/final_QA_v1.json':'78510a8dd845181d368e7d960e31f0ac7138e13b9b13febb8853247723a04196','delivery_verification.json':'89bc852c4f6d2017d829c5586954169b3615d817deac1546c97523ec0cb81e15'}
+def collect_parent39(pins,reader):
+    for rel,h in PIN39.items():C.require(C.digest(reader.raw(K39/rel))==h,'D39_metadata:'+rel);add_pin(pins,K39/rel,h)
+    inv=reader.json(K39/'archive_inventory_v1.json');qa=reader.json(K39/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==647 and qa['passed'] and qa['Native_cases']==38 and qa['business_start_actual_case_passed'] and qa['ordinary_active_stop_actual_case_passed'] and not qa['stage_qualified'],'D39_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D39_member');names.add(str(rel));add_pin(pins,K39/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K39)==pop,'D39_population')
+    audit=reader.json(K39/'postrun/business_ordinary_actual_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D39_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K40=D.parent/'scheme_A_final_V1_gate_confirmation_20261020_40'
+PIN40={'archive_inventory_v1.json': '802bf929697c7c0d2db6b8d69176f909bba1bd684c06092cc081886c98410bf7', 'postrun/final_QA_v1.json': '4f60cab12fe746631fdb6466751a91400f44c6211b37ce469b63c16e3ffb80c1', 'delivery_verification.json': '0551d190dd5cfe99905803b2ceaf1c86f20ecf69277a5a251ee09d6e919a966a'}
+def collect_parent40(pins,reader):
+    for rel,h in PIN40.items():C.require(C.digest(reader.raw(K40/rel))==h,'D40_metadata:'+rel);add_pin(pins,K40/rel,h)
+    inv=reader.json(K40/'archive_inventory_v1.json');qa=reader.json(K40/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==363 and qa['passed'] and qa['Native_cases_reused']==38 and qa['current_selected_V1_case_passed'] and not qa['stage_qualified'],'D40_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D40_member');names.add(str(rel));add_pin(pins,K40/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K40)==pop,'D40_population')
+    audit=reader.json(K40/'postrun/current_V1_actual_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D40_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K41=D.parent/'scheme_A_ordinary_lease_20261020_41'
+PIN41={'archive_inventory_v1.json': '3387cf5349e138b7ed178cc922451460a2dbd0862e13d6c54813785efb94f6df', 'postrun/final_QA_v1.json': '8e23d5ff1e8062f79d93eb51bc17db6dd44e270420cf8de07d5b7e5d68924496', 'delivery_verification.json': '7e96867ec3f62d15875fa8f6f706dbe01d0652e60600799a3b11acc687fea9a9'}
+def collect_parent41(pins,reader):
+    for rel,h in PIN41.items():C.require(C.digest(reader.raw(K41/rel))==h,'D41_metadata:'+rel);add_pin(pins,K41/rel,h)
+    inv=reader.json(K41/'archive_inventory_v1.json');qa=reader.json(K41/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==380 and qa['passed'] and qa['Native_cases_reused']==38 and qa['current_selected_ordinary_lease_case_passed'] and not qa['stage_qualified'],'D41_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D41_member');names.add(str(rel));add_pin(pins,K41/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K41)==pop,'D41_population')
+    audit=reader.json(K41/'postrun/ordinary_lease_actual_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D41_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K42=D.parent/'scheme_A_post_lease_fresh_recovery_20261020_42'
+PIN42={'archive_inventory_v1.json': 'e2d2686f47f380e8e9a0306ca91e2a5a23c3128169920a57063910d5763b4004', 'postrun/final_QA_v1.json': '4566da9a414874dd2e59c9127e17eccebcfc417d87281ad795d2b6e6fbb381e1', 'delivery_verification.json': 'a4b4ae41fc1a48b6baff53546bc88cfce44b9b5bbbffe6275e58977c908c0427'}
+def collect_parent42(pins,reader):
+    for rel,h in PIN42.items():C.require(C.digest(reader.raw(K42/rel))==h,'D42_metadata:'+rel);add_pin(pins,K42/rel,h)
+    inv=reader.json(K42/'archive_inventory_v1.json');qa=reader.json(K42/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==390 and qa['passed'] and qa['Native_cases_reused']==38 and qa['current_selected_post_lease41_recovery_case_passed'] and not qa['stage_qualified'],'D42_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D42_member');names.add(str(rel));add_pin(pins,K42/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K42)==pop,'D42_population')
+    audit=reader.json(K42/'postrun/fresh_recovery_actual_audit_v2.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D42_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K43=D.parent/'scheme_A_B4_finite_scope_review_20261020_43'
+PIN43={'archive_inventory_v1.json':'568b8375256a8e6ac716bea8b08613a1c15d32c46def77dc44fce2650019b187','postrun/final_QA_v1.json':'6f6effff617a10199e51482bc41b1bebd6686ee20598d1b1b3fc137fefd8a4e7','delivery_verification.json':'89c8aa0a504914698aa04b5b05e1909f14e17e7c55dd1133c35898adf0ff3529'}
+def collect_parent43(pins,reader):
+    for rel,h in PIN43.items():C.require(C.digest(reader.raw(K43/rel))==h,'D43_metadata:'+rel);add_pin(pins,K43/rel,h)
+    inv=reader.json(K43/'archive_inventory_v1.json');qa=reader.json(K43/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==30 and qa['passed'] and qa['prior_Native_cases_reused']==38 and qa['B4_selected_source_policy_review_complete'] and not qa['stage_qualified'],'D43_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D43_member');names.add(str(rel));add_pin(pins,K43/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K43)==pop,'D43_population')
+    audit=reader.json(K43/'postrun/review_evidence_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D43_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K44=D.parent/'scheme_A_B5_contract_parity_20261020_44'
+PIN44={'archive_inventory_v1.json':'d977d050f30e40a130bb9002a993738a3f4b5accac11d683a07c55dbf0b81834','postrun/final_QA_v1.json':'c542737910e2e2cd99462ff4e69b98b19ffa12624a06751fea8c1935661598f2','delivery_verification.json':'842d1fb75c22ee935e8456a7c76535dfd9a99bba0575f50a9e94e64848ed32ac'}
+def collect_parent44(pins,reader):
+    for rel,h in PIN44.items():C.require(C.digest(reader.raw(K44/rel))==h,'D44_metadata:'+rel);add_pin(pins,K44/rel,h)
+    inv=reader.json(K44/'archive_inventory_v1.json');qa=reader.json(K44/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==851 and qa['passed'] and qa['contract_parity_cases']==385 and qa['formal_prepare_core_seeded_cases']==102 and not qa['stage_qualified'],'D44_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D44_member');names.add(str(rel));add_pin(pins,K44/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K44)==pop,'D44_population')
+    audit=reader.json(K44/'postrun/component_evidence_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D44_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K45=D.parent/'scheme_A_owned_formal_prepare_20261020_45'
+PIN45={'archive_inventory_v1.json':'ab7c782a110dbabb8c0579051536e70105bf387da4a5eae84300d94668f3fc92','postrun/final_QA_v1.json':'a75c090de2d9f46303d532042533953dbbc029a02799152f9b7f8228f2bb92f0','delivery_verification.json':'4822a0d23a172e13dc2d2dccf724bd96a005687f381da99e3194049e263c91e2'}
+def collect_parent45(pins,reader):
+    for rel,h in PIN45.items():C.require(C.digest(reader.raw(K45/rel))==h,'D45_metadata:'+rel);add_pin(pins,K45/rel,h)
+    inv=reader.json(K45/'archive_inventory_v1.json');qa=reader.json(K45/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==721 and qa['passed'] and qa['owned_formal_prepare_close_component_passed'] and qa['actual_four_role_sessions']==2 and not qa['stage_qualified'],'D45_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D45_member');names.add(str(rel));add_pin(pins,K45/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K45)==pop,'D45_population')
+    for leaf in ['actual_prepare_audit_v1.json','actual_prepare_audit_v2.json']:
+        audit=reader.json(K45/'postrun'/leaf);C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D45_audit:'+leaf)
+        for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K46=D.parent/'scheme_A_current_normal_source_20261020_46'
+PIN46={'archive_inventory_v1.json':'91306604a02bae491732374c940af6c3e5d9b282f036560c3d09542a5a3e8b64','postrun/final_QA_v1.json':'783be1dc39138e16bca56db0e74c8c09640ebb946989327a5006bba7665887d2','delivery_verification.json':'3d737b2f2efc4c75a4036a5b5cd14fdb709af30cfbfd8075c2a7c22d1adeea63'}
+def collect_parent46(pins,reader):
+    for rel,h in PIN46.items():C.require(C.digest(reader.raw(K46/rel))==h,'D46_metadata:'+rel);add_pin(pins,K46/rel,h)
+    inv=reader.json(K46/'archive_inventory_v1.json');qa=reader.json(K46/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==850 and qa['passed'] and qa['normal_source20s_component_passed'] and qa['B5_candidate_evidence_ledger_ready'] and not qa['stage_qualified'],'D46_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D46_member');names.add(str(rel));add_pin(pins,K46/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K46)==pop,'D46_population')
+    audit=reader.json(K46/'postrun/current_normal_source20s_audit_v1.json')
+    C.require(audit['passed'] and audit['input_sha256_before']==audit['input_sha256_after'],'D46_audit')
+    for path,row in audit['input_sha256_before'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+K47=D.parent/'scheme_A_formal_execute_profile_20261020_47'
+PIN47={'archive_inventory_v1.json':'668f89588e02de3ea1a0da8796982760ab1c9fc31e678dd65ce4093127b5b175','postrun/final_QA_v1.json':'647309d6307d417e38252383c6d09160d009305e18a11b55c2e32a58cf737515','delivery_verification.json':'3698dca511e63c1014390ba2e9f19866071514f3c8078b2d5ee801717b0bd2df'}
+def collect_parent47(pins,reader):
+    for rel,h in PIN47.items():C.require(C.digest(reader.raw(K47/rel))==h,'D47_metadata:'+rel);add_pin(pins,K47/rel,h)
+    inv=reader.json(K47/'archive_inventory_v1.json');qa=reader.json(K47/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==394 and qa['passed'] and qa['B5_contract_freeze_qualified'] and qa['M0b_selected_engineering_freeze_qualified'] and not qa['M4_qualified'],'D47_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D47_member');names.add(str(rel));add_pin(pins,K47/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K47)==pop,'D47_population')
+    index=reader.json(K47/'freeze/freeze_index_v1.json');C.require(len(index['artifacts'])==4103,'D47_freeze_asset_population')
+    for row in index['artifacts']:add_pin(pins,row['path'],row['sha256'],row['bytes'])
+    C.require(C.digest(reader.raw(K47/'freeze/freeze_index_v1.json'))=='1d750a7eeb32f379f2be5dd516533f6f785e091c6b30082dda68e51b3f100081','D47_index')
+    return pop
+
+K48=D.parent/'scheme_A_M4_owned_entry_20261021_48'
+PIN48={'archive_inventory_v1.json':'38d987e6e62d1e1fb3fceb2435d464977110b165ac584e855372b618eb59bb1f','postrun/final_QA_v1.json':'f03e91d089c28b8887ac29c02d46f68633a801d37b8cac6e8bf4159a3e891e0a','delivery_verification.json':'86f2f80173facd34f252a382e101c0a9e50b5e59d952e77b4d207583c60ce9a4'}
+def collect_parent48(pins,reader):
+    for rel,h in PIN48.items():C.require(C.digest(reader.raw(K48/rel))==h,'D48_metadata:'+rel);add_pin(pins,K48/rel,h)
+    inv=reader.json(K48/'archive_inventory_v1.json');qa=reader.json(K48/'postrun/final_QA_v1.json')
+    C.require(len(inv['files'])==967 and qa['passed'] and qa['component_verification_passed'] and not qa['actual_normal_run_passed'] and qa['control_API_calls']==0 and not qa['M4_stage_qualified'],'D48_failure_scope')
+    names={'archive_inventory_v1.json','delivery_verification.json'}
+    for row in inv['files']:
+        rel=Path(row['relative_path']);C.require(not rel.is_absolute() and '..' not in rel.parts and str(rel) not in names,'D48_member');names.add(str(rel));add_pin(pins,K48/rel,row['sha256'],row['bytes'])
+    pop=(names,set(inv['directories']));C.require(V.population(K48)==pop,'D48_population')
+    audit=reader.json(K48/'postrun/failed_start_audit_v1.json');C.require(audit['passed'] and not audit['actual_run_passed'] and audit['owned_groups_empty'],'D48_failure_audit')
+    for path,row in audit['prerun_inputs'].items():add_pin(pins,path,row['sha256'],row['bytes'])
+    return pop
+
+def protect():
+    before = workspace()
+    reader = C.Reader(seconds=1200, max_bytes=512 * 1024**2, max_files=1000)
+    for root, meta in ((P, PIN16), (A, PIN17)):
+        for rel, sha in meta.items():
+            C.require(C.digest(reader.raw(root / rel)) == sha, 'sealed_metadata_changed:' + str(root / rel))
+    anchor = reader.json(P / 'preflight/preservation_anchor_v3.json')
+    roster = reader.json(P / 'preflight/preservation_roster_v3.json')
+    transition = reader.json(P / 'preflight/boot_transition_v4.json')
+    C.require(anchor['roster_sha256'] == PIN16['preflight/preservation_roster_v3.json']
+              and transition['original_anchor_sha256'] == PIN16['preflight/preservation_anchor_v3.json']
+              and transition['original_roster_sha256'] == anchor['roster_sha256']
+              and transition['helper_sha256'] == PIN16['protection_v4.py'], 'original_capture_transition_identity')
+    C.require(roster['parent_inventory_sha256'] == V.PIN['archive_inventory_v1.json']
+              and roster['parent_QA_sha256'] == V.PIN['postrun/final_QA_current.json']
+              and roster['parent_proof_sha256'] == anchor['parent_proof_sha256'], 'historical_semantic_anchor_identity')
+    C.require(len(roster['files']) == 34296 and len(roster['directories']) == 1344, 'historical_complete_capture_scope')
+    C.require(before['boot_id'] == transition['resumed_boot_id'], 'new_boot_requires_explicit_transition')
+    C.require(transition['preserved_workspace_projection_without_boot']==without_boot(roster['initial_workspace_projection']),'historical_workspace_capture_changed')
+    C.require(before['historical24_now_committed'] and before['live_tracked_diff_bytes']==0,'declared_resumed_committed_baseline')
+    C.require(before['business_tracked_count'] == 24 and before['business_diff_bytes'] == 151961
+              and before['business_diff_sha256'] == 'd901511293df5be4aecb988509e4c4107977dc7c05f042286869c36e0a239ba5',
+              'original_24_business_changes_changed')
+    C.require(roster['files'].get(REAL) == OLD_REAL, 'declared_live_exception_original_roster_identity')
+    pins = {path: dict(pin) for path,pin in roster['files'].items() if not Path(path).is_relative_to(M)}
+    for absent,row in RECOVERED_HEADERS.items():
+        old=pins.pop(absent);add_pin(pins,row['snapshot'],old['sha256'],old['bytes'],old.get('mode'))
+    DEFERRED_MPC_PINS.update({path:dict(pin) for path,pin in roster['files'].items() if Path(path).is_relative_to(M)})
+    for path, sha in anchor['provenance_file_sha256'].items():
+        add_pin(pins, path, sha)
+    for root, meta in ((P, PIN16), (A, PIN17)):
+        for rel, sha in meta.items():
+            add_pin(pins, root / rel, sha)
+    inv16 = reader.json(P / 'archive_inventory_v1.json')
+    delivery16 = reader.json(P / 'delivery_verification.json')
+    qa16 = reader.json(P / 'postrun/final_QA_current.json')
+    C.require(len(inv16['files']) == 2432 and delivery16['passed']
+              and delivery16['full_second_SHA_readback'] and delivery16['final_regular_files_per_root'] == 2435,
+              'C310_complete_archive_scope')
+    C.require(qa16['passed'] and qa16['stage_qualified'] is False and qa16['new_frozen_pairs'] == 2151
+              and len(qa16['fixed_source_header_input_hashes']) == 4303, 'C310_current_QA_scope')
+    C.require(qa16['parent_before'] == qa16['parent_after'] == inv16['protection']['parent']
+              == inv16['protection_after_prepare']['parent'] == delivery16['protected_before']['parent']
+              == delivery16['protected_after']['parent'], 'C310_archived_parent_proof_identity')
+    C.require(inv16['protection'] == inv16['protection_after_prepare'] == delivery16['protected_before']
+              == delivery16['protected_after'] and inv16['protection']['passed']
+              and inv16['protection']['current_fixed_paths'] == 4303
+              and inv16['protection']['new_frozen_pairs'] == 2151
+              and inv16['protection']['current_QA_sha256'] == PIN16['postrun/final_QA_current.json'],
+              'C310_current_archive_protection_identity')
+    old_proof = qa16['parent_after']
+    C.require(old_proof['flat_roster_sha256'] == anchor['roster_sha256']
+              and old_proof['parent_chain_proof_sha256'] == roster['parent_proof_sha256']
+              and old_proof['boot_transition_record_sha256'] == PIN16['preflight/boot_transition_v4.json']
+              and old_proof['old_run_or_endpoint_qualification_transferred'] is False
+              and old_proof['current_asset_recheck_boot_id'] == before['boot_id'], 'C310_archived_proof_scope')
+    archives16 = add_archive(pins, P, inv16, PIN16,
+                             ('archive_inventory_v1.json', 'delivery_verification.json', 'batch_status_final.json'))
+    for path, sha in qa16['fixed_source_header_input_hashes'].items():
+        add_pin(pins, path, sha)
+    frozen = reader.json(P / 'final_frozen_snapshot/manifest.json')
+    C.require(len(frozen['files']) == 2151, 'C310_frozen_population')
+    for row in frozen['files']:
+        for field in ('original', 'copy'):
+            add_pin(pins, row[field], row['sha256'], row['bytes'])
+    inv17 = reader.json(A / 'archive_inventory_v1.json')
+    delivery17 = reader.json(A / 'delivery_verification.json')
+    qa17 = reader.json(A / 'evidence/analysis_QA_v1.json')
+    audit17 = reader.json(A / 'evidence/rejection_audit_v1.json')
+    C.require(len(inv17['files']) == 6 and delivery17['passed']
+              and delivery17['full_second_SHA_readback'] and delivery17['final_files_per_root'] == 8
+              and qa17['passed'] and qa17['raw_inputs_before_after_equal']
+              and qa17['new_ROS_run'] is False and audit17['passed']
+              and audit17['source_inputs_before_sha256'] == audit17['source_inputs_after_sha256'], 'analysis_preserved_scope')
+    archives17 = add_archive(pins, A, inv17, PIN17, ('archive_inventory_v1.json', 'delivery_verification.json'))
+    analysis_inputs = {**audit17['source_inputs_before_sha256'], **qa17['source_code_document_pins']}
+    C.require(len(analysis_inputs) == 42, 'analysis_complete_input_scope')
+    for path, sha in analysis_inputs.items():
+        add_pin(pins, path, sha)
+    for path, target in roster['legacy_symlink_targets'].items():
+        if Path(path).is_relative_to(M):continue
+        C.require(Path(path).is_symlink() and os.readlink(path) == target, 'historical_symlink_changed:' + path)
+    for path, target in roster['legacy_symlink_logical_aliases'].items():
+        if Path(path).is_relative_to(M):continue
+        C.require(alias_preserved(path,target), 'historical_alias_changed:' + path)
+    archive18_population, author18_population, archived_parent18_proof = collect_parent18(pins, reader)
+    archive19_population,author19_population,archived_parent19_proof=collect_parent19(pins,reader)
+    archive20_population,author20_population=collect_parent20(pins,reader)
+    revision_path=K21/'postrun/revision01_author_freeze_v1.json'
+    C.require(C.digest(reader.raw(revision_path))=='93c285567872ef4602175f3cad4105f6d9c14ae6a2bc1dfe95e6b9c80757534c','revision01_frozen_manifest_changed')
+    revision=reader.json(revision_path);revision_names=set();revision_dirs=set(revision['directories'])
+    add_pin(pins,revision_path,'93c285567872ef4602175f3cad4105f6d9c14ae6a2bc1dfe95e6b9c80757534c')
+    for row in revision['files']:
+        revision_names.add(row['relative_path'])
+        for key in ['original','snapshot']:add_pin(pins,row[key],row['sha256'],row['bytes'])
+    revision_root=D.parent/'p1_execution_architecture_20261005_01/authored_D1_reference_time_anchor_20261017_v21'
+    C.require(V.population(revision_root)==(revision_names,revision_dirs)==V.population(K21/'revision01_author_snapshot'),'revision01_exact_frozen_population')
+    archive21_population,author21_population=collect_parent21(pins,reader)
+    archive22_population,author22_population=collect_parent22(pins,reader)
+    archive23_population,author23_population=collect_parent23(pins,reader)
+    archive24_population,author24_population=collect_parent24(pins,reader)
+    archive25_population,author25_population=collect_parent25(pins,reader)
+    archive26_population,author26_population=collect_parent26(pins,reader)
+    archive27_population,author27_population=collect_parent27(pins,reader)
+    archive28_population,author28_population=collect_parent28(pins,reader)
+    archive29_population,author29_population=collect_parent29(pins,reader)
+    archive30_population=collect_parent30(pins,reader)
+    archive31_population=collect_parent31(pins,reader)
+    archive32_population=collect_parent32(pins,reader)
+    archive33_population,authors33_population=collect_parent33(pins,reader)
+    archive34_population=collect_parent34(pins,reader)
+    archive35_population=collect_parent35(pins,reader)
+    archive36_population=collect_parent36(pins,reader)
+    archive37_population=collect_parent37(pins,reader)
+    archive38_population=collect_parent38(pins,reader)
+    archive39_population=collect_parent39(pins,reader)
+    archive40_population=collect_parent40(pins,reader)
+    archive41_population=collect_parent41(pins,reader)
+    archive42_population=collect_parent42(pins,reader)
+    archive43_population=collect_parent43(pins,reader)
+    archive44_population=collect_parent44(pins,reader)
+    archive45_population=collect_parent45(pins,reader)
+    archive46_population=collect_parent46(pins,reader)
+    archive47_population=collect_parent47(pins,reader)
+    archive48_population=collect_parent48(pins,reader)
+    check_dependency_aliases()
+    check_compiler_aliases()
+    # Flattened selected_assets can also name a previously recorded tool alias.
+    # Only aliases already bound by sealed dependency records may be normalized.
+    for logical,target in {**DEPENDENCY_LOGICAL_ALIASES,**ADDITIONAL_COMPILER_ALIASES}.items():
+        if logical in pins:
+            pin=pins.pop(logical)
+            add_pin(pins,target,pin['sha256'],pin.get('bytes'),pin.get('mode'))
+    for path in pins:
+        C.require(not Path(path).is_symlink(),'unrecorded_symlink_pin:'+path)
+    total_bytes = 0
+    for path, pin in sorted(pins.items()):
+        actual = V.stable_sha(path)
+        if path == REAL:
+            C.require(pin == OLD_REAL and actual == NEW_REAL, 'exactly_declared_live_original_path_exception')
+        elif path=='/home/trevor/USV/.gitignore':
+            C.require(pin=={'bytes':1052,'mode':436,'sha256':'f9cf0ccc6e4c897602540a4b76f331838b9cf7a84e4bb46f2f0e67ae0006a942'},'historical_ignore_pin_changed')
+            C.require(actual=={'bytes':1287,'mode':436,'sha256':'76125a286206337d24ced7066e3f40d2bc51d8c15d72991d551f35aaddadf966'} and Path(path).read_bytes()==(D/'preflight/gitignore_resumed_current.snapshot').read_bytes(),'resumed_committed_ignore_changed')
+        else:
+            C.require(all(actual[key] == value for key, value in pin.items()), 'sealed_raw_file_changed:' + path)
+        total_bytes += actual['bytes']
+    verify_resumed_delta()
+    check_dependency_aliases()
+    check_compiler_aliases()
+    for path, entries in roster['directories'].items():
+        if Path(path).is_relative_to(M):DEFERRED_MPC_DIRECTORIES[path]=entries;continue
+        C.require(V.directory_entries(path) == entries, 'historical_population_changed:' + path)
+    for root, expected in ((P, archives16), (A, archives17)):
+        C.require(V.population(root) == expected, 'sealed_population_changed_during_read:' + str(root))
+    for root in (H,):
+        C.require(V.population(root) == archive18_population, 'D18_sealed_population_changed_during_stream')
+    C.require(V.population(N18) == author18_population, 'N18_sealed_population_changed_during_stream')
+    for root in (J,):C.require(V.population(root)==archive19_population,'D19_archive_population_changed_during_stream')
+    C.require(V.population(N19)==author19_population,'N19_original_population_changed_during_stream')
+    for root in (K,):C.require(V.population(root)==archive20_population,'D20_archive_population_changed')
+    C.require(V.population(N20)==author20_population,'N20_population_changed')
+    C.require(V.population(revision_root)==(revision_names,revision_dirs),'revision01_population_changed_during_stream')
+    for root in (K21,):C.require(V.population(root)==archive21_population,'D21_population_changed')
+    C.require(V.population(N21)==author21_population,'N21_population_changed')
+    for root in (K22,):C.require(V.population(root)==archive22_population,'D22_archive_population_changed')
+    C.require(V.population(N22)==author22_population,'N22_population_changed')
+    C.require(V.population(K23)==archive23_population and V.population(N23)==author23_population,'D23_N23_local_population_changed')
+    C.require(V.population(K24)==archive24_population and V.population(N24)==author24_population,'D24_N24_local_population_changed')
+    C.require(V.population(K25)==archive25_population and V.population(N25)==author25_population,'D25_N25_local_population_changed')
+    C.require(V.population(K26)==archive26_population and V.population(N26)==author26_population,'D26_N26_local_population_changed')
+    C.require(V.population(K27)==archive27_population and V.population(N27)==author27_population,'D27_N27_local_population_changed')
+    C.require(V.population(K28)==archive28_population and V.population(N28)==author28_population,'D28_N28_local_population_changed')
+    C.require(V.population(K29)==archive29_population and V.population(N29)==author29_population,'D29_N29_population_changed')
+    C.require(V.population(K30)==archive30_population,'D30_population_changed')
+    C.require(V.population(K31)==archive31_population,'D31_population_changed')
+    C.require(V.population(K32)==archive32_population,'D32_population_changed')
+    C.require(V.population(K33)==archive33_population,'D33_population_changed')
+    for root,pop in authors33_population:C.require(V.population(root)==pop,'D33_author_population_changed')
+    C.require(V.population(K34)==archive34_population,'D34_population_changed')
+    C.require(V.population(K39)==archive39_population,'D39_population_after')
+    C.require(V.population(K40)==archive40_population,'D40_population_after')
+    C.require(V.population(K41)==archive41_population,'D41_population_after')
+    C.require(V.population(K42)==archive42_population,'D42_population_after')
+    C.require(V.population(K43)==archive43_population,'D43_population_after')
+    C.require(V.population(K44)==archive44_population,'D44_population_after')
+    C.require(V.population(K45)==archive45_population,'D45_population_after')
+    C.require(V.population(K46)==archive46_population,'D46_population_after')
+    C.require(V.population(K47)==archive47_population,'D47_population_after')
+    C.require(V.population(K48)==archive48_population,'D48_population_after')
+    C.require(V.population(K38)==archive38_population,'D38_population_after')
+    C.require(V.population(K37)==archive37_population,'D37_population_after')
+    C.require(V.population(K36)==archive36_population,'D36_population_after')
+    C.require(V.population(K35)==archive35_population,'D35_population_changed')
+    C.require(reader.unchanged(), 'metadata_changed_during_stream_recheck')
+    after = workspace()
+    C.require(projection(before) == projection(after), 'old_workspace_changed_during_recheck')
+    return {'schema': 'SchemeA-fault-close-local-preservation/v1', 'passed': True,'local_D34_files':245,'D34_offline_only_scope_retained':True,'local_D33_files':1028,'local_N33_and_r2_files':612,'D33_two_normal_failures_retained':True,
+            'parent_D22_archive_pairs':1885,'parent_N22_author_pairs':301,'parent_D22_RMSE_failure_preserved':True,'parent_D22_inventory_sha256':PIN22['archive_inventory_v1.json'],
+            'parent_D21_archive_pairs':1676,'parent_N21r2_author_pairs':291,'parent_D21_first_revision_pairs':272,'parent_D21_failed_gates_preserved':True,'parent_D21_inventory_sha256':PIN21['archive_inventory_v1.json'],
+            'parent_D20_archive_pairs':928,'parent_N20_author_pairs':291,
+            'parent_D20_performance_failure_preserved':True,
+            'parent_D20_inventory_sha256':PIN20['archive_inventory_v1.json'],
+            'parent_D20_QA_sha256':PIN20['postrun/final_QA_v1.json'],
+            'parent_D19_archive_pairs':853,
+            'parent_D19_fixed_QA_files':850,
+            'parent_N19_author_pairs':528,
+            'parent_N19_original_and_snapshot_directories':33,
+            'parent_D19_closed_twenty_second_component_records':4,
+            'parent_D19_inventory_sha256':PIN19['archive_inventory_v1.json'],
+            'parent_D19_QA_sha256':PIN19['postrun/final_QA_v1.json'],
+            'parent_D19_final_protection_sha256':PIN19['preflight/workspace_final_v2.json'],
+            'parent_D19_recorded_compiler_aliases_rechecked':len(ADDITIONAL_COMPILER_ALIASES),
+            'parent_D19_recorded_compiler_alias_mapping':dict(sorted(ADDITIONAL_COMPILER_ALIASES.items())),
+            'parent_D19_cases_requalified_for_new_research_or_endpoints':False,
+            'parent_D18_archive_pairs': 2503,
+            'parent_D18_fixed_QA_files': 2499,
+            'parent_N18_author_pairs': 957,
+            'parent_N18_original_directories': 103,
+            'parent_N18_snapshot_directories': 95,
+            'parent_N18_named_empty_build_directories': 8,
+            'parent_D18_inventory_sha256': PIN18['archive_inventory_v1.json'],
+            'parent_D18_QA_sha256': PIN18['postrun/final_QA_v1.json'],
+            'parent_D18_final_protection_sha256': PIN18['preflight/workspace_final_v4.json'],
+            'parent_D18_semantic_and_raw_proof_preserved': True,
+            'recursive_parent_protect_called': False,
+            'parent_D18_recorded_dependency_logical_aliases_rechecked': len(DEPENDENCY_LOGICAL_ALIASES),
+            'parent_D18_recorded_dependency_alias_mapping': dict(sorted(DEPENDENCY_LOGICAL_ALIASES.items())),
+            'initial_logical_alias_adapter_failure_retained': True,
+            'parent_D18_component_results_requalified': False,
+            'historical_flat_roster_sha256': anchor['roster_sha256'],
+            'historical_raw_paths_checked': sum(not Path(p).is_relative_to(M) for p in roster['files']),
+            'historical_raw_paths_equal_original_bytes': sum(not Path(p).is_relative_to(M) for p in roster['files']) - 1,
+            'all_historical_original_path_bytes_unchanged': False,
+            'raw_paths_equal_recorded_old_bytes': len(pins) - 1,
+            'explicit_live_original_path_exceptions': [{'path': REAL, 'old_pin': OLD_REAL, 'current_pin': NEW_REAL,
+                'diff_bytes': 515, 'diff_sha256': DELTA_DIFF_SHA, 'origin': 'unknown; present before resumed turn',
+                'current_live_file_edited_or_restored_by_this_batch': False,
+                'old_bytes_retained_in_original_Git_HEAD': True,
+                'historical_recovery_snapshot_written_at_resume': True}],
+            'resume_record_sha256': RESUMED_PINS,
+            'historical_directory_populations_rechecked': sum(not Path(p).is_relative_to(M) for p in roster['directories']),
+            'historical_capture_provenance_files_rechecked': len(anchor['provenance_file_sha256']),
+            'historical_logical_aliases_rechecked': len(roster['legacy_symlink_logical_aliases']),
+            'parent_C310_archive_pairs': 2435, 'parent_C310_fixed_QA_paths': 4303,
+            'parent_C310_frozen_pairs': 2151, 'analysis_archive_pairs': 8,
+            'analysis_inputs_reread': len(analysis_inputs), 'unique_raw_files_reread': len(pins),
+            'logical_bytes_streamed': total_bytes, 'full_declared_current_byte_sha_recheck': False, 'full_local_current_byte_sha_recheck':True, 'MPC_mirror_current_bytes_verified':False, 'MPC_unavailable_expected_file_count':len(DEFERRED_MPC_PINS), 'local_D23_archive_files':413, 'local_N23_source_files':6, 'local_D24_archive_files':402, 'local_N24_source_files':6, 'D24_MPC_delivery_pending_preserved':True, 'local_D25_archive_files':420, 'local_N25_source_files':7, 'D25_MPC_delivery_pending_preserved':True, 'local_D32_archive_files':175, 'D32_component_only_and_delivery_preserved':True, 'local_D31_archive_files':37, 'D31_registration_only_and_delivery_retained':True, 'local_D30_archive_files':75, 'D30_original_qualification_preserved':True, 'local_D29_archive_files':961, 'local_N29_source_files':331, 'D29_original_RMSE_failure_preserved':True, 'D29_MPC_delivery_pending_preserved':True, 'local_D28_archive_files':1765, 'local_N28_source_files':325, 'D28_MPC_delivery_pending_preserved':True, 'local_D27_archive_files':1558, 'local_N27_source_files':315, 'D27_MPC_delivery_pending_preserved':True, 'local_D26_archive_files':230, 'local_N26_source_files':8, 'D26_MPC_delivery_pending_preserved':True,
+            'parent_D18_capture_scope': 'archived component records and exact bytes; no current endpoint or stage qualification inherited',
+            'parent_inventory_sha256': PIN16['archive_inventory_v1.json'],
+            'parent_QA_sha256': PIN16['postrun/final_QA_current.json'],
+            'analysis_inventory_sha256': PIN17['archive_inventory_v1.json'],
+            'archived_parent_proof_sha256': C.digest(V.canon(old_proof)),
+            'historical_semantics_recomputed': False,
+            'historical_semantic_capture_retained': True,
+            'semantic_capture_boot_id': transition['original_capture_boot_id'],
+            'current_asset_recheck_boot_id': before['boot_id'],
+            'old_run_or_endpoint_qualification_transferred': False,
+            'new_current_endpoints_verified': False,
+            'workspace_status_excluded_untracked_roots_only': list(OLD_ROOTS + SEALED_LATER_ROOTS + PARENT_ROOTS + NEW_ROOTS),
+            'sealed_later_roots_exact_population_required': list(SEALED_LATER_ROOTS + PARENT_ROOTS),
+            'new_mutable_untracked_roots_only': list(NEW_ROOTS),
+            'first_projection_failure_evidence_retained': True,
+            'only_one_explicit_current_live_path_delta_permitted': True,
+            'parent_proof_wrapper_shape_failure_evidence_retained': True,
+            'initial_full_untracked_snapshot_unavailable': True,
+            'initial_full_untracked_list_before_original_capture_retrospectively_proven': False,
+            'HEAD': after['HEAD'], 'branch': after['branch'], 'boot_id': after['boot_id'],
+            'business_tracked_count': 24, 'business_diff_bytes': 151961,
+            'business_diff_sha256': after['business_diff_sha256'],
+            'actual_Witness_normal_business': False, 'normal_business_contract_qualified': False,
+            'stage_qualified': False, 'execute_qualified': False, 'research_conclusion': False}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, required=True)
+    args = parser.parse_args()
+    C.require(args.output.is_absolute() and args.output.parent == D / 'preflight', 'new_preflight_output_only')
+    started = time.monotonic()
+    before = workspace()
+    try:
+        proof = protect()
+        for key in list(proof):
+            if key.endswith('archive_pairs'):proof[key.replace('archive_pairs','local_archive_files')]=proof.pop(key)
+        proof['explicit_absent_original_header_content_recovery']=RECOVERED_HEADERS
+        proof['historical_original_paths_all_unchanged']=False
+        proof['resumed_gitignore_committed_delta']={'old_sha256':'f9cf0ccc6e4c897602540a4b76f331838b9cf7a84e4bb46f2f0e67ae0006a942','new_sha256':'76125a286206337d24ced7066e3f40d2bc51d8c15d72991d551f35aaddadf966','source':'new committed HEAD; changed before this batch; old bytes not reconstructed','preserved_current_snapshot':'preflight/gitignore_resumed_current.snapshot'}
+        proof['remote_mirror_expectations_preserved_not_read']=DEFERRED_MPC_PINS
+        proof['remote_directory_expectations_not_read']=DEFERRED_MPC_DIRECTORIES
+        result = {'passed': True, 'protection': proof, 'workspace_before': before,
+                  'workspace_after': workspace(), 'endpoints_checked': False,
+                  'stage_qualified': False, 'research_conclusion': False}
+    except Exception as error:
+        result = {'passed': False, 'error': repr(error), 'traceback': __import__('traceback').format_exc(), 'workspace_before': before,
+                  'workspace_after': workspace(), 'stage_qualified': False, 'research_conclusion': False}
+    result['elapsed_seconds'] = time.monotonic() - started
+    V.write_new(args.output, result)
+    print(json.dumps({'passed': result['passed'], 'error': result.get('error'),
+                      'elapsed_seconds': result['elapsed_seconds'], 'output': str(args.output)}, sort_keys=True))
+    return 0 if result['passed'] else 2
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

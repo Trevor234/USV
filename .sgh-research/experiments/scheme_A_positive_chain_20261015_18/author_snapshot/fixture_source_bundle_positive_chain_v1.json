@@ -1,0 +1,46 @@
+{
+  "execute_qualified": false,
+  "files": {
+    "common/p1_create_only_atomic.hpp": {
+      "bytes": 2937,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/common/p1_create_only_atomic.hpp",
+      "sha256": "1cce5a2c1c5ec7c05483dbf3f850bf46aeeaf0b5facd87bf9616a4e7225359e8"
+    },
+    "common/p1_owned_identity.hpp": {
+      "bytes": 12545,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/common/p1_owned_identity.hpp",
+      "sha256": "26457395586b14cd43a2dad2e79b18580c2755f2a43271195c9108ee557327f7"
+    },
+    "fixture/CMakeLists.txt": {
+      "bytes": 1388,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/fixture/CMakeLists.txt",
+      "sha256": "a8766831e898cb96d049964d0a0ebaa5dd62e98f85e91dccb2c29acda0883620"
+    },
+    "fixture/synthetic_source.cpp": {
+      "bytes": 7163,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/fixture/synthetic_source.cpp",
+      "sha256": "703e49fa26bb53f56adde251466170e1fc2c04e4f5a3fc28fc30990bb883b717"
+    },
+    "fixture/test_zero_reference.cpp": {
+      "bytes": 3241,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/fixture/test_zero_reference.cpp",
+      "sha256": "f5522472bf0d1568ed813705888e0a64f90ef2f3ae3832ccbb52aa103a99df2b"
+    },
+    "fixture/zero_reference.hpp": {
+      "bytes": 1369,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_positive_chain_20261015_v18/fixture/zero_reference.hpp",
+      "sha256": "a34fc26e6c61818cfb4dfc72ed9b7317ca0d4a842916ec9d8823178b3af736be"
+    }
+  },
+  "parent_source_bundle": {
+    "files": 4,
+    "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture_source_bundle_C3_4_v1.json",
+    "sha256": "f092c4205f4fbf69cfba48fb4c8ebc4a5fe5882a74372ef18dd15cb1e707be71"
+  },
+  "reference_kind": "stationary_zero_equilibrium",
+  "reference_speed_m_s": 0.0,
+  "research_conclusion": false,
+  "role": "fixture",
+  "schema": "p1-positive-chain-fixture-source/v1",
+  "stage_qualified": false
+}

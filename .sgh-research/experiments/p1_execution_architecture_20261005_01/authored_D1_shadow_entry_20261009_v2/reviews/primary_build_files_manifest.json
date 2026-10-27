@@ -1,0 +1,101 @@
+{
+  "schema": "p1-D1-primary-build-files-v1",
+  "files": [
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build_result.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\000_build_result.json",
+      "bytes": 20642,
+      "sha256": "db40b14065cbd7a37ce5b17fb01d3d794dc1bef7a024af3953773487d2d20426"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/test_d0_observation.xml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\001_test_d0_observation.xml",
+      "bytes": 3131,
+      "sha256": "e53c236a28865993e5a5c8c2378174c3b9f116f1c409f9d3c036db9961fe55dd"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/test_enqueue_branch.xml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\002_test_enqueue_branch.xml",
+      "bytes": 3635,
+      "sha256": "594c746588e5bfa177ab4e761150ec87b5bf426fd4730d93cb47898d0c3a4d6a"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/test_shadow_entry.xml",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\003_test_shadow_entry.xml",
+      "bytes": 8160,
+      "sha256": "8c055d90efa622b44ca88954a40d2859bac5f39907abb6abc825b5055f1a057a"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build_supervision/compile.console.log",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\004_compile.console.log",
+      "bytes": 1070,
+      "sha256": "d85d747e2fecebb7327a5a8feb8f0fc6066922a938b7804336e65ac5934448b2"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build_supervision/configure.console.log",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\005_configure.console.log",
+      "bytes": 2522,
+      "sha256": "7e7ac913c13303ab336940394469be33e1eca6747d5d57e2c74dcd631db6f397"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build_supervision/test_d0_observation.console.log",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\006_test_d0_observation.console.log",
+      "bytes": 1728,
+      "sha256": "44e861d9324737fd0f8315a7e54052f16fb1d303c5797195f58925b99a7efbbc"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build_supervision/test_enqueue_branch.console.log",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\007_test_enqueue_branch.console.log",
+      "bytes": 1677,
+      "sha256": "ffdb2bab39545264eeccccf9555ac7227a6560528cc8b72615a10ff3645a7d32"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build_supervision/test_shadow_entry.console.log",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\008_test_shadow_entry.console.log",
+      "bytes": 3908,
+      "sha256": "7913b9b188033c97bac9b8d0f0314ca1250016a5a5f5b782c31d1e660d16de80"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build_supervision/owned_process_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\009_owned_process_ledger.jsonl",
+      "bytes": 6560,
+      "sha256": "bd5216c1c0cf2e7ca9a11a65ba69810e7b113846e5c07e03c80abfb88dbe8ba8"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build/CMakeFiles/p1_regulator_shadow_observer.dir/flags.make",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\010_flags.make",
+      "bytes": 2095,
+      "sha256": "b7657f021eed74f4f7cce82c303fa9a1d87306d7aeb5ce08fe1d9b0e2e53b96b"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build/CMakeFiles/test_d0_observation.dir/flags.make",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\011_flags.make",
+      "bytes": 2329,
+      "sha256": "f325629105900ebb8c935fa163449a34fdc7d1531e29a18a03e131cd0251e9d7"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build/CMakeFiles/test_enqueue_branch.dir/flags.make",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\012_flags.make",
+      "bytes": 2350,
+      "sha256": "dd88235f5f5e0edc29dd1a1662bbccf1b603c27fc08949950ace1a94ed3c2614"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v2/build/CMakeFiles/test_shadow_entry.dir/flags.make",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\013_flags.make",
+      "bytes": 2329,
+      "sha256": "f325629105900ebb8c935fa163449a34fdc7d1531e29a18a03e131cd0251e9d7"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_shadow_entry_20261009_v1/build_supervision/owned_process_ledger.jsonl",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\014_owned_process_ledger.jsonl",
+      "bytes": 2313,
+      "sha256": "bc6cc5593bdb40fd498afbc70f6b0f0b2f3cb12066956487eaff443811eab87d"
+    },
+    {
+      "remote_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/D1_entry_v1_failure_assets_20261009.json",
+      "local_path": "C:\\Users\\sgh\\Documents\\Codex\\2026-10-02\\referenced-chatgpt-conversation-this-is-an-2\\work\\p1_execution_architecture_2026-10-05\\m0b_D1_prerequisites_20261009\\raw_v2\\015_D1_entry_v1_failure_assets_20261009.json",
+      "bytes": 58694,
+      "sha256": "7d9f6059d1565bbf814efc971592bb7d9b4d4dfae1ea76ce88bb3c19aa7e336c"
+    }
+  ]
+}

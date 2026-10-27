@@ -1,0 +1,76 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "case": "R1",
+  "case_summary": {
+    "api_pairs": 0,
+    "physical_API_calls": 0
+  },
+  "declared_exceptions": [
+    "R1.regulator.exit_code_3",
+    "R1.regulator.witness_not_observation_complete"
+  ],
+  "input_continuity": 37,
+  "max_tick_start_jitter_ns": 0,
+  "mutation_rejections": [
+    "exit_code_fabricated",
+    "applied_command_tampered",
+    "raw_time_tampered_flags_false",
+    "duplicate_stored_message",
+    "undeclared_source_loss"
+  ],
+  "pair_stream": {
+    "max_gap_ns": [
+      0,
+      0
+    ],
+    "max_rate_n_s": [
+      0.0,
+      0.0
+    ],
+    "max_span_ns": 0
+  },
+  "passed": true,
+  "recorder_and_fixture": {
+    "fixture_normal_end": true,
+    "recorder_clean": true
+  },
+  "registration_discrepancies": [],
+  "research_conclusion": false,
+  "role_exit_codes": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 3,
+    "worker": 0
+  },
+  "run_id": "M4_owned_fault_20261021_53_R1",
+  "schema": "M4-owned-fault-audit-v2",
+  "shutdown": {
+    "absent": "R1 cancels before any business tick"
+  },
+  "source_and_witness": {
+    "regulator_dropped": 0,
+    "witness_observation_complete": false
+  },
+  "typed_equality": {
+    "applied": 0,
+    "candidates": 0,
+    "decisions": 0,
+    "jobs": 0,
+    "pairs": 0,
+    "stored_counts": {
+      "/clock": 31,
+      "/p1/worker_capability": 5,
+      "/path/reference": 2,
+      "/path/reference_profile": 2,
+      "/wamv/sensors/imu/imu/data": 31,
+      "/wamv/sensors/position/ground_truth_odometry": 31
+    }
+  },
+  "wire_transport": {
+    "extra": 1,
+    "observed": 101,
+    "stored": 102
+  }
+}

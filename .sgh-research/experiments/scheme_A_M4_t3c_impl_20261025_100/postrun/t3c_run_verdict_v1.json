@@ -1,0 +1,225 @@
+{
+  "batch": 100,
+  "cases": {
+    "T3C_C12": {
+      "driver_rc": 2,
+      "driver_stderr_tail": "",
+      "driver_stdout_tail": "{\"passed\": false, \"error\": null, \"elapsed_seconds\": 5.642318421974778, \"output\": \"/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3c_impl_20261025_100/implementation/runs/T3C_C12\"}\n",
+      "elapsed_seconds": 6.1,
+      "ok": true,
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3c_impl_20261025_100/implementation/runs/T3C_C12"
+    },
+    "T3C_C3": {
+      "driver_rc": 0,
+      "driver_stderr_tail": "",
+      "driver_stdout_tail": "{\"passed\": true, \"error\": null, \"elapsed_seconds\": 3.0824382069986314, \"output\": \"/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3c_impl_20261025_100/implementation/runs/T3C_C3\"}\n",
+      "elapsed_seconds": 3.519,
+      "ok": true,
+      "output": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_t3c_impl_20261025_100/implementation/runs/T3C_C3"
+    }
+  },
+  "checks": [
+    {
+      "detail": {
+        "closed": 4,
+        "elapsed": 6.1
+      },
+      "name": "C12.driver_completed_within_budget",
+      "passed": true
+    },
+    {
+      "detail": {
+        "spawns": [
+          "fixture",
+          "worker",
+          "recorder",
+          "regulator"
+        ]
+      },
+      "name": "C12.exactly_four_single_spawns",
+      "passed": true
+    },
+    {
+      "detail": [
+        "actual_role_authenticated",
+        "cleanup_failed",
+        "owned_role_closed",
+        "role_spawned",
+        "t2_action_executed",
+        "t2_actual_output_authorized",
+        "t2_command_evidence"
+      ],
+      "name": "C12.no_restart_events",
+      "passed": true
+    },
+    {
+      "detail": {
+        "check_deadline_ns": 1000000000,
+        "checked_ns": 891123168443191,
+        "finished_ns": 891123168439741,
+        "group_empty": false,
+        "pid": 305797,
+        "returncode": 0,
+        "role": "fixture",
+        "signals": [
+          {
+            "sent_ns": 891120248616089,
+            "signal": "SIGINT",
+            "wait_seconds": 2.5
+          },
+          {
+            "sent_ns": 891122753861679,
+            "signal": "SIGTERM",
+            "wait_seconds": 1.0
+          }
+        ],
+        "type": "cleanup_failed"
+      },
+      "name": "C12.cleanup_failed_event_present_for_fixture",
+      "passed": true
+    },
+    {
+      "detail": [
+        "fixture"
+      ],
+      "name": "C12.cleanup_failed_roles_field",
+      "passed": true
+    },
+    {
+      "detail": [
+        {
+          "sent_ns": 891120248616089,
+          "signal": "SIGINT",
+          "wait_seconds": 2.5
+        },
+        {
+          "sent_ns": 891122753861679,
+          "signal": "SIGTERM",
+          "wait_seconds": 1.0
+        }
+      ],
+      "name": "C12.fixture_ladder_int_term_no_kill",
+      "passed": true
+    },
+    {
+      "detail": {
+        "recorder": {
+          "empty": true,
+          "rc": 0
+        },
+        "regulator": {
+          "empty": true,
+          "rc": 0
+        },
+        "worker": {
+          "empty": true,
+          "rc": 0
+        }
+      },
+      "name": "C12.other_roles_healthy",
+      "passed": true
+    },
+    {
+      "detail": {
+        "forked_steady_ns": 891122756493994,
+        "killable": true,
+        "pid": 305869,
+        "policy": "t3_close_survivor_v1",
+        "self_deadline_ms": 3000
+      },
+      "name": "C12.survivor_recorded",
+      "passed": true
+    },
+    {
+      "detail": {
+        "pgid": 305797,
+        "waited_s": 2.2
+      },
+      "name": "C12.survivor_self_terminated_bounded",
+      "passed": true
+    },
+    {
+      "detail": {
+        "passed": false
+      },
+      "name": "C12.run_declared_failed",
+      "passed": true
+    },
+    {
+      "detail": {
+        "closed": 4,
+        "elapsed": 3.519
+      },
+      "name": "C3.driver_completed_within_budget",
+      "passed": true
+    },
+    {
+      "detail": {
+        "spawns": [
+          "fixture",
+          "worker",
+          "recorder",
+          "regulator"
+        ]
+      },
+      "name": "C3.exactly_four_single_spawns",
+      "passed": true
+    },
+    {
+      "detail": [
+        "actual_role_authenticated",
+        "owned_role_closed",
+        "role_spawned",
+        "t2_action_executed",
+        "t2_actual_output_authorized",
+        "t2_command_evidence"
+      ],
+      "name": "C3.no_restart_events",
+      "passed": true
+    },
+    {
+      "detail": {
+        "events": [],
+        "field": []
+      },
+      "name": "C3.no_cleanup_failed",
+      "passed": true
+    },
+    {
+      "detail": {
+        "fixture": {
+          "empty": true,
+          "ladder": [
+            "SIGINT"
+          ],
+          "rc": 0
+        },
+        "recorder": {
+          "empty": true,
+          "ladder": [
+            "SIGINT"
+          ],
+          "rc": 0
+        },
+        "regulator": {
+          "empty": true,
+          "ladder": [
+            "SIGINT"
+          ],
+          "rc": 0
+        },
+        "worker": {
+          "empty": true,
+          "ladder": [
+            "SIGINT"
+          ],
+          "rc": 0
+        }
+      },
+      "name": "C3.all_roles_healthy_close",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "schema": "T3-cleanup-run-verdict/v1"
+}

@@ -1,0 +1,37 @@
+{
+  "applied_endpoint": {
+    "gid": [
+      1,
+      15,
+      151,
+      211,
+      193,
+      16,
+      241,
+      218,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      30,
+      4
+    ],
+    "kind": "subscription",
+    "topic": "/research/control/applied",
+    "type": "usv_research_interfaces/msg/AppliedControl"
+  },
+  "applied_matched_publishers": 1,
+  "boot_id": "d9ebbc36-acd7-46ac-a805-bfe3c9eedd39",
+  "checked_steady_ns": 73816870280994,
+  "contract_sha256": "0e3eb70e74e922059ff17014ab1971b8a9fe20be0171964fc26410b7d769a933",
+  "execute_qualified": false,
+  "fixture_only": true,
+  "owned_manifest_sha256": "a868415fd43fdebcbabebcfcb21986211f23bdebc19d19358ca822895f61b37c",
+  "pid": 69825,
+  "process_start_ticks": 7381346,
+  "role": "observer",
+  "run_id": "owned_source_v4_01",
+  "schema": "p1-owned-native-reader-ready-v1"
+}

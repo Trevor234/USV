@@ -1,0 +1,6 @@
+{
+  "legacy_input_path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_startup_rti_mechanism_20261018_v23/actual_startup_input_v1.json",
+  "legacy_input_sha256": "66fcf57e255c4843d551f74464d7cda3fb0f1d5832c589484a55b96d8f5ea475",
+  "candidate_result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_causal_cold_start_20261018_26/replay/native_causal_cold_v1.json",
+  "candidate_result_sha256": "64a94b463f5eaacca2703646e44065e4a4a91cd347e74eb4ddc8c4c4d30af514"
+}

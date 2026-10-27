@@ -1,0 +1,78 @@
+--- /home/trevor/USV/.sgh-research/experiments/scheme_A_V2_supervisor_bridge_20261019_36/author/observer/src/shadow/regulator_shadow_observer.cpp
++++ /home/trevor/USV/.sgh-research/experiments/scheme_A_V3_activation_interleave_20261019_37/author/observer/src/shadow/regulator_shadow_observer.cpp
+@@ -30,6 +30,7 @@
+ #include "p1_admission.hpp"
+ #include "publication_result_v1.hpp"
+ #include "activation_sensor_history_v1.hpp"
++#include "activation_interleave_v1.hpp"
+ #include "p1_clock_window.hpp"
+ #include "p1_worker_liveness.hpp"
+ #include "p1_preparation_barrier.hpp"
+@@ -95,6 +96,9 @@
+       const std::filesystem::path path(v1_fault_file_);
+       p1_owned::require(path.is_absolute()&&std::filesystem::is_directory(path.parent_path())&&!std::filesystem::exists(path)&&!std::filesystem::is_symlink(std::filesystem::symlink_status(path)),"V1 fault evidence must be a fresh absolute path");
+     }else p1_owned::require(v1_fault_file_.empty(),"disabled V1 cannot have evidence output");
++    v3_policy_=declare_parameter<std::string>("diagnostic_v3_input_policy","none");
++    const auto v3_budget=declare_parameter<int64_t>("diagnostic_v3_wait_ns",0);
++    activation_interleave::validate(v3_policy_,v3_budget,mode_,audit,c_.at("fault_injection_enabled").get<bool>(),v1_enabled_);
+     p1::shadow::EntryPolicy policy{mode_,run_,boot_,source_file,witness_file_,source_path,expected_source,expected_binary,expected_worker,instance,
+       expected_worker_pid_,audit,hooks,expected_legacy_identity_};
+     policy.validate(); // All application publisher/sink creation is below this gate.
+@@ -198,7 +202,7 @@
+       p1_owned::subscription_endpoint(*applied_,"usv_research_interfaces/msg/AppliedControl"),
+       p1_owned::subscription_endpoint(*controlled_phase_subscription_,"std_msgs/msg/String")});
+     p1_owned::write_create_only(owned_file,p1_owned::role_manifest(*this,"observer",run_,hash_,P1_OWNED_SOURCE_BUNDLE_SHA256,endpoints,
+-      {{"source_fd",p1_owned::source_fd_identity(source_file)},{"contract_configuration",c_},{"diagnostic_v1_sink_policy",v1_policy_},{"diagnostic_v1_fault_file",v1_fault_file_},
++      {{"source_fd",p1_owned::source_fd_identity(source_file)},{"contract_configuration",c_},{"diagnostic_v1_sink_policy",v1_policy_},{"diagnostic_v1_fault_file",v1_fault_file_},{"diagnostic_v3_input_policy",v3_policy_},{"diagnostic_v3_wait_ns",v3_budget},
+        {"worker_instance",instance},{"runtime_hook_values",hooks},{"expected_legacy_identity",expected_legacy_identity_.json()},
+        {"physical_publisher_endpoints",0},{"adapter_peer_binding",owner_peer_->evidence()},{"worker_peer_binding",worker_peer_->evidence()},{"adapter_pins_sha256",peer_sha},{"controlled_phase_peer_binding",controlled_owner_phase_peer_->evidence()},{"controlled_phase_enabled",true},{"controlled_phase_baseline",controlled_phase::baseline}}));
+     wait_recording_ready();
+@@ -352,7 +356,7 @@
+   Snapshot snapshot_source_locked(int64_t now){Snapshot s;s.activation_history_generation=activation_sensor_history_.generation();s.state=state_;s.ref=ref_;s.input_commit_ordinal=input_commit_ordinal_;s.path_fingerprint=path_fingerprint_;s.profile_fingerprint=profile_fingerprint_;s.anchor=anchor_;s.version=version_;s.odom_seq=odom_seq_;s.imu_seq=imu_seq_;s.odom_stamp=odom_stamp_;s.imu_stamp=imu_stamp_;s.odom_receive=odom_receive_;s.imu_receive=imu_receive_;s.clock_receive=clock_receive_;s.sim=sim_;s.freeze=now;s.mixed=mixed_;s.paused=paused_;s.rtf_valid=rtf_valid_;s.rtf=rtf_;s.anchor_source=mode_=="shadow"?"legacy_publisher":mode_=="execute"?"regulator_publisher":"synthetic_static_fixture";s.anchor_producer=mode_=="shadow"?legacy_producer_:p1::digest(run_+boot_+std::to_string(getpid()));s.anchor_run=mode_=="shadow"?legacy_run_:run_;return s;}
+   Snapshot snapshot_locked(int64_t now){auto s=snapshot_source_locked(now);s.activation_frames=activation_sensor_history_.copy();s.history.assign(history_.begin(),history_.end());s.publication_history=publication_history_;return s;}
+   struct ActivationAttemptRecord {
+-    Snapshot raw,guard;activation_alignment::Selection selection;p1::d0::Observation gate_observation;
++    Snapshot raw,guard;activation_interleave::Record interleave;activation_alignment::Selection selection;p1::d0::Observation gate_observation;
+     int64_t copied_ns=0,commit_check_ns=0,final_commit_ns=0;bool retry=false,predicted_available=false;
+     p1::State predicted{};std::string reason;
+   };
+@@ -372,6 +376,7 @@
+         {"input_change_gate_unchanged",p1::d0::nullable_bool(r.gate_observation.input_change_gate_unchanged)},
+         {"input_gate_reads",p1::d0::gate_reads_json(r.gate_observation)},{"guard_snapshot",p1::d0::source_json(r.guard)},
+         {"commit_check_ns",r.commit_check_ns},{"retry",r.retry},{"reason",r.reason}};
++      if(r.interleave.used){const auto &w=r.interleave;a["diagnostic_interleave"]={{"policy",activation_interleave::policy},{"begin_ns",w.begin_ns},{"deadline_ns",w.deadline_ns},{"end_ns",w.end_ns},{"wait_budget_ns",activation_interleave::wait_budget_ns},{"captured_odom_sequence",w.captured_sequence},{"observed_before",w.observed_before},{"observed_after",w.observed_after},{"changed",w.changed},{"cancelled",w.cancelled},{"business_mutex_held_during_wait",false},{"original_jitter_budget_unchanged",true}};}
+       if(!r.retry){a["final_commit_ns"]=r.final_commit_ns;a["predicted_state"]=r.predicted_available?p1::Json(r.predicted):p1::Json(nullptr);}
+       trace["attempts"].push_back(std::move(a));
+     }
+@@ -531,8 +536,10 @@
+   void odom(const nav_msgs::msg::Odometry & m,const p1::Json *raw=nullptr){auto now=p1::monotonic_ns();auto & p=m.pose.pose.position;auto & q=m.pose.pose.orientation;auto & t=m.twist.twist;std::array<double,5> a={p.x,p.y,t.linear.x,t.linear.y,t.angular.z};std::array<double,4> quat={q.x,q.y,q.z,q.w};bool valid=usv_mpc::admit_odom(a,quat)&&m.header.frame_id==c_.at("expected_pose_frame")&&m.child_frame_id==c_.at("expected_child_frame");std::lock_guard<std::mutex> l(mutex_);++input_commit_ordinal_;++odom_received_;
+     if(valid){state_=usv_mpc::compose_odom(a,quat);odom_seq_=odom_received_;odom_stamp_=stamp(m.header.stamp);odom_receive_=now;mixed_=false;activation_odom_generation_=activation_sensor_history_.generation();}
+     const auto activation_frame=valid?remember_activation_sensor_locked("odom",odom_received_):p1::Json(nullptr);
+-    sink_->add({{"type","odom_admission"},{"activation_sensor_frame",activation_frame},{"input_commit_ordinal",input_commit_ordinal_},{"raw_input",raw?*raw:p1::Json(nullptr)},{"sequence",odom_received_},{"valid",valid},{"pose_frame",m.header.frame_id.substr(0,128)},{"pose_frame_truncated",m.header.frame_id.size()>128},{"child_frame",m.child_frame_id.substr(0,128)},{"child_frame_truncated",m.child_frame_id.size()>128},{"accepted_sequence",odom_seq_},{"stamp_ns",stamp(m.header.stamp)},{"receive_ns",now},{"state",std::array<double,6>{state_[0],state_[1],state_[2],state_[3],state_[4],state_[5]}}});
++    const auto v3_commit_ns=v3_policy_==activation_interleave::policy&&valid?p1::monotonic_ns():0;
++    sink_->add({{"type","odom_admission"},{"diagnostic_v3_commit_ns",v3_commit_ns},{"activation_sensor_frame",activation_frame},{"input_commit_ordinal",input_commit_ordinal_},{"raw_input",raw?*raw:p1::Json(nullptr)},{"sequence",odom_received_},{"valid",valid},{"pose_frame",m.header.frame_id.substr(0,128)},{"pose_frame_truncated",m.header.frame_id.size()>128},{"child_frame",m.child_frame_id.substr(0,128)},{"child_frame_truncated",m.child_frame_id.size()>128},{"accepted_sequence",odom_seq_},{"stamp_ns",stamp(m.header.stamp)},{"receive_ns",now},{"state",std::array<double,6>{state_[0],state_[1],state_[2],state_[3],state_[4],state_[5]}}});
+     try_legacy_ready_locked(p1::monotonic_ns());
++    if(v3_commit_ns)v3_interleave_.observe_odom(odom_seq_);
+   }
+   void imu(const sensor_msgs::msg::Imu & m,const p1::Json *raw=nullptr){auto now=p1::monotonic_ns();std::lock_guard<std::mutex> l(mutex_);++input_commit_ordinal_;++imu_received_;const bool valid=usv_mpc::admit_imu(m.angular_velocity.z)&&m.header.frame_id==c_.at("expected_imu_frame");if(valid){usv_mpc::compose_imu(state_,m.angular_velocity.z);imu_seq_=imu_received_;imu_stamp_=stamp(m.header.stamp);imu_receive_=now;mixed_=true;}const auto activation_frame=valid?remember_activation_sensor_locked("imu",imu_received_):p1::Json(nullptr);sink_->add({{"type","imu_admission"},{"activation_sensor_frame",activation_frame},{"input_commit_ordinal",input_commit_ordinal_},{"raw_input",raw?*raw:p1::Json(nullptr)},{"sequence",imu_received_},{"valid",valid},{"frame_id",m.header.frame_id.substr(0,128)},{"frame_truncated",m.header.frame_id.size()>128},{"r_value",m.angular_velocity.z},{"accepted_sequence",imu_seq_},{"stamp_ns",stamp(m.header.stamp)},{"receive_ns",now}});try_legacy_ready_locked(p1::monotonic_ns());}
+   void path(const nav_msgs::msg::Path & m,const p1::Json *raw=nullptr){auto next=std::make_shared<usv_mpc::ReferenceInput>();std::string fingerprint;
+@@ -960,6 +967,11 @@
+         p1::d0::observe_prediction(observation,predicted,d.activation_state,t->prediction);
+         if(reason.empty()){Eigen::Vector2d request(cand->first_control[0],cand->first_control[1]);auto mapped=usv_mpc::map_vrx(request,c_.at("map_scale"),limits_.low,limits_.high,c_.at("publisher_max_n"));d.requested_n=cand->first_control;d.final_n={mapped[0],mapped[1]};reason=p1::command_check(d.final_n,s.anchor,now,limits_);if((mapped-request).norm()>1e-9)reason="candidate_mapping_changed";}
+       }else if(reason.empty())reason="no_candidate";
++      // Deliberately outside mutex_: the actual executor must be able to finish
++      // a source admission. The original planned tick/jitter/deadline is retained.
++      saved.interleave=v3_interleave_.wait(v3_policy_==activation_interleave::policy,
++        reason.empty()&&attempt==0&&t&&cand&&last_accepted_>0,s.odom_seq,
++        []{return p1::monotonic_ns();},[this]{return stopping_.load()||stop_requested.load()||worker_unusable_.load();});
+ #ifdef P1_C33_MATRIX_TEST
+       if(c33_before_commit_)c33_before_commit_(tick);
+ #endif
+@@ -1068,6 +1080,7 @@
+     }
+     prep_stop_=true;prep_cv_.notify_all();finished_=true;
+   }
++  std::string v3_policy_="none";activation_interleave::Once v3_interleave_;
+   std::string v1_policy_,v1_fault_file_;uint64_t v1_await_sequence_=0;bool v1_enabled_=false,v1_armed_=false,v1_report_written_=false;
+   bool controlled_phase_enabled_=false,controlled_previous_hold_changed_=false;
+   controlled_phase::Identity controlled_owner_identity_;controlled_phase::PeerBinding controlled_applied_binding_,controlled_phase_binding_;

@@ -6,8 +6,8 @@ VecNormalize statistics. Existing ONNX files are never overwritten.
 
 Example::
 
-    python -m usv_rl.export_policy --model models/v5/s4_dr/model.zip \
-        --vecnorm models/v5/s4_dr/vecnormalize.pkl --thrust-scale-n 25.0 \
+    python -m usv_rl.export_policy --model ../artifacts/rl_models/v5/s4_dr/model.zip \
+        --vecnorm ../artifacts/rl_models/v5/s4_dr/vecnormalize.pkl --thrust-scale-n 25.0 \
         --verification-obs experiments/observations.npy
 """
 from __future__ import annotations

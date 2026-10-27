@@ -1,0 +1,75 @@
+{
+  "M4_derived_runtime_binding": "future run manifest must bind this frozen index/contract, exact new source/bin/config and owned graph/GIDs; no backdating calibration role identity",
+  "calibration_contract_sha256": "89caaaf36783463a1e1d789bda41f7f90dc398981ddb4b3b8cd6037114333f72",
+  "calibration_roles": [
+    {
+      "binary_sha256": "8f10c7fe1ca70539f98326e66a8a9591bcea4d32a016f83f2a04fe29bb2a279a",
+      "exe": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/cmake_build/p1_controlled_phase_publisher",
+      "manifest_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/publisher/owned_manifest.json",
+      "role": "publisher",
+      "scope": "calibration role under old diagnostic/shadow entry, not new execute owner qualification",
+      "source_bundle": {
+        "files": 18,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_positive_chain_20261015_18/build/controlled_publisher_attempt03/source_bundle.json",
+        "sha256": "275ce043b1b0b3f068c8d8e5180b50ffa5adf2c68f5089be83586cf7c98cf453"
+      }
+    },
+    {
+      "binary_sha256": "6ad949b4ce68db8d26d97d6409c2d710739750ec107bf0ee735edfbf63f11a58",
+      "exe": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/build/v2_worker_attempt01/cmake_build/p1_solver_worker_owned_v2",
+      "manifest_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/worker/owned_manifest.json",
+      "role": "worker",
+      "scope": "calibration role under old diagnostic/shadow entry, not new execute owner qualification",
+      "source_bundle": {
+        "files": 30,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_V2_watchdog_lease_20261019_35/build/v2_worker_attempt01/source_bundle.json",
+        "sha256": "ec2fbfe28c644eef5142422ce2634a8cb1dc3eda507aff4665f66e67eaffa888"
+      }
+    },
+    {
+      "binary_sha256": "96fc74eb839367b6d420c6d698cc0302d242e1b57a879aaf39f4470d07aa7096",
+      "exe": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/build/business_observer_attempt01/cmake_build/p1_regulator_shadow_observer_owned_v2",
+      "manifest_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/observer/owned_manifest.json",
+      "role": "observer",
+      "scope": "calibration role under old diagnostic/shadow entry, not new execute owner qualification",
+      "source_bundle": {
+        "files": 40,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_owned_business_start_20261020_39/build/business_observer_attempt01/source_bundle.json",
+        "sha256": "73781fb06b348b78b72459259600db3c3be4e6a1b8a96af19773bbe16737a977"
+      }
+    },
+    {
+      "binary_sha256": "4071cf717c28181a0f4ead7d13813ae652224627ba3fe1f96d72bb16f6ba9ece",
+      "exe": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/cmake_build/p1_controlled_phase_fixture",
+      "manifest_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/synthetic_source/owned_manifest.json",
+      "role": "synthetic_source",
+      "scope": "calibration role under old diagnostic/shadow entry, not new execute owner qualification",
+      "source_bundle": {
+        "files": 14,
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_longitudinal_20261016_19/build/controlled_fixture_attempt01/source_bundle.json",
+        "sha256": "9ae9f9a5a1ce37efe7a11e25947ea6ca643f8564095bf33ce95fddaaebd7cee9"
+      }
+    },
+    {
+      "binary_sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+      "exe": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/build01/p1_owned_recorder",
+      "manifest_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_current_normal_source_20261020_46/author_r2/runs/normal_source20s_03/recorder/owned_manifest.json",
+      "role": "recorder",
+      "scope": "calibration role under old diagnostic/shadow entry, not new execute owner qualification",
+      "source_bundle": {
+        "files": 4,
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+        "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+      }
+    }
+  ],
+  "formal_prepare_contract_sha256": "1faedd4bbf7338ffbd3bc1f9b049285e58d7c3605816d416ac2b83fbfd5365fb",
+  "new_execute_runtime_binary_qualified": false,
+  "nominal_hash": "78d7133fd4f11d47bd534d820b02489e440bd8664bef254893e830fe4bc7dc84",
+  "old_pre_freeze_and_failed_runs_retained": true,
+  "physical_execute_release_enabled": false,
+  "schema": "P1-M0b-calibration-and-policy-assets/v1",
+  "selected_new_policy_entry_probe_binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/build/components_attempt02/entry_probe",
+  "selected_new_policy_entry_source": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/implementation/native/owned_execution_entry_v2.hpp",
+  "selected_profile_validator_probe_binary": "/home/trevor/USV/.sgh-research/experiments/scheme_A_formal_execute_profile_20261020_47/build/components_attempt01/contract_probe"
+}

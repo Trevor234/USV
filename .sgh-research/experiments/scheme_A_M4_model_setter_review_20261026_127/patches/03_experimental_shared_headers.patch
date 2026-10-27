@@ -1,0 +1,45 @@
+--- a/experimental_model/model_transaction_v1.hpp
++++ b/experimental_model/model_transaction_v1.hpp
+@@ -22,6 +22,7 @@
+ #include <acados_c/ocp_nlp_interface.h>
+ #include "acados_solver_usv_dyn_nmpc.h"
+ #include "usv_mpc_cpp/utils.hpp"
++#include "usv_mpc_cpp/p_global_apply.hpp"
+ #include <Eigen/Dense>
+ #include <array>
+ #include <algorithm>
+@@ -115,7 +116,10 @@
+     state_ = TransactionState::FAULTED; has_committed_ = false;
+     try {
+       ++stats_.setter_calls;
+-      if (api_.set_global(capsule_, const_cast<double *>(pg.data()), NPG) != 0) return false;
++      if (!usv_mpc::p_global::apply_with(capsule_, pg,
++          [this](auto * capsule, double * values, int size) {
++            return api_.set_global(capsule, values, size);
++          }).ok()) return false;
+       if (!warm_.at(staged_).has) {
+         ++stats_.reset_calls;
+         if (api_.reset(capsule_, 1) != 0) return false;
+--- a/experimental_model/test_f6_model_transaction.cpp
++++ b/experimental_model/test_f6_model_transaction.cpp
+@@ -28,19 +28,7 @@
+   return p;
+ }
+ std::array<double, 30> make_p_global(const MpcParams & p) {
+-  // Layout pinned to acados_backend.cpp L45-67: 19 hydro + 6 Q + 2 R + 2 Rd + 1 Qf.
+-  std::array<double, 30> pg{};
+-  const auto & h = p.hydro;
+-  pg[0] = h.mass; pg[1] = h.Iz; pg[2] = h.xg; pg[3] = h.d_thruster;
+-  pg[4] = h.Xu_dot; pg[5] = h.Yv_dot; pg[6] = h.Yr_dot; pg[7] = h.Nv_dot;
+-  pg[8] = h.Nr_dot; pg[9] = h.Xu; pg[10] = h.Yv; pg[11] = h.Yr;
+-  pg[12] = h.Nv; pg[13] = h.Nr; pg[14] = h.Xuu; pg[15] = h.Yvv;
+-  pg[16] = h.Yrr; pg[17] = h.Nvv; pg[18] = h.Nrr;
+-  for (int i = 0; i < 6; ++i) pg[19 + i] = p.Q_diag(i);
+-  pg[25] = p.R_diag(0); pg[26] = p.R_diag(1);
+-  pg[27] = p.Rd_diag(0); pg[28] = p.Rd_diag(1);
+-  pg[29] = p.Qf_scale;
+-  return pg;
++  return usv_mpc::p_global::pack(p);
+ }
+ Eigen::MatrixXd ref_tick(int k) {          // .05 straight, 6 x 21
+   Eigen::MatrixXd R(6, 21);

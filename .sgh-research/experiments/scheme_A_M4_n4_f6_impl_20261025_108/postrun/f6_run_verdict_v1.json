@@ -1,0 +1,80 @@
+{
+  "auto_retry": 0,
+  "batch": 108,
+  "cases": [
+    {
+      "assertion_count": 2,
+      "case": "F6-1",
+      "elapsed_seconds": 0.005,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 2,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/runs/F6-1/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=F6-1 passed=true assertions=2\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 4,
+      "case": "F6-2",
+      "elapsed_seconds": 0.003,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 4,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/runs/F6-2/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=F6-2 passed=true assertions=4\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 3,
+      "case": "F6-3",
+      "elapsed_seconds": 0.005,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 3,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/runs/F6-3/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=F6-3 passed=true assertions=3\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 5,
+      "case": "F6-4",
+      "elapsed_seconds": 0.003,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 5,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/runs/F6-4/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=F6-4 passed=true assertions=5\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 4,
+      "case": "F6-5",
+      "elapsed_seconds": 0.005,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 4,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/runs/F6-5/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=F6-5 passed=true assertions=4\n",
+      "timed_out": false
+    },
+    {
+      "assertion_count": 2,
+      "case": "F6-6",
+      "elapsed_seconds": 0.005,
+      "passed": true,
+      "rc": 0,
+      "registered_count": 2,
+      "result_path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_n4_f6_impl_20261025_108/implementation/runs/F6-6/result.json",
+      "stderr_tail": "",
+      "stdout_tail": "case=F6-6 passed=true assertions=2\n",
+      "timed_out": false
+    }
+  ],
+  "passed": true,
+  "schema": "F6-run-verdict/v1"
+}

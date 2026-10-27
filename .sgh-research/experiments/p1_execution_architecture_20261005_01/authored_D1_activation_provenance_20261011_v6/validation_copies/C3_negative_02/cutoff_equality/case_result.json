@@ -1,0 +1,23 @@
+{
+  "case": "cutoff_equality",
+  "expected_code": "original_cutoff_take",
+  "passed": true,
+  "observed_codes": [
+    "original_cutoff_take"
+  ],
+  "mutation": {
+    "coherent_stored_CDR_updates": [
+      {
+        "id": 364,
+        "topic": "/p1/execution_decision"
+      }
+    ],
+    "source_files": [
+      "observer/source.jsonl",
+      "worker/source.jsonl",
+      "observer/witness.json"
+    ]
+  },
+  "report": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_activation_provenance_20261011_v6/validation_copies/C3_negative_02/cutoff_equality/C3_report.json",
+  "original_authenticity_qualified": false
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="8" failures="0" disabled="0" errors="0" time="0.008" timestamp="2026-10-08T02:16:25.237" name="AllTests">
+  <testsuite name="SinkTest" tests="7" failures="0" disabled="0" skipped="0" errors="0" time="0.008" timestamp="2026-10-08T02:16:25.237">
+    <testcase name="DefaultOffCannotArmAndRetainsSourceSemantics" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="15" status="run" result="completed" time="0." timestamp="2026-10-08T02:16:25.237" classname="SinkTest" />
+    <testcase name="ConstructorAlsoRejectsUnboundedPause" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="30" status="run" result="completed" time="0." timestamp="2026-10-08T02:16:25.237" classname="SinkTest" />
+    <testcase name="OnceArmAndConcurrentEnqueueDuringFinitePause" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="31" status="run" result="completed" time="0.001" timestamp="2026-10-08T02:16:25.237" classname="SinkTest" />
+    <testcase name="CloseCancelsLongPauseAndDoesNotWaitFiveSeconds" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="39" status="run" result="completed" time="0.001" timestamp="2026-10-08T02:16:25.238" classname="SinkTest" />
+    <testcase name="ActualOverflowIsIndependentOfLaterClose" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="42" status="run" result="completed" time="0.001" timestamp="2026-10-08T02:16:25.239" classname="SinkTest" />
+    <testcase name="ClosingRejectionIsNotCapacityOverflow" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="51" status="run" result="completed" time="0." timestamp="2026-10-08T02:16:25.241" classname="SinkTest" />
+    <testcase name="ExistingSourceBytesAreNotTruncated" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="55" status="run" result="completed" time="0.004" timestamp="2026-10-08T02:16:25.241" classname="SinkTest" />
+  </testsuite>
+  <testsuite name="DiagPolicy" tests="1" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-10-08T02:16:25.245">
+    <testcase name="ModeFaultAndFiniteBounds" file="/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_B1_diag_20261008_v3/diag/test_p1_diag_sink.cpp" line="23" status="run" result="completed" time="0." timestamp="2026-10-08T02:16:25.245" classname="DiagPolicy" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,21 @@
+{
+  "schema": "M4-plan-v79-final",
+  "recorded_at": "2026-10-25T13:46:05.696413+08:00",
+  "steps": [
+    {
+      "id": "T2-B boundary infrastructure",
+      "status": "milestone",
+      "detail": "identity chain fully working; scope/contract/boundary/action/receipts all pass"
+    },
+    {
+      "id": "T2-B scenario semantics",
+      "status": "next",
+      "task": "examine Worker boundary release→C call→Candidate→Regulator rejection chain; Worker rc=2 isolation needs Driver gate update; version_mismatch=0 needs root-cause"
+    },
+    {
+      "id": "T2-C/T2-A/T3/N3/F6/P1",
+      "status": "retained"
+    }
+  ],
+  "stage_qualified": false
+}

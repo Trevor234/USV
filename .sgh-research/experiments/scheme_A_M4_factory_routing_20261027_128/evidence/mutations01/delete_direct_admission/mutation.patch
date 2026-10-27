@@ -1,0 +1,11 @@
+--- original
++++ delete_direct_admission
+@@ -58,7 +58,7 @@
+ #ifdef USV_MPC_HAS_CASADI
+ std::unique_ptr<DynamicMpc> make_casadi_dynamic_mpc(const MpcParams & params)
+ {
+-  validate_model_parameters(params);
++
+   return std::make_unique<CasadiBackend>(params);
+ }
+ #endif

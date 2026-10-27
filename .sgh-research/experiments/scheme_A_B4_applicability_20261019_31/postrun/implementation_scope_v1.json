@@ -1,0 +1,15 @@
+{
+  "execute_qualified": false,
+  "fields": 81,
+  "final_targeted_checks": "verification/targeted_checks_v2.json",
+  "final_verifier": "verification/verify_register_v2.json",
+  "hydro": 19,
+  "input_pins": 123,
+  "original_control_changes": false,
+  "passed": true,
+  "research_conclusion": false,
+  "roles": 5,
+  "stage_qualified": false,
+  "targeted_rejected": 13,
+  "typed_digests": 5
+}

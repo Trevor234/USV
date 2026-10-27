@@ -1,0 +1,12 @@
+{
+  "schema": "M4-T2C-v91",
+  "recorded_at": "2026-10-25T18:46:21.937042+08:00",
+  "milestone": "target-Job guard rejection",
+  "fix": "stop block no cleanup",
+  "audit": {
+    "ordering": true,
+    "guard": true,
+    "stopping": true
+  },
+  "owned": 1
+}

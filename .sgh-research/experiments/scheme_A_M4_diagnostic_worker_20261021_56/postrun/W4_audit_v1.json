@@ -1,0 +1,249 @@
+{
+  "F6_qualified": false,
+  "M4_stage_qualified": false,
+  "P1_qualified": false,
+  "api_pairs": {
+    "max_gap_ns": [
+      200177038,
+      200191730
+    ],
+    "max_rate_n_s": [
+      2.497788982170872,
+      2.497605670324144
+    ],
+    "max_span_ns": 55344,
+    "pairs": 7
+  },
+  "case": "W4",
+  "claim": "a missing candidate falls back under frozen policy; nothing goes terminal",
+  "contract_sha256": "3a8451d5172423adbef955d78c8550d67bbeec4582a80bd9ba69028b867b9f06",
+  "declared_exceptions": [],
+  "driver_cross_check": {
+    "agree": [
+      {
+        "audit": 1,
+        "driver": 1,
+        "field": "dropped_candidates"
+      }
+    ],
+    "disagree": []
+  },
+  "fallback_policy_recomputed": [
+    {
+      "age_since_accepted_ns": 200121183,
+      "observed": "hold",
+      "required": "hold",
+      "tick": 4
+    }
+  ],
+  "heartbeat": {
+    "capability_attempts": 11,
+    "regulator_admissions": 8,
+    "worst_heartbeat_gap_ns": 201177897
+  },
+  "job_ledger": {
+    "1": {
+      "kind": "delivered",
+      "replaced_by": null,
+      "solved": true,
+      "target_tick": 2,
+      "worker_received": true
+    },
+    "2": {
+      "kind": "delivered",
+      "replaced_by": null,
+      "solved": true,
+      "target_tick": 3,
+      "worker_received": true
+    },
+    "3": {
+      "kind": "dropped",
+      "replaced_by": null,
+      "solved": true,
+      "target_tick": 4,
+      "worker_received": true
+    },
+    "4": {
+      "kind": "delivered",
+      "replaced_by": null,
+      "solved": true,
+      "target_tick": 5,
+      "worker_received": true
+    },
+    "5": {
+      "kind": "delivered",
+      "replaced_by": null,
+      "solved": true,
+      "target_tick": 6,
+      "worker_received": true
+    }
+  },
+  "mutations_rejected": [
+    "forged_exit_code",
+    "decision_claims_qualified",
+    "duplicate_stored_job",
+    "ghost_publish_result",
+    "raw_time_tampered_flags_false",
+    "silent_hold_ramp",
+    "second_hook_invocation"
+  ],
+  "passed": true,
+  "recorder_fixture": {
+    "fixture_published_counts": {
+      "/clock": 95,
+      "/path/reference": 4,
+      "/path/reference_profile": 4,
+      "/wamv/sensors/imu/imu/data": 95,
+      "/wamv/sensors/position/ground_truth_odometry": 95
+    },
+    "recorder_clean": true
+  },
+  "registration": "/home/trevor/USV/.sgh-research/experiments/scheme_A_M4_diagnostic_worker_20261021_56/implementation/W4_registration_v1.json",
+  "registration_sha256": "7ce3468dcb3ac37959ffafcda5ace8a4fee19bf58875c468e7f7d76ba4216f24",
+  "research_conclusion": false,
+  "role_exit_codes": {
+    "fixture": 0,
+    "recorder": 0,
+    "regulator": 0,
+    "worker": 0
+  },
+  "role_signals": {
+    "fixture": [
+      "SIGINT"
+    ],
+    "recorder": [
+      "SIGINT"
+    ],
+    "regulator": [],
+    "worker": [
+      "SIGINT"
+    ]
+  },
+  "run_id": "M4_diagnostic_W4_20261022_05",
+  "schema": "M4-owned-diagnostic-audit-v1",
+  "scope": "M4_owned_diagnostic_worker_only_v1",
+  "shutdown": {
+    "grace_exceeded": false,
+    "zero_target_published": true
+  },
+  "target_tick_decisions": {
+    "0": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "unknown_anchor"
+    },
+    "1": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": null,
+      "reason": "no_candidate"
+    },
+    "2": {
+      "accepted": true,
+      "control_source": "candidate",
+      "job": 1,
+      "job_id_field": 1,
+      "kind": "delivered",
+      "reason": ""
+    },
+    "3": {
+      "accepted": true,
+      "control_source": "candidate",
+      "job": 2,
+      "job_id_field": 2,
+      "kind": "delivered",
+      "reason": ""
+    },
+    "4": {
+      "accepted": false,
+      "control_source": "hold",
+      "job": 3,
+      "job_id_field": 0,
+      "kind": "dropped",
+      "reason": "no_candidate"
+    },
+    "5": {
+      "accepted": true,
+      "control_source": "candidate",
+      "job": 4,
+      "job_id_field": 4,
+      "kind": "delivered",
+      "reason": ""
+    },
+    "6": {
+      "accepted": false,
+      "control_source": "ramp_zero",
+      "job": 5,
+      "job_id_field": 0,
+      "kind": "delivered",
+      "reason": "shutdown"
+    }
+  },
+  "transition": {
+    "transition": false
+  },
+  "typed": {
+    "applied": 7,
+    "candidates": 4,
+    "decisions": 7,
+    "jobs": 5,
+    "pairs": 7,
+    "published_candidates": 4,
+    "stored_counts": {
+      "/clock": 95,
+      "/p1/execution_decision": 7,
+      "/p1/solve_candidate": 4,
+      "/p1/solve_job": 5,
+      "/p1/worker_capability": 11,
+      "/path/reference": 4,
+      "/path/reference_profile": 4,
+      "/research/control/applied": 7,
+      "/wamv/sensors/imu/imu/data": 95,
+      "/wamv/sensors/position/ground_truth_odometry": 95,
+      "/wamv/thrusters/left/thrust": 7,
+      "/wamv/thrusters/right/thrust": 7
+    }
+  },
+  "unprovable_here": [
+    "a signal list of [] is consistent with both a clean exit and a close that happened before the Driver sampled; only the exit code distinguishes them",
+    "the capability DDS payloads themselves are checked by the wire reconciliation, not by these summary counters"
+  ],
+  "wire": {
+    "extra_capabilities": 1,
+    "observed": 340,
+    "stored": 341
+  },
+  "witness": {
+    "observation_complete": true,
+    "regulator_rows_generated": 342
+  },
+  "worker_accounting": {
+    "delivered": 4,
+    "dropped": 1,
+    "final_completed": 5,
+    "generated": 5,
+    "published": 4,
+    "unprovable_here": [
+      "the capability DDS payloads themselves are checked by the wire reconciliation, not by these summary counters"
+    ]
+  },
+  "worker_hooks": {
+    "candidate_order": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "dropped_job_id": 3,
+    "generated_at_drop": 3,
+    "hooks": {
+      "controlled_pre_native_barrier": 0,
+      "diagnostic_candidate_dropped": 1,
+      "diagnostic_v2_pre_native_enter": 0,
+      "terminal_exception": 0,
+      "terminal_numerical_failure": 0
+    }
+  }
+}

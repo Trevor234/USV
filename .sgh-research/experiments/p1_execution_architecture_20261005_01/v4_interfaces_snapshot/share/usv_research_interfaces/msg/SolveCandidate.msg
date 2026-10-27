@@ -1,0 +1,14 @@
+usv_research_interfaces/SolveJob job
+string<=64 worker_instance
+int64 worker_receive_ns
+int64 solve_start_ns
+int64 solve_end_ns
+bool solver_invoked
+bool success
+bool prediction_available
+string<=256 reason
+string<=16 backend
+float64 backend_ms
+float64[2] first_control
+float64[126] x_prediction
+float64[40] u_prediction

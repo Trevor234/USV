@@ -1,0 +1,35 @@
+{
+  "schema": "p1-resource-metadata-batch-v1",
+  "failure": "KeyError('/path/reference_profile')",
+  "result": null,
+  "steps": [
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_metadata_02.runner.log",
+      "returncode": 0,
+      "sha256": "9c43ebcf9ae17629d03232c69b0e9101a3bb3424d36f76ee992fcd8de0604170"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_metadata_02.base.log",
+      "returncode": 0,
+      "sha256": "720c62079799417b7f1b3b251fd1c5adfcf977d22b7e6104ea92b3a6bdf520d9"
+    },
+    {
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_metadata_02.delivery.log",
+      "returncode": 0,
+      "sha256": "cda6cc457538c999ec4406ef5e96b89afd2a6f663a83085b77b4341beffcc548"
+    }
+  ],
+  "asset_final": {
+    "manifest": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/resource_v29_prelaunch_assets_20261007.json",
+    "manifest_sha256": "d2a4b4d348fe30c05118e83fc057c591781c40a44379b4f8d952e5dfe5931a98",
+    "count": 1196,
+    "drift": []
+  },
+  "host_final": {
+    "boot_id": "5a417cdc-1c7f-4c5c-8186-6d7e9a85ddcb",
+    "monotonic_ns": 1126981387385979,
+    "existing_controller_gazebo_count": 0,
+    "unreadable_cmdline_count": 0
+  },
+  "execute_qualified": false
+}

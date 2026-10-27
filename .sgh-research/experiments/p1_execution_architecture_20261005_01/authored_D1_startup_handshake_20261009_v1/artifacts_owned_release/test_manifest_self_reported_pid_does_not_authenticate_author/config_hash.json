@@ -1,0 +1,13 @@
+{
+  "binary_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "boot_id": "boot",
+  "config_hash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "created_steady_ns": 1334592840088889,
+  "derived_publisher": true,
+  "pid": 100,
+  "process_start_ticks": 20,
+  "producer_instance_id": "run:100",
+  "run_id": "run",
+  "schema_version": "p1-D1-publisher-startup-v1",
+  "steady_clock_domain": "boot:steady_clock"
+}

@@ -1,0 +1,162 @@
+{
+  "P1_qualified": false,
+  "current_M4_runs": 0,
+  "derived_from_original_section8": true,
+  "fault_exception_policy": {
+    "capability_receipt_timeout": [
+      "terminal, no new job; current valid callback receipt only",
+      "no packet sequence/sendtime freshness claim"
+    ],
+    "forced_worker_exit": [
+      "worker_session_complete follows actual false/incomplete facts",
+      "cleanup_failed forbids restart"
+    ],
+    "intentional_source_queue_drop": [
+      "normal_contract_complete=false",
+      "drop count and reason exactly explained; extra loss fails"
+    ],
+    "partial_output": [
+      "normal_contract_complete=false",
+      "failed-side anchor unknown; successful side retained",
+      "rho_available reflects per-side facts"
+    ]
+  },
+  "finite_next_normal_budget": {
+    "automatic_retries": 0,
+    "cleanup_phase_bounds_from_contract": true,
+    "normal_source_window_ns": 20000000000,
+    "whole_driver_wall_timeout_ns": 45000000000
+  },
+  "future_fault_runs_require_case_specific_registration": true,
+  "groups": [
+    {
+      "acceptance": "same reused core; exact declared future-reference semantics; no hidden writer",
+      "current_M4_qualified": false,
+      "id": "compatibility_input",
+      "required_cases": [
+        "F5 source/reference/mapping qualified old regression and logging off/on",
+        "new target-reference independent fixture, no implicit physical writer"
+      ]
+    },
+    {
+      "acceptance": "complete absolute 150ms cutoff equality allowed, strict-after cutoff; target remains origin+200ms; no deadline extension or late activation",
+      "current_M4_qualified": false,
+      "id": "time_boundaries",
+      "required_cases": [
+        "50/150/250/400ms; ready before/equal/after deadline",
+        "early ready, wrong target, delayed tick"
+      ]
+    },
+    {
+      "acceptance": "multiple complete regulator ticks while worker blocked; active/pending/ready bounded; one backend only; delivery delay not called native block",
+      "current_M4_qualified": false,
+      "id": "native_block_and_delivery",
+      "required_cases": [
+        "worker held at native boundary until independent release",
+        "separate result delivery delay/drop"
+      ]
+    },
+    {
+      "acceptance": "invalid selection or normal output count=0; each candidate consumed at most once; bounded slots and explicit reason",
+      "current_M4_qualified": false,
+      "id": "candidate_identity_shape",
+      "required_cases": [
+        "failed, invalid shape, NaN, duplicate, old/reordered IDs",
+        "foreign producer/boot/version"
+      ]
+    },
+    {
+      "acceptance": "semantic task generation only; old task rejected before activation; new odom does not unconditionally starve",
+      "current_M4_qualified": false,
+      "id": "task_reference",
+      "required_cases": [
+        "clear/single point before freeze, clear/replacement during solve",
+        "same content republish, path/profile mismatch, ordinary new odom"
+      ]
+    },
+    {
+      "acceptance": "separate receipt/sim ages, IMU only if mixed; selected tolerances; epoch/schedule invalidation; no cross-domain subtraction or resurrection",
+      "current_M4_qualified": false,
+      "id": "state_clock",
+      "required_cases": [
+        "source stale/future, mixed skew, activation mismatch",
+        "pause/resume/reset/jump and RTF band"
+      ]
+    },
+    {
+      "acceptance": "actual per-side history; H=600ms from last accepted activation; rho80 each actual interval; missing anchor unavailable; no instant-zero rate fiction",
+      "current_M4_qualified": false,
+      "id": "anchor_fallback",
+      "required_cases": [
+        "mid-interval change/same-value republish/different API intervals/missing history",
+        "five misses, HOLD equality/after, invalid bypass, unknown side"
+      ]
+    },
+    {
+      "acceptance": "sole new owner; both calls attempted; successful side irreversible; unknown failed side; finite cleanup attempt/no restart until old group empty; request/API/process/plant flags separate",
+      "current_M4_qualified": false,
+      "id": "publication_exit",
+      "required_cases": [
+        "clear/shutdown before/after submit; left/right partial API outcomes",
+        "worker death, active watchdog, capability lease and cleanup failed"
+      ]
+    },
+    {
+      "acceptance": "normal source/Witness/raw/Stored accounting complete, full startup/business/fallback/shutdown API stream; fault flags follow declared exception, extra unexplained loss/error/overrun fails",
+      "current_M4_qualified": false,
+      "id": "actual_source_recording",
+      "required_cases": [
+        "new isolated normal straight0.05 then controlled faults",
+        "log queue pressure, source/emit/bag counts and before/after assets"
+      ]
+    }
+  ],
+  "normal_criteria": {
+    "both_output_writers_same_owned_regulator": true,
+    "complete_source_and_recording": true,
+    "full_stream_gap240ms": true,
+    "invalid_normal_actions": 0,
+    "unexplained_drops": 0
+  },
+  "normal_limits_from_contract": {
+    "T_ns": 200000000,
+    "activation_tolerance": [
+      0.25,
+      0.25,
+      0.15,
+      0.3,
+      0.2,
+      0.15
+    ],
+    "active_watchdog_ns": 1000000000,
+    "clock_age_ns": 100000000,
+    "clock_pause_confirm_ns": 400000000,
+    "deadline_ns": 150000000,
+    "hold_ns": 600000000,
+    "imu_age_ns": 100000000,
+    "kill_postcheck_ns": 1000000000,
+    "mixed_skew_ns": 100000000,
+    "odom_age_ns": 100000000,
+    "publish_budget_ns": 5000000,
+    "publish_gap_ns": 240000000,
+    "rho_n_s": 80,
+    "rtf_high": 1.05,
+    "rtf_low": 0.95,
+    "shutdown_grace_ns": 2500000000,
+    "term_grace_ns": 1000000000,
+    "tick_jitter_ns": 20000000,
+    "worker_capability_receipt_timeout_ns": 600000000,
+    "worker_grace_ns": 500000000
+  },
+  "profile_id": "P1_owned_nominal_execution_20261020_01",
+  "registered_before_M4": true,
+  "schema": "P1-M4-predeclared-fault-matrix/v1",
+  "scope_controls": [
+    "new run and old physical owner exited",
+    "sole regulator output only in isolated owned nominal fixture; no Gazebo/plant/hardware",
+    "normal first, then controlled fault cases",
+    "no threshold/RTI/cost/model tuning in a confirmation run",
+    "every new runtime/source/bin diff gets affected regression",
+    "physical production release remains closed"
+  ]
+}

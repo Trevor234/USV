@@ -1,0 +1,65 @@
+{
+  "schema": "schemeA-after-session-review-plan-v124",
+  "scope": "review recommendations; no production implementation or new owned run performed in 124",
+  "report": "documents/方案A_第124批_近期修改详解_代码质量复审与后续计划_2026-10-26.md",
+  "supersedes_current_interpretation_of": ["batch122 remaining-autonomous-work claim", "batch123 production integration readiness claims"],
+  "historical_assets_rewritten": false,
+  "autonomous_resource_free_work_remains": true,
+  "steps": [
+    {
+      "id": "P0",
+      "status": "recommended_next_implementation",
+      "task": "Fix offline validation and component identity boundaries before expanding reuse",
+      "items": [
+        "Q2 base captured by value, producer identity and complete event multiset assertions, ASAN regression",
+        "RNW one hard admission shared by freeze and real pre-spawn registration entry",
+        "separate R4 observation, full-run acceptance, coverage and stage qualification",
+        "full Job/ref-generation identity and logical commit time chain; required clauses aggregate strictly",
+        "105 keyword-only bool clause and non-tautological binding comparison",
+        "ScopedEpoch generation/open Proposal token and exact retired-ledger path tests",
+        "model nonzero generation, has_committed, finite/model domain and explicit commit/reset failure outcome",
+        "B2 checked arithmetic, receive-latency/cap domain and declared out-of-domain fail-closed",
+        "correct single innovation register wording without overwriting historical evidence"
+      ],
+      "acceptance": "actual positive controls and legitimate boundary cases pass; true invalid cases reject by intended named assertions; parser/compiler/unexecuted/unprepared failures cannot count as caught",
+      "existing_data_first": ["104 POS/NEG", "119 RNW3", "108 finite model positives"],
+      "automatic_owned_reruns": false,
+      "GP_plant_RT_resources_required": false
+    },
+    {
+      "id": "P1",
+      "status": "after_P0",
+      "task": "Establish one maintained source for new work and separately review each integration target",
+      "old_frozen_copies_preserved": true,
+      "candidates": [
+        {"name": "B2", "target": "research Fixture/simulation clock writer", "direct_real_ship_clock_patch": false},
+        {"name": "model_transaction", "target": "shared production Backend setter/packing plus single-owner Worker request queue", "direct_Backend_replacement": false,
+         "must_preserve": ["baked N/dt guards", "warm management", "failure fallback", "fail_count", "timing and identity semantics"]},
+        {"name": "scoped Epoch", "target": "task reference lifecycle/Regulator opt-in policy", "must_preserve": ["default old static policy", "full binding freshness", "same-lock invalidation/commit", "no stale Proposal commit"]}
+      ],
+      "suggested_control_chain_first_review": "model_transaction shared setter design after its input/state gates are fixed",
+      "bundle_candidates_together": false
+    },
+    {
+      "id": "P2",
+      "status": "conditional_on_new_behavior_evidence_needed",
+      "task": "Freeze unique identities and obtain minimal per-candidate integration/negative evidence",
+      "negative_control_scope": ["capability disabled preserves old policy", "capability enabled acts only in registered domain", "error/fallback path parity"],
+      "automatic_retries": 0,
+      "single_finite_execution": true,
+      "old_failure_evidence_preserved": true,
+      "budgets_unchanged": true,
+      "stage_qualification_not_automatic": true
+    },
+    {
+      "id": "P3",
+      "status": "separate_resource_and_writing_tracks",
+      "resource_decisions": ["F6 GP collection per existing 60x60s plan", "plant connection", "RT platform"],
+      "writing": "first build problem/mechanism/counterexample/fix/domain material and related-work baseline; local tests do not certify academic novelty",
+      "B0": "optional independent need; not a prerequisite for declared B2-domain progress"
+    }
+  ],
+  "review_only": {"production_fixes_implemented": false, "ROS_initialized": false, "owned_runs": 0},
+  "qualification": {"M4": false, "F6": false, "P1": false, "plant": false, "hard_realtime": false},
+  "production_B_mode": "MANUAL+RC override"
+}

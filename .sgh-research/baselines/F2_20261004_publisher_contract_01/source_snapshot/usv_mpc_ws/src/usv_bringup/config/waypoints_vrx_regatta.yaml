@@ -1,0 +1,16 @@
+# VRX sydney_regatta 世界演示航点（map 坐标系）
+#
+# 出生点约 (-532, 162)、初始航向约 1 rad(57°)（见 usv_simulation/vrx_spawn.py），
+# 航点沿初始航向前出，先直航 ~55m 验证跟踪，再两个缓弯回来，全程约 130m。
+# 格式见 usv_planning_cpp/src/waypoint_manager.cpp load_from_yaml_file：
+#   x/y 必填（map 系，米）；heading_deg/radius/stay_time 可选。
+#
+# 用法:
+#   ros2 launch usv_bringup vrx.launch.py scheme:=C \
+#       waypoints_file:=$HOME/USV/usv_mpc_ws/src/usv_bringup/config/waypoints_vrx_regatta.yaml ...
+waypoints:
+  - {x: -532.0, y: 162.0}    # 出生点（路径起点）
+  - {x: -502.0, y: 192.0}    # 沿 57° 航向直航 ~42m
+  - {x: -474.0, y: 205.0}    # 缓右转 ~30m
+  - {x: -452.0, y: 182.0}    # 右转回折 ~33m
+  - {x: -466.0, y: 152.0}    # 收尾直线 ~30m

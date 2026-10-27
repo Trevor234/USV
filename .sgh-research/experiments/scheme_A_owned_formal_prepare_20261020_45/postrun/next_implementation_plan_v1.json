@@ -1,0 +1,82 @@
+{
+  "B5_formal_freeze_qualified": false,
+  "M0b_qualified": false,
+  "M4_qualified": false,
+  "P1_qualified": false,
+  "component_complete_stop_expanding_this_work_package": true,
+  "current_batch45_proved": [
+    "formal84/fault=false Native preparation cold start and actual4role endpoint/config/process binding",
+    "actual authenticated source/lease/recording readiness; one actual grant and replay rejection",
+    "current revision zero jobs/forbiddenoutputs;INT-only4role close;Source/Stored371 typed accounted;prior370 preserved"
+  ],
+  "current_source_revision": "author_r2",
+  "new_ROS_session_registered_by_this_plan": false,
+  "next_order": [
+    {
+      "concrete_output": "一张原要求→当前实现/证据/真实缺项→最小动作的冻结差集矩阵；逐项绑定Observer39/Worker35/当前driver与formal84源版本",
+      "must_check": [
+        "连续20s当前recipe域、实际非零动作/速度/turn/mixed/skew范围是否仍缺；39–42短域不能拼接",
+        "B4选定工程假设/时间保证/域外处理及pending8与真实冻结条件的映射",
+        "完整Regulator no_output源/参考/锚点语义：当前45只准备关闭、没有Job/Decision/Witness，不授权假legacy Applied或默认零实际锚点",
+        "形式化profile依赖controlled-phase的策略与现有shadow-only业务入口是否仍有精确实现差集；保留旧guard，必要则新独立版本"
+      ],
+      "order": 1,
+      "task": "按原D1/B4/B5/M0b冻结门建立最终版本差集，不把45批准备链改写为完整Regulator或动态来源结论。"
+    },
+    {
+      "constraints": [
+        "不得扩大为全面重跑39–42故障/恢复，也不重跑已证45准备/Ctor测试",
+        "完整no_output实现差集若必要，必须显式标记虚拟/实际命令与出处，不伪造Applied、plant ACK或主时钟硬界",
+        "不添加半RMSE/RTI调参或新的性能门；现有失败和研究NoGo保留",
+        "每个有变更实现只复验影响条件；Native/Source/Witness/bin/contract/config/driver按最终同源身份绑定"
+      ],
+      "order": 2,
+      "task": "只补矩阵认定的最小实现/证据；若原D1正常20s窗未满足，先用现有已认证五角色、固定recipe和零hooks补一次事前注册的连续正常来源窗。"
+    },
+    {
+      "order": 3,
+      "prohibitions": [
+        "不得因shape-onlyFrozen/64hex marker授权物理执行",
+        "不得先清空pending8或改execute标志再找理由",
+        "不得把stationary prepare-only替代动态来源、执行/候选接纳或原压力条件"
+      ],
+      "task": "原B5/M0b条件成立后封存不可变合同/政策/模型/源码/bin/配置/工具；冻结证据hash必须指向真实产物与域。"
+    },
+    {
+      "P2_GP_PPO_or_full_collision_certificate_is_current_P1_prerequisite": false,
+      "order": 4,
+      "remaining": [
+        "soleoutput,newrun owner,per-side actualanchors,partial publish,hold/ramp5misses,shutdown,bootstrap-inclusive gaps,APIbudget",
+        "actual numeric model prepare/atomic model+plan commit,old/mixed candidates rejection,immutable savedplan and warm-start separation"
+      ],
+      "task": "随后推进M4真实唯一Regulator输出，再完成有限已知模型切换事务/F6并按原P1要求联合验收。"
+    }
+  ],
+  "not_new_P1_acceptance_conditions": true,
+  "original_order_authority": {
+    "files": {
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_B4_finite_scope_review_20261020_43/implementation/B4_selected_policy_review_v1.json": {
+        "bytes": 29643,
+        "sha256": "89a0b72bebe640e122ad32c147411d62e2122d246f8e069c1a9a0800e0d4930c"
+      },
+      "/home/trevor/USV/.sgh-research/experiments/scheme_A_B5_contract_parity_20261020_44/implementation/owned_no_output_integration_plan_v1.json": {
+        "bytes": 6152,
+        "sha256": "e502e7b4445ea744a44490486cd2fab6127605a5f30f3cc448162492af615410"
+      },
+      "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/source_docs/P1_时间与候选接纳契约及独立执行架构_最小实施计划_2026-10-05.md": {
+        "bytes": 79145,
+        "sha256": "372051418da9b8363fefee2c57210257849b297de6e4346133352cb8ff63d75d"
+      },
+      "/home/trevor/USV/.sgh-research/handoffs/scheme_A_20261010_01/方案A_UbuntuCodex交接与全面推进计划_2026-10-10.md": {
+        "bytes": 37342,
+        "sha256": "296cc1b3149d2bfe0c33f43d38ed642abf0ba12ad32e79e31b0055d4d0782cf6"
+      }
+    },
+    "handoff_section": "4.2 S5 and4.3 steps1..7"
+  },
+  "physical_execute_release_enabled": false,
+  "research_conclusion": false,
+  "resource_capacity_domain_checked": true,
+  "schema": "SchemeA-post-owned-formal-prepare-next-work/v1",
+  "stage_qualified": false
+}

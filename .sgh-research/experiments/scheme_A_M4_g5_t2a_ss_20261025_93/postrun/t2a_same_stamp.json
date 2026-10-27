@@ -1,0 +1,8 @@
+{
+  "schema": "M4-T2A-SS-v93",
+  "recorded_at": "2026-10-25T18:58:09.976944+08:00",
+  "result": "AUDIT PASSED",
+  "same_stamp_registered": true,
+  "silent": "not_covered(same_stamp run)",
+  "key": "G1 A-predicate fix verified: same_stamp checks actual stamp+receipt freshness"
+}

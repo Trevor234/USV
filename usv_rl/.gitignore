@@ -1,8 +1,5 @@
-# 训练产物不入库
+# 训练产物不入库（产物已集中到仓库顶层 artifacts/，见根 .gitignore）
 .venv/
-runs/
-models/
-artifacts/
 *.pkl
 *.zip
 *.onnx

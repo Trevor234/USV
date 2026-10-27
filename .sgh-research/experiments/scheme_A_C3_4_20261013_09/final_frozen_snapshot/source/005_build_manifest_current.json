@@ -1,0 +1,199 @@
+[
+  {
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/build01/p1_F5_held_publisher",
+    "binary_sha256": "d3ac6bd4c61af36a3fa8bf503b2a3436f96e056ab1192c22b76e082e882bfc01",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "configure_rc": 0,
+    "elapsed_seconds": 139.46279692101234,
+    "execute_qualified": false,
+    "install_performed": false,
+    "native_binaries": {
+      "test_publisher_startup": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/build01/test_publisher_startup",
+        "sha256": "d7963a43cd20cb274c6e94965a818db14d8be37cd12964db6bd519c19b46df6f"
+      }
+    },
+    "native_binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher/build01/test_publisher_startup",
+    "native_binary_sha256": "d7963a43cd20cb274c6e94965a818db14d8be37cd12964db6bd519c19b46df6f",
+    "native_build_rc": 0,
+    "node_launch_performed": false,
+    "parent_roles_verified_unchanged": true,
+    "passed": true,
+    "research_conclusion": false,
+    "role": "publisher",
+    "runtime_build_rc": 0,
+    "schema": "p1-C3.4-build/v1",
+    "source_bundle": {
+      "files": 9,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/publisher_source_bundle_C3_4_v1.json",
+      "sha256": "41efe37c6bbb15f155ee99f8dfcf0f116a602fc43fecab2bb8bb8204c9177cab"
+    },
+    "stage_qualified": false
+  },
+  {
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/p1_regulator_shadow_observer_owned_v2",
+    "binary_sha256": "e804d70844f747144501f3c697907f6c1087884115d2a64ce88571504b297756",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "component_source_bundle": {
+      "files": 28,
+      "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_4_20261013_09/C_lease/build_wire_v3/component_source_bundle_v2.json",
+      "sha256": "1e0e77ed38d71f686646c21841fcc1a3b0fc42833d300420228662dfe8f18c9b"
+    },
+    "configure_rc": 0,
+    "elapsed_seconds": 132.67973615499795,
+    "error": null,
+    "execute_qualified": false,
+    "failed_prototype_wire_target": "original c34_lease_wire_component is retained compile failure; corrected separately pinned component executable is current",
+    "install_performed": false,
+    "native_binaries": {
+      "c34_lease_wire_component": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_4_20261013_09/C_lease/build_wire_v3/c34_lease_wire_component_v2",
+        "sha256": "71cd36c0aed989e281d492eb2aafdff8ca92e15ed6dd4484ae3e0e54730c2da8"
+      },
+      "test_atomic_observation": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_atomic_observation",
+        "sha256": "f9773820f88c05f8174c169f4da19501ca15625cb273196b85b3671bb460aeb4"
+      },
+      "test_c33_input_matrix": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_c33_input_matrix",
+        "sha256": "7d285984089526a624e2f28a233b6f19592b6e57b939a8e874a71b3a3972003d"
+      },
+      "test_c34_lease_matrix": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_c34_lease_matrix",
+        "sha256": "d5710d86a72af1ebc7dbbaa8675eb7750c90e4337066777d07ee2068b6ec0025"
+      },
+      "test_d0_observation": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_d0_observation",
+        "sha256": "f83d96053200ff01f6df97ae960f9fdbb454f415c812a7b4376570dc5da9a842"
+      },
+      "test_enqueue_branch": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_enqueue_branch",
+        "sha256": "eeef63cce186250ecd670f0ea41ffedd773177dd9f82069cec62c9b6c3000594"
+      },
+      "test_legacy_ready": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_legacy_ready",
+        "sha256": "7e6e1780be5ef62a079e8961c1b97c982e512a946f48aef1fafc93d22a03abb7"
+      },
+      "test_shadow_entry": {
+        "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_shadow_entry",
+        "sha256": "750c26b220381fcf85db24234bb31d189783932cd727f298d0cb546363e052cb"
+      }
+    },
+    "native_binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer/build01/test_c33_input_matrix",
+    "native_binary_sha256": "7d285984089526a624e2f28a233b6f19592b6e57b939a8e874a71b3a3972003d",
+    "native_build_rc": 0,
+    "native_commands": [
+      {
+        "budget_seconds": 180,
+        "returncode": 0,
+        "target": "test_c33_input_matrix"
+      },
+      {
+        "budget_seconds": 180,
+        "returncode": 0,
+        "target": "test_c34_lease_matrix"
+      },
+      {
+        "budget_seconds": 180,
+        "returncode": 2,
+        "target": "c34_lease_wire_component"
+      }
+    ],
+    "node_launch_performed": false,
+    "parent_roles_verified_unchanged": true,
+    "passed": true,
+    "previous_attempt": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_4_20261013_09/build/observer01/result.json",
+    "previous_native_build_rc": 124,
+    "research_conclusion": false,
+    "reuse": "unchanged source pin and actual successful runtime binary; cached incomplete native objects; no expected change",
+    "role": "observer",
+    "runtime_build_rc": 0,
+    "schema": "p1-C3.4-completed-observer-and-separate-wire/v3",
+    "source_bundle": {
+      "files": 27,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/observer_source_bundle_C3_4_v1.json",
+      "sha256": "4cabaa142a680cdbb1baeed9818f5ea47b09f6ac3851a52d1c7ecccd179af344"
+    },
+    "stage_qualified": false,
+    "wire_build_result": "/home/trevor/USV/.sgh-research/experiments/scheme_A_C3_4_20261013_09/C_lease/build_wire_v3/result.json"
+  },
+  {
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker/build01/p1_solver_worker_owned_v2",
+    "binary_sha256": "7b8015a889adff7652a76008078eacea0b1a039d3abb00cbb706ae799317be9a",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "configure_rc": 0,
+    "elapsed_seconds": 59.33196672900522,
+    "execute_qualified": false,
+    "install_performed": false,
+    "native_binaries": {},
+    "node_launch_performed": false,
+    "parent_roles_verified_unchanged": true,
+    "passed": true,
+    "research_conclusion": false,
+    "role": "worker",
+    "runtime_build_rc": 0,
+    "schema": "p1-C3.4-build/v1",
+    "source_bundle": {
+      "files": 14,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/worker_source_bundle_C3_4_v1.json",
+      "sha256": "d7a13cc5133a290c6b2ca9354324a6dfc01d16f4fa77c8729634c1febddf4633"
+    },
+    "stage_qualified": false
+  },
+  {
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture/build01/p1_synthetic_source",
+    "binary_sha256": "88338bf5b9a5531b9fce2e2954267b59fef05aad4b9c1e987509b6499d746c32",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "configure_rc": 0,
+    "elapsed_seconds": 51.176393187997746,
+    "execute_qualified": false,
+    "install_performed": false,
+    "native_binaries": {},
+    "node_launch_performed": false,
+    "parent_roles_verified_unchanged": true,
+    "passed": true,
+    "research_conclusion": false,
+    "role": "fixture",
+    "runtime_build_rc": 0,
+    "schema": "p1-C3.4-build/v1",
+    "source_bundle": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/fixture_source_bundle_C3_4_v1.json",
+      "sha256": "f092c4205f4fbf69cfba48fb4c8ebc4a5fe5882a74372ef18dd15cb1e707be71"
+    },
+    "stage_qualified": false
+  },
+  {
+    "author_directory": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10",
+    "binary": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder/build01/p1_owned_recorder",
+    "binary_sha256": "d1b91109081c84d4427510d752e926249a0779c44e84b36509bbfa1dac800002",
+    "build_rc": 0,
+    "codegen_performed": false,
+    "configure_rc": 0,
+    "elapsed_seconds": 55.68476000899682,
+    "execute_qualified": false,
+    "install_performed": false,
+    "native_binaries": {},
+    "node_launch_performed": false,
+    "parent_roles_verified_unchanged": true,
+    "passed": true,
+    "research_conclusion": false,
+    "role": "recorder",
+    "runtime_build_rc": 0,
+    "schema": "p1-C3.4-build/v1",
+    "source_bundle": {
+      "files": 4,
+      "path": "/home/trevor/USV/.sgh-research/experiments/p1_execution_architecture_20261005_01/authored_D1_C3_4_20261013_v10/recorder_source_bundle_C3_4_v1.json",
+      "sha256": "61da30907164a3e55ba3aa41e5609d9b80562982133c52cc6135d8283bb99c08"
+    },
+    "stage_qualified": false
+  }
+]
