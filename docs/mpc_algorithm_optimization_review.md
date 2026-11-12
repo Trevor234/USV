@@ -1,7 +1,7 @@
 # USV MPC 算法分析与优化建议
 
 > 评审日期：2026-09-12  
-> 评审范围：`usv_mpc_kinematic_cpp`（方案 A）、`usv_mpc_cpp`（方案 B）、参考轨迹生成、VRX 执行内环及相关参数  
+> 评审范围：`usv_mpc_kinematic_cpp`（方案 A）、`usv_mpc_cpp`（方案 B）、参考轨迹生成、原 VRX 执行内环及相关参数（注：VRX / SITL 仿真入口及 `vrx_thrust`/`cmdvel_to_thrust` 已于 2026-11 清理移除，下文中对应段落仅作历史评审背景保留）  
 > 工作区：ROS 2 Jazzy / `ament_cmake` + `ament_python`
 
 ## 1. 文档目的
@@ -691,11 +691,10 @@ colcon test
 colcon test-result --verbose
 ```
 
-VRX 记录和离线分析示例：
+离线分析脚本示例（注：历史 `vrx.launch.py` 仿真入口已移除，现用于实船日志分析或历史 bag 复盘）：
 
 ```bash
-ros2 launch usv_bringup vrx.launch.py scheme:=A record_bag:=True run_id:=mpc_a_after_fix
-python3 scripts/analyze_usv_bag.py ~/usv_vrx_logs/mpc_a_after_fix
+python3 scripts/analyze_usv_bag.py ~/usv_logs/<run_id>
 ```
 
 ## 14. 风险与回归检查点

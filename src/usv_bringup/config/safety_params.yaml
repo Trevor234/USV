@@ -1,6 +1,6 @@
 /**:
   ros__parameters:
-    # Shared safety defaults for MAVROS-backed real/SITL launches.
+    # Shared safety defaults for MAVROS-backed real launches.
     geofence_radius: 200.0
     geofence_center_x: 0.0
     geofence_center_y: 0.0

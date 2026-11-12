@@ -3,7 +3,7 @@
 <package format="3">
   <name>usv_simulation</name>
   <version>0.1.0</version>
-  <description>Matplotlib runtime visualization for USV MPC (real boat / SITL, Scheme A).</description>
+  <description>Matplotlib runtime visualization and TCP telemetry bridge for real USV MPC.</description>
   <maintainer email="user@example.com">USV Developer</maintainer>
   <license>MIT</license>
 

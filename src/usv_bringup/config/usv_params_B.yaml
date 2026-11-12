@@ -14,10 +14,9 @@
 #   - usv_mpc_cpp/src/mpc_node.cpp (C++ NMPC, declares `vehicle.*`/`dynamic.*`)
 #   - usv_mpc_dynamic.m (kept in sync manually)
 #
-# IMPORTANT: parameter names must match `_declare_parameter` calls in mpc_node.py
+# IMPORTANT: parameter names must match `_declare_parameter` calls in mpc_node.cpp
 # (flat dotted names in code, nested in YAML). Keep aligned with mpc_params_B.yaml style.
-# The VRX/Gazebo 30 kg sim boat uses usv_mono_dynamics.xacro directly and does
-# NOT read this file's hydrodynamics — only real.launch.py does.
+# Consumed by real.launch.py (scheme:=B).
 
 /**:
   ros__parameters:

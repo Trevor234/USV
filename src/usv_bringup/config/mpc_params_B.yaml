@@ -14,7 +14,7 @@
     horizon: 20                  # Prediction horizon steps
     publish_predicted: true      # Publish MPC predicted trajectory
     max_solve_time_ms: 200.0    # Maximum acceptable solve time (ms)
-    odom_timeout_s: 3.0         # MAVROS local odom can pause briefly during SITL EKF/GPS updates
+    odom_timeout_s: 3.0         # MAVROS local odom can pause briefly during EKF/GPS updates
     state_timeout_s: 5.0        # Allow brief MAVLink heartbeat jitter without dropping to STANDBY
     reference_start_offset: 8   # Start MPC reference several path points ahead of the nearest point
 
@@ -45,7 +45,7 @@
     steering_sign: -1.0            # Flip steering: ArduRover RC1 yaw sign is opposite NMPC TR-TL sign
     throttle_sign: 1.0             # Positive MPC throttle maps to high RC3 / forward in rover-skid
     steering_gain: 0.4             # Moderate yaw authority after steering sign correction
-    throttle_gain: 0.75            # Faster SITL tracking after basic direction tuning
+    throttle_gain: 0.75            # Tuned throttle authority for tracking
     # 节点会把最终整数 PWM 按当前线性混控反算为等效 [TL,TR]，写回下一拍
     # delta_T 锚点。该近似包含 gain/sign/PWM 量化；死区、非线性和电压影响
     # 仍需实船标定后纳入。

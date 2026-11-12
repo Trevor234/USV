@@ -27,9 +27,7 @@
  *
  * 订阅: /mavros/local_position/odom, /mavros/imu/data, /path/reference,
  *       /path/reference_profile, /mavros/state
- * 发布: /mavros/rc/override (output_mode=rc_override, 实机) 或
- *       /wamv/thrusters/{left,right}/thrust (output_mode=vrx_thrust, VRX 仿真),
- *       /mpc/status, /mpc/predicted_trajectory
+ * 发布: /mavros/rc/override (RC 覆写), /mpc/status, /mpc/predicted_trajectory
  */
 
 #pragma once
@@ -47,7 +45,6 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <sensor_msgs/msg/imu.hpp>
-#include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/string.hpp>
 
@@ -90,10 +87,6 @@ class MpcControllerNode : public rclcpp::Node {
   Eigen::Vector2d thrust_to_rc_pwm_(const Eigen::Vector2d& thrust,
                                     int& steering_pwm, int& throttle_pwm);
   Eigen::Vector2d publish_rc_override_(const Eigen::Vector2d& thrust);
-  Eigen::Vector2d publish_vrx_thrust_(const Eigen::Vector2d& thrust);
-  void release_vrx_thrust_();
-  Eigen::Vector2d publish_dynamic_output_(const Eigen::Vector2d& thrust);
-  void publish_zero_dynamic_output_();
   void release_rc_override_();
   void publish_status_(const SolveInfo& info, bool in_hold,
                        const Eigen::Vector2d& commanded_thrust,
@@ -148,7 +141,7 @@ class MpcControllerNode : public rclcpp::Node {
   int solver_hold_threshold_ = 5;
   std::vector<std::string> allowed_fcu_modes_ = {"MANUAL"};
   double state_timeout_s_ = 5.0;
-  double odom_timeout_s_ = 3.0;     // 与 mpc_params_B.yaml 一致 (SITL EKF 停流容忍)
+  double odom_timeout_s_ = 3.0;     // 与 mpc_params_B.yaml 一致 (EKF 停流容忍)
   int reference_start_offset_ = 8;  // 与 mpc_params_B.yaml 一致
   double cruise_speed_ = 1.0;
 
@@ -159,11 +152,6 @@ class MpcControllerNode : public rclcpp::Node {
   double steering_sign_ = 1.0, throttle_sign_ = 1.0;
   double steering_gain_ = 0.4, throttle_gain_ = 0.75;  // 与 mpc_params_B.yaml 一致
 
-  // 输出后端: "rc_override" (实机 ArduRover) 或 "vrx_thrust" (VRX Gazebo 直接推力)
-  std::string output_mode_ = "rc_override";
-  double vrx_thrust_scale_ = 25.0;
-  double vrx_thrust_cmd_max_ = 1000.0;
-
   // ── ROS 接口 ────────────────────────────────────────
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
   rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;
@@ -171,8 +159,6 @@ class MpcControllerNode : public rclcpp::Node {
   rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr profile_sub_;
   rclcpp::Subscription<mavros_msgs::msg::State>::SharedPtr state_sub_;
   rclcpp::Publisher<mavros_msgs::msg::OverrideRCIn>::SharedPtr rc_pub_;
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr vrx_left_pub_;
-  rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr vrx_right_pub_;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr traj_pub_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_;
   rclcpp::TimerBase::SharedPtr timer_;

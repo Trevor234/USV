@@ -1,8 +1,0 @@
-# SITL 仿真航线 —— 本地原点 (0,0) 附近的小方块 (Scheme A)。
-# 船从 EKF 原点 (0,0) 出发, 依次绕行 16m 方块; radius 2.0m。
-# 坐标为 ENU 本地米制 (与 /mavros/local_position/odom 同帧)。
-waypoints:
-  - {x: 2.0,  y: 2.0,  radius: 2.0, stay_time: 0.0}
-  - {x: 14.0, y: 2.0,  radius: 2.0, stay_time: 0.0}
-  - {x: 14.0, y: 14.0, radius: 2.0, stay_time: 0.0}
-  - {x: 2.0,  y: 14.0, radius: 2.0, stay_time: 0.0}

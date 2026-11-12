@@ -10,19 +10,19 @@ TIMEOUT_S="${SMOKE_TIMEOUT_S:-5}"
 usage() {
   cat <<'EOF'
 Usage:
-  scripts/smoke_check_topics.sh <profile>
+  scripts/smoke_check_topics.sh real [A|B]
 
 Profiles:
-  vrx    Real VRX Gazebo Sim / WAM-V stack
-  sim    Pure Python dynamics simulation launched by usv_bringup sim.launch.py
-  real   Real hardware / MAVROS stack launched by usv_bringup real.launch.py
+  real [A|B]  Real hardware / MAVROS stack launched by usv_bringup real.launch.py
+              Scheme defaults to B (matching real.launch.py).
 
 Environment:
   SMOKE_TIMEOUT_S  Timeout in seconds for --once topic echo checks (default: 5)
 
 Examples:
-  scripts/smoke_check_topics.sh vrx
-  SMOKE_TIMEOUT_S=10 scripts/smoke_check_topics.sh sim
+  scripts/smoke_check_topics.sh real
+  scripts/smoke_check_topics.sh real A
+  SMOKE_TIMEOUT_S=10 scripts/smoke_check_topics.sh real B
 EOF
 }
 
@@ -82,29 +82,27 @@ check_common_mpc() {
   check_info "/mpc/predicted_trajectory"
 }
 
+SCHEME="${2:-B}"
+
 case "${PROFILE}" in
-  vrx)
-    check_echo_once "/wamv/sensors/position/ground_truth_odometry"
-    check_echo_once "/wamv/sensors/imu/imu/data"
-    check_common_mpc
-    check_info "/wamv/thrusters/left/thrust"
-    check_info "/wamv/thrusters/right/thrust"
-    ;;
-  sim)
-    check_echo_once "/mavros/local_position/odom"
-    check_echo_once "/mavros/imu/data"
-    check_echo_once "/mavros/state"
-    check_common_mpc
-    check_info "/mavros/setpoint_velocity/cmd_vel"
-    check_info "/mavros/rc/override"
-    ;;
   real)
     check_echo_once "/mavros/state"
     check_echo_once "/mavros/local_position/odom"
     check_echo_once "/mavros/imu/data"
     check_common_mpc
-    check_info "/mavros/setpoint_velocity/cmd_vel"
-    check_info "/mavros/rc/override"
+    case "${SCHEME}" in
+      A|a)
+        check_info "/mavros/setpoint_velocity/cmd_vel"
+        ;;
+      B|b)
+        check_info "/mavros/rc/override"
+        ;;
+      *)
+        echo "ERROR: unknown scheme '${SCHEME}' (expected A or B)" >&2
+        usage >&2
+        exit 2
+        ;;
+    esac
     ;;
   *)
     echo "ERROR: unknown profile '${PROFILE}'" >&2

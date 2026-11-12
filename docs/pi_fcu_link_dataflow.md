@@ -450,7 +450,7 @@ JSON 帧 kind 分两类：
 
 > 代码里 `body_to_ned`/`ned_to_body` 是**历史命名**，实际操作的是 map↔base_link 旋转（`utils.hpp:52-56`），与真正的 NED 无关。读代码时不要被误导。
 
-**nav_msgs/Odometry 契约**是全栈坐标约定的根基：pose 在 map、twist 在 base_link，消费方（如 VRX 的 `cmdvel_to_thrust`）直接拿 `twist.linear.x` 当机体纵速，**严禁再按 ψ 旋转**。
+**nav_msgs/Odometry 契约**是全栈坐标约定的根基：pose 在 map、twist 在 base_link，消费方直接拿 `twist.linear.x` 当机体纵速，**严禁再按 ψ 旋转**。
 
 ---
 

@@ -54,9 +54,8 @@ MpcControllerNode::MpcControllerNode()
   init_pubsub_();
 
   RCLCPP_INFO(this->get_logger(),
-              "MPC 控制器已启动 | 模式=dynamic | dt=%.1fs | N=%d | 类型=NMPC (动力学) | backend=%s | output=%s",
-              mpc_dt_, horizon_, mpc_ ? mpc_->backend() : "none",
-              output_mode_.c_str());
+              "MPC 控制器已启动 | 模式=dynamic | dt=%.1fs | N=%d | 类型=NMPC (动力学) | backend=%s | output=rc_override",
+              mpc_dt_, horizon_, mpc_ ? mpc_->backend() : "none");
 
   timer_ = this->create_wall_timer(
       std::chrono::duration<double>(mpc_dt_),
@@ -95,17 +94,10 @@ void MpcControllerNode::declare_parameters_() {
   // 现在两份 mpc_params_*.yaml 各自声明, 此默认值只兜底裸启动。
   this->declare_parameter("allowed_fcu_modes", std::vector<std::string>{"MANUAL"});
   this->declare_parameter("state_timeout_s", 5.0);
-  // MAVROS local odom 在 SITL EKF/GPS 更新期间会短暂停流 (yaml 注释)
+  // MAVROS local odom 在 EKF/GPS 更新期间可能短暂停流 (与 mpc_params_B.yaml 对齐)
   this->declare_parameter("odom_timeout_s", 3.0);
   this->declare_parameter("reference_start_offset", 8);
   this->declare_parameter("cruise_speed", 1.0);
-
-  // 输出后端: "rc_override" (实机 ArduRover) 或 "vrx_thrust" (VRX Gazebo 直接推力)
-  this->declare_parameter("output_mode", std::string("rc_override"));
-  this->declare_parameter("vrx_left_thrust_topic", std::string("/wamv/thrusters/left/thrust"));
-  this->declare_parameter("vrx_right_thrust_topic", std::string("/wamv/thrusters/right/thrust"));
-  this->declare_parameter("vrx_thrust_scale", 25.0);
-  this->declare_parameter("vrx_thrust_cmd_max", 1000.0);
 
   // NMPC参数 (mpc_params_B.yaml: sqrt(Qx/R)≈20N=80%T_max 调参)
   this->declare_parameter("dynamic.Q", std::vector<double>{20.0, 20.0, 50.0, 8.0, 1.0, 8.0});
@@ -173,23 +165,13 @@ void MpcControllerNode::load_config_() {
   reference_start_offset_ = this->get_parameter("reference_start_offset").as_int();
   cruise_speed_ = this->get_parameter("cruise_speed").as_double();
 
-  output_mode_ = this->get_parameter("output_mode").as_string();
-  if (output_mode_ != "rc_override" && output_mode_ != "vrx_thrust") {
-    RCLCPP_ERROR(this->get_logger(),
-                 "output_mode='%s' 不支持 (仅 rc_override/vrx_thrust), fallback rc_override",
-                 output_mode_.c_str());
-    output_mode_ = "rc_override";
-  }
-  vrx_thrust_scale_ = this->get_parameter("vrx_thrust_scale").as_double();
-  vrx_thrust_cmd_max_ = this->get_parameter("vrx_thrust_cmd_max").as_double();
-
   // 输出后端 × FCU 模式契约自检: rc_override 只在 ArduRover MANUAL 模式下
   // 经 pilot 输入链 (channel_steer/channel_throttle) 成为舵/油主控制。
   // GUIDED 由自身 submode 驱动: CH1 转向被忽略, CH3 仅作 speed nudge
   // (且限 WP/Heading/TurnRate 子模式), 无 target 时 Stop/Loiter 停车。
   // allowed_fcu_modes 不含 MANUAL 时 MPC 会永远 wrong_mode STANDBY 或
   // (更糟) 在 GUIDED 下解算但船无响应, 启动时显式告警。
-  if (output_mode_ == "rc_override" && !allowed_fcu_modes_.empty()) {
+  if (!allowed_fcu_modes_.empty()) {
     bool has_manual = false;
     for (const auto& m : allowed_fcu_modes_) {
       if (m == "MANUAL") { has_manual = true; break; }
@@ -200,9 +182,8 @@ void MpcControllerNode::load_config_() {
         modes += (modes.empty() ? "" : ",") + m;
       }
       RCLCPP_WARN(this->get_logger(),
-                  "output_mode=rc_override 但 allowed_fcu_modes=[%s] 不含 "
-                  "MANUAL: RC 覆写在非 MANUAL 模式下不是舵/油主控制, "
-                  "确认方案 B 的 FCU 模式配置",
+                  "allowed_fcu_modes=[%s] 不含 MANUAL: RC 覆写在非 MANUAL "
+                  "模式下不是舵/油主控制, 确认方案 B 的 FCU 模式配置",
                   modes.c_str());
     }
   }
@@ -237,10 +218,6 @@ void MpcControllerNode::load_config_() {
     throw std::runtime_error(
         "RC 映射参数非法: 通道须有效且不同，并满足 pwm_min < pwm_center < "
         "pwm_max、sign=+-1、gain>=0");
-  }
-  if (!std::isfinite(vrx_thrust_scale_) || vrx_thrust_scale_ <= 0.0 ||
-      !std::isfinite(vrx_thrust_cmd_max_) || vrx_thrust_cmd_max_ <= 0.0) {
-    throw std::runtime_error("VRX 推力映射参数必须为有限正数");
   }
 }
 
@@ -336,10 +313,6 @@ void MpcControllerNode::init_pubsub_() {
 
   rc_pub_ = this->create_publisher<mavros_msgs::msg::OverrideRCIn>(
       this->get_parameter("rc_override_topic").as_string(), 10);
-  vrx_left_pub_ = this->create_publisher<std_msgs::msg::Float64>(
-      this->get_parameter("vrx_left_thrust_topic").as_string(), 10);
-  vrx_right_pub_ = this->create_publisher<std_msgs::msg::Float64>(
-      this->get_parameter("vrx_right_thrust_topic").as_string(), 10);
   traj_pub_ = this->create_publisher<nav_msgs::msg::Path>(
       this->get_parameter("predicted_trajectory_topic").as_string(), 10);
   status_pub_ = this->create_publisher<std_msgs::msg::String>(
@@ -461,7 +434,7 @@ void MpcControllerNode::enter_standby_(const std::string& reason) {
   if (transition) {
     solver_fail_count_ = 0;
     if (mpc_) mpc_->reset_warmstart();
-    publish_zero_dynamic_output_();
+    release_rc_override_();
     RCLCPP_INFO(this->get_logger(), "MPC → STANDBY: %s", reason.c_str());
   }
   prev_state_ = "STANDBY";
@@ -559,10 +532,10 @@ void MpcControllerNode::run_dynamic_mpc_() {
     }
   }
 
-  const Eigen::Vector2d applied_thrust = publish_dynamic_output_(u_opt);
+  const Eigen::Vector2d applied_thrust = publish_rc_override_(u_opt);
   last_commanded_thrust_ = applied_thrust;
   has_last_thrust_ = true;
-  // 求解器 solve() 内部先保存了计划首拍；这里用经过 RC/VRX 映射后真正
+  // 求解器 solve() 内部先保存了计划首拍；这里用经过 RC 映射后真正
   // 下发的等效推力覆盖，使下一拍 ΔT 代价和硬约束从执行输入出发。
   mpc_->set_applied_control(applied_thrust);
   publish_status_(info, in_hold, u_opt, applied_thrust);
@@ -613,48 +586,9 @@ Eigen::Vector2d MpcControllerNode::publish_rc_override_(
   return applied_thrust;
 }
 
-Eigen::Vector2d MpcControllerNode::publish_dynamic_output_(
-    const Eigen::Vector2d& thrust) {
-  if (output_mode_ == "vrx_thrust") {
-    return publish_vrx_thrust_(thrust);
-  }
-  return publish_rc_override_(thrust);
-}
-
-void MpcControllerNode::publish_zero_dynamic_output_() {
-  if (output_mode_ == "vrx_thrust") {
-    release_vrx_thrust_();
-  } else {
-    release_rc_override_();
-  }
-}
-
 void MpcControllerNode::release_rc_override_() {
   // 全零 OverrideRCIn = 释放所有通道
   rc_pub_->publish(mavros_msgs::msg::OverrideRCIn());
-}
-
-// 对应 Python _publish_vrx_thrust: NMPC [TL,TR] (N) 经 scale/cmd_max 限幅后
-// 直接发布到 VRX thruster topic (std_msgs/Float64, 单位 N)。
-Eigen::Vector2d MpcControllerNode::publish_vrx_thrust_(
-    const Eigen::Vector2d& thrust) {
-  std_msgs::msg::Float64 left, right;
-  const double lower = std::max(dyn_T_min_, -vrx_thrust_cmd_max_);
-  const double upper = std::min(dyn_T_max_, vrx_thrust_cmd_max_);
-  left.data = std::clamp(thrust(0) * vrx_thrust_scale_, lower, upper);
-  right.data = std::clamp(thrust(1) * vrx_thrust_scale_, lower, upper);
-  vrx_left_pub_->publish(left);
-  vrx_right_pub_->publish(right);
-  return Eigen::Vector2d(left.data, right.data);
-}
-
-void MpcControllerNode::release_vrx_thrust_() {
-  // VRX thruster 无"释放通道"概念, 零推力即停船
-  std_msgs::msg::Float64 left, right;
-  left.data = 0.0;
-  right.data = 0.0;
-  vrx_left_pub_->publish(left);
-  vrx_right_pub_->publish(right);
 }
 
 void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
@@ -691,8 +625,7 @@ void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
   j["tr_n"] = applied_thrust(1);
   j["tl_cmd_n"] = commanded_thrust(0);
   j["tr_cmd_n"] = commanded_thrust(1);
-  j["actuation_anchor_source"] =
-      (output_mode_ == "vrx_thrust") ? "vrx_published" : "rc_linearized";
+  j["actuation_anchor_source"] = "rc_linearized";
   j["actuation_mapping_error_n"] =
       (commanded_thrust - applied_thrust).cwiseAbs().maxCoeff();
   // 对应 RC PWM (与 Python _last_rc_debug 字段对齐)。
@@ -842,7 +775,7 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Vector6d& current_stat
 }
 
 void MpcControllerNode::safe_shutdown() {
-  publish_zero_dynamic_output_();
+  release_rc_override_();
   publish_standby_status_("node_shutdown");
   RCLCPP_INFO(this->get_logger(), "MPC 节点退出: 已发送安全停车指令");
 }

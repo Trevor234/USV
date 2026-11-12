@@ -65,8 +65,7 @@ class USVVisualizer(Node):
         )
 
     def _declare_parameters(self):
-        # 默认值面向实机方案A（运动学 MPC, cmd_vel 输出, 无推力话题）。
-        # VRX/WAM-V 仿真请通过 launch 参数覆盖 odom/thrust 话题。
+        # 默认值面向实机 MAVROS 话题；推力话题按需通过 launch 参数显式传入。
         self.declare_parameter("odom_topic", "/mavros/local_position/odom")
         self.declare_parameter("reference_path_topic", "/path/reference")
         self.declare_parameter("path_topic", "/path/reference")

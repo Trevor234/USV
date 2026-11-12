@@ -4,9 +4,9 @@
 用法:
   python3 analyze_usv_bag.py <bag目录> [-o 输出目录]
 
-自动识别仿真/实机话题:
-  odom: /wamv/sensors/position/ground_truth_odometry 或 /mavros/local_position/odom
-  推力: /wamv/thrusters/{left,right}/thrust 或 /mavros/rc/override(仅状态)
+自动识别实机话题 (并兼容历史 VRX/WAM-V 仿真 bag):
+  odom: /mavros/local_position/odom (兼容历史 /wamv/sensors/position/ground_truth_odometry)
+  推力: /mavros/rc/override(仅状态) (兼容历史 /wamv/thrusters/{left,right}/thrust)
   参考: /path/reference + /path/reference_profile
   状态: /mpc/status (JSON)
 需在 source 过 ROS 2 的环境中运行 (依赖 rosbag2_py 与消息类型)。

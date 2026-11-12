@@ -1,27 +1,21 @@
-# USV physical parameters — single source of truth.
+# USV physical parameters — single source of truth (Scheme A).
 #
-# Used by:
-#   - usv_simulation/models/usv_2m/model.sdf (xacro substitutes geometry)
-#
-# References: implementation_plan.md §九 (initial estimates).
-#
-# NOTE: the kinematic MPC node does NOT read these hull (`vehicle.*`) params;
-# they describe the vessel for Gazebo and the parameter-identification scripts.
-# Retained here as the canonical hull description.
+# NOTE: the kinematic MPC node (usv_mpc_kinematic_cpp) does NOT read these
+# hull (`vehicle.*`) params; retained here as the canonical hull description.
 
 /**:
   ros__parameters:
-    # ----- Hull (used by Gazebo SDF; canonical hull description) -----
+    # ----- Hull (canonical hull description; informational for kinematic MPC) -----
     vehicle:
       mass: 14.2          # kg, total including payload
       Iz: 2.13            # kg·m², yaw moment of inertia (= m(L²+B²)/12)
       xg: 0.12            # m, CG longitudinal offset (+ forward)
       d_thruster: 0.25    # m, half of thruster spacing 2d (separation=0.5)
 
-      # ----- Hull geometry (Gazebo only — informational for MPC) -----
+      # ----- Hull geometry (informational for MPC) -----
       length: 1.2         # m, length overall
       beam: 0.6           # m, beam
-      draft: 0.10         # m, waterline depth (smaller draft than sim boat)
+      draft: 0.10         # m, waterline depth
       height: 0.30        # m, freeboard above water
 
       # ----- Added mass (negative by Fossen convention) -----
@@ -46,8 +40,8 @@
       Nrr: -0.001         # near-zero diagonal, kept
 
     # ----- Thruster -----
-    # NOTE: these limits are read by the Gazebo thrust plugin and the
-    # parameter-identification scripts. The kinematic MPC does not use them.
+    # NOTE: the kinematic MPC does not use thruster limits directly;
+    # retained here as the vessel's nominal thrust specification.
     thruster:
       pwm_min: 1000
       pwm_center: 1500
