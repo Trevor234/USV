@@ -663,7 +663,7 @@ idx = nearest + reference_start_offset
 仅修改方案 A 时：
 
 ```bash
-cd ~/USV/usv_mpc_ws
+cd ~/usv_mpc_ws
 colcon build --symlink-install --packages-select usv_mpc_kinematic_cpp usv_simulation usv_bringup
 source install/setup.bash
 colcon test --packages-select usv_mpc_kinematic_cpp usv_simulation usv_bringup
@@ -673,7 +673,7 @@ colcon test-result --verbose
 修改方案 B OCP 或重新生成 acados 代码时：
 
 ```bash
-cd ~/USV/usv_mpc_ws
+cd ~/usv_mpc_ws
 python3 src/usv_mpc_cpp/scripts/regenerate_acados_codegen.py --horizon 20 --dt 0.2
 colcon build --symlink-install --packages-select usv_mpc_cpp usv_bringup
 source install/setup.bash
@@ -684,7 +684,7 @@ colcon test-result --verbose
 全工作区回归：
 
 ```bash
-cd ~/USV/usv_mpc_ws
+cd ~/usv_mpc_ws
 colcon build --symlink-install
 source install/setup.bash
 colcon test

@@ -2,14 +2,14 @@
 
 面向 1.2 m / 14.2 kg 双推进器(差速)无人水面艇(USV)的 **ROS 2 Jazzy** 工作区。
 
-**算法栈与部署工作区 `usv_mpc_ws_B`(Pi5 实机)完全同源**(2026-09-04 以 B 为准同步):
+**算法栈与部署工作区 `usv_mpc_ws`(Pi5 实机)完全同源**(2026-09-04 以 B 为准同步):
 运动学 MPC(方案 A,Python,CasADi/acados 双后端)+ 动力学 NMPC(方案 B,C++,acados SQP_RTI,
 CasADi fallback)。本工作区在 B 的基础上额外保留并维护**开发专用能力**:VRX Gazebo 仿真、
 ArduPilot SITL 联调、参数辨识工具链。
 
-## 与 usv_mpc_ws_B(Pi5 部署)的关系
+## 与 usv_mpc_ws(Pi5 部署)的关系
 
-| 项 | 本工作区(开发) | usv_mpc_ws_B(Pi5 部署) |
+| 项 | 本工作区(开发) | usv_mpc_ws(Pi5 部署) |
 |---|---|---|
 | 算法(控制器/规划/安全) | **同源,以 B 为准** | 上游(source of truth) |
 | VRX/Gazebo 仿真 | ✅ `sim/sitl/vrx.launch.py` | ❌(仅 matplotlib 可视化) |
@@ -19,7 +19,7 @@ ArduPilot SITL 联调、参数辨识工具链。
 | acados | x86 源码编译(`~/acados`) | aarch64 源码编译 |
 | 部署文档 | 参考 B 的 `docs/pi5_deploy.md` | ✅ |
 
-> 修改算法后若要部署实机,请把改动**回移**到 `usv_mpc_ws_B` 并在那边验证;本工作区只做开发与仿真验证。
+> 修改算法后若要部署实机,请把改动**回移**到 `usv_mpc_ws` 并在那边验证;本工作区只做开发与仿真验证。
 
 ## 包结构
 
@@ -49,7 +49,7 @@ ArduPilot SITL 联调、参数辨识工具链。
 ## 构建
 
 ```bash
-cd ~/USV/usv_mpc_ws
+cd ~/usv_mpc_ws
 colcon build --symlink-install
 source install/setup.bash
 ```
@@ -93,7 +93,7 @@ ros2 launch usv_bringup sitl.launch.py scheme:=B
 
 ## 实机运行
 
-与 `usv_mpc_ws_B` 一致(MicoAir743 / ArduRover,UART `/dev/ttyAMA10` @ 921600):
+与 `usv_mpc_ws` 一致(MicoAir743 / ArduRover,UART `/dev/ttyAMA10` @ 921600):
 
 ```bash
 ros2 launch usv_bringup real.launch.py                # scheme:=B 默认(动力学 NMPC)

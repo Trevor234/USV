@@ -1,7 +1,7 @@
 # ROS 2 工作空间迁移到树莓派 5 的计划
 
 > 适用范围：将开发机 `/home/trevor/USV/usv_mpc_ws` 中经过确认的代码更新到树莓派 5，并恢复由 `usv-system.service` 管理的艇载运行环境。  
-> 目标环境：Raspberry Pi 5 8 GB、Ubuntu/ROS 2 Jazzy、AArch64、工作空间 `/home/trevor/usv_mpc_ws_B`。  
+> 目标环境：Raspberry Pi 5 8 GB、Ubuntu/ROS 2 Jazzy、AArch64、工作空间 `/home/trevor/usv_mpc_ws`。  
 > 文档状态：迁移执行计划，不代表已经完成部署。  
 > 编制日期：2026-09-12。
 
@@ -55,7 +55,7 @@
 ```bash
 ls -l /dev/ttyAMA* /dev/serial/by-id 2>/dev/null
 systemctl cat usv-system.service
-rg -n "ttyAMA|fcu_url|921600" /home/trevor/usv_mpc_ws_B/src /etc/default/usv-system 2>/dev/null
+rg -n "ttyAMA|fcu_url|921600" /home/trevor/usv_mpc_ws/src /etc/default/usv-system 2>/dev/null
 ```
 
 确认标准：实际存在的串口、MAVROS `fcu_url` 和 systemd 启动参数三者一致。不要为了匹配文档而更改一个正在正常工作的设备名。
@@ -66,7 +66,7 @@ rg -n "ttyAMA|fcu_url|921600" /home/trevor/usv_mpc_ws_B/src /etc/default/usv-sys
 
 ```bash
 systemctl cat usv-system.service
-rg -n "8765|7865|telemetry|bridge" /home/trevor/usv_mpc_ws_B/src /etc/default/usv-system 2>/dev/null
+rg -n "8765|7865|telemetry|bridge" /home/trevor/usv_mpc_ws/src /etc/default/usv-system 2>/dev/null
 ss -ltnp | rg ":(8765|7865)"
 ```
 
@@ -199,7 +199,7 @@ free -h
 systemctl is-active usv-system.service
 systemctl cat usv-system.service
 cat /etc/default/usv-system 2>/dev/null
-readlink -f /home/trevor/usv_mpc_ws_B
+readlink -f /home/trevor/usv_mpc_ws
 ```
 
 期望结果：架构为 `aarch64`，ROS 发行版为 `jazzy`，Python 与本机安装的 CasADi/acados 兼容，磁盘空间足以同时保留当前版本、预发布目录和一次备份。
@@ -237,8 +237,8 @@ ros2 topic list
 本计划使用：
 
 ```text
-/home/trevor/usv_mpc_ws_B                    正式运行目录
-/home/trevor/usv_mpc_ws_B_staging/<DEPLOY_ID> 预发布目录
+/home/trevor/usv_mpc_ws                    正式运行目录
+/home/trevor/usv_mpc_ws_staging/<DEPLOY_ID> 预发布目录
 /home/trevor/usv_backups/<DEPLOY_ID>          回滚备份目录
 ```
 
@@ -250,9 +250,9 @@ ros2 topic list
 
 ```bash
 export DEPLOY_ID=20260912_mpc_update_01
-mkdir -p "$HOME/usv_mpc_ws_B_staging"
-git clone <项目仓库地址> "$HOME/usv_mpc_ws_B_staging/$DEPLOY_ID/repo"
-cd "$HOME/usv_mpc_ws_B_staging/$DEPLOY_ID/repo"
+mkdir -p "$HOME/usv_mpc_ws_staging"
+git clone <项目仓库地址> "$HOME/usv_mpc_ws_staging/$DEPLOY_ID/repo"
+cd "$HOME/usv_mpc_ws_staging/$DEPLOY_ID/repo"
 git checkout --detach <已记录的提交SHA>
 git rev-parse HEAD
 ```
@@ -260,7 +260,7 @@ git rev-parse HEAD
 工作空间位于仓库内的 `usv_mpc_ws` 子目录：
 
 ```bash
-cd "$HOME/usv_mpc_ws_B_staging/$DEPLOY_ID/repo/usv_mpc_ws"
+cd "$HOME/usv_mpc_ws_staging/$DEPLOY_ID/repo/usv_mpc_ws"
 ```
 
 ### 7.2 rsync 方式（树莓派不能访问 Git 时）
@@ -269,7 +269,7 @@ cd "$HOME/usv_mpc_ws_B_staging/$DEPLOY_ID/repo/usv_mpc_ws"
 
 ```bash
 export DEPLOY_ID=20260912_mpc_update_01
-mkdir -p "$HOME/usv_mpc_ws_B_staging/$DEPLOY_ID/usv_mpc_ws"
+mkdir -p "$HOME/usv_mpc_ws_staging/$DEPLOY_ID/usv_mpc_ws"
 ```
 
 再从开发机执行一次预览：
@@ -283,13 +283,13 @@ rsync -anv \
   --exclude='__pycache__/' \
   --exclude='*.pyc' \
   /home/trevor/USV/usv_mpc_ws/ \
-  trevor@192.168.1.220:/home/trevor/usv_mpc_ws_B_staging/20260912_mpc_update_01/usv_mpc_ws/
+  trevor@192.168.1.220:/home/trevor/usv_mpc_ws_staging/20260912_mpc_update_01/usv_mpc_ws/
 ```
 
 确认预览列表后去掉 `n` 执行正式同步。不要使用 `--delete` 覆盖当前正式工作空间。传输完成后，为源码归档生成校验值并保存到发布记录：
 
 ```bash
-cd "$HOME/usv_mpc_ws_B_staging/20260912_mpc_update_01"
+cd "$HOME/usv_mpc_ws_staging/20260912_mpc_update_01"
 tar --exclude='build' --exclude='install' --exclude='log' \
   -czf usv_mpc_ws_source.tar.gz usv_mpc_ws
 sha256sum usv_mpc_ws_source.tar.gz
@@ -373,8 +373,8 @@ ps -ef | rg "mavros|mpc_node|safety|telemetry" | rg -v "rg "
 export DEPLOY_ID=20260912_mpc_update_01
 mkdir -p "$HOME/usv_backups/$DEPLOY_ID"
 
-cp -a "$HOME/usv_mpc_ws_B" \
-  "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws_B"
+cp -a "$HOME/usv_mpc_ws" \
+  "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws"
 sudo cp -a /etc/default/usv-system \
   "$HOME/usv_backups/$DEPLOY_ID/usv-system.default" 2>/dev/null || true
 sudo cp -a /etc/systemd/system/usv-system.service \
@@ -387,20 +387,20 @@ systemctl cat usv-system.service \
 
 ### 9.3 更新固定工作空间
 
-systemd 和 `usv-scheme` 当前预期使用固定目录 `/home/trevor/usv_mpc_ws_B`。为避免把预发布目录中带有旧绝对路径的构建产物直接搬入正式目录，只同步源码，然后在固定目录重新构建。
+systemd 和 `usv-scheme` 当前预期使用固定目录 `/home/trevor/usv_mpc_ws`。为避免把预发布目录中带有旧绝对路径的构建产物直接搬入正式目录，只同步源码，然后在固定目录重新构建。
 
 ```bash
-mkdir -p "$HOME/usv_mpc_ws_B_next_source"
+mkdir -p "$HOME/usv_mpc_ws_next_source"
 rsync -a \
   --exclude='build/' \
   --exclude='install/' \
   --exclude='log/' \
   <预发布工作空间路径>/ \
-  "$HOME/usv_mpc_ws_B_next_source/"
+  "$HOME/usv_mpc_ws_next_source/"
 
-mv "$HOME/usv_mpc_ws_B" \
-  "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws_B_runtime"
-mv "$HOME/usv_mpc_ws_B_next_source" "$HOME/usv_mpc_ws_B"
+mv "$HOME/usv_mpc_ws" \
+  "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws_runtime"
+mv "$HOME/usv_mpc_ws_next_source" "$HOME/usv_mpc_ws"
 ```
 
 如果前面的完整备份已占用较多磁盘空间，可把“完整备份”和“运行目录移动”合并为一次操作；必须保证旧目录仍完整存在于 `$HOME/usv_backups/$DEPLOY_ID/`，且回滚命令已经检查无误。
@@ -408,7 +408,7 @@ mv "$HOME/usv_mpc_ws_B_next_source" "$HOME/usv_mpc_ws_B"
 ### 9.4 在正式路径干净构建
 
 ```bash
-cd "$HOME/usv_mpc_ws_B"
+cd "$HOME/usv_mpc_ws"
 source /opt/ros/jazzy/setup.bash
 export ACADOS_SOURCE_DIR="$HOME/acados"
 export LD_LIBRARY_PATH="$HOME/acados/lib:${LD_LIBRARY_PATH:-}"
@@ -466,7 +466,7 @@ journalctl -u usv-system.service -n 200 --no-pager
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-source /home/trevor/usv_mpc_ws_B/install/setup.bash
+source /home/trevor/usv_mpc_ws/install/setup.bash
 
 ros2 node list
 ros2 topic list
@@ -507,10 +507,10 @@ journalctl -u usv-system.service -n 200 --no-pager | \
 export DEPLOY_ID=20260912_mpc_update_01
 sudo systemctl stop usv-system.service
 
-mv "$HOME/usv_mpc_ws_B" \
-  "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws_B_failed"
-mv "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws_B_runtime" \
-  "$HOME/usv_mpc_ws_B"
+mv "$HOME/usv_mpc_ws" \
+  "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws_failed"
+mv "$HOME/usv_backups/$DEPLOY_ID/usv_mpc_ws_runtime" \
+  "$HOME/usv_mpc_ws"
 
 sudo cp -a "$HOME/usv_backups/$DEPLOY_ID/usv-system.default" \
   /etc/default/usv-system 2>/dev/null || true
@@ -523,7 +523,7 @@ systemctl status usv-system.service --no-pager
 journalctl -u usv-system.service -n 150 --no-pager
 ```
 
-若采用的是完整复制备份而非 `usv_mpc_ws_B_runtime` 目录，回滚时从对应备份路径恢复。执行正式切换前必须根据实际采用的备份方式演练并修正这组路径。
+若采用的是完整复制备份而非 `usv_mpc_ws_runtime` 目录，回滚时从对应备份路径恢复。执行正式切换前必须根据实际采用的备份方式演练并修正这组路径。
 
 ## 12. G6：水试计划
 
@@ -556,7 +556,7 @@ Python 版本：
 acados 版本/提交：
 CasADi 版本：
 
-正式工作空间：/home/trevor/usv_mpc_ws_B
+正式工作空间：/home/trevor/usv_mpc_ws
 备份路径：
 systemd 服务文件校验值：
 /etc/default/usv-system 校验值：
