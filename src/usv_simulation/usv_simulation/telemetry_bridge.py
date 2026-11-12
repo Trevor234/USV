@@ -152,10 +152,22 @@ class TelemetryServer(socketserver.ThreadingTCPServer):
             self._logger.info(msg)
 
 
+# 2026-11-11 P3: 本节点自身日志的识别关键字。
+# 为什么要过滤: journalctl -u usv-system -f 会把 telemetry_bridge 自己写进该
+# 单元的日志一并拉回来, 再推给地面站, 形成自激回声(每轮心跳都被自己的采集端
+# 采到, 白白刷掉日志环形缓冲, 地面站看到大量重复 seq= 行)。此处直接丢弃。
+_SELF_LOG_MARKERS = ("usv_telemetry_bridge", "telemetry_bridge-", "telemetry_bridge]")
+
+
+def _is_self_log(line: str) -> bool:
+    return any(m in line for m in _SELF_LOG_MARKERS)
+
+
 def _journal_tailer(server: TelemetryServer, logger, unit: str, stop_event: threading.Event):
     """跟随 journalctl -u <unit> -f，把每行推进服务器日志缓冲。
 
     journalctl 退出(如服务重启导致 fd 失效)时自动重拉，保证长期在船不断流。
+    本节点自身产生的日志行会被过滤, 避免自激回声(见 _SELF_LOG_MARKERS)。
     """
     cmd = ["journalctl", "-u", unit, "-f", "-n", "0", "--no-pager", "-o", "short"]
     while not stop_event.is_set():
@@ -171,7 +183,7 @@ def _journal_tailer(server: TelemetryServer, logger, unit: str, stop_event: thre
                 if stop_event.is_set():
                     break
                 line = line.rstrip("\r\n")
-                if line:
+                if line and not _is_self_log(line):
                     server.push_logs([line])
         except Exception as exc:  # noqa: BLE001 - 跟随线程不能因异常退出
             if logger is not None:
@@ -274,7 +286,10 @@ def main(args=None):
         server.update(_frame(snap))
 
         now = time.monotonic()
-        if now - last_log > 5.0:
+        # 2026-11-11 P3: 5s -> 300s。原值每小时产出 720 行心跳日志, 全部进
+        # journal 并被采集端反复搬运, 属于纯噪声。改成 5 分钟一次后仍有
+        # 存活信号, 日志量降到原来的 1/60。
+        if now - last_log > 300.0:
             last_log = now
             n = len(snap["track"].get("append", []))
             collector.get_logger().info(
