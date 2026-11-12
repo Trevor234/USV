@@ -4,6 +4,8 @@
 #   raw/gps1/raw = fix_type/eph/卫星数 (GPSRAW, ~1Hz)
 #   raw/fix      = 经纬度原值 (NavSatFix, ~1Hz)
 #   RTCM 差分原始流 (send_rtcm) 不录: 5Hz 高流量, 事后无法重放。
+#   MAVROS 若通过 UAS 发出 GPS_RTCM_DATA 帧, 该帧会自然出现在下面两个
+#   MAVLink 帧话题里; 单独 RTCM ROS 话题仍不录。
 topics:
   - /mavros/local_position/odom
   - /mavros/imu/data
@@ -22,3 +24,9 @@ topics:
   - /mpc/predicted_trajectory
   - /mavros/gpsstatus/gps1/raw
   - /mavros/global_position/raw/fix
+  # MAVLink 双向帧 (mavros_msgs/msg/Mavlink, MAVROS 2.14 原生接口)。
+  # source = 路由器交给 UAS 的入站帧 (飞控下传),
+  # sink   = UAS 封装后发出的报文 (仅表示发送意图, 不代表串口已发出)。
+  # 全消息 ID 保留, 不按插件/msgid 过滤。BEST_EFFORT depth 1000。
+  - /uas1/mavlink_source
+  - /uas1/mavlink_sink

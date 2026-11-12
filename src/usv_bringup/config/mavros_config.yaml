@@ -4,7 +4,6 @@
 # Baud rate: 921600
 #
 # fcu_url: primary MAVLink link between Raspberry Pi and flight controller
-# gcs_url: optional MAVLink forwarding endpoint for a ground station
 #          on the Raspberry Pi network
 #
 # Load only the plugins used by this workspace. This avoids a Jazzy MAVROS
@@ -13,7 +12,11 @@
 /**:
   ros__parameters:
     fcu_url: "/dev/ttyAMA10:921600"
-    gcs_url: "tcp-l://:14550"
+    # 2026-11-11: gcs_url 置空。原先 "tcp-l://:14550" 让 mavros 监听 14550 并
+    # 与 frpc 的 mavlink-tcp 隧道(同样指向 14550)重叠，实测从未有地面站连入，
+    # 属纯开销，已连同 frpc 隧道一并移除。需要地面站直连时改为：
+    #   gcs_url: "udp://@<gcs-ip>:14550"
+    gcs_url: ""
     tgt_system: 1
     tgt_component: 1
     system_id: 255
@@ -34,5 +37,13 @@
       - "waypoint"
     plugin_denylist:
       - "_disabled_plugin_name_that_matches_nothing"
+      # 2026-11-11: sys_time 插件必须停用。
+      # 飞控重启后发出 SYSTEM_TIME.time_unix_usec = 3155760742730791 (year~2070),
+      # sec = 3155760742 > INT32_MAX, cast 成负 int32 后 rclcpp::Time 抛
+      # "cannot store a negative time point" 并 abort, 启动 5s 即死,
+      # /uas1/mavlink_* 永远没有发布端。该 handler 不受 timesync_mode 门控
+      # (get_subscriptions 无条件注册), 只有 deny 插件能绕开。
+      # 本工作区没有订阅 /mavros/time_reference 或 /mavros/timesync_status。
+      - "sys_time"
 
 

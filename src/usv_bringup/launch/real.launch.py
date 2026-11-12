@@ -9,18 +9,19 @@ Launches ALL nodes:
 
 Usage:
   ros2 launch usv_bringup real.launch.py
-  ros2 launch usv_bringup real.launch.py gcs_url:=udp://@<gcs-ip>:14550
   ros2 launch usv_bringup real.launch.py visualize:=true use_ntrip:=true
   ros2 launch usv_bringup real.launch.py record:=true bag_output_dir:=/mnt/usv_bags
 """
 
 import os
+import subprocess
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
+    LogInfo,
     TimerAction,
 )
 from launch.conditions import IfCondition
@@ -28,6 +29,41 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess
+
+def _ntrip_daemon_state(service="usv-rtk.service"):
+    """判断 RTK 差分注入守护进程 usv-rtk.service 的状态。
+
+    2026-11-11 拆分: 差分注入从本 launch 迁出, 由 usv-rtk.service 托管;
+    但 use_ntrip 保持默认 true, 让本 launch 在守护进程缺席时仍自足。
+
+    必须互斥的原因: ntrip_client 的两份实例会同时向
+    /mavros/gps_rtk/send_rtcm 发 GPS_RTCM_DATA, 双份差分流会污染
+    RTK 模块的解析。
+
+    返回值:
+      "active"  —— 守护进程正在跑, 本 launch 必须跳过
+      "enabled" —— 已设开机自启但当前未运行
+                   (可能正在启动中, 也可能被人为 stop)。本 launch 也跳过,
+                   避免与服务抢注。此时日志会明确提示, 不会静默失效。
+      "off"     —— 未启用也不在跑, 本 launch 用自己的 ntrip
+
+    放行方式(手工调试): systemctl disable --now usv-rtk 后再启动本 launch。
+    """
+    def _probe(verb):
+        try:
+            res = subprocess.run(
+                ["systemctl", verb, service],
+                capture_output=True, text=True, timeout=5,
+            )
+        except (OSError, subprocess.SubprocessError):
+            return ""
+        return res.stdout.strip()
+
+    if _probe("is-active") in ("active", "activating", "reloading"):
+        return "active"
+    if _probe("is-enabled") == "enabled":
+        return "enabled"
+    return "off"
 
 def generate_launch_description():
     bringup_dir = get_package_share_directory("usv_bringup")
@@ -52,12 +88,8 @@ def generate_launch_description():
         description="FCU serial connection URL"
     )
 
-    # gcs_url: MAVLink 链路，可用于转发到地面站或转发 CORS 数据。默认指向方案 A 的 GCS 地址。
-    gcs_url_arg = DeclareLaunchArgument(
-        "gcs_url", default_value="tcp-l://:14550",
-        description="Optional MAVLink GCS forwarding URL"
-    )
-
+    # 2026-11-11: TCP GCS 转发链路已删除（gcs_url 不再声明，也不再传给 mavros）。
+    # 如需临时恢复，用 mavros.launch.py gcs_url:=... 单独启动，不要挂回常驻服务。
     # mavros_odom_topic: planner 和 MPC 用作主定位话题的名称。
     mavros_odom_topic_arg = DeclareLaunchArgument(
         "mavros_odom_topic", default_value="/mavros/local_position/odom",
@@ -107,13 +139,16 @@ def generate_launch_description():
         choices=["true", "false"],
     )
 
-    # use_ntrip: 是否启动 ntrip_client 差分定位。
-    # CORS 账号已配好(config/ntrip_params.yaml), 默认开启随服务自启;
-    # 调试或暂不用 RTK 时传 use_ntrip:=false 关闭。
+    # use_ntrip: 是否启动 ntrip_client 差分定位。默认 true —— 本 launch 保持自足,
+    # 即使 usv-rtk.service 没启用也能独立完成差分注入。
+    # 2026-11-11 拆分: 差分注入另由 usv-rtk.service 守护进程托管, 两者互斥。
+    # 互斥由 _ntrip_owned_by_daemon() 自动判定: 守护进程 enabled/active 时本 launch
+    # 自动跳过, 不会出现双份 RTCM 注入飞控。手工强制走本 launch 需先
+    # systemctl disable --now usv-rtk。
     use_ntrip_arg = DeclareLaunchArgument(
         "use_ntrip", default_value="true",
         description="启动 ntrip_client 把 CORS 差分注入飞控做 RTK。默认开启;"
-                    "config/ntrip_params.yaml 已填好账号; 不用时传 use_ntrip:=false",
+                    "若 usv-rtk.service 已 enabled/active 则自动跳过以避免双份 RTCM。",
         choices=["true", "false"],
     )
 
@@ -145,7 +180,6 @@ def generate_launch_description():
     )
 
     fcu_url = LaunchConfiguration("fcu_url")
-    gcs_url = LaunchConfiguration("gcs_url")
     mavros_odom_topic = LaunchConfiguration("mavros_odom_topic")
     mavros_state_topic = LaunchConfiguration("mavros_state_topic")
     mavros_imu_topic = LaunchConfiguration("mavros_imu_topic")
@@ -185,7 +219,6 @@ def generate_launch_description():
         ),
         launch_arguments={
             "fcu_url": fcu_url,
-            "gcs_url": gcs_url,
         }.items(),
     )
 
@@ -363,17 +396,37 @@ def generate_launch_description():
     )
 
     # RTK 差分注入 (CORS → ntrip_client → MAVROS gps_rtk → 飞控 → GPS)。
-    # 延迟启动让 MAVROS 先连上飞控,gps_rtk 插件就绪后再喂 RTCM。
-    ntrip_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(bringup_dir, "launch", "ntrip.launch.py")
-        ),
-        condition=IfCondition(use_ntrip),
-    )
-    delayed_ntrip = TimerAction(
-        period=5.0,
-        actions=[ntrip_launch],
-    )
+    # 2026-11-11 起默认不在此启动, 改由独立守护进程 usv-rtk.service 托管;
+    # 拆分理由: 差分链路依赖外部 CORS 网络, 曾每 6 秒重连一次, 与控制栈
+    # 生命周期解耦后可单独重启/排障, 不影响录制与 MPC。
+    _rtk_state = _ntrip_daemon_state()
+    if _rtk_state == "active":
+        # 守护进程正在跑: 绝不能再起第二份 ntrip。
+        delayed_ntrip = LogInfo(msg=[
+            "[real.launch] RTK 差分注入由 usv-rtk.service 托管(运行中), 本 launch 跳过 ntrip。",
+            "  手动排查: journalctl -u usv-rtk -f",
+            "  若要改由此 launch 启动: sudo systemctl disable --now usv-rtk",
+        ])
+    elif _rtk_state == "enabled":
+        # 已启用但当前没跑: 大概率是开机时尚未轮到它, 或在被人为 stop。
+        # 仍然跳过, 否则会与随后启动的服务抢注; 但必须把这事说清楚,
+        # 不能让 "差分没注入" 变成静默故障。
+        delayed_ntrip = LogInfo(msg=[
+            "[real.launch] usv-rtk.service 已 enabled 但当前未运行, 本 launch 仍跳过 ntrip。",
+            "  若差分确实需要: sudo systemctl start usv-rtk",
+            "  若想改由此 launch 启动: sudo systemctl disable --now usv-rtk 后重启本服务",
+        ])
+    else:
+        ntrip_launch = IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(bringup_dir, "launch", "ntrip.launch.py")
+            ),
+            condition=IfCondition(use_ntrip),
+        )
+        delayed_ntrip = TimerAction(
+            period=5.0,
+            actions=[ntrip_launch],
+        )
 
     log_msg = ExecuteProcess(
         cmd=["echo", "Launching real USV system..."],
@@ -384,7 +437,6 @@ def generate_launch_description():
         log_msg,
         scheme_arg,
         fcu_url_arg,
-        gcs_url_arg,
         mavros_odom_topic_arg,
         mavros_state_topic_arg,
         mavros_imu_topic_arg,
