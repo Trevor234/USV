@@ -69,7 +69,10 @@ mpc_controller_node:
       #           actuation_anchor_source, actuation_mapping_error_n;
       # 方案 A 另含: initial_state_residual, max_dynamics_residual,
       #              max_control_bound_violation, max_control_rate_violation
-      # mode_manager 仅消费: success/fail_count/solve_time_ms/hold/state/standby_reason
+      # mode_manager 消费: success/fail_count/solve_time_ms/hold/state/
+      #                  standby_reason/allowed_fcu_modes
+      # allowed_fcu_modes 是自动切模式的目标 (A=GUIDED, B=MANUAL),
+      # 由 mpc_params_A/B.yaml 各自声明, 不再依赖 launch 传参。
     - topic: /mpc/predicted_trajectory
       type: nav_msgs/msg/Path
       frame: map

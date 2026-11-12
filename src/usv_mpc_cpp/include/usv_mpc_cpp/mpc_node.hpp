@@ -146,10 +146,10 @@ class MpcControllerNode : public rclcpp::Node {
   std::string path_frame_ = "map";
   bool publish_predicted_ = true;
   int solver_hold_threshold_ = 5;
-  std::vector<std::string> allowed_fcu_modes_ = {"GUIDED"};
+  std::vector<std::string> allowed_fcu_modes_ = {"MANUAL"};
   double state_timeout_s_ = 5.0;
-  double odom_timeout_s_ = 1.0;
-  int reference_start_offset_ = 3;
+  double odom_timeout_s_ = 3.0;     // 与 mpc_params_B.yaml 一致 (SITL EKF 停流容忍)
+  int reference_start_offset_ = 8;  // 与 mpc_params_B.yaml 一致
   double cruise_speed_ = 1.0;
 
   // RC 映射
@@ -157,7 +157,7 @@ class MpcControllerNode : public rclcpp::Node {
   int rc_throttle_channel_ = 2;
   int rc_pwm_min_ = 1100, rc_pwm_center_ = 1500, rc_pwm_max_ = 1900;
   double steering_sign_ = 1.0, throttle_sign_ = 1.0;
-  double steering_gain_ = 0.25, throttle_gain_ = 0.5;
+  double steering_gain_ = 0.4, throttle_gain_ = 0.75;  // 与 mpc_params_B.yaml 一致
 
   // 输出后端: "rc_override" (实机 ArduRover) 或 "vrx_thrust" (VRX Gazebo 直接推力)
   std::string output_mode_ = "rc_override";

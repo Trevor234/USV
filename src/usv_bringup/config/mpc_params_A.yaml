@@ -3,6 +3,11 @@
     # --- General MPC Settings (Flat) ---
     scheme: "A"                 # 实机精简版仅支持方案 A（运动学 MPC）
     control_mode: "kinematic"    # "kinematic" or "idle"
+    # FCU 模式门禁 (方案 A): 速度 setpoint 由 MAVROS 转成
+    # SET_POSITION_TARGET_LOCAL_NED, 只有 GUIDED 模式下飞控才执行。
+    # 放在这里而不是 launch 里: 方案与模式一一对应, launch 漏传时不再
+    # 静默落到节点默认值 (2026-11-12 方案 B 就是被这个缺口卡住)。
+    allowed_fcu_modes: ["GUIDED"]
     mpc_dt: 0.2                 # MPC time step (s) — 5 Hz for kinematic
     horizon: 20                  # Prediction horizon steps
     publish_predicted: true      # Publish MPC predicted trajectory

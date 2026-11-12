@@ -69,3 +69,19 @@ def test_record_launch_uses_mcap_storage_compression_only():
     assert '"--storage-preset-profile"' in text
     assert "--compression-mode" not in text
     assert "--compression-format" not in text
+
+
+def test_scheme_mode_contract_matches_output_backend():
+    """方案 ↔ FCU 模式是一一对应的硬契约, 写错就是船不动。
+
+    A 输出速度 setpoint, 只有 GUIDED 执行; B 输出 RC 覆写, 只有 MANUAL
+    下才经 ArduRover pilot 输入链成为舵/油主控制。2026-11-12 实船方案 B
+    因 launch 未传 allowed_fcu_modes、节点默认 GUIDED, 切到 GUIDED 后
+    原地不动 —— 契约必须由参数文件本身声明, 不能依赖 launch 兜底。
+    """
+    config_dir = Path(__file__).resolve().parents[1] / "config"
+    expected = {"mpc_params_A.yaml": ["GUIDED"], "mpc_params_B.yaml": ["MANUAL"]}
+    for filename, modes in expected.items():
+        with (config_dir / filename).open("r", encoding="utf-8") as f:
+            params = yaml.safe_load(f)["/**"]["ros__parameters"]
+        assert params["allowed_fcu_modes"] == modes, filename

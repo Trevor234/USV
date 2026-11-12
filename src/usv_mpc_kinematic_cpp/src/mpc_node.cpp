@@ -119,7 +119,7 @@ void MpcControllerNode::declare_parameters_()
   this->declare_parameter("allowed_fcu_modes", std::vector<std::string>{"GUIDED"});
   this->declare_parameter("state_timeout_s", 2.0);   // A 用 2.0 (B 用 5.0)
   this->declare_parameter("odom_timeout_s", 1.0);
-  this->declare_parameter("reference_start_offset", 1);  // A 用 1 (B 用 3)
+  this->declare_parameter("reference_start_offset", 1);  // A 用 1 (B 用 8)
   this->declare_parameter("cruise_speed", 1.0);
 
   // 运动学 MPC 参数 (kinematic.*)

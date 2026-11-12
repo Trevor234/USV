@@ -48,7 +48,8 @@ def generate_launch_description():
     )
     auto_mode_switch_arg = DeclareLaunchArgument(
         "auto_mode_switch", default_value="false",
-        description="Automatically switch the FCU to GUIDED. Keep false for Scheme B RC override tests.",
+        description="Automatically switch the FCU to the mode the MPC requires "
+                    "(A=GUIDED, B=MANUAL). Keep false for Scheme B RC override tests.",
     )
 
     mavros_odom_topic_arg = DeclareLaunchArgument(
@@ -114,7 +115,6 @@ def generate_launch_description():
             {
                 "scheme": "A",
                 "control_mode": "kinematic",
-                "allowed_fcu_modes": ["GUIDED"],
                 "odom_topic": mavros_odom_topic,
                 "imu_topic": mavros_imu_topic,
                 "path_topic": "/path/reference",
@@ -136,7 +136,6 @@ def generate_launch_description():
             os.path.join(bringup_dir, "config", "usv_params_sim.yaml"),
             {
                 "control_mode": "dynamic",
-                "allowed_fcu_modes": ["MANUAL"],
                 "odom_topic": mavros_odom_topic,
                 "imu_topic": mavros_imu_topic,
                 "path_topic": "/path/reference",

@@ -3,6 +3,13 @@
     # --- General MPC Settings (Flat) ---
     # 此工作目录仅 NMPC (动力学)
     control_mode: "dynamic"     # "dynamic" (跑 NMPC) 或 "idle" (在线不解算);此工作目录仅支持这两值
+    # FCU 模式门禁 (方案 B): 输出是 RC 通道覆写, 只有 MANUAL 模式下
+    # ArduRover 才把 pilot 输入链 (channel_steer/channel_throttle) 当作
+    # 舵/油主控制。GUIDED 由自身 submode 驱动: CH1 转向被忽略, CH3 仅作
+    # speed nudge (仅 WP/Heading/TurnRate 子模式, 且是"加速微调"而非驱动),
+    # 进入 GUIDED 时无目标即 Stop/Loiter 停车。故 RC 覆写无法驱动船。
+    # 因此方案 B 必须 MANUAL, 且不能靠 launch 传参兜底。
+    allowed_fcu_modes: ["MANUAL"]
     mpc_dt: 0.2                 # MPC time step (s) — 5 Hz control loop
     horizon: 20                  # Prediction horizon steps
     publish_predicted: true      # Publish MPC predicted trajectory

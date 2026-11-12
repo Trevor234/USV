@@ -68,7 +68,10 @@ MpcControllerNode::~MpcControllerNode() {
   // safe_shutdown 由 main 在 rclpy::shutdown 前显式调用
 }
 
-// ── 参数声明 (默认值与清理后的 mpc_params_B.yaml/usv_params_B.yaml 对齐) ──
+// ── 参数声明 ──
+// 默认值 = 实船部署值 (mpc_params_B.yaml + usv_params_B.yaml 2026-09-03
+// 阶段3 辨识): yaml 缺失/漏传时落在实船模型上, 而不是静默换成 30kg 仿真船。
+// 改动 yaml 后须同步此处 (此前默认值是仿真船参数, 与注释声称的"对齐"不符)。
 void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("control_mode", std::string("dynamic"));
   this->declare_parameter("mpc_dt", 0.2);
@@ -86,10 +89,15 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("publish_predicted", true);
   this->declare_parameter("max_solve_time_ms", 200.0);
   this->declare_parameter("solver_hold_threshold", 5);
-  this->declare_parameter("allowed_fcu_modes", std::vector<std::string>{"GUIDED"});
+  // FCU 模式门禁默认值 = 本节点的输出语义: rc_override 只在 MANUAL 下经
+  // ArduRover pilot 输入链生效。曾默认为 GUIDED (方案 A 的语义), 而
+  // real.launch 不传该参数, 方案 B 实船因此永远 wrong_mode STANDBY。
+  // 现在两份 mpc_params_*.yaml 各自声明, 此默认值只兜底裸启动。
+  this->declare_parameter("allowed_fcu_modes", std::vector<std::string>{"MANUAL"});
   this->declare_parameter("state_timeout_s", 5.0);
-  this->declare_parameter("odom_timeout_s", 1.0);
-  this->declare_parameter("reference_start_offset", 3);
+  // MAVROS local odom 在 SITL EKF/GPS 更新期间会短暂停流 (yaml 注释)
+  this->declare_parameter("odom_timeout_s", 3.0);
+  this->declare_parameter("reference_start_offset", 8);
   this->declare_parameter("cruise_speed", 1.0);
 
   // 输出后端: "rc_override" (实机 ArduRover) 或 "vrx_thrust" (VRX Gazebo 直接推力)
@@ -99,14 +107,14 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("vrx_thrust_scale", 25.0);
   this->declare_parameter("vrx_thrust_cmd_max", 1000.0);
 
-  // NMPC参数
-  this->declare_parameter("dynamic.Q", std::vector<double>{10.0, 10.0, 50.0, 5.0, 1.0, 5.0});
-  this->declare_parameter("dynamic.R", std::vector<double>{0.01, 0.01});
-  this->declare_parameter("dynamic.Rd", std::vector<double>{0.1, 0.1});
-  this->declare_parameter("dynamic.Qf_scale", 10.0);
-  this->declare_parameter("dynamic.T_max", 40.0);
-  this->declare_parameter("dynamic.T_min", -20.0);
-  this->declare_parameter("dynamic.dT_max", 30.0);
+  // NMPC参数 (mpc_params_B.yaml: sqrt(Qx/R)≈20N=80%T_max 调参)
+  this->declare_parameter("dynamic.Q", std::vector<double>{20.0, 20.0, 50.0, 8.0, 1.0, 8.0});
+  this->declare_parameter("dynamic.R", std::vector<double>{0.05, 0.05});
+  this->declare_parameter("dynamic.Rd", std::vector<double>{0.2, 0.2});
+  this->declare_parameter("dynamic.Qf_scale", 8.0);
+  this->declare_parameter("dynamic.T_max", 25.0);
+  this->declare_parameter("dynamic.T_min", -25.0);
+  this->declare_parameter("dynamic.dT_max", 80.0);
   this->declare_parameter("dynamic.dt", 0.2);
 
   // RC 映射
@@ -119,29 +127,29 @@ void MpcControllerNode::declare_parameters_() {
   // 与 mpc_params_B.yaml 一致)。默认必须为 -1, 避免配置缺失时闭环正反馈画圈。
   this->declare_parameter("steering_sign", -1.0);
   this->declare_parameter("throttle_sign", 1.0);
-  this->declare_parameter("steering_gain", 0.25);
-  this->declare_parameter("throttle_gain", 0.5);
+  this->declare_parameter("steering_gain", 0.4);
+  this->declare_parameter("throttle_gain", 0.75);
 
-  // 船体参数 (vehicle.*)
-  this->declare_parameter("vehicle.mass", 30.0);
-  this->declare_parameter("vehicle.Iz", 8.0);
-  this->declare_parameter("vehicle.xg", 0.0);
-  this->declare_parameter("vehicle.d_thruster", 0.3);
-  this->declare_parameter("vehicle.Xu_dot", -3.0);
-  this->declare_parameter("vehicle.Yv_dot", -20.0);
-  this->declare_parameter("vehicle.Yr_dot", -0.5);
-  this->declare_parameter("vehicle.Nv_dot", -0.5);
-  this->declare_parameter("vehicle.Nr_dot", -2.0);
-  this->declare_parameter("vehicle.Xu", -8.0);
-  this->declare_parameter("vehicle.Yv", -30.0);
-  this->declare_parameter("vehicle.Yr", -1.0);
-  this->declare_parameter("vehicle.Nv", -1.0);
-  this->declare_parameter("vehicle.Nr", -5.0);
-  this->declare_parameter("vehicle.Xuu", -15.0);
-  this->declare_parameter("vehicle.Yvv", -60.0);
-  this->declare_parameter("vehicle.Yrr", -1.0);
-  this->declare_parameter("vehicle.Nvv", -1.0);
-  this->declare_parameter("vehicle.Nrr", -3.0);
+  // 船体参数 (vehicle.* = usv_params_B.yaml 实船 14.2kg / 2026-09-03 阶段3)
+  this->declare_parameter("vehicle.mass", 14.2);
+  this->declare_parameter("vehicle.Iz", 2.13);
+  this->declare_parameter("vehicle.xg", 0.12);
+  this->declare_parameter("vehicle.d_thruster", 0.25);
+  this->declare_parameter("vehicle.Xu_dot", -2.0);
+  this->declare_parameter("vehicle.Yv_dot", -8.0);
+  this->declare_parameter("vehicle.Yr_dot", 0.0);
+  this->declare_parameter("vehicle.Nv_dot", -0.363545);
+  this->declare_parameter("vehicle.Nr_dot", -3.41);   // 阶段3: was -1.621220
+  this->declare_parameter("vehicle.Xu", -2.272063);
+  this->declare_parameter("vehicle.Yv", -2.629019);
+  this->declare_parameter("vehicle.Yr", 0.0);          // zeroed
+  this->declare_parameter("vehicle.Nv", 0.0);          // zeroed
+  this->declare_parameter("vehicle.Nr", -3.105);      // 阶段3: was -4.286144
+  this->declare_parameter("vehicle.Xuu", -11.571784);
+  this->declare_parameter("vehicle.Yvv", -0.05);
+  this->declare_parameter("vehicle.Yrr", 0.0);         // zeroed
+  this->declare_parameter("vehicle.Nvv", 0.0);         // zeroed
+  this->declare_parameter("vehicle.Nrr", -0.71);       // 阶段3: was -0.001
 }
 
 void MpcControllerNode::load_config_() {
@@ -175,23 +183,26 @@ void MpcControllerNode::load_config_() {
   vrx_thrust_scale_ = this->get_parameter("vrx_thrust_scale").as_double();
   vrx_thrust_cmd_max_ = this->get_parameter("vrx_thrust_cmd_max").as_double();
 
-  // 输出后端 × FCU 模式契约自检: rc_override 组合 (ArduRover GUIDED 接受
-  // RC override, 2026-07 实船验证) 依赖 allowed_fcu_modes 与部署的模式切换
-  // 逻辑一致。若列表不含 GUIDED, MPC 将永远 wrong_mode STANDBY —— 启动时
-  // 显式告警, 避免配置漂移静默生效。
+  // 输出后端 × FCU 模式契约自检: rc_override 只在 ArduRover MANUAL 模式下
+  // 经 pilot 输入链 (channel_steer/channel_throttle) 成为舵/油主控制。
+  // GUIDED 由自身 submode 驱动: CH1 转向被忽略, CH3 仅作 speed nudge
+  // (且限 WP/Heading/TurnRate 子模式), 无 target 时 Stop/Loiter 停车。
+  // allowed_fcu_modes 不含 MANUAL 时 MPC 会永远 wrong_mode STANDBY 或
+  // (更糟) 在 GUIDED 下解算但船无响应, 启动时显式告警。
   if (output_mode_ == "rc_override" && !allowed_fcu_modes_.empty()) {
-    bool has_guided = false;
+    bool has_manual = false;
     for (const auto& m : allowed_fcu_modes_) {
-      if (m == "GUIDED") { has_guided = true; break; }
+      if (m == "MANUAL") { has_manual = true; break; }
     }
-    if (!has_guided) {
+    if (!has_manual) {
       std::string modes;
       for (const auto& m : allowed_fcu_modes_) {
         modes += (modes.empty() ? "" : ",") + m;
       }
       RCLCPP_WARN(this->get_logger(),
                   "output_mode=rc_override 但 allowed_fcu_modes=[%s] 不含 "
-                  "GUIDED: 确认该组合与模式管理器的切换逻辑一致",
+                  "MANUAL: RC 覆写在非 MANUAL 模式下不是舵/油主控制, "
+                  "确认方案 B 的 FCU 模式配置",
                   modes.c_str());
     }
   }
@@ -716,6 +727,14 @@ void MpcControllerNode::publish_standby_status_(const std::string& reason) {
     j["profile_sync_reason"] = profile_sync_reason_;
   }
   j["standby_reason"] = reason;
+  // allowed_fcu_modes 在 STANDBY 期间也必须在 (尤其 wrong_mode 时):
+  // mode_manager 用它决定自动切到哪个模式, 缺了就只能退回 GUIDED 猜方案。
+  {
+    std::lock_guard<std::mutex> lk(state_lock_);
+    j["allowed_fcu_modes"] = allowed_fcu_modes_;
+    j["fcu_mode"] = mode_;
+    j["armed"] = armed_;
+  }
   std_msgs::msg::String msg;
   msg.data = j.dump();
   status_pub_->publish(msg);

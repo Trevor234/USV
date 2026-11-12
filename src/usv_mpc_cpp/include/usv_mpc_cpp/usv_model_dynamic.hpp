@@ -58,19 +58,19 @@ struct HydroParams {
   double Yv_dot = -8.0;
   double Yr_dot = 0.0;
   double Nv_dot = -0.363545;
-  double Nr_dot = -1.621220;
+  double Nr_dot = -3.41;   // 2026-09-03 阶段3 (usv_params_B.yaml), was -1.621220
   // 线性阻尼
   double Xu = -2.272063;
   double Yv = -2.629019;
   double Yr = 0.0;     // zeroed (开环稳定)
   double Nv = 0.0;     // zeroed (开环稳定)
-  double Nr = -4.286144;
+  double Nr = -3.105;  // 2026-09-03 阶段3 (usv_params_B.yaml), was -4.286144
   // 二次阻尼
   double Xuu = -11.571784;
   double Yvv = -0.05;
   double Yrr = 0.0;    // zeroed
   double Nvv = 0.0;    // zeroed
-  double Nrr = -0.001;
+  double Nrr = -0.71;  // 2026-09-03 阶段3 (usv_params_B.yaml), was -0.001;
 };
 
 /// USV 三自由度 Fossen 动力学模型 (双推进器)。

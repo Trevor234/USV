@@ -127,7 +127,7 @@ void ModeManagerNode::declare_parameters_() {
   // 不触发 RTL —— 缺失遥测导致的意外 RTL 本身就是危险。
   this->declare_parameter("battery_timeout_s", 10.0);
   // 人工接管冷却: 检测到 FCU 模式被外部改变后, 该时长内 auto_mode_switch
-  // 不拉回 GUIDED。failsafe RTL 不受此限制。
+  // 不拉回目标模式。failsafe RTL 不受此限制。
   this->declare_parameter("manual_takeover_cooldown_s", 10.0);
   // FAILSAFE RTL 重发上限: 达到后停止指令洪水 (链路断/飞控拒绝时无限
   // 重发毫无意义), 保持 failsafe 状态并节流告警, 等待人工介入。
@@ -194,6 +194,12 @@ void ModeManagerNode::mpc_status_callback_(const std_msgs::msg::String::SharedPt
     mpc_hold_           = payload.value("hold", false);
     mpc_state_          = payload.value("state", "UNKNOWN");
     mpc_standby_reason_ = payload.value("standby_reason", "");
+    // MPC 是"哪个 FCU 模式才算就绪"的唯一事实来源 (方案 A=GUIDED,
+    // 方案 B=MANUAL)。自动切换必须跟随它, 不能自己猜。
+    if (auto const it = payload.find("allowed_fcu_modes");
+        it != payload.end() && it->is_array()) {
+      mpc_allowed_modes_ = it->get<std::vector<std::string>>();
+    }
   } catch (const nlohmann::json::exception& e) {
     // Legacy: 任何 "error" 子串标记为失败
     std::string lower = msg->data;
@@ -380,27 +386,39 @@ void ModeManagerNode::monitor_loop_() {
   failsafe_disarm_sent_ = false;
 
   // ── 自动模式切换 ──
-  // 触发条件: armed 且不在 GUIDED,且 MPC 有意愿解算 ——
+  // 目标模式不再硬编码 GUIDED: MPC 在 /mpc/status 里发布 allowed_fcu_modes,
+  // 方案 A 是 GUIDED (速度 setpoint), 方案 B 是 MANUAL (RC 覆写)。拿硬编码
+  // GUIDED 去切换会把方案 B 从 MANUAL 里拽出来, 而 GUIDED 下 RC 覆写不是
+  // 主控制 —— 船会停住。
+  // 触发条件: armed 且不在目标模式, 且 MPC 有意愿解算 ——
   //   (1) 当前正在成功解算(legacy 行为),或
-  //   (2) MPC 因 wrong_mode 进入 STANDBY(没切到 GUIDED 之前永远不会
+  //   (2) MPC 因 wrong_mode 进入 STANDBY(没切到目标模式之前永远不会
   //       success,需要由 mode_manager 主动切过去打破死锁)
   // 人工接管冷却: 模式刚被改变(如操作手切 MANUAL)后的冷却期内不拉回;
-  // failsafe RTL 在上方已 return, 不受冷却影响。
+  // failsafe 在上方已 return, 不受冷却影响。
+  const std::string target_mode = auto_mode_target_();
   bool auto_switch = this->get_parameter("auto_mode_switch").as_bool();
   bool in_takeover_cooldown =
       (now - last_mode_change_) < takeover_cooldown_s_;
-  if (in_takeover_cooldown && current_mavros_mode_ != "GUIDED") {
+  if (in_takeover_cooldown && current_mavros_mode_ != target_mode) {
     RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
-                         "人工接管冷却期内, 暂停自动切回 GUIDED");
+                         "人工接管冷却期内, 暂停自动切回 %s",
+                         target_mode.c_str());
   }
-  if (!in_takeover_cooldown && auto_switch && armed_ &&
-      current_mavros_mode_ != "GUIDED") {
-    bool needs_guided =
+  // target_mode 为空 = 还没收到 MPC status, 不知道本方案要哪个模式。
+  // 此时绝不猜 GUIDED: 方案 B 被切进 GUIDED 就是船原地不动, 宁可不动。
+  if (target_mode.empty() && auto_switch && armed_) {
+    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
+                         "尚未收到 MPC status (allowed_fcu_modes), 暂停自动切模式");
+  }
+  if (!target_mode.empty() && !in_takeover_cooldown && auto_switch && armed_ &&
+      current_mavros_mode_ != target_mode) {
+    bool needs_switch =
         mpc_ok_ ||
         (mpc_state_ == "STANDBY" &&
          mpc_standby_reason_.rfind("wrong_mode", 0) == 0);
-    if (needs_guided) {
-      switch_mode_("GUIDED");
+    if (needs_switch) {
+      switch_mode_(target_mode);
     }
   }
 
@@ -426,6 +444,14 @@ void ModeManagerNode::monitor_loop_() {
 }
 
 // ── 模式切换 ─────────────────────────────────────────────
+std::string ModeManagerNode::auto_mode_target_() const
+{
+  if (!mpc_allowed_modes_.empty()) return mpc_allowed_modes_.front();
+  // 空字符串 = 未知。不得回退 "GUIDED": 那是方案 A 的语义, 用在方案 B 上
+  // 会把船切进 GUIDED, RC 覆写失去主控制权 —— 船原地不动 (2026-11-12 实船)。
+  return "";
+}
+
 bool ModeManagerNode::switch_mode_(const std::string& mode) {
   if (current_mavros_mode_ == mode) return true;
 

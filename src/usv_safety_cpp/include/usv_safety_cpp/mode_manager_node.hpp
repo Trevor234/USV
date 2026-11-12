@@ -34,6 +34,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 #include <mavros_msgs/msg/state.hpp>
@@ -85,6 +86,10 @@ class ModeManagerNode : public rclcpp::Node {
 
   // ── 模式切换 ────────────────────────────────────────
   bool switch_mode_(const std::string& mode);
+  /// 自动模式切换的目标: 取 MPC 声明的 allowed_fcu_modes 首个条目。
+  /// 未收到 MPC status 时返回空串 (= 未知), 此时不自动切模式 —— 绝不
+  /// 回退 GUIDED: 方案 B 在 GUIDED 下 RC 覆写不是主控制, 船原地不动。
+  std::string auto_mode_target_() const;
 
   // ── 安全监控器（纯逻辑） ────────────────────────────
   SafetyConfig  safety_config_;
@@ -106,6 +111,8 @@ class ModeManagerNode : public rclcpp::Node {
   bool        mpc_hold_              = false;
   std::string mpc_state_             = "UNKNOWN";  // ACTIVE/HOLD/STANDBY/UNKNOWN
   std::string mpc_standby_reason_;
+  // MPC 声明的 FCU 模式门禁 (方案 A=GUIDED, 方案 B=MANUAL); 空表示尚未收到
+  std::vector<std::string> mpc_allowed_modes_;
   double      last_mpc_status_time_  = 0.0;
   // 每条 /mpc/status 递增; 监控循环据此只消费"新"状态 (避免按 2Hz 监控
   // 节拍重复喂同一份失败, 把失败计数膨胀)
