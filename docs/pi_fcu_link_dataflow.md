@@ -16,7 +16,9 @@
 
 ## 1. 系统总览：五条链路
 
-整个系统可以看成以树莓派为中心的**五条独立链路**。它们物理上共用一台 Pi 和一个 frp 隧道，但逻辑上互不依赖，任何一条断掉不影响其他链路（除了控制回路本身）。
+> **2026-11 更新注**：原 `usv_simulation` 包（含 `telemetry_bridge` 遥测桥与 `visualizer`）及 `real.launch.py` 中的 `gcs_url` 已移除；下方总览表及 §5.11、§7 中的 ④ 号遥测链路和 TCP:14550/8765 记录反映历史实测态，若树莓派 `/usr/local/frp/frpc.toml` 中仍留有 `usv-telemetry` 转发可按需一并下线。
+
+整个系统在历史实测时可以看成以树莓派为中心的**五条独立链路**。它们物理上共用一台 Pi 和一个 frp 隧道，但逻辑上互不依赖，任何一条断掉不影响其他链路（除了控制回路本身）。
 
 ```mermaid
 flowchart TB
@@ -45,7 +47,7 @@ flowchart TB
 | ① | **SSH 运维** | 操作机 → VPS:6022 → frp → Pi:22 | 远程登录、部署、查看日志 |
 | ② | **GCS 遥控链路** | Mission Planner → VPS:14550 → frp → Pi:14550（mavros_router GCS 桥）→ MAVLink 转发给飞控 | 下发任务航点、监控飞控状态、手动接管 |
 | ③ | **RTK 差分注入** | 云图CORS → NTRIP → ntrip_client → `/mavros/gps_rtk/send_rtcm` → MAVROS → `GPS_RTCM_DATA` MAVLink → 飞控 GPS 串口 → RTK 模块 | 厘米级定位 |
-| ④ | **遥测** | telemetry_bridge → 127.0.0.1:8765 → frp → VPS:7865 → 监控 UI | 5 Hz JSON 状态/轨迹/日志流 |
+| ④ | **遥测** *(已移除)* | *(原)* telemetry_bridge → 127.0.0.1:8765 → frp → VPS:7865 → 监控 UI | 5 Hz JSON 状态/轨迹/日志流（2026-11 随 `usv_simulation` 移除） |
 | ⑤ | **数据录包** | rosbag2 → `/mnt/usv_bags`（外接 SSD，MCAP+zstd） | 事后分析/辨识 |
 
 **注意**：GCS 链路（②）中 Mission Planner 看到的是**经 frp 穿透的 MAVROS GCS 桥**，不是直连飞控串口。MAVROS 在这里同时是"飞控话题的发布者"和"MAVLink 分发路由器"——mavros_router 把一条串口链路扇出到 `/uas1`（ROS 侧）和 `tcp-l://:14550`（GCS 侧）两个端点。
@@ -150,7 +152,7 @@ flowchart LR
     end
 
     subgraph 旁路
-        TB[telemetry_bridge<br/>5 Hz JSON, TCP:8765] -.->|"订阅 odom/status/paths/<br/>fix/gpsraw/rtcm"| MPC
+        TB["telemetry_bridge (2026-11 已移除)<br/>5 Hz JSON, TCP:8765"] -.->|"历史链路"| MPC
         REC[rosbag2 录包<br/>14 话题 → SSD<br/>含 MAVLink 双向帧] -.->|"订阅全部核心话题"| MPC
     end
 ```
@@ -185,8 +187,8 @@ dN = Δlat · (π/180) · R                ← 北向偏移
 **安全旁路（mode_manager_node）**
 0.5 s 周期监控：odom 新鲜度（1 s）、MPC status 新鲜度（1 s，防 MPC 崩溃后 FCU 锁存最后速度指令）、路径新鲜度（5 s）、地理围栏（半径 200 m）、超速（3 m/s）、低电量（10.5 V）+ MPC 求解失败计数。触发 failsafe 时按 `failsafe_mode` 行动——实船当前为 `"report"`（只告警不切模式，控制权留人工；9-03 实测教训：测试期自动切模式弊大于利）。`auto_arm`/`auto_mode_switch` 在 real.launch 中强制 false，即**实船永不自动解锁/切模式**，只监视报告。另有人工接管后自动恢复目标模式（A=GUIDED / B=MANUAL，取自 MPC status 的 `allowed_fcu_modes`）的冷却逻辑（report 模式下被抑制）。
 
-**遥测/录包旁路**
-`telemetry_bridge`（Python）聚合 odom/status/三类路径/fix/gpsraw/rtcm 统计 + journalctl 日志尾巴，5 Hz 打成 JSON 帧推给 TCP 客户端（当前 0 个连接）。rosbag2 以 MCAP+实时写（`mcap_realtime.yaml`，不分卷、`cache=0`）录 14 个核心话题到 SSD，其中包含 `/uas1/mavlink_source` 与 `/uas1/mavlink_sink` 两个 MAVLink 双向帧话题（详见 [bag_recording.md](bag_recording.md) §3.1 与 §10）。
+**录包/（历史）遥测旁路**
+*(注：`telemetry_bridge` 已于 2026-11 随 `usv_simulation` 移除)* 原 `telemetry_bridge`（Python）曾聚合 odom/status/三类路径/fix/gpsraw/rtcm 统计 + journalctl 日志尾巴，5 Hz 打成 JSON 帧推给 TCP 客户端。现行仅保留 rosbag2 以 MCAP+实时写（`mcap_realtime.yaml`，不分卷、`cache=0`）录 14 个核心话题到 SSD，其中包含 `/uas1/mavlink_source` 与 `/uas1/mavlink_sink` 两个 MAVLink 双向帧话题（详见 [bag_recording.md](bag_recording.md) §3.1 与 §10）。
 
 ---
 
@@ -418,7 +420,7 @@ NTRIP 客户端下发的差分数据容器。`data` 字段为**原始 RTCM3 二�
 
 方案 B 额外字段：`tl_n`/`tr_n`（锚定等效推力）、`tl_cmd_n`/`tr_cmd_n`（规划推力）、`steering_pwm`/`throttle_pwm`、`actuation_anchor_source`、`actuation_mapping_error_n`、`solve_wall_time_ms`、`control_source`。mode_manager 只消费 `success/fail_count/solve_time_ms/hold/state/standby_reason` 六个字段做看门狗。
 
-### 5.11 遥测 TCP 帧格式（telemetry_bridge）
+### 5.11 遥测 TCP 帧格式（telemetry_bridge，现已随 `usv_simulation` 移除）
 
 自定义应用层协议，**不是 ROS 话题**：
 

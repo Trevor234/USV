@@ -21,7 +21,7 @@
 
 ## 2. 当前基线
 
-开发工作空间包含以下 6 个 ROS 2 包：
+开发工作空间当前包含以下 **5 个** ROS 2 包（原 `usv_simulation` 及 `telemetry_bridge`/`visualizer` 已彻底移除）：
 
 | 包 | 迁移用途 |
 |---|---|
@@ -29,8 +29,7 @@
 | `usv_mpc_kinematic_cpp` | 运动学 MPC 运行节点 |
 | `usv_planning_cpp` | 路径规划和轨迹相关节点 |
 | `usv_safety_cpp` | 安全监督与状态检查 |
-| `usv_simulation` | 遥测桥、仿真及部分运行辅助组件 |
-| `usv_bringup` | 真实艇、仿真和整体启动入口 |
+| `usv_bringup` | 真实艇整体启动入口、QoS 中继与全部配置 |
 
 截至编制本计划时，MPC 相关本地验证已通过：
 
@@ -60,9 +59,11 @@ rg -n "ttyAMA|fcu_url|921600" /home/trevor/usv_mpc_ws/src /etc/default/usv-syste
 
 确认标准：实际存在的串口、MAVROS `fcu_url` 和 systemd 启动参数三者一致。不要为了匹配文档而更改一个正在正常工作的设备名。
 
-### 3.2 遥测端口
+### 3.2 遥测端口（原 `telemetry_bridge` 已随 `usv_simulation` 移除）
 
-艇载说明主体使用 TCP `8765`，文末另有 `7865` 的记录。迁移前检查当前服务实际监听端口：
+> 注：`usv_simulation` 及其内嵌的 `telemetry_bridge`（本地 TCP `8765` / frp `7865`）已于 2026-11 移除；下述端口与进程检查命令仅保留用于历史发布记录比对或核查主机侧 `frpc.toml` 是否尚存残留配置。
+
+艇载说明主体曾使用 TCP `8765`，文末另有 `7865` 的记录。迁移前如仍存在历史进程/端口可检查：
 
 ```bash
 systemctl cat usv-system.service
@@ -85,7 +86,7 @@ ss -ltnp | rg ":(8765|7865)"
 
 ### 3.5 包依赖声明
 
-静态检查发现 `usv_bringup/package.xml` 没有完整声明启动文件引用的运行时包，其中包括工作空间内的 `usv_mpc_kinematic_cpp`、`usv_simulation`，以及特定启动路径可能使用的 `ntrip_client`（开发机 VRX/Gazebo 仿真入口现已移除，不应在艇载系统安装完整仿真栈）。
+静态检查曾发现 `usv_bringup/package.xml` 没有完整声明启动文件引用的运行时包，其中包括工作空间内的 `usv_mpc_kinematic_cpp`、原 `usv_simulation`（现已随遥测与可视化功能一并彻底移除），以及特定启动路径可能使用的 `ntrip_client`（开发机 VRX/Gazebo 仿真入口现已移除，不应在艇载系统安装完整仿真栈）。
 
 发布前应完成以下二选一动作：
 
@@ -479,7 +480,9 @@ ros2 topic hz /mavros/imu/data
 
 如需手工运行 `real.launch.py` 诊断，必须先停止 `usv-system.service`；诊断结束后退出全部手工节点，再恢复 systemd 服务。
 
-### 10.4 遥测与远程链路
+### 10.4 遥测与远程链路（`telemetry_bridge` 已随 `usv_simulation` 移除）
+
+> 注：工作区移除 `usv_simulation` / `telemetry_bridge` 后，机载端不再监听 TCP `8765`；本检查仅用于确认无旧进程残留以及验证 SSH/frp 等其他远程运维通道正常。
 
 ```bash
 ss -ltnp | rg ":(8765|7865)"
@@ -583,11 +586,11 @@ systemd 服务文件校验值：
 
 - [ ] 确认本次发布文件范围；
 - [ ] 生成提交 SHA/标签或归档校验值；
-- [ ] 开发机 6 包完整构建和测试通过；
+- [ ] 开发机现存 5 包完整构建和测试通过（`usv_simulation` 已移除）；
 - [ ] acados 生成代码与 OCP 配置一致；
 - [ ] 补齐或记录真实艇运行依赖；
 - [ ] 核实串口 `/dev/ttyAMA0` 与 `/dev/ttyAMA10` 的实际值；
-- [ ] 核实遥测端口 `8765` 与 `7865` 的实际值；
+- [ ] 确认原遥测端口 `8765` / `7865` 无旧服务残留（`telemetry_bridge` 已随 `usv_simulation` 移除）；
 - [ ] 确认磁盘空间、SSH 和物理应急登录可用；
 - [ ] 准备固定部署编号和发布记录。
 

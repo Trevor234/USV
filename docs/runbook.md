@@ -14,7 +14,7 @@ source /opt/ros/jazzy/setup.bash
 export ACADOS_SOURCE_DIR=$HOME/acados
 export LD_LIBRARY_PATH=$HOME/acados/lib:${LD_LIBRARY_PATH:-}
 colcon build --symlink-install --packages-select \
-  usv_bringup usv_planning_cpp usv_safety_cpp usv_simulation \
+  usv_bringup usv_planning_cpp usv_safety_cpp \
   usv_mpc_kinematic_cpp usv_mpc_cpp
 source install/setup.bash
 ```
@@ -54,8 +54,7 @@ source install/setup.bash
 
 ros2 launch usv_bringup real.launch.py \
   scheme:=B \
-  fcu_url:=/dev/ttyAMA10:921600 \
-  visualize:=false
+  fcu_url:=/dev/ttyAMA10:921600
 ```
 
 如需单独启动 MAVROS 并临时开启 GCS 转发（`real.launch.py` 默认不再提供 `gcs_url`）：
@@ -108,12 +107,21 @@ ros2 topic echo /mpc/status --once
      （2026-11-12 00:24–00:25 实测）。任何一次 odom/path 超时都会走这条路，
      而 `auto_mode_switch=false` 不会自己切回 MANUAL，必须人工重切。
      台架调试可临时 `FS_THR_ENABLE=0`，水上不要关。
-  2. **摇杆不能接管**。`RC_OPTIONS=32` 只有 bit5（ARMING_CHECK_THROTTLE），
-     bit1 IGNORE_OVERRIDES 与 bit14 CLEAR_OVERRIDES_BY_RC 都未置位：飞控接受
-     RC 覆写（不是忽略），但操作手推杆**不会**清除覆写。MANUAL 下唯一的
-     人工接管手段是拨模式开关（`MODE_CH=8`，未被覆写）或停服务。若要"动杆
-     即接管"，需 `RC_OPTIONS |= 16384`，但这会让操作手碰杆就抢走控制权 ——
-     是策略选择，不是 bug 修复，默认未改。
+  2. **人工接管按实机固件版本核对**。实机启动日志为
+     `ArduRover V4.7.1 (dbe79216)`，该提交的 `RC_OPTIONS` 定义范围为 bit0–bit13。
+     当前 `RC_OPTIONS=32` 对应 bit5（ARMING_CHECK_THROTTLE）。有效覆写期间，
+     通道输入优先采用 MAVLink 覆写值，操作手推动摇杆后仍会使用覆写值。
+     [对应固件的位定义](https://github.com/ArduPilot/ardupilot/blob/dbe79216/libraries/RC_Channel/RC_Channel.h#L623-L638)
+
+     当前固件提供 `RCx_OPTION=46`（RC Override Enable）辅助开关机制，
+     `x` 按遥控器实际接线选择独立可用通道。LOW 会清除现有覆写并关闭后续
+     覆写接收，HIGH 重新允许覆写，MIDDLE 保持先前状态。在未解锁台架上核对
+     开关实际高低位置、禁用覆写后的遥控输入，以及重新允许后的 MPC 恢复行为。
+     [对应固件的开关处理](https://github.com/ArduPilot/ardupilot/blob/dbe79216/libraries/RC_Channel/RC_Channel.cpp#L1297-L1312)
+
+     拨模式开关切到 HOLD 会使方案 B 进入待命并释放覆写。回到 MANUAL 后，
+     MPC 在路径、里程计和解锁条件满足时会恢复输出，接管操作需结合覆写
+     使能开关的实际配置。
 - RTK 差分凭据：`ntrip.launch.py` 依赖
   `usv_bringup/config/ntrip_params.yaml`（含 CORS 账号密码，不入库）。
   仓库只提供 `ntrip_params.yaml.example` 模板；首次部署时先

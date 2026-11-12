@@ -1,7 +1,7 @@
 # USV MPC 算法分析与优化建议
 
 > 评审日期：2026-09-12  
-> 评审范围：`usv_mpc_kinematic_cpp`（方案 A）、`usv_mpc_cpp`（方案 B）、参考轨迹生成、原 VRX 执行内环及相关参数（注：VRX / SITL 仿真入口及 `vrx_thrust`/`cmdvel_to_thrust` 已于 2026-11 清理移除，下文中对应段落仅作历史评审背景保留）  
+> 评审范围：`usv_mpc_kinematic_cpp`（方案 A）、`usv_mpc_cpp`（方案 B）、参考轨迹生成、原 VRX 执行内环及相关参数（注：VRX / SITL 仿真入口、`vrx_thrust`/`cmdvel_to_thrust` 及 `usv_simulation` 包已于 2026-11 清理移除，下文中对应段落仅作历史评审背景保留）  
 > 工作区：ROS 2 Jazzy / `ament_cmake` + `ament_python`
 
 ## 1. 文档目的
@@ -664,9 +664,9 @@ idx = nearest + reference_start_offset
 
 ```bash
 cd ~/usv_mpc_ws
-colcon build --symlink-install --packages-select usv_mpc_kinematic_cpp usv_simulation usv_bringup
+colcon build --symlink-install --packages-select usv_mpc_kinematic_cpp usv_bringup
 source install/setup.bash
-colcon test --packages-select usv_mpc_kinematic_cpp usv_simulation usv_bringup
+colcon test --packages-select usv_mpc_kinematic_cpp usv_bringup
 colcon test-result --verbose
 ```
 

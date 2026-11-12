@@ -14,8 +14,7 @@ acados SQP_RTI + CasADi fallback)。
 | `usv_mpc_kinematic_cpp` | C++ | 运动学 MPC 的 C++ 版(方案 A 实机用) |
 | `usv_planning_cpp` | C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
 | `usv_safety_cpp` | C++ | 模式管理 + 安全监控(围栏/电池/求解器/看门狗 failsafe → HOLD) |
-| `usv_simulation` | Python | matplotlib 实时可视化(`visualizer`) + TCP telemetry bridge(`telemetry_bridge`) |
-| `usv_bringup` | — | launch(`real/mavros/ntrip/record`)+ 全部 YAML 配置 |
+| `usv_bringup` | Python | launch(`real/mavros/ntrip/record`)、QoS 中继与全部 YAML 配置 |
 
 > 注: Python 版 `usv_planning` / `usv_safety` / `usv_mpc` 包已于 2026-09
 > 删除, 现在全部为 C++ 实现 (`*_cpp`)。

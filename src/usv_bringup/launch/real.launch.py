@@ -5,11 +5,11 @@ Launches ALL nodes:
   - MPC controller
   - Path planner
   - Mode manager & safety monitor
-  - (optional) Visualizer + NTRIP RTK injection
+  - (optional) NTRIP RTK injection + rosbag2 recording
 
 Usage:
   ros2 launch usv_bringup real.launch.py
-  ros2 launch usv_bringup real.launch.py visualize:=true use_ntrip:=true
+  ros2 launch usv_bringup real.launch.py use_ntrip:=true
   ros2 launch usv_bringup real.launch.py record:=true bag_output_dir:=/mnt/usv_bags
 """
 
@@ -123,21 +123,6 @@ def generate_launch_description():
         "profile_topic", default_value="/path/reference_profile",
         description="Reference speed/curvature/time profile topic used by MPC",
     )
-    
-    # visualize: 是否启动 matplotlib 实时可视化。
-    visualize_arg = DeclareLaunchArgument(
-        "visualize", default_value="false",
-        description="启动 matplotlib 实时可视化。默认关闭(B 实机通常 headless);"
-                    "无 DISPLAY 时该节点会自动优雅退出(不影响其他节点);需开启传 visualize:=true",
-        choices=["true", "false"],
-    )
-
-    # telemetry: 是否启动遥测桥接,经 frp 向地面站转发状态。
-    telemetry_arg = DeclareLaunchArgument(
-        "telemetry", default_value="true",
-        description="启动遥测桥接(usv_simulation/telemetry_bridge),5 Hz 打包 JSON 经裸 TCP 转发。默认开启",
-        choices=["true", "false"],
-    )
 
     # use_ntrip: 是否启动 ntrip_client 差分定位。默认 true —— 本 launch 保持自足,
     # 即使 usv-rtk.service 没启用也能独立完成差分注入。
@@ -185,8 +170,6 @@ def generate_launch_description():
     mavros_imu_topic = LaunchConfiguration("mavros_imu_topic")
     mavros_rc_override_topic = LaunchConfiguration("mavros_rc_override_topic")
     profile_topic = LaunchConfiguration("profile_topic")
-    visualize = LaunchConfiguration("visualize")
-    telemetry = LaunchConfiguration("telemetry")
     use_ntrip = LaunchConfiguration("use_ntrip")
     scheme = LaunchConfiguration("scheme")
     record = LaunchConfiguration("record")
@@ -355,46 +338,6 @@ def generate_launch_description():
         actions=[mpc_node],
     )
 
-    # 可视化节点 (方案无关)。B 输出 rc/override 而非 cmd_vel,故 cmd_vel_topic 留空
-    # (visualizer 优雅跳过);如需看推力,可把 left/right_thrust_topic 指向推力话题。
-    visualizer_node = Node(
-        package="usv_simulation",
-        executable="visualizer",
-        name="usv_visualizer",
-        output="screen",
-        condition=IfCondition(visualize),
-        parameters=[{
-            "odom_topic": mavros_odom_topic,
-            "cmd_vel_topic": "",
-            "left_thrust_topic": "",
-            "right_thrust_topic": "",
-            "rtcm_topic": "/mavros/gps_rtk/send_rtcm",
-            "gps_fix_topic": "/mavros/global_position/raw/fix",
-            "gps_raw_topic": "/mavros/gpsstatus/gps1/raw",
-        }],
-    )
-
-    # 遥测桥接: 复用 USVVisualizer 采集类, 5 Hz 打包 JSON 经裸 TCP 转发。
-    # 监听 127.0.0.1:8765, 配合 frpc 的 usv-telemetry 代理对外暴露给地面站。
-    # host/port/rate 用 telemetry_bridge 的默认值(127.0.0.1:8765:5Hz),
-    # 话题参数与 visualizer_node 一致(同一份采集逻辑)。
-    telemetry_node = Node(
-        package="usv_simulation",
-        executable="telemetry_bridge",
-        name="usv_telemetry_bridge",
-        output="screen",
-        condition=IfCondition(telemetry),
-        parameters=[{
-            "odom_topic": mavros_odom_topic,
-            "cmd_vel_topic": "",
-            "left_thrust_topic": "",
-            "right_thrust_topic": "",
-            "rtcm_topic": "/mavros/gps_rtk/send_rtcm",
-            "gps_fix_topic": "/mavros/global_position/raw/fix",
-            "gps_raw_topic": "/mavros/gpsstatus/gps1/raw",
-        }],
-    )
-
     # RTK 差分注入 (CORS → ntrip_client → MAVROS gps_rtk → 飞控 → GPS)。
     # 2026-11-11 起默认不在此启动, 改由独立守护进程 usv-rtk.service 托管;
     # 拆分理由: 差分链路依赖外部 CORS 网络, 曾每 6 秒重连一次, 与控制栈
@@ -442,8 +385,6 @@ def generate_launch_description():
         mavros_imu_topic_arg,
         mavros_rc_override_topic_arg,
         profile_topic_arg,
-        visualize_arg,
-        telemetry_arg,
         use_ntrip_arg,
         record_arg,
         bag_output_dir_arg,
@@ -457,7 +398,5 @@ def generate_launch_description():
         planner_node,
         mission_bridge_node,
         delayed_mpc,
-        visualizer_node,
-        telemetry_node,
         delayed_ntrip,
     ])
