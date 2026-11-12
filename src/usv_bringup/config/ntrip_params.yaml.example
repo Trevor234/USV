@@ -11,7 +11,7 @@
 #   CORS caster --NTRIP/RTCM3--> ntrip_client
 #     发布 rtcm(mavros_msgs/RTCM) --重映射--> /mavros/gps_rtk/send_rtcm
 #     订阅 fix(sensor_msgs/NavSatFix) <--重映射-- /mavros/global_position/raw/fix
-#   MAVROS gps_rtk 插件 --GPS_RTCM_DATA(MAVLink)--> MicoAir743 --GPS串口--> RTK模块
+#   MAVROS gps_rtk 插件 --GPS_RTCM_DATA(MAVLink)--> AET-H743-AIR-PRO --GPS串口--> RTK模块
 #
 # /** 通配所有节点名 —— 与 mavros_config.yaml 同风格。
 /**:

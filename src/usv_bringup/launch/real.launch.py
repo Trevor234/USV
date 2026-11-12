@@ -1,7 +1,7 @@
-"""Real USV launch — full system with MicoAir743.
+"""Real USV launch — full system with AET-H743-AIR-PRO.
 
 Launches ALL nodes:
-  - MAVROS (UART connection to MicoAir743)
+  - MAVROS (UART connection to AET-H743-AIR-PRO)
   - MPC controller
   - Path planner
   - Mode manager & safety monitor
@@ -102,7 +102,7 @@ def generate_launch_description():
         description="MAVROS state topic for mode manager and MPC"
     )
 
-    # mavros_imu_topic: MPC 用作 IMU 输入的话题名称 (目前方案 A/B 逻辑未直接消费,但保留配置)。
+    # mavros_imu_topic: MPC 用作 IMU 输入的话题名称 (方案 A/B 均订阅以读取 angular_velocity.z 作为横摆角速度 r)。
     mavros_imu_topic_arg = DeclareLaunchArgument(
         "mavros_imu_topic", default_value="/mavros/imu/data",
         description="MAVROS IMU topic used by the MPC node"
@@ -142,7 +142,7 @@ def generate_launch_description():
     # use_ntrip: 是否启动 ntrip_client 差分定位。默认 true —— 本 launch 保持自足,
     # 即使 usv-rtk.service 没启用也能独立完成差分注入。
     # 2026-11-11 拆分: 差分注入另由 usv-rtk.service 守护进程托管, 两者互斥。
-    # 互斥由 _ntrip_owned_by_daemon() 自动判定: 守护进程 enabled/active 时本 launch
+    # 互斥由 _ntrip_daemon_state() 自动判定: 守护进程 enabled/active 时本 launch
     # 自动跳过, 不会出现双份 RTCM 注入飞控。手工强制走本 launch 需先
     # systemctl disable --now usv-rtk。
     use_ntrip_arg = DeclareLaunchArgument(

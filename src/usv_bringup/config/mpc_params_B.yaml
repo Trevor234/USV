@@ -22,7 +22,7 @@
     # Q/R chosen so critical thrust sqrt(Q_x/R)≈20 N = 80% of T_max=25, i.e. the
     # controller is willing to use near-full thrust to correct 1 m of error.
     # dt=0.2 (was 0.1) keeps dyn_N=round(horizon*mpc_dt/dt)=20 so solve time
-    # stays within the 200 ms budget on the MicoAir743 embedded target.
+    # stays within the 200 ms budget on the Raspberry Pi 5 onboard computer.
     # Q/R/Rd are running-cost-density weights: both acados and CasADi multiply
     # the full stage cost by dt. Qf_scale applies to the unscaled terminal cost.
     # Rd penalizes per-step thrust increments and is tuned for this fixed dt.

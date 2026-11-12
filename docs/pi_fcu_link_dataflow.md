@@ -8,7 +8,7 @@
 
 本文回答三个问题：
 
-1. 树莓派和飞控（MicoAir743，ArduPilot 固件）之间**物理上和协议上**怎么连？
+1. 树莓派和飞控（AET-H743-AIR-PRO，ArduPilot 固件）之间**物理上和协议上**怎么连？
 2. 整个控制软件栈里，数据**从哪来、到哪去**、被谁消费？
 3. 链路上的每一种消息**长什么样**、每个字段什么含义、什么单位、什么坐标系？
 
@@ -29,7 +29,7 @@ flowchart TB
         FRPC -->|127.0.0.1:14550| GCSBRIDGE[mavros_router<br/>GCS 桥 tcp-l]
         FRPC -->|127.0.0.1:8765| TELEM[telemetry_bridge<br/>JSON 遥测]
         MAVROS[mavros_node] --- GCSBRIDGE
-        MAVROS <-->|"/dev/ttyAMA10<br/>921600 波特 MAVLink v2"| FCU[MicoAir743<br/>ArduPilot Rover]
+        MAVROS <-->|"/dev/ttyAMA10<br/>921600 波特 MAVLink v2"| FCU[AET-H743-AIR-PRO<br/>ArduPilot Rover]
     end
 
     MP[Mission Planner<br/>地面站] -->|TCP 124.220.218.43:14550| FRPS
@@ -74,7 +74,7 @@ flowchart TB
 | 协议版本 | **v2.0**（`fcu_protocol: "v2.0"`；FCU 能力位 0xd1ef 含 MAVLink v2 位） |
 | MAVROS 身份 | system_id=255（地面站级），component_id=191 |
 | 目标 | tgt_system=1, tgt_component=1（飞控本体） |
-| 固件 | ArduPilot（Rover 舵/油双通道输出），飞行软件版本 040701ff，板卡 049b0000，VID/PID 1209:5741 |
+| 固件 | ArduPilot（Rover 舵/油双通道输出），飞行软件版本 040701ff，板卡 049b0000，VID/PID 1209:5741（注：以上板卡/USB ID 及 §7 快照采自 2026-10-09 原 MicoAir743 飞控；现已迁移为 AET-H743-AIR-PRO，固件仍为 ArduPilot Rover） |
 
 链路建立日志（journalctl，2026-10-09 15:23）：
 
@@ -123,7 +123,7 @@ Mission Planner 端配置 TCP 连接 `124.220.218.43:14550` 即可接入。**这
 ```mermaid
 flowchart LR
     subgraph 任务层
-        MP[Mission Planner] -->|"MAVLink mission 写入"| FCU[(MicoAir743<br/>ArduPilot)]
+        MP[Mission Planner] -->|"MAVLink mission 写入"| FCU[(AET-H743-AIR-PRO<br/>ArduPilot)]
         MB[mission_bridge_node] -->|"/usv/mission/waypoints_local<br/>(Path, ENU 米)"| PP
         MB -.->|"2s 周期 /mavros/mission/pull<br/>+ /mavros/mission/waypoints<br/>+ /gp_origin"| MAVROS
     end

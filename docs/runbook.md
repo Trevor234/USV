@@ -45,7 +45,7 @@ MAVROS 控制接口：
 
 ## 实机运行入口：通过 MAVROS 连接真实硬件
 
-用于 MicoAir743 / 真实 USV 的部署路径：
+用于 AET-H743-AIR-PRO / 真实 USV 的部署路径：
 
 ```bash
 cd /home/trevor/usv_mpc_ws

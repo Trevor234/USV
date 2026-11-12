@@ -53,7 +53,7 @@ C++ 包(`usv_mpc_cpp` 等)依赖:
 
 ## 实机运行
 
-MicoAir743 / ArduRover,UART `/dev/ttyAMA10` @ 921600:
+AET-H743-AIR-PRO / ArduRover,UART `/dev/ttyAMA10` @ 921600:
 
 ```bash
 ros2 launch usv_bringup real.launch.py                # scheme:=B 默认(动力学 NMPC)

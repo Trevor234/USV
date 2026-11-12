@@ -9,7 +9,7 @@
     原因: MAVROS raw/fix 是 BEST_EFFORT, 而 ntrip_client 的 fix 订阅是
     RELIABLE 且未启用 rclpy qos_overriding_options, 参数表无法覆盖,
     只能靠中继桥接。中继断了 GGA 就上不去, VRS 不发差分。
-  MAVROS gps_rtk 插件 --GPS_RTCM_DATA(MAVLink)--> MicoAir743 --GPS串口--> RTK模块
+  MAVROS gps_rtk 插件 --GPS_RTCM_DATA(MAVLink)--> AET-H743-AIR-PRO --GPS串口--> RTK模块
 
 前置: 先在 config/ntrip_params.yaml 填好 CORS 账号/挂载点。
 

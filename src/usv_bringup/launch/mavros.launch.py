@@ -1,4 +1,4 @@
-"""MAVROS-only launch — test MAVLink communication with MicoAir743.
+"""MAVROS-only launch — test MAVLink communication with AET-H743-AIR-PRO.
 
 Usage:
   ros2 launch usv_bringup mavros.launch.py

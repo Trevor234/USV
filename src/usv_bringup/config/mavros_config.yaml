@@ -1,4 +1,4 @@
-# MAVROS Configuration for USV MicoAir743
+# MAVROS Configuration for USV AET-H743-AIR-PRO
 #
 # Serial connection: validated FCU MAVLink port → /dev/ttyAMA10 on RPi5
 # Baud rate: 921600
