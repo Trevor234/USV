@@ -1,0 +1,23 @@
+#!/bin/bash
+# USV 系统方案切换脚本
+# 用法:  sudo usv-scheme A   或   sudo usv-scheme B
+# 修改 /etc/default/usv-system 中的 SCHEME 并重启服务
+#
+# 安装: sudo install -m 755 deploy/usv-scheme /usr/local/bin/usv-scheme
+# 2026-11-12: 原先脚本残留 usv_mpc_ws_B 路径(工作空间已合并到 usv_mpc_ws),
+# 依赖它打印 control_mode 会在 set -e 下直接报错, 现改为从当前工作空间读取。
+
+set -e
+WS=/home/trevor/usv_mpc_ws
+S=$(echo "$1" | tr 'a-z' 'A-Z')
+if [ "$S" != "A" ] && [ "$S" != "B" ]; then
+    echo "用法: sudo usv-scheme A|B"
+    exit 1
+fi
+sed -i "s/^SCHEME=.*/SCHEME=$S/" /etc/default/usv-system
+systemctl restart usv-system
+sleep 3
+MODE=$(grep control_mode "$WS/src/usv_bringup/config/mpc_params_$S.yaml" | awk -F'"' '{print $2}')
+GATE=$(grep allowed_fcu_modes "$WS/src/usv_bringup/config/mpc_params_$S.yaml" | tr -d ' ')
+echo "方案 = $S (control_mode=$MODE, $GATE), 服务已重启"
+journalctl -u usv-system -n 5 --no-pager | grep -E 'mpc_node|MPC' | tail -3 || true

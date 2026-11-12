@@ -1,6 +1,6 @@
 [Unit]
 Description=USV rosbag2 recorder (pure recording, no MAVROS)
-Documentation=file:///home/trevor/usv_mpc_ws_B/src/usv_bringup/launch/record.launch.py
+Documentation=file:///home/trevor/usv_mpc_ws/src/usv_bringup/launch/record.launch.py
 After=usv-system.service
 # 禁止加 RequiresMountsFor=/mnt/usv_bags: 它会绕过 fstab 的 x-systemd.automount 惰性挂载,
 # 在开机时强制真实挂载, 与 device-timeout 竞速 —— USB 冷插枚举(实测 13~17s)慢于超时即
@@ -17,7 +17,7 @@ StartLimitBurst=5
 Type=simple
 User=trevor
 Group=trevor
-WorkingDirectory=/home/trevor/usv_mpc_ws_B
+WorkingDirectory=/home/trevor/usv_mpc_ws
 Environment=HOME=/home/trevor
 Environment=ROS_DOMAIN_ID=0
 
@@ -44,7 +44,7 @@ ExecStartPre=/usr/bin/test -w /mnt/usv_bags
 #                        只关缓存还不够: MCAP 还有 chunk 缓冲层(默认 768KB, 700B/s 下要
 #                        18 分钟才 flush), noChunking 才能真正做到每条消息立即落盘。
 #                        代价: 无压缩(文件大 1.5~2 倍)、无 message index。见该 yaml 注释。
-ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/trevor/usv_mpc_ws_B/install/setup.bash && exec ros2 launch usv_bringup record.launch.py bag_output_dir:=/mnt/usv_bags max_cache_size:=0 max_bag_duration:=0 max_bag_size:=0 storage_config_file:=/home/trevor/.ros/mcap_realtime.yaml'
+ExecStart=/bin/bash -lc 'source /opt/ros/jazzy/setup.bash && source /home/trevor/usv_mpc_ws/install/setup.bash && exec ros2 launch usv_bringup record.launch.py bag_output_dir:=/mnt/usv_bags max_cache_size:=0 max_bag_duration:=0 max_bag_size:=0 storage_config_file:=/home/trevor/.ros/mcap_realtime.yaml'
 
 Restart=always
 RestartSec=10

@@ -13,12 +13,12 @@
             "qpoases": ""
         },
         "acados_version": "d9d0ba2",
-        "code_export_directory": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/acados_generated",
+        "code_export_directory": "/home/trevor/usv_mpc_ws/src/usv_mpc_cpp/acados_generated",
         "cython_include_dirs": [
-            "/home/trevor/venv-ardupilot/lib/python3.12/site-packages/numpy/_core/include",
+            "/usr/lib/python3/dist-packages/numpy/core/include",
             "/usr/include/python3.12"
         ],
-        "json_file": "/home/trevor/USV/usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_ocp.json",
+        "json_file": "/home/trevor/usv_mpc_ws/src/usv_mpc_cpp/acados_generated/usv_dyn_ocp.json",
         "os": "unix",
         "shared_lib_ext": ".so"
     },
