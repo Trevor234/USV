@@ -1,8 +1,8 @@
-# Path Configuration
+# 路径配置
 #
-# Defines Mission Planner waypoint input, path parameters, and planning behavior.
+# 定义 Mission Planner 航点输入、路径参数及规划行为。
 
-# --- Mission Planner waypoints converted to local map coordinates ---
+# --- 转换为局部地图坐标系的 Mission Planner 航点 ---
 /**:
   ros__parameters:
     path_resolution: 0.5        # 采样路径点间距 (m)

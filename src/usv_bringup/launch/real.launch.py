@@ -1,13 +1,13 @@
-"""Real USV launch — full system with AET-H743-AIR-PRO.
+"""实船全系统启动 — 配合 AET-H743-AIR-PRO 飞控运行完整控制栈。
 
-Launches ALL nodes:
-  - MAVROS (UART connection to AET-H743-AIR-PRO)
-  - MPC controller
-  - Path planner
-  - Mode manager & safety monitor
-  - (optional) NTRIP RTK injection + rosbag2 recording
+启动全部核心节点：
+  - MAVROS（与 AET-H743-AIR-PRO 的串口 UART 连接）
+  - MPC 控制器
+  - 路径规划器
+  - 模式管理与安全监控节点
+  - （可选）NTRIP RTK 差分注入与 rosbag2 数据录制
 
-Usage:
+用法：
   ros2 launch usv_bringup real.launch.py
   ros2 launch usv_bringup real.launch.py use_ntrip:=true
   ros2 launch usv_bringup real.launch.py record:=true bag_output_dir:=/mnt/usv_bags
@@ -71,8 +71,8 @@ def generate_launch_description():
 
     # scheme: 控制方案选择。A=运动学 MPC(kinematic), B=动力学 NMPC(dynamic)。
     # 切换时自动选择对应的 MPC 包和参数配置文件:
-    #   A: usv_mpc_kinematic_cpp + mpc_params_A.yaml + usv_params_A.yaml
-    #   B: usv_mpc_cpp          + mpc_params_B.yaml + usv_params_B.yaml
+    #   A: usv_mpc  + mpc_params_A.yaml + usv_params_A.yaml
+    #   B: usv_nmpc + mpc_params_B.yaml + usv_params_B.yaml
     scheme_arg = DeclareLaunchArgument(
         "scheme", default_value="B",
         description="控制方案: A=运动学MPC, B=动力学NMPC",
@@ -112,7 +112,7 @@ def generate_launch_description():
     
     
     
-    # mavros_rc_override_topic: NMPC(Python 逻辑)读取摇杆 override 的话题名称(C++ 已切换,但保留参数)。
+    # mavros_rc_override_topic: NMPC 预留的 RC override 话题名称参数。
     mavros_rc_override_topic_arg = DeclareLaunchArgument(
         "mavros_rc_override_topic", default_value="/mavros/rc/override",
         description="MAVROS RC override topic used by the NMPC controller"
@@ -179,8 +179,8 @@ def generate_launch_description():
     bag_max_bag_duration = LaunchConfiguration("bag_max_bag_duration")
     bag_max_cache_size = LaunchConfiguration("bag_max_cache_size")
 
-    # Start recording immediately so MAVROS connection and startup state are captured.
-    # record.launch.py fails fast if the external drive is unavailable or unwritable.
+    # 立即开始录制，确保捕获 MAVROS 建立连接与系统启动阶段状态。
+    # 若外接存储不可用或不可写，record.launch.py 会立即失败退出。
     record_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(bringup_dir, "launch", "record.launch.py")
@@ -195,7 +195,7 @@ def generate_launch_description():
         }.items(),
     )
 
-    # MAVROS launch
+    # 启动 MAVROS 节点
     mavros_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(bringup_dir, "launch", "mavros.launch.py")
@@ -207,9 +207,9 @@ def generate_launch_description():
 
     
 
-    # 安全节点恒为 C++ (usv_safety_cpp)。Python usv_safety 包已删除。
+    # 安全节点 (usv_safety)
     safety_node = Node(
-        package="usv_safety_cpp",
+        package="usv_safety",
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",
@@ -228,9 +228,9 @@ def generate_launch_description():
         ],
     )
 
-    # 规划节点恒为 C++ (usv_planning_cpp)。Python usv_planning 包已删除。
+    # 规划节点 (usv_planning)
     planner_node = Node(
-        package="usv_planning_cpp",
+        package="usv_planning",
         executable="path_planner_node",
         name="path_planner_node",
         output="screen",
@@ -245,7 +245,7 @@ def generate_launch_description():
     )
 
     mission_bridge_node = Node(
-        package="usv_planning_cpp",
+        package="usv_planning",
         executable="mission_bridge_node",
         name="mission_bridge_node",
         output="screen",
@@ -261,43 +261,23 @@ def generate_launch_description():
     )
 
     # MPC 控制器: 根据 scheme 切换包和配置文件。
-    #   scheme=A: usv_mpc_kinematic_cpp (运动学, CasADi) + mpc_params_A.yaml + usv_params_A.yaml
-    #   scheme=B: usv_mpc_cpp (动力学 NMPC, acados+CasADi) + mpc_params_B.yaml + usv_params_B.yaml
-    # 2026-09-06: Python 方案 A 包 (usv_mpc) 已删除, 方案 A 恒为 C++
-    # (usv_mpc_kinematic_cpp, CasADi/IPOPT); scheme=B 为 usv_mpc_cpp (acados)。
+    #   scheme=A: usv_mpc  (运动学, acados SQP+MERIT_BACKTRACKING) + mpc_params_A.yaml
+    #   scheme=B: usv_nmpc (动力学, acados SQP_RTI) + mpc_params_B.yaml
+    # 两个方案共用 usv_acados::backend (libusv_acados_backend.so), 只是各自
+    # 使用独立的生成模型/实例。
 
-    # acados/CasADi 运行时库路径: 非交互式启动(如 SSH、systemd)不 source .bashrc,
-    # 故在此显式设置 LD_LIBRARY_PATH, 确保 scheme=B 的 mpc_node 能找到 libhpipm.so 等。
+    # acados 运行时库路径: 非交互式启动 (SSH、systemd) 不 source .bashrc,
+    # 故显式补 LD_LIBRARY_PATH:
+    #   - acados 运行时库 (libacados/libhpipm/libblasfeo)
+    #   - 共用后端库: 由 workspace setup.bash 的 overlay 给出 (launch 继承),
+    #     此处只保留 overlay 已设置的 LD_LIBRARY_PATH 前缀 _ld_base。
+    # 方案 A 不再需要 CasADi 运行时库 (不链接也不 import casadi)。
     _acados_lib = os.path.expanduser("~/acados/lib")
-    # CasADi 的运行时库目录随 Python 版本变化。原先硬编码 python3.12,
-    # 系统 Python 升级后路径失效且不会有任何提示 —— 只会在求解时报
-    # 找不到 .so。改为动态发现: 优先当前解释器版本, 否则扫描 site-packages
-    # 下任意 pythonX.Y 目录。
-    def _find_casadi_lib():
-        import glob
-        candidates = []
-        import sys
-        candidates.append(
-            os.path.expanduser(
-                f"~/.local/lib/python{sys.version_info.major}.{sys.version_info.minor}"
-                "/site-packages/casadi"))
-        candidates.extend(sorted(glob.glob(
-            os.path.expanduser("~/.local/lib/python*/site-packages/casadi")),
-            reverse=True))
-        for c in candidates:
-            if os.path.isdir(c):
-                return c
-        return ""
-
-    _casadi_lib = _find_casadi_lib()
-    _mpc_ld_path = ":".join(p for p in [
-        os.environ.get("LD_LIBRARY_PATH", ""),
-        _acados_lib,
-        _casadi_lib,
-    ] if p)
+    _ld_base = os.environ.get("LD_LIBRARY_PATH", "")
+    _mpc_ld_path = ":".join(p for p in [_ld_base, _acados_lib] if p)
 
     mpc_pkg = PythonExpression(
-        expression=["'usv_mpc_kinematic_cpp' if '", scheme, "' == 'A' else 'usv_mpc_cpp'"]
+        expression=["'usv_mpc' if '", scheme, "' == 'A' else 'usv_nmpc'"]
     )
     mpc_params_file = PythonExpression(
         expression=["'", bringup_dir, "/config/mpc_params_A.yaml' if '", scheme, "' == 'A' else '", bringup_dir, "/config/mpc_params_B.yaml'"]
@@ -332,7 +312,7 @@ def generate_launch_description():
         ],
     )
 
-    # Delayed start — let MAVROS connect first
+    # 延迟启动 — 等待 MAVROS 先建立连接
     delayed_mpc = TimerAction(
         period=3.0,
         actions=[mpc_node],

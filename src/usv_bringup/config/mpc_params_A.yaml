@@ -1,32 +1,32 @@
 /**:
   ros__parameters:
-    # --- General MPC Settings (Flat) ---
+    # --- 通用 MPC 配置（扁平参数）---
     scheme: "A"                 # 实机精简版仅支持方案 A（运动学 MPC）
-    control_mode: "kinematic"    # "kinematic" or "idle"
+    control_mode: "kinematic"    # "kinematic"（运动学）或 "idle"（空闲）
     # FCU 模式门禁 (方案 A): 速度 setpoint 由 MAVROS 转成
     # SET_POSITION_TARGET_LOCAL_NED, 只有 GUIDED 模式下飞控才执行。
     # 放在这里而不是 launch 里: 方案与模式一一对应, launch 漏传时不再
     # 静默落到节点默认值 (2026-11-12 方案 B 就是被这个缺口卡住)。
     allowed_fcu_modes: ["GUIDED"]
-    mpc_dt: 0.2                 # MPC time step (s) — 5 Hz for kinematic
-    horizon: 20                  # Prediction horizon steps
-    publish_predicted: true      # Publish MPC predicted trajectory
-    max_solve_time_ms: 200.0    # Maximum acceptable solve time (ms)
+    mpc_dt: 0.2                 # MPC 控制步长 (s) — 运动学方案为 5 Hz
+    horizon: 20                  # 预测时域步数
+    publish_predicted: true      # 是否发布 MPC 预测轨迹
+    max_solve_time_ms: 200.0    # 最大可接受求解时间 (ms)
 
-    # --- Kinematic MPC ---
+    # --- 运动学 MPC ---
     kinematic:
-      backend: "ipopt"              # C++ 运动学节点仅实现 CasADi/IPOPT 后端;
-                                    # (Python 版的 acados 后端随 usv_mpc 包删除, 2026-09-06)
-      Q: [10.0, 10.0, 50.0]       # State weights [x, y, psi]
-      R: [1.0, 1.0]                # Control weights [u_surge, r_yaw]
-      Qf_scale: 10.0               # Terminal cost multiplier (Qf = scale * Q)
-      u_max: 3.3                   # Max surge speed (m/s) — 实测标定 P99.5=3.24
-      u_min: 0.0                   # Minimum surge speed (m/s)
-      r_max: 1.25                  # Max yaw rate (rad/s) — 实测 P99=1.22 (STER TurnRate)
-      du_max: 1.3                  # Max surge accel (m/s²) — 实测 P99=1.23
-      dr_max: 1.25                 # Max yaw accel (rad/s²) — 实测 P99=1.22
+      backend: "acados"            # 方案 A 仅实现 acados 后端 (非该值启动失败)
+      dt: 0.2                     # 求解器步长 (s); 须与生成码烘焙值一致
+      Q: [10.0, 10.0, 50.0]       # 状态权重 [x, y, psi]
+      R: [1.0, 1.0]                # 控制量权重 [u_surge, r_yaw]
+      Qf_scale: 10.0               # 终端代价倍率 (Qf = scale * Q)
+      u_max: 3.3                   # 最大纵荡速度 (m/s) — 实测标定 P99.5=3.24
+      u_min: 0.0                   # 最小纵荡速度 (m/s)
+      r_max: 1.25                  # 最大艏摇角速度 (rad/s) — 实测 P99=1.22 (STER TurnRate)
+      du_max: 1.3                  # 最大纵荡加速度 (m/s²) — 实测 P99=1.23
+      dr_max: 1.25                 # 最大艏摇角加速度 (rad/s²) — 实测 P99=1.22
       tau_u: 0.8                   # 纵向速度一阶滞后时间常数 (s)
       tau_r: 1.78                  # 艏摇角速度一阶滞后时间常数 (s, Iz_eff/Nr)
-      ipopt_max_iter: 50           # IPOPT 迭代上限 (早停时回收当前迭代点, 不丢拍)
-      ipopt_max_cpu_time_ms: 120.0 # IPOPT CPU 时间上限 (ms), 须 < max_solve_time_ms
+      # acados 求解预算烘焙在生成码里 (SQP 50 次迭代 / 0.12 s 超时 / tol 1e-4),
+      # 不在 YAML 暴露运行期开关。
       solution_constraint_tol: 0.005 # 候选轨迹最大约束残差;早停解也必须满足

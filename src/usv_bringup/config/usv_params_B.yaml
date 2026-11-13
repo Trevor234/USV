@@ -1,75 +1,70 @@
-# USV physical parameters — single source of truth for the REAL boat.
+# 无人艇物理参数 — 实船单一事实来源（方案 B）。
 #
-# Identified from ArduPilot DataFlash logs (2026-07-23). See
-# 参数识别/results/real_identification_20260723/ for the identification report.
+# 基于 ArduPilot DataFlash 日志辨识（2026-07-23），辨识报告见
+# 参数识别/results/real_identification_20260723/。
 #
-# SURGE parameters (mass, Xu, Xuu, Xu_dot) are high-confidence (direct forward
-# motion, R²=0.54). SWAY-YAW COUPLING terms (Yr, Nv, Yrr, Nvv) are ZEROED:
-# the GPS-derived fit gave them signs that made the open-loop system unstable
-# (A=-M^-1*D max eigenvalue real part +0.159). Diagonal sway/yaw damping
-# (Yv, Nr) is retained from the fit. After zeroing, max real part = -0.118
-# across all tested working points (u up to 1.5, |v| up to 0.5, |r| up to 0.4).
+# 纵荡参数（mass、Xu、Xuu、Xu_dot）置信度高（直航运动，R²=0.54）。
+# 横荡-艏摇耦合项（Yr、Nv、Yrr、Nvv）已置零：基于 GPS 的拟合给出了使开环系统
+# 不稳定的符号（A=-M^-1*D 最大特征值实部为 +0.159）。拟合得到的对角横荡/艏摇阻尼
+# （Yv、Nr）予以保留。耦合项置零后，在所有测试工况点（u 最高 1.5、|v| 最高 0.5、
+# |r| 最高 0.4）下最大特征值实部均为 -0.118（稳定）。
 #
-# Used by:
-#   - usv_mpc_cpp/src/mpc_node.cpp (C++ NMPC, declares `vehicle.*`/`dynamic.*`)
-#   - usv_mpc_dynamic.m (kept in sync manually)
+# 使用方：
+#   - usv_nmpc/src/mpc_node.cpp（动力学 NMPC，声明 `vehicle.*`/`dynamic.*`）
+#   - usv_mpc_dynamic.m（需手动保持同步）
 #
-# IMPORTANT: parameter names must match `_declare_parameter` calls in mpc_node.cpp
-# (flat dotted names in code, nested in YAML). Keep aligned with mpc_params_B.yaml style.
-# Consumed by real.launch.py (scheme:=B).
+# 重要：参数名必须与 mpc_node.cpp 中的 `declare_parameter` 调用完全一致
+# （代码中为扁平点分命名，YAML 中为嵌套结构）。请与 mpc_params_B.yaml 风格保持一致。
+# 由 real.launch.py（scheme:=B）加载使用。
 
 /**:
   ros__parameters:
-    # ----- Hull (used by MPC dynamic model) — REAL boat 14.2 kg / 1.2 m -----
+    # ----- 船体参数（供 MPC 动力学模型使用）— 实船 14.2 kg / 1.2 m -----
     vehicle:
-      mass: 14.2          # kg, total including payload
-      Iz: 2.13            # kg·m², yaw moment of inertia (= m(L²+B²)/12)
-      xg: 0.12            # m, CG longitudinal offset (+ forward)
-      d_thruster: 0.25    # m, half of thruster spacing 2d (separation=0.5)
+      mass: 14.2          # 总质量（含载荷），单位 kg
+      Iz: 2.13            # 艏摇转动惯量 (= m(L²+B²)/12)，单位 kg·m²
+      xg: 0.12            # 重心纵向偏移（+ 向前），单位 m
+      d_thruster: 0.25    # 推进器半间距（总间距 2d = 0.5 m），单位 m
 
-      # ----- Hull geometry (informational for MPC) -----
-      length: 1.2         # m, length overall
-      beam: 0.6           # m, beam
-      draft: 0.10         # m, waterline depth (smaller draft than sim boat)
-      height: 0.30        # m, freeboard above water
+      # ----- 船体几何尺寸（MPC 仅作参考）-----
+      length: 1.2         # 总长，单位 m
+      beam: 0.6           # 船宽，单位 m
+      draft: 0.10         # 吃水深度（比仿真艇更浅），单位 m
+      height: 0.30        # 干舷高度，单位 m
 
-      # ----- Added mass (negative by Fossen convention; conservative estimates) -----
+      # ----- 附加质量（按 Fossen 约定取负值；保守估计）-----
       Xu_dot: -2.0
       Yv_dot: -8.0
       Yr_dot: 0.0
       Nv_dot: -0.363545
-      Nr_dot: -3.41        # 2026-09-03 阶段3: 由 Iz_eff=5.537 反解 (was -1.621220)
+      Nr_dot: -3.41        # 2026-09-03 阶段3: 由 Iz_eff=5.537 反解 (原值 -1.621220)
 
-      # ----- Linear damping -----
-      # Surge (Xu) is high-confidence (R²=0.54, direct forward motion).
-      # Sway-yaw COUPLING terms (Yr, Nv) are ZEROED: the identification fit
-      # gave positive signs that made the open-loop A=-M^-1*D unstable
-      # (max eigenvalue real part +0.159). They come from the low-confidence
-      # GPS-derived sway channel. With them zeroed, max real part = -0.118
-      # (stable) across all tested working points. Diagonal sway/yaw damping
-      # (Yv, Nr) is retained from the fit.
+      # ----- 线性阻尼 -----
+      # 纵荡项 (Xu) 置信度高（R²=0.54，直航运动）。
+      # 横荡-艏摇耦合项 (Yr, Nv) 已置零：辨识拟合得到的正符号使开环 A=-M^-1*D
+      # 不稳定（最大特征值实部 +0.159），这些项来源于低置信度的 GPS 反演横荡通道。
+      # 置零后在所有测试工况点下最大实部为 -0.118（稳定）。对角横荡/艏摇阻尼
+      # (Yv, Nr) 保留拟合值。
       Xu: -2.272063
       Yv: -2.629019
-      Yr: 0.0             # zeroed — see block comment above
-      Nv: 0.0             # zeroed — see block comment above
-      Nr: -3.105           # 2026-09-03 阶段3: was -4.286144
+      Yr: 0.0             # 置零 — 见上方块注释
+      Nv: 0.0             # 置零 — 见上方块注释
+      Nr: -3.105           # 2026-09-03 阶段3: 原值 -4.286144
 
-      # ----- Quadratic damping -----
-      # Xuu retained (high-confidence). Quadratic coupling terms (Yrr, Nvv)
-      # zeroed together with their linear counterparts for consistency.
-      # Yvv/Nrr are near-zero diagonal terms kept as-identified (harmless).
+      # ----- 二次阻尼 -----
+      # 保留 Xuu（高置信度）。为保持一致性，二次耦合项 (Yrr, Nvv) 与线性耦合项一并置零。
+      # Yvv/Nrr 为极小的对角项，按辨识结果保留（无害）。
       Xuu: -11.571784
-      Yvv: -0.05          # near-zero diagonal, kept
-      Yrr: 0.0            # zeroed — shares sway-yaw coupling channel
-      Nvv: 0.0            # zeroed — shares sway-yaw coupling channel
-      Nrr: -0.71           # 2026-09-03 阶段3 新增: was ~0 (近零)         # near-zero diagonal, kept
+      Yvv: -0.05          # 极小的对角阻尼项，保留
+      Yrr: 0.0            # 置零 — 共用横荡-艏摇耦合通道
+      Nvv: 0.0            # 置零 — 共用横荡-艏摇耦合通道
+      Nrr: -0.71           # 2026-09-03 阶段3 新增: 原值近零（极小对角项，保留）
 
-    # ----- Thruster -----
-    # K_T=25 N assumed (no bollard-pull calibration yet). T_max forward/reverse
-    # are equal per identification. NOTE: T_max/T_min/dT_max are also declared in
-    # mpc_params_B.yaml under `dynamic.*` and take precedence there for MPC.
-    # Repeated here so the parameter-identification scripts read a single file.
-    # Keep in sync with mpc_params_B.yaml.
+    # ----- 推进器 -----
+    # 暂按 K_T=25 N 估算（尚未做系柱拉力标定）。按辨识假设正反最大推力相等。
+    # 注意：T_max/T_min/dT_max 同时也在 mpc_params_B.yaml 的 `dynamic.*` 下声明，
+    # MPC 运行时以 mpc_params_B.yaml 为准。此处保留一份以便参数辨识脚本读取单文件，
+    # 修改时请与 mpc_params_B.yaml 保持同步。
     #
     # 本工作目录的 mpc_node 不消费此块 (实机 PWM 边界见 mpc_params_B.yaml 的 rc_pwm_*,
     # 推力边界见 dynamic.T_max/T_min)。保留此块作为物理辨识结果的单一事实来源,
@@ -78,5 +73,5 @@
       pwm_min: 1000
       pwm_center: 1500
       pwm_max: 2000
-      T_max_forward: 25.0   # N per thruster (K_T)
-      T_max_reverse: 25.0   # N per thruster (equal reverse)
+      T_max_forward: 25.0   # 单侧推进器最大正向推力 (N, K_T)
+      T_max_reverse: 25.0   # 单侧推进器最大反向推力 (N，正反相等)

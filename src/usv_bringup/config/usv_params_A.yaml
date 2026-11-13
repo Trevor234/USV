@@ -1,50 +1,50 @@
-# USV physical parameters — single source of truth (Scheme A).
+# 无人艇物理参数 — 单一事实来源（方案 A）。
 #
-# NOTE: the kinematic MPC node (usv_mpc_kinematic_cpp) does NOT read these
-# hull (`vehicle.*`) params; retained here as the canonical hull description.
+# 注意：运动学 MPC 节点（usv_mpc）不会读取这些船体（`vehicle.*`）参数；
+# 此处保留作为规范的船体参数描述。
 
 /**:
   ros__parameters:
-    # ----- Hull (canonical hull description; informational for kinematic MPC) -----
+    # ----- 船体参数（规范船体描述；运动学 MPC 仅作参考）-----
     vehicle:
-      mass: 14.2          # kg, total including payload
-      Iz: 2.13            # kg·m², yaw moment of inertia (= m(L²+B²)/12)
-      xg: 0.12            # m, CG longitudinal offset (+ forward)
-      d_thruster: 0.25    # m, half of thruster spacing 2d (separation=0.5)
+      mass: 14.2          # 总质量（含载荷），单位 kg
+      Iz: 2.13            # 艏摇转动惯量 (= m(L²+B²)/12)，单位 kg·m²
+      xg: 0.12            # 重心纵向偏移（+ 向前），单位 m
+      d_thruster: 0.25    # 推进器半间距（总间距 2d = 0.5 m），单位 m
 
-      # ----- Hull geometry (informational for MPC) -----
-      length: 1.2         # m, length overall
-      beam: 0.6           # m, beam
-      draft: 0.10         # m, waterline depth
-      height: 0.30        # m, freeboard above water
+      # ----- 船体几何尺寸（MPC 仅作参考）-----
+      length: 1.2         # 总长，单位 m
+      beam: 0.6           # 船宽，单位 m
+      draft: 0.10         # 吃水深度，单位 m
+      height: 0.30        # 干舷高度，单位 m
 
-      # ----- Added mass (negative by Fossen convention) -----
+      # ----- 附加质量（按 Fossen 约定取负值）-----
       Xu_dot: -2.0
       Yv_dot: -8.0
       Yr_dot: 0.0
       Nv_dot: -0.363545
       Nr_dot: -1.621220
 
-      # ----- Linear damping -----
+      # ----- 线性阻尼 -----
       Xu: -2.272063
       Yv: -2.629019
-      Yr: 0.0             # zeroed — see block comment above
-      Nv: 0.0             # zeroed — see block comment above
+      Yr: 0.0             # 置零（原因见上方注释）
+      Nv: 0.0             # 置零（原因见上方注释）
       Nr: -4.286144
 
-      # ----- Quadratic damping -----
+      # ----- 二次阻尼 -----
       Xuu: -11.571784
-      Yvv: -0.05          # near-zero diagonal, kept
-      Yrr: 0.0            # zeroed — shares sway-yaw coupling channel
-      Nvv: 0.0            # zeroed — shares sway-yaw coupling channel
-      Nrr: -0.001         # near-zero diagonal, kept
+      Yvv: -0.05          # 极小的对角阻尼项，保留
+      Yrr: 0.0            # 置零 — 共用横荡-艏摇耦合通道
+      Nvv: 0.0            # 置零 — 共用横荡-艏摇耦合通道
+      Nrr: -0.001         # 极小的对角阻尼项，保留
 
-    # ----- Thruster -----
-    # NOTE: the kinematic MPC does not use thruster limits directly;
-    # retained here as the vessel's nominal thrust specification.
+    # ----- 推进器 -----
+    # 注意：运动学 MPC 不直接使用推力上限；
+    # 此处保留作为无人艇的标称推力规格。
     thruster:
       pwm_min: 1000
       pwm_center: 1500
       pwm_max: 2000
-      T_max_forward: 25.0   # N per thruster (K_T)
-      T_max_reverse: 25.0   # N per thruster (equal reverse)
+      T_max_forward: 25.0   # 单侧推进器最大正向推力 (N, K_T)
+      T_max_reverse: 25.0   # 单侧推进器最大反向推力 (N，正反相等)

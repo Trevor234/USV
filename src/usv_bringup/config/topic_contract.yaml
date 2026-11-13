@@ -109,8 +109,8 @@ mode_manager_node:
   subscribes:
     - topic: /mavros/state
     - topic: /mpc/status               # 解析 JSON,监视求解器健康
-    - topic: /mavros/local_position/odom  # geofence / 速度限制
-    - topic: /path/reference           # path watchdog
+    - topic: /mavros/local_position/odom  # 电子围栏 / 速度限制
+    - topic: /path/reference           # 路径看门狗
     - topic: /mavros/battery           # 电池 failsafe
   services:
     - /mavros/set_mode
@@ -188,8 +188,8 @@ mavlink_frames:
 #   - dim.label = "stamp_nanosec:<nanosec>"  # 纳秒
 # 两个 dim 的 size=0, stride=0, 仅作元数据载体。
 #
-# 解析方: usv_mpc_cpp utils.hpp usv_mpc::parse_profile_stamp(layout) -> (sec, nanosec)
-# 同步判据: usv_mpc_cpp utils.hpp usv_mpc::profile_sync_state(path_len, profile_len, path_stamp, profile_stamp)
+# 解析方: usv_nmpc utils.hpp usv_mpc::parse_profile_stamp(layout) -> (sec, nanosec)
+# 同步判据: usv_nmpc utils.hpp usv_mpc::profile_sync_state(path_len, profile_len, path_stamp, profile_stamp)
 #   - 长度相等 且 stamp 相等 -> "stamp_match" (优先按时间重采样)
 #   - stamp 缺失 -> "legacy_no_profile_stamp" (兼容旧规划器,仍按长度对齐)
 #   - 长度/stamp 不一致 -> 回退匀速弧长采样, profile_synced=False
@@ -201,6 +201,6 @@ path_profile_sync:
   profile_topic: /path/reference_profile
   stamp_encoding:
     layout_dim_labels: ["stamp_sec", "stamp_nanosec"]
-  parser: usv_mpc_cpp::usv_mpc::parse_profile_stamp
-  sync_check: usv_mpc_cpp::usv_mpc::profile_sync_state
+  parser: usv_nmpc::usv_mpc::parse_profile_stamp
+  sync_check: usv_nmpc::usv_mpc::profile_sync_state
   consumer: mpc_node.MpcControllerNode._build_reference

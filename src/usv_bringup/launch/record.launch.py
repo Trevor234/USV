@@ -1,4 +1,4 @@
-"""Record the real-USV control loop to an external drive using rosbag2."""
+"""使用 rosbag2 将实船控制闭环录制到外接存储设备。"""
 
 from datetime import datetime
 import os

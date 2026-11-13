@@ -1,6 +1,6 @@
 /**:
   ros__parameters:
-    # --- General MPC Settings (Flat) ---
+    # --- 通用 MPC 配置（扁平参数）---
     # 此工作目录仅 NMPC (动力学)
     control_mode: "dynamic"     # "dynamic" (跑 NMPC) 或 "idle" (在线不解算);此工作目录仅支持这两值
     # FCU 模式门禁 (方案 B): 输出是 RC 通道覆写, 只有 MANUAL 模式下
@@ -10,42 +10,39 @@
     # 进入 GUIDED 时无目标即 Stop/Loiter 停车。故 RC 覆写无法驱动船。
     # 因此方案 B 必须 MANUAL, 且不能靠 launch 传参兜底。
     allowed_fcu_modes: ["MANUAL"]
-    mpc_dt: 0.2                 # MPC time step (s) — 5 Hz control loop
-    horizon: 20                  # Prediction horizon steps
-    publish_predicted: true      # Publish MPC predicted trajectory
-    max_solve_time_ms: 200.0    # Maximum acceptable solve time (ms)
-    odom_timeout_s: 3.0         # MAVROS local odom can pause briefly during EKF/GPS updates
-    state_timeout_s: 5.0        # Allow brief MAVLink heartbeat jitter without dropping to STANDBY
-    reference_start_offset: 8   # Start MPC reference several path points ahead of the nearest point
+    mpc_dt: 0.2                 # MPC 控制步长 (s) — 5 Hz 控制循环
+    horizon: 20                  # 预测时域步数
+    publish_predicted: true      # 是否发布 MPC 预测轨迹
+    max_solve_time_ms: 200.0    # 最大可接受求解时间 (ms)
+    odom_timeout_s: 3.0         # EKF/GPS 更新期间 MAVROS 局部里程计可能短暂暂停
+    state_timeout_s: 5.0        # 允许短暂的 MAVLink 心跳抖动，避免直接掉入 STANDBY
+    reference_start_offset: 8   # 从最近路径点前方若干个点开始截取 MPC 参考轨迹
 
-    # --- Dynamic NMPC (retuned for real 14.2 kg / 25 N boat) ---
-    # Q/R chosen so critical thrust sqrt(Q_x/R)≈20 N = 80% of T_max=25, i.e. the
-    # controller is willing to use near-full thrust to correct 1 m of error.
-    # dt=0.2 (was 0.1) keeps dyn_N=round(horizon*mpc_dt/dt)=20 so solve time
-    # stays within the 200 ms budget on the Raspberry Pi 5 onboard computer.
-    # Q/R/Rd are running-cost-density weights: both acados and CasADi multiply
-    # the full stage cost by dt. Qf_scale applies to the unscaled terminal cost.
-    # Rd penalizes per-step thrust increments and is tuned for this fixed dt.
+    # --- 动力学 NMPC（针对 14.2 kg / 25 N 实船重新整定）---
+    # 选取 Q/R 使临界推力 sqrt(Q_x/R)≈20 N = 80% * T_max(25 N)，即控制器愿意动用接近满推力来消除 1 m 误差。
+    # dt=0.2（原为 0.1）使 dyn_N=round(horizon*mpc_dt/dt)=20，从而将求解时间控制在树莓派 5 机载计算机的 200 ms 预算内。
+    # Q/R/Rd 为运行代价密度权重：acados 与 CasADi 均会将完整阶段代价乘以 dt；Qf_scale 作用于未缩放的终端代价。
+    # Rd 惩罚单步推力增量，已按该固定 dt 整定。
     dynamic:
-      Q: [20.0, 20.0, 50.0, 8.0, 1.0, 8.0]  # State weights [x,y,psi,u,v,r]
-      R: [0.05, 0.05]              # Control weights [TL, TR]
-      Rd: [0.2, 0.2]               # Control rate weights (Rd/R=4 kept)
-      Qf_scale: 8.0                # Terminal cost multiplier (lowered for N=20)
-      dt: 0.2                      # Dynamic MPC time step (s) — keeps N=20
-      T_max: 25.0                  # Max thrust per thruster (N) — K_T
-      T_min: -25.0                 # Max reverse thrust (N) — equal reverse
-      dT_max: 80.0                 # Max thrust rate (N/s) — 0→25 N in ~0.3 s
+      Q: [20.0, 20.0, 50.0, 8.0, 1.0, 8.0]  # 状态权重 [x, y, psi, u, v, r]
+      R: [0.05, 0.05]              # 控制量权重 [TL, TR]
+      Rd: [0.2, 0.2]               # 控制变化率权重（保持 Rd/R=4）
+      Qf_scale: 8.0                # 终端代价倍率（针对 N=20 调低）
+      dt: 0.2                      # 动力学 MPC 离散步长 (s) — 保持 N=20
+      T_max: 25.0                  # 单侧推进器最大正向推力 (N) — K_T
+      T_min: -25.0                 # 单侧推进器最大反向推力 (N) — 正反推力对称
+      dT_max: 80.0                 # 最大推力变化率 (N/s) — 约 0.3 s 内从 0 升至 25 N
 
-    # --- NMPC RC override mapping (ArduRover input channels) ---
-    rc_steering_channel: 0         # CH1 steering input
-    rc_throttle_channel: 2         # CH3 throttle input
+    # --- NMPC RC 覆写映射（ArduRover 输入通道）---
+    rc_steering_channel: 0         # CH1 转向输入通道
+    rc_throttle_channel: 2         # CH3 油门输入通道
     rc_pwm_min: 1100
     rc_pwm_center: 1500
     rc_pwm_max: 1900
-    steering_sign: -1.0            # Flip steering: ArduRover RC1 yaw sign is opposite NMPC TR-TL sign
-    throttle_sign: 1.0             # Positive MPC throttle maps to high RC3 / forward in rover-skid
-    steering_gain: 0.4             # Moderate yaw authority after steering sign correction
-    throttle_gain: 0.75            # Tuned throttle authority for tracking
+    steering_sign: -1.0            # 转向取反：ArduRover RC1 偏航符号与 NMPC (TR-TL) 相反
+    throttle_sign: 1.0             # 正向 MPC 油门在 rover-skid 模式下对应高 RC3 / 前进
+    steering_gain: 0.4             # 修正转向符号后适度限制偏航控制增益
+    throttle_gain: 0.75            # 针对轨迹跟踪整定后的油门增益
     # 节点会把最终整数 PWM 按当前线性混控反算为等效 [TL,TR]，写回下一拍
     # delta_T 锚点。该近似包含 gain/sign/PWM 量化；死区、非线性和电压影响
     # 仍需实船标定后纳入。

@@ -1,4 +1,4 @@
-# rosbag2 subscription overrides for MAVROS sensor-data publishers.
+# 针对 MAVROS sensor-data 发布端的 rosbag2 订阅 QoS 覆盖配置。
 /mavros/local_position/odom:
   reliability: best_effort
   durability: volatile

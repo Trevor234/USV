@@ -1,6 +1,6 @@
-"""MAVROS-only launch — test MAVLink communication with AET-H743-AIR-PRO.
+"""仅启动 MAVROS — 用于测试与 AET-H743-AIR-PRO 飞控的 MAVLink 通信。
 
-Usage:
+用法:
   ros2 launch usv_bringup mavros.launch.py
   ros2 launch usv_bringup mavros.launch.py gcs_url:=udp://@<gcs-ip>:14550
 """

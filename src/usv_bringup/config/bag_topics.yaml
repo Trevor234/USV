@@ -1,5 +1,5 @@
-# Core closed-loop topics recorded during real USV runs.
-# Message types, QoS, and semantics remain defined in topic_contract.yaml.
+# 实船运行期间录制的核心闭环话题。
+# 消息类型、QoS 与语义定义仍以 topic_contract.yaml 为准。
 # 2026-10-09: 加入 GPS 状态话题 (RTK 事后分析需要区分 Float/Fixed/单点段)。
 #   raw/gps1/raw = fix_type/eph/卫星数 (GPSRAW, ~1Hz)
 #   raw/fix      = 经纬度原值 (NavSatFix, ~1Hz)

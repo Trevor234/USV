@@ -1,13 +1,12 @@
-# MAVROS Configuration for USV AET-H743-AIR-PRO
+# 无人艇 AET-H743-AIR-PRO 的 MAVROS 配置
 #
-# Serial connection: validated FCU MAVLink port → /dev/ttyAMA10 on RPi5
-# Baud rate: 921600
+# 串口连接：树莓派 5 上已验证的飞控 MAVLink 端口 → /dev/ttyAMA10
+# 波特率：921600
 #
-# fcu_url: primary MAVLink link between Raspberry Pi and flight controller
-#          on the Raspberry Pi network
+# fcu_url：树莓派与飞控之间的主 MAVLink 链路
 #
-# Load only the plugins used by this workspace. This avoids a Jazzy MAVROS
-# topic type collision on /mavros/mavros/status from unrelated status plugins.
+# 仅加载本工作区使用的插件，避免 Jazzy 版本 MAVROS 中无关状态插件在
+# /mavros/mavros/status 上引发话题类型冲突。
 
 /**:
   ros__parameters:
