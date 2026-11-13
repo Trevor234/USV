@@ -178,7 +178,7 @@ dN = Δlat · (π/180) · R                ← 北向偏移
 输出两个**配对发布**的话题：`/path/reference`（几何）+ `/path/reference_profile`（速度剖面），每 1 秒重发一次（保证 late-joiner 也能拿到当前任务）。航点数 <2 或任务完成时发布**空路径**，主动触发 MPC 进 STANDBY。
 
 **控制层（参考 → 指令）**
-`mpc_controller_node`（方案 A，`usv_mpc_kinematic_cpp`，CasADi/IPOPT 后端）以 5 Hz（`mpc_dt=0.2s`）运行：取最新 odom 状态 `[x,y,ψ,u,r]`（5 状态，一阶滞后模型），从参考路径上找最近点构建 N=20 步参考序列，解二次规划得到首步控制 `[u_surge, r_yaw]`。**先过 8 项就绪门禁**（odom/path/state 收到且新鲜、armed、模式 ∈ allowed_fcu_modes=`["GUIDED"]`），任一不满足即 STANDBY 并**持续发布零速度指令**（防 FCU 锁存旧指令）。连续求解失败 ≥5 次进 HOLD（零速度+重置热启动）。
+`mpc_controller_node`（方案 A，`usv_mpc`，CasADi/IPOPT 后端）以 5 Hz（`mpc_dt=0.2s`）运行：取最新 odom 状态 `[x,y,ψ,u,r]`（5 状态，一阶滞后模型），从参考路径上找最近点构建 N=20 步参考序列，解二次规划得到首步控制 `[u_surge, r_yaw]`。**先过 8 项就绪门禁**（odom/path/state 收到且新鲜、armed、模式 ∈ allowed_fcu_modes=`["GUIDED"]`），任一不满足即 STANDBY 并**持续发布零速度指令**（防 FCU 锁存旧指令）。连续求解失败 ≥5 次进 HOLD（零速度+重置热启动）。
 
 **执行层（指令 → 船）**
 - **方案 A**（当前）：速度指令 `TwistStamped` → `/mavros/setpoint_velocity/cmd_vel` → MAVROS `setpoint_velocity` 插件转成 `SET_POSITION_TARGET_LOCAL_NED`（type_mask 只留速度字段）→ 飞控 GUIDED 模式内部的速度控制器 → 舵/油输出。**推力分配由飞控完成**，ROS 侧不做混控。
@@ -345,7 +345,7 @@ data = [v₀, κ₀, r₀, t₀,  v₁, κ₁, r₁, t₁, ..., v_{m-1}, κ_{m-1
 | r | 期望艏摇角速度 = v·κ | rad/s | 运动学关系 |
 | t | 距起点的**累积时间** | s | TOPP 积分 |
 
-**配对同步规则**（`topic_contract.yaml` §104-134）：`/path/reference` 的 `header.stamp` 与 profile 的 dim 标签时间戳**必须相等**才算配对成功；不等则 MPC 标记 `profile_synced=false` 并在 `profile_sync_reason` 给出原因（当前实测：`empty_or_malformed_profile`，因为无任务）。解析代码见 `usv_mpc_kinematic_cpp/src/mpc_node.cpp:313-338`，构造见 `usv_planning_cpp/src/path_planner_node.cpp:276-304`。
+**配对同步规则**（`topic_contract.yaml` §104-134）：`/path/reference` 的 `header.stamp` 与 profile 的 dim 标签时间戳**必须相等**才算配对成功；不等则 MPC 标记 `profile_synced=false` 并在 `profile_sync_reason` 给出原因（当前实测：`empty_or_malformed_profile`，因为无任务）。解析代码见 `usv_mpc/src/mpc_node.cpp:313-338`，构造见 `usv_planning/src/path_planner_node.cpp:276-304`。
 
 > 设计动机：Path 消息没有放浮点数组的字段，velocity profile 若用单独 PoseStamped/CollisionObject 都不合适；借用 MultiArray 的 dim 标签塞时间戳，让两条话题能无锁配对，是务实的工程折中。
 

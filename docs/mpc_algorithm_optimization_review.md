@@ -1,7 +1,7 @@
 # USV MPC 算法分析与优化建议
 
 > 评审日期：2026-09-12  
-> 评审范围：`usv_mpc_kinematic_cpp`（方案 A）、`usv_mpc_cpp`（方案 B）、参考轨迹生成、原 VRX 执行内环及相关参数（注：VRX / SITL 仿真入口、`vrx_thrust`/`cmdvel_to_thrust` 及 `usv_simulation` 包已于 2026-11 清理移除，下文中对应段落仅作历史评审背景保留）  
+> 评审范围：`usv_mpc`（方案 A）、`usv_nmpc`（方案 B）、参考轨迹生成、原 VRX 执行内环及相关参数（注：VRX / SITL 仿真入口、`vrx_thrust`/`cmdvel_to_thrust` 及 `usv_simulation` 包已于 2026-11 清理移除，下文中对应段落仅作历史评审背景保留）  
 > 工作区：ROS 2 Jazzy / `ament_cmake` + `ament_python`
 
 ## 1. 文档目的
@@ -12,7 +12,7 @@
 
 | 项目 | 方案 A：运动学 MPC | 方案 B：动力学 NMPC |
 |---|---|---|
-| 包 | `usv_mpc_kinematic_cpp` | `usv_mpc_cpp` |
+| 包 | `usv_mpc` | `usv_nmpc` |
 | 状态 | `[x, y, psi, u, r]` | `[x, y, psi, u, v, r]`，acados 内部增广上一拍双桨推力 |
 | 优化变量 | `[u_cmd, r_cmd]` | `[T_L, T_R]` |
 | 预测模型 | 平面运动学 + 速度/角速度一阶滞后 | Fossen 三自由度动力学 |
@@ -664,9 +664,9 @@ idx = nearest + reference_start_offset
 
 ```bash
 cd ~/usv_mpc_ws
-colcon build --symlink-install --packages-select usv_mpc_kinematic_cpp usv_bringup
+colcon build --symlink-install --packages-select usv_mpc usv_bringup
 source install/setup.bash
-colcon test --packages-select usv_mpc_kinematic_cpp usv_bringup
+colcon test --packages-select usv_mpc usv_bringup
 colcon test-result --verbose
 ```
 
@@ -674,10 +674,10 @@ colcon test-result --verbose
 
 ```bash
 cd ~/usv_mpc_ws
-python3 src/usv_mpc_cpp/scripts/regenerate_acados_codegen.py --horizon 20 --dt 0.2
-colcon build --symlink-install --packages-select usv_mpc_cpp usv_bringup
+python3 src/usv_nmpc/scripts/regenerate_acados_codegen.py --horizon 20 --dt 0.2
+colcon build --symlink-install --packages-select usv_nmpc usv_bringup
 source install/setup.bash
-colcon test --packages-select usv_mpc_cpp usv_bringup
+colcon test --packages-select usv_nmpc usv_bringup
 colcon test-result --verbose
 ```
 
@@ -712,13 +712,13 @@ python3 scripts/analyze_usv_bag.py ~/usv_logs/<run_id>
 
 代码与配置主要依据：
 
-- `src/usv_mpc_kinematic_cpp/src/casadi_kinematic_backend.cpp`
-- `src/usv_mpc_kinematic_cpp/src/mpc_node.cpp`
-- `src/usv_mpc_cpp/src/acados_backend.cpp`
-- `src/usv_mpc_cpp/src/casadi_backend.cpp`
-- `src/usv_mpc_cpp/scripts/regenerate_acados_codegen.py`
+- `src/usv_mpc/src/casadi_kinematic_backend.cpp`
+- `src/usv_mpc/src/mpc_node.cpp`
+- `src/usv_nmpc/src/acados_backend.cpp`
+- `src/usv_nmpc/src/casadi_backend.cpp`
+- `src/usv_nmpc/scripts/regenerate_acados_codegen.py`
 - `src/usv_simulation/usv_simulation/cmdvel_to_thrust.py`
-- `src/usv_planning_cpp/src/speed_profile.cpp`
+- `src/usv_planning/src/speed_profile.cpp`
 - `src/usv_bringup/config/mpc_params_A.yaml`
 - `src/usv_bringup/config/mpc_params_B.yaml`
 - `src/usv_bringup/config/path_config.yaml`

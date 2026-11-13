@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Smoke-check the USV MPC topic contract for a running profile.
-# Source the relevant ROS workspaces before running this script.
+# 对正在运行的配置方案进行 USV MPC 话题契约冒烟检查。
+# 运行本脚本前请先 source 对应的 ROS 工作区环境。
 
 set -u
 

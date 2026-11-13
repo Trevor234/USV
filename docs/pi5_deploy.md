@@ -12,7 +12,7 @@
 执行时遵循以下原则：
 
 1. 不把开发机的 `build/`、`install/`、`log/` 或任何 x86_64 动态库复制到树莓派。
-2. `src/usv_mpc_cpp/acados_generated/` 中已纳入源码管理的生成代码、JSON 和 CMake 文件属于发布源码，必须随版本迁移。
+2. `src/usv_nmpc/acados_generated/` 中已纳入源码管理的生成代码、JSON 和 CMake 文件属于发布源码，必须随版本迁移。
 3. 部署前把当前未提交修改整理成一个明确的提交或发布归档。仅在树莓派执行 `git pull` 不能得到开发机尚未提交的修改。
 4. 在新目录完成依赖检查和预编译；进入维护窗口后才停止艇载服务并切换正式目录。
 5. `usv-system.service` 运行时禁止手工启动另一套 `mavros` 或 `real.launch.py`，否则两个进程会争用飞控串口。
@@ -25,10 +25,10 @@
 
 | 包 | 迁移用途 |
 |---|---|
-| `usv_mpc_cpp` | 运动学/动力学 MPC、CasADi/IPOPT 与 acados 后端 |
-| `usv_mpc_kinematic_cpp` | 运动学 MPC 运行节点 |
-| `usv_planning_cpp` | 路径规划和轨迹相关节点 |
-| `usv_safety_cpp` | 安全监督与状态检查 |
+| `usv_nmpc` | 动力学 NMPC，仅使用 acados SQP_RTI 后端 |
+| `usv_mpc` | 运动学 MPC 运行节点（CasADi/IPOPT 后端） |
+| `usv_planning` | 路径规划和轨迹相关节点 |
+| `usv_safety` | 安全监督与状态检查 |
 | `usv_bringup` | 真实艇整体启动入口、QoS 中继与全部配置 |
 
 截至编制本计划时，MPC 相关本地验证已通过：
@@ -86,7 +86,7 @@ ss -ltnp | rg ":(8765|7865)"
 
 ### 3.5 包依赖声明
 
-静态检查曾发现 `usv_bringup/package.xml` 没有完整声明启动文件引用的运行时包，其中包括工作空间内的 `usv_mpc_kinematic_cpp`、原 `usv_simulation`（现已随遥测与可视化功能一并彻底移除），以及特定启动路径可能使用的 `ntrip_client`（开发机 VRX/Gazebo 仿真入口现已移除，不应在艇载系统安装完整仿真栈）。
+静态检查曾发现 `usv_bringup/package.xml` 没有完整声明启动文件引用的运行时包，其中包括工作空间内的 `usv_mpc`、原 `usv_simulation`（现已随遥测与可视化功能一并彻底移除），以及特定启动路径可能使用的 `ntrip_client`（开发机 VRX/Gazebo 仿真入口现已移除，不应在艇载系统安装完整仿真栈）。
 
 发布前应完成以下二选一动作：
 
@@ -167,7 +167,7 @@ colcon test-result --verbose
 - 6 个包均完成构建；
 - `colcon test-result --verbose` 无失败；
 - `git diff --check` 无错误；
-- `usv_mpc_cpp` 的 core、acados 和 backend consistency 测试全部通过；
+- `usv_nmpc` 的 core 和 acados 测试全部通过；
 - `usv_bringup` 配置测试全部通过。
 
 ### 5.4 检查 acados 生成代码
@@ -175,8 +175,8 @@ colcon test-result --verbose
 ```bash
 cd /home/trevor/USV/usv_mpc_ws
 rg -n '"cost_type"[[:space:]]*:[[:space:]]*"NONLINEAR_LS"' \
-  src/usv_mpc_cpp/acados_generated
-find src/usv_mpc_cpp/acados_generated -type f \
+  src/usv_nmpc/acados_generated
+find src/usv_nmpc/acados_generated -type f \
   \( -name '*ext_cost*' -o -name '*external_cost*' \) -print
 ```
 
@@ -343,7 +343,7 @@ colcon test-result --verbose
 预编译通过后检查主程序的动态库：
 
 ```bash
-ldd install/usv_mpc_cpp/lib/usv_mpc_cpp/mpc_node | rg "not found" || true
+ldd install/usv_nmpc/lib/usv_nmpc/mpc_node | rg "not found" || true
 ```
 
 若输出任何 `not found`，不得切换正式版本。
@@ -423,7 +423,7 @@ colcon build \
 source install/setup.bash
 colcon test --executor sequential --event-handlers console_direct+
 colcon test-result --verbose
-ldd install/usv_mpc_cpp/lib/usv_mpc_cpp/mpc_node | rg "not found" || true
+ldd install/usv_nmpc/lib/usv_nmpc/mpc_node | rg "not found" || true
 ```
 
 所有测试通过且没有缺失动态库后，才能启动 systemd 服务。若本次发布没有修改 service 或 `/etc/default/usv-system`，不要覆盖它们。

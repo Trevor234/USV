@@ -14,8 +14,8 @@ source /opt/ros/jazzy/setup.bash
 export ACADOS_SOURCE_DIR=$HOME/acados
 export LD_LIBRARY_PATH=$HOME/acados/lib:${LD_LIBRARY_PATH:-}
 colcon build --symlink-install --packages-select \
-  usv_bringup usv_planning_cpp usv_safety_cpp \
-  usv_mpc_kinematic_cpp usv_mpc_cpp
+  usv_bringup usv_planning usv_safety \
+  usv_mpc usv_nmpc
 source install/setup.bash
 ```
 

@@ -1,23 +1,75 @@
 #!/bin/bash
 # USV 系统方案切换脚本
 # 用法:  sudo usv-scheme A   或   sudo usv-scheme B
-# 修改 /etc/default/usv-system 中的 SCHEME 并重启服务
+#
+# 前置条件 (2026-11-12 起): 控制栈由版本化 install 提供, 入口为
+# /home/trevor/usv_runtime 软链。本脚本在改动 SCHEME 前先校验该软链与已安装
+# 配置存在, 校验失败直接退出, 不重启服务。
+#
+# 打印的 control_mode / allowed_fcu_modes 来自**安装目录里的配置**
+# (软链指向的 usv_bringup/share/usv_bringup/config/), 只说明将要加载什么,
+# 不证明当前进程真的在用它 —— 在线证据请用 deploy/capture_release_identity.py
+# 的 runtime 子命令。
 #
 # 安装: sudo install -m 755 deploy/usv-scheme /usr/local/bin/usv-scheme
-# 2026-11-12: 原先脚本残留 usv_mpc_ws_B 路径(工作空间已合并到 usv_mpc_ws),
-# 依赖它打印 control_mode 会在 set -e 下直接报错, 现改为从当前工作空间读取。
 
 set -e
-WS=/home/trevor/usv_mpc_ws
-S=$(echo "$1" | tr 'a-z' 'A-Z')
+
+RUNTIME_LINK=/home/trevor/usv_runtime
+DEFAULTS=/etc/default/usv-system
+
+S=$(echo "${1:-}" | tr 'a-z' 'A-Z')
 if [ "$S" != "A" ] && [ "$S" != "B" ]; then
     echo "用法: sudo usv-scheme A|B"
     exit 1
 fi
-sed -i "s/^SCHEME=.*/SCHEME=$S/" /etc/default/usv-system
+
+if [ ! -L "$RUNTIME_LINK" ]; then
+    echo "错误: $RUNTIME_LINK 不是软链, 拒绝猜测运行版本" >&2
+    echo "  期望: $RUNTIME_LINK -> /home/trevor/usv_releases/<RELEASE_ID>/install_{noopt,release}" >&2
+    exit 1
+fi
+
+TARGET=$(readlink -f "$RUNTIME_LINK")
+if [ ! -f "$TARGET/setup.bash" ]; then
+    echo "错误: 软链目标缺少 setup.bash: $TARGET" >&2
+    exit 1
+fi
+
+CONFIG_DIR="$TARGET/usv_bringup/share/usv_bringup/config"
+PARAMS="$CONFIG_DIR/mpc_params_$S.yaml"
+if [ ! -f "$PARAMS" ]; then
+    echo "错误: 软链目标缺少方案 $S 的参数配置: $PARAMS" >&2
+    exit 1
+fi
+
+# 方案对应的控制包必须真的装在这一份 install 里, 否则切过去只会启动失败。
+if [ "$S" = "A" ]; then
+    PKG=usv_mpc
+else
+    PKG=usv_nmpc
+fi
+NODE="$TARGET/$PKG/lib/$PKG/mpc_node"
+if [ ! -x "$NODE" ]; then
+    echo "错误: 软链目标缺少方案 $S 的控制器: $NODE" >&2
+    exit 1
+fi
+
+if [ ! -f "$DEFAULTS" ]; then
+    echo "错误: 缺少 $DEFAULTS" >&2
+    exit 1
+fi
+
+sed -i "s/^SCHEME=.*/SCHEME=$S/" "$DEFAULTS"
 systemctl restart usv-system
 sleep 3
-MODE=$(grep control_mode "$WS/src/usv_bringup/config/mpc_params_$S.yaml" | awk -F'"' '{print $2}')
-GATE=$(grep allowed_fcu_modes "$WS/src/usv_bringup/config/mpc_params_$S.yaml" | tr -d ' ')
-echo "方案 = $S (control_mode=$MODE, $GATE), 服务已重启"
+
+MODE=$(grep control_mode "$PARAMS" | awk -F'"' '{print $2}')
+GATE=$(grep allowed_fcu_modes "$PARAMS" | tr -d ' ')
+echo "方案 = $S (control_mode=$MODE, $GATE)"
+echo "运行 install = $TARGET"
+echo "控制器 = $NODE"
+echo "提示: 以上来自安装配置, 不证明在线进程已生效; 用"
+echo "      python3 deploy/capture_release_identity.py runtime \\"
+echo "        --expected-install $RUNTIME_LINK --output <新 JSON> 核验"
 journalctl -u usv-system -n 5 --no-pager | grep -E 'mpc_node|MPC' | tail -3 || true

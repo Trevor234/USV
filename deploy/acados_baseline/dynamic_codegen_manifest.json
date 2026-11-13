@@ -1,0 +1,29 @@
+{
+  "files": {
+    "acados_solver_usv_dyn_nmpc.c": "38c222d809dc15e362f423ed329f34156ac7e4b836227242407a684f814f9f30",
+    "acados_solver_usv_dyn_nmpc.h": "bdac3caa7ee125812d485f87cdde272c5c90d6c10628a996c6fd6f7d75038114",
+    "usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_0_fun.c": "d4d02b31983e37ed5ce32bf7ce6fa2cda6ed3506df7a1825841eb521b5b96424",
+    "usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_0_fun_jac_uxt_zt.c": "14ec97780a20c0d946f76e795f1f69c0c99f1a12477b6062d0c5b5bc708a98d7",
+    "usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_fun.c": "4ba292e2a46724c3935c2ea9527500c3596ae0920a2eb8fe9304415c52f0495b",
+    "usv_dyn_nmpc_constraints/usv_dyn_nmpc_constr_h_fun_jac_uxt_zt.c": "2984f524b49cecf91f7e0ffac246ee78a3914f64cca9b4c7fa5d94c33e90ff03",
+    "usv_dyn_nmpc_constraints/usv_dyn_nmpc_constraints.h": "d5fe1da868dfbabffa160f83d82ce3d492d8c5e8e2cc091286a55fb43ee8999a",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost.h": "21ffc99e506d2e778e6d5c6e4f95c746f132f1d557d37522ae234f4d090bccbd",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_0_fun.c": "9791aa69c4f170b739bcf079bb7c49dedc1ef389dbe597e7dc8dfa1c40bc6044",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_0_fun_jac_ut_xt.c": "7bfc077b8639b19db62fb53ca4d097e3db3a9be60c6ac6d32f528510663c4d3a",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_0_hess.c": "0f4d3f47271dd1ea78e067121cec9d202572373977a41f3ba8713b5d8a5e2c71",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_e_fun.c": "18d156cef93b8883d28a1b8a8552dcb8c76d1795670f929bf1ae3de1f9986bea",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_e_fun_jac_ut_xt.c": "1eb492c29f743eb4ce354417a28e9760993f793b9aac22f15325e9a219156c98",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_e_hess.c": "d3ef3825ce61da4406de30530181112f676b6c460ee277651b4c0f99c1bcc6c1",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_fun.c": "f3eebf78cb21592ddf1f82d3e19e536fdbcf10ba68c871d3f179f4048707195f",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_fun_jac_ut_xt.c": "8dedbe1ab590da309047b67ca660af708ed296608172e28f1210757a490daa08",
+    "usv_dyn_nmpc_cost/usv_dyn_nmpc_cost_y_hess.c": "ccb3399e16bea57b555c1453dc4e02608df955ddda92341c89cf4c37701fc11f",
+    "usv_dyn_nmpc_model/usv_dyn_nmpc_dyn_disc_phi_fun.c": "a4a891ffd8b98c0c35be7ee23fca7817343bd6958f0b67e71785282a2f8e8504",
+    "usv_dyn_nmpc_model/usv_dyn_nmpc_dyn_disc_phi_fun_jac.c": "ae075e4f9ee34f86765fe7831b9675d2c10d6bf035a2c1157a3c7dbc92540188",
+    "usv_dyn_nmpc_model/usv_dyn_nmpc_model.h": "d2471c85706deb72047df28521074d297a344053a56d90938f4f63046ab90682",
+    "usv_dyn_nmpc_p_global_precompute_fun.c": "d336c975054b3fa554f81b41d1307c221a7a18be3657e23cb73a6b164d3ba30d",
+    "usv_dyn_nmpc_p_global_precompute_fun.h": "175b83c9d37263330d11e7c7828be067764b71cad69a3e5b71802031511ce770",
+    "usv_dyn_ocp.json": "39121b0fcda7192a843042d8065eff56b9a522713d716b4b36c40169b5169290"
+  },
+  "model": "dynamic",
+  "root": "src/usv_nmpc/acados_generated"
+}

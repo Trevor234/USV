@@ -1,18 +1,19 @@
-# Pip-only / Python dependencies for the USV MPC workspace (ROS 2 jazzy).
+# USV MPC 工作区（ROS 2 Jazzy）的纯 pip / Python 依赖列表。
 #
-# ROS packages (rclpy, *_msgs) come from the ROS 2 distribution and are declared
-# in each package.xml. The packages below have no apt/rosdep key (or are simplest
-# to pin via pip), so install them with:
+# ROS 相关包（rclpy、*_msgs）由 ROS 2 发行版提供，并在各 package.xml 中声明。
+# 下列包无 apt/rosdep 键（或通过 pip 锁定版本最简洁），请使用以下命令安装：
 #
 #   pip install -r usv_mpc_ws/requirements.txt
 #
 # acados 不在此处: 它是 C 库, 需源码编译 (见 docs/pi5_deploy.md)。
 # acados_template 是其 Python 接口, 从 acados 源码树 pip install -e 安装,
-# 不在 PyPI, 故不列入此文件。若 acados 不可用, usv_mpc 自动回退 CasADi+IPOPT。
+# 不在 PyPI, 故不列入此文件 (仅在离线执行 regenerate_acados_codegen.py 时需要)。
 #
-# Tested with: casadi 3.7.2, Python 3.12 (x86_64) / aarch64 (Pi5)。
+# 已在以下环境测试通过：casadi 3.7.2，Python 3.12（x86_64）/ aarch64（树莓派 5）。
 
-casadi>=3.6      # NMPC/QP solver backend — usv_mpc 运动学后端 + C++ fallback 的来源 wheel
-numpy>=1.24      # used across usv_mpc and usv_planning
-pyyaml>=6.0      # waypoint YAML loading in usv_planning
-matplotlib       # usv_simulation 实时可视化
+# casadi 仅作为离线代码生成工具链的一部分 (acados_template 依赖它)。
+# 方案 A/B 的运行时控制器均不链接、不 import casadi，因此不要从系统卸载它。
+casadi>=3.6      # 仅离线 codegen 使用 (usv_acados/scripts/regenerate_acados_codegen.py)
+numpy>=1.24      # 供 regenerate_acados_codegen.py 与 analyze_usv_bag.py 使用
+pyyaml>=6.0      # 供 usv_bringup 配置加载与测试使用
+matplotlib       # 供 scripts/analyze_usv_bag.py 离线绘图使用
