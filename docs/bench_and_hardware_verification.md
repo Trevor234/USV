@@ -139,15 +139,44 @@ sequenceDiagram
 
 在连接主控前，必须通过 Mission Planner 对 AET-H743-AIR-PRO 飞控参数进行针对性配置，解决此前实测中发现的数据流瓶颈与阻断项：
 
-### 4.1 核心通信与数据流参数
-| 参数项 | 设定值 | 作用与必要性 |
-| :--- | :--- | :--- |
-| `SERIAL1_PROTOCOL` | `2` | 开启 TELEM1 的 MAVLink v2 协议支持 |
-| `SERIAL1_BAUD` | `921` | 波特率设为 921600 bps，确保 5 Hz 控制下串口带宽充裕 |
-| `SR1_RAW_IMU` | **`10`** | **由 1 Hz 提速至 10 Hz**，解决 IMU 角速度采样滞后于 MPC 5 Hz 周期的瓶颈 |
-| `SR1_POSITION` | `5` | 里程计与位置以 5 Hz 输出，匹配 MPC 控制周期 |
-| `SR1_EXT_STAT` | `5` | 飞控状态与电池电压上报频率 5 Hz |
-| `SYSID_THISMAV` | `1` | 飞控本端 System ID 固定为 1 |
+### 4.1 核心通信与数据流参数 (ArduRover 4.7.1 规范)
+
+> [!NOTE]
+> **ArduPilot 4.7+ 关键参数重命名说明**：  
+> 自 ArduPilot 4.7 起，旧版以 `SRx_` 开头（0 索引）的流速率参数全面重构为以 **`MAVn_`** 开头（1 索引，对应 MAVLink 实例）：
+> * `SERIAL0` (USB) 对应 `MAV1_*`
+> * `SERIAL1` (TELEM1) 对应 **`MAV2_*`**
+> * `SERIAL2` (TELEM2) 对应 **`MAV3_*`**
+> 
+> 此外，飞控分类中负责原始传感器/IMU 数据包（`RAW_IMU`、`SCALED_IMU`）的后缀是 **`RAW_SENS`**，负责姿态与角速度（`ATTITUDE`、`AHRS2`）的后缀是 **`EXTRA1`**。MAVROS 的 `/mavros/imu/data` 正是由这两类消息合成的。
+
+如果主板使用 **TELEM1（`SERIAL1`）** 连接树莓派，在地面站全参数表中配置：
+
+| 参数项 (ArduRover 4.7.1) | 设定值 | 对应旧版参数 (<=4.6) | 作用与必要性 |
+| :--- | :--- | :--- | :--- |
+| `SERIAL1_PROTOCOL` | `2` | 同左 | 开启 TELEM1 的 MAVLink v2 协议支持 |
+| `SERIAL1_BAUD` | `921` | 同左 | 波特率设为 921600 bps，确保高速传输带宽 |
+| `MAV2_EXTRA1` | **`10`** 或 `20` | `SR1_EXTRA1` | **提速姿态流** (`ATTITUDE`)，推送实时角速度与姿态四元数 |
+| `MAV2_RAW_SENS` | **`10`** 或 `20` | `SR1_RAW_SENS` | **提速原始传感器流** (`RAW_IMU`, `SCALED_IMU`)，提供实时角速度 $r$ |
+| `MAV2_POSITION` | `5` | `SR1_POSITION` | 里程计与位置 (`LOCAL_POSITION_NED`) 以 5 Hz 输出，匹配 MPC 周期 |
+| `MAV2_EXT_STAT` | `5` | `SR1_EXT_STAT` | 飞控状态与电池电压上报频率 5 Hz |
+| `SYSID_THISMAV` | `1` | 同左 | 飞控本端 System ID 固定为 1 |
+
+*(注：若硬件物理接在 TELEM2 即 `SERIAL2`，上述参数前缀请相应改为 `MAV3_*`)*。
+
+#### 替代方法：通过 ROS 2 动态服务直接设定流速率 (推荐)
+无需在地面站硬记参数名，MAVROS 启动后可直接通过 MAVLink 协议标准服务 `set_message_interval` 向飞控请求目标消息频率：
+```bash
+# 请求飞控以 20 Hz 发送 ATTITUDE 姿态流 (#30)
+ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 30, message_rate: 20.0}"
+
+# 请求飞控以 20 Hz 发送 RAW_IMU / HIGHRES_IMU 传感器流 (#27 / #105)
+ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 27, message_rate: 20.0}"
+ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 105, message_rate: 20.0}"
+
+# 请求飞控以 5 Hz 发送 LOCAL_POSITION_NED 里程计流 (#32)
+ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 32, message_rate: 5.0}"
+```
 
 ### 4.2 差速推进器混控参数
 | 参数项 | 设定值 | 说明 |
