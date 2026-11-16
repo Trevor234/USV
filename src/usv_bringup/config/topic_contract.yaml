@@ -131,8 +131,7 @@ gps_status_topics:
   - topic: /mavros/global_position/raw/fix
     type: sensor_msgs/msg/NavSatFix
     qos: sensor_data
-    purpose: GPS 经纬度原值; 亦为 NTRIP 客户端 GGA 上报来源 (经 /fix_for_ntrip
-             QoS 中继, 见 ntrip.launch.py)
+    purpose: GPS 经纬度原值; 亦为 NTRIP 客户端 GGA 上报来源 (ntrip_client 原生直连)
 
 
 # ---------------------------------------------------------------------------

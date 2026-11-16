@@ -3,12 +3,7 @@
 数据通路:
   CORS caster --NTRIP/RTCM3--> ntrip_client
     发布 rtcm(mavros_msgs/RTCM)      --重映射--> /mavros/gps_rtk/send_rtcm
-    订阅 fix (sensor_msgs/NavSatFix) <--重映射-- /fix_for_ntrip (QoS中继, 见下)
-  fix_qos_relay (本launch自带, 2026-10-09 引入):
-    /mavros/global_position/raw/fix (BEST_EFFORT) --> /fix_for_ntrip (RELIABLE)
-    原因: MAVROS raw/fix 是 BEST_EFFORT, 而 ntrip_client 的 fix 订阅是
-    RELIABLE 且未启用 rclpy qos_overriding_options, 参数表无法覆盖,
-    只能靠中继桥接。中继断了 GGA 就上不去, VRS 不发差分。
+    订阅 fix (sensor_msgs/NavSatFix) <--重映射-- /mavros/global_position/raw/fix (SensorDataQoS 原生直连)
   MAVROS gps_rtk 插件 --GPS_RTCM_DATA(MAVLink)--> AET-H743-AIR-PRO --GPS串口--> RTK模块
 
 前置: 先在 config/ntrip_params.yaml 填好 CORS 账号/挂载点。
@@ -40,16 +35,17 @@ def generate_launch_description():
         description="MAVROS gps_rtk 插件的 RTCM 输入话题 (mavros_msgs/RTCM)",
     )
     fix_topic_arg = DeclareLaunchArgument(
-        "fix_topic", default_value="/fix_for_ntrip",
+        "fix_topic", default_value="/mavros/global_position/raw/fix",
         description="用于生成上传给 CORS 的 GGA 的 NavSatFix 来源 (VRS 必需); "
-                    "也可用 /mavros/global_position/global",
+                    "默认原生直连 MAVROS /mavros/global_position/raw/fix",
     )
 
     params_file = LaunchConfiguration("ntrip_params_file")
     rtcm_topic = LaunchConfiguration("rtcm_topic")
     fix_topic = LaunchConfiguration("fix_topic")
 
-    # ntrip_client (LORD-MicroStrain): 可执行 ntrip_ros.py
+    # ntrip_client (LORD-MicroStrain, 工作区源码覆盖版本):
+    #   已将 fix 订阅 QoS 修正为 SensorDataQoS (BEST_EFFORT), 原生直连 MAVROS。
     #   发布 'rtcm', 订阅 'nmea' 与 'fix' —— 这里只用 'fix' 上传 GGA。
     ntrip_node = Node(
         package="ntrip_client",
@@ -63,19 +59,9 @@ def generate_launch_description():
         ],
     )
 
-    # QoS 中继 (2026-10-09): raw/fix BEST_EFFORT -> /fix_for_ntrip RELIABLE。
-    # ntrip_client 的 fix 订阅无法用参数覆盖 QoS, 只能经此桥接。
-    fix_qos_relay = Node(
-        package="usv_bringup",
-        executable="fix_qos_relay",
-        name="fix_qos_relay",
-        output="screen",
-    )
-
     return LaunchDescription([
         params_file_arg,
         rtcm_topic_arg,
         fix_topic_arg,
-        fix_qos_relay,
         ntrip_node,
     ])
