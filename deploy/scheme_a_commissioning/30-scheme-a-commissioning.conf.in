@@ -1,0 +1,8 @@
+[Unit]
+ConditionPathExists=@TOKEN_PATH@
+
+[Service]
+Restart=no
+ExecCondition=+/usr/bin/python3 -B @RELEASE_ROOT@/deploy/commission_scheme_a.py --release-root @RELEASE_ROOT@ --underlay @UNDERLAY@ --operator-attestation @RELEASE_ROOT@/evidence/operator-attestation.json --action check-start
+ExecStart=
+ExecStart=/bin/bash --noprofile --norc -c 'source /opt/ros/jazzy/setup.bash && source @UNDERLAY@/local_setup.bash && source @RELEASE_ROOT@/install/local_setup.bash && exec ros2 launch usv_bringup real.launch.py scheme:=${SCHEME} controller_backend:=research_commissioning commissioning_release_root:=@RELEASE_ROOT@ commissioning_underlay:=@UNDERLAY@ record:=false force:=false'
