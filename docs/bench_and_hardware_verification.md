@@ -40,7 +40,7 @@
 ```mermaid
 flowchart TB
     subgraph POWER["供电总线 (动力与逻辑隔离)"]
-        BAT["3S/4S 动力锂电池 (11.1V ~ 16.8V)"] --> PDB["电源分配板 (PDB) / 分流计"]
+        BAT["6S 动力锂电池 (22.2V ~ 29.0V)"] --> PDB["电源分配板 (PDB) / WeAct 功率计"]
         PDB -->|动力直供| ESC_L["左舷无刷电调 (ESC-L)"]
         PDB -->|动力直供| ESC_R["右舷无刷电调 (ESC-R)"]
         PDB -->|稳压 5V/5A| BEC1["DCDC 降压模块 1"] -->|Type-C / 排针| PI["树莓派 5 (Trevor-Desktop)"]

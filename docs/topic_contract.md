@@ -57,14 +57,15 @@ CRC8-0x31 frame terminator; details in `usv_bringup/power_monitor_node.py`.
 
 `power_monitor_node` publishes `sensor_msgs/BatteryState` (sensor-data QoS):
 voltage/current measured inline on the battery (current negative on
-discharge), `percentage` interpolated from a 3S LiPo per-cell SOC table
-(sag-biased under load — low-battery failsafe still uses absolute voltage
-thresholds); power is derivable as voltage×current. The driver polls only
-the 0x82 realtime command (mAh/mWh counters are available via the vendor GUI
-over USB, which can run concurrently with the UART link). With
-`use_power_monitor:=true` (default), `real.launch.py` points the mode
-manager's `battery_topic` at `/usv/battery`; `false` falls back to
-`/mavros/battery`.
+discharge), `percentage` linearly mapped from 6S LiPo pack voltage range
+(25.0V~29.0V) or interpolated from per-cell table
+(sag-biased under load — low-battery failsafe uses absolute voltage
+thresholds: e.g. 25.8V warning, 25.0V critical HOLD); power is derivable as
+voltage×current. The driver polls only the 0x82 realtime command (mAh/mWh counters
+are available via the vendor GUI over USB, which can run concurrently with the
+UART link). `real.launch.py` binds the mode manager's `battery_topic` strictly
+to `/usv/battery`; falling back to `/mavros/battery` is forbidden because FCU
+reports only the 12V DCDC rail.
 
 ## Debug checklist
 

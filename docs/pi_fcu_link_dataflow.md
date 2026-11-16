@@ -108,7 +108,7 @@ link[1000..1002] opened successfully
 | `global_position` | `/mavros/global_position/gp_origin`、`/raw/fix` | ENU 原点、RTK/NTRIP GGA 来源 |
 | `waypoint` | `/mavros/mission/waypoints`、`/mission/pull` | mission_bridge 拉取任务航点 |
 | `gps_rtk` | `/mavros/gps_rtk/send_rtcm` | NTRIP → 飞控的 RTCM 注入口 |
-| `battery` | `/mavros/battery` | mode_manager 电量看门狗 |
+| `battery` | `/usv/battery` | mode_manager 动力电池安全监控（/mavros/battery 仅为飞控 12V 稳压轨，不作动力安全判据） |
 
 ### 2.4 GCS 链路（frp 穿透）
 
@@ -215,7 +215,8 @@ dN = Δlat · (π/180) · R                ← 北向偏移
 | `/usv/mission/waypoints_local` | `nav_msgs/Path` | mission_bridge → planner、telem、recorder | RELIABLE, depth 10 | 航点/原点变化时 |
 | `/mpc/status` | `std_msgs/String`(JSON) | MPC → mode_mgr、telem、recorder | RELIABLE, depth 10 | 5 Hz |
 | `/mpc/predicted_trajectory` | `nav_msgs/Path` | MPC → telem、recorder | RELIABLE, depth 10 | 1 Hz（每 5 拍） |
-| `/mavros/battery` | `sensor_msgs/BatteryState` | MAVROS → mode_mgr | SensorDataQoS | ~1 Hz |
+| `/usv/battery` | `sensor_msgs/BatteryState` | power_monitor_node → mode_mgr、recorder | SensorDataQoS | 2 Hz |
+| `/mavros/battery` | `sensor_msgs/BatteryState` | MAVROS 发布（仅飞控12V稳压轨供电监测，mode_mgr 已改订 /usv/battery） | SensorDataQoS | ~1 Hz |
 | `/mavros/gps_rtk/send_rtcm` | `mavros_msgs/RTCM` | ntrip_client → MAVROS | RELIABLE | 1 Hz（NTRIP 数据流） |
 | `/uas1/mavlink_source` | `mavros_msgs/Mavlink` | MAVROS router → recorder | BEST_EFFORT/Volatile, depth 1000 | 实测 24.67 Hz（飞控 `1.1`）+ 1.64 Hz（`255.190` 回环） |
 | `/uas1/mavlink_sink` | `mavros_msgs/Mavlink` | MAVROS UAS → recorder | BEST_EFFORT/Volatile, depth 1000 | 实测 11.49 Hz（发送速率，非采样率） |

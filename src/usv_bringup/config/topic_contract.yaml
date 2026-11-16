@@ -111,8 +111,8 @@ mode_manager_node:
     - topic: /mpc/status               # 解析 JSON,监视求解器健康
     - topic: /mavros/local_position/odom  # 电子围栏 / 速度限制
     - topic: /path/reference           # 路径看门狗
-    - topic: /usv/battery         # 电池 failsafe; use_power_monitor:=true (默认) 订阅
-                                  # WeAct 功率计, false 时回落 /mavros/battery
+    - topic: /usv/battery         # 动力电池 failsafe; 严禁回退 /mavros/battery
+                                  # (飞控为 DCDC 12V 稳压轨，动力电池固定订阅 WeAct 功率计)
   services:
     - /mavros/set_mode
     - /mavros/cmd/arming
@@ -150,7 +150,7 @@ power_monitor_node:
       fields:
         voltage: 功率计实测电压 (V)
         current: 放电为负 (A; 设备电流正方向为输入→输出, 已按 BatteryState 约定取反)
-        percentage: 3S LiPo 单芯电压-SOC 表插值估算, 带载压降偏低读,
+        percentage: 动力电池 (6S) 总压量程线性映射 (25.0V~29.0V) 或 LiPo 单芯折算, 带载压降偏低读,
                     低电量判据仍以 mode_manager 绝对电压阈值为准
         serial_number: 设备序列号 (连接时读取一次)
 

@@ -5,12 +5,17 @@
 #   然后填写真实的 username / password。真实文件已被 .gitignore 忽略,
 #   不得提交到仓库; 树莓派部署时通过 scp 单独传输。
 #
-# 服务商: 云图CORS (ytcors)
+# 通信说明:
+#   ntrip_client 在工作空间源码层已原生采用 SensorDataQoS (BEST_EFFORT / depth=5)，
+#   直接兼容 MAVROS /mavros/global_position/raw/fix 发布端 QoS，
+#   无需且不使用 fix_qos_relay 中转，亦无需在 YAML 中配置 qos_overrides。
+#
+# 服务商示例: 云图CORS (ytcors)
 #
 # 数据通路:
 #   CORS caster --NTRIP/RTCM3--> ntrip_client
-#     发布 rtcm(mavros_msgs/RTCM) --重映射--> /mavros/gps_rtk/send_rtcm
-#     订阅 fix(sensor_msgs/NavSatFix) <--重映射-- /mavros/global_position/raw/fix
+#     发布 rtcm(mavros_msgs/RTCM) --直连--> /mavros/gps_rtk/send_rtcm
+#     订阅 fix(sensor_msgs/NavSatFix) <--直连-- /mavros/global_position/raw/fix
 #   MAVROS gps_rtk 插件 --GPS_RTCM_DATA(MAVLink)--> AET-H743-AIR-PRO --GPS串口--> RTK模块
 #
 # /** 通配所有节点名 —— 与 mavros_config.yaml 同风格。
@@ -35,8 +40,3 @@
     ntrip_version: None
     ssl: false
     rtcm_message_package: mavros_msgs
-    qos_overrides:
-      /fix:
-        subscription:
-          reliability: best_effort
-          depth: 5

@@ -149,7 +149,7 @@ flowchart LR
 |---|---|---|
 | `usv-system` | `real.launch.py scheme:=B`，拉起 MAVROS + 控制栈 | 使用修改后的 `mavros_config.yaml`（含 `sys_time` deny） |
 | `usv-record` | `record.launch.py`，单一 `ros2 bag record` | 读取修改后的 `bag_topics.yaml` / `rosbag_qos_overrides.yaml` |
-| `usv-rtk` | NTRIP 差分注入 + `fix_qos_relay` | 未改配置，与其它服务共用同一 DDS profile |
+| `usv-rtk` | NTRIP 差分注入（ntrip_client 原生 SensorDataQoS 直连） | 未改配置，与其它服务共用同一 DDS profile |
 
 三个服务共用 `FASTDDS_DEFAULT_PROFILES_FILE=/home/trevor/.ros/fastdds_lan.xml`、`ROS_DOMAIN_ID=0`、`ROS_AUTOMATIC_DISCOVERY_RANGE=SUBNET`。
 
