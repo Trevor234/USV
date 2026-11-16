@@ -21,6 +21,9 @@ topics:
   - /path/reference
   - /path/reference_profile
   - /usv/mission/waypoints_local
+  # WeAct 功率计电池 (2026-11-14): 电压/电流(放电为负)/SOC。
+  # 低电量 failsafe 与事后续航分析的数据源。
+  - /usv/battery
   - /mpc/predicted_trajectory
   - /mavros/gpsstatus/gps1/raw
   - /mavros/global_position/raw/fix

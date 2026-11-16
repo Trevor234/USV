@@ -75,6 +75,7 @@ colcon test && colcon test-result --verbose           # pytest + gtest
 | `usv_params_A.yaml` / `usv_params_B.yaml` | **真船**水动力学(14.2 kg / 1.2 m,2026-07-23 / 2026-09-03 辨识) |
 | `path_config.yaml` | 圆弧倒角半径、TOPP 限制(规划可行域 ⊆ 控制可行域) |
 | `safety_params.yaml` | 围栏/电池/求解器/看门狗阈值 |
+| `power_monitor_params.yaml` | WeAct 功率计电池驱动 (串口/轮询/电池参数, 发布 `/usv/battery`) |
 | `ntrip_params.yaml` | CORS 差分数据源(RTK,未入库;由 `ntrip_params.yaml.example` 复制) |
 | `topic_contract.yaml` | 全系统话题契约(话题名/类型/QoS 与 path/profile 时间同步约定) |
 

@@ -4,8 +4,13 @@
     geofence_radius: 200.0
     geofence_center_x: 0.0
     geofence_center_y: 0.0
-    low_battery_v: 10.5
-    critical_battery_v: 10.0
+    # 6S 动力电池安全保护门限 (工作区间 25.0V ~ 29.0V)
+    # 一级预警线 (Low battery): 建议返航，保留 ~15%-20% 余量
+    low_battery_v: 25.8
+    # 二级绝杀线 (Critical battery): 强制切 HOLD 停机并 Disarm，防止锂电过放
+    critical_battery_v: 25.0
+    # 电池遥测断流看门狗 (s): 超过 5.0s 未收到 /usv/battery 触发告警
+    battery_timeout_s: 5.0
     max_solver_failures: 5
     odom_timeout_s: 1.0
     max_path_timeout_s: 5.0

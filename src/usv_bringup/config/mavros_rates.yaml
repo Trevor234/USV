@@ -1,0 +1,20 @@
+# MAVROS 动态消息流频配置参数
+# 通过 MAVLink MAV_CMD_SET_MESSAGE_INTERVAL (511) 动态设定飞控消息发送频率
+# 避免依赖固化于飞控 Flash 中的 ArduPilot MAVn_* / SRx_* 参数
+
+mavros_rate_configurator:
+  ros__parameters:
+    # 目标 MAVLink 消息 ID 列表:
+    #   30  : ATTITUDE (姿态四元数、角速度 -> /mavros/imu/data, MPC 核心控制反馈)
+    #   27  : RAW_IMU (原始陀螺仪、加速度计)
+    #   105 : HIGHRES_IMU (高分辨率校准惯导)
+    #   32  : LOCAL_POSITION_NED (EKF 局部坐标与速度 -> /mavros/local_position/odom)
+    #   33  : GLOBAL_POSITION_INT (GPS 经纬度航向融合定位 -> /mavros/global_position/global)
+    message_ids: [30, 27, 105, 32, 33]
+    message_rates: [20.0, 20.0, 20.0, 10.0, 10.0]
+
+    # 容错重试配置
+    max_retries: 5
+    retry_interval_sec: 1.0
+    service_timeout_sec: 3.0
+    auto_reconfigure_on_reconnect: true

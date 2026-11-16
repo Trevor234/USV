@@ -20,6 +20,8 @@ setup(
     entry_points={
         "console_scripts": [
             "fix_qos_relay = usv_bringup.fix_qos_relay:main",
+            "power_monitor_node = usv_bringup.power_monitor_node:main",
+            "mavros_rate_configurator = usv_bringup.mavros_rate_configurator:main",
         ],
     },
     zip_safe=True,

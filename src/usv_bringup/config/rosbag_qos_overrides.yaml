@@ -11,6 +11,13 @@
   history: keep_last
   depth: 5
 
+# WeAct 功率计电池: 发布端 sensor-data (BEST_EFFORT/KEEP_LAST 5)。
+/usv/battery:
+  reliability: best_effort
+  durability: volatile
+  history: keep_last
+  depth: 5
+
 /mavros/global_position/raw/fix:
   reliability: best_effort
   durability: volatile

@@ -1,0 +1,24 @@
+# WeAct PowerMonitorMini V1 电池驱动参数 (power_monitor_node)。
+# 硬件接线与协议见 usv_bringup/power_monitor_node.py 模块 docstring。
+/**:
+  ros__parameters:
+    # Pi5 UART4: dtoverlay=uart4-pi5 (GPIO12 pin32=TXD4 / GPIO13 pin33=RXD4)。
+    # GPIO14/15 (/dev/ttyAMA10) 已被 MAVROS/飞控独占。
+    port: /dev/ttyAMA4
+    # 必须与设备设置菜单 Baudrate 一致 (出厂默认 9600)。
+    baudrate: 9600
+    # 轮询频率 (Hz)。固件 50ms 刷新一轮, 上限 20。
+    poll_rate: 2.0
+    battery_topic: /usv/battery
+    frame_id: base_link
+    # 动力电池串数 (6S 标称)。≤0 时 percentage 置 NaN。
+    cell_count: 6
+    # 动力电池总压量程范围 (V): 满电 ~29.0V, 亏电截止 ~25.0V。
+    # 显式配置时优先根据总压量程线性计算 percentage (SOC 0.0~1.0);
+    # 未配置 (保持 0.0) 时按 cell_count 与 LIPO_CELL_SOC_TABLE 插值折算。
+    v_min: 25.0
+    v_max: 29.0
+    # 标称容量 (Ah)。未知保持 0, capacity 置 NaN。
+    design_capacity_ah: 0.0
+    # 串口打开失败/链路失效后的重连间隔 (s)。
+    reconnect_interval_s: 5.0

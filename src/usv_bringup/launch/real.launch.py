@@ -5,6 +5,7 @@
   - MPC 控制器
   - 路径规划器
   - 模式管理与安全监控节点
+  - WeAct 功率计电池驱动 (use_power_monitor, GPIO UART 直连, 发布 /usv/battery)
   - （可选）NTRIP RTK 差分注入与 rosbag2 数据录制
 
 用法：
@@ -29,6 +30,8 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from launch.actions import ExecuteProcess
+
+from usv_bringup.launch_guard import create_launch_guard_action
 
 def _ntrip_daemon_state(service="usv-rtk.service"):
     """判断 RTK 差分注入守护进程 usv-rtk.service 的状态。
@@ -86,6 +89,29 @@ def generate_launch_description():
     fcu_url_arg = DeclareLaunchArgument(
         "fcu_url", default_value="/dev/ttyAMA10:921600",
         description="FCU serial connection URL"
+    )
+
+    # force: 是否强制绕过防重复启动与串口独占检查 (仅供排障)
+    force_arg = DeclareLaunchArgument(
+        "force", default_value="false",
+        description="强制忽略防重复启动与串口占用检查 (高风险，仅供排障)",
+        choices=["true", "false"],
+    )
+
+    # use_power_monitor: 是否启动 WeAct 功率计电池驱动 (发布 /usv/battery)。
+    # 动力电池安全监控唯一依赖 /usv/battery。接线: dtoverlay=uart4-pi5 → /dev/ttyAMA4。
+    use_power_monitor_arg = DeclareLaunchArgument(
+        "use_power_monitor", default_value="true",
+        description="启动 WeAct 功率计电池驱动 (发布 /usv/battery)",
+        choices=["true", "false"],
+    )
+    power_monitor_port_arg = DeclareLaunchArgument(
+        "power_monitor_port", default_value="/dev/ttyAMA4",
+        description="WeAct 功率计串口 (Pi5: dtoverlay=uart4-pi5 → /dev/ttyAMA4)",
+    )
+    power_monitor_baudrate_arg = DeclareLaunchArgument(
+        "power_monitor_baudrate", default_value="9600",
+        description="与设备设置菜单 Baudrate 一致 (出厂默认 9600)",
     )
 
     # 2026-11-11: TCP GCS 转发链路已删除（gcs_url 不再声明，也不再传给 mavros）。
@@ -164,6 +190,13 @@ def generate_launch_description():
         description="rosbag2 write-cache size in bytes",
     )
 
+    # configure_rates: 是否自动配置飞控 MAVLink 消息流频 (IMU 20Hz, Odom 10Hz)
+    configure_rates_arg = DeclareLaunchArgument(
+        "configure_rates", default_value="true",
+        description="自动配置飞控 MAVLink 消息流频 (IMU 20Hz, Odom 10Hz)",
+        choices=["true", "false"],
+    )
+
     fcu_url = LaunchConfiguration("fcu_url")
     mavros_odom_topic = LaunchConfiguration("mavros_odom_topic")
     mavros_state_topic = LaunchConfiguration("mavros_state_topic")
@@ -172,12 +205,16 @@ def generate_launch_description():
     profile_topic = LaunchConfiguration("profile_topic")
     use_ntrip = LaunchConfiguration("use_ntrip")
     scheme = LaunchConfiguration("scheme")
+    use_power_monitor = LaunchConfiguration("use_power_monitor")
+    power_monitor_port = LaunchConfiguration("power_monitor_port")
+    power_monitor_baudrate = LaunchConfiguration("power_monitor_baudrate")
     record = LaunchConfiguration("record")
     bag_output_dir = LaunchConfiguration("bag_output_dir")
     bag_prefix = LaunchConfiguration("bag_prefix")
     bag_max_bag_size = LaunchConfiguration("bag_max_bag_size")
     bag_max_bag_duration = LaunchConfiguration("bag_max_bag_duration")
     bag_max_cache_size = LaunchConfiguration("bag_max_cache_size")
+    configure_rates = LaunchConfiguration("configure_rates")
 
     # 立即开始录制，确保捕获 MAVROS 建立连接与系统启动阶段状态。
     # 若外接存储不可用或不可写，record.launch.py 会立即失败退出。
@@ -195,15 +232,29 @@ def generate_launch_description():
         }.items(),
     )
 
-    # 启动 MAVROS 节点
+    # 启动 MAVROS 节点 (内含 MAVLink 消息流频动态配置节点)
     mavros_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(bringup_dir, "launch", "mavros.launch.py")
         ),
         launch_arguments={
             "fcu_url": fcu_url,
+            "configure_rates": configure_rates,
+            "force": LaunchConfiguration("force"),
         }.items(),
     )
+
+    # 防重复启动与串口冲突拦截 Action (处于节点拉起最前置位置)
+    guard_action = create_launch_guard_action(
+        fcu_url_config_name="fcu_url",
+        force_config_name="force",
+        service_name="usv-system.service",
+        lock_name="usv_system",
+    )
+
+    # 电池数据源: 动力电池由 WeAct 功率计实测 (/usv/battery) 驱动低电量 failsafe。
+    # 飞控 /mavros/battery 为 DCDC 12V 恒压稳压轨，严禁作为动力电池安全判据。
+    safety_battery_topic = "/usv/battery"
 
     
 
@@ -220,7 +271,7 @@ def generate_launch_description():
                 "auto_mode_switch": False,
                 "state_topic": mavros_state_topic,
                 "odom_topic": mavros_odom_topic,
-                "battery_topic": "/mavros/battery",
+                "battery_topic": safety_battery_topic,
                 "path_topic": "/path/reference",
                 "set_mode_service": "/mavros/set_mode",
                 "arming_service": "/mavros/cmd/arming",
@@ -351,6 +402,18 @@ def generate_launch_description():
             actions=[ntrip_launch],
         )
 
+    # WeAct 功率计电池驱动 (UART 直连 GPIO, 发布 /usv/battery)。
+    power_monitor_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(bringup_dir, "launch", "power_monitor.launch.py")
+        ),
+        condition=IfCondition(use_power_monitor),
+        launch_arguments={
+            "port": power_monitor_port,
+            "baudrate": power_monitor_baudrate,
+        }.items(),
+    )
+
     log_msg = ExecuteProcess(
         cmd=["echo", "Launching real USV system..."],
         shell=True,
@@ -360,21 +423,28 @@ def generate_launch_description():
         log_msg,
         scheme_arg,
         fcu_url_arg,
+        force_arg,
+        configure_rates_arg,
         mavros_odom_topic_arg,
         mavros_state_topic_arg,
         mavros_imu_topic_arg,
         mavros_rc_override_topic_arg,
         profile_topic_arg,
         use_ntrip_arg,
+        use_power_monitor_arg,
+        power_monitor_port_arg,
+        power_monitor_baudrate_arg,
         record_arg,
         bag_output_dir_arg,
         bag_prefix_arg,
         bag_max_bag_size_arg,
         bag_max_bag_duration_arg,
         bag_max_cache_size_arg,
+        guard_action,
         record_launch,
         mavros_launch,
         safety_node,
+        power_monitor_launch,
         planner_node,
         mission_bridge_node,
         delayed_mpc,

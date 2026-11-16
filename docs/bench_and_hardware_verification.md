@@ -164,18 +164,35 @@ sequenceDiagram
 
 *(注：若硬件物理接在 TELEM2 即 `SERIAL2`，上述参数前缀请相应改为 `MAV3_*`)*。
 
-#### 替代方法：通过 ROS 2 动态服务直接设定流速率 (推荐)
-无需在地面站硬记参数名，MAVROS 启动后可直接通过 MAVLink 协议标准服务 `set_message_interval` 向飞控请求目标消息频率：
+#### 4.1.1 自动化动态流频配置（系统默认机制，推荐）
+
+为彻底解除对地面站手动修改 `MAVn_*` 参数的依赖，工作区已在 `usv_bringup` 中实现并集成了 `mavros_rate_configurator` 节点，随 `mavros.launch.py` 和 `real.launch.py` 自动启动。
+
+**工作原理与特性**：
+1. **自动侦测飞控连入**：订阅 `/mavros/state`，在检测到飞控心跳连入（`connected: true` 上升沿）时，自动触发 MAVLink 标准 `MAV_CMD_SET_MESSAGE_INTERVAL`（511）服务请求；
+2. **多流频并发设置**：
+   - `#30` (`ATTITUDE`)：**20.0 Hz** $\rightarrow$ 提供 `/mavros/imu/data` 实时姿态与角速度（MPC 核心反馈）
+   - `#27` (`RAW_IMU`)：**20.0 Hz** $\rightarrow$ 原始陀螺仪与加速度计数据
+   - `#105` (`HIGHRES_IMU`)：**20.0 Hz** $\rightarrow$ 飞控校准后高精度惯导
+   - `#32` (`LOCAL_POSITION_NED`)：**10.0 Hz** $\rightarrow$ 提供 `/mavros/local_position/odom` 局部里程计与速度反馈
+   - `#33` (`GLOBAL_POSITION_INT`)：**10.0 Hz** $\rightarrow$ 融合 GPS 经纬度航向
+3. **断电重启与断线重连容灾**：实船或台架飞控重启后，节点感知连接状态变化，自动重新补发流频配置命令，保持 20 Hz 流频恢复；
+4. **非阻塞安全机制**：异步发起请求，配置失败仅记录 Warning 日志并按退避重试，绝不阻塞 MPC 或安全看门狗启动。
+
+**参数配置文件**：`src/usv_bringup/config/mavros_rates.yaml`
+
+**验证命令**：
 ```bash
-# 请求飞控以 20 Hz 发送 ATTITUDE 姿态流 (#30)
+# 查看配置节点运行状态
+ros2 run usv_bringup mavros_rate_configurator
+
+# 测量 IMU 实际流频 (实测可稳定达到 20.0 Hz)
+ros2 topic hz /mavros/imu/data
+```
+
+*(可选手动命令行调用备查)*：
+```bash
 ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 30, message_rate: 20.0}"
-
-# 请求飞控以 20 Hz 发送 RAW_IMU / HIGHRES_IMU 传感器流 (#27 / #105)
-ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 27, message_rate: 20.0}"
-ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 105, message_rate: 20.0}"
-
-# 请求飞控以 5 Hz 发送 LOCAL_POSITION_NED 里程计流 (#32)
-ros2 service call /mavros/set_message_interval mavros_msgs/srv/MessageInterval "{message_id: 32, message_rate: 5.0}"
 ```
 
 ### 4.2 差速推进器混控参数

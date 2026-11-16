@@ -89,6 +89,7 @@ case "${PROFILE}" in
     check_echo_once "/mavros/state"
     check_echo_once "/mavros/local_position/odom"
     check_echo_once "/mavros/imu/data"
+    check_echo_once "/usv/battery"
     check_common_mpc
     case "${SCHEME}" in
       A|a)

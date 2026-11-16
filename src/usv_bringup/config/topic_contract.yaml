@@ -111,7 +111,8 @@ mode_manager_node:
     - topic: /mpc/status               # 解析 JSON,监视求解器健康
     - topic: /mavros/local_position/odom  # 电子围栏 / 速度限制
     - topic: /path/reference           # 路径看门狗
-    - topic: /mavros/battery           # 电池 failsafe
+    - topic: /usv/battery         # 电池 failsafe; use_power_monitor:=true (默认) 订阅
+                                  # WeAct 功率计, false 时回落 /mavros/battery
   services:
     - /mavros/set_mode
     - /mavros/cmd/arming
@@ -132,6 +133,27 @@ gps_status_topics:
     qos: sensor_data
     purpose: GPS 经纬度原值; 亦为 NTRIP 客户端 GGA 上报来源 (经 /fix_for_ntrip
              QoS 中继, 见 ntrip.launch.py)
+
+
+# ---------------------------------------------------------------------------
+# WeAct 功率计电池 (2026-11-14 加入, 2026-11-14 起 bag_topics.yaml 录制)
+# ---------------------------------------------------------------------------
+# 数据源: WeAct PowerMonitorMini V1, Pi5 GPIO UART 直连
+# (dtoverlay=uart4-pi5 → /dev/ttyAMA4, GPIO12/13 与设备交叉接线并共地;
+#  GPIO14/15 /dev/ttyAMA10 已被 MAVROS 独占)。协议 v1.3, CRC8-0x31 帧尾。
+# 接线与协议细节见 usv_bringup/power_monitor_node.py 模块 docstring。
+power_monitor_node:
+  publishes:
+    - topic: /usv/battery
+      type: sensor_msgs/msg/BatteryState
+      qos: sensor_data
+      purpose: 电池电压/电流/荷电状态
+      fields:
+        voltage: 功率计实测电压 (V)
+        current: 放电为负 (A; 设备电流正方向为输入→输出, 已按 BatteryState 约定取反)
+        percentage: 3S LiPo 单芯电压-SOC 表插值估算, 带载压降偏低读,
+                    低电量判据仍以 mode_manager 绝对电压阈值为准
+        serial_number: 设备序列号 (连接时读取一次)
 
 # ---------------------------------------------------------------------------
 # MAVLink 双向原始帧 (MAVROS 2.14 原生接口; 2026-11-11 加入 bag_topics.yaml)
