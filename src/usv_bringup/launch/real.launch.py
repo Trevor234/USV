@@ -21,10 +21,14 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
+    EmitEvent,
     IncludeLaunchDescription,
     LogInfo,
+    RegisterEventHandler,
     TimerAction,
 )
+from launch.events import Shutdown
+from launch.event_handlers import OnProcessExit
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PythonExpression
@@ -80,6 +84,25 @@ def generate_launch_description():
         "scheme", default_value="B",
         description="控制方案: A=运动学MPC, B=动力学NMPC",
         choices=["A", "B"],
+    )
+
+    # controller_backend: 控制后端选择。
+    #   legacy                 —— 现状: 按 scheme 拉起 mpc_node (A/B 控制器)
+    #   research_commissioning —— 方案A 研究候选的**调试服务接管**: 不起任何航行
+    #                             控制器, 只拉起零求解/零物理输出的研究与监督节点。
+    # 这是服务接管, 不是航行闭环: 不产生推力/cmd_vel/RC override, 不声称实船闭环。
+    controller_backend_arg = DeclareLaunchArgument(
+        "controller_backend", default_value="legacy",
+        description="控制后端: legacy=传统A/B控制器, research_commissioning=方案A研究候选调试服务接管",
+        choices=["legacy", "research_commissioning"],
+    )
+    commissioning_release_root_arg = DeclareLaunchArgument(
+        "commissioning_release_root", default_value="",
+        description="research_commissioning 专用的发布根 (含 deploy/ 与 install/)",
+    )
+    commissioning_underlay_arg = DeclareLaunchArgument(
+        "commissioning_underlay", default_value="",
+        description="research_commissioning 专用的旧 install underlay (安全/规划/NTRIP 由它提供)",
     )
 
 
@@ -205,6 +228,9 @@ def generate_launch_description():
     profile_topic = LaunchConfiguration("profile_topic")
     use_ntrip = LaunchConfiguration("use_ntrip")
     scheme = LaunchConfiguration("scheme")
+    controller_backend = LaunchConfiguration("controller_backend")
+    commissioning_release_root = LaunchConfiguration("commissioning_release_root")
+    commissioning_underlay = LaunchConfiguration("commissioning_underlay")
     use_power_monitor = LaunchConfiguration("use_power_monitor")
     power_monitor_port = LaunchConfiguration("power_monitor_port")
     power_monitor_baudrate = LaunchConfiguration("power_monitor_baudrate")
@@ -259,23 +285,38 @@ def generate_launch_description():
     
 
     # 安全节点 (usv_safety)
+    # legacy 保持与 HEAD 完全一致的参数集（不额外注入 failsafe_mode）；
+    # research_commissioning 仅在物理隔离调试分支将 failsafe_mode 降为 report。
+    _safety_params_file = os.path.join(bringup_dir, "config", "safety_params.yaml")
+    _safety_common_params = {
+        "auto_arm": False,
+        "auto_mode_switch": False,
+        "state_topic": mavros_state_topic,
+        "odom_topic": mavros_odom_topic,
+        "battery_topic": safety_battery_topic,
+        "path_topic": "/path/reference",
+        "set_mode_service": "/mavros/set_mode",
+        "arming_service": "/mavros/cmd/arming",
+    }
     safety_node = Node(
         package="usv_safety",
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",
+        condition=IfCondition(PythonExpression(
+            ["'", controller_backend, "' == 'legacy'"])),
+        parameters=[_safety_params_file, _safety_common_params],
+    )
+    safety_node_commissioning = Node(
+        package="usv_safety",
+        executable="mode_manager_node",
+        name="mode_manager_node",
+        output="screen",
+        condition=IfCondition(PythonExpression(
+            ["'", controller_backend, "' == 'research_commissioning'"])),
         parameters=[
-            os.path.join(bringup_dir, "config", "safety_params.yaml"),
-            {
-                "auto_arm": False,
-                "auto_mode_switch": False,
-                "state_topic": mavros_state_topic,
-                "odom_topic": mavros_odom_topic,
-                "battery_topic": safety_battery_topic,
-                "path_topic": "/path/reference",
-                "set_mode_service": "/mavros/set_mode",
-                "arming_service": "/mavros/cmd/arming",
-            },
+            _safety_params_file,
+            {**_safety_common_params, "failsafe_mode": "report"},
         ],
     )
 
@@ -363,10 +404,51 @@ def generate_launch_description():
         ],
     )
 
-    # 延迟启动 — 等待 MAVROS 先建立连接
-    delayed_mpc = TimerAction(
+    # 延迟启动 — 等待 MAVROS 先建立连接。
+    # 只有 legacy 后端才实例化控制器节点: legacy 的节点/参数/延迟保持不变。
+    legacy_delayed_mpc = TimerAction(
         period=3.0,
         actions=[mpc_node],
+        condition=IfCondition(PythonExpression(
+            ["'", controller_backend, "' == 'legacy'"])),
+    )
+    # research_commissioning: 不实例化任何 A/B 控制节点。研究与监督进程由
+    # 研究包的 run_shipboard_commissioning.py 在同一个 usv-system.service 内托管。
+    commissioning_launch = ExecuteProcess(
+        cmd=[
+            PythonExpression([
+                "'", commissioning_release_root,
+                "/install/usv_research_safety_cpp/lib/usv_research_safety_cpp",
+                "/run_shipboard_commissioning.py'",
+            ]),
+            "--release-root", commissioning_release_root,
+            "--underlay", commissioning_underlay,
+            "--run-root", PythonExpression(
+                ["'", commissioning_release_root, "/runs'"]),
+            "--contract", PythonExpression([
+                "'", commissioning_release_root,
+                "/capsule/usv_mpc_ws/src/usv_research_safety_cpp/model",
+                "/contract_shipboard_commissioning.json'"]),
+            "--plan", PythonExpression([
+                "'", commissioning_release_root,
+                "/capsule/usv_mpc_ws/src/usv_research_safety_cpp/model",
+                "/research_model_plan.json'"]),
+        ],
+        output="screen",
+        condition=IfCondition(PythonExpression(
+            ["'", controller_backend, "' == 'research_commissioning'"])),
+    )
+    # 监督器退出 ⇒ 整个 launch 收尾: 真实 state 断流时不能留下 active 的空壳 launch。
+    shutdown_on_commissioning_exit = RegisterEventHandler(
+        OnProcessExit(
+            target_action=commissioning_launch,
+            on_exit=[
+                LogInfo(msg="[real.launch] research_commissioning 监督器退出, 收尾全部硬件节点。"),
+                EmitEvent(event=Shutdown(reason="commissioning supervisor exited")),
+            ],
+        ),
+        condition=IfCondition(PythonExpression(
+            ["'", controller_backend, "' == 'research_commissioning'"])),
     )
 
     # RTK 差分注入 (CORS → ntrip_client → MAVROS gps_rtk → 飞控 → GPS)。
@@ -440,13 +522,19 @@ def generate_launch_description():
         bag_max_bag_size_arg,
         bag_max_bag_duration_arg,
         bag_max_cache_size_arg,
+        controller_backend_arg,
+        commissioning_release_root_arg,
+        commissioning_underlay_arg,
         guard_action,
         record_launch,
         mavros_launch,
         safety_node,
+        safety_node_commissioning,
         power_monitor_launch,
         planner_node,
         mission_bridge_node,
-        delayed_mpc,
+        legacy_delayed_mpc,
+        commissioning_launch,
+        shutdown_on_commissioning_exit,
         delayed_ntrip,
     ])
