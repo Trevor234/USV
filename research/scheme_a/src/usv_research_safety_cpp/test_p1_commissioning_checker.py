@@ -1,0 +1,329 @@
+"""F1/F2 回归测试：服务级验收 checker 的 --proc-snapshot 与活动/已结束判定。
+
+全部构造临时 run 目录并实际调用 check_shipboard_commissioning.py 子进程，
+不依赖 run_state.json / status_latest.json，也不允许无 snapshot 静默跳过。
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import subprocess
+import sys
+
+CHECKER = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "scripts",
+    "check_shipboard_commissioning.py",
+)
+
+SUPERVISOR_SCHEMA = "p1-shipboard-supervisor-v1"
+STATUS_SCHEMA = "p1-shipboard-commissioning-status-v1"
+
+
+def _sha256_file(path: str) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _valid_status() -> dict:
+    empty_input = {
+        "seen": False,
+        "count": 0,
+        "receipt_age_ns": None,
+        "source_stamp_ns": None,
+        "frame": None,
+        "child_frame": None,
+        "truncated": False,
+        "finite": None,
+        "resource_valid": False,
+    }
+    imu_input = {
+        "seen": True,
+        "count": 5,
+        "receipt_age_ns": 100_000_000,
+        "source_stamp_ns": 123456789,
+        "frame": "base_link",
+        "child_frame": None,
+        "truncated": False,
+        "finite": True,
+        "resource_valid": True,
+    }
+    state_input = {
+        "seen": True,
+        "count": 5,
+        "receipt_age_ns": 100_000_000,
+        "source_stamp_ns": None,
+        "frame": None,
+        "child_frame": None,
+        "truncated": False,
+        "finite": None,
+        "resource_valid": None,
+    }
+    return {
+        "schema": STATUS_SCHEMA,
+        "run_id": "run-1",
+        "boot_id": "boot-1",
+        "host_boot_id": "host-1",
+        "contract_hash": "c" * 64,
+        "plan_sha256": "p" * 64,
+        "mode": "commissioning",
+        "seq": 3,
+        "at_ns": 3_000_000_000,
+        "phase": "ready",
+        "failure_reason": "",
+        "physical_output_enabled": False,
+        "jobs_submitted": 0,
+        "anchor_known": False,
+        "control_inputs_verified": False,
+        "closed_loop_verified": False,
+        "worker": {
+            "pid": 1002,
+            "instance": "worker-1",
+            "model_runtime_ready": True,
+            "capability_age_ns": 50_000_000,
+            "completed_jobs": 0,
+            "active_job": 0,
+            "pending_count": 0,
+        },
+        "fcu": {"seen": True, "connected": True, "armed": False, "mode": "HOLD"},
+        "inputs": {
+            "state": state_input,
+            "odom": dict(empty_input),
+            "imu": imu_input,
+            "path": dict(empty_input),
+            "profile": dict(empty_input),
+        },
+        "source": {"generated": 4, "emitted": 4, "dropped": 0, "failed": False},
+    }
+
+
+def _build_fixture(tmp_path, include_shutdown: bool = False, include_summaries: bool = False):
+    release = tmp_path / "release"
+    underlay = tmp_path / "underlay"
+    run_dir = release / "runs" / "inv-fixture-1"
+    tx_dir = tmp_path / "tx"
+    bin_dir = release / "install" / "usv_research_safety_cpp" / "lib" / "usv_research_safety_cpp"
+    lib_dir = release / "install" / "usv_acados" / "lib"
+    (release / "deploy").mkdir(parents=True)
+    (release / "evidence").mkdir(parents=True)
+    bin_dir.mkdir(parents=True)
+    lib_dir.mkdir(parents=True)
+    underlay.mkdir(parents=True)
+    run_dir.mkdir(parents=True)
+    tx_dir.mkdir(parents=True)
+
+    (release / "deploy" / "capture_release_identity.py").write_text(
+        "import hashlib\n"
+        "def sha256_bytes(data: bytes) -> str:\n"
+        "    return hashlib.sha256(data).hexdigest()\n",
+        encoding="utf-8",
+    )
+
+    regulator_bin = bin_dir / "p1_regulator"
+    worker_bin = bin_dir / "p1_solver_worker"
+    supervisor_py = bin_dir / "run_shipboard_commissioning.py"
+    acados_so = lib_dir / "libusv_acados_backend.so"
+    regulator_bin.write_bytes(b"\x7fELF-reg")
+    worker_bin.write_bytes(b"\x7fELF-wrk")
+    supervisor_py.write_text("# supervisor\n", encoding="utf-8")
+    acados_so.write_bytes(b"\x7fELF-so")
+
+    install_root = release / "install"
+    manifest_records = []
+    for item in (regulator_bin, worker_bin, supervisor_py, acados_so):
+        rel = os.path.relpath(item, install_root)
+        manifest_records.append({
+            "path": rel,
+            "resolved_path": str(item),
+            "sha256": _sha256_file(str(item)),
+        })
+    (release / "evidence" / "install_manifest.json").write_text(
+        json.dumps({"records": manifest_records}),
+        encoding="utf-8",
+    )
+
+    reg_sha = _sha256_file(str(regulator_bin))
+    wrk_sha = _sha256_file(str(worker_bin))
+    snapshot = {
+        "schema": "p1-shipboard-proc-snapshot-v1",
+        "processes": [
+            {
+                "pid": 1001,
+                "cmdline": [str(regulator_bin)],
+                "exe_deleted": False,
+                "exe_target": str(regulator_bin),
+                "exe_sha256": reg_sha,
+                "disk_sha256": reg_sha,
+                "external_libraries": [{"path": str(acados_so), "sha256": "a" * 64}],
+                "interpreter": False,
+            },
+            {
+                "pid": 1002,
+                "cmdline": [str(worker_bin)],
+                "exe_deleted": False,
+                "exe_target": str(worker_bin),
+                "exe_sha256": wrk_sha,
+                "disk_sha256": wrk_sha,
+                "external_libraries": [{"path": str(acados_so), "sha256": "a" * 64}],
+                "interpreter": False,
+            },
+            {
+                "pid": 1000,
+                "cmdline": ["/usr/bin/python3", "-B", str(supervisor_py)],
+                "exe_deleted": False,
+                "exe_target": "/usr/bin/python3",
+                "interpreter": True,
+            },
+            {
+                "pid": 1003,
+                "cmdline": ["/opt/ros/jazzy/lib/mavros/mavros_node"],
+                "exe_deleted": False,
+                "exe_target": "/opt/ros/jazzy/lib/mavros/mavros_node",
+                "interpreter": False,
+            },
+        ],
+        "serial_holders": {"/dev/ttyAMA10": [1003], "/dev/ttyAMA4": [1004]},
+    }
+    snap_path = tx_dir / "commissioning-t60.json"
+    snap_path.write_text(json.dumps(snapshot), encoding="utf-8")
+
+    status = _valid_status()
+    base = {
+        "schema": SUPERVISOR_SCHEMA,
+        "invocation_id": "inv-fixture-1",
+        "run_id": "run-1",
+        "boot_id": "boot-1",
+        "host_boot_id": "host-1",
+    }
+    sup_lines = [
+        {**base, "event": "startup", "at_ns": 1_000_000_000},
+        {
+            **base,
+            "event": "sample",
+            "at_ns": 2_000_000_000,
+            "status_received_ns": 1_900_000_000,
+            "worker_capability_received_ns": 1_800_000_000,
+            "processes": {},
+            "regulator_status": status,
+        },
+        {
+            **base,
+            "event": "sample",
+            "at_ns": 3_000_000_000,
+            "status_received_ns": 2_900_000_000,
+            "worker_capability_received_ns": 2_800_000_000,
+            "processes": {},
+            "regulator_status": status,
+        },
+    ]
+    if include_shutdown:
+        sup_lines.append({
+            **base,
+            "event": "shutdown",
+            "at_ns": 4_000_000_000,
+            "reason": "clean_stop",
+            "exit_code": 0,
+        })
+    (run_dir / "supervisor.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in sup_lines) + "\n",
+        encoding="utf-8",
+    )
+
+    if include_summaries:
+        (run_dir / "worker.source.jsonl").write_text(
+            json.dumps({"type": "worker_summary", "fatal": False, "completed_jobs": 0}) + "\n",
+            encoding="utf-8",
+        )
+        (run_dir / "regulator.source.jsonl").write_text(
+            json.dumps({"type": "source_summary", "generated": 5, "emitted": 5, "dropped": 0}) + "\n",
+            encoding="utf-8",
+        )
+
+    return release, underlay, run_dir, snap_path
+
+
+def _run_checker(release, underlay, run_dir, snap_path, out_path, extra_args=()):
+    cmd = [
+        sys.executable,
+        "-B",
+        CHECKER,
+        "--release-root",
+        str(release),
+        "--underlay",
+        str(underlay),
+        "--run",
+        str(run_dir),
+        "--proc-snapshot",
+        str(snap_path),
+        "--out",
+        str(out_path),
+        *extra_args,
+    ]
+    res = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    doc = json.loads(out_path.read_text(encoding="utf-8")) if out_path.is_file() else {}
+    return res.returncode, doc, res
+
+
+def test_active_run_passes_with_external_proc_snapshot(tmp_path):
+    release, underlay, run_dir, snap_path = _build_fixture(tmp_path)
+    out = tmp_path / "check-active.json"
+    rc, doc, res = _run_checker(
+        release, underlay, run_dir, snap_path, out, extra_args=("--expect-active",)
+    )
+    assert rc == 0, res.stdout + res.stderr
+    assert doc["verdict"] == "PASS"
+    assert doc["commissioning_service_takeover_passed"] is True
+    assert doc["physical_control_authorised"] is False
+    assert doc["closed_loop_verified"] is False
+    assert doc["run_facts"]["finished"] is False
+
+
+def test_active_run_missing_proc_snapshot_exits_2(tmp_path):
+    release, underlay, run_dir, _ = _build_fixture(tmp_path)
+    missing = tmp_path / "nonexistent-t60.json"
+    out = tmp_path / "check-missing-snap.json"
+    rc, doc, _ = _run_checker(release, underlay, run_dir, missing, out)
+    assert rc == 2
+    assert doc["verdict"] == "FAIL"
+    assert any("proc_snapshot_present" in err for err in doc["errors"])
+
+
+def test_closed_run_missing_summary_exits_2(tmp_path):
+    release, underlay, run_dir, snap_path = _build_fixture(
+        tmp_path, include_shutdown=True, include_summaries=False
+    )
+    out = tmp_path / "check-closed-no-sum.json"
+    rc, doc, _ = _run_checker(release, underlay, run_dir, snap_path, out)
+    assert rc == 2
+    assert doc["verdict"] == "FAIL"
+    assert any("closed_summary_missing" in err for err in doc["errors"])
+
+
+def test_closed_run_with_summaries_passes(tmp_path):
+    release, underlay, run_dir, snap_path = _build_fixture(
+        tmp_path, include_shutdown=True, include_summaries=True
+    )
+    out = tmp_path / "check-closed-pass.json"
+    rc, doc, res = _run_checker(release, underlay, run_dir, snap_path, out)
+    assert rc == 0, res.stdout + res.stderr
+    assert doc["verdict"] == "PASS"
+    assert doc["run_facts"]["finished"] is True
+
+
+def test_active_run_with_shutdown_event_exits_2(tmp_path):
+    # 即使有 summary，只要声明期望活动 (--expect-active) 却带 shutdown 事件，必须 exit 2
+    release, underlay, run_dir, snap_path = _build_fixture(
+        tmp_path, include_shutdown=True, include_summaries=True
+    )
+    out = tmp_path / "check-active-shutdown.json"
+    rc, doc, _ = _run_checker(
+        release, underlay, run_dir, snap_path, out, extra_args=("--expect-active",)
+    )
+    assert rc == 2
+    assert doc["verdict"] == "FAIL"
+    assert any("supervisor_active_no_shutdown" in err for err in doc["errors"])
