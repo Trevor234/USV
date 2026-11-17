@@ -1070,6 +1070,14 @@ class Driver:
                 problems.append(f"rollback controller identity changed between t0 and t60: {sig0} -> {sig60}")
         return problems
 
+    def _is_legacy_symlink_underlay(self) -> bool:
+        mpc_path = os.path.join(self.underlay, "usv_nmpc", "lib", "usv_nmpc", "mpc_node")
+        if not os.path.islink(mpc_path):
+            return False
+        resolved = os.path.realpath(mpc_path)
+        underlay_real = os.path.realpath(self.underlay)
+        return not resolved.startswith(underlay_real + os.sep)
+
     def _verify_original_b(self, identity: dict) -> dict:
         problems = []
         capture = os.path.join(self.release_root, "deploy", "capture_release_identity.py")
@@ -1094,10 +1102,7 @@ class Driver:
         self.record("b_runtime_capture_baseline", output=t60, rc=result_t60["rc"])
 
         if result_t0["rc"] != 0 or result_t60["rc"] != 0:
-            is_candidate_underlay = os.path.exists(
-                os.path.join(self.underlay, "usv_acados", "lib", "libusv_acados_backend.so")
-            )
-            if not is_candidate_underlay and os.path.isfile(t0) and os.path.isfile(t60):
+            if self._is_legacy_symlink_underlay() and os.path.isfile(t0) and os.path.isfile(t60):
                 try:
                     with open(t0, "r", encoding="utf-8") as handle:
                         t0_doc = json.load(handle)

@@ -896,6 +896,9 @@ def test_rollback_rejects_failure_when_underlay_has_candidate_shared_backend(tmp
     shared = Path(underlay) / "usv_acados" / "lib" / "libusv_acados_backend.so"
     shared.parent.mkdir(parents=True, exist_ok=True)
     shared.write_bytes(b"so")
+    mpc = Path(underlay) / "usv_nmpc" / "lib" / "usv_nmpc" / "mpc_node"
+    mpc.parent.mkdir(parents=True, exist_ok=True)
+    mpc.write_bytes(b"candidate-mpc-elf")
 
     units = tmp_path / "units"
     run_units = tmp_path / "run_units"
