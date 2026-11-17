@@ -14,7 +14,9 @@
 // （JobRefused/Closing，零本 Job native，不进入数值故障隔离），要么终端故障。
 #include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <csignal>
+#include <deque>
 #include <fstream>
 #include <mutex>
 #include <optional>
@@ -121,6 +123,8 @@ public:
         [this](p1::Job::SharedPtr job) { receive(*job); });
 
     startup_ = p1::monotonic_ns();
+    // 启动异步日志写线程，防止 SD 卡 flush 阻塞心跳发布或求解线程。
+    log_thread_ = std::thread([this] { log_loop(); });
     publish_capability();  // 初始化未完成时 ready=false，但身份/时域常量已可读
     timer_ = create_wall_timer(std::chrono::milliseconds(200),
                                [this] { publish_capability(); });
@@ -139,6 +143,7 @@ public:
     if (closed_) return !fatal_;
     closed_ = true;
     stopping_ = true;
+    if (timer_) timer_->cancel();
     cv_.notify_all();
     if (thread_.joinable()) thread_.join();
     {
@@ -165,8 +170,13 @@ public:
            {"fatal", fatal_.load()},
            {"normal_source_complete", !fatal_.load() &&
                                        generated_.load() == published_.load()},
-           {"finished_ns", p1::monotonic_ns()}});
-    file_.flush();
+           {"finished_ns", p1::monotonic_ns()}}, true);
+    {
+      std::lock_guard<std::mutex> lock(log_mutex_);
+      log_closing_ = true;
+    }
+    log_cv_.notify_all();
+    if (log_thread_.joinable()) log_thread_.join();
     if (!file_) fatal_ = true;
     fprintf(stdout, "WORKER_CLOSE_FLUSH_SUCCESS=%s\n", fatal_ ? "false" : "true");
     return !fatal_;
@@ -179,11 +189,54 @@ private:
     std::int64_t receive_ns = 0;
   };
 
-  void event(const p1::Json & doc, bool flush = false)
+  struct LogItem
+  {
+    p1::Json doc;
+    bool flush = false;
+  };
+
+  static constexpr std::size_t kLogQueueCapacity = 4096;
+
+  void event(p1::Json doc, bool flush = false)
   {
     std::lock_guard<std::mutex> lock(log_mutex_);
-    file_ << doc.dump() << '\n';
-    if (flush) file_.flush();
+    if (log_closing_ || log_q_.size() >= kLogQueueCapacity)
+    {
+      fatal_ = true;
+      return;
+    }
+    log_q_.push_back(LogItem{std::move(doc), flush});
+    log_cv_.notify_one();
+  }
+
+  void log_loop()
+  {
+    for (;;)
+    {
+      std::deque<LogItem> batch;
+      {
+        std::unique_lock<std::mutex> lock(log_mutex_);
+        log_cv_.wait(lock, [this] { return log_closing_ || !log_q_.empty(); });
+        if (log_q_.empty() && log_closing_) break;
+        batch.swap(log_q_);
+      }
+      try
+      {
+        bool need_flush = false;
+        for (const auto & item : batch)
+        {
+          file_ << item.doc.dump() << '\n';
+          need_flush = need_flush || item.flush;
+        }
+        if (need_flush) file_.flush();
+        if (!file_) fatal_ = true;
+      }
+      catch (...)
+      {
+        fatal_ = true;
+      }
+    }
+    file_.flush();
     if (!file_) fatal_ = true;
   }
 
@@ -861,12 +914,17 @@ private:
   std::uint64_t last_received_ = 0;
 
   std::optional<Pending> pending_;
-  std::mutex mutex_, log_mutex_;
+  std::mutex mutex_;
   mutable std::mutex snapshot_mutex_;
   std::condition_variable cv_;
   EngineSnapshot snapshot_{};
-  std::thread thread_;
   std::ofstream file_;
+  std::mutex log_mutex_;
+  std::condition_variable log_cv_;
+  std::deque<LogItem> log_q_;
+  bool log_closing_ = false;
+  std::thread log_thread_;
+  std::thread thread_;
   std::unique_ptr<p1::WorkerEngine> engine_;  // 仅求解线程访问
 
   rclcpp::Publisher<p1::Candidate>::SharedPtr out_;
