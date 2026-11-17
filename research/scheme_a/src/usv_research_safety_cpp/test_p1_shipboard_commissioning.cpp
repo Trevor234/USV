@@ -303,6 +303,34 @@ TEST(ShipboardCommissioningMonitor, StartupTimeoutNamesTheMissingPiece) {
     s.connected = true; s.armed = false; s.mode = "MANUAL"; m.on_state(s);
     m.evaluate(1000 * kSecond + 1, 0);
     EXPECT_EQ(m.failure(), "commissioning_wrong_mode"); }
+  // 启动阶段 ArduPilot/MAVROS 刚连上时可能短暂发布 connected=true, mode="CMODE(4)"：
+  // 启动窗内放行等待解析为 HOLD；若 30s 仍停在 CMODE(4) 则按 wrong_mode 失败。
+  { p1_shipboard::Monitor m; m.arm_start(1000 * kSecond);
+    p1_shipboard::StateFacts s; s.seen = true; s.count = 1; s.receipt_ns = 1000 * kSecond + 2 * kSecond;
+    s.connected = true; s.armed = false; s.mode = "CMODE(4)"; m.on_state(s);
+    p1_shipboard::InputFacts imu; imu.seen = true; imu.count = 1; imu.receipt_ns = 1000 * kSecond + 2 * kSecond;
+    imu.has_finite = true; imu.finite = true; imu.resource_valid = true;
+    m.on_input("imu", imu);
+    p1_shipboard::CapabilityFacts c; c.seen = true; c.receipt_ns = 1000 * kSecond + 2 * kSecond;
+    c.lease_last_ns = 1000 * kSecond + 4 * kSecond; c.model_runtime_ready = true;
+    m.on_capability(c); m.set_worker_capability_valid(true);
+    m.evaluate(1000 * kSecond + 2 * kSecond, 0);
+    EXPECT_TRUE(m.failure().empty()) << m.failure();
+    EXPECT_FALSE(m.ready());
+    s.mode = "HOLD"; s.receipt_ns = 1000 * kSecond + 3 * kSecond;
+    imu.receipt_ns = 1000 * kSecond + 3 * kSecond;
+    m.on_state(s); m.on_input("imu", imu);
+    m.evaluate(1000 * kSecond + 3 * kSecond, 0);
+    EXPECT_TRUE(m.ready()) << m.failure();
+    // ready 之后若再出现 CMODE(...) 也必须立刻判错。
+    s.mode = "CMODE(4)"; m.on_state(s);
+    m.evaluate(1000 * kSecond + 4 * kSecond, 0);
+    EXPECT_EQ(m.failure(), "commissioning_wrong_mode"); }
+  { p1_shipboard::Monitor m; m.arm_start(1000 * kSecond);
+    p1_shipboard::StateFacts s; s.seen = true; s.count = 1; s.receipt_ns = 1000 * kSecond;
+    s.connected = true; s.armed = false; s.mode = "CMODE(4)"; m.on_state(s);
+    m.evaluate(1000 * kSecond + 31 * kSecond, 0);
+    EXPECT_EQ(m.failure(), "commissioning_wrong_mode"); }
 }
 
 TEST(ShipboardCommissioningMonitor, AuthorisationExpiryClosesTheRun) {

@@ -128,14 +128,20 @@ class Monitor {
     if (worker_.exited) return fail(reason_worker_exit);
     if (state_.seen) {
       if (state_.armed) return fail(reason_armed);
-      // Wait for FCU handshake during startup: MAVROS publishes connected=false, mode=""
-      // before serial link comes up; post-ready disconnects still fail via reason_state_disconnected.
-      if (state_.connected && state_.mode != "HOLD") return fail(reason_wrong_mode);
+      // Startup-only tolerance for MAVROS unresolved transient strings (empty before link,
+      // "CMODE(...)" before autopilot capability/mode mapping completes). Must still be "HOLD"
+      // to reach ready(), and any non-"HOLD" mode after ready() fails immediately.
+      const bool unresolved_startup_mode =
+          !ready() && (!state_.connected || state_.mode.empty() || state_.mode.rfind("CMODE(", 0) == 0);
+      if (state_.connected && !unresolved_startup_mode && state_.mode != "HOLD") {
+        return fail(reason_wrong_mode);
+      }
     }
     if (!ready()) {
       // 启动门：30s 内必须凑齐 capability 就绪 + FCU 安全态 + 新鲜 IMU。
       if (start_ns_ != 0 && now_ns - start_ns_ > limits_.startup_ns) {
         if (!state_.seen || !state_.connected) return fail(reason_state_timeout);
+        if (state_.mode != "HOLD") return fail(reason_wrong_mode);
         if (!capability_ok(now_ns)) return fail(reason_worker_timeout);
         return fail(reason_imu_timeout);
       }

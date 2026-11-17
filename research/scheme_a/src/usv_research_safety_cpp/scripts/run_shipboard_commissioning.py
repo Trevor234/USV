@@ -574,10 +574,13 @@ class Supervisor:
         for name, proc in self.children:
             identity = self.child_identity[name]
             try:
-                if proc_starttime(proc.pid) != identity["starttime"]:
-                    self.failure = f"commissioning_child_identity_changed:{name}"
-                    return
-                if proc_exe(proc.pid) != identity["exe"]:
+                obs_start = proc_starttime(proc.pid)
+                obs_exe = proc_exe(proc.pid)
+                if obs_start != identity["starttime"] or obs_exe != identity["exe"]:
+                    self.record("identity_mismatch_detail", child=name, pid=proc.pid,
+                                expected=identity,
+                                observed={"starttime": obs_start, "exe": obs_exe,
+                                          "readlink": os.readlink(f"/proc/{proc.pid}/exe")})
                     self.failure = f"commissioning_child_identity_changed:{name}"
                     return
             except OSError:
