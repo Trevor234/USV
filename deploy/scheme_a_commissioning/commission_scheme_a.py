@@ -522,6 +522,23 @@ class Driver:
             if "=" in line:
                 key, value = line.split("=", 1)
                 info[key] = value
+        # Real systemd stores ConditionPathExists inside D-Bus Conditions ([unprintable] in show),
+        # so fall back to merged unit output from `systemctl cat` when `show` omits it.
+        if "ConditionPathExists" not in info:
+            cat_res = self.runner.run(["systemctl", "cat", unit, "--no-pager"])
+            conditions: list[str] = []
+            for raw_line in (cat_res.get("stdout") or "").splitlines():
+                stripped = raw_line.strip()
+                if not stripped or stripped.startswith("#"):
+                    continue
+                if stripped.startswith("ConditionPathExists="):
+                    val = stripped.split("=", 1)[1].strip()
+                    if val:
+                        conditions.append(val)
+                    else:
+                        conditions.clear()
+            if conditions:
+                info["ConditionPathExists"] = " ".join(conditions)
         return info
 
     def verify_unit_syntax(self) -> None:

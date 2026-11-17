@@ -766,3 +766,39 @@ def test_rollback_waits_for_b_mpc_node_and_backend_log_before_t0(tmp_path, monke
     assert driver.action_rollback() == driver_module.EXIT_OK
     t0_event = [item for item in timeline if item[0] == "capture" and item[1] == "rollback-t0.json"][0]
     assert t0_event[2] >= 2
+
+
+def test_effective_reads_condition_path_from_systemctl_cat_when_show_omits_it(tmp_path, monkeypatch):
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+
+    class RealSystemdShowRunner(FakeRunner):
+        def run(self, argv, timeout=60, env=None, check=False):
+            if argv[0] == "systemctl" and "show" in argv:
+                return {
+                    "argv": list(argv),
+                    "rc": 0,
+                    "stdout": "Restart=no\nExecStart=research_commissioning\n",
+                    "stderr": "",
+                }
+            if argv[0] == "systemctl" and "cat" in argv:
+                return {
+                    "argv": list(argv),
+                    "rc": 0,
+                    "stdout": (
+                        "# /etc/systemd/system/usv-system.service.d/30-scheme-a-commissioning.conf\n"
+                        "[Unit]\n"
+                        "ConditionPathExists=/run/usv-scheme-a-commissioning-authorized\n"
+                        "[Service]\n"
+                        "Restart=no\n"
+                    ),
+                    "stderr": "",
+                }
+            return super().run(argv, timeout=timeout, env=env, check=check)
+
+    driver = driver_module.Driver(
+        make_args(monkeypatch, release, underlay, evidence, "check-start"),
+        runner=RealSystemdShowRunner(),
+    )
+    eff = driver.effective()
+    assert eff["Restart"] == "no"
+    assert "/run/usv-scheme-a-commissioning-authorized" in eff["ConditionPathExists"]
