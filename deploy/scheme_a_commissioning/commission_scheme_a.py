@@ -457,9 +457,13 @@ class Driver:
             raise DriverError("drop-in template bytes drifted from the frozen identity")
         with open(template_path, "r", encoding="utf-8") as handle:
             body = handle.read()
+        use_ntrip = str(getattr(self.args, "use_ntrip", "true"))
+        backend = str(getattr(self.args, "backend", "research_commissioning"))
         for token, value in (("@RELEASE_ROOT@", self.release_root),
                              ("@UNDERLAY@", self.underlay),
-                             ("@TOKEN_PATH@", self.token_path)):
+                             ("@TOKEN_PATH@", self.token_path),
+                             ("@USE_NTRIP@", use_ntrip),
+                             ("@CONTROLLER_BACKEND@", backend)):
             body = body.replace(token, value)
         if "@" in body.replace("${SCHEME}", ""):
             leftover = [line for line in body.splitlines() if "@" in line]
@@ -1156,6 +1160,11 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--action", required=True,
                         choices=["takeover", "rollback", "check-start"])
     parser.add_argument("--evidence-dir", default="")
+    parser.add_argument("--use-ntrip", choices=["true", "false"], default="true",
+                        help="Launch-time use_ntrip argument for real.launch.py (false for indoor bench without RTK)")
+    parser.add_argument("--backend", choices=["research_commissioning"],
+                        default="research_commissioning",
+                        help="Controller backend passed to real.launch.py in 30 drop-in")
     return parser.parse_args(argv)
 
 

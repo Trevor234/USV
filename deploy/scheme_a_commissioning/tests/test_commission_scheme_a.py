@@ -1000,3 +1000,57 @@ def test_rollback_rejects_legacy_underlay_on_release_leak_or_drift(tmp_path, mon
     probs = driver._evaluate_legacy_underlay_rollback(t0_doc, t60_doc)
     assert any("leaked" in p or "inside underlay" in p for p in probs), probs
     assert any("parameter dump sha changed" in p for p in probs), probs
+
+
+def test_render_dropin_substitutes_use_ntrip_and_backend(tmp_path, monkeypatch):
+    import importlib.util
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    from pathlib import Path
+    tpl = Path(release) / "deploy" / "30-scheme-a-commissioning.conf.in"
+    tpl.write_text(
+        "[Unit]\nConditionPathExists=@TOKEN_PATH@\n\n[Service]\nRestart=no\n"
+        "ExecStart=/bin/bash -c 'ros2 launch usv_bringup real.launch.py "
+        "controller_backend:=@CONTROLLER_BACKEND@ use_ntrip:=@USE_NTRIP@ "
+        "commissioning_release_root:=@RELEASE_ROOT@ commissioning_underlay:=@UNDERLAY@'\n"
+    )
+    ident_path = Path(evidence) / "release_identity.json"
+    ident = json.loads(ident_path.read_text())
+    ident["dropin_template_sha256"] = driver_module.sha256_file(str(tpl))
+    ident_path.write_text(json.dumps(ident))
+
+    args = driver_module.parse_args([
+        "--release-root", release,
+        "--underlay", underlay,
+        "--operator-attestation", str(Path(evidence) / "operator-attestation.json"),
+        "--action", "takeover",
+        "--evidence-dir", str(tmp_path / "ev"),
+        "--use-ntrip", "false",
+    ])
+    drv = driver_module.Driver(args, runner=FakeRunner(), token_path=str(tmp_path / "tok"))
+    rendered = drv.render_dropin(ident)
+    assert "controller_backend:=research_commissioning" in rendered
+    assert "use_ntrip:=false" in rendered
+    assert "@" not in rendered
+
+    probe_spec = importlib.util.spec_from_file_location(
+        "probe_fcu_state",
+        str(Path(__file__).resolve().parents[1] / "probe_fcu_state.py"),
+    )
+    probe_mod = importlib.util.module_from_spec(probe_spec)
+    probe_spec.loader.exec_module(probe_mod)
+    not_ready = probe_mod.summarize_nav({
+        "imu_count": 10, "imu_finite": True,
+        "odom_count": 0, "odom_finite": True,
+        "gp_origin_seen": False,
+        "path_count": 2, "profile_count": 2,
+    })
+    assert not_ready["nav_ready"] is False
+    assert set(not_ready["missing"]) == {"odom", "gp_origin"}
+    ready = probe_mod.summarize_nav({
+        "imu_count": 10, "imu_finite": True,
+        "odom_count": 5, "odom_finite": True,
+        "gp_origin_seen": True,
+        "path_count": 2, "profile_count": 2,
+    })
+    assert ready["nav_ready"] is True
+    assert ready["missing"] == []
