@@ -442,26 +442,35 @@ class Supervisor:
 
     # ------------------------------------------------------------- DDS 预检
     def preflight_graph(self) -> None:
-        """启动前只读 graph：出现非本批 p1 节点即拒绝（含远程 DDS）。"""
+        """启动前只读 graph：用独立 rclpy.Context 探测，销毁后不干扰监督器 Context。"""
         import rclpy
+        from rclpy.executors import SingleThreadedExecutor
         from rclpy.node import Node
 
-        rclpy.init(args=None)
-        probe = Node("p1_commissioning_preflight")
+        ctx = rclpy.Context()
+        ctx.init(args=None)
+        probe = Node("p1_commissioning_preflight", context=ctx)
+        executor = SingleThreadedExecutor(context=ctx)
+        executor.add_node(probe)
         deadline = now_ns() + 3 * 1_000_000_000
         offenders: list[str] = []
-        while now_ns() < deadline:
-            rclpy.spin_once(probe, timeout_sec=0.1)
-            offenders = [f"{name}/{namespace}"
-                         for name, namespace in probe.get_node_names_and_namespaces()
-                         if name.startswith("p1_") and name not in ("p1_commissioning_preflight",)]
-            if offenders:
-                break
-        probe.destroy_node()
+        try:
+            while now_ns() < deadline:
+                executor.spin_once(timeout_sec=0.1)
+                offenders = [f"{name}/{namespace}"
+                             for name, namespace in probe.get_node_names_and_namespaces()
+                             if name.startswith("p1_") and name not in ("p1_commissioning_preflight",)]
+                if offenders:
+                    break
+        finally:
+            try:
+                executor.remove_node(probe)
+                probe.destroy_node()
+            finally:
+                ctx.try_shutdown()
         if offenders:
-            rclpy.shutdown()
             die(f"foreign p1 nodes already in the graph: {sorted(set(offenders))}")
-        # 预检 observer 已销毁；随后的 supervisor 用固定名重建自己的 DDS 参与者。
+        # 预检独立 Context 已销毁；随后的 supervisor 用默认 Context 启动自己的 DDS 参与者。
 
     # ---------------------------------------------------------------- 子进程
     def spawn(self) -> None:
@@ -698,12 +707,30 @@ class Supervisor:
         return EXIT_FAIL if self.failure else EXIT_OK
 
 
+class _CleanStopSignal(BaseException):
+    """收到 SIGTERM/SIGINT 时触发有界收尾，不标记为 failure。"""
+
+
+def _install_stop_handlers() -> None:
+    def _handle(signum, _frame):
+        # 进入收尾前屏蔽重复信号（例如 systemd SIGTERM 后紧跟 launch SIGINT）。
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
+        raise _CleanStopSignal(signum)
+
+    signal.signal(signal.SIGTERM, _handle)
+    signal.signal(signal.SIGINT, _handle)
+
+
 def main(argv: list[str]) -> int:
     args = parse_args(argv)
     supervisor = Supervisor(args)
     exit_code = EXIT_FAIL
+    _install_stop_handlers()
     try:
         exit_code = supervisor.run()
+    except _CleanStopSignal:
+        exit_code = EXIT_OK
     except SystemExit:
         raise
     except BaseException as error:  # noqa: BLE001 - 统一 finally 收尾

@@ -318,3 +318,54 @@ def test_sigterm_closes_within_budget_and_summaries_are_complete(tmp_path):
     assert source[0]["generated"] == source[0]["emitted"]
     assert source[0]["dropped"] == 0
     assert not any(r.get("type") == "candidate" for r in worker_records)
+
+
+def test_supervisor_preflight_then_make_node_and_sigterm_clean_stop(tmp_path):
+    """回归：preflight_graph 独立 Context 后再 make_node 不得二次 init 崩溃，SIGTERM 须 clean_stop。"""
+    sup_script = os.path.join(HERE, "scripts", "run_shipboard_commissioning.py")
+    code = f"""
+import importlib.util, os, signal, time
+spec = importlib.util.spec_from_file_location("sup", {sup_script!r})
+sup_mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(sup_mod)
+
+run_dir = {str(tmp_path / "run")!r}
+os.makedirs(run_dir, exist_ok=True)
+os.environ["INVOCATION_ID"] = "test-inv-1"
+args = sup_mod.parse_args([
+    "--release-root", {str(tmp_path)!r},
+    "--underlay", {str(tmp_path)!r},
+    "--run-root", {str(tmp_path)!r},
+    "--contract", {CONTRACT!r},
+    "--plan", {PLAN!r},
+])
+s = sup_mod.Supervisor(args)
+s.run_dir = run_dir
+s.log_handle = open(os.path.join(run_dir, "supervisor.jsonl"), "a", buffering=1, encoding="utf-8")
+sup_mod._install_stop_handlers()
+rc = 2
+try:
+    s.preflight_graph()
+    s.make_node()
+    s.record("sample", phase="ready")
+    os.kill(os.getpid(), signal.SIGTERM)
+except sup_mod._CleanStopSignal:
+    rc = 0
+finally:
+    s.shutdown()
+    s.record("shutdown", reason=s.failure or "clean_stop", exit_code=rc, ready=True, evidence_closed=True)
+    s.log_handle.close()
+assert rc == 0, rc
+"""
+    res = subprocess.run(
+        ["/usr/bin/python3", "-B", "-c", code],
+        env=isolated_env(tmp_path),
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert res.returncode == 0, res.stdout + res.stderr
+    rows = read_jsonl(tmp_path / "run" / "supervisor.jsonl")
+    assert [r.get("event") for r in rows] == ["sample", "shutdown"]
+    assert rows[-1]["reason"] == "clean_stop"
+    assert rows[-1]["exit_code"] == 0
