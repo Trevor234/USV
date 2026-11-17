@@ -802,3 +802,198 @@ def test_effective_reads_condition_path_from_systemctl_cat_when_show_omits_it(tm
     eff = driver.effective()
     assert eff["Restart"] == "no"
     assert "/run/usv-scheme-a-commissioning-authorized" in eff["ConditionPathExists"]
+
+
+def _make_legacy_rollback_docs(release, underlay, build_dir, t60_override=None):
+    ctrl_bin = build_dir / "usv_nmpc" / "mpc_node"
+    ctrl_bin.parent.mkdir(parents=True, exist_ok=True)
+    ctrl_bin.write_bytes(b"legacy-mpc-elf")
+    ctrl_link = underlay / "usv_nmpc" / "lib" / "usv_nmpc" / "mpc_node"
+    ctrl_link.parent.mkdir(parents=True, exist_ok=True)
+    if not ctrl_link.exists():
+        ctrl_link.symlink_to(ctrl_bin)
+
+    safety_bin = build_dir / "usv_safety" / "mode_manager_node"
+    safety_bin.parent.mkdir(parents=True, exist_ok=True)
+    safety_bin.write_bytes(b"legacy-safety-elf")
+    safety_link = underlay / "usv_safety" / "lib" / "usv_safety" / "mode_manager_node"
+    safety_link.parent.mkdir(parents=True, exist_ok=True)
+    if not safety_link.exists():
+        safety_link.symlink_to(safety_bin)
+
+    ctrl_sha = driver_module.sha256_file(str(ctrl_bin))
+    safety_sha = driver_module.sha256_file(str(safety_bin))
+    pkgs = ("usv_acados", "usv_mpc", "usv_nmpc", "usv_safety", "usv_planning", "usv_bringup")
+
+    def build_doc(baseline=False):
+        doc = {
+            "identity_ok": False,
+            "scheme": "B",
+            "expected_install": str(underlay),
+            "expected_executable": {"path": str(ctrl_link), "sha256": ctrl_sha},
+            "services": {
+                "usv-system": {
+                    "ActiveState": "active",
+                    "MainPID": "1255",
+                    "NRestarts": "0",
+                    "ExecStart": "source /home/trevor/usv_runtime/setup.bash && exec ros2 launch usv_bringup real.launch.py scheme:=B",
+                    "drop_ins": [
+                        "/etc/systemd/system/usv-system.service.d/20-release.conf",
+                        "/run/systemd/system/usv-system.service.d/31-scheme-a-rollback-no-restart.conf",
+                    ],
+                },
+                "usv-record": {"ActiveState": "inactive"},
+                "usv-rtk": {"ActiveState": "inactive"},
+            },
+            "processes": [
+                {"pid": 1001, "starttime": 500, "exe_target": "/opt/ros/jazzy/lib/mavros/mavros_node", "custom": False, "exe_deleted": False},
+                {"pid": 1002, "starttime": 501, "exe_target": "/usr/bin/python3.12", "custom": False, "exe_deleted": False},
+                {"pid": 1003, "starttime": 502, "exe_target": str(safety_bin), "custom": True, "exe_deleted": False, "disk_sha256": safety_sha, "exe_sha256": safety_sha},
+                {"pid": 1004, "starttime": 503, "exe_target": str(ctrl_bin), "custom": True, "exe_deleted": False, "disk_sha256": ctrl_sha, "exe_sha256": ctrl_sha},
+            ],
+            "serial_holders": {"/dev/ttyAMA10": [1001], "/dev/ttyAMA4": [1002]},
+            "parameter_dump": {"returncode": 0, "sha256": "param-sha-b", "parameters": {"control_mode": "dynamic"}},
+            "backend_log": {"backend": "acados"},
+            "package_prefixes": {
+                p: {"prefix": str(underlay / p), "resolved": True, "inside_expected": True}
+                for p in pkgs
+            },
+            "failures": [
+                f"控制器不在预期 install 内: {ctrl_bin} (期望 {underlay})",
+                f"控制器路径不是预期方案可执行文件: {ctrl_bin} (期望 {ctrl_link})",
+                "控制器未加载共用后端库 libusv_acados_backend",
+                f"自定义进程不在预期 install 内: pid=1003 exe={safety_bin}",
+                "串口 /dev/ttyAMA4 由非 MAVROS 进程持有: [1002]",
+            ],
+        }
+        if baseline and t60_override:
+            t60_override(doc)
+        return doc
+
+    return build_doc(False), build_doc(True)
+
+
+def test_rollback_capture_excludes_release_paths_from_env(tmp_path, monkeypatch):
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    rel_p = driver_module.Path if False else None  # keep clean
+    from pathlib import Path
+    (Path(release) / "install" / "usv_bringup" / "lib" / "python3.12" / "site-packages").mkdir(parents=True)
+    (Path(release) / "install" / "usv_acados" / "lib").mkdir(parents=True)
+    (Path(underlay) / "usv_nmpc" / "lib").mkdir(parents=True)
+
+    driver = driver_module.Driver(
+        make_args(monkeypatch, release, underlay, evidence, "rollback"),
+        runner=FakeRunner(), unit_dir=str(tmp_path / "units"),
+    )
+    b_env = driver.ros_env({"ros_domain_id": 0, "dds_profile_path": "/dev/null"}, include_release=False)
+    for var in ("AMENT_PREFIX_PATH", "PYTHONPATH", "LD_LIBRARY_PATH"):
+        assert str(release) not in b_env.get(var, ""), f"{var} leaked release_root: {b_env.get(var)}"
+
+
+def test_rollback_rejects_failure_when_underlay_has_candidate_shared_backend(tmp_path, monkeypatch):
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    from pathlib import Path
+    shared = Path(underlay) / "usv_acados" / "lib" / "libusv_acados_backend.so"
+    shared.parent.mkdir(parents=True, exist_ok=True)
+    shared.write_bytes(b"so")
+
+    units = tmp_path / "units"
+    run_units = tmp_path / "run_units"
+    (units / "usv-system.service.d").mkdir(parents=True)
+    (units / "usv-system.service.d" / "30-scheme-a-commissioning.conf").write_text("[Service]\nRestart=no\n")
+
+    class FailingCandidateCaptureRunner(FakeRunner):
+        def run(self, argv, timeout=60, env=None, check=False):
+            if argv[0] == "runuser" and "capture_release_identity.py" in " ".join(argv):
+                out_path = argv[argv.index("--output") + 1]
+                Path(out_path).write_text(json.dumps({"identity_ok": False, "failures": ["broken"]}))
+                return {"argv": list(argv), "rc": 1, "stdout": "", "stderr": ""}
+            return super().run(argv, timeout=timeout, env=env, check=check)
+
+    runner = FailingCandidateCaptureRunner(
+        service_states={"usv-system.service": {
+            "ActiveState": "active", "MainPID": "1255", "NRestarts": "0",
+            "Restart": "always", "ControlGroup": "/system.slice/usv-system.service"}},
+        unit_dir=str(units), runtime_unit_dir=str(run_units),
+    )
+    driver = driver_module.Driver(
+        make_args(monkeypatch, release, underlay, evidence, "rollback"),
+        runner=runner, unit_dir=str(units), runtime_unit_dir=str(run_units),
+        token_path=str(tmp_path / "token"), lock_path=str(tmp_path / "lock"),
+    )
+    monkeypatch.setattr(driver, "cgroup_pids", lambda unit: [])
+    monkeypatch.setattr(driver, "serial_holders", lambda: {})
+    monkeypatch.setattr(driver_module, "B_STARTUP_SECONDS", 0.01)
+    monkeypatch.setattr(driver_module, "B_SETTLE_SECONDS", 0.0)
+    monkeypatch.setattr(driver_module, "ACCEPTANCE_SECONDS", 0.01)
+
+    assert driver.action_rollback() == driver_module.EXIT_FAIL
+    assert (run_units / "usv-system.service.d" / "31-scheme-a-rollback-no-restart.conf").exists()
+
+
+def test_rollback_accepts_verified_legacy_symlink_underlay_when_invariants_hold(tmp_path, monkeypatch):
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    from pathlib import Path
+    t0_doc, t60_doc = _make_legacy_rollback_docs(Path(release), Path(underlay), tmp_path / "build")
+
+    units = tmp_path / "units"
+    run_units = tmp_path / "run_units"
+    (units / "usv-system.service.d").mkdir(parents=True)
+    (units / "usv-system.service.d" / "30-scheme-a-commissioning.conf").write_text("[Service]\nRestart=no\n")
+
+    seen_envs = []
+
+    class LegacyCaptureRunner(FakeRunner):
+        def run(self, argv, timeout=60, env=None, check=False):
+            if argv[0] == "runuser" and "capture_release_identity.py" in " ".join(argv):
+                seen_envs.append(dict(env or {}))
+                out_path = argv[argv.index("--output") + 1]
+                doc = t60_doc if "--baseline" in argv else t0_doc
+                Path(out_path).write_text(json.dumps(doc))
+                return {"argv": list(argv), "rc": 1, "stdout": "", "stderr": ""}
+            return super().run(argv, timeout=timeout, env=env, check=check)
+
+    runner = LegacyCaptureRunner(
+        service_states={"usv-system.service": {
+            "ActiveState": "active", "MainPID": "1255", "NRestarts": "0",
+            "Restart": "always", "ControlGroup": "/system.slice/usv-system.service"}},
+        unit_dir=str(units), runtime_unit_dir=str(run_units),
+    )
+    driver = driver_module.Driver(
+        make_args(monkeypatch, release, underlay, evidence, "rollback"),
+        runner=runner, unit_dir=str(units), runtime_unit_dir=str(run_units),
+        token_path=str(tmp_path / "token"), lock_path=str(tmp_path / "lock"),
+    )
+    monkeypatch.setattr(driver, "cgroup_pids", lambda unit: [])
+    monkeypatch.setattr(driver, "serial_holders", lambda: {})
+    monkeypatch.setattr(driver_module, "B_STARTUP_SECONDS", 0.01)
+    monkeypatch.setattr(driver_module, "B_SETTLE_SECONDS", 0.0)
+    monkeypatch.setattr(driver_module, "ACCEPTANCE_SECONDS", 0.01)
+
+    assert driver.action_rollback() == driver_module.EXIT_OK
+    assert not (run_units / "usv-system.service.d" / "31-scheme-a-rollback-no-restart.conf").exists()
+    assert len(seen_envs) == 2
+    for env in seen_envs:
+        assert str(release) not in env.get("AMENT_PREFIX_PATH", "")
+
+
+def test_rollback_rejects_legacy_underlay_on_release_leak_or_drift(tmp_path, monkeypatch):
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    from pathlib import Path
+    t0_doc, t60_doc = _make_legacy_rollback_docs(
+        Path(release), Path(underlay), tmp_path / "build",
+        t60_override=lambda d: d["parameter_dump"].update({"sha256": "drifted-sha"}),
+    )
+    t0_doc["package_prefixes"]["usv_nmpc"] = {
+        "prefix": str(Path(release) / "install" / "usv_nmpc"),
+        "resolved": True,
+        "inside_expected": False,
+    }
+
+    driver = driver_module.Driver(
+        make_args(monkeypatch, release, underlay, evidence, "rollback"),
+        runner=FakeRunner(), unit_dir=str(tmp_path / "units"),
+    )
+    probs = driver._evaluate_legacy_underlay_rollback(t0_doc, t60_doc)
+    assert any("leaked" in p or "inside underlay" in p for p in probs), probs
+    assert any("parameter dump sha changed" in p for p in probs), probs

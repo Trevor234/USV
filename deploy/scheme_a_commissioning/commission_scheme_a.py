@@ -570,29 +570,41 @@ class Driver:
         self.record("unit_stopped", pid=state.get("MainPID"))
 
     # ------------------------------------------------------------ ROS 探测
-    def ros_env(self, identity: dict) -> dict:
+    def ros_env(self, identity: dict, include_release: bool = True) -> dict:
         rel_install = os.path.join(self.release_root, "install")
         ros_root = "/opt/ros/jazzy"
-        ament_prefixes = _collect_unique_dirs([
-            os.path.join(rel_install, "*"),
-            os.path.join(self.underlay, "*"),
-            ros_root,
-        ]) or [self.underlay, rel_install]
-        python_paths = _collect_unique_dirs([
-            os.path.join(rel_install, "*", "lib", "python*", "site-packages"),
+        ament_patterns = []
+        python_patterns = []
+        ld_patterns = []
+        if include_release:
+            ament_patterns.append(os.path.join(rel_install, "*"))
+            python_patterns.extend([
+                os.path.join(rel_install, "*", "lib", "python*", "site-packages"),
+                os.path.join(rel_install, "lib", "python*", "site-packages"),
+            ])
+            ld_patterns.append(os.path.join(rel_install, "*", "lib"))
+        ament_patterns.extend([os.path.join(self.underlay, "*"), ros_root])
+        python_patterns.extend([
             os.path.join(self.underlay, "*", "lib", "python*", "site-packages"),
-            os.path.join(rel_install, "lib", "python*", "site-packages"),
             os.path.join(self.underlay, "lib", "python*", "site-packages"),
             os.path.join(ros_root, "lib", "python*", "site-packages"),
         ])
-        ld_paths = _collect_unique_dirs([
-            os.path.join(rel_install, "*", "lib"),
+        ld_patterns.extend([
             os.path.join(self.underlay, "*", "lib"),
             "/home/trevor/acados/lib",
             os.path.join(ros_root, "lib", "*-linux-gnu"),
             os.path.join(ros_root, "lib"),
-        ]) or [os.path.join(rel_install, "usv_acados", "lib"),
-               os.path.join(self.underlay, "usv_acados", "lib")]
+        ])
+        ament_prefixes = _collect_unique_dirs(ament_patterns) or (
+            [self.underlay, rel_install] if include_release else [self.underlay]
+        )
+        python_paths = _collect_unique_dirs(python_patterns)
+        ld_paths = _collect_unique_dirs(ld_patterns) or (
+            [os.path.join(rel_install, "usv_acados", "lib"),
+             os.path.join(self.underlay, "usv_acados", "lib")]
+            if include_release
+            else [os.path.join(self.underlay, "usv_acados", "lib")]
+        )
         env = {
             "HOME": "/home/trevor",
             "USER": "trevor",
@@ -909,6 +921,155 @@ class Driver:
                         return
             time.sleep(0.5)
 
+    def _legacy_underlay_allowed_targets(self) -> set[str]:
+        targets = set()
+        for entry in glob.glob(os.path.join(self.underlay, "*", "lib", "*", "*")):
+            if os.path.exists(entry) or os.path.islink(entry):
+                targets.add(os.path.realpath(entry))
+        return targets
+
+    def _evaluate_legacy_underlay_doc(
+        self, tag: str, doc: dict, allowed_targets: set[str]
+    ) -> list[str]:
+        problems = []
+        rel_real = os.path.realpath(self.release_root)
+        allowed_legacy_prefixes = (
+            "控制器不在预期 install 内:",
+            "控制器路径不是预期方案可执行文件:",
+            "控制器未加载共用后端库",
+            "自定义进程不在预期 install 内:",
+            "串口 /dev/ttyAMA4 由非 MAVROS 进程持有:",
+        )
+        for failure in doc.get("failures") or []:
+            if not any(failure.startswith(p) for p in allowed_legacy_prefixes):
+                problems.append(f"rollback {tag} unexpected capture failure: {failure}")
+
+        if doc.get("scheme") != "B":
+            problems.append(f"rollback {tag} scheme mismatch: {doc.get('scheme')!r}")
+
+        sys_svc = (doc.get("services") or {}).get("usv-system") or {}
+        if sys_svc.get("ActiveState") != "active":
+            problems.append(f"rollback {tag} usv-system not active: {sys_svc.get('ActiveState')!r}")
+        drop_ins = [os.path.basename(p) for p in (sys_svc.get("drop_ins") or [])]
+        if DROPIN_NAME in drop_ins:
+            problems.append(f"rollback {tag} commissioning drop-in still in service drop_ins")
+        exec_start = sys_svc.get("ExecStart") or ""
+        if self.release_root in exec_start or rel_real in exec_start or "research_commissioning" in exec_start:
+            problems.append(f"rollback {tag} ExecStart references commissioning release")
+
+        required_pkgs = (
+            "usv_acados", "usv_mpc", "usv_nmpc",
+            "usv_safety", "usv_planning", "usv_bringup",
+        )
+        prefixes = doc.get("package_prefixes") or {}
+        for pkg in required_pkgs:
+            info = prefixes.get(pkg) or {}
+            prefix = str(info.get("prefix") or "")
+            if not info.get("resolved") or not info.get("inside_expected"):
+                problems.append(f"rollback {tag} package {pkg} not inside underlay: {info!r}")
+            elif prefix.startswith(self.release_root + os.sep) or (
+                prefix and os.path.realpath(prefix).startswith(rel_real + os.sep)
+            ):
+                problems.append(f"rollback {tag} package {pkg} leaked into release_root: {prefix}")
+
+        backend = (doc.get("backend_log") or {}).get("backend")
+        if backend != "acados":
+            problems.append(f"rollback {tag} backend mismatch: {backend!r}")
+
+        dump = doc.get("parameter_dump") or {}
+        live_params = dump.get("parameters") or {}
+        if dump.get("returncode") != 0 or not dump.get("sha256"):
+            problems.append(f"rollback {tag} parameter dump failed: rc={dump.get('returncode')}")
+        elif live_params.get("control_mode") != "dynamic":
+            problems.append(f"rollback {tag} control_mode mismatch: {live_params.get('control_mode')!r}")
+
+        procs = doc.get("processes") or []
+        by_pid = {p.get("pid"): p for p in procs if p.get("pid") is not None}
+        expected_exe = doc.get("expected_executable") or {}
+        expected_path = expected_exe.get("path")
+        expected_sha = expected_exe.get("sha256")
+        controllers = [p for p in procs if os.path.basename(p.get("exe_target", "")) == "mpc_node"]
+        if len(controllers) != 1:
+            problems.append(f"rollback {tag} controller count != 1: {len(controllers)}")
+        elif not expected_path or not expected_sha:
+            problems.append(f"rollback {tag} missing expected_executable metadata")
+        else:
+            ctrl = controllers[0]
+            if ctrl.get("exe_deleted"):
+                problems.append(f"rollback {tag} controller ELF deleted")
+            elif ctrl.get("exe_target") != os.path.realpath(expected_path):
+                problems.append(
+                    f"rollback {tag} controller exe mismatch: {ctrl.get('exe_target')} vs {os.path.realpath(expected_path)}"
+                )
+            elif not ctrl.get("exe_sha256") or ctrl.get("exe_sha256") != expected_sha or ctrl.get("disk_sha256") != expected_sha:
+                problems.append(f"rollback {tag} controller sha mismatch")
+
+        for proc in procs:
+            exe_target = proc.get("exe_target") or ""
+            if exe_target.startswith(self.release_root + os.sep) or (
+                exe_target and os.path.realpath(exe_target).startswith(rel_real + os.sep)
+            ):
+                problems.append(f"rollback {tag} process leaked from release_root: {exe_target}")
+                continue
+            if proc.get("custom"):
+                if proc.get("exe_deleted"):
+                    problems.append(f"rollback {tag} custom process deleted: pid={proc.get('pid')}")
+                elif not proc.get("disk_sha256") or proc.get("exe_sha256") != proc.get("disk_sha256"):
+                    problems.append(f"rollback {tag} custom process sha mismatch: {exe_target}")
+                elif exe_target not in allowed_targets:
+                    problems.append(f"rollback {tag} custom process outside underlay targets: {exe_target}")
+
+        mavros_pids = {
+            p.get("pid") for p in procs
+            if (p.get("exe_target") or "").endswith("/lib/mavros/mavros_node")
+        }
+        if len(mavros_pids) != 1:
+            problems.append(f"rollback {tag} mavros count != 1: {sorted(mavros_pids)}")
+
+        holders = doc.get("serial_holders") or {}
+        for dev, pids in holders.items():
+            active_pids = [pid for pid in pids if pid in by_pid]
+            if dev == "/dev/ttyAMA10" and (len(active_pids) > 1 or any(pid not in mavros_pids for pid in active_pids)):
+                problems.append(f"rollback {tag} {dev} unexpected holder: {active_pids}")
+            elif dev == "/dev/ttyAMA4":
+                if len(active_pids) > 1:
+                    problems.append(f"rollback {tag} {dev} multiple holders: {active_pids}")
+                elif active_pids:
+                    holder_exe = by_pid[active_pids[0]].get("exe_target") or ""
+                    if not (holder_exe.startswith("/usr/bin/python3") or active_pids[0] in mavros_pids):
+                        problems.append(f"rollback {tag} {dev} unexpected holder exe: {holder_exe}")
+        return problems
+
+    def _evaluate_legacy_underlay_rollback(self, t0_doc: dict, t60_doc: dict) -> list[str]:
+        allowed_targets = self._legacy_underlay_allowed_targets()
+        problems = []
+        problems.extend(self._evaluate_legacy_underlay_doc("t0", t0_doc, allowed_targets))
+        problems.extend(self._evaluate_legacy_underlay_doc("t60", t60_doc, allowed_targets))
+
+        svc0 = (t0_doc.get("services") or {}).get("usv-system") or {}
+        svc60 = (t60_doc.get("services") or {}).get("usv-system") or {}
+        if not svc0.get("MainPID") or svc0.get("MainPID") == "0" or svc60.get("MainPID") != svc0.get("MainPID"):
+            problems.append(f"rollback MainPID changed or zero: {svc0.get('MainPID')} -> {svc60.get('MainPID')}")
+        try:
+            if int(svc60.get("NRestarts", -1)) != int(svc0.get("NRestarts", -2)):
+                problems.append(f"rollback NRestarts changed: {svc0.get('NRestarts')} -> {svc60.get('NRestarts')}")
+        except (TypeError, ValueError):
+            problems.append("rollback unable to compare NRestarts")
+
+        sha0 = (t0_doc.get("parameter_dump") or {}).get("sha256")
+        sha60 = (t60_doc.get("parameter_dump") or {}).get("sha256")
+        if not sha0 or sha60 != sha0:
+            problems.append(f"rollback parameter dump sha changed between t0 and t60: {sha0} -> {sha60}")
+
+        ctrl0 = [p for p in (t0_doc.get("processes") or []) if os.path.basename(p.get("exe_target", "")) == "mpc_node"]
+        ctrl60 = [p for p in (t60_doc.get("processes") or []) if os.path.basename(p.get("exe_target", "")) == "mpc_node"]
+        if len(ctrl0) == 1 and len(ctrl60) == 1:
+            sig0 = (ctrl0[0].get("pid"), ctrl0[0].get("starttime"), ctrl0[0].get("exe_sha256"))
+            sig60 = (ctrl60[0].get("pid"), ctrl60[0].get("starttime"), ctrl60[0].get("exe_sha256"))
+            if sig0 != sig60:
+                problems.append(f"rollback controller identity changed between t0 and t60: {sig0} -> {sig60}")
+        return problems
+
     def _verify_original_b(self, identity: dict) -> dict:
         problems = []
         capture = os.path.join(self.release_root, "deploy", "capture_release_identity.py")
@@ -916,13 +1077,12 @@ class Driver:
         t0 = os.path.join(out_dir, "rollback-t0.json")
         t60 = os.path.join(out_dir, "rollback-t60.json")
         self._wait_for_original_b_ready()
+        b_env = self.ros_env(identity, include_release=False)
         result_t0 = self.runner.run(
             ["runuser", "-u", "trevor", "--", "/usr/bin/python3", "-B", capture,
              "runtime", "--expected-install", self.underlay, "--output", t0],
-            timeout=600, env=self.ros_env(identity))
+            timeout=600, env=b_env)
         self.record("b_runtime_capture", output=t0, rc=result_t0["rc"])
-        if result_t0["rc"] != 0:
-            problems.append(f"original B runtime check failed: {t0}")
         deadline = time.time() + ACCEPTANCE_SECONDS
         while time.time() < deadline:
             time.sleep(1.0)
@@ -930,10 +1090,35 @@ class Driver:
             ["runuser", "-u", "trevor", "--", "/usr/bin/python3", "-B", capture,
              "runtime", "--expected-install", self.underlay, "--output", t60,
              "--baseline", t0],
-            timeout=600, env=self.ros_env(identity))
+            timeout=600, env=b_env)
         self.record("b_runtime_capture_baseline", output=t60, rc=result_t60["rc"])
-        if result_t60["rc"] != 0:
-            problems.append("original B 60s baseline check failed")
+
+        if result_t0["rc"] != 0 or result_t60["rc"] != 0:
+            is_candidate_underlay = os.path.exists(
+                os.path.join(self.underlay, "usv_acados", "lib", "libusv_acados_backend.so")
+            )
+            if not is_candidate_underlay and os.path.isfile(t0) and os.path.isfile(t60):
+                try:
+                    with open(t0, "r", encoding="utf-8") as handle:
+                        t0_doc = json.load(handle)
+                    with open(t60, "r", encoding="utf-8") as handle:
+                        t60_doc = json.load(handle)
+                except (OSError, ValueError) as exc:
+                    problems.append(f"unable to parse rollback captures: {exc}")
+                else:
+                    legacy_problems = self._evaluate_legacy_underlay_rollback(t0_doc, t60_doc)
+                    self.record(
+                        "b_legacy_underlay_evaluated",
+                        problems=legacy_problems,
+                        t0_failures=t0_doc.get("failures", []),
+                        t60_failures=t60_doc.get("failures", []),
+                    )
+                    problems.extend(legacy_problems)
+            else:
+                if result_t0["rc"] != 0:
+                    problems.append(f"original B runtime check failed: {t0}")
+                if result_t60["rc"] != 0:
+                    problems.append("original B 60s baseline check failed")
         state = self.service_state(UNIT)
         if state.get("ActiveState") != "active":
             problems.append(f"original B not active: {state.get('ActiveState')}")
