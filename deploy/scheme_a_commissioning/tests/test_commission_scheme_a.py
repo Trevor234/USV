@@ -1069,3 +1069,78 @@ def test_render_dropin_substitutes_use_ntrip_and_backend(tmp_path, monkeypatch):
     assert "controller_backend:=research_dry_run" in rendered_dr
     assert "use_ntrip:=false" in rendered_dr
     assert "@" not in rendered_dr
+
+
+def test_takeover_accepts_research_dry_run_backend_and_rollback_rejects_dry_run_leak(
+    tmp_path, monkeypatch
+):
+    from pathlib import Path
+
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    tpl = Path(release) / "deploy" / "30-scheme-a-commissioning.conf.in"
+    tpl.write_text(
+        "[Unit]\nConditionPathExists=@TOKEN_PATH@\n\n[Service]\nRestart=no\n"
+        "ExecStart=/bin/bash -c 'ros2 launch usv_bringup real.launch.py "
+        "controller_backend:=@CONTROLLER_BACKEND@ use_ntrip:=@USE_NTRIP@'\n"
+    )
+    ident_path = Path(evidence) / "release_identity.json"
+    ident = json.loads(ident_path.read_text())
+    ident["dropin_template_sha256"] = driver_module.sha256_file(str(tpl))
+    ident_path.write_text(json.dumps(ident))
+
+    units = tmp_path / "units"
+    (units / "usv-system.service.d").mkdir(parents=True)
+    ev_dir = tmp_path / "ev_takeover"
+    ev_dir.mkdir(parents=True)
+    args = driver_module.parse_args([
+        "--release-root", release,
+        "--underlay", underlay,
+        "--operator-attestation", str(Path(evidence) / "operator-attestation.json"),
+        "--action", "takeover",
+        "--evidence-dir", str(ev_dir),
+        "--backend", "research_dry_run",
+        "--use-ntrip", "false",
+    ])
+    runner = FakeRunner(
+        service_states={
+            "usv-system.service": {
+                "ActiveState": "active",
+                "MainPID": "1",
+                "NRestarts": "0",
+                "ControlGroup": "/system.slice/usv-system.service",
+            }
+        },
+        unit_dir=str(units),
+    )
+    drv = driver_module.Driver(
+        args,
+        runner=runner,
+        unit_dir=str(units),
+        token_path=str(tmp_path / "tok"),
+        lock_path=str(tmp_path / "lock"),
+    )
+    monkeypatch.setattr(drv, "acceptance", lambda _ident, _label: {"run_dir": "r1", "problems": []})
+    assert drv.action_takeover() == driver_module.EXIT_OK
+    dropin_body = (units / "usv-system.service.d" / "30-scheme-a-commissioning.conf").read_text()
+    assert "controller_backend:=research_dry_run" in dropin_body
+
+    # Rollback evaluator must also flag ExecStart referencing research_dry_run
+    bad_doc = {
+        "scheme": "B",
+        "services": {
+            "usv-system": {
+                "ActiveState": "active",
+                "drop_ins": [],
+                "ExecStart": "ros2 launch usv_bringup real.launch.py controller_backend:=research_dry_run",
+            }
+        },
+        "package_prefixes": {
+            pkg: {"prefix": underlay, "resolved": True, "inside_expected": True}
+            for pkg in ("usv_acados", "usv_mpc", "usv_nmpc", "usv_safety", "usv_planning", "usv_bringup")
+        },
+        "backend_log": {"backend": "acados"},
+        "parameter_dump": {"returncode": 0, "sha256": "abc", "parameters": {"control_mode": "dynamic"}},
+        "processes": [],
+    }
+    problems = drv._evaluate_legacy_underlay_doc("t0", bad_doc, set())
+    assert any("ExecStart references commissioning release" in p for p in problems)

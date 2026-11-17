@@ -41,6 +41,7 @@ DROPIN_DIR = os.path.join(UNIT_DIR, f"{UNIT}.d")
 DROPIN_NAME = "30-scheme-a-commissioning.conf"
 ROLLBACK_DROPIN_NAME = "31-scheme-a-rollback-no-restart.conf"
 TOKEN_PATH = "/run/usv-scheme-a-commissioning-authorized"
+ALLOWED_BACKENDS = ("research_commissioning", "research_dry_run")
 LOCK_PATH = "/run/lock/usv-scheme-a-commissioning.lock"
 STATE_GATE_SECONDS = 10.0
 STARTUP_SECONDS = 30.0
@@ -821,8 +822,9 @@ class Driver:
             self.verify_unit_syntax()
             self.daemon_reload()
             effective = self.effective()
-            if "research_commissioning" not in effective.get("ExecStart", ""):
-                raise DriverError("effective ExecStart does not select research_commissioning")
+            expected_backend = str(getattr(self.args, "backend", "research_commissioning"))
+            if expected_backend not in effective.get("ExecStart", ""):
+                raise DriverError(f"effective ExecStart does not select {expected_backend}")
             if effective.get("Restart") != "no":
                 raise DriverError(f"effective Restart is {effective.get('Restart')}, expected no")
             if self.token_path not in effective.get("ConditionPathExists", ""):
@@ -958,7 +960,11 @@ class Driver:
         if DROPIN_NAME in drop_ins:
             problems.append(f"rollback {tag} commissioning drop-in still in service drop_ins")
         exec_start = sys_svc.get("ExecStart") or ""
-        if self.release_root in exec_start or rel_real in exec_start or "research_commissioning" in exec_start:
+        if (
+            self.release_root in exec_start
+            or rel_real in exec_start
+            or any(name in exec_start for name in ALLOWED_BACKENDS)
+        ):
             problems.append(f"rollback {tag} ExecStart references commissioning release")
 
         required_pkgs = (
@@ -1162,7 +1168,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--evidence-dir", default="")
     parser.add_argument("--use-ntrip", choices=["true", "false"], default="true",
                         help="Launch-time use_ntrip argument for real.launch.py (false for indoor bench without RTK)")
-    parser.add_argument("--backend", choices=["research_commissioning", "research_dry_run"],
+    parser.add_argument("--backend", choices=list(ALLOWED_BACKENDS),
                         default="research_commissioning",
                         help="Controller backend passed to real.launch.py in 30 drop-in")
     return parser.parse_args(argv)
