@@ -13,6 +13,7 @@
 from __future__ import annotations
 
 import argparse
+import glob
 import hashlib
 import json
 import os
@@ -213,6 +214,48 @@ def verify_contract(path: str, expected_sha: str) -> dict:
     return contract
 
 
+OVERRIDDEN_OR_RESEARCH_PACKAGES = frozenset({
+    "usv_acados",
+    "usv_nmpc",
+    "usv_research_interfaces",
+    "usv_research_safety_cpp",
+    "usv_bringup",
+})
+
+
+def _underlay_editable_python_paths(underlay: str) -> set[str]:
+    """返回宿主 underlay 非研究包 .egg-link 指向的合法 <ws>/build/<pkg>/... 路径集合。"""
+    underlay_real = os.path.realpath(underlay)
+    ws_build_root = os.path.realpath(os.path.join(os.path.dirname(underlay_real), "build"))
+    verified: set[str] = set()
+    if not os.path.isdir(underlay_real):
+        return verified
+    try:
+        pkg_names = sorted(os.listdir(underlay_real))
+    except OSError:
+        return verified
+    for pkg in pkg_names:
+        if pkg in OVERRIDDEN_OR_RESEARCH_PACKAGES:
+            continue
+        pkg_dir = os.path.join(underlay_real, pkg)
+        if not os.path.isdir(pkg_dir):
+            continue
+        pkg_build = os.path.realpath(os.path.join(ws_build_root, pkg))
+        pattern = os.path.join(pkg_dir, "lib", "python*", "site-packages", "*.egg-link")
+        for egg_link in sorted(glob.glob(pattern)):
+            try:
+                with open(egg_link, "r", encoding="utf-8") as handle:
+                    first_line = next((line.strip() for line in handle if line.strip()), "")
+            except OSError:
+                continue
+            if not first_line:
+                continue
+            target = os.path.realpath(first_line)
+            if (target == pkg_build or target.startswith(pkg_build + os.sep)) and os.path.isdir(target):
+                verified.add(target)
+    return verified
+
+
 def clean_environment(release_root: str, underlay: str, identity: dict) -> dict:
     """只保留白名单 ROS/DDS 值与两层已绑定前缀；不继承研究域的隔离变量。"""
     env = {
@@ -241,12 +284,14 @@ def clean_environment(release_root: str, underlay: str, identity: dict) -> dict:
     env.pop("ROS_LOCALHOST_ONLY", None)
 
     # 两层（旧 install underlay + 新发布 install）之外的前缀一律拒绝。
+    acados_real = os.path.realpath("/home/trevor/acados")
     allowed = [
         os.path.realpath("/opt/ros/jazzy"),
         os.path.realpath(underlay),
         os.path.realpath(release_root),
-        os.path.realpath("/home/trevor/acados"),
+        acados_real,
     ]
+    underlay_editable = _underlay_editable_python_paths(underlay)
     for name in ("LD_LIBRARY_PATH", "PYTHONPATH", "AMENT_PREFIX_PATH", "CMAKE_PREFIX_PATH"):
         inherited = os.environ.get(name, "")
         kept = []
@@ -254,8 +299,15 @@ def clean_environment(release_root: str, underlay: str, identity: dict) -> dict:
             resolved = os.path.realpath(entry)
             if any(resolved == base or resolved.startswith(base + os.sep) for base in allowed):
                 kept.append(entry)
+            elif name == "PYTHONPATH" and resolved in underlay_editable:
+                # 宿主 underlay 非研究包（如 ntrip_client）的 editable 构建路径不传给 C++ 子进程
+                continue
             else:
                 die(f"{name} entry outside the two bound prefixes: {entry}")
+        if name == "LD_LIBRARY_PATH":
+            acados_lib = os.path.join(acados_real, "lib")
+            if os.path.isdir(acados_lib) and not any(os.path.realpath(item) == acados_lib for item in kept):
+                kept.append(acados_lib)
         if kept:
             env[name] = ":".join(kept)
     return env

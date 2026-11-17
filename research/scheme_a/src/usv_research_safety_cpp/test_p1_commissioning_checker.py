@@ -7,16 +7,31 @@
 from __future__ import annotations
 
 import hashlib
+import importlib.util
 import json
 import os
 import subprocess
 import sys
+
+import pytest
 
 CHECKER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "scripts",
     "check_shipboard_commissioning.py",
 )
+SUPERVISOR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "scripts",
+    "run_shipboard_commissioning.py",
+)
+
+
+def _load_supervisor():
+    spec = importlib.util.spec_from_file_location("run_shipboard_commissioning", SUPERVISOR)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
 
 SUPERVISOR_SCHEMA = "p1-shipboard-supervisor-v1"
 STATUS_SCHEMA = "p1-shipboard-commissioning-status-v1"
@@ -327,3 +342,77 @@ def test_active_run_with_shutdown_event_exits_2(tmp_path):
     assert rc == 2
     assert doc["verdict"] == "FAIL"
     assert any("supervisor_active_no_shutdown" in err for err in doc["errors"])
+
+
+def _setup_env_fixture(tmp_path):
+    ws = tmp_path / "ws"
+    underlay = ws / "install"
+    release = tmp_path / "release"
+    ntrip_src = ws / "build" / "ntrip_client" / "src"
+    ntrip_sp = underlay / "ntrip_client" / "lib" / "python3.12" / "site-packages"
+    rel_sp = release / "install" / "usv_bringup" / "lib" / "python3.12" / "site-packages"
+    dds = tmp_path / "fastdds_lan.xml"
+    dds.write_text("<dds/>", encoding="utf-8")
+    for p in (ntrip_src, ntrip_sp, rel_sp):
+        p.mkdir(parents=True, exist_ok=True)
+    (ntrip_sp / "ntrip-client.egg-link").write_text(f"{ntrip_src}\n../\n", encoding="utf-8")
+    identity = {
+        "ros_domain_id": 0,
+        "dds_profile_path": str(dds),
+        "dds_profile_sha256": _sha256_file(str(dds)),
+    }
+    return ws, underlay, release, ntrip_src, rel_sp, identity
+
+
+def test_clean_environment_strips_verified_underlay_egg_link_and_ensures_acados_lib(tmp_path, monkeypatch):
+    sup = _load_supervisor()
+    ws, underlay, release, ntrip_src, rel_sp, identity = _setup_env_fixture(tmp_path)
+    monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{ntrip_src}:{underlay}")
+    monkeypatch.setenv("LD_LIBRARY_PATH", f"{release}/install/usv_nmpc/lib")
+    monkeypatch.setenv("AMENT_PREFIX_PATH", f"{release}/install:{underlay}")
+    monkeypatch.setenv("CMAKE_PREFIX_PATH", f"{release}/install:{underlay}")
+
+    cleaned = sup.clean_environment(str(release), str(underlay), identity)
+    py_entries = cleaned["PYTHONPATH"].split(":")
+    assert str(ntrip_src) not in py_entries
+    assert str(rel_sp) in py_entries
+    assert str(underlay) in py_entries
+
+    acados_lib = os.path.join(os.path.realpath("/home/trevor/acados"), "lib")
+    if os.path.isdir(acados_lib):
+        ld_entries = [os.path.realpath(p) for p in cleaned["LD_LIBRARY_PATH"].split(":")]
+        assert ld_entries.count(acados_lib) == 1
+        monkeypatch.setenv("LD_LIBRARY_PATH", f"{release}/install/usv_nmpc/lib:{acados_lib}/")
+        cleaned2 = sup.clean_environment(str(release), str(underlay), identity)
+        assert [os.path.realpath(p) for p in cleaned2["LD_LIBRARY_PATH"].split(":")].count(acados_lib) == 1
+
+
+def test_clean_environment_still_rejects_unverified_build_or_overridden_pkg(tmp_path, monkeypatch):
+    sup = _load_supervisor()
+    ws, underlay, release, ntrip_src, rel_sp, identity = _setup_env_fixture(tmp_path)
+
+    # 1. 未在 underlay egg-link 中声明的 build 目录仍必须拒绝
+    evil_src = ws / "build" / "unregistered_pkg" / "src"
+    evil_src.mkdir(parents=True)
+    monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{evil_src}")
+    monkeypatch.setenv("LD_LIBRARY_PATH", "")
+    monkeypatch.setenv("AMENT_PREFIX_PATH", "")
+    monkeypatch.setenv("CMAKE_PREFIX_PATH", "")
+    with pytest.raises(SystemExit):
+        sup.clean_environment(str(release), str(underlay), identity)
+
+    # 2. 已被覆盖的研究/bringup 包不允许通过 egg-link 绕过
+    bringup_src = ws / "build" / "usv_bringup" / "src"
+    bringup_sp = underlay / "usv_bringup" / "lib" / "python3.12" / "site-packages"
+    bringup_src.mkdir(parents=True)
+    bringup_sp.mkdir(parents=True)
+    (bringup_sp / "usv-bringup.egg-link").write_text(f"{bringup_src}\n", encoding="utf-8")
+    monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{bringup_src}")
+    with pytest.raises(SystemExit):
+        sup.clean_environment(str(release), str(underlay), identity)
+
+    # 3. 合法 ntrip_client build 路径若出现在非 PYTHONPATH 变量中仍必须拒绝
+    monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{ntrip_src}")
+    monkeypatch.setenv("LD_LIBRARY_PATH", str(ntrip_src))
+    with pytest.raises(SystemExit):
+        sup.clean_environment(str(release), str(underlay), identity)
