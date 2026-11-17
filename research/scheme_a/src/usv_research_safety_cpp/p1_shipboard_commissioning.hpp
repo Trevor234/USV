@@ -128,7 +128,9 @@ class Monitor {
     if (worker_.exited) return fail(reason_worker_exit);
     if (state_.seen) {
       if (state_.armed) return fail(reason_armed);
-      if (state_.mode != "HOLD") return fail(reason_wrong_mode);
+      // Wait for FCU handshake during startup: MAVROS publishes connected=false, mode=""
+      // before serial link comes up; post-ready disconnects still fail via reason_state_disconnected.
+      if (state_.connected && state_.mode != "HOLD") return fail(reason_wrong_mode);
     }
     if (!ready()) {
       // 启动门：30s 内必须凑齐 capability 就绪 + FCU 安全态 + 新鲜 IMU。

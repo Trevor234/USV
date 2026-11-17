@@ -271,6 +271,38 @@ TEST(ShipboardCommissioningMonitor, StartupTimeoutNamesTheMissingPiece) {
     s.connected = true; s.armed = true; s.mode = "HOLD"; m.on_state(s);
     m.evaluate(1000 * kSecond + 1, 0);
     EXPECT_EQ(m.failure(), "commissioning_armed"); }
+  // 启动阶段 MAVROS 尚未连通 FCU 时会先发布 connected=false, mode=""：不得误判为 wrong_mode，
+  // 连通且 HOLD 后正常就绪；若 30s 仍未连通则报 commissioning_state_timeout。
+  { p1_shipboard::Monitor m; m.arm_start(1000 * kSecond);
+    p1_shipboard::StateFacts s; s.seen = true; s.count = 1; s.receipt_ns = 1000 * kSecond;
+    s.connected = false; s.armed = false; s.mode = ""; m.on_state(s);
+    p1_shipboard::InputFacts imu; imu.seen = true; imu.count = 1; imu.receipt_ns = 1000 * kSecond;
+    imu.has_finite = true; imu.finite = true; imu.resource_valid = true;
+    m.on_input("imu", imu);
+    p1_shipboard::CapabilityFacts c; c.seen = true; c.receipt_ns = 1000 * kSecond;
+    c.lease_last_ns = 1000 * kSecond + 5 * kSecond; c.model_runtime_ready = true;
+    m.on_capability(c); m.set_worker_capability_valid(true);
+    m.evaluate(1000 * kSecond + 2 * kSecond, 0);
+    EXPECT_TRUE(m.failure().empty()) << m.failure();
+    EXPECT_EQ(m.phase(), "starting");
+    s.connected = true; s.mode = "HOLD"; s.receipt_ns = 1000 * kSecond + 5 * kSecond;
+    imu.receipt_ns = 1000 * kSecond + 5 * kSecond;
+    m.on_state(s);
+    m.on_input("imu", imu);
+    m.evaluate(1000 * kSecond + 5 * kSecond, 0);
+    EXPECT_TRUE(m.ready()) << m.failure();
+    EXPECT_TRUE(m.failure().empty()); }
+  { p1_shipboard::Monitor m; m.arm_start(1000 * kSecond);
+    p1_shipboard::StateFacts s; s.seen = true; s.count = 1; s.receipt_ns = 1000 * kSecond;
+    s.connected = false; s.armed = false; s.mode = ""; m.on_state(s);
+    m.evaluate(1000 * kSecond + 31 * kSecond, 0);
+    EXPECT_EQ(m.failure(), "commissioning_state_timeout"); }
+  // 启动阶段若已连通且 mode 非 HOLD，仍必须立刻失败。
+  { p1_shipboard::Monitor m; m.arm_start(1000 * kSecond);
+    p1_shipboard::StateFacts s; s.seen = true; s.count = 1; s.receipt_ns = 1000 * kSecond;
+    s.connected = true; s.armed = false; s.mode = "MANUAL"; m.on_state(s);
+    m.evaluate(1000 * kSecond + 1, 0);
+    EXPECT_EQ(m.failure(), "commissioning_wrong_mode"); }
 }
 
 TEST(ShipboardCommissioningMonitor, AuthorisationExpiryClosesTheRun) {
