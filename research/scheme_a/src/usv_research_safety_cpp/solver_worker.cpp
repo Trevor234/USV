@@ -89,7 +89,10 @@ public:
     commissioning_ = mode_ == p1::shipboard_commissioning_mode ||
                      contract_.value("schema", std::string{}) ==
                          p1::shipboard_commissioning_schema;
-    if (commissioning_) p1::require_runtime_contract_mode(contract_, mode_);
+    dry_run_ = mode_ == p1::shipboard_dry_run_mode ||
+               contract_.value("schema", std::string{}) ==
+                   p1::shipboard_dry_run_schema;
+    if (commissioning_ || dry_run_) p1::require_runtime_contract_mode(contract_, mode_);
 
     const auto log = declare_parameter<std::string>("source_file", "");
     file_.open(log, std::ios::out | std::ios::app);
@@ -154,6 +157,7 @@ public:
            {"completed_jobs", completed_.load()},
            {"refused_jobs", refused_.load()},
            {"commissioning_mode", commissioning_},
+           {"dry_run_mode", dry_run_},
            {"commissioning_refused_total", refused_total_.load()},
            {"commissioning_resource_invalid_total", resource_invalid_total_.load()},
            {"cancelled_jobs", cancelled_.load()},
@@ -279,10 +283,10 @@ private:
         // worker 必须先就绪，regulator 之后才启动 —— 因此这里**不能**等
         // regulator 的订阅出现，否则两边互等直到超时。
         // 生产采集仍要求 recorder 与 regulator 都在位。
-        const bool sim_ready = mode_ == "controlled_sim";
+        const bool sim_ready = mode_ == "controlled_sim" || dry_run_;
         const bool production_ready = out_->get_subscription_count() >= 2 && recorder &&
                                       regulator;
-        if (mode_ == "controlled_sim" ? sim_ready : production_ready)
+        if ((mode_ == "controlled_sim" || dry_run_) ? sim_ready : production_ready)
         {
           event({{"type", "worker_recording_ready"},
                  {"worker_instance", instance_},
@@ -849,6 +853,7 @@ private:
   std::atomic<std::uint64_t> active_{0}, completed_{0}, generated_{0}, published_{0},
       refused_{0}, cancelled_{0}, terminal_numerical_{0};
   bool commissioning_ = false;
+  bool dry_run_ = false;
   std::atomic<std::uint64_t> refused_total_{0}, resource_invalid_total_{0}, refused_window_{0};
   bool commissioning_refusal_logged_ = false;
   std::int64_t commissioning_window_ns_ = 0;

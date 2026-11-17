@@ -1162,7 +1162,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--evidence-dir", default="")
     parser.add_argument("--use-ntrip", choices=["true", "false"], default="true",
                         help="Launch-time use_ntrip argument for real.launch.py (false for indoor bench without RTK)")
-    parser.add_argument("--backend", choices=["research_commissioning"],
+    parser.add_argument("--backend", choices=["research_commissioning", "research_dry_run"],
                         default="research_commissioning",
                         help="Controller backend passed to real.launch.py in 30 drop-in")
     return parser.parse_args(argv)

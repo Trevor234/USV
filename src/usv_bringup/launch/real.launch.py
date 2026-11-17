@@ -93,8 +93,11 @@ def generate_launch_description():
     # 这是服务接管, 不是航行闭环: 不产生推力/cmd_vel/RC override, 不声称实船闭环。
     controller_backend_arg = DeclareLaunchArgument(
         "controller_backend", default_value="legacy",
-        description="控制后端: legacy=传统A/B控制器, research_commissioning=方案A研究候选调试服务接管",
-        choices=["legacy", "research_commissioning"],
+        description=(
+            "控制后端: legacy=传统A/B控制器, research_commissioning=方案A调试服务接管(零求解), "
+            "research_dry_run=方案A实船干跑求解(真MAVROS+真acados求解+零物理输出)"
+        ),
+        choices=["legacy", "research_commissioning", "research_dry_run"],
     )
     commissioning_release_root_arg = DeclareLaunchArgument(
         "commissioning_release_root", default_value="",
@@ -313,7 +316,7 @@ def generate_launch_description():
         name="mode_manager_node",
         output="screen",
         condition=IfCondition(PythonExpression(
-            ["'", controller_backend, "' == 'research_commissioning'"])),
+            ["'", controller_backend, "' in ('research_commissioning', 'research_dry_run')"])),
         parameters=[
             _safety_params_file,
             {**_safety_common_params, "failsafe_mode": "report"},
@@ -427,8 +430,12 @@ def generate_launch_description():
                 ["'", commissioning_release_root, "/runs'"]),
             "--contract", PythonExpression([
                 "'", commissioning_release_root,
-                "/capsule/usv_mpc_ws/src/usv_research_safety_cpp/model",
-                "/contract_shipboard_commissioning.json'"]),
+                "/capsule/usv_mpc_ws/src/usv_research_safety_cpp/model/' + "
+                "('contract_shipboard_dry_run.json' if '", controller_backend,
+                "' == 'research_dry_run' else 'contract_shipboard_commissioning.json')"]),
+            "--mode", PythonExpression([
+                "'shipboard_dry_run' if '", controller_backend,
+                "' == 'research_dry_run' else 'commissioning'"]),
             "--plan", PythonExpression([
                 "'", commissioning_release_root,
                 "/capsule/usv_mpc_ws/src/usv_research_safety_cpp/model",
@@ -436,19 +443,19 @@ def generate_launch_description():
         ],
         output="screen",
         condition=IfCondition(PythonExpression(
-            ["'", controller_backend, "' == 'research_commissioning'"])),
+            ["'", controller_backend, "' in ('research_commissioning', 'research_dry_run')"])),
     )
     # 监督器退出 ⇒ 整个 launch 收尾: 真实 state 断流时不能留下 active 的空壳 launch。
     shutdown_on_commissioning_exit = RegisterEventHandler(
         OnProcessExit(
             target_action=commissioning_launch,
             on_exit=[
-                LogInfo(msg="[real.launch] research_commissioning 监督器退出, 收尾全部硬件节点。"),
+                LogInfo(msg="[real.launch] research 监督器退出, 收尾全部硬件节点。"),
                 EmitEvent(event=Shutdown(reason="commissioning supervisor exited")),
             ],
         ),
         condition=IfCondition(PythonExpression(
-            ["'", controller_backend, "' == 'research_commissioning'"])),
+            ["'", controller_backend, "' in ('research_commissioning', 'research_dry_run')"])),
     )
 
     # RTK 差分注入 (CORS → ntrip_client → MAVROS gps_rtk → 飞控 → GPS)。

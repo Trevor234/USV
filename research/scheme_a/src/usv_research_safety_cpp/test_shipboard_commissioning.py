@@ -43,6 +43,7 @@ def _resolve_install_and_bin() -> tuple[str, str]:
 
 INSTALL, BIN = _resolve_install_and_bin()
 CONTRACT = os.path.join(HERE, "model", "contract_shipboard_commissioning.json")
+DRY_RUN_CONTRACT = os.path.join(HERE, "model", "contract_shipboard_dry_run.json")
 BASELINE_CONTRACT = os.path.join(HERE, "model", "contract_controlled_sim.json")
 PLAN = os.path.join(HERE, "model", "research_model_plan.json")
 
@@ -103,27 +104,27 @@ def isolated_env(tmp_path) -> dict:
     }
 
 
-def spawn_pair(tmp_path):
+def spawn_pair(tmp_path, contract_path=CONTRACT, mode="commissioning"):
     import uuid
     run_id = str(uuid.uuid4())
     boot_id = str(uuid.uuid4())
-    contract_sha = sha256_file(CONTRACT)
+    contract_sha = sha256_file(contract_path)
     plan_sha = sha256_file(PLAN)
     logs = {}
     worker_argv = [os.path.join(BIN, "p1_solver_worker"), "--ros-args",
                    "-p", f"run_id:={run_id}", "-p", f"boot_id:={boot_id}",
-                   "-p", f"contract_file:={CONTRACT}", "-p", f"contract_hash:={contract_sha}",
+                   "-p", f"contract_file:={contract_path}", "-p", f"contract_hash:={contract_sha}",
                    "-p", f"model_plan_file:={PLAN}", "-p", f"model_plan_sha256:={plan_sha}",
-                   "-p", "mode:=commissioning",
+                   "-p", f"mode:={mode}",
                    "-p", f"source_file:={tmp_path}/worker.source.jsonl"]
     logs["worker"] = open(tmp_path / "worker.stdout.txt", "wb")
     worker = subprocess.Popen(worker_argv, env=isolated_env(tmp_path),
                               stdout=logs["worker"], stderr=logs["worker"])
     regulator_argv = [os.path.join(BIN, "p1_regulator"), "--ros-args",
                       "-p", f"run_id:={run_id}", "-p", f"boot_id:={boot_id}",
-                      "-p", f"contract_file:={CONTRACT}", "-p", f"contract_hash:={contract_sha}",
+                      "-p", f"contract_file:={contract_path}", "-p", f"contract_hash:={contract_sha}",
                       "-p", f"model_plan_file:={PLAN}", "-p", f"model_plan_sha256:={plan_sha}",
-                      "-p", "mode:=commissioning",
+                      "-p", f"mode:={mode}",
                       "-p", f"source_file:={tmp_path}/regulator.source.jsonl",
                       "-p", f"worker_pid:={worker.pid}"]
     logs["regulator"] = open(tmp_path / "regulator.stdout.txt", "wb")
@@ -369,3 +370,129 @@ assert rc == 0, rc
     assert [r.get("event") for r in rows] == ["sample", "shutdown"]
     assert rows[-1]["reason"] == "clean_stop"
     assert rows[-1]["exit_code"] == 0
+
+
+def test_shipboard_dry_run_solves_without_physical_output(tmp_path):
+    """隔离域 224：真实 worker+regulator dry-run 必须消费 MAVROS 输入并真求解，且零物理执行。"""
+    pair = spawn_pair(tmp_path, contract_path=DRY_RUN_CONTRACT, mode="shipboard_dry_run")
+    try:
+        driver = subprocess.run(
+            [sys.executable, "-c", """
+import json, time
+import rclpy
+from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy, DurabilityPolicy, HistoryPolicy
+from mavros_msgs.msg import State
+from nav_msgs.msg import Odometry, Path
+from geometry_msgs.msg import PoseStamped
+from sensor_msgs.msg import Imu
+from std_msgs.msg import Float64MultiArray, MultiArrayDimension, String
+
+rclpy.init()
+node = Node("test_dry_run_feeder")
+sensor_qos = rclpy.qos.qos_profile_sensor_data
+p_state = node.create_publisher(State, "/mavros/state", sensor_qos)
+p_odom = node.create_publisher(Odometry, "/mavros/local_position/odom", sensor_qos)
+p_imu = node.create_publisher(Imu, "/mavros/imu/data", sensor_qos)
+p_path = node.create_publisher(Path, "/path/reference", 10)
+p_prof = node.create_publisher(Float64MultiArray, "/path/reference_profile", 10)
+statuses = []
+sub_qos = QoSProfile(depth=1, history=HistoryPolicy.KEEP_LAST,
+                     reliability=ReliabilityPolicy.RELIABLE,
+                     durability=DurabilityPolicy.TRANSIENT_LOCAL)
+node.create_subscription(String, "/p1/commissioning_status",
+                         lambda m: statuses.append(json.loads(m.data)), sub_qos)
+
+start = time.time()
+ready_seen = False
+while time.time() - start < 25.0:
+    now_t = node.get_clock().now().to_msg()
+    st = State()
+    st.connected = True
+    st.armed = False
+    st.mode = "HOLD"
+    p_state.publish(st)
+
+    od = Odometry()
+    od.header.stamp = now_t
+    od.header.frame_id = "map"
+    od.child_frame_id = "base_link"
+    od.pose.pose.orientation.w = 1.0
+    od.twist.twist.linear.x = 0.2
+    p_odom.publish(od)
+
+    im = Imu()
+    im.header.stamp = now_t
+    im.header.frame_id = "base_link"
+    im.orientation.w = 1.0
+    im.angular_velocity.z = 0.01
+    p_imu.publish(im)
+
+    path = Path()
+    path.header.stamp = now_t
+    path.header.frame_id = "map"
+    prof = Float64MultiArray()
+    for i in range(12):
+        ps = PoseStamped()
+        ps.header.stamp = now_t
+        ps.header.frame_id = "map"
+        ps.pose.position.x = float(i) * 0.5
+        ps.pose.orientation.w = 1.0
+        path.poses.append(ps)
+        prof.data.extend([0.6, 0.0, 0.0, float(i) * 0.8])
+    dim0 = MultiArrayDimension(label=f"stamp_sec:{now_t.sec}", size=12, stride=48)
+    dim1 = MultiArrayDimension(label=f"stamp_nanosec:{now_t.nanosec}", size=4, stride=4)
+    prof.layout.dim = [dim0, dim1]
+    p_path.publish(path)
+    p_prof.publish(prof)
+
+    rclpy.spin_once(node, timeout_sec=0.05)
+    if statuses:
+        last = statuses[-1]
+        if last.get("phase") == "ready" and last.get("jobs_submitted", 0) >= 3 and last.get("dry_run", {}).get("candidates_accepted", 0) >= 3:
+            ready_seen = True
+            break
+    time.sleep(0.05)
+
+topics_with_pub = {
+    name: [info.node_name for info in node.get_publishers_info_by_topic(name)]
+    for name in (
+        "/p1/commissioning_status", "/p1/solve_job",
+        "/mavros/setpoint_velocity/cmd_vel", "/mavros/rc/override",
+        "/wamv/thrusters/left/thrust", "/wamv/thrusters/right/thrust",
+        "/p1/plant_command", "/p1/execution_decision",
+    )
+}
+print(json.dumps({"ready_seen": ready_seen, "last": statuses[-1] if statuses else None, "pubs": topics_with_pub}))
+rclpy.shutdown()
+"""], env=isolated_env(tmp_path), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=45)
+        assert driver.returncode == 0, driver.stderr
+        payload = json.loads(driver.stdout.strip().splitlines()[-1])
+        assert payload["ready_seen"], payload
+        last = payload["last"]
+        assert last["mode"] == "shipboard_dry_run"
+        assert last["physical_output_enabled"] is False
+        assert last["closed_loop_verified"] is False
+        assert last["anchor_known"] is False
+        assert last["jobs_submitted"] >= 3
+        assert last["worker"]["completed_jobs"] >= 3
+        assert last["dry_run"]["candidates_accepted"] >= 3
+        assert "/p1/commissioning_status" in [k for k, v in payload["pubs"].items() if v]
+        assert "/p1/solve_job" in [k for k, v in payload["pubs"].items() if v]
+        for forbidden in ("/mavros/setpoint_velocity/cmd_vel", "/mavros/rc/override",
+                          "/wamv/thrusters/left/thrust", "/wamv/thrusters/right/thrust",
+                          "/p1/plant_command", "/p1/execution_decision"):
+            assert payload["pubs"][forbidden] == [], f"{forbidden} must have no publishers: {payload['pubs'][forbidden]}"
+    finally:
+        stop_pair(pair)
+    worker_records = read_jsonl(tmp_path / "worker.source.jsonl")
+    regulator_records = read_jsonl(tmp_path / "regulator.source.jsonl")
+    summaries = [r for r in worker_records if r.get("type") == "worker_summary"]
+    assert len(summaries) == 1
+    assert summaries[0]["fatal"] is False
+    assert summaries[0]["dry_run_mode"] is True
+    assert summaries[0]["completed_jobs"] >= 3
+    source = [r for r in regulator_records if r.get("type") == "source_summary"]
+    assert len(source) == 1
+    assert source[0]["generated"] == source[0]["emitted"]
+    assert source[0]["dropped"] == 0

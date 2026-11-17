@@ -33,6 +33,11 @@ SUPERVISOR_SCHEMA = "p1-shipboard-supervisor-v1"
 STATUS_SCHEMA = "p1-shipboard-commissioning-status-v1"
 CAPABILITY_SCHEMA = "p1-worker-capability-v2"
 CONTRACT_SCHEMA = "p1-shipboard-commissioning-v1"
+DRY_RUN_CONTRACT_SCHEMA = "p1-shipboard-dry-run-v1"
+ALLOWED_PROFILES = {
+    CONTRACT_SCHEMA: ("shipboard_commissioning", "commissioning"),
+    DRY_RUN_CONTRACT_SCHEMA: ("shipboard_dry_run", "shipboard_dry_run"),
+}
 
 STARTUP_DEADLINE_NS = 30 * 1_000_000_000
 STATUS_STALE_NS = 2_500_000_000          # ready 之后 status 无新 seq
@@ -119,6 +124,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--run-root", required=True)
     parser.add_argument("--contract", required=True)
     parser.add_argument("--plan", required=True)
+    parser.add_argument("--mode", choices=["commissioning", "shipboard_dry_run"], default=None)
     return parser.parse_args(argv)
 
 
@@ -185,7 +191,12 @@ def verify_identity_binding(release_root: str, contract_sha: str, plan_sha: str,
             die(f"release_identity missing {key}")
         if sha256_file(path) != expected:
             die(f"release_identity binding drifted: {key}")
-    if identity.get("contract_sha256") not in (None, contract_sha):
+    expected_contracts = {
+        digest
+        for digest in (identity.get("contract_sha256"), identity.get("dry_run_contract_sha256"))
+        if digest
+    }
+    if expected_contracts and contract_sha not in expected_contracts:
         die("release_identity contract binding drifted")
     if identity.get("plan_sha256") not in (None, plan_sha):
         die("release_identity plan binding drifted")
@@ -194,24 +205,28 @@ def verify_identity_binding(release_root: str, contract_sha: str, plan_sha: str,
     return identity
 
 
-def verify_contract(path: str, expected_sha: str) -> dict:
+def verify_contract(path: str, expected_sha: str, expected_mode: str | None = None) -> tuple[dict, str]:
     if not os.path.isfile(path):
         die(f"contract missing: {path}")
     digest = sha256_file(path)
     if digest != expected_sha:
         die(f"contract hash mismatch: {digest} != {expected_sha}")
     contract = read_json(path)
-    if contract.get("schema") != CONTRACT_SCHEMA:
-        die("contract schema is not the shipboard commissioning profile")
-    if contract.get("qualification") != "shipboard_commissioning":
-        die("contract qualification is not shipboard_commissioning")
+    schema = contract.get("schema")
+    if schema not in ALLOWED_PROFILES:
+        die(f"contract schema is not a permitted shipboard profile: {schema}")
+    expected_qual, runtime_mode = ALLOWED_PROFILES[schema]
+    if contract.get("qualification") != expected_qual:
+        die(f"contract qualification is not {expected_qual}")
+    if expected_mode and expected_mode != runtime_mode:
+        die(f"contract mode mismatch: {runtime_mode} != {expected_mode}")
     if contract.get("execute_qualified") is not False:
         die("contract claims execute qualification")
     if contract.get("parameters_are_diagnostic_only") is not True:
         die("contract parameters are not declared diagnostic-only")
     if contract.get("fault_injection_enabled") is not False:
         die("contract enables fault injection")
-    return contract
+    return contract, runtime_mode
 
 
 OVERRIDDEN_OR_RESEARCH_PACKAGES = frozenset({
@@ -348,6 +363,7 @@ class Supervisor:
         self.ready_ns = 0
         self.failure = ""
         self.contract: dict = {}
+        self.runtime_mode = args.mode or "commissioning"
         self.contract_sha = ""
         self.plan_sha = ""
         self.attestation_sha = ""
@@ -398,7 +414,8 @@ class Supervisor:
         artifacts = verify_release_artifacts(self.release_root)
         self.contract_sha = sha256_file(self.contract_path)
         self.plan_sha = sha256_file(self.plan_path)
-        self.contract = verify_contract(self.contract_path, self.contract_sha)
+        self.contract, self.runtime_mode = verify_contract(
+            self.contract_path, self.contract_sha, getattr(self.args, "mode", None))
         self.identity = verify_identity_binding(
             self.release_root, self.contract_sha, self.plan_sha,
             artifacts.get("underlay_identity_sha256", ""))
@@ -490,7 +507,7 @@ class Supervisor:
             "-p", f"contract_hash:={self.contract_sha}",
             "-p", f"model_plan_file:={self.run_path('plan.json')}",
             "-p", f"model_plan_sha256:={self.plan_sha}",
-            "-p", "mode:=commissioning",
+            "-p", f"mode:={self.runtime_mode}",
         ]
         worker_log = open(self.run_path("worker.stdout.txt"), "ab", buffering=0)
         self._spawn_child("worker", [worker] + common + [
@@ -610,7 +627,8 @@ class Supervisor:
             return
         for key, expected in (("run_id", self.run_id), ("boot_id", self.boot_id),
                               ("contract_hash", self.contract_sha),
-                              ("plan_sha256", self.plan_sha)):
+                              ("plan_sha256", self.plan_sha),
+                              ("mode", self.runtime_mode)):
             if status.get(key) != expected:
                 self.failure = f"commissioning_status_identity_mismatch:{key}"
                 return
@@ -749,7 +767,9 @@ def main(argv: list[str]) -> int:
                     "shutdown", reason=supervisor.failure or "clean_stop",
                     exit_code=exit_code, ready=supervisor.ready,
                     evidence_closed=True,
-                    physical_output_enabled=False, jobs_submitted=0)
+                    mode=supervisor.runtime_mode,
+                    physical_output_enabled=False,
+                    jobs_submitted=int((supervisor.latest_status or {}).get("jobs_submitted") or 0))
                 supervisor.log_handle.flush()
                 supervisor.log_handle.close()
                 supervisor.log_handle = None

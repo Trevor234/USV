@@ -416,3 +416,99 @@ def test_clean_environment_still_rejects_unverified_build_or_overridden_pkg(tmp_
     monkeypatch.setenv("LD_LIBRARY_PATH", str(ntrip_src))
     with pytest.raises(SystemExit):
         sup.clean_environment(str(release), str(underlay), identity)
+
+
+def _write_dry_run_contract(run_dir):
+    doc = json.loads(open(os.path.join(os.path.dirname(SUPERVISOR), "..", "model", "contract_shipboard_dry_run.json"), encoding="utf-8").read())
+    (run_dir / "contract.json").write_text(json.dumps(doc), encoding="utf-8")
+
+
+def test_checker_accepts_dry_run_with_solves_and_rejects_physical_output(tmp_path):
+    release, underlay, run_dir, snap_path = _build_fixture(
+        tmp_path, include_shutdown=True, include_summaries=True
+    )
+    _write_dry_run_contract(run_dir)
+
+    # 重写 supervisor.jsonl + regulator.source.jsonl 为 shipboard_dry_run
+    status = _valid_status()
+    status["mode"] = "shipboard_dry_run"
+    status["jobs_submitted"] = 5
+    status["worker"]["completed_jobs"] = 5
+    status["dry_run"] = {
+        "nav_gate": "ready",
+        "nav_ready": True,
+        "jobs_submitted": 5,
+        "candidates_received": 5,
+        "candidates_accepted": 5,
+        "candidates_rejected": 0,
+        "last_rejection_reason": "",
+        "last_backend_ms": 1.1,
+        "last_solve_latency_ms": 1.2,
+        "last_first_control": [2.0, 2.0],
+        "nominal_continuity_n": [2.0, 2.0],
+        "physical_output_enabled": False,
+        "closed_loop_verified": False,
+        "control_inputs_verified": False,
+        "anchor_known": False,
+    }
+    sup_lines = [
+        {"schema": SUPERVISOR_SCHEMA, "event": "startup", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 1_000_000_000},
+        {"schema": SUPERVISOR_SCHEMA, "event": "sample", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 2_000_000_000,
+         "phase": "ready", "status_received_ns": 2_000_000_000, "worker_capability_received_ns": 2_000_000_000,
+         "regulator_status": status, "processes": {}},
+        {"schema": SUPERVISOR_SCHEMA, "event": "sample", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 3_000_000_000,
+         "phase": "ready", "status_received_ns": 3_000_000_000, "worker_capability_received_ns": 3_000_000_000,
+         "regulator_status": status, "processes": {}},
+        {"schema": SUPERVISOR_SCHEMA, "event": "shutdown", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 4_000_000_000,
+         "mode": "shipboard_dry_run", "physical_output_enabled": False, "jobs_submitted": 5},
+    ]
+    (run_dir / "supervisor.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in sup_lines) + "\n", encoding="utf-8"
+    )
+    reg_lines = [
+        {"type": "startup", "mode": "shipboard_dry_run", "physical_output_enabled": False,
+         "anchor_known": False, "execution_publisher_endpoints": 0,
+         "publications": ["/p1/commissioning_status", "/p1/solve_job"]},
+        {"type": "dry_run_job", "job_id": 1, "physical_output_enabled": False, "anchor_known": False},
+        {"type": "dry_run_decision", "schema": "p1-dry-run-decision-v1", "job_id": 1,
+         "accepted": True, "physical_output_enabled": False, "closed_loop_verified": False,
+         "anchor_known": False},
+        {"type": "source_summary", "generated": 4, "emitted": 4, "dropped": 0, "normal_source_complete": True},
+    ]
+    (run_dir / "regulator.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in reg_lines) + "\n", encoding="utf-8"
+    )
+    wrk_lines = [
+        {"type": "candidate", "job": {"job_id": 1}},
+        {"type": "worker_summary", "fatal": False, "dry_run_mode": True, "completed_jobs": 5},
+    ]
+    (run_dir / "worker.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in wrk_lines) + "\n", encoding="utf-8"
+    )
+
+    out_ok = tmp_path / "check-dry-ok.json"
+    rc, doc, _ = _run_checker(
+        release, underlay, run_dir, snap_path, out_ok, extra_args=("--require-solves",)
+    )
+    assert rc == 0, doc
+    assert doc["verdict"] == "PASS"
+    assert doc["mode"] == "shipboard_dry_run"
+    assert doc["physical_output_enabled"] is False
+    assert doc["closed_loop_verified"] is False
+
+    # 若 startup 出现真实执行话题或 physical_output_enabled=True，checker 必须判 FAIL
+    bad_reg = list(reg_lines)
+    bad_reg[0] = {**reg_lines[0], "publications": ["/p1/commissioning_status", "/mavros/rc/override"]}
+    (run_dir / "regulator.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in bad_reg) + "\n", encoding="utf-8"
+    )
+    out_bad = tmp_path / "check-dry-bad.json"
+    rc_bad, doc_bad, _ = _run_checker(
+        release, underlay, run_dir, snap_path, out_bad, extra_args=("--require-solves",)
+    )
+    assert rc_bad == 2
+    assert any("startup_no_actuator_publishers" in err for err in doc_bad["errors"])

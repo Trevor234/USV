@@ -100,6 +100,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--ros-domain-id", type=int, required=True)
     parser.add_argument("--dds-profile", required=True)
     parser.add_argument("--contract", default="")
+    parser.add_argument("--dry-run-contract", default="")
     parser.add_argument("--plan", default="")
     parser.add_argument("--write", action="store_true")
     args = parser.parse_args(argv)
@@ -208,6 +209,9 @@ def main(argv: list[str]) -> int:
         "dds_profile_path": os.path.realpath(args.dds_profile),
         "dds_profile_sha256": sha256_file(args.dds_profile),
         "contract_sha256": sha256_file(args.contract) if args.contract else None,
+        "dry_run_contract_sha256": (
+            sha256_file(args.dry_run_contract) if args.dry_run_contract else None
+        ),
         "plan_sha256": sha256_file(args.plan) if args.plan else None,
     }
     write("release_identity.json", identity)

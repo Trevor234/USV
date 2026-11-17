@@ -30,6 +30,18 @@ EXIT_USAGE = 1
 STATUS_SCHEMA = "p1-shipboard-commissioning-status-v1"
 SUPERVISOR_SCHEMA = "p1-shipboard-supervisor-v1"
 CONTRACT_SCHEMA = "p1-shipboard-commissioning-v1"
+DRY_RUN_CONTRACT_SCHEMA = "p1-shipboard-dry-run-v1"
+DRY_RUN_DECISION_SCHEMA = "p1-dry-run-decision-v1"
+ACTUATOR_TOPICS = (
+    "/p1/plant_command", "/p1/execution_decision",
+    "/mavros/setpoint_velocity/cmd_vel", "/mavros/rc/override",
+    "/wamv/thrusters/left/thrust", "/wamv/thrusters/right/thrust",
+)
+DRY_RUN_KEYS = (
+    "nav_gate", "nav_ready", "jobs_submitted", "candidates_received",
+    "candidates_accepted", "candidates_rejected", "physical_output_enabled",
+    "closed_loop_verified", "control_inputs_verified", "anchor_known",
+)
 
 INPUT_KEYS = ("state", "odom", "imu", "path", "profile")
 STATUS_TOP = ("schema", "run_id", "boot_id", "host_boot_id", "contract_hash", "plan_sha256",
@@ -55,12 +67,14 @@ RESEARCH_NODES = ("p1_regulator", "p1_solver_worker", "p1_commissioning_supervis
 
 class Checker:
     def __init__(self, release_root: str, underlay: str, run_dir: str,
-                 proc_snapshot: str, expect_active: bool = False) -> None:
+                 proc_snapshot: str, expect_active: bool = False,
+                 require_solves: bool = False) -> None:
         self.release_root = os.path.realpath(release_root)
         self.underlay = os.path.realpath(underlay)
         self.run_dir = os.path.realpath(run_dir)
         self.proc_snapshot_path = os.path.realpath(proc_snapshot)
         self.expect_active = bool(expect_active)
+        self.require_solves = bool(require_solves)
         self.checks: list[dict] = []
         self.errors: list[str] = []
         self.capture = self._load_capture()
@@ -248,20 +262,19 @@ class Checker:
         terminal = shutdown[0] if shutdown else None
         return terminal, samples, finished
 
-    def evaluate_status(self, status: dict, label: str) -> None:
+    def evaluate_status(self, status: dict, label: str, expected_mode: str = "commissioning") -> None:
         if status.get("schema") != STATUS_SCHEMA:
             self.fail(f"{label}:status_schema", str(status.get("schema")))
             return
         for key in STATUS_TOP:
             self.check(f"{label}:status_field:{key}", key in status, key)
-        # 三把锁: 永远为 false / 0。
+        # 三把锁: 永远为 false。
         self.check(f"{label}:physical_output_disabled",
                    status.get("physical_output_enabled") is False, "")
-        self.check(f"{label}:jobs_submitted_zero", status.get("jobs_submitted") == 0, "")
         self.check(f"{label}:anchor_unknown", status.get("anchor_known") is False, "")
         self.check(f"{label}:closed_loop_false",
                    status.get("closed_loop_verified") is False, "")
-        self.check(f"{label}:mode", status.get("mode") == "commissioning",
+        self.check(f"{label}:mode", status.get("mode") == expected_mode,
                    str(status.get("mode")))
         self.check(f"{label}:phase_allowed",
                    status.get("phase") in ("starting", "ready", "failed", "stopping"),
@@ -269,12 +282,38 @@ class Checker:
         worker = status.get("worker") or {}
         for key in WORKER_KEYS:
             self.check(f"{label}:worker_field:{key}", key in worker, key)
-        self.check(f"{label}:worker_completed_jobs_zero",
-                   worker.get("completed_jobs") == 0, str(worker.get("completed_jobs")))
-        self.check(f"{label}:worker_active_job_zero",
-                   worker.get("active_job") == 0, str(worker.get("active_job")))
-        self.check(f"{label}:worker_pending_zero",
-                   worker.get("pending_count") == 0, str(worker.get("pending_count")))
+        if expected_mode == "shipboard_dry_run":
+            jobs = status.get("jobs_submitted")
+            self.check(f"{label}:jobs_submitted_nonneg",
+                       type(jobs) is int and jobs >= 0, str(jobs))
+            for field in ("completed_jobs", "active_job", "pending_count"):
+                val = worker.get(field)
+                self.check(f"{label}:worker_{field}_nonneg",
+                           type(val) is int and val >= 0, str(val))
+            dry_run = status.get("dry_run")
+            self.check(f"{label}:dry_run_present", isinstance(dry_run, dict), "")
+            if isinstance(dry_run, dict):
+                for field in DRY_RUN_KEYS:
+                    self.check(f"{label}:dry_run_field:{field}", field in dry_run, field)
+                self.check(f"{label}:dry_run_jobs_match",
+                           dry_run.get("jobs_submitted") == jobs,
+                           f"{dry_run.get('jobs_submitted')} vs {jobs}")
+                self.check(f"{label}:dry_run_physical_disabled",
+                           dry_run.get("physical_output_enabled") is False, "")
+                self.check(f"{label}:dry_run_closed_loop_false",
+                           dry_run.get("closed_loop_verified") is False, "")
+                self.check(f"{label}:dry_run_control_inputs_false",
+                           dry_run.get("control_inputs_verified") is False, "")
+                self.check(f"{label}:dry_run_anchor_unknown",
+                           dry_run.get("anchor_known") is False, "")
+        else:
+            self.check(f"{label}:jobs_submitted_zero", status.get("jobs_submitted") == 0, "")
+            self.check(f"{label}:worker_completed_jobs_zero",
+                       worker.get("completed_jobs") == 0, str(worker.get("completed_jobs")))
+            self.check(f"{label}:worker_active_job_zero",
+                       worker.get("active_job") == 0, str(worker.get("active_job")))
+            self.check(f"{label}:worker_pending_zero",
+                       worker.get("pending_count") == 0, str(worker.get("pending_count")))
         fcu = status.get("fcu") or {}
         self.check(f"{label}:fcu_field_seen", "seen" in fcu, "")
         inputs = status.get("inputs") or {}
@@ -322,9 +361,27 @@ class Checker:
             if isinstance(candidate, dict):
                 latest_status = candidate
                 break
+        contract_path = os.path.join(self.run_dir, "contract.json")
+        contract_mode = None
+        if os.path.isfile(contract_path):
+            contract_doc = self.read_json(contract_path)
+            c_schema = contract_doc.get("schema")
+            if c_schema == CONTRACT_SCHEMA:
+                contract_mode = "commissioning"
+            elif c_schema == DRY_RUN_CONTRACT_SCHEMA:
+                contract_mode = "shipboard_dry_run"
+            else:
+                self.fail("contract_schema_unknown", str(c_schema))
+        status_mode = latest_status.get("mode") if isinstance(latest_status, dict) else None
+        expected_mode = contract_mode or (status_mode if status_mode in ("commissioning", "shipboard_dry_run") else "commissioning")
+        if contract_mode and status_mode:
+            self.check("contract_matches_status_mode", contract_mode == status_mode,
+                       f"{contract_mode} != {status_mode}")
+
         self.check("status_snapshot_available", isinstance(latest_status, dict), "")
         if isinstance(latest_status, dict):
-            self.evaluate_status(latest_status, "active" if not finished else "final")
+            self.evaluate_status(latest_status, "active" if not finished else "final",
+                                 expected_mode=expected_mode)
             if not finished:
                 self.check("active_run_ready",
                            latest_status.get("phase") == "ready",
@@ -353,27 +410,82 @@ class Checker:
             self.check("active_run_source_still_open", True,
                        "active run: no permanent SHA is bound to a still-written log")
 
-        # 本 run 不得出现候选/完成 job。
+        dry_run_jobs = 0
+        dry_run_decisions_accepted = 0
+        worker_candidates = 0
         for name in ("worker.source.jsonl", "regulator.source.jsonl"):
             path = os.path.join(self.run_dir, name)
             if not os.path.isfile(path):
                 continue
             for record in self.read_jsonl(path):
                 kind = record.get("type")
-                if kind == "candidate":
-                    self.fail("candidate_published_in_commissioning", name)
-                    break
-                if kind == "job_refused":
-                    self.check("job_refused_reason",
-                               record.get("reason") == "commissioning_no_jobs",
-                               str(record.get("reason")))
-                    self.check("job_refused_no_native",
-                               record.get("native_solve_entries_this_job") == 0, "")
+                if name == "regulator.source.jsonl" and kind == "startup":
+                    self.check("startup_physical_disabled",
+                               record.get("physical_output_enabled") is False, "")
+                    self.check("startup_anchor_unknown",
+                               record.get("anchor_known") is False, "")
+                    self.check("startup_zero_execution_endpoints",
+                               record.get("execution_publisher_endpoints") == 0,
+                               str(record.get("execution_publisher_endpoints")))
+                    pubs = set(record.get("publications") or [])
+                    bad_pubs = sorted(topic for topic in ACTUATOR_TOPICS if topic in pubs)
+                    self.check("startup_no_actuator_publishers", not bad_pubs, str(bad_pubs))
+                if expected_mode == "shipboard_dry_run":
+                    if name == "worker.source.jsonl" and kind == "candidate":
+                        worker_candidates += 1
+                    elif name == "regulator.source.jsonl" and kind == "dry_run_job":
+                        dry_run_jobs += 1
+                        self.check("dry_run_job_physical_disabled",
+                                   record.get("physical_output_enabled") is False, "")
+                        self.check("dry_run_job_anchor_unknown",
+                                   record.get("anchor_known") is False, "")
+                    elif name == "regulator.source.jsonl" and kind == "dry_run_decision":
+                        self.check("dry_run_decision_schema",
+                                   record.get("schema") == DRY_RUN_DECISION_SCHEMA,
+                                   str(record.get("schema")))
+                        self.check("dry_run_decision_physical_disabled",
+                                   record.get("physical_output_enabled") is False, "")
+                        self.check("dry_run_decision_closed_loop_false",
+                                   record.get("closed_loop_verified") is False, "")
+                        self.check("dry_run_decision_anchor_unknown",
+                                   record.get("anchor_known") is False, "")
+                        if record.get("accepted") is True:
+                            dry_run_decisions_accepted += 1
+                else:
+                    if kind == "candidate":
+                        self.fail("candidate_published_in_commissioning", name)
+                        break
+                    if kind == "job_refused":
+                        self.check("job_refused_reason",
+                                   record.get("reason") == "commissioning_no_jobs",
+                                   str(record.get("reason")))
+                        self.check("job_refused_no_native",
+                                   record.get("native_solve_entries_this_job") == 0, "")
+        if expected_mode == "shipboard_dry_run" and self.require_solves:
+            st = latest_status or {}
+            w = st.get("worker") or {}
+            dr = st.get("dry_run") or {}
+            self.check("require_solves:jobs_submitted",
+                       isinstance(st.get("jobs_submitted"), int) and st["jobs_submitted"] > 0,
+                       str(st.get("jobs_submitted")))
+            self.check("require_solves:worker_completed_jobs",
+                       isinstance(w.get("completed_jobs"), int) and w["completed_jobs"] > 0,
+                       str(w.get("completed_jobs")))
+            self.check("require_solves:candidates_accepted",
+                       isinstance(dr.get("candidates_accepted"), int) and dr["candidates_accepted"] > 0,
+                       str(dr.get("candidates_accepted")))
+            self.check("require_solves:source_logs",
+                       dry_run_jobs > 0 and worker_candidates > 0 and dry_run_decisions_accepted > 0,
+                       f"jobs={dry_run_jobs},cands={worker_candidates},acc={dry_run_decisions_accepted}")
         return {
+            "mode": expected_mode,
             "finished": finished,
             "terminal_event": terminal,
             "status": latest_status,
             "samples": len(samples),
+            "dry_run_jobs_logged": dry_run_jobs,
+            "worker_candidates_logged": worker_candidates,
+            "dry_run_decisions_accepted": dry_run_decisions_accepted,
         }
 
 
@@ -386,13 +498,15 @@ def main(argv: list[str]) -> int:
     parser.add_argument("--out", required=True)
     parser.add_argument("--baseline")
     parser.add_argument("--expect-active", action="store_true")
+    parser.add_argument("--require-solves", action="store_true")
     args = parser.parse_args(argv)
 
     if not os.path.isdir(args.run):
         print(f"checker fatal: run directory missing: {args.run}", file=sys.stderr)
         return EXIT_FAIL
     checker = Checker(args.release_root, args.underlay, args.run,
-                      args.proc_snapshot, expect_active=args.expect_active)
+                      args.proc_snapshot, expect_active=args.expect_active,
+                      require_solves=args.require_solves)
     try:
         run_facts = checker.evaluate_run()
     except Exception as error:  # noqa: BLE001 - 判据自身出错也必须 exit 2
@@ -409,6 +523,7 @@ def main(argv: list[str]) -> int:
     verdict = "PASS" if not checker.errors else "FAIL"
     document = {
         "schema": "p1-shipboard-commissioning-check-v1",
+        "mode": run_facts.get("mode", "commissioning"),
         "release_root": checker.release_root,
         "underlay": checker.underlay,
         "run": checker.run_dir,

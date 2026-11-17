@@ -10,6 +10,7 @@
 
 #include "p1_full_contract.hpp"
 #include "p1_shipboard_commissioning.hpp"
+#include "p1_shipboard_dry_run.hpp"
 
 namespace {
 
@@ -28,6 +29,7 @@ Json read_json(const std::string & name) {
 }
 
 Json commissioning_contract() { return read_json("model/contract_shipboard_commissioning.json"); }
+Json dry_run_contract() { return read_json("model/contract_shipboard_dry_run.json"); }
 
 constexpr std::int64_t kSecond = 1000000000LL;
 
@@ -367,4 +369,108 @@ TEST(ShipboardCommissioningMonitor, StatusShapeMatchesTheDeclaredSchema) {
   // 本模式永远不声称闭环/物理资格。
   EXPECT_FALSE(status["closed_loop_verified"].get<bool>());
   EXPECT_FALSE(status["physical_output_enabled"].get<bool>());
+}
+
+TEST(ShipboardDryRunContract, AcceptsOnlyDryRunModeAndRejectsTampering) {
+  const auto c = dry_run_contract();
+  EXPECT_EQ(p1::validate_contract_fields(c), p1::ContractProfile::ShipboardDryRun);
+  EXPECT_NO_THROW(p1::validate_contract_mode(c, "shipboard_dry_run"));
+  EXPECT_NO_THROW(p1::require_runtime_contract_mode(c, "shipboard_dry_run"));
+  for (const char * mode : {"commissioning", "no_output", "shadow", "execute", "controlled_sim"})
+    EXPECT_THROW(p1::validate_contract_mode(c, mode), std::runtime_error) << mode;
+
+  { auto bad = c; bad["execute_qualified"] = true;
+    EXPECT_THROW(p1::validate_contract_fields(bad), std::runtime_error); }
+  { auto bad = c; bad["parameters_are_diagnostic_only"] = false;
+    EXPECT_THROW(p1::validate_contract_fields(bad), std::runtime_error); }
+  { auto bad = c; bad["fault_injection_enabled"] = true;
+    EXPECT_THROW(p1::validate_contract_fields(bad), std::runtime_error); }
+  { auto bad = c; bad["output_topics"] = Json{{"left", "/wamv/thrusters/left/thrust"}};
+    EXPECT_THROW(p1::validate_contract_fields(bad), std::runtime_error); }
+  { auto bad = c; bad["expected_child_frame"] = "wamv/base_link";
+    EXPECT_THROW(p1::validate_contract_fields(bad), std::runtime_error); }
+  { auto bad = c; bad["worker_capability_receipt_timeout_ns"] = 50000000LL;
+    EXPECT_THROW(p1::validate_contract_fields(bad), std::runtime_error); }
+  { auto bad = c; bad["Q"][0] = 999.0;
+    EXPECT_THROW(p1::validate_contract_fields(bad), std::runtime_error); }
+}
+
+TEST(ShipboardDryRunCoordinator, NavGateAndCandidateChecksHoldPhysicalLocksFalse) {
+  const auto c = dry_run_contract();
+  p1_dry_run::DryRunCoordinator coord(p1_dry_run::limits_from_contract(c));
+  const std::int64_t t0 = 2000 * kSecond;
+  coord.arm(t0);
+  EXPECT_EQ(coord.nav_gate(t0), "waiting_odom");
+
+  p1_dry_run::OdomFacts od;
+  od.seen = true; od.valid = true; od.finite = true;
+  od.pose_frame = "map"; od.child_frame = "base_link";
+  od.seq = 1; od.receipt_ns = t0; od.stamp_ns = 1790000000000000000LL;
+  od.state = {1.0, 2.0, 0.3, 0.5, 0.0, 0.1};
+  coord.on_odom(od);
+  EXPECT_EQ(coord.nav_gate(t0), "waiting_imu");
+
+  p1_dry_run::ImuFacts im;
+  im.seen = true; im.valid = true; im.finite = true;
+  im.frame = "base_link"; im.seq = 1; im.receipt_ns = t0; im.stamp_ns = od.stamp_ns;
+  im.r = 0.25;
+  coord.on_imu(im);
+  EXPECT_EQ(coord.nav_gate(t0), "waiting_path");
+
+  p1_dry_run::PathFacts pf;
+  pf.seen = true; pf.resource_valid = true; pf.frame = "map"; pf.seq = 1;
+  pf.receipt_ns = t0; pf.stamp_ns = od.stamp_ns; pf.points = 10;
+  coord.on_path(pf);
+  EXPECT_EQ(coord.nav_gate(t0), "waiting_profile");
+
+  p1_dry_run::ProfileFacts prf;
+  prf.seen = true; prf.resource_valid = true; prf.seq = 1;
+  prf.receipt_ns = t0; prf.stamp_ns = od.stamp_ns; prf.rows = 10;
+  prf.stamp_ok = true; prf.path_profile_sync_ok = false; prf.sync_reason = "skew";
+  coord.on_profile(prf);
+  EXPECT_EQ(coord.nav_gate(t0), "profile_sync_mismatch");
+
+  coord.set_profile_sync(true, "");
+  EXPECT_EQ(coord.nav_gate(t0), "ready");
+  EXPECT_DOUBLE_EQ(coord.composed_state()[5], 0.25);
+
+  // Stale odom blocks without asserting hardware ready.
+  EXPECT_EQ(coord.nav_gate(t0 + c["odom_age_ns"].get<std::int64_t>() + 1), "odom_stale");
+
+  // Valid candidate updates internal nominal continuity while keeping hardware locks false.
+  p1_dry_run::CandidateFacts cf;
+  cf.job_id = 1; cf.tick = 1;
+  cf.worker_instance = "w1"; cf.expected_worker_instance = "w1"; cf.backend = "acados";
+  cf.echo_matched = true; cf.success = true; cf.prediction_available = true; cf.solver_invoked = true;
+  cf.finite = true; cf.backend_ms = 1.2; cf.first_control = {10.0, 10.0};
+  cf.initial_control_matches = true; cf.initial_state_matches = true;
+  cf.freeze_steady_ns = t0; cf.worker_receive_ns = t0 + 100000;
+  cf.solve_start_ns = t0 + 200000; cf.solve_end_ns = t0 + 1500000;
+  cf.deadline_steady_ns = t0 + 150000000LL; cf.receive_ns = t0 + 2000000;
+  const auto ok_out = coord.evaluate_candidate(cf);
+  EXPECT_TRUE(ok_out.accepted) << ok_out.reason;
+  EXPECT_DOUBLE_EQ(coord.nominal_continuity_n()[0], 10.0);
+
+  // Rate jump > 16 N / 0.2s (= 80 N/s) must be rejected without corrupting nominal continuity.
+  auto bad_rate = cf; bad_rate.job_id = 2; bad_rate.first_control = {-10.0, -10.0};
+  const auto rate_out = coord.evaluate_candidate(bad_rate);
+  EXPECT_FALSE(rate_out.accepted);
+  EXPECT_EQ(rate_out.reason, "rate_limit_exceeded");
+  EXPECT_DOUBLE_EQ(coord.nominal_continuity_n()[0], 10.0);
+
+  // Deadline exceeded must be rejected.
+  auto bad_deadline = cf; bad_deadline.job_id = 3; bad_deadline.first_control = {12.0, 12.0};
+  bad_deadline.solve_end_ns = bad_deadline.deadline_steady_ns + 1;
+  bad_deadline.receive_ns = bad_deadline.solve_end_ns + 1000;
+  const auto late_out = coord.evaluate_candidate(bad_deadline);
+  EXPECT_FALSE(late_out.accepted);
+  EXPECT_EQ(late_out.reason, "deadline_exceeded");
+
+  const auto st = coord.status_json(t0);
+  EXPECT_EQ(st["candidates_accepted"].get<int>(), 1);
+  EXPECT_EQ(st["candidates_rejected"].get<int>(), 2);
+  EXPECT_FALSE(st["physical_output_enabled"].get<bool>());
+  EXPECT_FALSE(st["closed_loop_verified"].get<bool>());
+  EXPECT_FALSE(st["control_inputs_verified"].get<bool>());
+  EXPECT_FALSE(st["anchor_known"].get<bool>());
 }

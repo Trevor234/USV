@@ -33,6 +33,7 @@
 #include "p1_tick_barrier.hpp"
 #include "p1_clock_diagnostics.hpp"
 #include "p1_shipboard_commissioning.hpp"
+#include "p1_shipboard_dry_run.hpp"
 namespace {
 /// 诊断缓冲上限：订阅 executor 与 tick 线程各一条单生产者流。
 constexpr std::size_t kCallbackTraceCapacity=65536;
@@ -97,7 +98,12 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     // frame 整段构造 —— 那些字段属于控制链，本模式一个都不碰。
     if(mode_==p1::shipboard_commissioning_mode||
        c_.at("schema").get<std::string>()==p1::shipboard_commissioning_schema){
-      start_commissioning();
+      start_shipboard_mode(false);
+      return;
+    }
+    if(mode_==p1::shipboard_dry_run_mode||
+       c_.at("schema").get<std::string>()==p1::shipboard_dry_run_schema){
+      start_shipboard_mode(true);
       return;
     }
     recording_observer_=declare_parameter<std::string>("recording_observer_node","p1_calibration_driver");
@@ -695,52 +701,67 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     prep_stop_=true;prep_cv_.notify_all();finished_=true;
   }
   // ================= 实船调试服务接管（零求解 / 零物理输出）=================
-  // 这一段是**第二条**构造路径：没有求解、没有物理输出、没有 tick/prep 线程，
-  // 唯一目的是把"服务接管 + 真实输入观测"做成可被判据核验的事实。
-  void start_commissioning(){
-    // 提前 return 会跳过下面通用的 mode 白名单，所以在这里以 require 版复核一次
-    // 模式/合同匹配：不匹配就抛，绝不"降级成能跑"。
+  // 实船调试模式入口：dry_run=false 时为纯观测 commissioning（zero jobs, zero solve），
+  // dry_run=true 时开启真 MAVROS 输入 + 真 acados 求解，但严格保持零物理执行输出。
+  void start_shipboard_mode(bool dry_run){
     p1::require_runtime_contract_mode(c_,mode_);
     if(run_.empty()||run_.size()>128)throw std::runtime_error("identity invalid");
     if(!diag_file_.empty())throw std::runtime_error("clock diagnostics require controlled_sim");
-    // 计划文件沿用父字节：只验证 200ms/150ms 网格与摘要，不在这里切换模型代。
-    // 参数已由上面的公共块声明并校验过摘要；这里只取回同一次解析结果。
     {const auto plan_text=p1::read_text(plan_file_text_);
      p1::contract_require(p1::digest(plan_text)==plan_sha_,"model plan hash mismatch");
      grid_=p1::grid_of_plan(plan_text,c_);}
-    // capability lease 以合同的 600ms 构造（不是 activation lease，也不是 rho/hold）。
     capability_lease_=std::make_unique<p1::CapabilityLease>(c_.at("worker_capability_receipt_timeout_ns").get<int64_t>());
     p1_shipboard::Limits limits;
     limits.capability_age_ns=capability_lease_->timeout_ns();
+    if(dry_run){
+      limits.state_age_ns=c_.at("state_age_ns").get<int64_t>();
+      limits.imu_age_ns=c_.at("imu_age_ns").get<int64_t>();
+      dry_run_nav_=std::make_unique<p1_dry_run::DryRunCoordinator>(p1_dry_run::limits_from_contract(c_));
+      dry_run_ref_=std::make_shared<usv_mpc::ReferenceInput>();
+    }
     monitor_=std::make_unique<p1_shipboard::Monitor>(limits);
     commission_active_=true;
+    dry_run_active_=dry_run;
 
-    // 无 Decision 的 Sink：写 source 与真实 source_summary，但没有任何执行回执可发。
     sink_=std::make_unique<Sink>(declare_parameter<std::string>("source_file",""),c_.at("log_capacity"),nullptr);
     const auto topics=p1::shipboard_input_topics();
     status_pub_=create_publisher<std_msgs::msg::String>("/p1/commissioning_status",rclcpp::QoS(1).reliable().transient_local());
-    // 只订阅；不创建 solve_job / plant_command / ExecutionDecision / Float64 推力 /
-    // cmd_vel / RC override publisher，也不订阅/发布 /clock。
+    const int path_depth=dry_run?10:1;
+    // 禁止创建任何物理执行端 publisher（无 Float64 推力、无 rc/override、无 cmd_vel）。
+    if(dry_run){
+      job_pub_=create_publisher<p1::Job>("/p1/solve_job",rclcpp::QoS(1).reliable());
+      candidates_=create_subscription<p1::Candidate>("/p1/solve_candidate",rclcpp::QoS(1).reliable(),[this](p1::Candidate::SharedPtr m){dry_run_candidate(*m);});
+    }
     c_state_=create_subscription<mavros_msgs::msg::State>(topics.at("state").get<std::string>(),rclcpp::SensorDataQoS(),[this](mavros_msgs::msg::State::SharedPtr m){commissioning_state(*m);});
     c_odom_=create_subscription<nav_msgs::msg::Odometry>(topics.at("odom").get<std::string>(),rclcpp::SensorDataQoS(),[this](nav_msgs::msg::Odometry::SharedPtr m){commissioning_odom(*m);});
     c_imu_=create_subscription<sensor_msgs::msg::Imu>(topics.at("imu").get<std::string>(),rclcpp::SensorDataQoS(),[this](sensor_msgs::msg::Imu::SharedPtr m){commissioning_imu(*m);});
-    c_path_=create_subscription<nav_msgs::msg::Path>(topics.at("path").get<std::string>(),rclcpp::QoS(1).reliable(),[this](nav_msgs::msg::Path::SharedPtr m){commissioning_path(*m);});
-    c_profile_=create_subscription<std_msgs::msg::Float64MultiArray>(topics.at("profile").get<std::string>(),rclcpp::QoS(1).reliable(),[this](std_msgs::msg::Float64MultiArray::SharedPtr m){commissioning_profile(*m);});
+    c_path_=create_subscription<nav_msgs::msg::Path>(topics.at("path").get<std::string>(),rclcpp::QoS(path_depth).reliable(),[this](nav_msgs::msg::Path::SharedPtr m){commissioning_path(*m);});
+    c_profile_=create_subscription<std_msgs::msg::Float64MultiArray>(topics.at("profile").get<std::string>(),rclcpp::QoS(path_depth).reliable(),[this](std_msgs::msg::Float64MultiArray::SharedPtr m){commissioning_profile(*m);});
     capabilities_=create_subscription<p1::Capability>("/p1/worker_capability",rclcpp::QoS(1).reliable().transient_local(),[this](p1::Capability::SharedPtr m){commissioning_capability(*m);});
     c_stop_=create_subscription<std_msgs::msg::Bool>("/p1/stop",rclcpp::QoS(1).reliable(),[this](std_msgs::msg::Bool::SharedPtr m){if(m->data)stop_requested=true;});
-    {const auto now=p1::monotonic_ns();std::lock_guard<std::mutex> l(c_mutex_);monitor_->arm_start(now);}
+    {const auto now=p1::monotonic_ns();std::lock_guard<std::mutex> l(c_mutex_);monitor_->arm_start(now);if(dry_run_nav_)dry_run_nav_->arm(now);}
+    auto subs=p1::Json::array({"/mavros/state","/mavros/local_position/odom","/mavros/imu/data","/path/reference","/path/reference_profile","/p1/worker_capability","/p1/stop"});
+    auto pubs=p1::Json::array({"/p1/commissioning_status"});
+    if(dry_run){subs.push_back("/p1/solve_candidate");pubs.push_back("/p1/solve_job");}
     auto header=p1::Json{{"type","startup"},{"schema","p1-shipboard-regulator-v1"},{"run_id",run_},
       {"boot_id",boot_},{"host_boot_id",p1::boot_id()},{"contract_hash",hash_},
       {"plan_sha256",plan_sha_},{"mode",mode_},{"pid",getpid()},
       {"clock","CLOCK_MONOTONIC"},{"physical_output_enabled",false},{"jobs_submitted",0},
       {"anchor_known",false},{"execution_publisher_endpoints",0},
-      {"subscriptions",p1::Json::array({"/mavros/state","/mavros/local_position/odom","/mavros/imu/data","/path/reference","/path/reference_profile","/p1/worker_capability","/p1/stop"})},
-      {"publications",p1::Json::array({"/p1/commissioning_status"})}};
+      {"subscriptions",subs},{"publications",pubs}};
     if(!sink_->add(header))throw std::runtime_error("commissioning source unavailable");
     commission_thread_=std::thread([this]{commission_loop();});
   }
   static std::string bounded(const std::string & s,bool & truncated){
     truncated=s.size()>128;return s.substr(0,128);
+  }
+  void recompute_dry_run_sync_locked(){
+    if(!dry_run_nav_||!dry_run_ref_)return;
+    const auto sync=usv_mpc::profile_sync_state(
+      dry_run_ref_->path.size(),
+      dry_run_ref_->profile.empty()?-1:static_cast<int>(dry_run_ref_->profile.size()),
+      &dry_run_ref_->path_stamp,&dry_run_ref_->profile_stamp);
+    dry_run_nav_->set_profile_sync(sync.first,sync.second);
   }
   void commissioning_state(const mavros_msgs::msg::State & m){
     const auto now=p1::monotonic_ns();
@@ -762,6 +783,19 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       std::isfinite(t.angular.z);
     f.resource_valid=true;
     monitor_->on_input("odom",f);
+    if(dry_run_nav_){
+      std::array<double,5> a{p.x,p.y,t.linear.x,t.linear.y,t.angular.z};
+      std::array<double,4> quat{q.x,q.y,q.z,q.w};
+      p1_dry_run::OdomFacts df;
+      df.seen=true;df.finite=f.finite;df.valid=f.finite&&usv_mpc::admit_odom(a,quat);
+      df.pose_frame=f.frame;df.child_frame=f.child_frame;df.seq=f.count;
+      df.receipt_ns=now;df.stamp_ns=f.source_stamp_ns;
+      if(df.valid){
+        const auto vec=usv_mpc::compose_odom(a,quat);
+        for(int i=0;i<6;++i)df.state[static_cast<size_t>(i)]=vec[i];
+      }
+      dry_run_nav_->on_odom(df);
+    }
   }
   void commissioning_imu(const sensor_msgs::msg::Imu & m){
     const auto now=p1::monotonic_ns();
@@ -775,17 +809,53 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       std::isfinite(m.orientation.y)&&std::isfinite(m.orientation.z)&&std::isfinite(m.orientation.w);
     f.resource_valid=true;
     monitor_->on_input("imu",f);
+    if(dry_run_nav_){
+      p1_dry_run::ImuFacts imf;
+      imf.seen=true;imf.finite=std::isfinite(m.angular_velocity.z);
+      imf.valid=imf.finite&&usv_mpc::admit_imu(m.angular_velocity.z);
+      imf.frame=f.frame;imf.seq=f.count;imf.receipt_ns=now;imf.stamp_ns=f.source_stamp_ns;
+      imf.r=imf.valid?m.angular_velocity.z:0.0;
+      dry_run_nav_->on_imu(imf);
+    }
   }
-  // path/profile 先复用资源检查，再只记长度/布局摘要：不复制全路径，不逐条刷盘。
+  // path/profile 先复用资源检查，再只记长度/布局摘要；dry_run 同步解析坐标给 ReferenceInput。
   void commissioning_path(const nav_msgs::msg::Path & m){
     const auto now=p1::monotonic_ns();
     const auto resource=p1::check_path_resources(m,resources_);
+    std::shared_ptr<usv_mpc::ReferenceInput> next;
+    bool dry_valid=false;
+    if(dry_run_active_){
+      next=std::make_shared<usv_mpc::ReferenceInput>();
+      dry_valid=bool(resource);
+      if(dry_valid){
+        for(const auto & p:m.poses){
+          const auto & q=p.pose.orientation;
+          const double yaw=usv_mpc::quaternion_to_yaw(q.x,q.y,q.z,q.w);
+          if(!std::isfinite(p.pose.position.x)||!std::isfinite(p.pose.position.y)||!std::isfinite(yaw)){
+            dry_valid=false;break;
+          }
+          next->path.push_back({p.pose.position.x,p.pose.position.y,yaw});
+        }
+        if(!dry_valid)next->path.clear();
+      }
+      next->path_stamp={m.header.stamp.sec,int(m.header.stamp.nanosec)};
+    }
     std::lock_guard<std::mutex> l(c_mutex_);
     p1_shipboard::InputFacts f;f.seen=true;f.count=monitor_->input("path").count+1;f.receipt_ns=now;
     f.source_stamp_ns=stamp(m.header.stamp);
     f.frame=bounded(m.header.frame_id,f.truncated);
     f.resource_valid=bool(resource);
     monitor_->on_input("path",f);
+    if(dry_run_nav_){
+      next->profile=dry_run_ref_->profile;next->profile_stamp=dry_run_ref_->profile_stamp;
+      next->profile_sequence=dry_run_ref_->profile_sequence;next->path_sequence=f.count;
+      dry_run_ref_=next;
+      p1_dry_run::PathFacts pf;pf.seen=true;pf.resource_valid=f.resource_valid&&dry_valid;
+      pf.frame=f.frame;pf.seq=f.count;pf.receipt_ns=now;pf.stamp_ns=f.source_stamp_ns;
+      pf.points=next->path.size();
+      dry_run_nav_->on_path(pf);
+      recompute_dry_run_sync_locked();
+    }
     sink_->add({{"type","commissioning_path_facts"},{"sequence",f.count},
       {"points",m.poses.size()},{"frame_bytes",m.header.frame_id.size()},
       {"resource_valid",f.resource_valid},{"resource_reason",resource.reason},
@@ -795,14 +865,43 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
   void commissioning_profile(const std_msgs::msg::Float64MultiArray & m){
     const auto now=p1::monotonic_ns();
     const auto resource=p1::check_profile_resources(m,resources_);
+    bool stamp_ok=false;
+    std::pair<int,int> parsed_stamp{-1,-1};
+    std::shared_ptr<usv_mpc::ReferenceInput> next;
+    bool dry_valid=false;
+    if(resource){
+      std::vector<std::string> labels;for(const auto & d:m.layout.dim)labels.push_back(d.label);
+      parsed_stamp=usv_mpc::parse_profile_stamp(labels,stamp_ok);
+    }
+    if(dry_run_active_){
+      next=std::make_shared<usv_mpc::ReferenceInput>();
+      dry_valid=bool(resource)&&!m.data.empty()&&m.data.size()%4==0&&
+                m.data.size()/4<=resources_.max_profile_rows;
+      next->profile_stamp=stamp_ok?parsed_stamp:std::pair<int,int>{-1,-1};
+      if(dry_valid){
+        for(size_t i=0;i<m.data.size()/4;++i){
+          std::array<double,4> r={m.data[4*i],m.data[4*i+1],m.data[4*i+2],m.data[4*i+3]};
+          if(!p1::finite_array(r)||(i&&r[3]<=m.data[4*(i-1)+3])){dry_valid=false;break;}
+          next->profile.push_back(r);
+        }
+        if(!dry_valid)next->profile.clear();
+      }
+    }
     std::lock_guard<std::mutex> l(c_mutex_);
     p1_shipboard::InputFacts f;f.seen=true;f.count=monitor_->input("profile").count+1;f.receipt_ns=now;
     f.resource_valid=bool(resource);
-    // Float64MultiArray 没有 header：只有既有布局标签能解析出时刻时才登记，否则 null。
-    if(resource){std::vector<std::string> labels;for(const auto & d:m.layout.dim)labels.push_back(d.label);
-      bool stamp_ok=false;const auto parsed=usv_mpc::parse_profile_stamp(labels,stamp_ok);
-      if(stamp_ok)f.source_stamp_ns=int64_t(parsed.first)*1000000000+parsed.second;}
+    if(stamp_ok)f.source_stamp_ns=int64_t(parsed_stamp.first)*1000000000+parsed_stamp.second;
     monitor_->on_input("profile",f);
+    if(dry_run_nav_){
+      next->path=dry_run_ref_->path;next->path_stamp=dry_run_ref_->path_stamp;
+      next->path_sequence=dry_run_ref_->path_sequence;next->profile_sequence=f.count;
+      dry_run_ref_=next;
+      p1_dry_run::ProfileFacts prf;prf.seen=true;prf.resource_valid=f.resource_valid&&dry_valid;
+      prf.seq=f.count;prf.receipt_ns=now;prf.stamp_ns=f.source_stamp_ns;
+      prf.rows=next->profile.size();prf.stamp_ok=stamp_ok;
+      dry_run_nav_->on_profile(prf);
+      recompute_dry_run_sync_locked();
+    }
     sink_->add({{"type","commissioning_profile_facts"},{"sequence",f.count},
       {"rows",m.data.size()/4},{"elements",m.data.size()},{"dims",m.layout.dim.size()},
       {"resource_valid",f.resource_valid},{"resource_reason",resource.reason},
@@ -856,6 +955,149 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         {"fault_injection_enabled",m.fault_injection_enabled},{"fatal",m.fatal},
         {"model_plan_sha256",m.model_plan_sha256},{"reason",m.reason}}}});
   }
+  void dry_run_candidate(const p1::Candidate & m){
+    if(!dry_run_active_||!dry_run_nav_)return;
+    const auto now=p1::monotonic_ns();
+    const auto resource=p1::check_candidate_resources(m,resources_);
+    if(!resource){
+      sink_->add({{"type","resource_rejected"},{"interface","candidate"},{"job_id",m.job.job_id},
+        {"reason",resource.reason},{"field",resource.field},{"observed",resource.observed},
+        {"limit",resource.limit},{"receive_ns",now},{"accepted_registration",false}});
+      return;
+    }
+    p1_dry_run::CandidateOutcome outcome;
+    std::string valid_job_reason;
+    {
+      std::lock_guard<std::mutex> l(c_mutex_);
+      valid_job_reason=p1::valid_job(m.job,run_,boot_,hash_,nominal_,worker_instance_);
+      auto expected=std::find_if(dry_run_jobs_.begin(),dry_run_jobs_.end(),
+        [&](const p1::Job & j){return j.job_id==m.job.job_id;});
+      p1_dry_run::CandidateFacts cf;
+      cf.job_id=m.job.job_id;cf.tick=m.job.target_tick;
+      cf.worker_instance=m.worker_instance;cf.expected_worker_instance=worker_instance_;
+      cf.backend=m.backend;
+      cf.echo_matched=valid_job_reason.empty()&&expected!=dry_run_jobs_.end()&&
+        p1::job_json(*expected)==p1::job_json(m.job);
+      cf.success=m.success;cf.prediction_available=m.prediction_available;cf.solver_invoked=m.solver_invoked;
+      cf.finite=p1::finite_array(m.x_prediction)&&p1::finite_array(m.u_prediction)&&
+        p1::finite_array(m.first_control);
+      cf.backend_ms=m.backend_ms;cf.first_control=m.first_control;
+      cf.initial_control_matches=cf.finite&&std::abs(m.first_control[0]-m.u_prediction[0])<=1e-8&&
+        std::abs(m.first_control[1]-m.u_prediction[1])<=1e-8;
+      cf.initial_state_matches=cf.finite;
+      if(cf.initial_state_matches){
+        for(int i=0;i<6;++i){
+          if(std::abs(m.x_prediction[i]-m.job.target_state[i])>1e-7){cf.initial_state_matches=false;break;}
+        }
+      }
+      cf.freeze_steady_ns=m.job.freeze_steady_ns;cf.worker_receive_ns=m.worker_receive_ns;
+      cf.solve_start_ns=m.solve_start_ns;cf.solve_end_ns=m.solve_end_ns;
+      cf.deadline_steady_ns=m.job.deadline_steady_ns;cf.receive_ns=now;
+      outcome=dry_run_nav_->evaluate_candidate(cf);
+    }
+    sink_->add({{"type","dry_run_decision"},{"schema","p1-dry-run-decision-v1"},
+      {"job_id",m.job.job_id},{"tick",m.job.target_tick},
+      {"accepted",outcome.accepted},{"reason",outcome.reason},
+      {"valid_job_reason",valid_job_reason},
+      {"backend_ms",m.backend_ms},{"solve_latency_ns",outcome.solve_latency_ns},
+      {"first_control",m.first_control},{"clamped_control",outcome.clamped_control},
+      {"worker_instance",m.worker_instance},
+      {"physical_output_enabled",false},{"closed_loop_verified",false},{"anchor_known",false},
+      {"receive_ns",now}});
+  }
+  void step_dry_run_tick(int64_t now){
+    if(!dry_run_active_||!dry_run_nav_)return;
+    std::string block_reason;
+    p1::Job j;
+    bool submit=false;
+    usv_mpc::ReferenceMetadata meta;
+    bool model_changed=false;
+    std::uint64_t target_tick=0;
+    {
+      std::lock_guard<std::mutex> l(c_mutex_);
+      const auto gate_now=p1::monotonic_ns();
+      block_reason=dry_run_nav_->nav_gate(gate_now);
+      if(block_reason=="ready"&&worker_instance_.empty())block_reason="waiting_worker_instance";
+      if(block_reason=="ready"){
+        const auto x_arr=dry_run_nav_->composed_state();
+        usv_mpc::Vector6d x;for(int i=0;i<6;++i)x[i]=x_arr[static_cast<size_t>(i)];
+        const auto ref=dry_run_ref_;
+        auto ref_mat=usv_mpc::build_frozen_reference(x,*ref,20,0.2,
+          c_.at("reference_start_offset").get<int>(),c_.at("cruise_speed").get<double>(),&meta);
+        if(!ref_mat.allFinite()){
+          block_reason="reference_nonfinite";
+        }else{
+          target_tick=dry_run_tick_++;
+          const auto selection=registry_.resolve(grid_,grid_,target_tick,model_options_);
+          if(!selection){
+            block_reason="model_plan_resolve:"+selection.reason;
+          }else{
+            if(dry_run_model_gen_!=selection.generation){
+              dry_run_model_gen_=selection.generation;
+              model_changed=true;
+            }
+            const auto & od=dry_run_nav_->odom();
+            const auto & im=dry_run_nav_->imu();
+            const int64_t freeze_now=p1::monotonic_ns();
+            const int64_t base_sim=std::max<int64_t>(0,od.stamp_ns);
+            j.schema_version="p1-solve-job-v1";j.run_id=run_;j.boot_id=boot_;
+            j.contract_hash=hash_;j.nominal_hash=nominal_;j.worker_instance=worker_instance_;
+            j.target_tick=target_tick;j.task_generation=od.seq;j.model_generation=selection.generation;
+            j.config_generation=1;j.schedule_generation=grid_.schedule_generation;
+            j.clock_epoch=grid_.clock_epoch;
+            j.tick_origin_steady_ns=freeze_now;j.freeze_steady_ns=freeze_now;
+            j.deadline_steady_ns=freeze_now+p1::DEADLINE;j.target_steady_ns=freeze_now+p1::T;
+            j.frozen_clock_sim_ns=base_sim;j.target_sim_ns=base_sim+p1::T;
+            j.frozen_clock_receive_ns=freeze_now;j.assumed_rtf=1.0;
+            j.odom_stamp_ns=od.stamp_ns;j.odom_receive_ns=od.receipt_ns;j.odom_sequence=od.seq;
+            j.imu_stamp_ns=im.stamp_ns;j.imu_receive_ns=im.receipt_ns;j.imu_sequence=im.seq;
+            j.r_from_imu=true;j.horizon_steps=20;j.prediction_dt=0.2;
+            for(int i=0;i<6;++i){j.frozen_state[i]=x[i];j.target_state[i]=x[i];}
+            std::copy(ref_mat.data(),ref_mat.data()+126,j.reference.begin());
+            j.anchor_source="dry_run_nominal_command";j.anchor_producer="";j.anchor_run_id=run_;
+            j.anchor_n=dry_run_nav_->nominal_continuity_n();
+            const auto a_seq=dry_run_nav_->nominal_anchor_seq();
+            const auto a_time=std::min(dry_run_nav_->nominal_anchor_time_ns(),freeze_now);
+            j.anchor_sequence={a_seq,a_seq};j.anchor_publish_ns={a_time,a_time};j.anchor_known={true,true};
+            j.reset_warmstart=std::abs(usv_mpc::normalize_angle(x[2]-ref_mat(2,0)))>M_PI*0.75;
+            j.job_id=dry_run_nav_->jobs_submitted()+1;
+            const auto res=p1::check_job_resources(j,resources_);
+            if(!res){
+              block_reason=std::string("job_resource_invalid:")+(res.reason?res.reason:"unknown");
+            }else{
+              dry_run_nav_->record_job_submitted();
+              dry_run_jobs_.push_back(j);
+              while(dry_run_jobs_.size()>16)dry_run_jobs_.pop_front();
+              last_dry_run_block_.clear();
+              submit=true;
+            }
+          }
+        }
+      }
+    }
+    if(submit){
+      if(model_changed){
+        sink_->add({{"type","model_version"},{"target_tick",target_tick},
+          {"model_generation",j.model_generation},{"processed_ns",j.freeze_steady_ns}});
+      }
+      const auto pub_start=p1::monotonic_ns();
+      bool pub_ok=false;
+      try{job_pub_->publish(j);pub_ok=true;}catch(...){pub_ok=false;}
+      const auto pub_end=p1::monotonic_ns();
+      sink_->add({{"type","dry_run_job"},{"job_id",j.job_id},{"target_tick",j.target_tick},
+        {"model_generation",j.model_generation},{"odom_seq",j.odom_sequence},{"imu_seq",j.imu_sequence},
+        {"reference_mode",meta.reference_mode},{"nearest_index",meta.nearest_index},
+        {"start_index",meta.start_index},{"anchor_n",j.anchor_n},
+        {"publish_start_ns",pub_start},{"publish_end_ns",pub_end},{"success",pub_ok},
+        {"physical_output_enabled",false},{"anchor_known",false}});
+      return;
+    }
+    if(block_reason!=last_dry_run_block_||now-last_dry_run_block_log_ns_>=1000000000LL){
+      last_dry_run_block_=block_reason;
+      last_dry_run_block_log_ns_=now;
+      sink_->add({{"type","dry_run_nav_blocked"},{"reason",block_reason},{"at_ns",now}});
+    }
+  }
   bool commission_monitor_alive()const{return !commission_rc_;}
   void commission_terminal(const char * reason){
     if(!commission_failure_.empty())return;
@@ -864,12 +1106,13 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
   }
   void commission_loop(){
     auto last_status=0LL;std::uint64_t seq=0;
+    auto next_tick=p1::monotonic_ns();
     while(!commission_stop_&&!finished_){
       const auto now=p1::monotonic_ns();
       bool terminal=false;std::string reason;
       p1_shipboard::WorkerFacts wf;
+      std::uint64_t jobs_count=0;
       {std::lock_guard<std::mutex> l(c_mutex_);
-       // worker 身份/存活只从 pidfd 事实来，不靠自报。
        wf.pid=expected_worker_pid_;
        wf.instance=worker_instance_;
        wf.model_runtime_ready=monitor_->capability().model_runtime_ready;
@@ -877,6 +1120,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
        wf.exited=!alive.empty()&&alive.find("exited")!=std::string::npos;
        monitor_->on_worker(wf);
        monitor_->evaluate(now,0);
+       if(dry_run_nav_)jobs_count=dry_run_nav_->jobs_submitted();
        if(monitor_->failed()){terminal=true;reason=monitor_->failure();}
        else if(sink_->failed()){terminal=true;reason=p1_shipboard::reason_log_failed;}
       }
@@ -885,21 +1129,30 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         std::lock_guard<std::mutex> l(c_mutex_);
         sink_->add({{"type","commissioning_failure"},{"reason",reason},{"failed_ns",p1::monotonic_ns()},
           {"phase",monitor_->phase()},{"finished",true},{"exit_code",2},
-          {"physical_output_enabled",false},{"jobs_submitted",0}});
+          {"physical_output_enabled",false},{"jobs_submitted",jobs_count}});
         break;
       }
       if(stop_requested){commission_rc_=0;finished_=true;
         std::lock_guard<std::mutex> l(c_mutex_);
         sink_->add({{"type","commissioning_stop"},{"reason","operator_stop"},
-          {"stopped_ns",p1::monotonic_ns()},{"phase","stopping"},{"exit_code",0}});
+          {"stopped_ns",p1::monotonic_ns()},{"phase","stopping"},{"exit_code",0},
+          {"jobs_submitted",jobs_count}});
         break;}
+      if(dry_run_active_&&monitor_->ready()){
+        step_dry_run_tick(now);
+      }
       if(now-last_status>=1000000000LL){
         last_status=now;
         auto counters=sink_->counters();
         p1::Json status;
         {std::lock_guard<std::mutex> l(c_mutex_);
          status=monitor_->status_json(now,++seq,p1::Json{{"run_id",run_},{"boot_id",boot_},
-           {"host_boot_id",p1::boot_id()},{"contract_hash",hash_},{"plan_sha256",plan_sha_}});}
+           {"host_boot_id",p1::boot_id()},{"contract_hash",hash_},{"plan_sha256",plan_sha_}});
+         if(dry_run_active_&&dry_run_nav_){
+           status["mode"]=mode_;
+           status["jobs_submitted"]=dry_run_nav_->jobs_submitted();
+           status["dry_run"]=dry_run_nav_->status_json(now);
+         }}
         status["source"]={{"generated",counters.generated},{"emitted",counters.emitted},
           {"dropped",counters.dropped},{"failed",counters.failed}};
         const auto text=status.dump();
@@ -907,12 +1160,19 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         std_msgs::msg::String msg;msg.data=text;
         try{status_pub_->publish(msg);}catch(...){commission_failure_=p1_shipboard::reason_log_failed;commission_rc_=2;finished_=true;break;}
       }
-      std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      if(dry_run_active_){
+        next_tick+=p1::T;
+        const auto wake=p1::monotonic_ns();
+        if(next_tick<wake)next_tick=wake+p1::T;
+        p1::sleep_until_monotonic(next_tick);
+      }else{
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+      }
     }
     if(commission_rc_==0)finished_=true;
   }
 
-  std::unique_ptr<p1_shipboard::Monitor> monitor_;std::thread commission_thread_;std::mutex c_mutex_;std::atomic<bool> commission_stop_{false},commission_active_{false};std::atomic<int> commission_rc_{0};std::string commission_failure_,plan_sha_,plan_file_text_;rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_;rclcpp::Subscription<mavros_msgs::msg::State>::SharedPtr c_state_;rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr c_odom_;rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr c_imu_;rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr c_path_;rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr c_profile_;rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr c_stop_;
+  std::unique_ptr<p1_shipboard::Monitor> monitor_;std::unique_ptr<p1_dry_run::DryRunCoordinator> dry_run_nav_;std::shared_ptr<usv_mpc::ReferenceInput> dry_run_ref_;std::deque<p1::Job> dry_run_jobs_;std::uint64_t dry_run_tick_=1,dry_run_model_gen_=0;std::string last_dry_run_block_;std::int64_t last_dry_run_block_log_ns_=0;std::thread commission_thread_;std::mutex c_mutex_;std::atomic<bool> commission_stop_{false},commission_active_{false},dry_run_active_{false};std::atomic<int> commission_rc_{0};std::string commission_failure_,plan_sha_,plan_file_text_;rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_;rclcpp::Subscription<mavros_msgs::msg::State>::SharedPtr c_state_;rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr c_odom_;rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr c_imu_;rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr c_path_;rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr c_profile_;rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr c_stop_;
   p1::Json c_;usv_mpc::MpcParams params_;p1::Limits limits_;std::string run_,hash_,mode_,boot_,nominal_,legacy_run_,legacy_producer_,worker_instance_,path_fingerprint_,profile_fingerprint_,recording_observer_;int64_t expected_worker_pid_=0;
   std::unique_ptr<p1::WorkerLiveness> worker_liveness_;
   std::unique_ptr<p1::PreparationBarrier> preparation_barrier_;std::atomic<bool> preparation_barrier_active_{false};

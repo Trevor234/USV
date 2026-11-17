@@ -1054,3 +1054,18 @@ def test_render_dropin_substitutes_use_ntrip_and_backend(tmp_path, monkeypatch):
     })
     assert ready["nav_ready"] is True
     assert ready["missing"] == []
+
+    args_dr = driver_module.parse_args([
+        "--release-root", release,
+        "--underlay", underlay,
+        "--operator-attestation", str(Path(evidence) / "operator-attestation.json"),
+        "--action", "takeover",
+        "--evidence-dir", str(tmp_path / "ev_dr"),
+        "--backend", "research_dry_run",
+        "--use-ntrip", "false",
+    ])
+    drv_dr = driver_module.Driver(args_dr, runner=FakeRunner(), token_path=str(tmp_path / "tok_dr"))
+    rendered_dr = drv_dr.render_dropin(ident)
+    assert "controller_backend:=research_dry_run" in rendered_dr
+    assert "use_ntrip:=false" in rendered_dr
+    assert "@" not in rendered_dr

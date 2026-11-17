@@ -178,10 +178,12 @@
       "sim_contract_value_ns": 100000000,
       "observed_odom_max_ms": 95.6941,
       "observed_clock_max_ms": 95.6356,
-      "shipboard_dry_run_odom_age_ns": 500000000,
-      "shipboard_dry_run_imu_age_ns": 250000000,
+      "stage1_live_mavros_8d20b39c_odom_max_ms": 397.79,
+      "stage1_live_mavros_8d20b39c_imu_max_ms": 200.06,
+      "shipboard_dry_run_odom_age_ns": 1000000000,
+      "shipboard_dry_run_imu_age_ns": 500000000,
       "shipboard_dry_run_state_age_ns": 2000000000,
-      "status": "calibrated_for_shipboard_dry_run"
+      "status": "calibrated_for_shipboard_dry_run_with_stage1_mavros_margin"
     },
     "RTF and pause": {
       "sim_contract_bounds": [0.95, 1.05],
