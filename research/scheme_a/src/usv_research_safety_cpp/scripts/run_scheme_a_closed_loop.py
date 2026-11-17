@@ -901,20 +901,26 @@ class Runner:
         controller.run(stop_hook)
 
     # -- 停止与排空 ------------------------------------------------------
-    def stop_all(self) -> None:
+    def stop_all(self, simultaneous: bool = False) -> None:
         grace = self.args.grace_s
+        targets = []
         for name in STOP_ORDER:
             proc = self.procs.get(name)
             if proc is None or proc.poll() is not None:
                 continue
             if not self.identity_matches(name, proc):
                 continue
+            targets.append((name, proc))
+
+        def _send_term(name: str, proc: subprocess.Popen) -> float:
             self.nodes[name]["stop_requested_ns"] = time.monotonic_ns()
             try:
                 os.killpg(os.getpgid(proc.pid), signal.SIGTERM)
             except ProcessLookupError:
                 pass
-            start = time.monotonic()
+            return time.monotonic()
+
+        def _reap(name: str, proc: subprocess.Popen, start: float) -> None:
             while time.monotonic() - start < grace:
                 if proc.poll() is not None:
                     break
@@ -928,6 +934,16 @@ class Runner:
                 self.fail(f"node_undead:{name}")
             proc.wait(timeout=10)
             self.nodes[name]["wait_ms"] = int((time.monotonic() - start) * 1000)
+
+        if simultaneous:
+            started = [(name, proc, _send_term(name, proc)) for name, proc in targets]
+            for name, proc, start in started:
+                _reap(name, proc, start)
+        else:
+            for name, proc in targets:
+                start = _send_term(name, proc)
+                _reap(name, proc, start)
+
         for name, proc in self.procs.items():
             if self.nodes[name]["rc"] is None:
                 self.nodes[name]["rc"] = proc.returncode
@@ -1514,11 +1530,12 @@ def main() -> int:
                 margin = 10_000_000
                 for _ in range(4):
                     phase = (time.monotonic_ns() - origin) % T_NS
+                    runner.stopped_at_phase_ns = phase
                     if abs(phase - target) < margin // 2:
                         break
-                    runner.stopped_at_phase_ns = phase
                     time.sleep(max(0.0, (target - phase) % T_NS) / 1e9)
-        runner.stop_all()
+                runner.stopped_at_phase_ns = (time.monotonic_ns() - origin) % T_NS
+        runner.stop_all(simultaneous=(args.stop_mode == "regulator_mid_window"))
         # 2) 停止节点之后才停采样：close phase 内的进程消失属于正常收尾。
         runner.sampler_stop.set()
         if runner.sampler_thread is not None:

@@ -1,0 +1,226 @@
+{
+  "schema": "p1-arm64-calibration-evidence-v1",
+  "release_id": "scheme-a-commissioning-20261117T030458Z",
+  "run_batch": "b1-seams-off-20261117T071005Z",
+  "build_config": {
+    "arch": "aarch64",
+    "usv_research_test_seams": "OFF",
+    "ros_domain_id": 224
+  },
+  "scenarios": {
+    "no_command_free_evolution": {
+      "checker_verdict": "PASS",
+      "checks": 11,
+      "failures": 0,
+      "clock_gap_status": "complete",
+      "clock_gap_observed": false
+    },
+    "pre_switch": {
+      "checker_verdict": "PASS",
+      "checks": 11,
+      "failures": 0,
+      "clock_gap_status": "complete",
+      "clock_gap_observed": false
+    },
+    "model_switch": {
+      "checker_verdict": "PASS",
+      "checks": 11,
+      "failures": 0,
+      "clock_gap_status": "complete",
+      "clock_gap_observed": false
+    },
+    "late_command": {
+      "checker_verdict": "PASS",
+      "checks": 11,
+      "failures": 0,
+      "clock_gap_status": "complete",
+      "clock_gap_observed": false
+    },
+    "duplicate_command": {
+      "checker_verdict": "PASS",
+      "checks": 11,
+      "failures": 0,
+      "clock_gap_status": "complete",
+      "clock_gap_observed": false
+    },
+    "hold_expiry": {
+      "checker_verdict": "PASS",
+      "checks": 11,
+      "failures": 0,
+      "clock_gap_status": "complete",
+      "clock_gap_observed": false
+    },
+    "stop_truncation_fix": {
+      "checker_verdict": "PASS",
+      "checks": 11,
+      "failures": 0,
+      "clock_gap_status": "complete",
+      "clock_gap_observed": false,
+      "note": "Initial stop_truncation failed intermittently with stop_hold_close_missing because sequential stop_all took ~341 ms > 200 ms T_ns; fixed with simultaneous SIGTERM at T_ns/2."
+    },
+    "worker_expiry": {
+      "seams_off_applicable": false,
+      "reason": "Injects --worker-block-ms 250 requiring USV_RESEARCH_TEST_SEAMS=ON; verified PASS in SEAMS=ON batch scheme-a-8scenarios-20261116T131548Z and C++ test_p1_engine_session."
+    }
+  },
+  "telemetry": {
+    "solve_ms": {
+      "count": 161,
+      "min": 0.5596,
+      "p50": 0.74,
+      "p95": 1.8447,
+      "max": 5.1172
+    },
+    "worker_rt_ms": {
+      "count": 161,
+      "min": 0.9258,
+      "p50": 1.2328,
+      "p95": 4.0037,
+      "max": 13.0329
+    },
+    "job_pub_ms": {
+      "count": 161,
+      "min": 0.0426,
+      "p50": 0.0693,
+      "p95": 0.1752,
+      "max": 0.7335
+    },
+    "cand_pub_ms": {
+      "count": 161,
+      "min": 0.07,
+      "p50": 0.1198,
+      "p95": 0.3895,
+      "max": 2.9706
+    },
+    "odom_age_ms": {
+      "count": 185,
+      "min": 4.1655,
+      "p50": 12.3801,
+      "p95": 45.7268,
+      "max": 95.6941
+    },
+    "clock_age_ms": {
+      "count": 185,
+      "min": 4.2533,
+      "p50": 13.7254,
+      "p95": 45.6735,
+      "max": 95.6356
+    },
+    "obs_rho_N_s": {
+      "count": 178,
+      "min": 0.0,
+      "p50": 1.312,
+      "p95": 6.1505,
+      "max": 16.0026
+    },
+    "rtf": {
+      "count": 792,
+      "min": 0.9885,
+      "p50": 1.0004,
+      "p95": 1.0033,
+      "max": 1.0225
+    },
+    "tick_jitter_abs_ms": {
+      "count": 185,
+      "min": 0.0142,
+      "p50": 0.0634,
+      "p95": 0.1416,
+      "max": 1.9827
+    },
+    "decision_publish_ms": {
+      "count": 184,
+      "min": 0.037,
+      "p50": 0.0967,
+      "p95": 0.1804,
+      "max": 2.4544
+    },
+    "max_abs_state_error": [
+      0.007293,
+      0.000417,
+      0.005439,
+      0.052398,
+      0.004472,
+      0.038701
+    ],
+    "cap_startup_to_first_admission_ms": {
+      "count": 6,
+      "min": 311.4699,
+      "p50": 490.1698,
+      "p95": 554.7059,
+      "max": 574.0335
+    },
+    "cap_renewal_interval_ms": {
+      "count": 215,
+      "min": 27.5887,
+      "p50": 200.0186,
+      "p95": 201.4908,
+      "max": 202.946
+    }
+  },
+  "pending_final_calibration_resolution": {
+    "rho_n_s": {
+      "sim_contract_value": 80,
+      "observed_max_n_s": 16.0026,
+      "shipboard_dry_run_value": 80,
+      "status": "calibrated_sim_verified_hardware_pending_c"
+    },
+    "hold_ns": {
+      "sim_contract_value": 600000000,
+      "shipboard_dry_run_value": null,
+      "status": "calibrated_sim_verified_not_applicable_to_dry_run"
+    },
+    "activation_tolerance": {
+      "sim_contract_value": [0.25, 0.25, 0.15, 0.3, 0.2, 0.15],
+      "observed_max_abs_error": [0.007293, 0.000417, 0.005439, 0.052398, 0.004472, 0.038701],
+      "status": "calibrated_sim_verified_hardware_pending_c"
+    },
+    "source ages": {
+      "sim_contract_value_ns": 100000000,
+      "observed_odom_max_ms": 95.6941,
+      "observed_clock_max_ms": 95.6356,
+      "shipboard_dry_run_odom_age_ns": 500000000,
+      "shipboard_dry_run_imu_age_ns": 250000000,
+      "shipboard_dry_run_state_age_ns": 2000000000,
+      "status": "calibrated_for_shipboard_dry_run"
+    },
+    "RTF and pause": {
+      "sim_contract_bounds": [0.95, 1.05],
+      "observed_rtf_range": [0.9885, 1.0225],
+      "clock_pause_confirm_ns": 400000000,
+      "status": "calibrated_sim_verified_monotonic_wallclock_for_dry_run"
+    },
+    "jitter/gap/publish": {
+      "sim_contract_limits_ns": {
+        "tick_jitter_ns": 20000000,
+        "publish_budget_ns": 5000000,
+        "publish_gap_ns": 240000000,
+        "deadline_ns": 150000000
+      },
+      "observed_max_ms": {
+        "tick_jitter_abs": 1.9827,
+        "decision_publish": 2.4544,
+        "solve": 5.1172,
+        "worker_rt": 13.0329
+      },
+      "status": "calibrated_arm64_verified"
+    },
+    "watchdog and cleanup": {
+      "sim_contract_limits_ns": {
+        "active_watchdog_ns": 1000000000,
+        "term_grace_ns": 1000000000,
+        "worker_grace_ns": 500000000,
+        "shutdown_grace_ns": 2500000000,
+        "kill_postcheck_ns": 1000000000
+      },
+      "observed_max_exit_wait_ms": 282,
+      "status": "calibrated_arm64_verified"
+    },
+    "worker capability validated callback receipt lease; no source packet sequence/send time": {
+      "sim_contract_timeout_ns": 600000000,
+      "observed_cold_admission_max_ms": 574.0335,
+      "observed_renewal_max_ms": 202.946,
+      "shipboard_dry_run_timeout_ns": 1000000000,
+      "status": "calibrated_raised_to_1000ms_after_574ms_arm64_cold_start"
+    }
+  }
+}
