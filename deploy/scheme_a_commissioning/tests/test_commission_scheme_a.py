@@ -666,6 +666,8 @@ def test_rollback_verifies_b_t0_sleep_t60_without_overwrite(tmp_path, monkeypatc
     )
     monkeypatch.setattr(driver, "cgroup_pids", lambda unit: [])
     monkeypatch.setattr(driver, "serial_holders", lambda: {})
+    monkeypatch.setattr(driver_module, "B_STARTUP_SECONDS", 0.01)
+    monkeypatch.setattr(driver_module, "B_SETTLE_SECONDS", 0.0)
     monkeypatch.setattr(driver_module, "ACCEPTANCE_SECONDS", 0.01)
 
     assert driver.action_rollback() == driver_module.EXIT_OK
@@ -674,3 +676,93 @@ def test_rollback_verifies_b_t0_sleep_t60_without_overwrite(tmp_path, monkeypatc
     assert capture_calls[1][0] == "rollback-t60.json"
     assert capture_calls[1][1] and capture_calls[1][1].endswith("rollback-t0.json")
     assert not (run_units / "usv-system.service.d" / "31-scheme-a-rollback-no-restart.conf").exists()
+
+
+def test_runner_resolves_runuser_from_sbin_when_env_path_is_minimal():
+    if not os.path.exists("/usr/sbin/runuser") and not os.path.exists("/sbin/runuser"):
+        pytest.skip("runuser not installed on this host")
+    runner = driver_module.Runner()
+    res = runner.run(["runuser", "--version"], timeout=10, env={"PATH": "/usr/local/bin:/usr/bin:/bin"})
+    assert res["rc"] == 0, res
+    assert "runuser" in res["stdout"]
+
+
+def test_ros_env_collects_package_python_and_lib_dirs(tmp_path):
+    release = tmp_path / "rel"
+    underlay = tmp_path / "underlay"
+    (release / "install" / "usv_bringup" / "lib" / "python3.12" / "site-packages").mkdir(parents=True)
+    (release / "install" / "usv_acados" / "lib").mkdir(parents=True)
+    (underlay / "usv_nmpc" / "lib").mkdir(parents=True)
+    args = driver_module.parse_args([
+        "--release-root", str(release),
+        "--underlay", str(underlay),
+        "--operator-attestation", str(release / "evidence" / "operator-attestation.json"),
+        "--action", "check-start",
+    ])
+    driver = driver_module.Driver(args, runner=FakeRunner())
+    env = driver.ros_env({"ros_domain_id": 0, "dds_profile_path": "/dev/null"})
+    assert str(release / "install" / "usv_bringup" / "lib" / "python3.12" / "site-packages") in env["PYTHONPATH"].split(":")
+    assert str(release / "install" / "usv_acados" / "lib") in env["LD_LIBRARY_PATH"].split(":")
+    assert str(underlay / "usv_nmpc" / "lib") in env["LD_LIBRARY_PATH"].split(":")
+    assert str(underlay / "usv_nmpc") in env["AMENT_PREFIX_PATH"].split(":")
+    if os.path.isdir("/opt/ros/jazzy/lib"):
+        assert "/opt/ros/jazzy" in env["AMENT_PREFIX_PATH"].split(":")
+        assert any(p.startswith("/opt/ros/jazzy/lib/python") for p in env["PYTHONPATH"].split(":"))
+
+
+def test_rollback_waits_for_b_mpc_node_and_backend_log_before_t0(tmp_path, monkeypatch):
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    units = tmp_path / "units"
+    run_units = tmp_path / "run_units"
+    (units / "usv-system.service.d").mkdir(parents=True)
+    (units / "usv-system.service.d" / "30-scheme-a-commissioning.conf").write_text("[Service]\nRestart=no\n")
+
+    timeline = []
+    polls = {"count": 0}
+
+    class WaitBRunner(FakeRunner):
+        def run(self, argv, timeout=60, env=None, check=False):
+            if argv[0] == "journalctl":
+                self.calls.append(list(argv))
+                timeline.append(("journalctl", polls["count"]))
+                out = "backend=acados\n" if polls["count"] >= 2 else "starting...\n"
+                return {"argv": list(argv), "rc": 0, "stdout": out, "stderr": ""}
+            if argv[0] == "runuser" and "capture_release_identity.py" in " ".join(argv):
+                self.calls.append(list(argv))
+                out_path = argv[argv.index("--output") + 1]
+                timeline.append(("capture", os.path.basename(out_path), polls["count"]))
+                with open(out_path, "w", encoding="utf-8") as handle:
+                    json.dump({"identity_ok": True}, handle)
+                return {"argv": list(argv), "rc": 0, "stdout": "", "stderr": ""}
+            return super().run(argv, timeout=timeout, env=env, check=check)
+
+    runner = WaitBRunner(
+        service_states={"usv-system.service": {
+            "ActiveState": "active", "MainPID": "2200", "NRestarts": "0",
+            "InvocationID": "b-inv-42", "Restart": "always",
+            "ControlGroup": "/system.slice/usv-system.service"}},
+        unit_dir=str(units), runtime_unit_dir=str(run_units),
+    )
+    driver = driver_module.Driver(
+        make_args(monkeypatch, release, underlay, evidence, "rollback"),
+        runner=runner, unit_dir=str(units), runtime_unit_dir=str(run_units),
+        token_path=str(tmp_path / "token"), lock_path=str(tmp_path / "lock"),
+    )
+
+    def fake_pids(unit):
+        if runner.service_states["usv-system.service"].get("ActiveState") != "active":
+            return []
+        polls["count"] += 1
+        return [] if polls["count"] == 1 else [9001]
+
+    orig_readlink = os.readlink
+    monkeypatch.setattr(driver, "cgroup_pids", fake_pids)
+    monkeypatch.setattr(driver, "serial_holders", lambda: {})
+    monkeypatch.setattr(os, "readlink", lambda p: "/opt/usv/lib/usv_nmpc/mpc_node" if p == "/proc/9001/exe" else orig_readlink(p))
+    monkeypatch.setattr(driver_module, "B_STARTUP_SECONDS", 5.0)
+    monkeypatch.setattr(driver_module, "B_SETTLE_SECONDS", 0.0)
+    monkeypatch.setattr(driver_module, "ACCEPTANCE_SECONDS", 0.01)
+
+    assert driver.action_rollback() == driver_module.EXIT_OK
+    t0_event = [item for item in timeline if item[0] == "capture" and item[1] == "rollback-t0.json"][0]
+    assert t0_event[2] >= 2

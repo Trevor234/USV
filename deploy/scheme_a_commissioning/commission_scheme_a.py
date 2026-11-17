@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import argparse
+import glob
 import hashlib
 import json
 import os
@@ -43,8 +44,11 @@ TOKEN_PATH = "/run/usv-scheme-a-commissioning-authorized"
 LOCK_PATH = "/run/lock/usv-scheme-a-commissioning.lock"
 STATE_GATE_SECONDS = 10.0
 STARTUP_SECONDS = 30.0
+B_STARTUP_SECONDS = STARTUP_SECONDS
+B_SETTLE_SECONDS = 2.0
 ACCEPTANCE_SECONDS = 60.0
 STOP_TIMEOUT_SECONDS = 20.0
+SAFE_SYSTEM_PATH = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ATTESTATION_REQUIRED_FLAGS = ("vessel_secured", "no_mission", "propulsion_power_isolated",
                               "local_emergency_stop_available")
 
@@ -79,11 +83,28 @@ def host_boot_id() -> str:
         return handle.read().decode().strip()
 
 
+def _collect_unique_dirs(patterns: tuple[str, ...] | list[str]) -> list[str]:
+    seen: list[str] = []
+    for pattern in patterns:
+        for match in sorted(glob.glob(pattern)):
+            base = os.path.basename(match)
+            if base.startswith("."):
+                continue
+            if os.path.isdir(match) and match not in seen:
+                seen.append(match)
+    return seen
+
+
 class Runner:
     """可替换的命令执行器：测试用它验证"外部效果"，而不是读源码字符串。"""
 
     def run(self, argv, timeout=60, env=None, check=False):
-        completed = subprocess.run(argv, capture_output=True, timeout=timeout,
+        cmd = list(argv)
+        if env is not None and cmd and not os.path.isabs(cmd[0]):
+            resolved = shutil.which(cmd[0]) or shutil.which(cmd[0], path=SAFE_SYSTEM_PATH)
+            if resolved:
+                cmd[0] = resolved
+        completed = subprocess.run(cmd, capture_output=True, timeout=timeout,
                                    check=False, env=env)
         result = {
             "argv": list(argv),
@@ -533,6 +554,28 @@ class Driver:
 
     # ------------------------------------------------------------ ROS 探测
     def ros_env(self, identity: dict) -> dict:
+        rel_install = os.path.join(self.release_root, "install")
+        ros_root = "/opt/ros/jazzy"
+        ament_prefixes = _collect_unique_dirs([
+            os.path.join(rel_install, "*"),
+            os.path.join(self.underlay, "*"),
+            ros_root,
+        ]) or [self.underlay, rel_install]
+        python_paths = _collect_unique_dirs([
+            os.path.join(rel_install, "*", "lib", "python*", "site-packages"),
+            os.path.join(self.underlay, "*", "lib", "python*", "site-packages"),
+            os.path.join(rel_install, "lib", "python*", "site-packages"),
+            os.path.join(self.underlay, "lib", "python*", "site-packages"),
+            os.path.join(ros_root, "lib", "python*", "site-packages"),
+        ])
+        ld_paths = _collect_unique_dirs([
+            os.path.join(rel_install, "*", "lib"),
+            os.path.join(self.underlay, "*", "lib"),
+            "/home/trevor/acados/lib",
+            os.path.join(ros_root, "lib", "*-linux-gnu"),
+            os.path.join(ros_root, "lib"),
+        ]) or [os.path.join(rel_install, "usv_acados", "lib"),
+               os.path.join(self.underlay, "usv_acados", "lib")]
         env = {
             "HOME": "/home/trevor",
             "USER": "trevor",
@@ -543,11 +586,12 @@ class Driver:
             "ROS_AUTOMATIC_DISCOVERY_RANGE": "SUBNET",
             "FASTDDS_DEFAULT_PROFILES_FILE": identity["dds_profile_path"],
             "FASTRTPS_DEFAULT_PROFILES_FILE": identity["dds_profile_path"],
-            "AMENT_PREFIX_PATH": ":".join([self.underlay, self.release_root + "/install"]),
-            "LD_LIBRARY_PATH": ":".join([self.release_root + "/install/usv_acados/lib",
-                                         self.underlay + "/usv_acados/lib"]),
+            "AMENT_PREFIX_PATH": ":".join(ament_prefixes),
+            "LD_LIBRARY_PATH": ":".join(ld_paths),
             "PYTHONDONTWRITEBYTECODE": "1",
         }
+        if python_paths:
+            env["PYTHONPATH"] = ":".join(python_paths)
         return env
 
     def probe_state(self, identity: dict, seconds: float) -> dict:
@@ -813,12 +857,48 @@ class Driver:
         finally:
             self.persist()
 
+    def _wait_for_original_b_ready(self) -> None:
+        """等待原方案 B 恢复至 mpc_node 在位且后端日志就绪后，再采 rollback-t0（应对 3s TimerAction）。"""
+        deadline = time.time() + B_STARTUP_SECONDS
+        while time.time() < deadline:
+            state = self.service_state(UNIT)
+            active = state.get("ActiveState", "")
+            if active in ("failed", "inactive", "deactivating"):
+                return
+            if active == "active":
+                has_mpc = False
+                for pid in self.cgroup_pids(UNIT):
+                    try:
+                        exe = os.readlink(f"/proc/{pid}/exe")
+                    except OSError:
+                        continue
+                    if os.path.basename(exe.removesuffix(" (deleted)")) == "mpc_node":
+                        has_mpc = True
+                        break
+                if has_mpc:
+                    inv_id = (state.get("InvocationID") or "").strip()
+                    if inv_id:
+                        jres = self.runner.run(
+                            ["journalctl", "-u", UNIT,
+                             f"_SYSTEMD_INVOCATION_ID={inv_id}",
+                             "--since", "-5min", "--no-pager", "-o", "cat"],
+                            timeout=10,
+                        )
+                        if "backend=" in (jres.get("stdout") or ""):
+                            time.sleep(B_SETTLE_SECONDS)
+                            return
+                    else:
+                        time.sleep(B_SETTLE_SECONDS)
+                        return
+            time.sleep(0.5)
+
     def _verify_original_b(self, identity: dict) -> dict:
         problems = []
         capture = os.path.join(self.release_root, "deploy", "capture_release_identity.py")
         out_dir = self.probe_dir or self.transaction_dir
         t0 = os.path.join(out_dir, "rollback-t0.json")
         t60 = os.path.join(out_dir, "rollback-t60.json")
+        self._wait_for_original_b_ready()
         result_t0 = self.runner.run(
             ["runuser", "-u", "trevor", "--", "/usr/bin/python3", "-B", capture,
              "runtime", "--expected-install", self.underlay, "--output", t0],
