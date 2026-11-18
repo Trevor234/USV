@@ -96,13 +96,25 @@ struct StageResidualEvalResult
   std::uint32_t ood_stage_count = 0;
 };
 
+/// Research-only exact physics residual specification for R1 Oracle upper-bound
+/// experiments (`exact_res(x, u) = RK4_actual(x, u) - RK4_nominal(x, u)`).
+struct OracleHydroSpec
+{
+  bool enabled = false;
+  usv_mpc::HydroParams nominal{};
+  usv_mpc::HydroParams actual{};
+  double dt = 0.2;
+  int rk4_substeps = 4;
+};
+
 /// Evaluate GP model along k=0..19 for trajectory (traj_x: 6x21, traj_u: 2x20).
 /// Terminal slot k=20 (indices 60..62) is always zeroed as specified by WP6.
 StageResidualEvalResult evaluate_gp_horizon(
     const p1_gp::GpResidualModel & model,
     const Eigen::MatrixXd & traj_x,
     const Eigen::MatrixXd & traj_u,
-    bool ood_fallback_zero = true);
+    bool ood_fallback_zero = true,
+    const OracleHydroSpec * oracle = nullptr);
 
 /// Build a physically consistent 6x21 / 2x20 trajectory guess for GP evaluation,
 /// either by shifting a nearby previous accepted MPC trajectory or rolling out
@@ -122,6 +134,7 @@ void build_gp_rollout_guess(
     const Eigen::MatrixXd * prev_u,
     int tick_shift,
     Eigen::MatrixXd & out_x,
-    Eigen::MatrixXd & out_u);
+    Eigen::MatrixXd & out_u,
+    const OracleHydroSpec * oracle = nullptr);
 
 }  // namespace p1_gp_snap

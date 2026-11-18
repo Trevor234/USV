@@ -1,5 +1,6 @@
 // Copyright 2026 USV Developer
 // SPDX-License-Identifier: MIT
+#include <algorithm>
 #include <atomic>
 #include <condition_variable>
 #include <csignal>
@@ -7,6 +8,7 @@
 #include <mutex>
 #include <optional>
 #include <thread>
+#include <vector>
 #include <rclcpp/rclcpp.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
@@ -22,6 +24,7 @@
 #include "usv_research_interfaces/msg/plant_receipt.hpp"
 #include "usv_research_interfaces/msg/plant_hold_close.hpp"
 #include "p1_receipt_anchor.hpp"
+#include "plant/p1_plant_model_loader.hpp"
 #include "usv_nmpc/p1_input_core.hpp"
 #include "protocol.hpp"
 #include "p1_model_reference.hpp"
@@ -97,9 +100,29 @@ class Regulator final:public rclcpp::Node {
      const auto gp_sched_file=declare_parameter<std::string>("gp_schedule_file","");
      const auto gp_sched_sha=declare_parameter<std::string>("gp_schedule_sha256","");
      gp_allow_ood_fallback_zero_=declare_parameter<bool>("gp_allow_ood_fallback_zero",true);
+     oracle_plant_file_=declare_parameter<std::string>("oracle_plant_file","");
+     align_tick_to_plant_origin_=declare_parameter<bool>("align_tick_to_plant_origin",false);
+     tick_phase_offset_ns_=declare_parameter<int64_t>("tick_phase_offset_ns",10000000LL);
+     if(tick_phase_offset_ns_<0||tick_phase_offset_ns_>=p1::T)
+       throw std::runtime_error("tick_phase_offset_ns must be in [0, T)");
      nominal_hydro_sha_=p1_gp_snap::canonical_nominal_hydro_sha256(params_.hydro,params_.dt,4);
-     gp_registry_=p1_gp_snap::GpSnapshotRegistry::initialize_from_params(
-         gp_snap_file,gp_snap_sha,gp_sched_file,gp_sched_sha,nominal_hydro_sha_);
+     if(!oracle_plant_file_.empty()){
+       if(mode_!="controlled_sim")
+         throw std::runtime_error("oracle_plant_file is restricted to controlled_sim");
+       if(!gp_snap_file.empty()||!gp_sched_file.empty())
+         throw std::runtime_error("oracle_plant_file cannot be combined with gp_snapshot/schedule");
+       const auto loaded=p1_plant::load_plant_hydro(params_.hydro,oracle_plant_file_);
+       oracle_spec_.enabled=true;
+       oracle_spec_.nominal=params_.hydro;
+       oracle_spec_.actual=loaded.plant_actual;
+       oracle_spec_.dt=params_.dt;
+       oracle_spec_.rk4_substeps=4;
+       oracle_actual_sha_=p1::digest(p1_plant::hydro_to_json(loaded.plant_actual).dump());
+       gp_registry_=p1_gp_snap::GpSnapshotRegistry::create_zero_only(nominal_hydro_sha_);
+     }else{
+       gp_registry_=p1_gp_snap::GpSnapshotRegistry::initialize_from_params(
+           gp_snap_file,gp_snap_sha,gp_sched_file,gp_sched_sha,nominal_hydro_sha_);
+     }
      ppo_enabled_=declare_parameter<bool>("ppo_enabled",false);
      ppo_lambda_pi_=declare_parameter<double>("ppo_lambda_pi",0.0);
      if(!std::isfinite(ppo_lambda_pi_)||ppo_lambda_pi_<0.0)
@@ -203,7 +226,40 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     a.time={receipts_.anchor_steady_ns(),receipts_.anchor_steady_ns()};
     a.known={true,true};
     return a;}
-  Snapshot snapshot_locked(int64_t now){Snapshot s;s.state=state_;s.ref=ref_;s.history.assign(history_.begin(),history_.end());s.anchor=anchor_;if(mode_=="controlled_sim"){s.anchor=receipt_anchor();}s.publication_history=publication_history_;s.version=version_;s.odom_seq=odom_seq_;s.imu_seq=imu_seq_;s.odom_stamp=odom_stamp_;s.imu_stamp=imu_stamp_;s.odom_receive=odom_receive_;s.imu_receive=imu_receive_;s.clock_receive=clock_receive_;s.sim=sim_;s.freeze=now;s.mixed=mixed_;s.paused=paused_;s.rtf_valid=rtf_valid_;s.rtf=rtf_;s.anchor_source=mode_=="shadow"?"legacy_publisher":mode_=="execute"?"regulator_publisher":"synthetic_static_fixture";s.anchor_producer=mode_=="shadow"?legacy_producer_:p1::digest(run_+boot_+std::to_string(getpid()));s.anchor_run=mode_=="shadow"?legacy_run_:run_;return s;}
+  Snapshot snapshot_locked(int64_t now){Snapshot s;s.state=state_;s.ref=ref_;s.history.assign(history_.begin(),history_.end());s.anchor=anchor_;
+    if(mode_=="controlled_sim"){
+      s.anchor=receipt_anchor();
+      const std::int64_t origin=receipts_.steady_origin_ns();
+      struct TimedHeld{std::int64_t sim_ns;int close_prio;int ch;double val;};
+      std::vector<TimedHeld> evs;
+      const auto held=receipts_.held_events();
+      evs.reserve(held.size()+declared_history_.size()*4);
+      for(std::size_t idx=0;idx<held.size();++idx){
+        const auto & e=held[idx];
+        const int close_prio=(idx%2==0)?1:0;  // 0=close before 1=begin at same timestamp
+        evs.push_back({e.steady_ns-origin,close_prio,e.channel,e.n});
+      }
+      if(!held.empty()){
+        for(const auto & d:declared_history_){
+          if(!d.valid||d.end_ns<=d.begin_ns||d.sequence<=last_controlled_receipt_seq_)continue;
+          for(int ch=0;ch<2;++ch){
+            evs.push_back({d.begin_ns-origin,1,ch,d.thrust[ch]});
+            evs.push_back({d.end_ns-origin,0,ch,0.0});
+          }
+        }
+      }
+      std::sort(evs.begin(),evs.end(),[](const TimedHeld & a,const TimedHeld & b){
+        if(a.sim_ns!=b.sim_ns)return a.sim_ns<b.sim_ns;
+        if(a.close_prio!=b.close_prio)return a.close_prio<b.close_prio;
+        return a.ch<b.ch;
+      });
+      const std::size_t hist_cap=std::min<std::size_t>(256,c_.at("history_capacity").get<std::size_t>());
+      const std::size_t drop=evs.size()>hist_cap?(evs.size()-hist_cap):0;
+      s.history.clear();
+      s.history.reserve(evs.size()-drop);
+      for(std::size_t idx=drop;idx<evs.size();++idx)s.history.push_back({evs[idx].sim_ns,evs[idx].ch,evs[idx].val});
+    }
+    s.publication_history=publication_history_;s.version=version_;s.odom_seq=odom_seq_;s.imu_seq=imu_seq_;s.odom_stamp=odom_stamp_;s.imu_stamp=imu_stamp_;s.odom_receive=odom_receive_;s.imu_receive=imu_receive_;s.clock_receive=clock_receive_;s.sim=sim_;s.freeze=now;s.mixed=mixed_;s.paused=paused_;s.rtf_valid=rtf_valid_;s.rtf=rtf_;s.anchor_source=mode_=="shadow"?"legacy_publisher":mode_=="execute"?"regulator_publisher":"synthetic_static_fixture";s.anchor_producer=mode_=="shadow"?legacy_producer_:p1::digest(run_+boot_+std::to_string(getpid()));s.anchor_run=mode_=="shadow"?legacy_run_:run_;return s;}
   // require_committed_execution：受控仿真里"锚点必须有真实执行窗口支撑"。
   // 这条只约束**接受候选**；准备下一拍的求解只需要感知/时钟/锚点链完整，
   // 否则刚发布完命令就永远把自己判成 plant_not_executing。
@@ -339,7 +395,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     diag_emit(diag_callbacks_.get(),p1_clock_diag::Record(p1_clock_diag::kClockCallbackLocked,p1_clock_diag::kRegulatorCallbacks,p1_clock_diag::monotonic_ns()).call(dcall).kind(p1_clock_diag::kKindClock).sim(s).nums(sim_,clock_receive_).ident(static_cast<std::uint64_t>(last_clock_advance_),0).schedule(version_.schedule,grid_.schedule_generation,version_.epoch));
     if(clock_receive_&&(s<sim_||s-sim_>5000000000LL)){
       diag_emit(diag_callbacks_.get(),p1_clock_diag::Record(p1_clock_diag::kClockEpochChange,p1_clock_diag::kRegulatorCallbacks,p1_clock_diag::monotonic_ns()).call(dcall).kind(p1_clock_diag::kKindClock).sim(s).nums(sim_,clock_receive_).ident(static_cast<std::uint64_t>(last_clock_advance_),5000000000ULL).schedule(version_.schedule,grid_.schedule_generation,version_.epoch));
-      version_.epoch++;version_.schedule++;clock_window_.reset();rtf_valid_=false;rtf_=0;history_.clear();publication_history_.clear();anchor_.known={false,false};invalidate_locked();}
+      version_.epoch++;version_.schedule++;clock_window_.reset();rtf_valid_=false;rtf_=0;history_.clear();publication_history_.clear();declared_history_.clear();anchor_.known={false,false};invalidate_locked();}
     if(s!=sim_){const bool was_paused=paused_;const std::int64_t advance_before=last_clock_advance_;last_clock_advance_=now;if(paused_){paused_=false;version_.schedule++;invalidate_locked();}
       if(was_paused)diag_emit(diag_callbacks_.get(),p1_clock_diag::Record(p1_clock_diag::kResume,p1_clock_diag::kRegulatorCallbacks,p1_clock_diag::monotonic_ns()).call(dcall).kind(p1_clock_diag::kKindClock).sim(s).nums(sim_,advance_before).ident(static_cast<std::uint64_t>(last_clock_advance_),0).schedule(version_.schedule,grid_.schedule_generation,version_.epoch));}
     sim_=s;clock_receive_=now;
@@ -398,6 +454,12 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     const auto result=receipts_.accept(facts);
     // 任何处置都终结这一条命令的 pending 状态；否则一条 late 回执会把
     // command_pending_ 永久钉住，后续每一拍都判 plant_not_executing。
+    if(m.disposition!="duplicate"&&m.sequence>0){
+      if(m.sequence>last_controlled_receipt_seq_)last_controlled_receipt_seq_=m.sequence;
+      while(!declared_history_.empty()&&declared_history_.front().sequence<=last_controlled_receipt_seq_){
+        declared_history_.pop_front();
+      }
+    }
     if(m.sequence>=pending_sequence_&&pending_sequence_>0)command_pending_=false;
     if(m.disposition=="ok"&&result.accepted){
       // 执行事实由回执决定：anchor 与 held-history 都从真实区间派生。
@@ -472,21 +534,13 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     sink_->add({{"type","anchor_validation"},{"sequence",d.sequence},{"job_id",t.id},{"mode",mode_},{"producer",legacy_producer_},{"run_id",legacy_run_},{"clock_epoch",version_.epoch},{"check_ns",d.activation_commit_ns},{"expected_n",t.anchor.n},{"expected_sequence",t.anchor.seq},{"expected_publish_ns",t.anchor.time},{"expected_known",t.anchor.known},{"actual_n",anchor_.n},{"actual_sequence",anchor_.seq},{"actual_publish_ns",anchor_.time},{"actual_known",anchor_.known},{"entries",entries},{"history_reason",p1::publication_history_check(t.anchor,anchor_,publication_history_)},{"decision_reason",d.reason},{"candidate_accepted",d.candidate_accepted},{"accepted",d.candidate_accepted}});
   }
   void push_history_locked(const usv_mpc::HeldInputEvent & e){if(!history_.empty()&&e.sim_ns<history_.back().sim_ns){history_.clear();publication_history_.clear();anchor_.known={false,false};invalidate_locked();return;}history_.push_back(e);while(history_.size()>c_.at("history_capacity").get<size_t>())history_.pop_front();}
-  struct Declared {bool valid=false;std::int64_t begin_ns=0,end_ns=0;double thrust[2]{0,0};};
-  bool predict(Snapshot & s,int64_t target_sim){Eigen::Vector2d initial(s.anchor.n[0],s.anchor.n[1]);std::array<bool,2> found{false,false};std::vector<usv_mpc::HeldInputEvent> receipt_history;const std::vector<usv_mpc::HeldInputEvent> * history_source=&s.history;
-    if(mode_=="controlled_sim"){const std::int64_t origin=receipts_.steady_origin_ns();
-      // hold 事件是稳态时刻；传播历史要的是仿真时刻（odom/sim 同一原点）。
-      for(const auto & e:receipts_.held_events())receipt_history.push_back({e.steady_ns-origin,e.channel,e.n});
-      // 已声明、尚未走完的窗口是**已经在执行的输入**：不把它并入历史，
-      // 候选就会按"窗口内为零推力"做预测，接受时与 plant 的实际回执不符。
-      if(declared_.valid&&declared_.end_ns>declared_.begin_ns){
-        for(int ch=0;ch<2;++ch){
-          receipt_history.push_back({declared_.begin_ns-origin,ch,declared_.thrust[ch]});
-          receipt_history.push_back({declared_.end_ns-origin,ch,0.0});}}
-      history_source=&receipt_history;}
-    const auto & hist = *history_source;
+  struct Declared {bool valid=false;std::uint64_t sequence=0;std::int64_t begin_ns=0,end_ns=0;double thrust[2]{0,0};};
+  bool predict(Snapshot & s,int64_t target_sim){Eigen::Vector2d initial(s.anchor.n[0],s.anchor.n[1]);std::array<bool,2> found{false,false};
+    const auto & hist = s.history;
     for(auto & e:hist)if(e.sim_ns<=s.odom_stamp){initial[e.channel]=e.value;found[e.channel]=true;}
-    if(mode_!="no_output"&&(!found[0]||!found[1]))return false;return usv_mpc::propagate_publisher_nominal(s.state,s.odom_stamp,target_sim,initial,hist,params_.hydro);}
+    if(mode_!="no_output"&&(!found[0]||!found[1]))return false;
+    const auto & hydro = oracle_spec_.enabled ? oracle_spec_.actual : params_.hydro;
+    return usv_mpc::propagate_publisher_nominal(s.state,s.odom_stamp,target_sim,initial,hist,hydro);}
   void candidate(const p1::Candidate & m){DiagCallback dspan(diag_callbacks_.get(),p1_clock_diag::kKindCandidate);auto resource=p1::check_candidate_resources(m,resources_);if(!resource){sink_->add({{"type","resource_rejected"},{"interface","candidate"},{"job_id",m.job.job_id},{"reason",resource.reason},{"field",resource.field},{"observed",resource.observed},{"limit",resource.limit},{"receive_ns",p1::monotonic_ns()},{"accepted_registration",false}});return;}auto immutable=std::make_shared<const p1::Candidate>(m);auto reason=p1::valid_job(m.job,run_,boot_,hash_,nominal_,worker_instance_);if(reason.empty()&&(m.worker_instance!=worker_instance_||m.backend!="acados"))reason="foreign_worker";
     if(reason.empty()&&(!m.success||!m.prediction_available||!m.solver_invoked))reason="solver_failed";
     if(reason.empty()&&(!p1::finite_array(m.x_prediction)||!p1::finite_array(m.u_prediction)||!p1::finite_array(m.first_control)||!std::isfinite(m.backend_ms)||m.backend_ms<0||m.solve_end_ns<m.solve_start_ns))reason="nonfinite_or_timing";
@@ -518,25 +572,37 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     proposals_.push_back(ProposalEntry{m, p1::monotonic_ns()});
     while(proposals_.size()>8)proposals_.pop_front();
   }
+  struct PrepTiming { double rollout_ms = 0.0; double eval_ms = 0.0; };
   bool bind_gp_and_ppo(
       p1::Job & j, uint64_t target_tick, int64_t target_sim, int64_t now_ns,
       const usv_mpc::Vector6d & x0, const Eigen::MatrixXd & ref,
       const Eigen::Vector2d & anchor, bool allow_ppo,
       const std::optional<ProposalEntry> & latest_prop,
       const Eigen::MatrixXd * prev_x, const Eigen::MatrixXd * prev_u,
-      int tick_shift, std::string * gp_block_reason){
+      int tick_shift, std::string * gp_block_reason, PrepTiming * timing = nullptr){
     const auto gp_sel=gp_registry_.resolve(target_tick);
     if(!gp_sel){if(gp_block_reason)*gp_block_reason="gp_plan_resolve:"+gp_sel.reason;return false;}
     Eigen::MatrixXd traj_x,traj_u;
+    const auto * oracle_ptr = oracle_spec_.enabled ? &oracle_spec_ : nullptr;
+    const int64_t t_r0 = p1::monotonic_ns();
     p1_gp_snap::build_gp_rollout_guess(
         x0,ref,anchor,params_.hydro,params_.dt,params_.T_min,params_.T_max,
         params_.dT_max,gp_sel.entry->model,gp_allow_ood_fallback_zero_,
-        prev_x,prev_u,tick_shift,traj_x,traj_u);
+        prev_x,prev_u,tick_shift,traj_x,traj_u,oracle_ptr);
+    const int64_t t_r1 = p1::monotonic_ns();
     const auto gp_eval=p1_gp_snap::evaluate_gp_horizon(
-        gp_sel.entry->model,traj_x,traj_u,gp_allow_ood_fallback_zero_);
-    j.gp_snapshot_id=gp_sel.entry->model.snapshot_id().substr(0,64);
-    j.gp_snapshot_sha256=gp_sel.entry->model.snapshot_sha256();
-    j.gp_generation=gp_sel.generation;
+        gp_sel.entry->model,traj_x,traj_u,gp_allow_ood_fallback_zero_,oracle_ptr);
+    const int64_t t_r2 = p1::monotonic_ns();
+    if(timing){timing->rollout_ms=(t_r1-t_r0)/1e6;timing->eval_ms=(t_r2-t_r1)/1e6;}
+    if(oracle_spec_.enabled){
+      j.gp_snapshot_id="oracle_exact";
+      j.gp_snapshot_sha256=oracle_actual_sha_;
+      j.gp_generation=1;
+    }else{
+      j.gp_snapshot_id=gp_sel.entry->model.snapshot_id().substr(0,64);
+      j.gp_snapshot_sha256=gp_sel.entry->model.snapshot_sha256();
+      j.gp_generation=gp_sel.generation;
+    }
     j.stage_residuals=gp_eval.residuals;
     j.stage_residuals_digest=gp_eval.digest;
     j.ppo_proposal_used=false;
@@ -583,31 +649,36 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       sink_->add({{"type","diagnostic_preparation_barrier_release"},{"target_tick",p.tick+1},{"released_ns",p1::monotonic_ns()},{"cancelled",cancelled},{"worker_unusable",worker_unusable_.load()},{"pending_after",pending_after}});
       if(cancelled){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason",worker_unusable_?"worker_unusable_after_preparation_barrier":"shutdown_after_preparation_barrier"},{"processed_ns",p1::monotonic_ns()}});continue;}
     }
+    const int64_t prep_t0=p1::monotonic_ns();
     auto & s=p.s;int64_t target_sim=s.sim+(p.origin+p1::T-s.clock_receive);auto x=s.state;if(!predict(s,target_sim)){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason","history_or_propagation"}});continue;}
+    const int64_t prep_t1=p1::monotonic_ns();
     usv_mpc::ReferenceMetadata meta;auto ref=usv_mpc::build_frozen_reference(s.state,*s.ref,20,.2,c_.at("reference_start_offset"),c_.at("cruise_speed"),&meta);if(!ref.allFinite())continue;
+    const int64_t prep_t2=p1::monotonic_ns();
     p1::Job j;j.schema_version="p1-solve-job-v1";j.run_id=run_;j.boot_id=boot_;j.contract_hash=hash_;j.nominal_hash=nominal_;const auto selection=registry_.resolve(grid_,grid_,p.tick+1,model_options_);
     if(!selection){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason","model_plan_resolve:"+selection.reason},{"processed_ns",p1::monotonic_ns()}});continue;}
     {std::lock_guard<std::mutex> l(mutex_);
        if(version_.model!=selection.generation){version_.model=selection.generation;invalidate_locked();
          sink_->add({{"type","model_version"},{"target_tick",p.tick+1},{"model_generation",version_.model},{"processed_ns",p1::monotonic_ns()}});}}
     j.target_tick=p.tick+1;j.task_generation=s.version.task;j.model_generation=selection.generation;j.config_generation=s.version.config;j.schedule_generation=grid_.schedule_generation;j.clock_epoch=grid_.clock_epoch;j.tick_origin_steady_ns=p.origin;j.freeze_steady_ns=s.freeze;j.deadline_steady_ns=p.origin+p1::DEADLINE;j.target_steady_ns=p.origin+p1::T;j.target_sim_ns=target_sim;j.odom_stamp_ns=s.odom_stamp;j.imu_stamp_ns=s.mixed?s.imu_stamp:0;j.odom_receive_ns=s.odom_receive;j.imu_receive_ns=s.mixed?s.imu_receive:0;j.odom_sequence=s.odom_seq;j.imu_sequence=s.mixed?s.imu_seq:0;j.r_from_imu=s.mixed;j.horizon_steps=20;j.prediction_dt=.2;std::copy(x.data(),x.data()+6,j.frozen_state.begin());std::copy(s.state.data(),s.state.data()+6,j.target_state.begin());std::copy(ref.data(),ref.data()+126,j.reference.begin());j.frozen_clock_sim_ns=s.sim;j.frozen_clock_receive_ns=s.clock_receive;j.assumed_rtf=1.0;j.anchor_source=s.anchor_source;j.anchor_producer=s.anchor_producer;j.anchor_run_id=s.anchor_run;    for(auto & e:s.history){j.history_sim_ns.push_back(e.sim_ns);j.history_channel.push_back(e.channel);j.history_n.push_back(e.value);}j.anchor_n=s.anchor.n;j.anchor_sequence=s.anchor.seq;j.anchor_publish_ns=s.anchor.time;j.anchor_known=s.anchor.known;j.reset_warmstart=std::abs(usv_mpc::normalize_angle(s.state[2]-ref(2,0)))>M_PI*.75;
+    PrepTiming prep_timing{};
     {std::optional<ProposalEntry> latest_prop;bool has_prev=false;Eigen::MatrixXd prev_x,prev_u;uint64_t prev_tick=0;
       {std::lock_guard<std::mutex> l(mutex_);
        if(!proposals_.empty())latest_prop=proposals_.back();
        if(last_cand_x_.rows()==6&&last_cand_u_.rows()==2){has_prev=true;prev_x=last_cand_x_;prev_u=last_cand_u_;prev_tick=last_cand_tick_;}}
       const int shift=has_prev&&j.target_tick>prev_tick?int(j.target_tick-prev_tick):0;
       std::string gp_block;
-      if(!bind_gp_and_ppo(j,j.target_tick,target_sim,p1::monotonic_ns(),x,ref,
+      if(!bind_gp_and_ppo(j,j.target_tick,target_sim,p1::monotonic_ns(),s.state,ref,
           {s.anchor.n[0],s.anchor.n[1]},true,latest_prop,
-          has_prev?&prev_x:nullptr,has_prev?&prev_u:nullptr,shift,&gp_block)){
+          has_prev?&prev_x:nullptr,has_prev?&prev_u:nullptr,shift,&gp_block,&prep_timing)){
         sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason",gp_block},{"processed_ns",p1::monotonic_ns()}});continue;}}
+    const int64_t prep_t3=p1::monotonic_ns();
     int64_t submit_commit_ns;
     {std::lock_guard<std::mutex> l(mutex_);check_worker_locked(p1::monotonic_ns());submit_commit_ns=p1::monotonic_ns();std::string rejected;
       if(stopping_)rejected="shutdown_before_submit";else if(worker_unusable_)rejected="worker_unusable_before_submit";else if(!worker_valid_)rejected="worker_unvalidated_before_submit";else if(sink_->failed())rejected="source_failed_before_submit";else if(!(s.version==version_))rejected="version_changed_before_submit";else if(current_tick_!=p.tick)rejected="tick_changed_before_submit";else if(submit_commit_ns>j.deadline_steady_ns)rejected="deadline_expired_before_submit";
       if(!rejected.empty()){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"preparation_tick",p.tick},{"current_tick",current_tick_},{"deadline_ns",j.deadline_steady_ns},{"processed_ns",submit_commit_ns},{"reason",rejected}});continue;}j.worker_instance=worker_instance_;auto resource=p1::check_job_resources(j,resources_);if(!resource){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason",resource.reason},{"field",resource.field},{"observed",resource.observed},{"limit",resource.limit}});continue;}j.job_id=++job_id_;jobs_.push_back(j);while(jobs_.size()>8)jobs_.pop_front();}
     // Submission commits share the invalidation mutex; DDS remains outside it.
     // A previously committed publication may finish after a terminal observation.
-    if(!sink_->add({{"type","job"},{"job",p1::job_json(j)},{"reference_mode",meta.reference_mode},{"profile_t0",meta.profile_t0},{"nearest_index",meta.nearest_index},{"start_index",meta.start_index},{"submit_commit_ns",submit_commit_ns},{"publish_start_ns",p1::monotonic_ns()}}))continue;
+    if(!sink_->add({{"type","job"},{"job",p1::job_json(j)},{"reference_mode",meta.reference_mode},{"profile_t0",meta.profile_t0},{"nearest_index",meta.nearest_index},{"start_index",meta.start_index},{"submit_commit_ns",submit_commit_ns},{"publish_start_ns",p1::monotonic_ns()},{"prep_timing_ms",{{"predict_ms",(prep_t1-prep_t0)/1e6},{"reference_ms",(prep_t2-prep_t1)/1e6},{"gp_rollout_ms",prep_timing.rollout_ms},{"gp_eval_ms",prep_timing.eval_ms},{"bind_total_ms",(prep_t3-prep_t2)/1e6},{"prepare_to_submit_ms",(submit_commit_ns-prep_t0)/1e6}}}}))continue;
     const auto publish_start=p1::monotonic_ns();try{job_pub_->publish(j);sink_->add({{"type","job_publish_result"},{"job_id",j.job_id},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",true}});}catch(...){sink_->add({{"type","job_publish_result"},{"job_id",j.job_id},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",false}});std::lock_guard<std::mutex> l(mutex_);unusable_locked("job_publication_failed",p1::monotonic_ns());}
   }}
   // 受控仿真：一拍一条类型化命令。sequence 严格递增，tick 与决策拍一致；
@@ -659,7 +730,8 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     m.clock_epoch=d.clock_epoch;
     m.thrust_n[0]=d.final_n[0];m.thrust_n[1]=d.final_n[1];
     {std::lock_guard<std::mutex> l(mutex_);
-     declared_={true,m.apply_begin_steady_ns,m.apply_end_steady_ns,{m.thrust_n[0],m.thrust_n[1]}};}
+     declared_history_.push_back(Declared{true,m.sequence,m.apply_begin_steady_ns,m.apply_end_steady_ns,{m.thrust_n[0],m.thrust_n[1]}});
+     while(declared_history_.size()>16)declared_history_.pop_front();}
     if(candidate_){m.candidate_job_id=candidate_->job.job_id;m.candidate_worker_instance=candidate_->worker_instance;m.candidate_solve_end_ns=candidate_->solve_end_ns;}
     const std::uint32_t pcall=diag_call_tick();
     diag_emit_tick(p1_clock_diag::Record(p1_clock_diag::kPublishBegin,p1_clock_diag::kRegulatorTick,p1_clock_diag::monotonic_ns()).call(pcall).kind(p1_clock_diag::kKindPlantCommand).ident(m.sequence,d.tick));
@@ -690,6 +762,20 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
   }
   static p1::Json decision_json(const p1::Decision & d){return {{"type","decision"},{"schema",d.schema_version},{"run_id",d.run_id},{"boot_id",d.boot_id},{"contract_hash",d.contract_hash},{"worker_instance",d.worker_instance},{"plant_execution_index",d.anchor_sequence[0]},{"model_generation",d.model_generation},{"config_generation",d.config_generation},{"mode",d.mode},{"sequence",d.sequence},{"tick",d.tick},{"job_id",d.job_id},{"task_generation",d.task_generation},{"schedule_generation",d.schedule_generation},{"epoch",d.clock_epoch},{"clock_epoch",d.clock_epoch},{"anchor_publish_ns",d.anchor_publish_ns},{"planned_ns",d.tick_planned_ns},{"start_ns",d.tick_start_ns},{"cutoff_commit_ns",d.cutoff_commit_ns},{"ready_commit_ns",d.candidate_ready_commit_ns},{"activation_commit_ns",d.activation_commit_ns},{"end_ns",d.tick_end_ns},{"skipped_ticks",d.skipped_ticks},{"candidate_accepted",d.candidate_accepted},{"accepted",d.candidate_accepted},{"diagnostic_only",d.diagnostic_only},{"reason",d.reason},{"control_source",d.control_source},{"target_state",d.target_state},{"activation_state",d.activation_state},{"state_error",d.state_error},{"requested_n",d.requested_n},{"final_n",d.final_n},{"publish_success",d.publish_success},{"publish_start_ns",d.publish_start_ns},{"publish_end_ns",d.publish_end_ns},{"previous_anchor_known",d.previous_anchor_known},{"publish_sim_ns",d.publish_sim_ns},{"publish_epoch",d.publish_epoch},{"publish_clock_age_ns",d.publish_clock_age_ns},{"activation_clock_sim_ns",d.activation_clock_sim_ns},{"activation_clock_receive_ns",d.activation_clock_receive_ns},{"activation_rtf",d.activation_rtf},{"activation_odom_stamp_ns",d.activation_odom_stamp_ns},{"activation_odom_receive_ns",d.activation_odom_receive_ns},{"activation_odom_sequence",d.activation_odom_sequence},{"activation_imu_stamp_ns",d.activation_imu_stamp_ns},{"activation_imu_receive_ns",d.activation_imu_receive_ns},{"activation_imu_sequence",d.activation_imu_sequence},{"activation_r_from_imu",d.activation_r_from_imu},{"previous_n",d.previous_n},{"previous_publish_ns",d.previous_publish_ns},{"anchor_known",d.anchor_known},{"anchor_sequence",d.anchor_sequence},{"odom_age_ns",d.odom_age_ns},{"imu_age_ns",d.imu_age_ns},{"clock_age_ns",d.clock_age_ns},{"normal_contract_complete",d.normal_contract_complete},{"rho_available",d.rho_available},{"plant_acceptance_observed",false},{"gp_snapshot_id",d.gp_snapshot_id},{"gp_snapshot_sha256",d.gp_snapshot_sha256},{"gp_generation",d.gp_generation},{"ppo_proposal_used",d.ppo_proposal_used},{"ppo_policy_sha256",d.ppo_policy_sha256},{"ppo_q_pi",d.ppo_q_pi},{"ppo_lambda_pi",d.ppo_lambda_pi},{"ppo_reject_reason",d.ppo_reject_reason},{"gp_local_approx_max_diff",d.gp_local_approx_max_diff},{"gp_ood_detected",d.gp_ood_detected},{"gp_ood_stage_count",d.gp_ood_stage_count}};}
   void tick_loop(){int64_t origin=p1::monotonic_ns()+1000000000,stop_start=0;uint64_t tick=1,last_schedule=0;
+    if(align_tick_to_plant_origin_&&mode_=="controlled_sim"){
+      const int64_t wait_until=p1::monotonic_ns()+800000000LL;
+      while(!stop_requested&&p1::monotonic_ns()<wait_until){
+        std::int64_t p_orig=0;bool have_clk=false;
+        {std::lock_guard<std::mutex> l(mutex_);p_orig=receipts_.steady_origin_ns();have_clk=clock_receive_>0&&rtf_valid_.load();}
+        if(p_orig>0&&have_clk){
+          const int64_t now_a=p1::monotonic_ns();
+          const int64_t k_base=std::max<int64_t>(1,((now_a-p_orig)/p1::T)+2);
+          origin=p_orig+k_base*p1::T+tick_phase_offset_ns_;
+          break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+      }
+    }
     while(true){auto planned=origin+tick*p1::T;p1::sleep_until_monotonic(planned);
       if(tick_barrier_->take()){
         const auto start=p1::monotonic_ns();sink_->add({{"type","diagnostic_tick_barrier_enter"},{"expected_tick",tick},{"planned_ns",planned},{"start_ns",start},{"maximum_ms",tick_barrier_->milliseconds()},{"physical_output",false}});
@@ -760,9 +846,13 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
           // 若上一条已声明的命令在 apply_begin 之前生效，速率基准就是它。
           // 速率是"值能变多快"：基准时间的语义是**该值从何时开始保持**，
           // 不是它何时结束。用结束时刻会把切换瞬间算成零间隔。
-          if(declared_.valid&&declared_.end_ns<=apply_begin){
-            baseline.n={declared_.thrust[0],declared_.thrust[1]};
-            baseline.time={declared_.begin_ns,declared_.begin_ns};}
+          for(auto it=declared_history_.rbegin();it!=declared_history_.rend();++it){
+            if(it->valid&&it->end_ns<=apply_begin&&it->begin_ns>baseline.time[0]){
+              baseline.n={it->thrust[0],it->thrust[1]};
+              baseline.time={it->begin_ns,it->begin_ns};
+              break;
+            }
+          }
           reason=p1::command_check_held(d.final_n,baseline,apply_begin,commit_now,
                                         limits_,p1::T);}
         if(stopping_||stop_requested)reason="shutdown";
@@ -793,7 +883,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         if(!added){normal_complete_=false;stopping_=true;if(!stop_start)stop_start=now;}}
       if(!stopping_&&!worker_unusable_&&worker_valid_&&!sink_->failed()){
         std::lock_guard<std::mutex> l(mutex_);const auto enqueue_now=p1::monotonic_ns();check_worker_locked(enqueue_now);auto next=snapshot_locked(enqueue_now);const std::string enqueue_gate=eligible(next,next.freeze,false);if(!enqueue_gate.empty())sink_->add({{"type","prepare_enqueue_blocked"},{"tick",tick},{"reason",enqueue_gate},{"processed_ns",enqueue_now}});
-        if(!stopping_&&!worker_unusable_&&worker_valid_&&!sink_->failed()&&enqueue_gate.empty()){std::lock_guard<std::mutex> q(prep_mutex_);if(pending_)sink_->add({{"type","prepare_pending_replaced"},{"old_target_tick",pending_->tick+1},{"replacement_target_tick",tick+1}});pending_=Preparation{next,tick,planned};if(preparation_barrier_active_)sink_->add({{"type","diagnostic_preparation_pending_enqueued"},{"target_tick",tick+1},{"enqueued_ns",enqueue_now},{"pending_count",1}});prep_cv_.notify_one();}}
+        if(!stopping_&&!worker_unusable_&&worker_valid_&&!sink_->failed()&&enqueue_gate.empty()){std::lock_guard<std::mutex> q(prep_mutex_);if(pending_)sink_->add({{"type","prepare_pending_replaced"},{"old_target_tick",pending_->tick+1},{"replacement_target_tick",tick+1}});pending_=Preparation{next,tick,static_cast<int64_t>(planned)};if(preparation_barrier_active_)sink_->add({{"type","diagnostic_preparation_pending_enqueued"},{"target_tick",tick+1},{"enqueued_ns",enqueue_now},{"pending_count",1}});prep_cv_.notify_one();}}
       if(stopping_){bool zero=std::abs(d.final_n[0])<1e-9&&std::abs(d.final_n[1])<1e-9;if(zero||now-stop_start>=c_.at("shutdown_grace_ns").get<int64_t>()){sink_->add({{"type","regulator_shutdown"},{"zero_target_published",mode_=="execute"&&zero&&d.publish_success[0]&&d.publish_success[1]},{"shutdown_grace_exceeded",!zero},{"last_decision_sequence",d.sequence},{"normal_contract_complete",normal_complete_.load()&&!sink_->failed()},{"plant_hold_end_known",receipts_.known()&&receipts_.normal_complete()},{"finished_ns",p1::monotonic_ns()}});break;}}
       diag_emit_tick(p1_clock_diag::Record(p1_clock_diag::kTickEnd,p1_clock_diag::kRegulatorTick,p1_clock_diag::monotonic_ns()).call(tcall).ident(tick,d.sequence).nums(d.tick_planned_ns,d.tick_start_ns,d.tick_end_ns,0).schedule(version_.schedule,grid_.schedule_generation,version_.epoch));
       p1::sleep_until_monotonic(planned+p1::DEADLINE+1);{std::lock_guard<std::mutex> l(mutex_);admission_.cutoff(p1::monotonic_ns());}
@@ -1287,8 +1377,8 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
   std::unique_ptr<p1::CapabilityLease> capability_lease_;
   std::mutex mutex_,prep_mutex_;std::condition_variable prep_cv_;std::optional<Preparation> pending_;std::thread prep_,tick_;std::atomic<bool> prep_stop_{false},finished_{false},stopping_{false},normal_complete_{true},worker_unusable_{false},worker_valid_{false};std::unique_ptr<Sink> sink_;
   std::string diag_file_;std::unique_ptr<p1_clock_diag::BoundedTrace<kCallbackTraceCapacity>> diag_callbacks_;std::unique_ptr<p1_clock_diag::BoundedTrace<kTickTraceCapacity>> diag_tick_;std::unique_ptr<p1_clock_diag::Diagnostics> diag_;
-  p1::ResourceLimits resources_;model_reference::Registry registry_;model_reference::Grid grid_;model_reference::Options model_options_{};p1_gp_snap::GpSnapshotRegistry gp_registry_{};std::string nominal_hydro_sha_;bool gp_allow_ood_fallback_zero_=true;bool ppo_enabled_=false;double ppo_lambda_pi_=0.0;std::string ppo_expected_policy_sha_,ppo_expected_obs_contract_;int64_t ppo_max_age_ns_=450000000LL;std::deque<ProposalEntry> proposals_;Eigen::MatrixXd last_cand_x_,last_cand_u_;uint64_t last_cand_tick_=0;RunVersion version_;p1::Anchor anchor_;p1::Admission admission_;std::shared_ptr<const p1::Candidate> candidate_;std::deque<p1::Job> jobs_;std::deque<usv_mpc::HeldInputEvent> history_;std::deque<p1::PublicationEvent> publication_history_;uint64_t legacy_sequence_=0;std::shared_ptr<const usv_mpc::ReferenceInput> ref_;usv_mpc::Vector6d state_=usv_mpc::Vector6d::Zero();
-  uint64_t current_tick_=0,job_id_=0,decision_seq_=0,odom_received_=0,imu_received_=0,odom_seq_=0,imu_seq_=0,path_seq_=0,profile_seq_=0,worker_active_=0;int64_t worker_active_since_=0,odom_stamp_=0,imu_stamp_=0,odom_receive_=0,imu_receive_=0,clock_receive_=0,sim_=0,last_clock_advance_=0,last_accepted_=0;bool mixed_=false;std::atomic<bool> paused_{false},rtf_valid_{false};double rtf_=0;p1::ClockWindow clock_window_;Declared declared_{};
+  p1::ResourceLimits resources_;model_reference::Registry registry_;model_reference::Grid grid_;model_reference::Options model_options_{};p1_gp_snap::GpSnapshotRegistry gp_registry_{};std::string nominal_hydro_sha_,oracle_plant_file_,oracle_actual_sha_;p1_gp_snap::OracleHydroSpec oracle_spec_{};bool gp_allow_ood_fallback_zero_=true;bool align_tick_to_plant_origin_=false;int64_t tick_phase_offset_ns_=10000000LL;bool ppo_enabled_=false;double ppo_lambda_pi_=0.0;std::string ppo_expected_policy_sha_,ppo_expected_obs_contract_;int64_t ppo_max_age_ns_=450000000LL;std::deque<ProposalEntry> proposals_;Eigen::MatrixXd last_cand_x_,last_cand_u_;uint64_t last_cand_tick_=0;RunVersion version_;p1::Anchor anchor_;p1::Admission admission_;std::shared_ptr<const p1::Candidate> candidate_;std::deque<p1::Job> jobs_;std::deque<usv_mpc::HeldInputEvent> history_;std::deque<p1::PublicationEvent> publication_history_;uint64_t legacy_sequence_=0;std::shared_ptr<const usv_mpc::ReferenceInput> ref_;usv_mpc::Vector6d state_=usv_mpc::Vector6d::Zero();
+  uint64_t current_tick_=0,job_id_=0,decision_seq_=0,odom_received_=0,imu_received_=0,odom_seq_=0,imu_seq_=0,path_seq_=0,profile_seq_=0,worker_active_=0,last_controlled_receipt_seq_=0;int64_t worker_active_since_=0,odom_stamp_=0,imu_stamp_=0,odom_receive_=0,imu_receive_=0,clock_receive_=0,sim_=0,last_clock_advance_=0,last_accepted_=0;bool mixed_=false;std::atomic<bool> paused_{false},rtf_valid_{false};double rtf_=0;p1::ClockWindow clock_window_;std::deque<Declared> declared_history_;
   rclcpp::Publisher<p1::Job>::SharedPtr job_pub_;rclcpp::Publisher<usv_research_interfaces::msg::PlantCommand>::SharedPtr plant_pub_;uint64_t plant_sequence_=0;rclcpp::Subscription<usv_research_interfaces::msg::PlantReceipt>::SharedPtr receipt_sub_;rclcpp::Subscription<usv_research_interfaces::msg::PlantHoldClose>::SharedPtr hold_close_sub_;p1_receipt::ReceiptAnchor receipts_{};std::string plant_producer_;bool command_pending_=false;uint64_t pending_execution_before_=0;uint64_t pending_sequence_=0;rclcpp::Publisher<p1::Decision>::SharedPtr decision_pub_;rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr left_,right_;
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_;rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_;rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr path_;rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr profile_;rclcpp::Subscription<rosgraph_msgs::msg::Clock>::SharedPtr clock_;rclcpp::Subscription<p1::Candidate>::SharedPtr candidates_;rclcpp::Subscription<p1::Capability>::SharedPtr capabilities_;rclcpp::Subscription<p1::Proposal>::SharedPtr proposal_sub_;rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr stop_;rclcpp::Subscription<usv_research_interfaces::msg::AppliedControl>::SharedPtr applied_;
 };

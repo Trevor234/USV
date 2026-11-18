@@ -45,6 +45,8 @@ def _base_cmd(
     gp_schedule: Path | None = None,
     ppo_proposal: bool = False,
     lambda_pi: float = 0.0,
+    source_hashes: Path = SOURCE_HASHES,
+    align_tick_phase: bool = False,
 ) -> list[str]:
     cmd = [
         "/usr/bin/python3",
@@ -56,7 +58,7 @@ def _base_cmd(
         "--contract-hash", sha256_file(CONTRACT),
         "--plan", str(PLAN),
         "--plan-sha256", sha256_file(PLAN),
-        "--source-hashes", str(SOURCE_HASHES),
+        "--source-hashes", str(source_hashes),
         "--stop-after-decisions", str(stop_decisions),
         "--maneuver", maneuver,
         "--maneuver-seed", str(seed),
@@ -76,6 +78,8 @@ def _base_cmd(
             "--ppo-manifest", str(PPO_MANIFEST),
             "--lambda-pi", str(lambda_pi),
         ])
+    if align_tick_phase:
+        cmd.append("--align-tick-phase")
     return cmd
 
 
@@ -84,6 +88,7 @@ def _run_verified_sync(
     run_dir: Path,
     dom: int,
     gp_models: dict[str, MultiChannelSparseGP],
+    source_hashes: Path = SOURCE_HASHES,
     max_attempts: int = 2,
     reuse_existing: bool = False,
     **cmd_kwargs: Any,
@@ -92,7 +97,7 @@ def _run_verified_sync(
 
     if reuse_existing and (run_dir / "run.json").is_file():
         metrics = evaluate_closed_loop_run(
-            run_dir, source_hashes=SOURCE_HASHES, gp_models_by_sha=gp_models
+            run_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models
         )
         if metrics["checker_passed"]:
             return metrics, dom + 1
@@ -101,7 +106,7 @@ def _run_verified_sync(
     for attempt in range(max_attempts):
         if run_dir.exists():
             shutil.rmtree(run_dir)
-        cmd = _base_cmd(out_dir=run_dir, ros_domain_id=dom, **cmd_kwargs)
+        cmd = _base_cmd(out_dir=run_dir, ros_domain_id=dom, source_hashes=source_hashes, **cmd_kwargs)
         env = dict(os.environ)
         env["ROS_DOMAIN_ID"] = str(dom)
         dom += 1
@@ -110,7 +115,7 @@ def _run_verified_sync(
             last_err = f"attempt={attempt + 1} rc={proc.returncode} stdout={proc.stdout} stderr={proc.stderr}"
             continue
         metrics = evaluate_closed_loop_run(
-            run_dir, source_hashes=SOURCE_HASHES, gp_models_by_sha=gp_models
+            run_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models
         )
         metrics["attempts"] = attempt + 1
         if metrics["checker_passed"]:
@@ -189,18 +194,27 @@ def _strip_traj(metrics: dict[str, Any]) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", default=str(WORK_ROOT / "gp_nmpc_regression"))
+    parser.add_argument("--source-hashes", default=str(SOURCE_HASHES))
+    parser.add_argument("--plant-dir", default=str(PLANT_DIR))
+    parser.add_argument("--gp-dir", default=str(GP_DIR))
+    parser.add_argument("--align-tick-phase", action="store_true")
     parser.add_argument("--base-domain-id", type=int, default=31)
     parser.add_argument("--reuse-existing", action="store_true")
     args = parser.parse_args(argv)
     reuse = bool(args.reuse_existing)
+    source_hashes = Path(args.source_hashes)
+    plant_dir = Path(args.plant_dir)
+    gp_dir = Path(args.gp_dir)
+    align_phase = bool(args.align_tick_phase)
+    sync_cfg = {"source_hashes": source_hashes, "align_tick_phase": align_phase}
 
     out_root = Path(args.out)
     out_root.mkdir(parents=True, exist_ok=True)
     dom = int(args.base_domain_id)
 
-    gp_surge = GP_DIR / "surge_damping_plus_15pct_sparse_m64.json"
-    gp_mass = GP_DIR / "mass_plus_10pct_sparse_m64.json"
-    gp_pooled = GP_DIR / "gp_snapshot.json"
+    gp_surge = gp_dir / "surge_damping_plus_15pct_sparse_m64.json"
+    gp_mass = gp_dir / "mass_plus_10pct_sparse_m64.json"
+    gp_pooled = gp_dir / "gp_snapshot.json"
     gp_models = {
         m.snapshot_sha256: m
         for m in (
@@ -248,12 +262,12 @@ def main(argv: list[str] | None = None) -> int:
     m_def, dom = _run_verified_sync(
         run_dir=nom_default_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=60, maneuver="straight", seed=1000, cruise_speed=0.72,
-        plant_file=PLANT_DIR / "nominal.json",
+        plant_file=plant_dir / "nominal.json", **sync_cfg,
     )
     m_exp, dom = _run_verified_sync(
         run_dir=nom_explicit_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=60, maneuver="straight", seed=1000, cruise_speed=0.72,
-        plant_file=PLANT_DIR / "nominal.json", gp_schedule=sched_zero,
+        plant_file=plant_dir / "nominal.json", gp_schedule=sched_zero, **sync_cfg,
     )
     u0_def = np.asarray(m_def["first_candidate"]["first_control"], dtype=np.float64)
     u0_exp = np.asarray(m_exp["first_candidate"]["first_control"], dtype=np.float64)
@@ -291,12 +305,12 @@ def main(argv: list[str] | None = None) -> int:
     m_snom, dom = _run_verified_sync(
         run_dir=surge_nom_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=80, maneuver="straight", seed=1002, cruise_speed=0.88,
-        plant_file=PLANT_DIR / "surge_damping_plus_15pct.json",
+        plant_file=plant_dir / "surge_damping_plus_15pct.json", **sync_cfg,
     )
     m_sgp, dom = _run_verified_sync(
         run_dir=surge_gp_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=80, maneuver="straight", seed=1002, cruise_speed=0.88,
-        plant_file=PLANT_DIR / "surge_damping_plus_15pct.json", gp_snapshot=gp_surge,
+        plant_file=plant_dir / "surge_damping_plus_15pct.json", gp_snapshot=gp_surge, **sync_cfg,
     )
     assert m_sgp["gp_telemetry"]["local_approx_max_diff"] is not None
     results["b1_surge_mismatch_gp_vs_nominal"] = {
@@ -315,12 +329,12 @@ def main(argv: list[str] | None = None) -> int:
     m_hnom, dom = _run_verified_sync(
         run_dir=held_nom_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=80, maneuver="right_turn", seed=3020, cruise_speed=0.7,
-        plant_file=PLANT_DIR / "heldout_combination.json",
+        plant_file=plant_dir / "heldout_combination.json", **sync_cfg,
     )
     m_hgp, dom = _run_verified_sync(
         run_dir=held_gp_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=80, maneuver="right_turn", seed=3020, cruise_speed=0.7,
-        plant_file=PLANT_DIR / "heldout_combination.json", gp_snapshot=gp_pooled,
+        plant_file=plant_dir / "heldout_combination.json", gp_snapshot=gp_pooled, **sync_cfg,
     )
     assert m_hgp["gp_telemetry"]["local_approx_max_diff"] is not None
     results["b2_heldout_pooled_gp_vs_nominal"] = {
@@ -336,7 +350,7 @@ def main(argv: list[str] | None = None) -> int:
     m_hot, dom = _run_verified_sync(
         run_dir=hotswap_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=80, maneuver="right_turn", seed=3600, cruise_speed=0.8,
-        plant_file=PLANT_DIR / "surge_damping_plus_15pct.json", gp_schedule=sched_hotswap,
+        plant_file=plant_dir / "surge_damping_plus_15pct.json", gp_schedule=sched_hotswap, **sync_cfg,
     )
     timeline = m_hot["gp_telemetry"]["generation_timeline"]
     gens = [e["generation"] for e in timeline]
@@ -365,8 +379,8 @@ def main(argv: list[str] | None = None) -> int:
     m_pzero, dom = _run_verified_sync(
         run_dir=ppo_zero_dir, dom=dom, gp_models=gp_models, reuse_existing=reuse,
         stop_decisions=80, maneuver="straight", seed=1002, cruise_speed=0.88,
-        plant_file=PLANT_DIR / "surge_damping_plus_15pct.json", gp_snapshot=gp_surge,
-        ppo_proposal=True, lambda_pi=0.0,
+        plant_file=plant_dir / "surge_damping_plus_15pct.json", gp_snapshot=gp_surge,
+        ppo_proposal=True, lambda_pi=0.0, **sync_cfg,
     )
     u0_sgp = np.asarray(m_sgp["first_candidate"]["first_control"], dtype=np.float64)
     u0_pzero = np.asarray(m_pzero["first_candidate"]["first_control"], dtype=np.float64)
@@ -401,12 +415,12 @@ def main(argv: list[str] | None = None) -> int:
         kill_meta = {"reused_from_disk": True}
     else:
         kill_meta = _run_with_ppo_kill(
-            _base_cmd(out_dir=ppo_kill_dir, stop_decisions=60, maneuver="right_turn", seed=3600, cruise_speed=0.8, plant_file=PLANT_DIR / "surge_damping_plus_15pct.json", ros_domain_id=dom, gp_snapshot=gp_surge, ppo_proposal=True, lambda_pi=0.15),
+            _base_cmd(out_dir=ppo_kill_dir, stop_decisions=60, maneuver="right_turn", seed=3600, cruise_speed=0.8, plant_file=plant_dir / "surge_damping_plus_15pct.json", ros_domain_id=dom, gp_snapshot=gp_surge, ppo_proposal=True, lambda_pi=0.15, source_hashes=source_hashes, align_tick_phase=align_phase),
             dom,
             ppo_kill_dir,
         )
     dom += 1
-    m_kill = evaluate_closed_loop_run(ppo_kill_dir, source_hashes=SOURCE_HASHES, gp_models_by_sha=gp_models)
+    m_kill = evaluate_closed_loop_run(ppo_kill_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models)
     rej = m_kill["ppo_telemetry"]["reject_reason_counts"]
     post_kill_candidate_ticks = sum(
         1 for d in (json.loads(l) for l in (ppo_kill_dir / "regulator.source.jsonl").read_text(encoding="utf-8").splitlines() if l.strip())

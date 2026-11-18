@@ -358,7 +358,8 @@ GpResidualModel GpResidualModel::from_json_string(
 GpPrediction GpResidualModel::predict(
     const std::array<double, 5> & z,
     bool apply_clip,
-    bool ood_fallback_zero) const noexcept
+    bool ood_fallback_zero,
+    bool compute_variance) const noexcept
 {
   GpPrediction out;
   if (zero_fallback_)
@@ -390,9 +391,9 @@ GpPrediction GpResidualModel::predict(
     z_std[d] = (z[d] - x_mean_[d]) / x_std_[d];
   }
 
-  double min_std_dist = std::numeric_limits<double>::infinity();
-  std::vector<double> k_star;
-  std::vector<double> v_vec;
+  double min_std_dist_sq = std::numeric_limits<double>::infinity();
+  std::array<double, kMaxInducing> k_star{};
+  std::array<double, kMaxInducing> v_vec{};
   for (std::size_t c = 0; c < kOutputDim; ++c)
   {
     const auto & ch = channels_[c];
@@ -410,14 +411,12 @@ GpPrediction GpResidualModel::predict(
           const double dz = z_std[d] - ch.Z_m_std[m][d];
           d2 += dz * dz;
         }
-        min_std_dist = std::min(min_std_dist, std::sqrt(d2));
+        if (d2 < min_std_dist_sq) min_std_dist_sq = d2;
       }
       continue;
     }
 
     const std::size_t M = ch.M;
-    k_star.resize(M);
-    v_vec.resize(M);
     const double sf2 = ch.signal_std * ch.signal_std;
     double mu_c = 0.0;
 
@@ -428,51 +427,56 @@ GpPrediction GpResidualModel::predict(
       for (std::size_t d = 0; d < kInputDim; ++d)
       {
         const double dz = z_std[d] - ch.Z_m_std[m][d];
-        std_d2 += dz * dz;
+        const double dz2 = dz * dz;
+        std_d2 += dz2;
         const double l = std::max(ch.lengthscales[d], 1e-6);
-        ard_d2 += (dz * dz) / (l * l);
+        ard_d2 += dz2 / (l * l);
       }
-      min_std_dist = std::min(min_std_dist, std::sqrt(std_d2));
+      if (std_d2 < min_std_dist_sq) min_std_dist_sq = std_d2;
       const double kv = sf2 * std::exp(-0.5 * ard_d2);
-      k_star[m] = kv;
+      if (compute_variance) k_star[m] = kv;
       mu_c += kv * ch.alpha_mu_phys[m];
     }
 
-    double norm_v2 = 0.0;
-    for (std::size_t i = 0; i < M; ++i)
-    {
-      double sum = 0.0;
-      const double * row = &ch.L_m_inv[i * M];
-      for (std::size_t j = 0; j < M; ++j)
-      {
-        sum += row[j] * k_star[j];
-      }
-      v_vec[i] = sum;
-      norm_v2 += sum * sum;
-    }
-
-    double norm_w2 = 0.0;
-    for (std::size_t i = 0; i < M; ++i)
-    {
-      double sum = 0.0;
-      const double * row = &ch.L_B_inv[i * M];
-      for (std::size_t j = 0; j < M; ++j)
-      {
-        sum += row[j] * v_vec[j];
-      }
-      norm_w2 += sum * sum;
-    }
-
-    const double var_lat_std = std::max(0.0, sf2 - norm_v2 + norm_w2);
-    const double var_tot_std = var_lat_std + ch.noise_std * ch.noise_std;
     out.raw_mean[c] = mu_c;
     out.mean[c] = mu_c;
-    out.latent_std[c] = ch.y_std_scale * std::sqrt(var_lat_std);
-    out.std[c] = ch.y_std_scale * std::sqrt(var_tot_std);
+
+    if (compute_variance)
+    {
+      double norm_v2 = 0.0;
+      for (std::size_t i = 0; i < M; ++i)
+      {
+        double sum = 0.0;
+        const double * row = &ch.L_m_inv[i * M];
+        for (std::size_t j = 0; j < M; ++j)
+        {
+          sum += row[j] * k_star[j];
+        }
+        v_vec[i] = sum;
+        norm_v2 += sum * sum;
+      }
+
+      double norm_w2 = 0.0;
+      for (std::size_t i = 0; i < M; ++i)
+      {
+        double sum = 0.0;
+        const double * row = &ch.L_B_inv[i * M];
+        for (std::size_t j = 0; j < M; ++j)
+        {
+          sum += row[j] * v_vec[j];
+        }
+        norm_w2 += sum * sum;
+      }
+
+      const double var_lat_std = std::max(0.0, sf2 - norm_v2 + norm_w2);
+      const double var_tot_std = var_lat_std + ch.noise_std * ch.noise_std;
+      out.latent_std[c] = ch.y_std_scale * std::sqrt(var_lat_std);
+      out.std[c] = ch.y_std_scale * std::sqrt(var_tot_std);
+    }
   }
 
-  out.nearest_std_dist = min_std_dist;
-  out.ood = box_ood || (min_std_dist > ood_max_nearest_std_dist_);
+  out.nearest_std_dist = std::isfinite(min_std_dist_sq) ? std::sqrt(min_std_dist_sq) : min_std_dist_sq;
+  out.ood = box_ood || (out.nearest_std_dist > ood_max_nearest_std_dist_);
 
   if (apply_clip)
   {

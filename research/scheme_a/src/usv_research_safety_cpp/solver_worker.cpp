@@ -27,6 +27,7 @@
 #include "protocol.hpp"
 #include "p1_worker_engine.hpp"
 #include "p1_engine_session.hpp"
+#include "plant/p1_plant_model_loader.hpp"
 
 namespace
 {
@@ -119,9 +120,28 @@ public:
     gp_schedule_file_ = declare_parameter<std::string>("gp_schedule_file", "");
     gp_schedule_sha_ = declare_parameter<std::string>("gp_schedule_sha256", "");
     gp_allow_ood_fallback_zero_ = declare_parameter<bool>("gp_allow_ood_fallback_zero", true);
+    oracle_plant_file_ = declare_parameter<std::string>("oracle_plant_file", "");
     nominal_hydro_sha_ = p1_gp_snap::canonical_nominal_hydro_sha256(params_.hydro, params_.dt, 4);
-    gp_registry_ = p1_gp_snap::GpSnapshotRegistry::initialize_from_params(
-        gp_snapshot_file_, gp_snapshot_sha_, gp_schedule_file_, gp_schedule_sha_, nominal_hydro_sha_);
+    if (!oracle_plant_file_.empty())
+    {
+      if (mode_ != "controlled_sim")
+        throw std::runtime_error("oracle_plant_file is restricted to controlled_sim");
+      if (!gp_snapshot_file_.empty() || !gp_schedule_file_.empty())
+        throw std::runtime_error("oracle_plant_file cannot be combined with gp_snapshot/schedule");
+      const auto loaded = p1_plant::load_plant_hydro(params_.hydro, oracle_plant_file_);
+      oracle_spec_.enabled = true;
+      oracle_spec_.nominal = params_.hydro;
+      oracle_spec_.actual = loaded.plant_actual;
+      oracle_spec_.dt = params_.dt;
+      oracle_spec_.rk4_substeps = 4;
+      oracle_actual_sha_ = p1::digest(p1_plant::hydro_to_json(loaded.plant_actual).dump());
+      gp_registry_ = p1_gp_snap::GpSnapshotRegistry::create_zero_only(nominal_hydro_sha_);
+    }
+    else
+    {
+      gp_registry_ = p1_gp_snap::GpSnapshotRegistry::initialize_from_params(
+          gp_snapshot_file_, gp_snapshot_sha_, gp_schedule_file_, gp_schedule_sha_, nominal_hydro_sha_);
+    }
 
     out_ = create_publisher<p1::Candidate>("/p1/solve_candidate",
                                            rclcpp::QoS(1).reliable());
@@ -570,13 +590,28 @@ private:
       result.worker_receive_ns = item.receive_ns;
       try
       {
+        const int64_t t_gp_check_start = p1::monotonic_ns();
         const auto * gp_entry = gp_registry_.find(item.job.gp_generation);
         std::string gp_reason;
         if (gp_entry == nullptr)
         {
           gp_reason = "unknown_gp_generation";
         }
-        else if (gp_entry->model.snapshot_id() != item.job.gp_snapshot_id ||
+        else if (oracle_spec_.enabled)
+        {
+          if (item.job.gp_generation != 1 ||
+              item.job.gp_snapshot_id != "oracle_exact" ||
+              item.job.gp_snapshot_sha256 != oracle_actual_sha_)
+          {
+            gp_reason = "gp_snapshot_identity_mismatch";
+          }
+          else if (p1_gp_snap::compute_stage_residuals_digest(item.job.stage_residuals) !=
+                   item.job.stage_residuals_digest)
+          {
+            gp_reason = "gp_stage_residuals_digest_mismatch";
+          }
+        }
+        else if (gp_entry->model.snapshot_id().substr(0, 64) != item.job.gp_snapshot_id ||
                  gp_entry->model.snapshot_sha256() != item.job.gp_snapshot_sha256)
         {
           gp_reason = "gp_snapshot_identity_mismatch";
@@ -624,6 +659,8 @@ private:
           active_ = 0;
           continue;
         }
+        const int64_t t_gp_check_end = p1::monotonic_ns();
+        const double gp_check_ms = static_cast<double>(t_gp_check_end - t_gp_check_start) / 1e6;
 
         if (item.job.reset_warmstart) engine.reset_warmstart();
         engine.set_applied_control({item.job.anchor_n[0], item.job.anchor_n[1]});
@@ -753,6 +790,7 @@ private:
             answer.second.X_pred.cols() == 21 && answer.second.U_pred.rows() == 2 &&
             answer.second.U_pred.cols() == 20 && answer.second.X_pred.allFinite() &&
             answer.second.U_pred.allFinite() && answer.first.allFinite();
+        double gp_post_ms = 0.0;
         if (result.prediction_available)
         {
           std::copy(answer.first.data(), answer.first.data() + 2,
@@ -762,10 +800,13 @@ private:
           std::copy(answer.second.U_pred.data(), answer.second.U_pred.data() + 40,
                     result.u_prediction.begin());
           result.applied_gp_generation = item.job.gp_generation;
-          result.applied_gp_snapshot_sha256 = gp_entry->model.snapshot_sha256();
+          result.applied_gp_snapshot_sha256 =
+              oracle_spec_.enabled ? oracle_actual_sha_ : gp_entry->model.snapshot_sha256();
+          const int64_t t_gp_post_start = p1::monotonic_ns();
           const auto post_gp = p1_gp_snap::evaluate_gp_horizon(
               gp_entry->model, answer.second.X_pred, answer.second.U_pred,
-              gp_allow_ood_fallback_zero_);
+              gp_allow_ood_fallback_zero_, oracle_spec_.enabled ? &oracle_spec_ : nullptr);
+          gp_post_ms = static_cast<double>(p1::monotonic_ns() - t_gp_post_start) / 1e6;
           result.gp_post_solve_residuals = post_gp.residuals;
           double max_diff = 0.0;
           for (std::size_t idx = 0; idx < 60; ++idx)
@@ -797,6 +838,11 @@ private:
                {"backend_ms", result.backend_ms},
                {"solve_start_ns", result.solve_start_ns},
                {"solve_end_ns", result.solve_end_ns},
+               {"worker_timing_ms", {{"gp_check_ms", gp_check_ms},
+                                     {"solve_setup_ms", static_cast<double>(result.solve_start_ns - t_gp_check_end) / 1e6},
+                                     {"engine_solve_total_ms", static_cast<double>(result.solve_end_ns - result.solve_start_ns) / 1e6},
+                                     {"backend_ms", result.backend_ms},
+                                     {"gp_post_ms", gp_post_ms}}},
                {"success", result.success},
                {"prediction_available", result.prediction_available},
                {"first_control", result.first_control},
@@ -984,6 +1030,8 @@ private:
   std::string gp_snapshot_file_, gp_snapshot_sha_, gp_schedule_file_, gp_schedule_sha_, nominal_hydro_sha_;
   bool gp_allow_ood_fallback_zero_ = true;
   p1_gp_snap::GpSnapshotRegistry gp_registry_{};
+  std::string oracle_plant_file_, oracle_actual_sha_;
+  p1_gp_snap::OracleHydroSpec oracle_spec_{};
   model_reference::Grid grid_;
   model_reference::Registry registry_{};
   usv_mpc::MpcParams params_{};

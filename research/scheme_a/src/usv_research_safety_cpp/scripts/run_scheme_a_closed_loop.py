@@ -562,6 +562,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--ppo-model", default="/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx")
     p.add_argument("--ppo-manifest", default="/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.manifest.json")
     p.add_argument("--lambda-pi", type=float, default=0.0)
+    p.add_argument("--oracle-plant-file", default=None)
+    p.add_argument("--align-tick-phase", action="store_true")
     return p
 
 
@@ -960,6 +962,14 @@ class Runner:
             plant_params["plant_model_file"] = str(Path(args.plant_model_file).resolve())
         worker_params_extra = {}
         regulator_params_extra = {}
+        if args.oracle_plant_file:
+            if args.gp_snapshot or args.gp_schedule:
+                raise SystemExit("--oracle-plant-file cannot be combined with --gp-snapshot or --gp-schedule")
+            oracle_path = str(Path(args.oracle_plant_file).resolve())
+            worker_params_extra["oracle_plant_file"] = oracle_path
+            regulator_params_extra["oracle_plant_file"] = oracle_path
+        if args.align_tick_phase:
+            regulator_params_extra["align_tick_to_plant_origin"] = True
         if args.gp_snapshot:
             gp_path = str(Path(args.gp_snapshot).resolve())
             gp_sha = args.gp_snapshot_sha256 or sha256(Path(gp_path))
@@ -1639,6 +1649,10 @@ def main() -> int:
         options["plant_model_file_sha256"] = sha256(Path(args.plant_model_file))
     if args.dataset_source:
         options["dataset_source"] = args.dataset_source
+    if args.oracle_plant_file:
+        options["oracle_plant_file_sha256"] = sha256(Path(args.oracle_plant_file))
+    if args.align_tick_phase:
+        options["align_tick_phase"] = True
     run_id = args.run_id or hashlib.sha256(json.dumps(
         [args.scenario, plan_sha, contract_sha, manifest_sha, options],
         sort_keys=True).encode()).hexdigest()[:24]
@@ -1826,6 +1840,10 @@ def main() -> int:
         }
     if args.plant_model_file:
         document["plant_model_file"] = str(Path(args.plant_model_file).resolve())
+    if args.oracle_plant_file:
+        document["oracle_plant_file"] = str(Path(args.oracle_plant_file).resolve())
+    if args.align_tick_phase:
+        document["align_tick_phase"] = True
     if args.gp_snapshot:
         document["gp_snapshot"] = str(Path(args.gp_snapshot).resolve())
     if args.gp_schedule:

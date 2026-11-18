@@ -358,7 +358,8 @@ StageResidualEvalResult evaluate_gp_horizon(
     const p1_gp::GpResidualModel & model,
     const Eigen::MatrixXd & traj_x,
     const Eigen::MatrixXd & traj_u,
-    bool ood_fallback_zero)
+    bool ood_fallback_zero,
+    const OracleHydroSpec * oracle)
 {
   StageResidualEvalResult out;
   out.residuals.fill(0.0);
@@ -367,13 +368,30 @@ StageResidualEvalResult evaluate_gp_horizon(
   {
     throw std::invalid_argument("evaluate_gp_horizon trajectory shape must be 6x21 and 2x20");
   }
-  if (!model.is_zero_fallback())
+  if (oracle != nullptr && oracle->enabled)
+  {
+    const usv_mpc::USVDynamicModel nom_dyn(oracle->dt, oracle->rk4_substeps, oracle->nominal);
+    const usv_mpc::USVDynamicModel act_dyn(oracle->dt, oracle->rk4_substeps, oracle->actual);
+    for (int k = 0; k < kHorizonSteps; ++k)
+    {
+      const usv_mpc::Vector6d xk = traj_x.col(k);
+      const Eigen::Vector2d uk = traj_u.col(k);
+      const usv_mpc::Vector6d next_nom = nom_dyn.forward(xk, uk);
+      const usv_mpc::Vector6d next_act = act_dyn.forward(xk, uk);
+      for (int c = 0; c < kResidualDims; ++c)
+      {
+        out.residuals[static_cast<std::size_t>(3 * k + c)] = next_act(3 + c) - next_nom(3 + c);
+      }
+    }
+  }
+  else if (!model.is_zero_fallback())
   {
     for (int k = 0; k < kHorizonSteps; ++k)
     {
       const std::array<double, 5> z{
           traj_x(3, k), traj_x(4, k), traj_x(5, k), traj_u(0, k), traj_u(1, k)};
-      const auto pred = model.predict(z, /*apply_clip=*/true, ood_fallback_zero);
+      const auto pred = model.predict(z, /*apply_clip=*/true, ood_fallback_zero,
+                                      /*compute_variance=*/false);
       for (int c = 0; c < kResidualDims; ++c)
       {
         out.residuals[static_cast<std::size_t>(3 * k + c)] = pred.mean[static_cast<std::size_t>(c)];
@@ -408,12 +426,14 @@ void build_gp_rollout_guess(
     const Eigen::MatrixXd * prev_u,
     int tick_shift,
     Eigen::MatrixXd & out_x,
-    Eigen::MatrixXd & out_u)
+    Eigen::MatrixXd & out_u,
+    const OracleHydroSpec * oracle)
 {
   out_x.resize(6, kHorizonSteps + 1);
   out_u.resize(2, kHorizonSteps);
 
-  if (model.is_zero_fallback())
+  const bool use_oracle = (oracle != nullptr && oracle->enabled);
+  if (model.is_zero_fallback() && !use_oracle)
   {
     out_x.setZero();
     out_x.col(0) = x0;
@@ -433,7 +453,7 @@ void build_gp_rollout_guess(
   }
 
   const double dT_step = dt_max * dt;
-  usv_mpc::USVDynamicModel dyn(dt, 4, hydro);
+  usv_mpc::USVDynamicModel dyn(dt, 4, use_oracle ? oracle->actual : hydro);
   usv_mpc::Vector6d x = x0;
   Eigen::Vector2d u_prev = anchor;
   out_x.col(0) = x;
@@ -464,10 +484,15 @@ void build_gp_rollout_guess(
     }
     out_u.col(k) = u_cand;
     usv_mpc::Vector6d x_next = dyn.forward(x, u_cand);
-    const auto pred = model.predict({x(3), x(4), x(5), u_cand(0), u_cand(1)}, true, ood_fallback_zero);
-    x_next(3) += pred.mean[0];
-    x_next(4) += pred.mean[1];
-    x_next(5) += pred.mean[2];
+    if (!use_oracle)
+    {
+      const auto pred = model.predict(
+          {x(3), x(4), x(5), u_cand(0), u_cand(1)}, /*apply_clip=*/true,
+          ood_fallback_zero, /*compute_variance=*/false);
+      x_next(3) += pred.mean[0];
+      x_next(4) += pred.mean[1];
+      x_next(5) += pred.mean[2];
+    }
     x = x_next;
     out_x.col(k + 1) = x;
     u_prev = u_cand;

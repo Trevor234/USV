@@ -58,7 +58,8 @@ public:
   GpPrediction predict(
       const std::array<double, 5> & z,
       bool apply_clip = true,
-      bool ood_fallback_zero = true) const noexcept;
+      bool ood_fallback_zero = true,
+      bool compute_variance = true) const noexcept;
 
   bool is_zero_fallback() const noexcept { return zero_fallback_; }
   const std::string & snapshot_id() const noexcept { return snapshot_id_; }
