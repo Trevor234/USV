@@ -300,3 +300,65 @@ TEST(P1EngineSession, NonZeroAnchorSurvivesGenerationSwitches)
   EXPECT_EQ(fresh_outcome.execution, p1::EngineDisposition::CandidateReady);
   EXPECT_LT((third.first - fresh_answer.first).norm(), 1e-8);
 }
+
+TEST(P1EngineSession, GpResidualAndPpoPreferenceSurviveWithNonZeroAnchor)
+{
+  const auto params = make_params();
+  const auto grid = make_grid();
+  auto registry = model_reference::default_registry();
+  p1::WorkerEngine engine(params, registry, grid, 1);
+
+  const Eigen::Vector2d anchor(8.0, 12.0);
+  const Eigen::MatrixXd zero_res = Eigen::MatrixXd::Zero(3, 21);
+
+  p1::EngineOutcome base_out;
+  const auto base_ans = engine.solve(
+      axes_of_generation(1), grid, 1, 1, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, identity(), [] { return false; },
+      [] { return false; }, &base_out);
+  ASSERT_EQ(base_out.execution, p1::EngineDisposition::CandidateReady);
+
+  p1::EngineOutcome zero_out;
+  const auto zero_ans = engine.solve(
+      axes_of_generation(1), grid, 2, 1, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, zero_res, Eigen::Vector2d(20.0, -5.0), 0.0,
+      identity(), [] { return false; }, [] { return false; }, &zero_out);
+  ASSERT_EQ(zero_out.execution, p1::EngineDisposition::CandidateReady);
+  EXPECT_LT((zero_ans.first - base_ans.first).norm(), 1e-9);
+
+  Eigen::MatrixXd gp_res(3, 21);
+  gp_res.row(0).setConstant(-0.08);
+  gp_res.row(1).setConstant(0.03);
+  gp_res.row(2).setConstant(-0.06);
+
+  p1::EngineOutcome gp_out;
+  const auto gp_ans = engine.solve(
+      axes_of_generation(1), grid, 3, 1, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, gp_res, Eigen::Vector2d(20.0, -5.0), 0.0,
+      identity(), [] { return false; }, [] { return false; }, &gp_out);
+  ASSERT_EQ(gp_out.execution, p1::EngineDisposition::CandidateReady);
+  EXPECT_GT((gp_ans.first - base_ans.first).norm(), 1e-3);
+
+  const Eigen::Vector2d q_pi(11.0, 7.0);
+  p1::EngineOutcome ppo_out;
+  const auto ppo_ans = engine.solve(
+      axes_of_generation(1), grid, 4, 1, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, gp_res, q_pi, 0.5, identity(),
+      [] { return false; }, [] { return false; }, &ppo_out);
+  ASSERT_EQ(ppo_out.execution, p1::EngineDisposition::CandidateReady);
+  EXPECT_LT((ppo_ans.first - q_pi).norm(), (gp_ans.first - q_pi).norm());
+
+  const Eigen::Vector2d extreme_q_pi(100.0, -100.0);
+  p1::EngineOutcome clamped_out;
+  const auto clamped_ans = engine.solve(
+      axes_of_generation(1), grid, 5, 1, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, gp_res, extreme_q_pi, 5.0, identity(),
+      [] { return false; }, [] { return false; }, &clamped_out);
+  ASSERT_EQ(clamped_out.execution, p1::EngineDisposition::CandidateReady);
+  const double max_step = params.dT_max * params.dt + 1e-6;
+  for (int i = 0; i < 2; ++i) {
+    EXPECT_GE(clamped_ans.first(i), params.T_min - 1e-6);
+    EXPECT_LE(clamped_ans.first(i), params.T_max + 1e-6);
+    EXPECT_LE(std::abs(clamped_ans.first(i) - anchor(i)), max_step);
+  }
+}

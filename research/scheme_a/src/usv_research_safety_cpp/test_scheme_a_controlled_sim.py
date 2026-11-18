@@ -107,12 +107,14 @@ class Builder:
     # -- 证据片段 --------------------------------------------------------
     def add_bootstrap(self) -> None:
         self.plant.append({
-            "type": "bootstrap_receipt", "schema": "p1-plant-receipt-v2",
+            "type": "bootstrap_receipt", "schema": "p1-plant-receipt-v3",
             "sequence": 0, "tick": 0,
             "disposition": "bootstrap", "reason": "", "execution_index": 0,
             "thrust_n": [0.0, 0.0],
             "state": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             "plant_steady_origin_ns": ORIGIN, "sim_ns": 0,
+            "state_sample_sim_ns": 0, "planned_window_end_sim_ns": 0,
+            "clock_identity": "plant_sim_clock:CLOCK_MONOTONIC",
             "apply_begin_steady_ns": ORIGIN, "apply_end_steady_ns": ORIGIN,
             "executed_begin_steady_ns": ORIGIN, "executed_end_steady_ns": ORIGIN,
             "hold_end_steady_ns": ORIGIN, "receive_steady_ns": ORIGIN,
@@ -205,7 +207,7 @@ class Builder:
         state = state or [float(tick), float(tick) * 0.5, 0.01 * tick,
                           1.0 - 0.01 * tick, 0.0, 0.0]
         self.plant.append({
-            "type": "plant_receipt", "schema": "p1-plant-receipt-v2",
+            "type": "plant_receipt", "schema": "p1-plant-receipt-v3",
             "sequence": sequence, "tick": tick,
             "disposition": "ok", "reason": "", "execution_index": execution_index,
             "thrust_n": thrust, "state": state,
@@ -218,6 +220,9 @@ class Builder:
             "receive_steady_ns": declared_begin - 1_000_000,
             "executed_steady_ns": executed_end - 500_000,
             "sim_ns": executed_end - ORIGIN,
+            "state_sample_sim_ns": executed_begin - ORIGIN,
+            "planned_window_end_sim_ns": executed_end - ORIGIN,
+            "clock_identity": "plant_sim_clock:CLOCK_MONOTONIC",
             **identity_of(), **axes,
         })
         self.anchor_index = execution_index
@@ -238,7 +243,7 @@ class Builder:
             **identity_of(), **axes_of(tick),
         })
         self.plant.append({
-            "type": "plant_receipt", "schema": "p1-plant-receipt-v2",
+            "type": "plant_receipt", "schema": "p1-plant-receipt-v3",
             "sequence": sequence, "tick": tick,
             "disposition": disposition, "reason": reason, "execution_index": 0,
             "thrust_n": [0.0, 0.0],
@@ -249,12 +254,15 @@ class Builder:
             "receive_steady_ns": self.hold_end + 1_000_000,
             "executed_steady_ns": self.hold_end + 1_100_000,
             "sim_ns": self.sim,
+            "state_sample_sim_ns": self.sim,
+            "planned_window_end_sim_ns": 0,
+            "clock_identity": "plant_sim_clock:CLOCK_MONOTONIC",
             **identity_of(), **axes_of(tick),
         })
 
     def add_duplicate(self, tick: int, sequence: int) -> None:
         self.plant.append({
-            "type": "plant_receipt", "schema": "p1-plant-receipt-v2",
+            "type": "plant_receipt", "schema": "p1-plant-receipt-v3",
             "sequence": sequence, "tick": tick,
             "disposition": "duplicate", "reason": "same_sequence",
             "execution_index": 0, "thrust_n": [0.0, 0.0],
@@ -265,16 +273,23 @@ class Builder:
             "receive_steady_ns": self.hold_end + 1_000_000,
             "executed_steady_ns": self.hold_end + 1_100_000,
             "sim_ns": self.sim,
+            "state_sample_sim_ns": self.sim,
+            "planned_window_end_sim_ns": 0,
+            "clock_identity": "plant_sim_clock:CLOCK_MONOTONIC",
             **identity_of(), **axes_of(tick),
         })
 
     def add_hold_close(self, reason: str, close_steady: int,
                        executed_end: int) -> None:
         self.plant.append({
-            "type": "plant_hold_close", "schema": "p1-plant-hold-close-v1",
+            "type": "plant_hold_close", "schema": "p1-plant-hold-close-v2",
             "execution_index": self.executed,
             "reason": reason, "close_steady_ns": close_steady,
             "close_sim_ns": close_steady - ORIGIN,
+            "state_sample_sim_ns": close_steady - ORIGIN,
+            "plant_steady_origin_ns": ORIGIN,
+            "clock_identity": "plant_sim_clock:CLOCK_MONOTONIC",
+            "clock_epoch": 0,
             "executed_end_steady_ns": executed_end,
             "state": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             **identity_of(),
@@ -758,3 +773,36 @@ def test_v1_legacy_runs_fail_on_schema():
             assert "guard_on_source" in failed, name
             assert "plan_complete" in failed, name
             assert "time_domain" in failed, name
+
+
+def test_legacy_v2_receipt_fails_on_schema():
+    with tempfile.TemporaryDirectory() as tmp:
+        run = build_standard(Path(tmp) / "run")
+        _mutate(run, "plant", lambda rows: [
+            r.__setitem__("schema", "p1-plant-receipt-v2")
+            for r in rows if r.get("type") == "plant_receipt" and r.get("sequence") == 2])
+        rc, doc = _check(run)
+        assert rc == 2
+        assert "evidence_schema_insufficient" in _failure_names(doc)
+
+
+def test_state_sample_sim_mismatch_fails_time_domain():
+    with tempfile.TemporaryDirectory() as tmp:
+        run = build_standard(Path(tmp) / "run")
+        _mutate(run, "plant", lambda rows: [
+            r.__setitem__("state_sample_sim_ns", int(r["state_sample_sim_ns"]) + 1000)
+            for r in rows if r.get("type") == "plant_receipt" and r.get("sequence") == 2])
+        rc, doc = _check(run)
+        assert rc == 2
+        assert "time_domain" in _failed(doc)
+
+
+def test_clock_identity_mismatch_fails_time_domain():
+    with tempfile.TemporaryDirectory() as tmp:
+        run = build_standard(Path(tmp) / "run")
+        _mutate(run, "plant", lambda rows: [
+            r.__setitem__("clock_identity", "other_clock")
+            for r in rows if r.get("type") == "plant_receipt" and r.get("sequence") == 2])
+        rc, doc = _check(run)
+        assert rc == 2
+        assert "time_domain" in _failed(doc)

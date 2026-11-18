@@ -74,3 +74,6 @@ def test_plant_never_invents_inputs():
     # 唯一的时间原点是 plant 自己采的稳态时钟，仿真时刻由它派生
     assert "steady_origin_ns" in plant
     assert "clock_.sim_of(" in plant or "sim_of" in plant
+    assert "p1-plant-receipt-v3" in plant
+    assert "state_sample_sim_ns" in plant
+    assert "p1-plant-hold-close-v2" in plant

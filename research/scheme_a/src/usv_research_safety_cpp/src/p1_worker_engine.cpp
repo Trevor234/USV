@@ -224,6 +224,29 @@ std::pair<Eigen::Vector2d, usv_mpc::SolveInfo> WorkerEngine::solve(
     const model_txn::RegisteredModelTransaction::ExpiryPredicate & expired,
     EngineOutcome * outcome)
 {
+  const Eigen::MatrixXd zero_res = Eigen::MatrixXd::Zero(3, usv_nmpc::kDynamicN + 1);
+  return solve(axes, grid, job_id, target_tick, original_deadline_ns, state,
+               reference, anchor, zero_res, Eigen::Vector2d::Zero(), 0.0,
+               identity, stop, expired, outcome);
+}
+
+std::pair<Eigen::Vector2d, usv_mpc::SolveInfo> WorkerEngine::solve(
+    const model_reference::Axes & axes,
+    const model_reference::Grid & grid,
+    std::uint64_t job_id,
+    std::uint64_t target_tick,
+    std::int64_t original_deadline_ns,
+    const Eigen::VectorXd & state,
+    const Eigen::MatrixXd & reference,
+    const Eigen::Vector2d & anchor,
+    const Eigen::MatrixXd & stage_residuals,
+    const Eigen::Vector2d & q_pi,
+    double lambda_pi,
+    const model_txn::RegisteredModelTransaction::JobIdentity & identity,
+    const model_txn::RegisteredModelTransaction::StopPredicate & stop,
+    const model_txn::RegisteredModelTransaction::ExpiryPredicate & expired,
+    EngineOutcome * outcome)
+{
   usv_mpc::SolveInfo info;
   info.success = false;
   ::snprintf(info.backend, sizeof(info.backend), "acados");
@@ -233,11 +256,15 @@ std::pair<Eigen::Vector2d, usv_mpc::SolveInfo> WorkerEngine::solve(
   *out = EngineOutcome{};
   out->original_deadline_ns = original_deadline_ns;
 
-  if (reference.rows() != 6 || reference.cols() != 21)
+  if (reference.rows() != 6 || reference.cols() != 21 ||
+      stage_residuals.rows() != 3 || stage_residuals.cols() != 21 ||
+      !stage_residuals.allFinite() || !q_pi.allFinite() ||
+      !std::isfinite(lambda_pi) || lambda_pi < 0.0)
   {
     std::snprintf(answer.second.error, sizeof(answer.second.error),
-                  "reference_shape:%ldx%ld", static_cast<long>(reference.rows()),
-                  static_cast<long>(reference.cols()));
+                  "reference_or_gp_shape:%ldx%ld/%ldx%ld",
+                  static_cast<long>(reference.rows()), static_cast<long>(reference.cols()),
+                  static_cast<long>(stage_residuals.rows()), static_cast<long>(stage_residuals.cols()));
     out->reason = answer.second.error;
     out->execution = EngineDisposition::TerminalFault;
     out->terminal = true;
@@ -324,7 +351,7 @@ std::pair<Eigen::Vector2d, usv_mpc::SolveInfo> WorkerEngine::solve(
   const usv_acados::Candidate * candidate = nullptr;
   try
   {
-    candidate = &session_->backend().solve(state, reference, hooks);
+    candidate = &session_->backend().solve(state, reference, stage_residuals, q_pi, lambda_pi, hooks);
   }
   catch (const model_txn::Refusal & refusal)
   {

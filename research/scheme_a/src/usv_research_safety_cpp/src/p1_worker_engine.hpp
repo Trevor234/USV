@@ -95,6 +95,24 @@ public:
       const model_txn::RegisteredModelTransaction::ExpiryPredicate & expired,
       EngineOutcome * outcome);
 
+  /// WP6/WP7 重载: 为当前 Job 注入冻结的逐阶段 GP 残差 (3x21) 与首拍 PPO 偏好。
+  std::pair<Eigen::Vector2d, usv_mpc::SolveInfo> solve(
+      const model_reference::Axes & axes,
+      const model_reference::Grid & grid,
+      std::uint64_t job_id,
+      std::uint64_t target_tick,
+      std::int64_t original_deadline_ns,
+      const Eigen::VectorXd & state,
+      const Eigen::MatrixXd & reference,
+      const Eigen::Vector2d & anchor,
+      const Eigen::MatrixXd & stage_residuals,
+      const Eigen::Vector2d & q_pi,
+      double lambda_pi,
+      const model_txn::RegisteredModelTransaction::JobIdentity & identity,
+      const model_txn::RegisteredModelTransaction::StopPredicate & stop,
+      const model_txn::RegisteredModelTransaction::ExpiryPredicate & expired,
+      EngineOutcome * outcome);
+
 #ifdef USV_RESEARCH_TEST_SEAMS
   /// 进程内测试接缝：在事务提交之后、真实准备之前插入一段可数的等待，
   /// 用来证明"准备期间越过原始 deadline"这条事实。普通构建编译剔除。

@@ -114,6 +114,15 @@ public:
     params_ = p1::solver_params(contract_);
     registry_ = p1::registry_from_plan(plan_text, grid_);
 
+    gp_snapshot_file_ = declare_parameter<std::string>("gp_snapshot_file", "");
+    gp_snapshot_sha_ = declare_parameter<std::string>("gp_snapshot_sha256", "");
+    gp_schedule_file_ = declare_parameter<std::string>("gp_schedule_file", "");
+    gp_schedule_sha_ = declare_parameter<std::string>("gp_schedule_sha256", "");
+    gp_allow_ood_fallback_zero_ = declare_parameter<bool>("gp_allow_ood_fallback_zero", true);
+    nominal_hydro_sha_ = p1_gp_snap::canonical_nominal_hydro_sha256(params_.hydro, params_.dt, 4);
+    gp_registry_ = p1_gp_snap::GpSnapshotRegistry::initialize_from_params(
+        gp_snapshot_file_, gp_snapshot_sha_, gp_schedule_file_, gp_schedule_sha_, nominal_hydro_sha_);
+
     out_ = create_publisher<p1::Candidate>("/p1/solve_candidate",
                                            rclcpp::QoS(1).reliable());
     caps_ = create_publisher<p1::Capability>(
@@ -561,12 +570,72 @@ private:
       result.worker_receive_ns = item.receive_ns;
       try
       {
+        const auto * gp_entry = gp_registry_.find(item.job.gp_generation);
+        std::string gp_reason;
+        if (gp_entry == nullptr)
+        {
+          gp_reason = "unknown_gp_generation";
+        }
+        else if (gp_entry->model.snapshot_id() != item.job.gp_snapshot_id ||
+                 gp_entry->model.snapshot_sha256() != item.job.gp_snapshot_sha256)
+        {
+          gp_reason = "gp_snapshot_identity_mismatch";
+        }
+        else if (p1_gp_snap::compute_stage_residuals_digest(item.job.stage_residuals) !=
+                 item.job.stage_residuals_digest)
+        {
+          gp_reason = "gp_stage_residuals_digest_mismatch";
+        }
+        else if (gp_entry->is_zero)
+        {
+          for (double rv : item.job.stage_residuals)
+          {
+            if (rv != 0.0)
+            {
+              gp_reason = "zero_gp_nonzero_residual";
+              break;
+            }
+          }
+        }
+        else
+        {
+          const auto & clips = gp_entry->model.clip_bounds();
+          for (int k = 0; k < p1_gp_snap::kHorizonSteps && gp_reason.empty(); ++k)
+          {
+            for (int c = 0; c < p1_gp_snap::kResidualDims; ++c)
+            {
+              const double v = item.job.stage_residuals[static_cast<std::size_t>(3 * k + c)];
+              if (v < clips[c][0] - 1e-12 || v > clips[c][1] + 1e-12)
+              {
+                gp_reason = "gp_stage_residual_out_of_clip";
+                break;
+              }
+            }
+          }
+        }
+        if (!gp_reason.empty())
+        {
+          event({{"type", "job_refused"}, {"job_id", item.job.job_id},
+                 {"origin", "gp_contract"}, {"reason", gp_reason},
+                 {"gp_generation", item.job.gp_generation},
+                 {"gp_snapshot_id", item.job.gp_snapshot_id},
+                 {"terminal", false}, {"native_solve_entries_this_job", 0}});
+          ++refused_;
+          active_ = 0;
+          continue;
+        }
+
         if (item.job.reset_warmstart) engine.reset_warmstart();
         engine.set_applied_control({item.job.anchor_n[0], item.job.anchor_n[1]});
         usv_mpc::Vector6d x;
         std::copy(item.job.target_state.begin(), item.job.target_state.end(), x.data());
         Eigen::MatrixXd reference(6, 21);
         std::copy(item.job.reference.begin(), item.job.reference.end(), reference.data());
+        Eigen::MatrixXd stage_residuals(3, 21);
+        std::copy(item.job.stage_residuals.begin(), item.job.stage_residuals.end(),
+                  stage_residuals.data());
+        const Eigen::Vector2d q_pi(item.job.ppo_q_pi[0], item.job.ppo_q_pi[1]);
+        const double lambda_pi = item.job.ppo_proposal_used ? item.job.ppo_lambda_pi : 0.0;
 
 #ifdef USV_RESEARCH_TEST_SEAMS
         // 阻塞只施加**一次**：反证要证明"这一拍超时被拒、下一拍仍能正常求解"，
@@ -596,7 +665,8 @@ private:
         const auto answer = engine.solve(
             p1::axes_of(item.job), grid_, item.job.job_id, item.job.target_tick,
             item.job.deadline_steady_ns, x, reference,
-            {item.job.anchor_n[0], item.job.anchor_n[1]}, p1::identity_of(item.job),
+            {item.job.anchor_n[0], item.job.anchor_n[1]}, stage_residuals,
+            q_pi, lambda_pi, p1::identity_of(item.job),
             [this] { return stopping_.load() || fatal_.load(); },
             [this, &item] { return p1::monotonic_ns() > item.job.deadline_steady_ns; },
             &outcome);
@@ -691,6 +761,20 @@ private:
                     result.x_prediction.begin());
           std::copy(answer.second.U_pred.data(), answer.second.U_pred.data() + 40,
                     result.u_prediction.begin());
+          result.applied_gp_generation = item.job.gp_generation;
+          result.applied_gp_snapshot_sha256 = gp_entry->model.snapshot_sha256();
+          const auto post_gp = p1_gp_snap::evaluate_gp_horizon(
+              gp_entry->model, answer.second.X_pred, answer.second.U_pred,
+              gp_allow_ood_fallback_zero_);
+          result.gp_post_solve_residuals = post_gp.residuals;
+          double max_diff = 0.0;
+          for (std::size_t idx = 0; idx < 60; ++idx)
+          {
+            max_diff = std::max(max_diff, std::abs(post_gp.residuals[idx] - item.job.stage_residuals[idx]));
+          }
+          result.gp_local_approx_max_diff = max_diff;
+          result.gp_ood_detected = post_gp.ood_detected;
+          result.gp_ood_stage_count = post_gp.ood_stage_count;
         }
         const auto output_resource = p1::check_candidate_resources(result, resources_);
         if (!output_resource)
@@ -717,6 +801,14 @@ private:
                {"prediction_available", result.prediction_available},
                {"first_control", result.first_control},
                {"X", result.x_prediction}, {"U", result.u_prediction},
+               {"applied_gp_generation", result.applied_gp_generation},
+               {"applied_gp_snapshot_sha256", result.applied_gp_snapshot_sha256},
+               {"gp_local_approx_max_diff", result.gp_local_approx_max_diff},
+               {"gp_ood_detected", result.gp_ood_detected},
+               {"gp_ood_stage_count", result.gp_ood_stage_count},
+               {"ppo_proposal_used", item.job.ppo_proposal_used},
+               {"ppo_q_pi", item.job.ppo_q_pi},
+               {"ppo_lambda_pi", item.job.ppo_lambda_pi},
                {"reason", result.reason},
                {"txn_disposition", outcome.disposition},
                {"txn_reason", outcome.reason},
@@ -889,6 +981,9 @@ private:
   p1::ResourceLimits resources_;
   std::string run_, hash_, boot_, nominal_, instance_, mode_;
   std::string plan_file_, plan_sha_;
+  std::string gp_snapshot_file_, gp_snapshot_sha_, gp_schedule_file_, gp_schedule_sha_, nominal_hydro_sha_;
+  bool gp_allow_ood_fallback_zero_ = true;
+  p1_gp_snap::GpSnapshotRegistry gp_registry_{};
   model_reference::Grid grid_;
   model_reference::Registry registry_{};
   usv_mpc::MpcParams params_{};

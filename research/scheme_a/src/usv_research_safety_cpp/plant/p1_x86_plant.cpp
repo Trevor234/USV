@@ -26,6 +26,7 @@
 #include "p1_clock_diagnostics.hpp"
 #include "plant/p1_plant_admission.hpp"
 #include "plant/p1_plant_core.hpp"
+#include "plant/p1_plant_model_loader.hpp"
 #include "usv_research_interfaces/msg/plant_command.hpp"
 #include "usv_research_interfaces/msg/plant_hold_close.hpp"
 #include "usv_research_interfaces/msg/plant_receipt.hpp"
@@ -62,6 +63,7 @@ public:
     hash_ = declare_parameter<std::string>("contract_hash", "");
     contract_file_ = declare_parameter<std::string>("contract_file", "");
     source_ = declare_parameter<std::string>("source_file", "");
+    plant_model_file_ = declare_parameter<std::string>("plant_model_file", "");
     // 空串 = 完全禁用：不分配缓冲、不额外读时钟、不创建文件。
     diag_file_ = declare_parameter<std::string>("clock_diagnostics_file", "");
     contract_ = p1::load_contract(contract_file_, hash_);
@@ -92,7 +94,10 @@ public:
     hydro.Yrr = params.hydro.Yrr;
     hydro.Nvv = params.hydro.Nvv;
     hydro.Nrr = params.hydro.Nrr;
-    core_ = std::make_unique<p1_plant::PlantCore>(hydro);
+    hydro_info_ = p1_plant::load_plant_hydro(hydro, plant_model_file_);
+    hydro_nominal_hash_ = p1::digest(p1_plant::hydro_to_json(hydro_info_.controller_nominal).dump());
+    hydro_actual_hash_ = p1::digest(p1_plant::hydro_to_json(hydro_info_.plant_actual).dump());
+    core_ = std::make_unique<p1_plant::PlantCore>(hydro_info_.plant_actual);
 
     gate_.run_id = run_;
     gate_.boot_id = boot_;
@@ -151,6 +156,8 @@ public:
     const auto path_file = declare_parameter<std::string>("scenario_path_file", "");
     if (path_file.empty()) throw std::runtime_error("scenario_path_file is required");
     path_rows_ = load_path(path_file);
+    const auto profile_file = declare_parameter<std::string>("scenario_profile_file", "");
+    if (!profile_file.empty()) profile_rows_ = load_path(profile_file);
     path_pub_ = create_publisher<nav_msgs::msg::Path>(
         contract_.at("input_topics").at("path").get<std::string>(),
         rclcpp::QoS(1).reliable());
@@ -166,8 +173,15 @@ public:
                                     [this] { pump(); });
     event({{"type", "plant_ready"}, {"run_id", run_}, {"boot", boot_},
            {"contract_hash", hash_}, {"clock", "CLOCK_MONOTONIC"},
+           {"clock_identity", p1_plant::kClockIdentity},
            {"steady_origin_ns", clock_.steady_origin_ns},
-           {"substep_ns", p1_plant::kSubstepNs}},
+           {"substep_ns", p1_plant::kSubstepNs},
+           {"plant_model_file", hydro_info_.source_path},
+           {"plant_model_overridden", hydro_info_.overridden},
+           {"controller_nominal_hash", hydro_nominal_hash_},
+           {"plant_actual_hash", hydro_actual_hash_},
+           {"controller_nominal", p1_plant::hydro_to_json(hydro_info_.controller_nominal)},
+           {"plant_actual", p1_plant::hydro_to_json(hydro_info_.plant_actual)}},
           true);
   }
 
@@ -345,7 +359,7 @@ private:
   void publish_bootstrap()
   {
     usv_research_interfaces::msg::PlantReceipt receipt;
-    receipt.schema_version = "p1-plant-receipt-v2";
+    receipt.schema_version = "p1-plant-receipt-v3";
     receipt.run_id = run_;
     receipt.boot_id = boot_;
     receipt.contract_hash = hash_;
@@ -366,7 +380,10 @@ private:
     receipt.thrust_n[1] = 0.0;
     copy_state(receipt.state);
     receipt.sim_ns = 0;
-    for (int i = 0; i < 6; ++i) receipt.state[i] = state_[i];
+    receipt.state_sample_sim_ns = 0;
+    receipt.planned_window_end_sim_ns = 0;
+    receipt.clock_identity = p1_plant::kClockIdentity;
+    receipt.clock_epoch = 0;
     {
       PublishSpan span(this, p1_clock_diag::kKindBootstrap, 0, 0);
       receipt_pub_->publish(receipt);
@@ -385,6 +402,10 @@ private:
            {"state", state_json()},
            {"plant_steady_origin_ns", clock_.steady_origin_ns},
            {"sim_ns", 0},
+           {"state_sample_sim_ns", 0},
+           {"planned_window_end_sim_ns", 0},
+           {"clock_identity", p1_plant::kClockIdentity},
+           {"clock_epoch", 0},
            {"apply_begin_steady_ns", clock_.steady_origin_ns},
            {"apply_end_steady_ns", clock_.steady_origin_ns},
            {"executed_begin_steady_ns", clock_.steady_origin_ns},
@@ -566,6 +587,7 @@ private:
       hold_.sequence = scheduled_->sequence;
       hold_.tick = scheduled_->tick;
       hold_.execution_index = scheduled_->execution_index;
+      hold_.clock_epoch = scheduled_->generations[4];
       gate_state_.note_executed_tick(scheduled_->tick);
       gate_state_.open_hold_end_steady_ns = hold_.end_ns;
       gate_state_.pending_scheduled = false;
@@ -738,7 +760,7 @@ private:
     usv_research_interfaces::msg::PlantReceipt receipt;
     fill_identity(receipt);
     // 回执通告的是**回执**的 schema；命令的 schema 只影响准入，不写进回执。
-    receipt.schema_version = "p1-plant-receipt-v2";
+    receipt.schema_version = "p1-plant-receipt-v3";
     receipt.sequence = scheduled.sequence;
     receipt.tick = scheduled.tick;
     receipt.disposition = "ok";
@@ -757,9 +779,11 @@ private:
     receipt.thrust_n[0] = scheduled.thrust[0];
     receipt.thrust_n[1] = scheduled.thrust[1];
     copy_state(receipt.state);
-    // 回执的 sim_ns 描述的是**该窗口执行完成后**的仿真时刻；它必须严格等于
-    // executed_end - origin（检查器逐条核对 sim 是否由唯一原点派生）。
-    receipt.sim_ns = hold_end_steady - clock_.steady_origin_ns;
+    // v3 显式区分状态采样时刻（窗口起点）与计划保持终点时刻。
+    receipt.state_sample_sim_ns = executed_begin_steady - clock_.steady_origin_ns;
+    receipt.planned_window_end_sim_ns = hold_end_steady - clock_.steady_origin_ns;
+    receipt.sim_ns = receipt.planned_window_end_sim_ns;
+    receipt.clock_identity = p1_plant::kClockIdentity;
     fill_generations(receipt, scheduled.generations);
     {
       PublishSpan span(this, p1_clock_diag::kKindOkReceipt, receipt.sequence,
@@ -789,6 +813,9 @@ private:
            {"receive_steady_ns", receipt.receive_steady_ns},
            {"executed_steady_ns", receipt.executed_steady_ns},
            {"sim_ns", receipt.sim_ns},
+           {"state_sample_sim_ns", receipt.state_sample_sim_ns},
+           {"planned_window_end_sim_ns", receipt.planned_window_end_sim_ns},
+           {"clock_identity", receipt.clock_identity},
            {"task_generation", scheduled.generations[0]},
            {"model_generation", scheduled.generations[1]},
            {"config_generation", scheduled.generations[2]},
@@ -804,7 +831,7 @@ private:
     else ++rejected_count_;
     usv_research_interfaces::msg::PlantReceipt receipt;
     fill_identity(receipt);
-    receipt.schema_version = "p1-plant-receipt-v2";
+    receipt.schema_version = "p1-plant-receipt-v3";
     receipt.sequence = command.sequence;
     receipt.tick = command.tick;
     receipt.disposition = admission.disposition;
@@ -822,7 +849,11 @@ private:
     receipt.executed_steady_ns = now;
     receipt.thrust_n[0] = 0.0;
     receipt.thrust_n[1] = 0.0;
+    copy_state(receipt.state);
     receipt.sim_ns = clock_.sim_ns;
+    receipt.state_sample_sim_ns = clock_.sim_ns;
+    receipt.planned_window_end_sim_ns = 0;
+    receipt.clock_identity = p1_plant::kClockIdentity;
     receipt.task_generation = command.task_generation;
     receipt.model_generation = command.model_generation;
     receipt.config_generation = command.config_generation;
@@ -855,6 +886,9 @@ private:
            {"receive_steady_ns", now},
            {"executed_steady_ns", now},
            {"sim_ns", receipt.sim_ns},
+           {"state_sample_sim_ns", receipt.state_sample_sim_ns},
+           {"planned_window_end_sim_ns", 0},
+           {"clock_identity", receipt.clock_identity},
            {"task_generation", command.task_generation},
            {"model_generation", command.model_generation},
            {"config_generation", command.config_generation},
@@ -866,13 +900,18 @@ private:
                           std::int64_t executed_end_steady)
   {
     usv_research_interfaces::msg::PlantHoldClose close;
-    close.schema_version = "p1-plant-hold-close-v1";
+    close.schema_version = "p1-plant-hold-close-v2";
     close.run_id = run_;
+    close.boot_id = boot_;
     close.contract_hash = hash_;
     close.execution_index = hold_.execution_index;
+    close.plant_steady_origin_ns = clock_.steady_origin_ns;
     close.close_steady_ns = close_steady;
     close.close_sim_ns = clock_.sim_of(close_steady);
+    close.state_sample_sim_ns = clock_.sim_ns;
     close.executed_end_steady_ns = executed_end_steady;
+    close.clock_identity = p1_plant::kClockIdentity;
+    close.clock_epoch = hold_.clock_epoch;
     close.reason = reason;
     for (int i = 0; i < 6; ++i) close.state[i] = state_[i];
     {
@@ -882,12 +921,17 @@ private:
     event({{"type", "plant_hold_close"},
            {"schema", close.schema_version},
            {"run_id", run_},
+           {"boot_id", boot_},
            {"contract_hash", hash_},
            {"execution_index", close.execution_index},
            {"reason", reason},
+           {"plant_steady_origin_ns", clock_.steady_origin_ns},
            {"close_steady_ns", close_steady},
            {"close_sim_ns", close.close_sim_ns},
+           {"state_sample_sim_ns", close.state_sample_sim_ns},
            {"executed_end_steady_ns", executed_end_steady},
+           {"clock_identity", close.clock_identity},
+           {"clock_epoch", close.clock_epoch},
            {"state", state_json()}}, true);
   }
 
@@ -919,7 +963,8 @@ private:
     event({{"type", "plant_clock"},
            {"sim_ns", clock_.sim_ns},
            {"steady_ns", clock_.steady_of(clock_.sim_ns)},
-           {"steady_origin_ns", clock_.steady_origin_ns}});
+           {"steady_origin_ns", clock_.steady_origin_ns},
+           {"clock_identity", p1_plant::kClockIdentity}});
   }
 
   void publish_sensors()
@@ -955,6 +1000,7 @@ private:
     event({{"type", "plant_sensors"},
            {"sim_ns", clock_.sim_ns},
            {"steady_ns", clock_.steady_of(clock_.sim_ns)},
+           {"clock_identity", p1_plant::kClockIdentity},
            {"state", state_json()}});
   }
 
@@ -980,18 +1026,19 @@ private:
       path_pub_->publish(path);
     }
 
+    const auto & prof = profile_rows_.empty() ? path_rows_ : profile_rows_;
     std_msgs::msg::Float64MultiArray profile;
     profile.layout.dim.resize(4);
     profile.layout.dim[0].label = "stamp_sec:" + std::to_string(stamp.seconds());
-    profile.layout.dim[0].size = static_cast<int>(path_rows_.size());
+    profile.layout.dim[0].size = static_cast<int>(prof.size());
     profile.layout.dim[1].label =
         "stamp_nanosec:" + std::to_string(stamp.nanoseconds() % 1000000000LL);
-    profile.layout.dim[1].size = static_cast<int>(path_rows_.size());
+    profile.layout.dim[1].size = static_cast<int>(prof.size());
     profile.layout.dim[2].label = "rows";
-    profile.layout.dim[2].size = static_cast<int>(path_rows_.size());
+    profile.layout.dim[2].size = static_cast<int>(prof.size());
     profile.layout.dim[3].label = "cols";
     profile.layout.dim[3].size = 4;
-    for (const auto & row : path_rows_)
+    for (const auto & row : prof)
       for (double value : row) profile.data.push_back(value);
     {
       PublishSpan span(this, p1_clock_diag::kKindProfile, 0, 0);
@@ -1024,11 +1071,17 @@ private:
            {"stopped_at_substep", clock_.sim_ns / p1_plant::kSubstepNs},
            {"flushed", flushed},
            {"sim_ns_end", clock_.sim_ns},
+           {"plant_model_file", hydro_info_.source_path},
+           {"plant_model_overridden", hydro_info_.overridden},
+           {"controller_nominal_hash", hydro_nominal_hash_},
+           {"plant_actual_hash", hydro_actual_hash_},
            {"final_state", state_json()}}, true);
   }
 
-  std::string run_, boot_, hash_, contract_file_, source_;
+  std::string run_, boot_, hash_, contract_file_, source_, plant_model_file_;
+  std::string hydro_nominal_hash_, hydro_actual_hash_;
   p1::Json contract_;
+  p1_plant::HydroLoadResult hydro_info_;
   double state_[6]{};
   p1_plant::SimClock clock_;
   p1_plant::HoldWindow hold_;
@@ -1037,6 +1090,7 @@ private:
   std::optional<Scheduled> scheduled_;
   std::unique_ptr<p1_plant::PlantCore> core_;
   std::vector<std::array<double, 4>> path_rows_;
+  std::vector<std::array<double, 4>> profile_rows_;
 
   std::uint64_t execution_index_ = 0;
   std::uint64_t ok_count_ = 0, rejected_count_ = 0, late_count_ = 0,

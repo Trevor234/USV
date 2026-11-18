@@ -6,8 +6,12 @@
 #include <gtest/gtest.h>
 
 #include <cmath>
+#include <cstdio>
+#include <fstream>
+#include <stdexcept>
 
 #include "plant/p1_plant_core.hpp"
+#include "plant/p1_plant_model_loader.hpp"
 
 namespace {
 
@@ -153,4 +157,50 @@ TEST(PlantCore, RejectsNonFiniteInput)
   auto bad = moving_state();
   bad[3] = std::nan("");
   EXPECT_FALSE(core.step_once(bad, {0.0, 0.0}));
+}
+
+TEST(PlantModelLoader, ValidatesSPDAndPhysicalBounds)
+{
+  const auto nom = hydro();
+  EXPECT_NO_THROW(p1_plant::validate_hydro_params(nom, "nominal"));
+
+  auto bad_spd = nom;
+  bad_spd.Yv_dot = 20.0;  // m22 = 14.2 - 20 < 0
+  EXPECT_THROW(p1_plant::validate_hydro_params(bad_spd, "bad_spd"), std::runtime_error);
+
+  auto bad_det = nom;
+  bad_det.Yr_dot = -15.0;  // induces off-diagonal blowup making det_sym <= 0
+  bad_det.Nv_dot = -15.0;
+  EXPECT_THROW(p1_plant::validate_hydro_params(bad_det, "bad_det"), std::runtime_error);
+
+  auto bad_damp = nom;
+  bad_damp.Xu = 0.5;  // positive linear damping breaks passivity
+  EXPECT_THROW(p1_plant::validate_hydro_params(bad_damp, "bad_damp"), std::runtime_error);
+
+  auto bad_nan = nom;
+  bad_nan.mass = std::nan("");
+  EXPECT_THROW(p1_plant::validate_hydro_params(bad_nan, "bad_nan"), std::runtime_error);
+}
+
+TEST(PlantModelLoader, LoadsOverrideFileAndRejectsInvalidFile)
+{
+  const std::string ok_path = "/tmp/test_p1_plant_model_ok.json";
+  {
+    std::ofstream ofs(ok_path);
+    ofs << R"({"plant_actual":{"mass":15.62,"Xu":-2.61287245}})";
+  }
+  const auto loaded = p1_plant::load_plant_hydro(hydro(), ok_path);
+  EXPECT_TRUE(loaded.overridden);
+  EXPECT_DOUBLE_EQ(loaded.controller_nominal.mass, 14.2);
+  EXPECT_DOUBLE_EQ(loaded.plant_actual.mass, 15.62);
+  EXPECT_DOUBLE_EQ(loaded.plant_actual.Xu, -2.61287245);
+  std::remove(ok_path.c_str());
+
+  const std::string bad_path = "/tmp/test_p1_plant_model_bad.json";
+  {
+    std::ofstream ofs(bad_path);
+    ofs << R"({"plant_actual":{"mass":-5.0}})";
+  }
+  EXPECT_THROW(p1_plant::load_plant_hydro(hydro(), bad_path), std::runtime_error);
+  std::remove(bad_path.c_str());
 }

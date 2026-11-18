@@ -28,6 +28,7 @@ namespace p1_plant
 constexpr std::int64_t kTickNs = 200000000;   // T
 constexpr std::int64_t kDeadlineNs = 150000000;
 constexpr std::int64_t kSubstepNs = kTickNs / 4;  // 50 ms，与 rk4_substeps = 4 对齐
+inline constexpr const char * kClockIdentity = "plant_sim_clock:CLOCK_MONOTONIC";
 
 using Vector6d = usv_mpc::Vector6d;
 
@@ -77,6 +78,7 @@ struct HoldWindow
   std::uint64_t sequence = 0;
   std::uint64_t tick = 0;
   std::uint64_t execution_index = 0;
+  std::uint64_t clock_epoch = 0;
 
   bool covers(std::int64_t sim) const
   {

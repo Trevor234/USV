@@ -23,6 +23,8 @@ add_library(p1_model_runtime STATIC
   src/p1_model_transaction.cpp
   src/p1_engine_session.cpp
   src/p1_worker_engine.cpp
+  src/gp_predictor.cpp
+  src/p1_gp_snapshot.cpp
 )
 target_include_directories(p1_model_runtime PUBLIC . ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(p1_model_runtime PUBLIC usv_acados::backend usv_nmpc::mpc_core_lib
@@ -52,6 +54,12 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/regulator.cpp")
  ament_target_dependencies(p1_regulator rclcpp usv_research_interfaces nav_msgs sensor_msgs std_msgs rosgraph_msgs mavros_msgs)
  install(TARGETS p1_regulator DESTINATION lib/${PROJECT_NAME})
 endif()
+add_executable(p1_gp_eval_cli gp_eval_cli.cpp src/gp_predictor.cpp)
+target_include_directories(p1_gp_eval_cli PRIVATE . ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(p1_gp_eval_cli OpenSSL::Crypto nlohmann_json::nlohmann_json)
+ament_target_dependencies(p1_gp_eval_cli usv_research_interfaces)
+install(TARGETS p1_gp_eval_cli DESTINATION lib/${PROJECT_NAME})
+
 add_executable(p1_contract_validate contract_validate_cli.cpp)
 target_include_directories(p1_contract_validate PRIVATE . ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(p1_contract_validate usv_nmpc::mpc_core_lib OpenSSL::Crypto nlohmann_json::nlohmann_json)
@@ -96,6 +104,15 @@ if(BUILD_TESTING)
  ament_add_gtest(test_p1_plant_core test_p1_plant_core.cpp)
  target_include_directories(test_p1_plant_core PRIVATE . ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/plant)
  target_link_libraries(test_p1_plant_core usv_nmpc::mpc_core_lib Eigen3::Eigen)
+
+ ament_add_gtest(test_gp_predictor test_gp_predictor.cpp src/gp_predictor.cpp)
+ target_include_directories(test_gp_predictor PRIVATE . ${CMAKE_CURRENT_SOURCE_DIR}/src)
+ target_link_libraries(test_gp_predictor OpenSSL::Crypto nlohmann_json::nlohmann_json)
+ ament_target_dependencies(test_gp_predictor usv_research_interfaces)
+
+ ament_add_gtest(test_p1_gp_snapshot test_p1_gp_snapshot.cpp src/gp_predictor.cpp src/p1_gp_snapshot.cpp)
+ target_include_directories(test_p1_gp_snapshot PRIVATE . ${CMAKE_CURRENT_SOURCE_DIR}/src)
+ target_link_libraries(test_p1_gp_snapshot usv_nmpc::mpc_core_lib Eigen3::Eigen OpenSSL::Crypto nlohmann_json::nlohmann_json)
 
  ament_add_gtest(test_p1_plant_admission test_p1_plant_admission.cpp)
  target_include_directories(test_p1_plant_admission PRIVATE . ${CMAKE_CURRENT_SOURCE_DIR}/src ${CMAKE_CURRENT_SOURCE_DIR}/plant)
