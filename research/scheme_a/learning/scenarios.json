@@ -1,0 +1,98 @@
+{
+  "schema": "scheme-a-gp-ppo-scenarios-v1",
+  "maneuvers": [
+    "straight",
+    "left_turn",
+    "right_turn",
+    "s_turn",
+    "rate_limited_thrust_step",
+    "speed_transition"
+  ],
+  "base_nominal": {
+    "mass": 14.2,
+    "Iz": 2.13,
+    "xg": 0.12,
+    "d_thruster": 0.25,
+    "Xu_dot": -2.0,
+    "Yv_dot": -8.0,
+    "Yr_dot": 0.0,
+    "Nv_dot": -0.363545,
+    "Nr_dot": -1.62122,
+    "Xu": -2.272063,
+    "Yv": -2.629019,
+    "Yr": 0.0,
+    "Nv": 0.0,
+    "Nr": -4.286144,
+    "Xuu": -11.571784,
+    "Yvv": -0.05,
+    "Yrr": 0.0,
+    "Nvv": 0.0,
+    "Nrr": -0.001
+  },
+  "plant_profiles": {
+    "nominal": {
+      "description": "Controller-matched nominal hydrodynamic plant (zero mismatch gate)",
+      "overrides": {}
+    },
+    "mass_plus_10pct": {
+      "description": "+10% mass mismatch",
+      "overrides": {
+        "mass": 15.62
+      }
+    },
+    "surge_damping_plus_15pct": {
+      "description": "+15% surge damping magnitude (Xu, Xuu)",
+      "overrides": {
+        "Xu": -2.61287245,
+        "Xuu": -13.3075516
+      }
+    },
+    "yaw_damping_plus_15pct": {
+      "description": "+15% yaw damping magnitude (Nr, Nrr)",
+      "overrides": {
+        "Nr": -4.9290656,
+        "Nrr": -0.00115
+      }
+    },
+    "heldout_combination": {
+      "description": "Held-out combined mismatch (+5% mass, +10% Xu/Xuu, +10% Nr/Nrr)",
+      "overrides": {
+        "mass": 14.91,
+        "Xu": -2.4992693,
+        "Xuu": -12.7289624,
+        "Nr": -4.7147584,
+        "Nrr": -0.0011
+      }
+    }
+  },
+  "pilot": {
+    "stop_after_decisions": 151,
+    "episodes": [
+      {"episode_name": "pilot_01_nom_straight", "split": "nominal_gate", "profile": "nominal", "maneuver": "straight", "seed": 11, "cruise_speed": 0.70},
+      {"episode_name": "pilot_02_nom_left_turn", "split": "nominal_gate", "profile": "nominal", "maneuver": "left_turn", "seed": 12, "cruise_speed": 0.65},
+      {"episode_name": "pilot_03_nom_right_turn", "split": "nominal_gate", "profile": "nominal", "maneuver": "right_turn", "seed": 13, "cruise_speed": 0.65},
+      {"episode_name": "pilot_04_nom_s_turn", "split": "nominal_gate", "profile": "nominal", "maneuver": "s_turn", "seed": 14, "cruise_speed": 0.70},
+      {"episode_name": "pilot_05_nom_thrust_step", "split": "nominal_gate", "profile": "nominal", "maneuver": "rate_limited_thrust_step", "seed": 15, "cruise_speed": null},
+      {"episode_name": "pilot_06_nom_speed_trans", "split": "nominal_gate", "profile": "nominal", "maneuver": "speed_transition", "seed": 16, "cruise_speed": null},
+      {"episode_name": "pilot_07_mass_straight", "split": "train", "profile": "mass_plus_10pct", "maneuver": "straight", "seed": 21, "cruise_speed": 0.75},
+      {"episode_name": "pilot_08_mass_s_turn", "split": "train", "profile": "mass_plus_10pct", "maneuver": "s_turn", "seed": 22, "cruise_speed": 0.70},
+      {"episode_name": "pilot_09_xu_left_turn", "split": "train", "profile": "surge_damping_plus_15pct", "maneuver": "left_turn", "seed": 23, "cruise_speed": 0.75},
+      {"episode_name": "pilot_10_xu_speed_trans", "split": "calibration", "profile": "surge_damping_plus_15pct", "maneuver": "speed_transition", "seed": 24, "cruise_speed": null},
+      {"episode_name": "pilot_11_nr_right_turn", "split": "calibration", "profile": "yaw_damping_plus_15pct", "maneuver": "right_turn", "seed": 25, "cruise_speed": 0.70},
+      {"episode_name": "pilot_12_comb_thrust_step", "split": "final_test", "profile": "heldout_combination", "maneuver": "rate_limited_thrust_step", "seed": 26, "cruise_speed": null}
+    ]
+  },
+  "full": {
+    "stop_after_decisions": 301,
+    "train_profiles": ["mass_plus_10pct", "surge_damping_plus_15pct", "yaw_damping_plus_15pct"],
+    "train_maneuvers": ["straight", "left_turn", "s_turn", "speed_transition"],
+    "calibration_maneuvers": ["right_turn", "rate_limited_thrust_step", "s_turn", "speed_transition"],
+    "nominal_gate_maneuvers": ["straight", "left_turn", "right_turn", "s_turn", "rate_limited_thrust_step", "speed_transition"],
+    "split_counts": {
+      "train": 36,
+      "calibration": 12,
+      "final_test": 12,
+      "nominal_gate": 6
+    }
+  }
+}
