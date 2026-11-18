@@ -250,3 +250,49 @@ TEST(AcadosInstanceIsolation, CandidateCostRequiresFiniteCandidate)
   EXPECT_THROW(kinematic.candidate_cost(), std::logic_error);
   EXPECT_THROW(kinematic.accept_candidate(), std::logic_error);
 }
+
+TEST(AcadosInstanceIsolation, StageResidualAndFirstStepPreferenceSemantics)
+{
+  usv_acados::AcadosBackend nominal(usv_acados::Model::Dynamic, DynamicProblem());
+  usv_acados::AcadosBackend zero_res(usv_acados::Model::Dynamic, DynamicProblem());
+  usv_acados::AcadosBackend gp_bias(usv_acados::Model::Dynamic, DynamicProblem());
+  usv_acados::AcadosBackend ppo_pref(usv_acados::Model::Dynamic, DynamicProblem());
+  usv_acados::AcadosBackend zero_lam(usv_acados::Model::Dynamic, DynamicProblem());
+
+  Eigen::VectorXd state6(6);
+  state6 << 0.0, 0.0, 0.0, 0.6, 0.0, 0.0;
+  Eigen::MatrixXd ref6 = StraightReference(6, 20, 0.2, 0.8);
+  Eigen::MatrixXd res_zero = Eigen::MatrixXd::Zero(3, 21);
+
+  const auto c_nom = nominal.solve(state6, ref6);
+  const auto c_zero = zero_res.solve(state6, ref6, res_zero, Eigen::Vector2d(10.0, 10.0), 0.0);
+  ASSERT_TRUE(c_nom.finite && c_zero.finite);
+  EXPECT_LT((c_nom.U - c_zero.U).cwiseAbs().maxCoeff(), 1e-12);
+  EXPECT_LT((c_nom.X_aug - c_zero.X_aug).cwiseAbs().maxCoeff(), 1e-12);
+
+  // Known positive surge velocity residual -> lower thrust required to match target speed.
+  Eigen::MatrixXd res_surge = Eigen::MatrixXd::Zero(3, 21);
+  res_surge.row(0).setConstant(0.08);
+  const auto c_gp = gp_bias.solve(state6, ref6, res_surge, Eigen::Vector2d::Zero(), 0.0);
+  ASSERT_TRUE(c_gp.finite);
+  EXPECT_LT(c_gp.U(0, 0), c_nom.U(0, 0) - 0.1);
+
+  // lambda_pi == 0 ignores arbitrary q_pi; lambda_pi > 0 pulls U(:,0) toward q_pi while preserving bounds.
+  const Eigen::Vector2d q_target(12.0, -4.0);
+  const auto c_l0 = zero_lam.solve(state6, ref6, res_zero, q_target, 0.0);
+  EXPECT_LT((c_l0.U - c_nom.U).cwiseAbs().maxCoeff(), 1e-12);
+
+  const auto c_pref = ppo_pref.solve(state6, ref6, res_zero, q_target, 5.0);
+  ASSERT_TRUE(c_pref.finite);
+  EXPECT_LT((c_pref.U.col(0) - q_target).norm(), (c_nom.U.col(0) - q_target).norm());
+  for (int k = 0; k < 20; ++k) {
+    EXPECT_GE(c_pref.U(0, k), -25.0 - 1e-6);
+    EXPECT_LE(c_pref.U(0, k), 25.0 + 1e-6);
+    EXPECT_GE(c_pref.U(1, k), -25.0 - 1e-6);
+    EXPECT_LE(c_pref.U(1, k), 25.0 + 1e-6);
+  }
+  const double du0_l = std::abs(c_pref.U(0, 0) - 0.0);
+  const double du0_r = std::abs(c_pref.U(1, 0) - 0.0);
+  EXPECT_LE(du0_l, 16.0 + 1e-4);
+  EXPECT_LE(du0_r, 16.0 + 1e-4);
+}

@@ -57,11 +57,11 @@ static const casadi_int casadi_s0[3] = {8, 1, 1};
 static const casadi_int casadi_s1[3] = {2, 1, 1};
 static const casadi_int casadi_s2[3] = {0, 1, 1};
 static const casadi_int casadi_s3[3] = {0, 0, 1};
-static const casadi_int casadi_s4[3] = {6, 1, 1};
+static const casadi_int casadi_s4[3] = {12, 1, 1};
 static const casadi_int casadi_s5[3] = {96, 1, 1};
-static const casadi_int casadi_s6[3] = {11, 1, 1};
+static const casadi_int casadi_s6[3] = {13, 1, 1};
 
-/* usv_dyn_nmpc_cost_y_0_fun:(i0[8],i1[2],i2[0],i3[],i4[6],i5[96])->(o0[11]) */
+/* usv_dyn_nmpc_cost_y_0_fun:(i0[8],i1[2],i2[0],i3[],i4[12],i5[96])->(o0[13]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1, a2, a3, a4;
   a0=arg[5]? arg[5][37] : 0;
@@ -117,14 +117,23 @@ static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw,
   if (res[0]!=0) res[0][8]=a0;
   a0=arg[5]? arg[5][45] : 0;
   a2=arg[0]? arg[0][6] : 0;
-  a1=(a1-a2);
-  a0=(a0*a1);
+  a2=(a1-a2);
+  a0=(a0*a2);
   if (res[0]!=0) res[0][9]=a0;
   a0=arg[5]? arg[5][46] : 0;
-  a1=arg[0]? arg[0][7] : 0;
+  a2=arg[0]? arg[0][7] : 0;
+  a2=(a3-a2);
+  a0=(a0*a2);
+  if (res[0]!=0) res[0][10]=a0;
+  a0=arg[4]? arg[4][11] : 0;
+  a2=arg[4]? arg[4][9] : 0;
+  a1=(a1-a2);
+  a1=(a0*a1);
+  if (res[0]!=0) res[0][11]=a1;
+  a1=arg[4]? arg[4][10] : 0;
   a3=(a3-a1);
   a0=(a0*a3);
-  if (res[0]!=0) res[0][10]=a0;
+  if (res[0]!=0) res[0][12]=a0;
   return 0;
 }
 

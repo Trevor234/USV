@@ -317,6 +317,19 @@ const Candidate & AcadosBackend::solve(
   const Eigen::Ref<const Eigen::MatrixXd> & reference,
   const SolveHooks & hooks)
 {
+  const int ncols = impl_->descriptor.N + 1;
+  return solve(physical_state, reference, Eigen::MatrixXd::Zero(3, ncols),
+               Eigen::Vector2d::Zero(), 0.0, hooks);
+}
+
+const Candidate & AcadosBackend::solve(
+  const Eigen::Ref<const Eigen::VectorXd> & physical_state,
+  const Eigen::Ref<const Eigen::MatrixXd> & reference,
+  const Eigen::Ref<const Eigen::MatrixXd> & stage_residuals,
+  const Eigen::Vector2d & q_pi,
+  double lambda_pi,
+  const SolveHooks & hooks)
+{
   Impl & d = *impl_;
   const detail::ModelDescriptor & desc = d.descriptor;
 
@@ -330,16 +343,25 @@ const Candidate & AcadosBackend::solve(
       std::to_string(physical_state.size()) + " != " +
       std::to_string(desc.n_phys));
   }
-  if (reference.rows() != desc.np || reference.cols() != desc.N + 1) {
+  if (reference.rows() != desc.n_ref || reference.cols() != desc.N + 1) {
     throw std::invalid_argument(
       std::string(desc.symbol) + ": reference 维度 " +
       std::to_string(reference.rows()) + "x" +
       std::to_string(reference.cols()) + " != " +
-      std::to_string(desc.np) + "x" + std::to_string(desc.N + 1));
+      std::to_string(desc.n_ref) + "x" + std::to_string(desc.N + 1));
   }
   if (!physical_state.allFinite() || !reference.allFinite()) {
     throw std::invalid_argument(
       std::string(desc.symbol) + ": state/reference 含非有限值");
+  }
+  if (stage_residuals.rows() != 3 || stage_residuals.cols() != desc.N + 1 ||
+      !stage_residuals.allFinite()) {
+    throw std::invalid_argument(
+      std::string(desc.symbol) + ": stage_residuals 必须为有限 3x(N+1)");
+  }
+  if (!q_pi.allFinite() || !std::isfinite(lambda_pi) || lambda_pi < 0.0) {
+    throw std::invalid_argument(
+      std::string(desc.symbol) + ": q_pi / lambda_pi 非法或为负");
   }
 
   // 上一次的候选在下一次 solve 前失效 (getter 不能读到陈旧 cost)。
@@ -389,16 +411,30 @@ const Candidate & AcadosBackend::solve(
                                     k, "uh", uh_v));
   }
 
-  // 3. 逐阶段参考解卷绕 (第 2 行为 psi), 再写入阶段参数。
+  // 3. 逐阶段参考解卷绕 (第 2 行为 psi), 填齐 GP 残差与 PPO 首拍偏好后再写入阶段参数。
   double ref_psi_prev = physical_state(2);
+  const double beta_pi_stage0 = (lambda_pi > 0.0)
+    ? std::sqrt(2.0 * lambda_pi / d.problem_dt)
+    : 0.0;
   for (int k = 0; k <= N; ++k) {
-    for (int i = 0; i < desc.np; ++i) {
+    std::fill(d.reference_buffer.begin(), d.reference_buffer.end(), 0.0);
+    for (int i = 0; i < desc.n_ref; ++i) {
       d.reference_buffer[static_cast<size_t>(i)] = reference(i, k);
     }
     const double solved = ref_psi_prev +
       wrap_to_pi(d.reference_buffer[2] - ref_psi_prev);
     d.reference_buffer[2] = solved;
     ref_psi_prev = solved;
+    if (desc.np == 12) {
+      d.reference_buffer[6] = stage_residuals(0, k);
+      d.reference_buffer[7] = stage_residuals(1, k);
+      d.reference_buffer[8] = stage_residuals(2, k);
+      if (k == 0) {
+        d.reference_buffer[9] = q_pi(0);
+        d.reference_buffer[10] = q_pi(1);
+        d.reference_buffer[11] = beta_pi_stage0;
+      }
+    }
     d.count_update_params(k, d.ops.update_params(
       d.capsule, k, d.reference_buffer.data(), desc.np));
   }

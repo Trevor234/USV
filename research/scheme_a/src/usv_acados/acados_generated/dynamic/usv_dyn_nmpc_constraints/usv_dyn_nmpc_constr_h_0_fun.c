@@ -54,10 +54,10 @@ extern "C" {
 static const casadi_int casadi_s0[3] = {8, 1, 1};
 static const casadi_int casadi_s1[3] = {2, 1, 1};
 static const casadi_int casadi_s2[3] = {0, 1, 1};
-static const casadi_int casadi_s3[3] = {6, 1, 1};
+static const casadi_int casadi_s3[3] = {12, 1, 1};
 static const casadi_int casadi_s4[3] = {96, 1, 1};
 
-/* usv_dyn_nmpc_constr_h_0_fun:(i0[8],i1[2],i2[0],i3[6],i4[96])->(o0[2]) */
+/* usv_dyn_nmpc_constr_h_0_fun:(i0[8],i1[2],i2[0],i3[12],i4[96])->(o0[2]) */
 static int casadi_f0(const casadi_real** arg, casadi_real** res, casadi_int* iw, casadi_real* w, int mem) {
   casadi_real a0, a1;
   a0=arg[1]? arg[1][0] : 0;

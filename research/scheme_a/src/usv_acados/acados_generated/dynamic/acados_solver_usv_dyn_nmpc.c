@@ -573,6 +573,8 @@ void usv_dyn_nmpc_acados_setup_nlp_in(usv_dyn_nmpc_solver_capsule* capsule, cons
     W_0[8+(NY0) * 8] = 1;
     W_0[9+(NY0) * 9] = 1;
     W_0[10+(NY0) * 10] = 1;
+    W_0[11+(NY0) * 11] = 1;
+    W_0[12+(NY0) * 12] = 1;
     ocp_nlp_cost_model_set(nlp_config, nlp_dims, nlp_in, 0, "W", W_0);
     free(W_0);
     double* yref = calloc(NY, sizeof(double));
@@ -596,6 +598,8 @@ void usv_dyn_nmpc_acados_setup_nlp_in(usv_dyn_nmpc_solver_capsule* capsule, cons
     W[8+(NY) * 8] = 1;
     W[9+(NY) * 9] = 1;
     W[10+(NY) * 10] = 1;
+    W[11+(NY) * 11] = 1;
+    W[12+(NY) * 12] = 1;
 
     for (int i = 1; i < N; i++)
     {
@@ -1006,7 +1010,7 @@ int usv_dyn_nmpc_acados_update_params(usv_dyn_nmpc_solver_capsule* capsule, int 
 {
     int solver_status = 0;
 
-    int casadi_np = 6;
+    int casadi_np = 12;
     if (casadi_np != np) {
         printf("acados_update_params: trying to set %i parameters for external functions."
             " External function has %i parameters. Exiting.\n", np, casadi_np);

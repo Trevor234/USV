@@ -161,17 +161,17 @@ def build_dynamic_ocp(N, dt, T_max, T_min, dT_max):
 
     nx_phys, nu = 6, 2
     nx_aug = nx_phys + nu  # 8
-    np_, npg = 6, N_P_GLOBAL
+    np_, npg = 12, N_P_GLOBAL
 
     x = ca.SX.sym("x", nx_aug)
     u = ca.SX.sym("u", nu)
-    p = ca.SX.sym("p", np_)              # x_ref (6)
+    p = ca.SX.sym("p", np_)              # [x_ref(6), res_nu(3), q_pi(2), beta_pi(1)]
     p_global = ca.SX.sym("p_global", npg)
 
     x_phys = x[:nx_phys]
     u_prev = x[nx_phys:]
 
-    # 离散动力学: 物理 6 维内嵌 RK4 (4 子步), 增广状态精确赋值 T̄ <- u。
+    # 离散动力学: 物理 6 维内嵌 RK4 (4 子步) + GP 离散速度增量, 增广状态精确赋值 T̄ <- u。
     def rk4_phys(xp, uu, h):
         k1 = continuous_ode_expr(xp, uu, p_global, ca)
         k2 = continuous_ode_expr(xp + h / 2 * k1, uu, p_global, ca)
@@ -183,7 +183,8 @@ def build_dynamic_ocp(N, dt, T_max, T_min, dT_max):
     h_int = dt / 4.0
     for _ in range(4):
         xc = rk4_phys(xc, u, h_int)
-    disc_phi = ca.vertcat(xc, u)  # [RK4(物理 6 维); T̄ <- u 精确赋值]
+    xc_corr = xc + ca.vertcat(0.0, 0.0, 0.0, p[6], p[7], p[8])
+    disc_phi = ca.vertcat(xc_corr, u)  # [RK4(物理 6 维)+残差; T̄ <- u 精确赋值]
 
     base = N_HYDRO_PARAMS
     Q = p_global[base:base + PG_N_Q]
@@ -192,12 +193,15 @@ def build_dynamic_ocp(N, dt, T_max, T_min, dT_max):
     Qf_scale = p_global[base + PG_N_Q + PG_N_R + PG_N_RD]
 
     idx_xy_uvr = [0, 1, 3, 4, 5]
-    x_ref = p
+    x_ref = p[:6]
+    q_pi = p[9:11]
+    beta_pi = p[11]
 
     # acados NONLINEAR_LS 使用 0.5 * y.T * W * y。把 sqrt(2*w)
     # 吸收到残差并令 W=I, 可保持原 Q/R/Rd 代价值完全不变。航向的两个
     # 单位圆残差平方和等于 2*(1-cos(delta_psi)), 因此对应原来的
     # 2*Q_psi*(1-cos(delta_psi)), 同时得到半正定 Gauss-Newton Hessian。
+    # WP7: beta_pi = sqrt(2*lambda_pi/dt) 在 cost_scaling=dt 下给出 lambda_pi*||u - q_pi||^2 (仅 stage 0 非零).
     def stage_residual(xk, uk, uprev_k):
         e = xk[idx_xy_uvr] - x_ref[idx_xy_uvr]
         state_res = ca.vertcat(*[
@@ -217,7 +221,8 @@ def build_dynamic_ocp(N, dt, T_max, T_min, dT_max):
             ca.sqrt(2 * Rd[0]) * du[0],
             ca.sqrt(2 * Rd[1]) * du[1],
         )
-        return ca.vertcat(state_res, heading_res, control_res, increment_res)
+        pref_res = beta_pi * (uk - q_pi)
+        return ca.vertcat(state_res, heading_res, control_res, increment_res, pref_res)
 
     def terminal_residual(xk):
         e = xk[idx_xy_uvr] - x_ref[idx_xy_uvr]
@@ -257,7 +262,7 @@ def build_dynamic_ocp(N, dt, T_max, T_min, dT_max):
     ocp.dims.nh = nu
     ocp.solver_options.tf = N * dt
 
-    ny, ny_e = 11, 7
+    ny, ny_e = 13, 7
     ocp.cost.cost_type = "NONLINEAR_LS"
     ocp.cost.cost_type_e = "NONLINEAR_LS"
     ocp.cost.W = np.eye(ny)
@@ -676,8 +681,8 @@ def main():
                                 args.dt_max)
         expected = {
             "dims": {
-                "N": args.horizon, "nx": 8, "nu": 2, "np": 6, "np_global": 30,
-                "ny_0": 11, "ny": 11, "ny_e": 7, "nh": 2, "nh_0": 2, "nbx_0": 8,
+                "N": args.horizon, "nx": 8, "nu": 2, "np": 12, "np_global": 30,
+                "ny_0": 13, "ny": 13, "ny_e": 7, "nh": 2, "nh_0": 2, "nbx_0": 8,
             },
             "solver_options": {
                 "nlp_solver_type": "SQP_RTI",

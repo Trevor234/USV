@@ -143,7 +143,7 @@ public:
 
   /// 求解一拍。
   /// physical_state: n_phys 维实测状态 (psi 已归一化到 [-pi, pi])。
-  /// reference: n_ref x (N+1), n_ref = np (kinematic 3 / dynamic 6), 第 2 行为 psi。
+  /// reference: n_ref x (N+1), n_ref = 3 (kinematic) / 6 (dynamic), 第 2 行为 psi。
   /// 返回的引用在下一次 solve()/reset_warmstart() 前有效。
   const Candidate & solve(
     const Eigen::Ref<const Eigen::VectorXd> & physical_state,
@@ -156,6 +156,16 @@ public:
     const Eigen::Ref<const Eigen::VectorXd> & physical_state,
     const Eigen::Ref<const Eigen::MatrixXd> & reference,
     const SolveHooks & hooks);
+
+  /// WP6/WP7 求解一拍: 为 dynamic 模型注入逐阶段 GP 速度残差均值 (3 x (N+1))
+  /// 与首拍 PPO 偏好 (q_pi, lambda_pi >= 0)。kinematic 模型保持纯 3 维参考参数。
+  const Candidate & solve(
+    const Eigen::Ref<const Eigen::VectorXd> & physical_state,
+    const Eigen::Ref<const Eigen::MatrixXd> & reference,
+    const Eigen::Ref<const Eigen::MatrixXd> & stage_residuals,
+    const Eigen::Vector2d & q_pi,
+    double lambda_pi,
+    const SolveHooks & hooks = SolveHooks{});
 
   /// 运行期全局参数事务: 维度/有限性检查通过后调用 set_p_global,
   /// 返回真实状态码。进入前使旧候选失效; 不清 warm 与 C++ 参数镜像。

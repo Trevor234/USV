@@ -39,7 +39,7 @@
 #define USV_DYN_NMPC_NX     8
 #define USV_DYN_NMPC_NZ     0
 #define USV_DYN_NMPC_NU     2
-#define USV_DYN_NMPC_NP     6
+#define USV_DYN_NMPC_NP     12
 #define USV_DYN_NMPC_NP_GLOBAL     30
 #define USV_DYN_NMPC_NBX    0
 #define USV_DYN_NMPC_NBX0   8
@@ -61,8 +61,8 @@
 #define USV_DYN_NMPC_NG     0
 #define USV_DYN_NMPC_NBXN   0
 #define USV_DYN_NMPC_NGN    0
-#define USV_DYN_NMPC_NY0    11
-#define USV_DYN_NMPC_NY     11
+#define USV_DYN_NMPC_NY0    13
+#define USV_DYN_NMPC_NY     13
 #define USV_DYN_NMPC_NYN    7
 #define USV_DYN_NMPC_N      20
 #define USV_DYN_NMPC_NH     2

@@ -42,11 +42,11 @@ namespace detail
 // 原 usv_nmpc 的代码只断言了残差维, 这里把全部尺寸一次性钉住。
 static_assert(USV_DYN_NMPC_NX == 8, "dynamic generated nx != 8");
 static_assert(USV_DYN_NMPC_NU == 2, "dynamic generated nu != 2");
-static_assert(USV_DYN_NMPC_NP == 6, "dynamic generated np != 6");
+static_assert(USV_DYN_NMPC_NP == 12, "dynamic generated np != 12");
 static_assert(USV_DYN_NMPC_NP_GLOBAL == 30, "dynamic generated np_global != 30");
 static_assert(USV_DYN_NMPC_NBX0 == 8, "dynamic generated nbx_0 != 8");
-static_assert(USV_DYN_NMPC_NY0 == 11, "dynamic generated ny_0 != 11");
-static_assert(USV_DYN_NMPC_NY == 11, "dynamic generated ny != 11");
+static_assert(USV_DYN_NMPC_NY0 == 13, "dynamic generated ny_0 != 13");
+static_assert(USV_DYN_NMPC_NY == 13, "dynamic generated ny != 13");
 static_assert(USV_DYN_NMPC_NYN == 7, "dynamic generated ny_e != 7");
 static_assert(USV_DYN_NMPC_NH == 2, "dynamic generated nh != 2");
 static_assert(USV_DYN_NMPC_NH0 == 2, "dynamic generated nh_0 != 2");
@@ -165,14 +165,14 @@ ocp_nlp_solver * kin_solver(void * capsule)
 
 const ModelDescriptor kKinematic = {
   Model::Kinematic, "kinematic", "usv_kin_mpc",
-  USV_KIN_MPC_N, 5, 2, 7, 3, 8,
+  USV_KIN_MPC_N, 5, 2, 7, 3, USV_KIN_MPC_NP, 8,
   USV_KIN_MPC_NY0, USV_KIN_MPC_NY, USV_KIN_MPC_NYN,
   USV_KIN_MPC_NH0, USV_KIN_MPC_NH, 5,
 };
 
 const ModelDescriptor kDynamic = {
   Model::Dynamic, "dynamic", "usv_dyn_nmpc",
-  USV_DYN_NMPC_N, 6, 2, 8, 6, 30,
+  USV_DYN_NMPC_N, 6, 2, 8, 6, USV_DYN_NMPC_NP, 30,
   USV_DYN_NMPC_NY0, USV_DYN_NMPC_NY, USV_DYN_NMPC_NYN,
   USV_DYN_NMPC_NH0, USV_DYN_NMPC_NH, 6,
 };

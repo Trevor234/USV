@@ -48,7 +48,8 @@ struct ModelDescriptor
   int n_phys;              // 物理状态维
   int nu;                  // 控制维
   int n_aug;               // 增广状态维 (n_phys + nu)
-  int np;                  // 每阶段参考参数维
+  int n_ref;               // 参考维 (kinematic 3 / dynamic 6)
+  int np;                  // 每阶段参数维 (kinematic 3 / dynamic 12)
   int np_global;           // 全局参数维
   int ny_0;                // stage 0 残差维
   int ny;                  // stage 残差维
