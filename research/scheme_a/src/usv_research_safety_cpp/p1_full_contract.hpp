@@ -9,6 +9,7 @@
 #include <vector>
 namespace p1 {
 inline constexpr bool physical_execute_release_enabled = false;
+inline constexpr bool shipboard_water_execute_release_enabled = false;
 inline constexpr const char * contract_parameter_profile = "F5_P1_candidate_20261007_01";
 inline constexpr const char * full_contract_spec_sha256 = "33fb4a5eef93aa6abce5a61e7549dd7217f90c9572e5097791731fbb89661ffd";
 inline const nlohmann::json & candidate_baseline() {
@@ -16,7 +17,7 @@ inline const nlohmann::json & candidate_baseline() {
   return value;
 }
 inline const std::set<std::string> & integer_contract_fields() {
-  static const std::set<std::string> fields = {"N","T_ns","active_watchdog_ns","candidate_cdr_max_bytes","clock_age_ns","clock_pause_confirm_ns","dds_depth","deadline_ns","diagnostic_contract_revision","history_capacity","hold_ns","imu_age_ns","imu_sim_lag_ns","job_cdr_max_bytes","kill_postcheck_ns","log_capacity","max_candidate_bytes","max_job_bytes","max_path_frame_bytes","max_path_points","max_profile_dims","max_profile_label_bytes","max_profile_rows","mixed_skew_ns","odom_age_ns","odom_sim_lag_ns","publish_budget_ns","publish_gap_ns","recording_ready_timeout_ns","reference_start_offset","shutdown_grace_ns","source_future_slack_ns","state_age_ns","target_sim_slack_ns","term_grace_ns","tick_jitter_ns","worker_capability_receipt_timeout_ns","worker_grace_ns"};return fields;
+  static const std::set<std::string> fields = {"N","T_ns","active_watchdog_ns","candidate_cdr_max_bytes","clock_age_ns","clock_pause_confirm_ns","dds_depth","deadline_ns","diagnostic_contract_revision","execution_contract_revision","history_capacity","hold_ns","imu_age_ns","imu_sim_lag_ns","job_cdr_max_bytes","kill_postcheck_ns","log_capacity","max_candidate_bytes","max_job_bytes","max_path_frame_bytes","max_path_points","max_profile_dims","max_profile_label_bytes","max_profile_rows","mixed_skew_ns","neutral_hold_ns_before_release","odom_age_ns","odom_sim_lag_ns","path_age_ns","publish_budget_ns","publish_gap_ns","pwm_center","pwm_max","pwm_min","recording_ready_timeout_ns","reference_start_offset","resource_contract_revision","shutdown_grace_ns","solver_hold_threshold","source_future_slack_ns","state_age_ns","steering_channel","target_sim_slack_ns","term_grace_ns","throttle_channel","tick_jitter_ns","worker_capability_receipt_timeout_ns","worker_grace_ns"};return fields;
 }
 inline const std::set<std::string> & resource_contract_fields() {
   static const std::set<std::string> fields = {"resource_policy","resource_budget_scope","max_path_points","max_profile_rows","max_job_bytes","max_candidate_bytes","history_capacity","log_capacity","dds_depth","max_profile_dims","max_profile_label_bytes","max_path_frame_bytes","job_cdr_max_bytes","candidate_cdr_max_bytes"};return fields;
@@ -54,7 +55,7 @@ inline void contract_value_type(const nlohmann::json & actual,const nlohmann::js
     }
   } else contract_require(false,"unsupported normative value type");
 }
-enum class ContractProfile { Diagnostic,PreFreeze,Frozen,ControlledSim,ShipboardCommissioning,ShipboardDryRun };
+enum class ContractProfile { Diagnostic,PreFreeze,Frozen,ControlledSim,ShipboardCommissioning,ShipboardDryRun,ShipboardExecute };
 // 实船调试服务接管的合同字段集合（不含资源字段）。旧 profile 一律不认这个 schema。
 inline const std::set<std::string> & shipboard_commissioning_fields() {
   static const std::set<std::string> fields = {"schema","qualification","execute_qualified","parameters_are_diagnostic_only","fault_injection_enabled","diagnostic_contract_revision","clock","input_topics","N","dt","T_ns","deadline_ns","nominal_hash","Q","R","Rd","Qf_scale","hydro","command_min_n","command_max_n","backend_rate_n_s","worker_failure_policy","recording_ready_timeout_ns","worker_capability_receipt_timeout_ns"};
@@ -75,9 +76,111 @@ inline const std::set<std::string> & shipboard_dry_run_fields() {
 inline constexpr const char * shipboard_dry_run_schema = "p1-shipboard-dry-run-v1";
 inline constexpr const char * shipboard_dry_run_qualification = "shipboard_dry_run";
 inline constexpr const char * shipboard_dry_run_mode = "shipboard_dry_run";
+inline constexpr const char * shipboard_execute_schema = "p1-shipboard-execute-v1";
+inline constexpr const char * shipboard_execute_bench_qualification = "shipboard_defueled_bench_execute";
+inline constexpr const char * shipboard_execute_frozen_qualification = "shipboard_execution_frozen";
+inline constexpr const char * shipboard_execute_mode = "shipboard_execute";
 inline const nlohmann::json & shipboard_input_topics() {
   static const auto value = nlohmann::json::parse(R"P1TOPICS({"state":"/mavros/state","odom":"/mavros/local_position/odom","imu":"/mavros/imu/data","path":"/path/reference","profile":"/path/reference_profile"})P1TOPICS");
   return value;
+}
+inline const nlohmann::json & shipboard_execute_output_topics() {
+  static const auto value = nlohmann::json::parse(R"P1EXECTOPICS({"rc_override":"/mavros/rc/override","mpc_status":"/mpc/status"})P1EXECTOPICS");
+  return value;
+}
+inline const std::set<std::string> & shipboard_execute_fields() {
+  static const std::set<std::string> fields = []() {
+    auto f = shipboard_dry_run_fields();
+    f.erase("diagnostic_contract_revision");
+    for (const char * k : {
+      "execution_contract_revision", "resource_contract_revision", "supported_parameter_profile",
+      "output_topics", "allowed_fcu_modes", "require_armed", "startup_hold_safe_required",
+      "rc_actuation", "solver_hold_threshold", "neutral_hold_ns_before_release", "path_age_ns",
+      "bench_execution_allowed", "water_execution_allowed", "propellers_removed_required",
+      "freeze_evidence_sha256"
+    }) f.insert(k);
+    return f;
+  }();
+  return fields;
+}
+inline void check_ns_contract_bound(const nlohmann::json & c,const char * key,int64_t lo,int64_t hi) {
+  contract_require(strict_i64(c.at(key)),std::string("int64 required: ")+key);
+  const auto v=c.at(key).get<int64_t>();
+  contract_require(v>=lo&&v<=hi,std::string("bound out of range: ")+key);
+}
+inline void validate_shipboard_execute(const nlohmann::json & c) {
+  static const std::set<std::string> calibrated = {
+    "expected_child_frame","expected_imu_frame","odom_age_ns","imu_age_ns",
+    "recording_ready_timeout_ns","worker_capability_receipt_timeout_ns","output_topics"
+  };
+  const auto & expected_fields = shipboard_execute_fields();
+  std::set<std::string> expected = expected_fields;
+  for(const auto & key:resource_contract_fields())expected.insert(key);
+  contract_require(c.size()==expected.size(),"missing or unknown top-level fields");
+  for(const auto & key:expected)contract_require(c.contains(key),"missing field: "+key);
+  const auto & base=candidate_baseline();
+  for(auto it=base.begin();it!=base.end();++it) {
+    const auto key=it.key();
+    if(!expected.count(key)||key=="input_topics"||key=="output_topics")continue;
+    contract_value_type(c.at(key),it.value(),key);
+    if(!special_contract_fields().count(key)&&!resource_contract_fields().count(key)&&!calibrated.count(key))
+      contract_require(c.at(key)==it.value(),"unsupported fixed shipboard parameter: "+key);
+  }
+  contract_require(strict_i64(c.at("execution_contract_revision"))&&c.at("execution_contract_revision").get<int64_t>()==1,"unsupported execution_contract_revision");
+  contract_require(strict_i64(c.at("resource_contract_revision"))&&c.at("resource_contract_revision").get<int64_t>()==1,"unsupported resource_contract_revision");
+  contract_require(c.at("supported_parameter_profile").is_string()&&c.at("supported_parameter_profile")==contract_parameter_profile,"unsupported parameter profile");
+  contract_require(c.at("fault_injection_enabled")==false,"shipboard fault injection prohibited");
+  contract_require(c.at("worker_failure_policy")==base.at("worker_failure_policy"),"shipboard worker failure policy is fixed");
+  contract_require(c.at("input_topics").is_object()&&c.at("input_topics")==shipboard_input_topics(),"shipboard input topics are fixed");
+  contract_require(c.at("output_topics").is_object()&&c.at("output_topics")==shipboard_execute_output_topics(),"shipboard execute output topics mismatch");
+  contract_require(c.at("allowed_fcu_modes").is_array()&&c.at("allowed_fcu_modes").size()==1&&c.at("allowed_fcu_modes")[0]=="MANUAL","shipboard execute allowed_fcu_modes must be [MANUAL]");
+  contract_require(c.at("require_armed").is_boolean()&&c.at("require_armed")==true,"shipboard execute requires armed=true");
+  contract_require(c.at("startup_hold_safe_required").is_boolean(),"startup_hold_safe_required bool required");
+  contract_require(c.at("expected_pose_frame")=="map","shipboard execute expected_pose_frame must be map");
+  contract_require(c.at("expected_child_frame")=="base_link","shipboard execute expected_child_frame must be base_link");
+  contract_require(c.at("expected_imu_frame")=="base_link","shipboard execute expected_imu_frame must be base_link");
+  check_ns_contract_bound(c,"odom_age_ns",100000000LL,5000000000LL);
+  check_ns_contract_bound(c,"imu_age_ns",100000000LL,5000000000LL);
+  check_ns_contract_bound(c,"state_age_ns",500000000LL,10000000000LL);
+  check_ns_contract_bound(c,"path_age_ns",500000000LL,30000000000LL);
+  check_ns_contract_bound(c,"worker_capability_receipt_timeout_ns",200000000LL,5000000000LL);
+  check_ns_contract_bound(c,"recording_ready_timeout_ns",1000000000LL,60000000000LL);
+  check_ns_contract_bound(c,"neutral_hold_ns_before_release",100000000LL,2000000000LL);
+  check_ns_contract_bound(c,"solver_hold_threshold",1LL,20LL);
+  const auto & rc = c.at("rc_actuation");
+  contract_require(rc.is_object()&&rc.size()==9,"rc_actuation object shape invalid");
+  for (const char * k : {"steering_channel","throttle_channel","pwm_min","pwm_center","pwm_max"}) {
+    contract_require(rc.contains(k)&&strict_i64(rc.at(k)),std::string("rc_actuation int required: ")+k);
+  }
+  const int64_t steer_ch = rc.at("steering_channel").get<int64_t>();
+  const int64_t thr_ch = rc.at("throttle_channel").get<int64_t>();
+  const int64_t pwm_min = rc.at("pwm_min").get<int64_t>();
+  const int64_t pwm_center = rc.at("pwm_center").get<int64_t>();
+  const int64_t pwm_max = rc.at("pwm_max").get<int64_t>();
+  contract_require(steer_ch>=0&&steer_ch<=17&&thr_ch>=0&&thr_ch<=17&&steer_ch!=thr_ch,"rc channels out of bounds");
+  contract_require(pwm_min>=1000&&pwm_min<pwm_center&&pwm_center<pwm_max&&pwm_max<=2000,"rc pwm bounds invalid");
+  for (const char * k : {"steering_sign","throttle_sign","steering_gain","throttle_gain"}) {
+    contract_require(rc.contains(k)&&rc.at(k).is_number()&&std::isfinite(rc.at(k).get<double>()),std::string("rc_actuation float required: ")+k);
+  }
+  contract_require(std::abs(std::abs(rc.at("steering_sign").get<double>())-1.0)<=1e-9,"steering_sign must be +-1");
+  contract_require(std::abs(std::abs(rc.at("throttle_sign").get<double>())-1.0)<=1e-9,"throttle_sign must be +-1");
+  const double sg = rc.at("steering_gain").get<double>();
+  const double tg = rc.at("throttle_gain").get<double>();
+  contract_require(sg>0.0&&sg<=1.0&&tg>0.0&&tg<=1.0,"rc gains out of range (0,1]");
+  for (const char * k : {"execute_qualified","parameters_are_diagnostic_only","bench_execution_allowed","water_execution_allowed","propellers_removed_required"}) {
+    contract_require(c.at(k).is_boolean(),std::string("bool required: ")+k);
+  }
+  contract_require(c.at("qualification").is_string()&&c.at("freeze_evidence_sha256").is_string(),"qualification/evidence strings required");
+  const std::string qual = c.at("qualification").get<std::string>();
+  const std::string ev_sha = c.at("freeze_evidence_sha256").get<std::string>();
+  if (qual == shipboard_execute_bench_qualification) {
+    contract_require(c.at("execute_qualified")==false&&c.at("bench_execution_allowed")==true&&c.at("water_execution_allowed")==false&&c.at("propellers_removed_required")==true&&c.at("parameters_are_diagnostic_only")==true&&ev_sha.empty(),"invalid shipboard defueled bench execute flags");
+  } else if (qual == shipboard_execute_frozen_qualification) {
+    contract_require(c.at("execute_qualified")==true&&c.at("bench_execution_allowed")==false&&c.at("water_execution_allowed")==true&&c.at("propellers_removed_required")==false&&c.at("parameters_are_diagnostic_only")==false&&std::regex_match(ev_sha,std::regex("[0-9a-f]{64}")),"invalid shipboard frozen execute flags");
+  } else {
+    contract_require(false,"unknown shipboard execute qualification: "+qual);
+  }
+  resource_limits_from_contract(c);
 }
 inline void validate_shipboard_common(const nlohmann::json & c,const std::set<std::string> & core_fields,const std::set<std::string> & dry_run_calibrated_fields,const std::string & expected_qualification) {
   contract_require(c.at("qualification")==expected_qualification,
@@ -134,17 +237,16 @@ inline ContractProfile validate_contract_fields(const nlohmann::json & c) {
     contract_require(c.at("expected_pose_frame")=="map","dry_run expected_pose_frame must be map");
     contract_require(c.at("expected_child_frame")=="base_link","dry_run expected_child_frame must be base_link");
     contract_require(c.at("expected_imu_frame")=="base_link","dry_run expected_imu_frame must be base_link");
-    const auto check_ns_bound=[&](const char * key,int64_t lo,int64_t hi){
-      contract_require(strict_i64(c.at(key)),std::string("int64 required: ")+key);
-      const auto v=c.at(key).get<int64_t>();
-      contract_require(v>=lo&&v<=hi,std::string("dry_run bound out of range: ")+key);
-    };
-    check_ns_bound("odom_age_ns",100000000LL,5000000000LL);
-    check_ns_bound("imu_age_ns",100000000LL,5000000000LL);
-    check_ns_bound("state_age_ns",500000000LL,10000000000LL);
-    check_ns_bound("worker_capability_receipt_timeout_ns",200000000LL,5000000000LL);
-    check_ns_bound("recording_ready_timeout_ns",1000000000LL,60000000000LL);
+    check_ns_contract_bound(c,"odom_age_ns",100000000LL,5000000000LL);
+    check_ns_contract_bound(c,"imu_age_ns",100000000LL,5000000000LL);
+    check_ns_contract_bound(c,"state_age_ns",500000000LL,10000000000LL);
+    check_ns_contract_bound(c,"worker_capability_receipt_timeout_ns",200000000LL,5000000000LL);
+    check_ns_contract_bound(c,"recording_ready_timeout_ns",1000000000LL,60000000000LL);
     return ContractProfile::ShipboardDryRun;
+  }
+  if(schema==shipboard_execute_schema) {
+    validate_shipboard_execute(c);
+    return ContractProfile::ShipboardExecute;
   }
   const bool formal=schema=="p1-execution-contract-v3";
   contract_require(formal||schema=="p1-execution-contract-v2","unknown schema");
@@ -187,6 +289,7 @@ inline void validate_contract_mode(const nlohmann::json & c,const std::string & 
   if(profile==ContractProfile::ControlledSim)okay=mode=="controlled_sim";
   else if(profile==ContractProfile::ShipboardCommissioning)okay=mode==shipboard_commissioning_mode;
   else if(profile==ContractProfile::ShipboardDryRun)okay=mode==shipboard_dry_run_mode;
+  else if(profile==ContractProfile::ShipboardExecute)okay=mode==shipboard_execute_mode;
   else if(profile==ContractProfile::Diagnostic)okay=(mode=="no_output"||mode=="shadow");
   else if(profile==ContractProfile::PreFreeze)okay=mode=="no_output";
   else okay=(mode=="no_output"||mode=="execute");
@@ -196,6 +299,10 @@ inline void require_runtime_contract_mode(const nlohmann::json & c,const std::st
   validate_contract_mode(c,mode);
   if(mode=="execute"&&!physical_execute_release_enabled)
     throw std::runtime_error("physical execute release is disabled until B5/M4");
+  if(mode==shipboard_execute_mode &&
+     c.at("qualification").get<std::string>()==shipboard_execute_frozen_qualification &&
+     !shipboard_water_execute_release_enabled)
+    throw std::runtime_error("shipboard water execute release is disabled until C3 human audit");
 }
 inline nlohmann::json parse_unique_contract(const std::string & text) {
   contract_require(!text.empty() && text.size()<=65536,"bounded contract file required");

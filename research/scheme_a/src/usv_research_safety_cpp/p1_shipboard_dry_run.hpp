@@ -130,6 +130,72 @@ struct CandidateOutcome {
   std::int64_t solve_latency_ns = 0;
 };
 
+inline CandidateOutcome validate_candidate_with_anchor(
+    const CandidateFacts & cand,
+    const DryRunLimits & limits,
+    const std::array<double, 2> & continuity_anchor_n) {
+  CandidateOutcome out;
+  out.solve_latency_ns =
+      cand.solve_end_ns >= cand.solve_start_ns ? (cand.solve_end_ns - cand.solve_start_ns) : -1;
+
+  std::string reason;
+  if (cand.expected_worker_instance.empty() ||
+      cand.worker_instance != cand.expected_worker_instance ||
+      cand.backend != "acados") {
+    reason = "foreign_worker";
+  } else if (!cand.echo_matched) {
+    reason = "job_echo_mismatch";
+  } else if (!cand.solver_invoked || !cand.success || !cand.prediction_available) {
+    reason = "solver_failed";
+  } else if (!cand.finite || !std::isfinite(cand.backend_ms) || cand.backend_ms < 0.0 ||
+             !std::isfinite(cand.first_control[0]) || !std::isfinite(cand.first_control[1])) {
+    reason = "nonfinite_or_timing";
+  } else if (!cand.initial_control_matches) {
+    reason = "first_control_mismatch";
+  } else if (!cand.initial_state_matches) {
+    reason = "prediction_initial_mismatch";
+  } else if (!(cand.freeze_steady_ns > 0 &&
+               cand.freeze_steady_ns <= cand.worker_receive_ns &&
+               cand.worker_receive_ns <= cand.solve_start_ns &&
+               cand.solve_start_ns <= cand.solve_end_ns &&
+               cand.solve_end_ns <= cand.receive_ns)) {
+    reason = "native_timing_order";
+  } else if (cand.solve_end_ns > cand.deadline_steady_ns ||
+             cand.receive_ns > cand.deadline_steady_ns) {
+    reason = "deadline_exceeded";
+  }
+
+  if (reason.empty()) {
+    const double lo = std::max(limits.command_min_n, -limits.publisher_max_n);
+    const double hi = std::min(limits.command_max_n, limits.publisher_max_n);
+    for (int i = 0; i < 2; ++i) {
+      const double raw = cand.first_control[i];
+      const double scaled = raw * limits.map_scale;
+      if (scaled < limits.command_min_n || scaled > limits.command_max_n ||
+          std::abs(scaled) > limits.publisher_max_n ||
+          std::abs(scaled - raw) > 1e-9) {
+        reason = "command_bounds";
+        break;
+      }
+      out.clamped_control[i] = std::clamp(scaled, lo, hi);
+    }
+  }
+
+  if (reason.empty()) {
+    const double max_delta = limits.rho_n_s * (limits.tick_period_ns / 1e9) + 1e-6;
+    for (int i = 0; i < 2; ++i) {
+      if (std::abs(out.clamped_control[i] - continuity_anchor_n[i]) > max_delta) {
+        reason = "rate_limit_exceeded";
+        break;
+      }
+    }
+  }
+
+  out.accepted = reason.empty();
+  out.reason = reason;
+  return out;
+}
+
 class DryRunCoordinator {
  public:
   static constexpr bool kPhysicalOutputEnabled = false;
@@ -191,65 +257,8 @@ class DryRunCoordinator {
 
   CandidateOutcome evaluate_candidate(const CandidateFacts & cand) {
     ++candidates_received_;
-    CandidateOutcome out;
-    out.solve_latency_ns =
-        cand.solve_end_ns >= cand.solve_start_ns ? (cand.solve_end_ns - cand.solve_start_ns) : -1;
-
-    std::string reason;
-    if (cand.expected_worker_instance.empty() ||
-        cand.worker_instance != cand.expected_worker_instance ||
-        cand.backend != "acados") {
-      reason = "foreign_worker";
-    } else if (!cand.echo_matched) {
-      reason = "job_echo_mismatch";
-    } else if (!cand.solver_invoked || !cand.success || !cand.prediction_available) {
-      reason = "solver_failed";
-    } else if (!cand.finite || !std::isfinite(cand.backend_ms) || cand.backend_ms < 0.0 ||
-               !std::isfinite(cand.first_control[0]) || !std::isfinite(cand.first_control[1])) {
-      reason = "nonfinite_or_timing";
-    } else if (!cand.initial_control_matches) {
-      reason = "first_control_mismatch";
-    } else if (!cand.initial_state_matches) {
-      reason = "prediction_initial_mismatch";
-    } else if (!(cand.freeze_steady_ns > 0 &&
-                 cand.freeze_steady_ns <= cand.worker_receive_ns &&
-                 cand.worker_receive_ns <= cand.solve_start_ns &&
-                 cand.solve_start_ns <= cand.solve_end_ns &&
-                 cand.solve_end_ns <= cand.receive_ns)) {
-      reason = "native_timing_order";
-    } else if (cand.solve_end_ns > cand.deadline_steady_ns ||
-               cand.receive_ns > cand.deadline_steady_ns) {
-      reason = "deadline_exceeded";
-    }
-
-    if (reason.empty()) {
-      const double lo = std::max(limits_.command_min_n, -limits_.publisher_max_n);
-      const double hi = std::min(limits_.command_max_n, limits_.publisher_max_n);
-      for (int i = 0; i < 2; ++i) {
-        const double raw = cand.first_control[i];
-        const double scaled = raw * limits_.map_scale;
-        if (scaled < limits_.command_min_n || scaled > limits_.command_max_n ||
-            std::abs(scaled) > limits_.publisher_max_n ||
-            std::abs(scaled - raw) > 1e-9) {
-          reason = "command_bounds";
-          break;
-        }
-        out.clamped_control[i] = std::clamp(scaled, lo, hi);
-      }
-    }
-
-    if (reason.empty()) {
-      const double max_delta = limits_.rho_n_s * (limits_.tick_period_ns / 1e9) + 1e-6;
-      for (int i = 0; i < 2; ++i) {
-        if (std::abs(out.clamped_control[i] - nominal_continuity_n_[i]) > max_delta) {
-          reason = "rate_limit_exceeded";
-          break;
-        }
-      }
-    }
-
-    out.accepted = reason.empty();
-    out.reason = reason;
+    CandidateOutcome out = validate_candidate_with_anchor(cand, limits_, nominal_continuity_n_);
+    out.accepted = out.reason.empty();
     last_backend_ms_ = cand.backend_ms;
     last_solve_latency_ns_ = out.solve_latency_ns;
     last_first_control_ = cand.first_control;
@@ -262,7 +271,7 @@ class DryRunCoordinator {
       last_rejection_reason_.clear();
     } else {
       ++candidates_rejected_;
-      last_rejection_reason_ = reason;
+      last_rejection_reason_ = out.reason;
     }
     return out;
   }

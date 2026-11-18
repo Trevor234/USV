@@ -16,6 +16,9 @@
 #include <std_msgs/msg/bool.hpp>
 #include <std_msgs/msg/string.hpp>
 #include <mavros_msgs/msg/state.hpp>
+#include <mavros_msgs/msg/override_rc_in.hpp>
+#include <mavros_msgs/msg/rc_out.hpp>
+#include <mavros_msgs/srv/set_mode.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include "usv_research_interfaces/msg/applied_control.hpp"
 #include "usv_research_interfaces/msg/plant_command.hpp"
@@ -34,6 +37,7 @@
 #include "p1_clock_diagnostics.hpp"
 #include "p1_shipboard_commissioning.hpp"
 #include "p1_shipboard_dry_run.hpp"
+#include "p1_shipboard_execute.hpp"
 namespace {
 /// 诊断缓冲上限：订阅 executor 与 tick 线程各一条单生产者流。
 constexpr std::size_t kCallbackTraceCapacity=65536;
@@ -98,12 +102,17 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     // frame 整段构造 —— 那些字段属于控制链，本模式一个都不碰。
     if(mode_==p1::shipboard_commissioning_mode||
        c_.at("schema").get<std::string>()==p1::shipboard_commissioning_schema){
-      start_shipboard_mode(false);
+      start_shipboard_mode(ShipboardVariant::Commissioning);
       return;
     }
     if(mode_==p1::shipboard_dry_run_mode||
        c_.at("schema").get<std::string>()==p1::shipboard_dry_run_schema){
-      start_shipboard_mode(true);
+      start_shipboard_mode(ShipboardVariant::DryRun);
+      return;
+    }
+    if(mode_==p1::shipboard_execute_mode||
+       c_.at("schema").get<std::string>()==p1::shipboard_execute_schema){
+      start_shipboard_mode(ShipboardVariant::Execute);
       return;
     }
     recording_observer_=declare_parameter<std::string>("recording_observer_node","p1_calibration_driver");
@@ -165,11 +174,25 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       {"raw_command_topics",p1::Json::array()},
       {"diagnostic_only",mode_!="execute"}});
   }
-  ~Regulator(){stop_requested=true;prep_stop_=true;commission_stop_=true;prep_cv_.notify_all();if(commission_thread_.joinable())commission_thread_.join();if(tick_.joinable())tick_.join();if(prep_.joinable())prep_.join();sink_->close();}
+  ~Regulator(){
+    stop_requested=true;prep_stop_=true;commission_stop_=true;prep_cv_.notify_all();
+    if(commission_thread_.joinable())commission_thread_.join();
+    if(tick_.joinable())tick_.join();
+    if(prep_.joinable())prep_.join();
+    release_execute_rc_final();
+    sink_->close();
+  }
   bool finished()const{return finished_;}
   bool commissioning()const{return commission_active_;}
   int commissioning_exit_code()const{return commission_rc_;}
-  bool close_source(){commission_stop_=true;if(commission_thread_.joinable())commission_thread_.join();if(tick_.joinable())tick_.join();prep_stop_=true;prep_cv_.notify_all();if(prep_.joinable())prep_.join();sink_->close();
+  bool close_source(){
+    commission_stop_=true;
+    if(commission_thread_.joinable())commission_thread_.join();
+    if(tick_.joinable())tick_.join();
+    prep_stop_=true;prep_cv_.notify_all();
+    if(prep_.joinable())prep_.join();
+    release_execute_rc_final();
+    sink_->close();
     if(diag_){const bool diag_ok=diag_->flush();fprintf(stdout,"CLOCK_DIAGNOSTICS_FLUSH_SUCCESS=%s\n",diag_ok?"true":"false");}
     fprintf(stdout,"REGULATOR_CLOSE_FLUSH_SUCCESS=%s\n",sink_->failed()?"false":"true");return !sink_->failed();}
  private:
@@ -700,10 +723,97 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     }
     prep_stop_=true;prep_cv_.notify_all();finished_=true;
   }
-  // ================= 实船调试服务接管（零求解 / 零物理输出）=================
-  // 实船调试模式入口：dry_run=false 时为纯观测 commissioning（zero jobs, zero solve），
-  // dry_run=true 时开启真 MAVROS 输入 + 真 acados 求解，但严格保持零物理执行输出。
-  void start_shipboard_mode(bool dry_run){
+  // ================= 实船服务接管（commissioning / shipboard_dry_run / shipboard_execute）=================
+  enum class ShipboardVariant { Commissioning, DryRun, Execute };
+  struct TrackedShipboardJob { p1::Job job; std::uint64_t epoch = 0; };
+
+  p1_dry_run::DryRunCoordinator * active_nav_coordinator_locked(){
+    if(dry_run_nav_) return dry_run_nav_.get();
+    if(execute_nav_) return &execute_nav_->dry_run();
+    return nullptr;
+  }
+
+  void release_execute_rc_final(){
+    if(!execute_active_ || !rc_pub_) return;
+    std::lock_guard<std::mutex> rc_lk(rc_pub_mutex_);
+    mavros_msgs::msg::OverrideRCIn msg;
+    try{ rc_pub_->publish(msg); }catch(...){}
+  }
+
+  void publish_mpc_status_now(){
+    if(!execute_active_ || !mpc_status_pub_ || !execute_nav_) return;
+    p1::Json j;
+    {
+      std::lock_guard<std::mutex> l(c_mutex_);
+      j = execute_nav_->mpc_status_json();
+    }
+    std_msgs::msg::String msg;
+    msg.data = j.dump();
+    std::lock_guard<std::mutex> st_lk(mpc_status_pub_mutex_);
+    try{ mpc_status_pub_->publish(msg); }catch(...){}
+  }
+
+  void apply_execute_action(const p1_execute::ActuationAction & act, int64_t now){
+    if(!execute_active_ || act.directive == p1_execute::OutputDirective::None) return;
+    const auto issue_ns = p1::monotonic_ns();
+    bool pub_ok = false;
+    bool stale_skipped = false;
+    mavros_msgs::msg::OverrideRCIn msg;
+    if(act.directive == p1_execute::OutputDirective::ThrustPwm ||
+       act.directive == p1_execute::OutputDirective::NeutralPwm){
+      msg.channels[execute_limits_.steering_channel] = static_cast<std::uint16_t>(act.steering_pwm);
+      msg.channels[execute_limits_.throttle_channel] = static_cast<std::uint16_t>(act.throttle_pwm);
+    }
+    {
+      std::lock_guard<std::mutex> rc_lk(rc_pub_mutex_);
+      if(act.directive == p1_execute::OutputDirective::Release ||
+         act.directive == p1_execute::OutputDirective::NeutralPwm){
+        if(act.epoch > latest_non_thrust_epoch_) latest_non_thrust_epoch_ = act.epoch;
+      }else if(act.epoch < latest_non_thrust_epoch_){
+        stale_skipped = true;
+      }
+      if(!stale_skipped && rc_pub_){
+        try{ rc_pub_->publish(msg); pub_ok = true; }catch(...){ pub_ok = false; }
+      }
+    }
+    const auto post_ns = p1::monotonic_ns();
+    bool hold_req_sent = false;
+    if(act.request_fcu_hold && set_mode_cli_ && set_mode_cli_->service_is_ready()){
+      auto req = std::make_shared<mavros_msgs::srv::SetMode::Request>();
+      req->custom_mode = "HOLD";
+      try{
+        set_mode_cli_->async_send_request(req);
+        hold_req_sent = true;
+      }catch(...){ hold_req_sent = false; }
+    }
+    const char * dir_name = act.directive == p1_execute::OutputDirective::ThrustPwm
+        ? "thrust_pwm"
+        : (act.directive == p1_execute::OutputDirective::NeutralPwm ? "neutral_pwm" : "release");
+    sink_->add({
+      {"type", "execute_actuation"},
+      {"schema", "p1-execute-actuation-v1"},
+      {"directive", dir_name},
+      {"control_source", act.control_source},
+      {"reason", act.reason},
+      {"epoch", act.epoch},
+      {"stale_skipped", stale_skipped},
+      {"steering_pwm", act.steering_pwm},
+      {"throttle_pwm", act.throttle_pwm},
+      {"commanded_n", act.commanded_n},
+      {"effective_thrust_n", act.effective_n},
+      {"anchor_source", "rc_override_quantized_eff"},
+      {"anchor_modeled", true},
+      {"hardware_receipt_verified", false},
+      {"publish_ok", pub_ok},
+      {"request_fcu_hold", act.request_fcu_hold},
+      {"hold_req_sent", hold_req_sent},
+      {"event_ns", now},
+      {"issue_steady_ns", issue_ns},
+      {"post_publish_steady_ns", post_ns}
+    });
+  }
+
+  void start_shipboard_mode(ShipboardVariant variant){
     p1::require_runtime_contract_mode(c_,mode_);
     if(run_.empty()||run_.size()>128)throw std::runtime_error("identity invalid");
     if(!diag_file_.empty())throw std::runtime_error("clock diagnostics require controlled_sim");
@@ -713,24 +823,40 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     capability_lease_=std::make_unique<p1::CapabilityLease>(c_.at("worker_capability_receipt_timeout_ns").get<int64_t>());
     p1_shipboard::Limits limits;
     limits.capability_age_ns=capability_lease_->timeout_ns();
-    if(dry_run){
+    const bool uses_solve=(variant==ShipboardVariant::DryRun || variant==ShipboardVariant::Execute);
+    if(variant==ShipboardVariant::DryRun){
       limits.state_age_ns=c_.at("state_age_ns").get<int64_t>();
       limits.imu_age_ns=c_.at("imu_age_ns").get<int64_t>();
       dry_run_nav_=std::make_unique<p1_dry_run::DryRunCoordinator>(p1_dry_run::limits_from_contract(c_));
       dry_run_ref_=std::make_shared<usv_mpc::ReferenceInput>();
+    }else if(variant==ShipboardVariant::Execute){
+      execute_limits_=p1_execute::execute_limits_from_contract(c_);
+      limits.state_age_ns=execute_limits_.state_age_ns;
+      limits.imu_age_ns=execute_limits_.nav.imu_age_ns;
+      execute_nav_=std::make_unique<p1_execute::ShipboardExecuteCoordinator>(execute_limits_);
+      dry_run_ref_=std::make_shared<usv_mpc::ReferenceInput>();
     }
     monitor_=std::make_unique<p1_shipboard::Monitor>(limits);
     commission_active_=true;
-    dry_run_active_=dry_run;
+    dry_run_active_=(variant==ShipboardVariant::DryRun);
+    execute_active_=(variant==ShipboardVariant::Execute);
 
     sink_=std::make_unique<Sink>(declare_parameter<std::string>("source_file",""),c_.at("log_capacity"),nullptr);
     const auto topics=p1::shipboard_input_topics();
     status_pub_=create_publisher<std_msgs::msg::String>("/p1/commissioning_status",rclcpp::QoS(1).reliable().transient_local());
-    const int path_depth=dry_run?10:1;
-    // 禁止创建任何物理执行端 publisher（无 Float64 推力、无 rc/override、无 cmd_vel）。
-    if(dry_run){
+    const int path_depth=uses_solve?10:1;
+    // commissioning / dry_run 严禁创建任何物理执行端 publisher；
+    // 只有 shipboard_execute 创建 /mavros/rc/override + /mpc/status + /mavros/set_mode client。
+    if(uses_solve){
       job_pub_=create_publisher<p1::Job>("/p1/solve_job",rclcpp::QoS(1).reliable());
       candidates_=create_subscription<p1::Candidate>("/p1/solve_candidate",rclcpp::QoS(1).reliable(),[this](p1::Candidate::SharedPtr m){dry_run_candidate(*m);});
+    }
+    if(execute_active_){
+      const auto out_topics=c_.at("output_topics");
+      rc_pub_=create_publisher<mavros_msgs::msg::OverrideRCIn>(out_topics.at("rc_override").get<std::string>(),rclcpp::QoS(10));
+      mpc_status_pub_=create_publisher<std_msgs::msg::String>(out_topics.at("mpc_status").get<std::string>(),rclcpp::QoS(10));
+      set_mode_cli_=create_client<mavros_msgs::srv::SetMode>("/mavros/set_mode");
+      c_rc_out_=create_subscription<mavros_msgs::msg::RCOut>("/mavros/rc/out",rclcpp::SensorDataQoS(),[this](mavros_msgs::msg::RCOut::SharedPtr m){execute_rc_out(*m);});
     }
     c_state_=create_subscription<mavros_msgs::msg::State>(topics.at("state").get<std::string>(),rclcpp::SensorDataQoS(),[this](mavros_msgs::msg::State::SharedPtr m){commissioning_state(*m);});
     c_odom_=create_subscription<nav_msgs::msg::Odometry>(topics.at("odom").get<std::string>(),rclcpp::SensorDataQoS(),[this](nav_msgs::msg::Odometry::SharedPtr m){commissioning_odom(*m);});
@@ -739,35 +865,66 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     c_profile_=create_subscription<std_msgs::msg::Float64MultiArray>(topics.at("profile").get<std::string>(),rclcpp::QoS(path_depth).reliable(),[this](std_msgs::msg::Float64MultiArray::SharedPtr m){commissioning_profile(*m);});
     capabilities_=create_subscription<p1::Capability>("/p1/worker_capability",rclcpp::QoS(1).reliable().transient_local(),[this](p1::Capability::SharedPtr m){commissioning_capability(*m);});
     c_stop_=create_subscription<std_msgs::msg::Bool>("/p1/stop",rclcpp::QoS(1).reliable(),[this](std_msgs::msg::Bool::SharedPtr m){if(m->data)stop_requested=true;});
-    {const auto now=p1::monotonic_ns();std::lock_guard<std::mutex> l(c_mutex_);monitor_->arm_start(now);if(dry_run_nav_)dry_run_nav_->arm(now);}
+    {const auto now=p1::monotonic_ns();std::lock_guard<std::mutex> l(c_mutex_);monitor_->arm_start(now);if(dry_run_nav_)dry_run_nav_->arm(now);if(execute_nav_)execute_nav_->arm(now);}
     auto subs=p1::Json::array({"/mavros/state","/mavros/local_position/odom","/mavros/imu/data","/path/reference","/path/reference_profile","/p1/worker_capability","/p1/stop"});
     auto pubs=p1::Json::array({"/p1/commissioning_status"});
-    if(dry_run){subs.push_back("/p1/solve_candidate");pubs.push_back("/p1/solve_job");}
+    if(uses_solve){subs.push_back("/p1/solve_candidate");pubs.push_back("/p1/solve_job");}
+    if(execute_active_){
+      subs.push_back("/mavros/rc/out");
+      pubs.push_back(c_.at("output_topics").at("rc_override").get<std::string>());
+      pubs.push_back(c_.at("output_topics").at("mpc_status").get<std::string>());
+    }
     auto header=p1::Json{{"type","startup"},{"schema","p1-shipboard-regulator-v1"},{"run_id",run_},
       {"boot_id",boot_},{"host_boot_id",p1::boot_id()},{"contract_hash",hash_},
       {"plan_sha256",plan_sha_},{"mode",mode_},{"pid",getpid()},
-      {"clock","CLOCK_MONOTONIC"},{"physical_output_enabled",false},{"jobs_submitted",0},
-      {"anchor_known",false},{"execution_publisher_endpoints",0},
+      {"clock","CLOCK_MONOTONIC"},{"physical_output_enabled",false},
+      {"execution_endpoint_enabled",execute_active_.load()},{"jobs_submitted",0},
+      {"anchor_known",false},{"execution_publisher_endpoints",execute_active_.load()?2:0},
       {"subscriptions",subs},{"publications",pubs}};
     if(!sink_->add(header))throw std::runtime_error("commissioning source unavailable");
     commission_thread_=std::thread([this]{commission_loop();});
+  }
+  void execute_rc_out(const mavros_msgs::msg::RCOut & m){
+    if(!execute_active_) return;
+    const auto now=p1::monotonic_ns();
+    std::uint16_t ch1=0,ch3=0;
+    if(static_cast<int>(m.channels.size())>execute_limits_.steering_channel)
+      ch1=m.channels[execute_limits_.steering_channel];
+    if(static_cast<int>(m.channels.size())>execute_limits_.throttle_channel)
+      ch3=m.channels[execute_limits_.throttle_channel];
+    if(ch1==last_rc_out_ch1_ && ch3==last_rc_out_ch3_ && now-last_rc_out_log_ns_<1000000000LL) return;
+    last_rc_out_ch1_=ch1;last_rc_out_ch3_=ch3;last_rc_out_log_ns_=now;
+    sink_->add({{"type","rc_out_observation"},{"ch1_pwm",ch1},{"ch3_pwm",ch3},
+      {"channel_count",m.channels.size()},{"receive_ns",now}});
   }
   static std::string bounded(const std::string & s,bool & truncated){
     truncated=s.size()>128;return s.substr(0,128);
   }
   void recompute_dry_run_sync_locked(){
-    if(!dry_run_nav_||!dry_run_ref_)return;
+    auto * nav=active_nav_coordinator_locked();
+    if(!nav||!dry_run_ref_)return;
     const auto sync=usv_mpc::profile_sync_state(
       dry_run_ref_->path.size(),
       dry_run_ref_->profile.empty()?-1:static_cast<int>(dry_run_ref_->profile.size()),
       &dry_run_ref_->path_stamp,&dry_run_ref_->profile_stamp);
-    dry_run_nav_->set_profile_sync(sync.first,sync.second);
+    if(execute_nav_) execute_nav_->set_profile_sync(sync.first,sync.second);
+    else nav->set_profile_sync(sync.first,sync.second);
   }
   void commissioning_state(const mavros_msgs::msg::State & m){
     const auto now=p1::monotonic_ns();
     p1_shipboard::StateFacts f;f.seen=true;f.receipt_ns=now;f.connected=m.connected;f.armed=m.armed;
     f.mode=m.mode;if(f.mode.size()>32)f.mode.resize(32);
-    std::lock_guard<std::mutex> l(c_mutex_);f.count=monitor_->state().count+1;monitor_->on_state(f);
+    p1_execute::ActuationAction act;
+    {
+      std::lock_guard<std::mutex> l(c_mutex_);
+      f.count=monitor_->state().count+1;
+      monitor_->on_state(f);
+      if(execute_nav_) act=execute_nav_->on_state(f,now);
+    }
+    if(execute_active_ && act.directive!=p1_execute::OutputDirective::None){
+      apply_execute_action(act,now);
+      publish_mpc_status_now();
+    }
   }
   void commissioning_odom(const nav_msgs::msg::Odometry & m){
     const auto now=p1::monotonic_ns();
@@ -783,7 +940,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       std::isfinite(t.angular.z);
     f.resource_valid=true;
     monitor_->on_input("odom",f);
-    if(dry_run_nav_){
+    if(auto * nav=active_nav_coordinator_locked()){
       std::array<double,5> a{p.x,p.y,t.linear.x,t.linear.y,t.angular.z};
       std::array<double,4> quat{q.x,q.y,q.z,q.w};
       p1_dry_run::OdomFacts df;
@@ -794,7 +951,8 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         const auto vec=usv_mpc::compose_odom(a,quat);
         for(int i=0;i<6;++i)df.state[static_cast<size_t>(i)]=vec[i];
       }
-      dry_run_nav_->on_odom(df);
+      if(execute_nav_) execute_nav_->on_odom(df);
+      else nav->on_odom(df);
     }
   }
   void commissioning_imu(const sensor_msgs::msg::Imu & m){
@@ -809,22 +967,23 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       std::isfinite(m.orientation.y)&&std::isfinite(m.orientation.z)&&std::isfinite(m.orientation.w);
     f.resource_valid=true;
     monitor_->on_input("imu",f);
-    if(dry_run_nav_){
+    if(auto * nav=active_nav_coordinator_locked()){
       p1_dry_run::ImuFacts imf;
       imf.seen=true;imf.finite=std::isfinite(m.angular_velocity.z);
       imf.valid=imf.finite&&usv_mpc::admit_imu(m.angular_velocity.z);
       imf.frame=f.frame;imf.seq=f.count;imf.receipt_ns=now;imf.stamp_ns=f.source_stamp_ns;
       imf.r=imf.valid?m.angular_velocity.z:0.0;
-      dry_run_nav_->on_imu(imf);
+      if(execute_nav_) execute_nav_->on_imu(imf);
+      else nav->on_imu(imf);
     }
   }
-  // path/profile 先复用资源检查，再只记长度/布局摘要；dry_run 同步解析坐标给 ReferenceInput。
+  // path/profile 先复用资源检查，再只记长度/布局摘要；dry_run/execute 同步解析坐标给 ReferenceInput。
   void commissioning_path(const nav_msgs::msg::Path & m){
     const auto now=p1::monotonic_ns();
     const auto resource=p1::check_path_resources(m,resources_);
     std::shared_ptr<usv_mpc::ReferenceInput> next;
     bool dry_valid=false;
-    if(dry_run_active_){
+    if(dry_run_active_||execute_active_){
       next=std::make_shared<usv_mpc::ReferenceInput>();
       dry_valid=bool(resource);
       if(dry_valid){
@@ -846,14 +1005,15 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     f.frame=bounded(m.header.frame_id,f.truncated);
     f.resource_valid=bool(resource);
     monitor_->on_input("path",f);
-    if(dry_run_nav_){
+    if(auto * nav=active_nav_coordinator_locked()){
       next->profile=dry_run_ref_->profile;next->profile_stamp=dry_run_ref_->profile_stamp;
       next->profile_sequence=dry_run_ref_->profile_sequence;next->path_sequence=f.count;
       dry_run_ref_=next;
       p1_dry_run::PathFacts pf;pf.seen=true;pf.resource_valid=f.resource_valid&&dry_valid;
       pf.frame=f.frame;pf.seq=f.count;pf.receipt_ns=now;pf.stamp_ns=f.source_stamp_ns;
       pf.points=next->path.size();
-      dry_run_nav_->on_path(pf);
+      if(execute_nav_) execute_nav_->on_path(pf);
+      else nav->on_path(pf);
       recompute_dry_run_sync_locked();
     }
     sink_->add({{"type","commissioning_path_facts"},{"sequence",f.count},
@@ -873,7 +1033,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       std::vector<std::string> labels;for(const auto & d:m.layout.dim)labels.push_back(d.label);
       parsed_stamp=usv_mpc::parse_profile_stamp(labels,stamp_ok);
     }
-    if(dry_run_active_){
+    if(dry_run_active_||execute_active_){
       next=std::make_shared<usv_mpc::ReferenceInput>();
       dry_valid=bool(resource)&&!m.data.empty()&&m.data.size()%4==0&&
                 m.data.size()/4<=resources_.max_profile_rows;
@@ -892,14 +1052,15 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     f.resource_valid=bool(resource);
     if(stamp_ok)f.source_stamp_ns=int64_t(parsed_stamp.first)*1000000000+parsed_stamp.second;
     monitor_->on_input("profile",f);
-    if(dry_run_nav_){
+    if(auto * nav=active_nav_coordinator_locked()){
       next->path=dry_run_ref_->path;next->path_stamp=dry_run_ref_->path_stamp;
       next->path_sequence=dry_run_ref_->path_sequence;next->profile_sequence=f.count;
       dry_run_ref_=next;
       p1_dry_run::ProfileFacts prf;prf.seen=true;prf.resource_valid=f.resource_valid&&dry_valid;
       prf.seq=f.count;prf.receipt_ns=now;prf.stamp_ns=f.source_stamp_ns;
       prf.rows=next->profile.size();prf.stamp_ok=stamp_ok;
-      dry_run_nav_->on_profile(prf);
+      if(execute_nav_) execute_nav_->on_profile(prf);
+      else nav->on_profile(prf);
       recompute_dry_run_sync_locked();
     }
     sink_->add({{"type","commissioning_profile_facts"},{"sequence",f.count},
@@ -926,10 +1087,12 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       m.model_plan_sha256==plan_sha_&&!m.fault_injection_enabled&&!m.fatal&&
       !m.worker_instance.empty()&&m.startup_ns>0;
     bool renewed=false;
+    bool identity_drifted=false;
     if(identity&&!worker_instance_.empty()&&worker_instance_!=m.worker_instance){
-      commission_terminal(p1_shipboard::reason_worker_identity_changed);
+      identity_drifted=true;
+      if(!execute_active_)commission_terminal(p1_shipboard::reason_worker_identity_changed);
     }
-    if(identity&&shape&&commission_monitor_alive()){
+    if(identity&&shape&&!identity_drifted&&commission_monitor_alive()){
       renewed=capability_lease_->renew(now);
       if(renewed)worker_instance_=m.worker_instance;
     }
@@ -940,7 +1103,12 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     f.fatal=m.fatal;f.completed_jobs=m.completed_jobs;f.active_job=m.active_job;
     f.pending_count=m.pending_count;f.worker_instance=m.worker_instance;
     monitor_->on_capability(f);
-    monitor_->set_worker_capability_valid(identity&&shape);
+    monitor_->set_worker_capability_valid(identity&&shape&&!identity_drifted);
+    if(execute_nav_){
+      execute_nav_->on_capability(f);
+      execute_nav_->set_worker_capability_valid(identity&&shape&&!identity_drifted);
+      if(identity_drifted)worker_identity_failed_=true;
+    }
     sink_->add({{"type","capability_admission"},{"receive_ns",received},{"validation_commit_ns",now},
       {"identity_valid",identity},{"shape_valid",shape},{"renewed",renewed},
       {"identity_fields",{{"run_id",m.run_id==run_},{"boot_id",m.boot_id==boot_},
@@ -956,7 +1124,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         {"model_plan_sha256",m.model_plan_sha256},{"reason",m.reason}}}});
   }
   void dry_run_candidate(const p1::Candidate & m){
-    if(!dry_run_active_||!dry_run_nav_)return;
+    if((!dry_run_active_&&!execute_active_)||(!dry_run_nav_&&!execute_nav_))return;
     const auto now=p1::monotonic_ns();
     const auto resource=p1::check_candidate_resources(m,resources_);
     if(!resource){
@@ -965,19 +1133,21 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         {"limit",resource.limit},{"receive_ns",now},{"accepted_registration",false}});
       return;
     }
-    p1_dry_run::CandidateOutcome outcome;
+    p1_dry_run::CandidateOutcome dry_outcome;
+    p1_execute::CandidateResult exec_outcome;
     std::string valid_job_reason;
+    const bool is_exec=execute_active_.load();
     {
       std::lock_guard<std::mutex> l(c_mutex_);
       valid_job_reason=p1::valid_job(m.job,run_,boot_,hash_,nominal_,worker_instance_);
       auto expected=std::find_if(dry_run_jobs_.begin(),dry_run_jobs_.end(),
-        [&](const p1::Job & j){return j.job_id==m.job.job_id;});
+        [&](const TrackedShipboardJob & tj){return tj.job.job_id==m.job.job_id;});
       p1_dry_run::CandidateFacts cf;
       cf.job_id=m.job.job_id;cf.tick=m.job.target_tick;
       cf.worker_instance=m.worker_instance;cf.expected_worker_instance=worker_instance_;
       cf.backend=m.backend;
       cf.echo_matched=valid_job_reason.empty()&&expected!=dry_run_jobs_.end()&&
-        p1::job_json(*expected)==p1::job_json(m.job);
+        p1::job_json(expected->job)==p1::job_json(m.job);
       cf.success=m.success;cf.prediction_available=m.prediction_available;cf.solver_invoked=m.solver_invoked;
       cf.finite=p1::finite_array(m.x_prediction)&&p1::finite_array(m.u_prediction)&&
         p1::finite_array(m.first_control);
@@ -993,20 +1163,45 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       cf.freeze_steady_ns=m.job.freeze_steady_ns;cf.worker_receive_ns=m.worker_receive_ns;
       cf.solve_start_ns=m.solve_start_ns;cf.solve_end_ns=m.solve_end_ns;
       cf.deadline_steady_ns=m.job.deadline_steady_ns;cf.receive_ns=now;
-      outcome=dry_run_nav_->evaluate_candidate(cf);
+      if(is_exec&&execute_nav_){
+        const std::uint64_t job_epoch=(expected!=dry_run_jobs_.end())?expected->epoch:0ULL;
+        exec_outcome=execute_nav_->evaluate_and_actuate(cf,job_epoch,now);
+      }else if(dry_run_nav_){
+        dry_outcome=dry_run_nav_->evaluate_candidate(cf);
+      }
     }
-    sink_->add({{"type","dry_run_decision"},{"schema","p1-dry-run-decision-v1"},
-      {"job_id",m.job.job_id},{"tick",m.job.target_tick},
-      {"accepted",outcome.accepted},{"reason",outcome.reason},
-      {"valid_job_reason",valid_job_reason},
-      {"backend_ms",m.backend_ms},{"solve_latency_ns",outcome.solve_latency_ns},
-      {"first_control",m.first_control},{"clamped_control",outcome.clamped_control},
-      {"worker_instance",m.worker_instance},
-      {"physical_output_enabled",false},{"closed_loop_verified",false},{"anchor_known",false},
-      {"receive_ns",now}});
+    if(is_exec){
+      if(exec_outcome.emit_action){
+        apply_execute_action(exec_outcome.action,now);
+        publish_mpc_status_now();
+      }
+      sink_->add({{"type","execute_decision"},{"schema","p1-execute-decision-v1"},
+        {"job_id",m.job.job_id},{"tick",m.job.target_tick},
+        {"accepted",exec_outcome.accepted},{"reason",exec_outcome.reason},
+        {"valid_job_reason",valid_job_reason},
+        {"backend_ms",m.backend_ms},{"solve_latency_ns",exec_outcome.solve_latency_ns},
+        {"first_control",m.first_control},
+        {"effective_thrust",exec_outcome.action.effective_n},
+        {"steering_pwm",exec_outcome.action.steering_pwm},
+        {"throttle_pwm",exec_outcome.action.throttle_pwm},
+        {"control_source",exec_outcome.action.control_source},
+        {"worker_instance",m.worker_instance},
+        {"anchor_source","rc_override_quantized_eff"},
+        {"anchor_modeled",true},{"hardware_receipt_verified",false},
+        {"receive_ns",now}});
+    }else{
+      sink_->add({{"type","dry_run_decision"},{"schema","p1-dry-run-decision-v1"},
+        {"job_id",m.job.job_id},{"tick",m.job.target_tick},
+        {"accepted",dry_outcome.accepted},{"reason",dry_outcome.reason},
+        {"valid_job_reason",valid_job_reason},
+        {"backend_ms",m.backend_ms},{"solve_latency_ns",dry_outcome.solve_latency_ns},
+        {"first_control",m.first_control},{"clamped_control",dry_outcome.clamped_control},
+        {"worker_instance",m.worker_instance},
+        {"physical_output_enabled",false},{"closed_loop_verified",false},{"anchor_known",false},
+        {"receive_ns",now}});
+    }
   }
-  void step_dry_run_tick(int64_t now){
-    if(!dry_run_active_||!dry_run_nav_)return;
+  void submit_shipboard_solve_job(int64_t now,bool for_execute,bool force_warmstart_reset,std::uint64_t job_epoch){
     std::string block_reason;
     p1::Job j;
     bool submit=false;
@@ -1015,11 +1210,13 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     std::uint64_t target_tick=0;
     {
       std::lock_guard<std::mutex> l(c_mutex_);
+      auto * nav=active_nav_coordinator_locked();
+      if(!nav)return;
       const auto gate_now=p1::monotonic_ns();
-      block_reason=dry_run_nav_->nav_gate(gate_now);
+      block_reason=nav->nav_gate(gate_now);
       if(block_reason=="ready"&&worker_instance_.empty())block_reason="waiting_worker_instance";
       if(block_reason=="ready"){
-        const auto x_arr=dry_run_nav_->composed_state();
+        const auto x_arr=nav->composed_state();
         usv_mpc::Vector6d x;for(int i=0;i<6;++i)x[i]=x_arr[static_cast<size_t>(i)];
         const auto ref=dry_run_ref_;
         auto ref_mat=usv_mpc::build_frozen_reference(x,*ref,20,0.2,
@@ -1036,8 +1233,8 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
               dry_run_model_gen_=selection.generation;
               model_changed=true;
             }
-            const auto & od=dry_run_nav_->odom();
-            const auto & im=dry_run_nav_->imu();
+            const auto & od=nav->odom();
+            const auto & im=nav->imu();
             const int64_t freeze_now=p1::monotonic_ns();
             const int64_t base_sim=std::max<int64_t>(0,od.stamp_ns);
             j.schema_version="p1-solve-job-v1";j.run_id=run_;j.boot_id=boot_;
@@ -1054,19 +1251,29 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
             j.r_from_imu=true;j.horizon_steps=20;j.prediction_dt=0.2;
             for(int i=0;i<6;++i){j.frozen_state[i]=x[i];j.target_state[i]=x[i];}
             std::copy(ref_mat.data(),ref_mat.data()+126,j.reference.begin());
-            j.anchor_source="dry_run_nominal_command";j.anchor_producer="";j.anchor_run_id=run_;
-            j.anchor_n=dry_run_nav_->nominal_continuity_n();
-            const auto a_seq=dry_run_nav_->nominal_anchor_seq();
-            const auto a_time=std::min(dry_run_nav_->nominal_anchor_time_ns(),freeze_now);
-            j.anchor_sequence={a_seq,a_seq};j.anchor_publish_ns={a_time,a_time};j.anchor_known={true,true};
-            j.reset_warmstart=std::abs(usv_mpc::normalize_angle(x[2]-ref_mat(2,0)))>M_PI*0.75;
-            j.job_id=dry_run_nav_->jobs_submitted()+1;
+            if(for_execute&&execute_nav_){
+              j.anchor_source="rc_override_quantized_eff";j.anchor_producer=boot_;j.anchor_run_id=run_;
+              j.anchor_n=execute_nav_->continuity_anchor_n();
+              const auto a_seq=nav->nominal_anchor_seq();
+              const auto a_time=std::min(nav->nominal_anchor_time_ns(),freeze_now);
+              j.anchor_sequence={a_seq,a_seq};j.anchor_publish_ns={a_time,a_time};j.anchor_known={true,true};
+              j.reset_warmstart=force_warmstart_reset||(std::abs(usv_mpc::normalize_angle(x[2]-ref_mat(2,0)))>M_PI*0.75);
+            }else{
+              j.anchor_source="dry_run_nominal_command";j.anchor_producer="";j.anchor_run_id=run_;
+              j.anchor_n=nav->nominal_continuity_n();
+              const auto a_seq=nav->nominal_anchor_seq();
+              const auto a_time=std::min(nav->nominal_anchor_time_ns(),freeze_now);
+              j.anchor_sequence={a_seq,a_seq};j.anchor_publish_ns={a_time,a_time};j.anchor_known={true,true};
+              j.reset_warmstart=std::abs(usv_mpc::normalize_angle(x[2]-ref_mat(2,0)))>M_PI*0.75;
+            }
+            j.job_id=nav->jobs_submitted()+1;
             const auto res=p1::check_job_resources(j,resources_);
             if(!res){
               block_reason=std::string("job_resource_invalid:")+(res.reason?res.reason:"unknown");
             }else{
-              dry_run_nav_->record_job_submitted();
-              dry_run_jobs_.push_back(j);
+              if(for_execute&&execute_nav_) execute_nav_->record_job_submitted();
+              else nav->record_job_submitted();
+              dry_run_jobs_.push_back({j,job_epoch});
               while(dry_run_jobs_.size()>16)dry_run_jobs_.pop_front();
               last_dry_run_block_.clear();
               submit=true;
@@ -1084,18 +1291,21 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       bool pub_ok=false;
       try{job_pub_->publish(j);pub_ok=true;}catch(...){pub_ok=false;}
       const auto pub_end=p1::monotonic_ns();
-      sink_->add({{"type","dry_run_job"},{"job_id",j.job_id},{"target_tick",j.target_tick},
+      sink_->add({{"type",for_execute?"execute_job":"dry_run_job"},
+        {"job_id",j.job_id},{"target_tick",j.target_tick},
         {"model_generation",j.model_generation},{"odom_seq",j.odom_sequence},{"imu_seq",j.imu_sequence},
         {"reference_mode",meta.reference_mode},{"nearest_index",meta.nearest_index},
         {"start_index",meta.start_index},{"anchor_n",j.anchor_n},
         {"publish_start_ns",pub_start},{"publish_end_ns",pub_end},{"success",pub_ok},
-        {"physical_output_enabled",false},{"anchor_known",false}});
+        {"physical_output_enabled",for_execute},{"anchor_known",for_execute},
+        {"anchor_modeled",for_execute}});
       return;
     }
     if(block_reason!=last_dry_run_block_||now-last_dry_run_block_log_ns_>=1000000000LL){
       last_dry_run_block_=block_reason;
       last_dry_run_block_log_ns_=now;
-      sink_->add({{"type","dry_run_nav_blocked"},{"reason",block_reason},{"at_ns",now}});
+      sink_->add({{"type",for_execute?"execute_nav_blocked":"dry_run_nav_blocked"},
+        {"reason",block_reason},{"at_ns",now}});
     }
   }
   bool commission_monitor_alive()const{return !commission_rc_;}
@@ -1109,38 +1319,121 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     auto next_tick=p1::monotonic_ns();
     while(!commission_stop_&&!finished_){
       const auto now=p1::monotonic_ns();
-      bool terminal=false;std::string reason;
       p1_shipboard::WorkerFacts wf;
-      std::uint64_t jobs_count=0;
-      {std::lock_guard<std::mutex> l(c_mutex_);
-       wf.pid=expected_worker_pid_;
-       wf.instance=worker_instance_;
-       wf.model_runtime_ready=monitor_->capability().model_runtime_ready;
-       const auto alive=worker_liveness_?worker_liveness_->reason():std::string();
-       wf.exited=!alive.empty()&&alive.find("exited")!=std::string::npos;
-       monitor_->on_worker(wf);
-       monitor_->evaluate(now,0);
-       if(dry_run_nav_)jobs_count=dry_run_nav_->jobs_submitted();
-       if(monitor_->failed()){terminal=true;reason=monitor_->failure();}
-       else if(sink_->failed()){terminal=true;reason=p1_shipboard::reason_log_failed;}
-      }
-      if(terminal){
-        commission_failure_=reason;commission_rc_=2;finished_=true;
+      {
         std::lock_guard<std::mutex> l(c_mutex_);
-        sink_->add({{"type","commissioning_failure"},{"reason",reason},{"failed_ns",p1::monotonic_ns()},
-          {"phase",monitor_->phase()},{"finished",true},{"exit_code",2},
-          {"physical_output_enabled",false},{"jobs_submitted",jobs_count}});
-        break;
+        wf.pid=expected_worker_pid_;
+        wf.instance=worker_instance_;
+        wf.model_runtime_ready=monitor_->capability().model_runtime_ready;
+        const auto alive=worker_liveness_?worker_liveness_->reason():std::string();
+        wf.exited=(!alive.empty()&&alive.find("exited")!=std::string::npos)||worker_identity_failed_.load();
+        monitor_->on_worker(wf);
       }
-      if(stop_requested){commission_rc_=0;finished_=true;
-        std::lock_guard<std::mutex> l(c_mutex_);
-        sink_->add({{"type","commissioning_stop"},{"reason","operator_stop"},
-          {"stopped_ns",p1::monotonic_ns()},{"phase","stopping"},{"exit_code",0},
-          {"jobs_submitted",jobs_count}});
-        break;}
-      if(dry_run_active_&&monitor_->ready()){
-        step_dry_run_tick(now);
+
+      if(execute_active_&&execute_nav_){
+        if(stop_requested){
+          p1_execute::ActuationAction stop_act;
+          {
+            std::lock_guard<std::mutex> l(c_mutex_);
+            stop_act=execute_nav_->request_operator_stop(now);
+          }
+          apply_execute_action(stop_act,now);
+          publish_mpc_status_now();
+          if(stop_act.directive==p1_execute::OutputDirective::NeutralPwm){
+            const auto drain_deadline=p1::monotonic_ns()+execute_limits_.neutral_hold_ns_before_release;
+            while(p1::monotonic_ns()<drain_deadline&&!commission_stop_){
+              bool exited_manual=false;
+              {
+                std::lock_guard<std::mutex> l(c_mutex_);
+                const auto st=execute_nav_->exec_state();
+                if(st==p1_execute::ExecuteState::Standby)exited_manual=true;
+              }
+              if(exited_manual)break;
+              std::this_thread::sleep_for(std::chrono::milliseconds(25));
+            }
+            p1_execute::ActuationAction rel;
+            rel.directive=p1_execute::OutputDirective::Release;
+            rel.control_source="shutdown_release";
+            rel.reason="operator_stop";
+            {
+              std::lock_guard<std::mutex> l(c_mutex_);
+              rel.epoch=execute_nav_->control_epoch();
+            }
+            apply_execute_action(rel,p1::monotonic_ns());
+          }
+          std::uint64_t jobs_count=0;
+          {
+            std::lock_guard<std::mutex> l(c_mutex_);
+            jobs_count=execute_nav_->dry_run().jobs_submitted();
+          }
+          commission_rc_=0;finished_=true;
+          sink_->add({{"type","commissioning_stop"},{"reason","operator_stop"},
+            {"stopped_ns",p1::monotonic_ns()},{"phase","stopping"},{"exit_code",0},
+            {"jobs_submitted",jobs_count}});
+          break;
+        }
+        p1_execute::TickOutcome tick;
+        {
+          std::lock_guard<std::mutex> l(c_mutex_);
+          execute_nav_->on_worker(wf);
+          tick=execute_nav_->step_tick(now);
+        }
+        if(tick.emit_action)apply_execute_action(tick.action,now);
+        publish_mpc_status_now();
+        if(tick.terminal_exit||sink_->failed()){
+          std::string reason=sink_->failed()?std::string(p1_shipboard::reason_log_failed)
+                                           :execute_nav_->failure_reason();
+          std::uint64_t jobs_count=0;
+          std::string phase_now="failed";
+          {
+            std::lock_guard<std::mutex> l(c_mutex_);
+            jobs_count=execute_nav_->dry_run().jobs_submitted();
+            phase_now=execute_nav_->phase_string();
+          }
+          release_execute_rc_final();
+          commission_failure_=reason;commission_rc_=2;finished_=true;
+          sink_->add({{"type","commissioning_failure"},{"reason",reason},{"failed_ns",p1::monotonic_ns()},
+            {"phase",phase_now},{"finished",true},{"exit_code",2},
+            {"execution_endpoint_enabled",true},{"jobs_submitted",jobs_count}});
+          break;
+        }
+        if(tick.submit_job){
+          submit_shipboard_solve_job(now,true,tick.reset_warmstart,tick.job_epoch);
+        }else if(!tick.block_reason.empty()){
+          if(tick.block_reason!=last_dry_run_block_||now-last_dry_run_block_log_ns_>=1000000000LL){
+            last_dry_run_block_=tick.block_reason;
+            last_dry_run_block_log_ns_=now;
+            sink_->add({{"type","execute_nav_blocked"},{"reason",tick.block_reason},{"at_ns",now}});
+          }
+        }
+      }else{
+        bool terminal=false;std::string reason;
+        std::uint64_t jobs_count=0;
+        {std::lock_guard<std::mutex> l(c_mutex_);
+         monitor_->evaluate(now,0);
+         if(dry_run_nav_)jobs_count=dry_run_nav_->jobs_submitted();
+         if(monitor_->failed()){terminal=true;reason=monitor_->failure();}
+         else if(sink_->failed()){terminal=true;reason=p1_shipboard::reason_log_failed;}
+        }
+        if(terminal){
+          commission_failure_=reason;commission_rc_=2;finished_=true;
+          std::lock_guard<std::mutex> l(c_mutex_);
+          sink_->add({{"type","commissioning_failure"},{"reason",reason},{"failed_ns",p1::monotonic_ns()},
+            {"phase",monitor_->phase()},{"finished",true},{"exit_code",2},
+            {"physical_output_enabled",false},{"jobs_submitted",jobs_count}});
+          break;
+        }
+        if(stop_requested){commission_rc_=0;finished_=true;
+          std::lock_guard<std::mutex> l(c_mutex_);
+          sink_->add({{"type","commissioning_stop"},{"reason","operator_stop"},
+            {"stopped_ns",p1::monotonic_ns()},{"phase","stopping"},{"exit_code",0},
+            {"jobs_submitted",jobs_count}});
+          break;}
+        if(dry_run_active_&&monitor_->ready()){
+          submit_shipboard_solve_job(now,false,false,0ULL);
+        }
       }
+
       if(now-last_status>=1000000000LL){
         last_status=now;
         auto counters=sink_->counters();
@@ -1152,6 +1445,16 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
            status["mode"]=mode_;
            status["jobs_submitted"]=dry_run_nav_->jobs_submitted();
            status["dry_run"]=dry_run_nav_->status_json(now);
+         }else if(execute_active_&&execute_nav_){
+           const auto exec_st=execute_nav_->status_snapshot(now);
+           status["mode"]=mode_;
+           status["phase"]=execute_nav_->phase_string();
+           status["failure_reason"]=execute_nav_->failure_reason();
+           status["jobs_submitted"]=execute_nav_->dry_run().jobs_submitted();
+           status["physical_output_enabled"]=exec_st.at("physical_output_enabled");
+           status["execution_endpoint_enabled"]=true;
+           status["water_execution_allowed"]=execute_limits_.water_execution_allowed;
+           status["execute"]=exec_st;
          }}
         status["source"]={{"generated",counters.generated},{"emitted",counters.emitted},
           {"dropped",counters.dropped},{"failed",counters.failed}};
@@ -1160,7 +1463,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         std_msgs::msg::String msg;msg.data=text;
         try{status_pub_->publish(msg);}catch(...){commission_failure_=p1_shipboard::reason_log_failed;commission_rc_=2;finished_=true;break;}
       }
-      if(dry_run_active_){
+      if(dry_run_active_||execute_active_){
         next_tick+=p1::T;
         const auto wake=p1::monotonic_ns();
         if(next_tick<wake)next_tick=wake+p1::T;
@@ -1172,7 +1475,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     if(commission_rc_==0)finished_=true;
   }
 
-  std::unique_ptr<p1_shipboard::Monitor> monitor_;std::unique_ptr<p1_dry_run::DryRunCoordinator> dry_run_nav_;std::shared_ptr<usv_mpc::ReferenceInput> dry_run_ref_;std::deque<p1::Job> dry_run_jobs_;std::uint64_t dry_run_tick_=1,dry_run_model_gen_=0;std::string last_dry_run_block_;std::int64_t last_dry_run_block_log_ns_=0;std::thread commission_thread_;std::mutex c_mutex_;std::atomic<bool> commission_stop_{false},commission_active_{false},dry_run_active_{false};std::atomic<int> commission_rc_{0};std::string commission_failure_,plan_sha_,plan_file_text_;rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_;rclcpp::Subscription<mavros_msgs::msg::State>::SharedPtr c_state_;rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr c_odom_;rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr c_imu_;rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr c_path_;rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr c_profile_;rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr c_stop_;
+  std::unique_ptr<p1_shipboard::Monitor> monitor_;std::unique_ptr<p1_dry_run::DryRunCoordinator> dry_run_nav_;std::unique_ptr<p1_execute::ShipboardExecuteCoordinator> execute_nav_;p1_execute::ExecuteLimits execute_limits_{};std::shared_ptr<usv_mpc::ReferenceInput> dry_run_ref_;std::deque<TrackedShipboardJob> dry_run_jobs_;std::uint64_t dry_run_tick_=1,dry_run_model_gen_=0,latest_non_thrust_epoch_=0;std::string last_dry_run_block_;std::int64_t last_dry_run_block_log_ns_=0;std::uint16_t last_rc_out_ch1_=0,last_rc_out_ch3_=0;std::int64_t last_rc_out_log_ns_=0;std::thread commission_thread_;std::mutex c_mutex_,rc_pub_mutex_,mpc_status_pub_mutex_;std::atomic<bool> commission_stop_{false},commission_active_{false},dry_run_active_{false},execute_active_{false},worker_identity_failed_{false};std::atomic<int> commission_rc_{0};std::string commission_failure_,plan_sha_,plan_file_text_;rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_,mpc_status_pub_;rclcpp::Publisher<mavros_msgs::msg::OverrideRCIn>::SharedPtr rc_pub_;rclcpp::Client<mavros_msgs::srv::SetMode>::SharedPtr set_mode_cli_;rclcpp::Subscription<mavros_msgs::msg::RCOut>::SharedPtr c_rc_out_;rclcpp::Subscription<mavros_msgs::msg::State>::SharedPtr c_state_;rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr c_odom_;rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr c_imu_;rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr c_path_;rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr c_profile_;rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr c_stop_;
   p1::Json c_;usv_mpc::MpcParams params_;p1::Limits limits_;std::string run_,hash_,mode_,boot_,nominal_,legacy_run_,legacy_producer_,worker_instance_,path_fingerprint_,profile_fingerprint_,recording_observer_;int64_t expected_worker_pid_=0;
   std::unique_ptr<p1::WorkerLiveness> worker_liveness_;
   std::unique_ptr<p1::PreparationBarrier> preparation_barrier_;std::atomic<bool> preparation_barrier_active_{false};

@@ -1144,3 +1144,73 @@ def test_takeover_accepts_research_dry_run_backend_and_rollback_rejects_dry_run_
     }
     problems = drv._evaluate_legacy_underlay_doc("t0", bad_doc, set())
     assert any("ExecStart references commissioning release" in p for p in problems)
+
+
+def test_research_execute_requires_defueled_bench_attestation_and_renders_record(tmp_path, monkeypatch):
+    from pathlib import Path
+    release, underlay, evidence = build_release(tmp_path, monkeypatch)
+    tpl = Path(release) / "deploy" / "30-scheme-a-commissioning.conf.in"
+    tpl.write_text(
+        "[Unit]\nConditionPathExists=@TOKEN_PATH@\n\n[Service]\nRestart=no\n"
+        "ExecStart=/bin/bash -c 'ros2 launch usv_bringup real.launch.py "
+        "controller_backend:=@CONTROLLER_BACKEND@ use_ntrip:=@USE_NTRIP@ record:=@RECORD@'\n"
+    )
+    ident_path = Path(evidence) / "release_identity.json"
+    ident = json.loads(ident_path.read_text())
+    ident["dropin_template_sha256"] = driver_module.sha256_file(str(tpl))
+    ident_path.write_text(json.dumps(ident))
+
+    # Isolated commissioning attestation must be rejected for research_execute
+    bad_args = driver_module.parse_args([
+        "--release-root", release,
+        "--underlay", underlay,
+        "--operator-attestation", str(Path(evidence) / "operator-attestation.json"),
+        "--action", "takeover",
+        "--evidence-dir", str(tmp_path / "ev_bad"),
+        "--backend", "research_execute",
+    ])
+    bad_drv = driver_module.Driver(bad_args, runner=FakeRunner(), token_path=str(tmp_path / "tok_bad"))
+    with pytest.raises(driver_module.DriverError, match="defueled_powered_bench"):
+        bad_drv.load_attestation()
+
+    bench_att = Path(evidence) / "operator-attestation.json"
+    bench_att.write_text(json.dumps({
+        "attestation_profile": "defueled_powered_bench",
+        "operator": "Trevor",
+        "confirmed_at_utc": 1,
+        "valid_until_utc": 1 << 62,
+        "vessel_secured": True,
+        "no_mission": True,
+        "propellers_removed": True,
+        "propulsion_power_isolated": False,
+        "local_emergency_stop_available": True,
+    }))
+    ok_args = driver_module.parse_args([
+        "--release-root", release,
+        "--underlay", underlay,
+        "--operator-attestation", str(bench_att),
+        "--action", "takeover",
+        "--evidence-dir", str(tmp_path / "ev_ok"),
+        "--backend", "research_execute",
+        "--record", "true",
+        "--use-ntrip", "false",
+    ])
+    ok_drv = driver_module.Driver(ok_args, runner=FakeRunner(), token_path=str(tmp_path / "tok_ok"))
+    decl = ok_drv.load_attestation()
+    assert decl["propellers_removed"] is True
+    rendered = ok_drv.render_dropin(ident)
+    assert "controller_backend:=research_execute" in rendered
+    assert "record:=true" in rendered
+    assert "use_ntrip:=false" in rendered
+    assert "@" not in rendered
+
+    # Rollback with defueled bench attestation must also be accepted cleanly
+    rb_args = driver_module.parse_args([
+        "--release-root", release,
+        "--underlay", underlay,
+        "--operator-attestation", str(bench_att),
+        "--action", "rollback",
+        "--evidence-dir", str(tmp_path / "ev_rb"),
+    ])
+    rb_drv = driver_module.Driver(rb_args, runner=FakeRunner(), token_path=str(tmp_path / "tok_rb"))
+    assert rb_drv.load_attestation()["propellers_removed"] is True

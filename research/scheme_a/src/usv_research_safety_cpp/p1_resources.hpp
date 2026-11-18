@@ -156,7 +156,8 @@ static_assert(max_candidate_cdr_bytes() == 8204, "SolveCandidate CDR layout chan
 // history cache. This prevents an implicit wire-schema change per run.
 inline ResourceLimits resource_limits_from_contract(const nlohmann::json & c) {
   using resource_detail::integer_bound;
-  if (c.value("schema", std::string{}) == "p1-execution-contract-v3") {
+  if (c.value("schema", std::string{}) == "p1-execution-contract-v3" ||
+      c.value("schema", std::string{}) == "p1-shipboard-execute-v1") {
     integer_bound(c, "resource_contract_revision", 1, 1);
   } else {
     integer_bound(c, "diagnostic_contract_revision", 5, 5);

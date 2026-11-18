@@ -34,9 +34,12 @@ STATUS_SCHEMA = "p1-shipboard-commissioning-status-v1"
 CAPABILITY_SCHEMA = "p1-worker-capability-v2"
 CONTRACT_SCHEMA = "p1-shipboard-commissioning-v1"
 DRY_RUN_CONTRACT_SCHEMA = "p1-shipboard-dry-run-v1"
+EXECUTE_CONTRACT_SCHEMA = "p1-shipboard-execute-v1"
+EXECUTE_BENCH_QUAL = "shipboard_defueled_bench_execute"
 ALLOWED_PROFILES = {
     CONTRACT_SCHEMA: ("shipboard_commissioning", "commissioning"),
     DRY_RUN_CONTRACT_SCHEMA: ("shipboard_dry_run", "shipboard_dry_run"),
+    EXECUTE_CONTRACT_SCHEMA: (EXECUTE_BENCH_QUAL, "shipboard_execute"),
 }
 
 STARTUP_DEADLINE_NS = 30 * 1_000_000_000
@@ -124,7 +127,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--run-root", required=True)
     parser.add_argument("--contract", required=True)
     parser.add_argument("--plan", required=True)
-    parser.add_argument("--mode", choices=["commissioning", "shipboard_dry_run"], default=None)
+    parser.add_argument("--mode", choices=["commissioning", "shipboard_dry_run", "shipboard_execute"], default=None)
     return parser.parse_args(argv)
 
 
@@ -193,7 +196,11 @@ def verify_identity_binding(release_root: str, contract_sha: str, plan_sha: str,
             die(f"release_identity binding drifted: {key}")
     expected_contracts = {
         digest
-        for digest in (identity.get("contract_sha256"), identity.get("dry_run_contract_sha256"))
+        for digest in (
+            identity.get("contract_sha256"),
+            identity.get("dry_run_contract_sha256"),
+            identity.get("execute_contract_sha256"),
+        )
         if digest
     }
     if expected_contracts and contract_sha not in expected_contracts:
@@ -220,6 +227,13 @@ def verify_contract(path: str, expected_sha: str, expected_mode: str | None = No
         die(f"contract qualification is not {expected_qual}")
     if expected_mode and expected_mode != runtime_mode:
         die(f"contract mode mismatch: {runtime_mode} != {expected_mode}")
+    if schema == EXECUTE_CONTRACT_SCHEMA:
+        if contract.get("water_execution_allowed") is not False:
+            die("shipboard water execute is locked until C3")
+        if contract.get("bench_execution_allowed") is not True:
+            die("shipboard execute contract does not allow bench execution")
+        if contract.get("propellers_removed_required") is not True:
+            die("shipboard bench execute requires propellers_removed_required=true")
     if contract.get("execute_qualified") is not False:
         die("contract claims execute qualification")
     if contract.get("parameters_are_diagnostic_only") is not True:
@@ -441,6 +455,7 @@ class Supervisor:
                     attestation_sha256=self.attestation_sha,
                     attestation_valid_until_utc_ns=self.attestation_deadline_ns,
                     evidence_limit_bytes=EVIDENCE_LIMIT_BYTES,
+                    execution_endpoint_enabled=(self.runtime_mode == "shipboard_execute"),
                     physical_output_enabled=False,
                     jobs_submitted=0)
 
@@ -456,6 +471,20 @@ class Supervisor:
         self.attestation_deadline_ns = int(deadline)
         if self.attestation_deadline_ns <= utc_ns():
             die("operator attestation already expired")
+        if self.runtime_mode == "shipboard_execute":
+            if declaration.get("attestation_profile") != "defueled_powered_bench":
+                die("shipboard_execute requires defueled_powered_bench attestation_profile")
+            for key in ("vessel_secured", "no_mission", "propellers_removed",
+                        "local_emergency_stop_available"):
+                if declaration.get(key) is not True:
+                    die(f"defueled_powered_bench attestation missing/false {key}")
+            if declaration.get("propulsion_power_isolated") is not False:
+                die("defueled_powered_bench attestation must honestly declare propulsion_power_isolated=false")
+        else:
+            for key in ("vessel_secured", "no_mission", "propulsion_power_isolated",
+                        "local_emergency_stop_available"):
+                if declaration.get(key) is not True:
+                    die(f"operator attestation does not confirm {key}")
 
     # ------------------------------------------------------------- DDS 预检
     def preflight_graph(self) -> None:
@@ -471,13 +500,25 @@ class Supervisor:
         executor.add_node(probe)
         deadline = now_ns() + 3 * 1_000_000_000
         offenders: list[str] = []
+        legacy_ctrl: list[str] = []
+        competing_pubs: dict[str, list[str]] = {}
         try:
             while now_ns() < deadline:
                 executor.spin_once(timeout_sec=0.1)
+                names_ns = probe.get_node_names_and_namespaces()
                 offenders = [f"{name}/{namespace}"
-                             for name, namespace in probe.get_node_names_and_namespaces()
+                             for name, namespace in names_ns
                              if name.startswith("p1_") and name not in ("p1_commissioning_preflight",)]
-                if offenders:
+                if self.runtime_mode == "shipboard_execute":
+                    legacy_ctrl = [f"{name}/{namespace}"
+                                   for name, namespace in names_ns
+                                   if name == "mpc_controller_node"]
+                    for topic in ("/mavros/rc/override", "/mavros/setpoint_velocity/cmd_vel"):
+                        infos = probe.get_publishers_info_by_topic(topic)
+                        if infos:
+                            competing_pubs[topic] = sorted(
+                                f"{i.node_name}/{i.node_namespace}" for i in infos)
+                if offenders or legacy_ctrl or competing_pubs:
                     break
         finally:
             try:
@@ -487,6 +528,10 @@ class Supervisor:
                 ctx.try_shutdown()
         if offenders:
             die(f"foreign p1 nodes already in the graph: {sorted(set(offenders))}")
+        if legacy_ctrl:
+            die(f"legacy controller present during shipboard_execute (M4 violation): {sorted(set(legacy_ctrl))}")
+        if competing_pubs:
+            die(f"competing physical actuator publishers present (M4 violation): {competing_pubs}")
         # 预检独立 Context 已销毁；随后的 supervisor 用默认 Context 启动自己的 DDS 参与者。
 
     # ---------------------------------------------------------------- 子进程
@@ -768,7 +813,9 @@ def main(argv: list[str]) -> int:
                     exit_code=exit_code, ready=supervisor.ready,
                     evidence_closed=True,
                     mode=supervisor.runtime_mode,
-                    physical_output_enabled=False,
+                    execution_endpoint_enabled=(supervisor.runtime_mode == "shipboard_execute"),
+                    physical_output_enabled=bool(
+                        (supervisor.latest_status or {}).get("physical_output_enabled") is True),
                     jobs_submitted=int((supervisor.latest_status or {}).get("jobs_submitted") or 0))
                 supervisor.log_handle.flush()
                 supervisor.log_handle.close()

@@ -31,7 +31,10 @@ STATUS_SCHEMA = "p1-shipboard-commissioning-status-v1"
 SUPERVISOR_SCHEMA = "p1-shipboard-supervisor-v1"
 CONTRACT_SCHEMA = "p1-shipboard-commissioning-v1"
 DRY_RUN_CONTRACT_SCHEMA = "p1-shipboard-dry-run-v1"
+EXECUTE_CONTRACT_SCHEMA = "p1-shipboard-execute-v1"
 DRY_RUN_DECISION_SCHEMA = "p1-dry-run-decision-v1"
+EXECUTE_DECISION_SCHEMA = "p1-execute-decision-v1"
+EXECUTE_ACTUATION_SCHEMA = "p1-execute-actuation-v1"
 ACTUATOR_TOPICS = (
     "/p1/plant_command", "/p1/execution_decision",
     "/mavros/setpoint_velocity/cmd_vel", "/mavros/rc/override",
@@ -268,12 +271,19 @@ class Checker:
             return
         for key in STATUS_TOP:
             self.check(f"{label}:status_field:{key}", key in status, key)
-        # 三把锁: 永远为 false。
-        self.check(f"{label}:physical_output_disabled",
-                   status.get("physical_output_enabled") is False, "")
-        self.check(f"{label}:anchor_unknown", status.get("anchor_known") is False, "")
-        self.check(f"{label}:closed_loop_false",
-                   status.get("closed_loop_verified") is False, "")
+        # 物理锁检查：commissioning/dry_run 恒为 false；shipboard_execute 允许本地台架 /mavros/rc/override 执行，
+        # 但闭环资格与水下权限仍明确绑定。
+        if expected_mode != "shipboard_execute":
+            self.check(f"{label}:physical_output_disabled",
+                       status.get("physical_output_enabled") is False, "")
+            self.check(f"{label}:anchor_unknown", status.get("anchor_known") is False, "")
+            self.check(f"{label}:closed_loop_false",
+                       status.get("closed_loop_verified") is False, "")
+        else:
+            self.check(f"{label}:execution_endpoint_enabled",
+                       status.get("execution_endpoint_enabled") is True, "")
+            self.check(f"{label}:closed_loop_false_on_bench",
+                       status.get("closed_loop_verified") is False, "")
         self.check(f"{label}:mode", status.get("mode") == expected_mode,
                    str(status.get("mode")))
         self.check(f"{label}:phase_allowed",
@@ -306,6 +316,25 @@ class Checker:
                            dry_run.get("control_inputs_verified") is False, "")
                 self.check(f"{label}:dry_run_anchor_unknown",
                            dry_run.get("anchor_known") is False, "")
+        elif expected_mode == "shipboard_execute":
+            jobs = status.get("jobs_submitted")
+            self.check(f"{label}:jobs_submitted_nonneg",
+                       type(jobs) is int and jobs >= 0, str(jobs))
+            for field in ("completed_jobs", "active_job", "pending_count"):
+                val = worker.get(field)
+                self.check(f"{label}:worker_{field}_nonneg",
+                           type(val) is int and val >= 0, str(val))
+            exec_block = status.get("execute")
+            self.check(f"{label}:execute_present", isinstance(exec_block, dict), "")
+            if isinstance(exec_block, dict):
+                self.check(f"{label}:execute_jobs_match",
+                           exec_block.get("jobs_submitted") == jobs,
+                           f"{exec_block.get('jobs_submitted')} vs {jobs}")
+                self.check(f"{label}:execute_anchor_modeled",
+                           exec_block.get("anchor_modeled") is True and
+                           exec_block.get("hardware_receipt_verified") is False and
+                           exec_block.get("anchor_source") == "rc_override_quantized_eff",
+                           str(exec_block.get("anchor_source")))
         else:
             self.check(f"{label}:jobs_submitted_zero", status.get("jobs_submitted") == 0, "")
             self.check(f"{label}:worker_completed_jobs_zero",
@@ -370,10 +399,14 @@ class Checker:
                 contract_mode = "commissioning"
             elif c_schema == DRY_RUN_CONTRACT_SCHEMA:
                 contract_mode = "shipboard_dry_run"
+            elif c_schema == EXECUTE_CONTRACT_SCHEMA:
+                contract_mode = "shipboard_execute"
             else:
                 self.fail("contract_schema_unknown", str(c_schema))
         status_mode = latest_status.get("mode") if isinstance(latest_status, dict) else None
-        expected_mode = contract_mode or (status_mode if status_mode in ("commissioning", "shipboard_dry_run") else "commissioning")
+        expected_mode = contract_mode or (
+            status_mode if status_mode in ("commissioning", "shipboard_dry_run", "shipboard_execute")
+            else "commissioning")
         if contract_mode and status_mode:
             self.check("contract_matches_status_mode", contract_mode == status_mode,
                        f"{contract_mode} != {status_mode}")
@@ -413,6 +446,7 @@ class Checker:
         dry_run_jobs = 0
         dry_run_decisions_accepted = 0
         worker_candidates = 0
+        execute_actuations = 0
         for name in ("worker.source.jsonl", "regulator.source.jsonl"):
             path = os.path.join(self.run_dir, name)
             if not os.path.isfile(path):
@@ -420,16 +454,32 @@ class Checker:
             for record in self.read_jsonl(path):
                 kind = record.get("type")
                 if name == "regulator.source.jsonl" and kind == "startup":
-                    self.check("startup_physical_disabled",
-                               record.get("physical_output_enabled") is False, "")
-                    self.check("startup_anchor_unknown",
-                               record.get("anchor_known") is False, "")
-                    self.check("startup_zero_execution_endpoints",
-                               record.get("execution_publisher_endpoints") == 0,
-                               str(record.get("execution_publisher_endpoints")))
-                    pubs = set(record.get("publications") or [])
-                    bad_pubs = sorted(topic for topic in ACTUATOR_TOPICS if topic in pubs)
-                    self.check("startup_no_actuator_publishers", not bad_pubs, str(bad_pubs))
+                    if expected_mode == "shipboard_execute":
+                        self.check("startup_execution_endpoint_enabled",
+                                   record.get("execution_endpoint_enabled") is True, "")
+                        self.check("startup_execution_endpoints_two",
+                                   record.get("execution_publisher_endpoints") == 2,
+                                   str(record.get("execution_publisher_endpoints")))
+                        pubs = set(record.get("publications") or [])
+                        self.check("startup_rc_override_declared",
+                                   "/mavros/rc/override" in pubs and "/mpc/status" in pubs,
+                                   str(sorted(pubs)))
+                        forbidden = {"/mavros/setpoint_velocity/cmd_vel",
+                                     "/wamv/thrusters/left/thrust", "/wamv/thrusters/right/thrust",
+                                     "/p1/plant_command", "/p1/execution_decision"}
+                        bad_pubs = sorted(t for t in forbidden if t in pubs)
+                        self.check("startup_no_forbidden_actuator_pubs", not bad_pubs, str(bad_pubs))
+                    else:
+                        self.check("startup_physical_disabled",
+                                   record.get("physical_output_enabled") is False, "")
+                        self.check("startup_anchor_unknown",
+                                   record.get("anchor_known") is False, "")
+                        self.check("startup_zero_execution_endpoints",
+                                   record.get("execution_publisher_endpoints") == 0,
+                                   str(record.get("execution_publisher_endpoints")))
+                        pubs = set(record.get("publications") or [])
+                        bad_pubs = sorted(topic for topic in ACTUATOR_TOPICS if topic in pubs)
+                        self.check("startup_no_actuator_publishers", not bad_pubs, str(bad_pubs))
                 if expected_mode == "shipboard_dry_run":
                     if name == "worker.source.jsonl" and kind == "candidate":
                         worker_candidates += 1
@@ -451,6 +501,37 @@ class Checker:
                                    record.get("anchor_known") is False, "")
                         if record.get("accepted") is True:
                             dry_run_decisions_accepted += 1
+                elif expected_mode == "shipboard_execute":
+                    if name == "worker.source.jsonl" and kind == "candidate":
+                        worker_candidates += 1
+                    elif name == "regulator.source.jsonl" and kind == "execute_job":
+                        dry_run_jobs += 1
+                    elif name == "regulator.source.jsonl" and kind == "execute_decision":
+                        self.check("execute_decision_schema",
+                                   record.get("schema") == EXECUTE_DECISION_SCHEMA,
+                                   str(record.get("schema")))
+                        self.check("execute_decision_honest_anchor",
+                                   record.get("anchor_modeled") is True and
+                                   record.get("hardware_receipt_verified") is False,
+                                   str(record.get("anchor_source")))
+                        if record.get("accepted") is True:
+                            dry_run_decisions_accepted += 1
+                    elif name == "regulator.source.jsonl" and kind == "execute_actuation":
+                        execute_actuations += 1
+                        self.check("execute_actuation_schema",
+                                   record.get("schema") == EXECUTE_ACTUATION_SCHEMA,
+                                   str(record.get("schema")))
+                        d = record.get("directive")
+                        s_pwm = record.get("steering_pwm")
+                        t_pwm = record.get("throttle_pwm")
+                        if d == "release":
+                            self.check("execute_release_zero_pwm", s_pwm == 0 and t_pwm == 0,
+                                       f"({s_pwm}, {t_pwm})")
+                        else:
+                            self.check("execute_pwm_in_bounds",
+                                       isinstance(s_pwm, int) and isinstance(t_pwm, int) and
+                                       1100 <= s_pwm <= 1900 and 1100 <= t_pwm <= 1900,
+                                       f"({s_pwm}, {t_pwm})")
                 else:
                     if kind == "candidate":
                         self.fail("candidate_published_in_commissioning", name)
@@ -477,6 +558,12 @@ class Checker:
             self.check("require_solves:source_logs",
                        dry_run_jobs > 0 and worker_candidates > 0 and dry_run_decisions_accepted > 0,
                        f"jobs={dry_run_jobs},cands={worker_candidates},acc={dry_run_decisions_accepted}")
+        elif expected_mode == "shipboard_execute" and self.require_solves:
+            self.check("require_solves:execute_logs",
+                       dry_run_jobs > 0 and worker_candidates > 0 and
+                       dry_run_decisions_accepted > 0 and execute_actuations > 0,
+                       f"jobs={dry_run_jobs},cands={worker_candidates},"
+                       f"acc={dry_run_decisions_accepted},act={execute_actuations}")
         return {
             "mode": expected_mode,
             "finished": finished,
@@ -486,6 +573,7 @@ class Checker:
             "dry_run_jobs_logged": dry_run_jobs,
             "worker_candidates_logged": worker_candidates,
             "dry_run_decisions_accepted": dry_run_decisions_accepted,
+            "execute_actuations_logged": execute_actuations,
         }
 
 
@@ -536,8 +624,11 @@ def main(argv: list[str]) -> int:
         "run_facts": run_facts,
         # 分开交付：服务接管 / 执行资格 是两件事。
         "commissioning_service_takeover_passed": verdict == "PASS",
+        "execution_endpoint_enabled": run_facts.get("mode") == "shipboard_execute",
         "physical_control_authorised": False,
-        "physical_output_enabled": False,
+        "physical_output_enabled": bool(
+            run_facts.get("mode") == "shipboard_execute" and
+            (run_facts.get("status") or {}).get("physical_output_enabled") is True),
         "closed_loop_verified": False,
         "control_inputs_verified": bool(
             (run_facts.get("status") or {}).get("control_inputs_verified") is True),

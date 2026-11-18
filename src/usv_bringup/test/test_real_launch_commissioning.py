@@ -236,3 +236,45 @@ def test_real_launch_dry_run_selects_dry_run_contract_and_skips_mpc(monkeypatch)
     assert dry_run_cmd[0].endswith("run_shipboard_commissioning.py")
     assert any(p.endswith("contract_shipboard_dry_run.json") for p in dry_run_cmd)
     assert "shipboard_dry_run" in dry_run_cmd
+
+
+def test_real_launch_execute_restores_hold_failsafe_and_skips_mpc(monkeypatch):
+    mod = _load_real_launch()
+    monkeypatch.setattr(mod, "_ntrip_daemon_state", lambda service="usv-rtk.service": "active")
+    monkeypatch.setattr(
+        mod, "get_package_share_directory", lambda pkg: str(PKG_ROOT) if pkg == "usv_bringup" else get_package_share_directory(pkg)
+    )
+    ld = mod.generate_launch_description()
+    ctx = _prepare_context(
+        ld,
+        {
+            "controller_backend": "research_execute",
+            "commissioning_release_root": "/tmp/fake-R",
+            "commissioning_underlay": "/tmp/fake-U",
+        },
+    )
+
+    enabled_nodes = [
+        e for e in ld.entities if isinstance(e, Node) and _is_enabled(e, ctx)
+    ]
+    mode_managers = [n for n in enabled_nodes if n.node_executable == "mode_manager_node"]
+    assert len(mode_managers) == 1
+    _yaml_path, inline_dict = _extract_mode_manager_params(mode_managers[0], ctx)
+    assert "failsafe_mode" not in inline_dict
+    assert inline_dict["auto_arm"] is False
+    assert inline_dict["auto_mode_switch"] is False
+    assert not any(n.node_executable == "mpc_node" for n in enabled_nodes)
+
+    enabled_timers = [
+        e for e in ld.entities if type(e).__name__ == "TimerAction" and _is_enabled(e, ctx)
+    ]
+    assert len(enabled_timers) == 0
+
+    enabled_execs = [
+        e for e in ld.entities if type(e).__name__ == "ExecuteProcess" and _is_enabled(e, ctx)
+    ]
+    assert len(enabled_execs) == 2
+    exec_cmd = [perform_substitutions(ctx, part) for part in enabled_execs[1].cmd]
+    assert exec_cmd[0].endswith("run_shipboard_commissioning.py")
+    assert any(p.endswith("contract_shipboard_execute.json") for p in exec_cmd)
+    assert "shipboard_execute" in exec_cmd

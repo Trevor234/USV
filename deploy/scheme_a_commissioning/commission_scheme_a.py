@@ -41,7 +41,9 @@ DROPIN_DIR = os.path.join(UNIT_DIR, f"{UNIT}.d")
 DROPIN_NAME = "30-scheme-a-commissioning.conf"
 ROLLBACK_DROPIN_NAME = "31-scheme-a-rollback-no-restart.conf"
 TOKEN_PATH = "/run/usv-scheme-a-commissioning-authorized"
-ALLOWED_BACKENDS = ("research_commissioning", "research_dry_run")
+ALLOWED_BACKENDS = ("research_commissioning", "research_dry_run", "research_execute")
+BENCH_EXECUTE_ATTESTATION_REQUIRED_FLAGS = ("vessel_secured", "no_mission", "propellers_removed",
+                                            "local_emergency_stop_available")
 LOCK_PATH = "/run/lock/usv-scheme-a-commissioning.lock"
 STATE_GATE_SECONDS = 10.0
 STARTUP_SECONDS = 30.0
@@ -172,9 +174,31 @@ class Driver:
         if not os.path.isfile(self.attestation_path):
             raise DriverError("operator attestation missing: no on-site declaration")
         declaration = read_json(self.attestation_path)
-        for field in ATTESTATION_REQUIRED_FLAGS:
-            if declaration.get(field) is not True:
-                raise DriverError(f"operator attestation does not confirm {field}")
+        backend = str(getattr(self.args, "backend", "research_commissioning"))
+        action = str(getattr(self.args, "action", ""))
+
+        def _require_isolated(doc: dict) -> None:
+            for field in ATTESTATION_REQUIRED_FLAGS:
+                if doc.get(field) is not True:
+                    raise DriverError(f"operator attestation does not confirm {field}")
+
+        def _require_defueled_bench(doc: dict) -> None:
+            if doc.get("attestation_profile") != "defueled_powered_bench":
+                raise DriverError(
+                    "research_execute requires attestation_profile='defueled_powered_bench'")
+            for field in BENCH_EXECUTE_ATTESTATION_REQUIRED_FLAGS:
+                if doc.get(field) is not True:
+                    raise DriverError(f"operator attestation does not confirm {field}")
+            if doc.get("propulsion_power_isolated") is not False:
+                raise DriverError(
+                    "defueled_powered_bench must set propulsion_power_isolated=false")
+
+        if action == "rollback" and declaration.get("attestation_profile") == "defueled_powered_bench":
+            _require_defueled_bench(declaration)
+        elif backend == "research_execute":
+            _require_defueled_bench(declaration)
+        else:
+            _require_isolated(declaration)
         for field in ("operator", "confirmed_at_utc", "valid_until_utc"):
             if field not in declaration:
                 raise DriverError(f"operator attestation missing {field}")
@@ -460,10 +484,12 @@ class Driver:
             body = handle.read()
         use_ntrip = str(getattr(self.args, "use_ntrip", "true"))
         backend = str(getattr(self.args, "backend", "research_commissioning"))
+        record_flag = str(getattr(self.args, "record", "false"))
         for token, value in (("@RELEASE_ROOT@", self.release_root),
                              ("@UNDERLAY@", self.underlay),
                              ("@TOKEN_PATH@", self.token_path),
                              ("@USE_NTRIP@", use_ntrip),
+                             ("@RECORD@", record_flag),
                              ("@CONTROLLER_BACKEND@", backend)):
             body = body.replace(token, value)
         if "@" in body.replace("${SCHEME}", ""):
@@ -1168,6 +1194,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--evidence-dir", default="")
     parser.add_argument("--use-ntrip", choices=["true", "false"], default="true",
                         help="Launch-time use_ntrip argument for real.launch.py (false for indoor bench without RTK)")
+    parser.add_argument("--record", choices=["true", "false"], default="false",
+                        help="Launch-time record argument for real.launch.py (true enables MCAP bag recording)")
     parser.add_argument("--backend", choices=list(ALLOWED_BACKENDS),
                         default="research_commissioning",
                         help="Controller backend passed to real.launch.py in 30 drop-in")

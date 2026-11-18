@@ -512,3 +512,222 @@ def test_checker_accepts_dry_run_with_solves_and_rejects_physical_output(tmp_pat
     )
     assert rc_bad == 2
     assert any("startup_no_actuator_publishers" in err for err in doc_bad["errors"])
+
+
+def _write_execute_contract(run_dir):
+    doc = json.loads(open(os.path.join(os.path.dirname(SUPERVISOR), "..", "model", "contract_shipboard_execute.json"), encoding="utf-8").read())
+    (run_dir / "contract.json").write_text(json.dumps(doc), encoding="utf-8")
+
+
+def test_checker_accepts_shipboard_execute_and_rejects_bad_execute_logs(tmp_path):
+    release, underlay, run_dir, snap_path = _build_fixture(
+        tmp_path, include_shutdown=True, include_summaries=True
+    )
+    _write_execute_contract(run_dir)
+
+    status = _valid_status()
+    status["mode"] = "shipboard_execute"
+    status["jobs_submitted"] = 4
+    status["execution_endpoint_enabled"] = True
+    status["water_execution_allowed"] = False
+    status["physical_output_enabled"] = True
+    status["worker"]["completed_jobs"] = 4
+    status["execute"] = {
+        "exec_state": "active",
+        "control_epoch": 2,
+        "jobs_submitted": 4,
+        "candidates_received": 4,
+        "candidates_accepted": 4,
+        "candidates_rejected": 0,
+        "continuity_anchor_n": [2.0, 2.0],
+        "steering_pwm": 1500,
+        "throttle_pwm": 1560,
+        "anchor_source": "rc_override_quantized_eff",
+        "anchor_modeled": True,
+        "hardware_receipt_verified": False,
+        "physical_output_enabled": True,
+        "water_execution_allowed": False,
+    }
+    sup_lines = [
+        {"schema": SUPERVISOR_SCHEMA, "event": "startup", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 1_000_000_000},
+        {"schema": SUPERVISOR_SCHEMA, "event": "sample", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 2_000_000_000,
+         "phase": "ready", "status_received_ns": 2_000_000_000, "worker_capability_received_ns": 2_000_000_000,
+         "regulator_status": status, "processes": {}},
+        {"schema": SUPERVISOR_SCHEMA, "event": "sample", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 3_000_000_000,
+         "phase": "ready", "status_received_ns": 3_000_000_000, "worker_capability_received_ns": 3_000_000_000,
+         "regulator_status": status, "processes": {}},
+        {"schema": SUPERVISOR_SCHEMA, "event": "shutdown", "invocation_id": "inv-fixture-1",
+         "run_id": "run-1", "boot_id": "boot-1", "host_boot_id": "host-1", "at_ns": 4_000_000_000,
+         "mode": "shipboard_execute", "execution_endpoint_enabled": True, "jobs_submitted": 4},
+    ]
+    (run_dir / "supervisor.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in sup_lines) + "\n", encoding="utf-8"
+    )
+    reg_lines = [
+        {"type": "startup", "mode": "shipboard_execute", "physical_output_enabled": False,
+         "execution_endpoint_enabled": True, "anchor_known": False,
+         "execution_publisher_endpoints": 2,
+         "publications": ["/p1/commissioning_status", "/p1/solve_job", "/mavros/rc/override", "/mpc/status"]},
+        {"type": "execute_job", "job_id": 1, "physical_output_enabled": True, "anchor_known": True},
+        {"type": "execute_decision", "schema": "p1-execute-decision-v1", "job_id": 1,
+         "accepted": True, "anchor_modeled": True, "hardware_receipt_verified": False},
+        {"type": "execute_actuation", "schema": "p1-execute-actuation-v1", "directive": "thrust_pwm",
+         "steering_pwm": 1500, "throttle_pwm": 1560},
+        {"type": "execute_actuation", "schema": "p1-execute-actuation-v1", "directive": "release",
+         "steering_pwm": 0, "throttle_pwm": 0},
+        {"type": "source_summary", "generated": 5, "emitted": 5, "dropped": 0, "normal_source_complete": True},
+    ]
+    (run_dir / "regulator.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in reg_lines) + "\n", encoding="utf-8"
+    )
+    wrk_lines = [
+        {"type": "candidate", "job": {"job_id": 1}},
+        {"type": "worker_summary", "fatal": False, "shipboard_execute_mode": True, "completed_jobs": 4},
+    ]
+    (run_dir / "worker.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in wrk_lines) + "\n", encoding="utf-8"
+    )
+
+    out_ok = tmp_path / "check-exec-ok.json"
+    rc, doc, _ = _run_checker(
+        release, underlay, run_dir, snap_path, out_ok, extra_args=("--require-solves",)
+    )
+    assert rc == 0, doc
+    assert doc["verdict"] == "PASS"
+    assert doc["mode"] == "shipboard_execute"
+    assert doc["execution_endpoint_enabled"] is True
+    assert doc["closed_loop_verified"] is False
+
+    bad_pwm = list(reg_lines)
+    bad_pwm[3] = {**reg_lines[3], "throttle_pwm": 2050}
+    (run_dir / "regulator.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in bad_pwm) + "\n", encoding="utf-8"
+    )
+    rc_pwm, doc_pwm, _ = _run_checker(release, underlay, run_dir, snap_path, tmp_path / "check-bad-pwm.json")
+    assert rc_pwm == 2 and any("execute_pwm_in_bounds" in err for err in doc_pwm["errors"])
+
+    bad_pub = list(reg_lines)
+    bad_pub[0] = {**reg_lines[0], "publications": ["/p1/commissioning_status", "/mavros/rc/override", "/mpc/status", "/mavros/setpoint_velocity/cmd_vel"]}
+    (run_dir / "regulator.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in bad_pub) + "\n", encoding="utf-8"
+    )
+    rc_pub, doc_pub, _ = _run_checker(release, underlay, run_dir, snap_path, tmp_path / "check-bad-pub.json")
+    assert rc_pub == 2 and any("startup_no_forbidden_actuator_pubs" in err for err in doc_pub["errors"])
+
+    bad_anchor = list(reg_lines)
+    bad_anchor[2] = {**reg_lines[2], "hardware_receipt_verified": True}
+    (run_dir / "regulator.source.jsonl").write_text(
+        "\n".join(json.dumps(row) for row in bad_anchor) + "\n", encoding="utf-8"
+    )
+    rc_anc, doc_anc, _ = _run_checker(release, underlay, run_dir, snap_path, tmp_path / "check-bad-anc.json")
+    assert rc_anc == 2 and any("execute_decision_honest_anchor" in err for err in doc_anc["errors"])
+
+
+def test_supervisor_defueled_powered_bench_contract_and_attestation_rules(tmp_path):
+    sup = _load_supervisor()
+    contract_path = os.path.join(os.path.dirname(SUPERVISOR), "..", "model", "contract_shipboard_execute.json")
+    contract_sha = _sha256_file(contract_path)
+    doc, mode = sup.verify_contract(contract_path, contract_sha, expected_mode="shipboard_execute")
+    assert mode == "shipboard_execute" and doc["qualification"] == "shipboard_defueled_bench_execute"
+
+    # 水下冻结合同必须在 runtime 阶段继续被拒，直到 C3 解锁。
+    water_contract = json.loads(open(contract_path, encoding="utf-8").read())
+    water_contract["qualification"] = "shipboard_execution_frozen"
+    water_contract["execute_qualified"] = True
+    water_contract["bench_execution_allowed"] = False
+    water_contract["water_execution_allowed"] = True
+    water_contract["propellers_removed_required"] = False
+    water_path = tmp_path / "water.json"
+    water_path.write_text(json.dumps(water_contract), encoding="utf-8")
+    with pytest.raises(SystemExit):
+        sup.verify_contract(str(water_path), _sha256_file(str(water_path)), expected_mode="shipboard_execute")
+
+    class _DummyArgs:
+        mode = "shipboard_execute"
+
+    release = tmp_path / "rel"
+    (release / "evidence").mkdir(parents=True)
+    att_file = release / "evidence" / "operator-attestation.json"
+    valid_att = {
+        "attestation_profile": "defueled_powered_bench",
+        "vessel_secured": True,
+        "no_mission": True,
+        "propellers_removed": True,
+        "propulsion_power_isolated": False,
+        "local_emergency_stop_available": True,
+        "valid_until_utc": int((__import__("time").time() + 3600) * 1_000_000_000),
+    }
+
+    s = sup.Supervisor.__new__(sup.Supervisor)
+    s.release_root = str(release)
+    s.runtime_mode = "shipboard_execute"
+    s.args = _DummyArgs()
+    att_file.write_text(json.dumps(valid_att), encoding="utf-8")
+    s._verify_attestation()
+
+    for bad_patch in (
+        {"attestation_profile": "commissioning"},
+        {"propellers_removed": False},
+        {"propulsion_power_isolated": True},
+        {"vessel_secured": False},
+    ):
+        att_file.write_text(json.dumps({**valid_att, **bad_patch}), encoding="utf-8")
+        with pytest.raises(SystemExit):
+            s._verify_attestation()
+
+
+def test_supervisor_preflight_rejects_m4_competing_controller_or_publisher(tmp_path, monkeypatch, capsys):
+    sup = _load_supervisor()
+    env = dict(os.environ)
+    env.update({
+        "ROS_DOMAIN_ID": "225",
+        "ROS_LOCALHOST_ONLY": "1",
+        "ROS_AUTOMATIC_DISCOVERY_RANGE": "LOCALHOST",
+        "RMW_IMPLEMENTATION": "rmw_fastrtps_cpp",
+        "PYTHONDONTWRITEBYTECODE": "1",
+    })
+    monkeypatch.setenv("ROS_DOMAIN_ID", "225")
+    monkeypatch.setenv("ROS_LOCALHOST_ONLY", "1")
+    monkeypatch.setenv("ROS_AUTOMATIC_DISCOVERY_RANGE", "LOCALHOST")
+
+    ready_flag = tmp_path / "competing.ready"
+    competing = subprocess.Popen(
+        [sys.executable, "-B", "-c", """
+import sys, time, rclpy
+from rclpy.node import Node
+from mavros_msgs.msg import OverrideRCIn
+rclpy.init()
+node = Node("mpc_controller_node")
+pub = node.create_publisher(OverrideRCIn, "/mavros/rc/override", 10)
+with open(sys.argv[1], "w") as fh:
+    fh.write("ready")
+try:
+    end = time.monotonic() + 8.0
+    while time.monotonic() < end and rclpy.ok():
+        rclpy.spin_once(node, timeout_sec=0.05)
+        time.sleep(0.05)
+except Exception:
+    pass
+finally:
+    if rclpy.ok():
+        rclpy.shutdown()
+""", str(ready_flag)],
+        env=env,
+    )
+    try:
+        deadline = __import__("time").monotonic() + 10.0
+        while __import__("time").monotonic() < deadline and not ready_flag.exists():
+            __import__("time").sleep(0.05)
+        assert ready_flag.exists(), "competing publisher never started"
+        s = sup.Supervisor.__new__(sup.Supervisor)
+        s.runtime_mode = "shipboard_execute"
+        with pytest.raises(SystemExit) as exc:
+            s.preflight_graph()
+        assert exc.value.code == 1
+        assert "M4 violation" in capsys.readouterr().err
+    finally:
+        competing.terminate()
+        competing.wait(timeout=5)
