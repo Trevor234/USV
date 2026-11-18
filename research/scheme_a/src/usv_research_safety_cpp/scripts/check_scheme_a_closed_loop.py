@@ -39,8 +39,8 @@ DEADLINE_NS = 150_000_000
 EVIDENCE = {
     "run": "scheme_A.controlled_sim.run.v2",
     "command": "p1-plant-command-v2",
-    "receipt": "p1-plant-receipt-v2",
-    "hold_close": "p1-plant-hold-close-v1",
+    "receipt": "p1-plant-receipt-v3",
+    "hold_close": "p1-plant-hold-close-v2",
     "capability": "p1-worker-capability-v2",
 }
 
@@ -374,6 +374,10 @@ class Evidence:
         for row in rows_of(self.regulator, "plant_command"):
             if row.get("schema") != EVIDENCE["command"]:
                 problems.append(f"command_schema:{row.get('schema')!r}")
+                break
+        for row in rows_of(self.plant, "bootstrap_receipt"):
+            if row.get("schema") != EVIDENCE["receipt"]:
+                problems.append(f"bootstrap_schema:{row.get('schema')!r}")
                 break
         for row in rows_of(self.plant, "plant_receipt"):
             if row.get("schema") != EVIDENCE["receipt"]:
@@ -991,11 +995,22 @@ def time_domain(ev: Evidence, p: Problems, required: set[str]) -> dict:
         p.add("no_ok_receipt")
     bootstrap = rows_of(ev.plant, "bootstrap_receipt")
     origin = as_int(bootstrap[0].get("plant_steady_origin_ns")) if bootstrap else None
+    boot_id = bootstrap[0].get("boot_id") if bootstrap else None
+    clock_identity = bootstrap[0].get("clock_identity") if bootstrap else None
     if origin is None:
         p.add("steady_origin_missing")
+    if bootstrap and (not isinstance(clock_identity, str) or not clock_identity):
+        p.add("clock_identity_missing")
+    if bootstrap and as_int(bootstrap[0].get("state_sample_sim_ns")) != 0:
+        p.add("bootstrap_state_sample_sim_invalid")
     previous_hold_end = None
+    previous_sample_sim = None
+    ok_by_exec_idx: dict[int, dict] = {}
     for row in receipts:
         sequence = row.get("sequence")
+        exec_idx = as_int(row.get("execution_index"))
+        if exec_idx is not None:
+            ok_by_exec_idx[exec_idx] = row
         begin = as_int(row.get("apply_begin_steady_ns"))
         end = as_int(row.get("apply_end_steady_ns"))
         executed_begin = as_int(row.get("executed_begin_steady_ns"))
@@ -1004,10 +1019,16 @@ def time_domain(ev: Evidence, p: Problems, required: set[str]) -> dict:
         receive = as_int(row.get("receive_steady_ns"))
         executed = as_int(row.get("executed_steady_ns"))
         sim_ns = as_int(row.get("sim_ns"))
+        state_sample_sim_ns = as_int(row.get("state_sample_sim_ns"))
+        planned_end_sim_ns = as_int(row.get("planned_window_end_sim_ns"))
+        row_clock_id = row.get("clock_identity")
         if None in (begin, end, executed_begin, executed_end, hold_end,
-                    receive, executed, sim_ns):
+                    receive, executed, sim_ns, state_sample_sim_ns,
+                    planned_end_sim_ns):
             p.add(f"receipt_window_field_missing:{sequence}")
             continue
+        p.require(isinstance(row_clock_id, str) and row_clock_id == clock_identity,
+                  f"receipt_clock_identity_mismatch:{sequence}")
         p.require(end - begin == T_NS, f"apply_window_length:{sequence}")
         p.require(hold_end == executed_begin + T_NS, f"hold_end_off_grid:{sequence}")
         p.require(executed_begin < executed_end, f"execution_window_empty:{sequence}")
@@ -1020,6 +1041,14 @@ def time_domain(ev: Evidence, p: Problems, required: set[str]) -> dict:
         if origin is not None:
             p.require(sim_ns == executed_end - origin,
                       f"sim_ns_not_derived_from_origin:{sequence}")
+            p.require(state_sample_sim_ns == executed_begin - origin,
+                      f"state_sample_sim_mismatch:{sequence}")
+            p.require(planned_end_sim_ns == hold_end - origin,
+                      f"planned_window_end_sim_mismatch:{sequence}")
+        if previous_sample_sim is not None:
+            p.require(state_sample_sim_ns > previous_sample_sim,
+                      f"state_sample_sim_not_increasing:{sequence}")
+        previous_sample_sim = state_sample_sim_ns
         if previous_hold_end is not None:
             p.require(executed_begin >= previous_hold_end,
                       f"execution_window_overlaps:{sequence}")
@@ -1034,11 +1063,27 @@ def time_domain(ev: Evidence, p: Problems, required: set[str]) -> dict:
             p.add(f"hold_close_reason:{reason}")
         close_ns = as_int(row.get("close_steady_ns"))
         close_sim = as_int(row.get("close_sim_ns"))
-        if close_ns is None or close_sim is None:
+        hc_sample_sim = as_int(row.get("state_sample_sim_ns"))
+        hc_origin = as_int(row.get("plant_steady_origin_ns"))
+        hc_exec_end = as_int(row.get("executed_end_steady_ns"))
+        hc_exec_idx = as_int(row.get("execution_index"))
+        hc_clock_id = row.get("clock_identity")
+        if None in (close_ns, close_sim, hc_sample_sim, hc_origin, hc_exec_end, hc_exec_idx) or as_int(row.get("clock_epoch")) is None:
             p.add("hold_close_time_missing")
             continue
+        p.require(isinstance(hc_clock_id, str) and hc_clock_id == clock_identity,
+                  "hold_close_clock_identity_mismatch")
+        if boot_id is not None:
+            p.require(row.get("boot_id") == boot_id, "hold_close_boot_id_mismatch")
         if origin is not None:
+            p.require(hc_origin == origin, "hold_close_steady_origin_mismatch")
             p.require(close_sim == close_ns - origin, "hold_close_sim_not_derived")
+            p.require(hc_sample_sim == close_sim, "hold_close_state_sample_sim_mismatch")
+            if reason in ("expired", "superseded"):
+                p.require(close_sim == hc_exec_end - origin,
+                          f"hold_close_full_window_end_mismatch:{hc_exec_idx}")
+        if receipts and hc_exec_idx not in ok_by_exec_idx:
+            p.add(f"hold_close_execution_index_unknown:{hc_exec_idx}")
 
     clocks = rows_of(ev.plant, "plant_clock")
     for row in clocks:

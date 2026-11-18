@@ -20,6 +20,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import math
+import random
 import threading
 import uuid
 import json
@@ -33,6 +35,97 @@ from pathlib import Path
 
 T_NS = 200_000_000
 DEADLINE_NS = 150_000_000
+
+MANEUVER_TYPES = (
+    "straight",
+    "left_turn",
+    "right_turn",
+    "s_turn",
+    "rate_limited_thrust_step",
+    "speed_transition",
+)
+
+
+def _smooth_step(x: float) -> float:
+    x = max(0.0, min(1.0, x))
+    return 0.5 * (1.0 - math.cos(math.pi * x))
+
+
+def generate_maneuver_path_and_profile(
+    maneuver: str,
+    seconds: float,
+    seed: int = 0,
+    cruise_speed: float | None = None,
+) -> tuple[list[str], list[str]]:
+    """Generate aligned, trackable, non-self-intersecting (path_rows, profile_rows)."""
+    rng = random.Random(seed)
+    n_steps = int(seconds * 5) + 2
+    dt = 0.2
+    u0 = float(cruise_speed) if cruise_speed is not None else rng.uniform(0.55, 0.85)
+    x = 0.0
+    y = 0.0
+    psi = 0.0
+    path_rows: list[str] = []
+    profile_rows: list[str] = []
+
+    # Turn arc capped well below pi (~100 deg max) so path NEVER self-intersects.
+    turn_rate = rng.uniform(0.15, 0.20)
+    turn_start = 4.0
+    turn_hold_end = 13.0
+    s_amp = rng.uniform(0.14, 0.22)
+    s_period = rng.uniform(14.0, 18.0)
+    s_phase = rng.uniform(-0.25, 0.25)
+
+    for i in range(n_steps):
+        t_s = i * dt
+        v_d = u0 * (0.25 + 0.75 * _smooth_step(t_s / 3.0))
+        r_d = 0.0
+
+        if maneuver == "straight":
+            v_d = max(0.35, min(0.95, u0 * (0.30 + 0.70 * _smooth_step(t_s / 3.0))))
+            r_d = (rng.uniform(-0.015, 0.015) * math.sin(0.25 * t_s)) if seed > 0 else 0.0
+        elif maneuver == "left_turn":
+            env = _smooth_step((t_s - turn_start) / 2.5) * (1.0 - _smooth_step((t_s - turn_hold_end) / 2.5))
+            r_d = turn_rate * env
+        elif maneuver == "right_turn":
+            env = _smooth_step((t_s - turn_start) / 2.5) * (1.0 - _smooth_step((t_s - turn_hold_end) / 2.5))
+            r_d = -turn_rate * env
+        elif maneuver == "s_turn":
+            gate = _smooth_step((t_s - 2.0) / 2.5)
+            r_d = gate * s_amp * math.sin(2.0 * math.pi * (t_s - 2.0) / s_period + s_phase)
+        elif maneuver == "rate_limited_thrust_step":
+            # Crisp 0.8s speed transitions + bounded alternating heading pulses (no loop-back).
+            seg = 6.0
+            blk = int(t_s // seg)
+            tau = t_s - blk * seg
+            v_prev = 0.85 if ((blk - 1) % 2 == 0 and blk > 0) else 0.42
+            v_next = 0.85 if (blk % 2 == 0) else 0.42
+            v_d = v_prev + (v_next - v_prev) * _smooth_step(tau / 0.8) if blk > 0 else 0.42 + 0.43 * _smooth_step(t_s / 1.5)
+            turn_sign = 1.0 if (blk % 2 == 1) else -1.0
+            if blk == 0:
+                r_d = 0.0
+            else:
+                r_d = 0.16 * turn_sign * _smooth_step(tau / 0.6) * (1.0 - _smooth_step((tau - 3.6) / 0.6))
+        elif maneuver == "speed_transition":
+            levels = (0.42, 0.85, 0.50, 0.92, 0.45, 0.78)
+            seg = 7.0
+            blk = int(t_s // seg)
+            tau = t_s - blk * seg
+            v_prev = levels[max(0, (blk - 1)) % len(levels)]
+            v_curr = levels[blk % len(levels)]
+            v_d = v_prev + (v_curr - v_prev) * _smooth_step(tau / 2.0) if blk > 0 else levels[0] * (0.4 + 0.6 * _smooth_step(t_s / 2.0))
+            r_d = 0.08 * _smooth_step((t_s - 2.0) / 2.0) * math.sin(0.30 * t_s + s_phase)
+        else:
+            raise ValueError(f"unsupported maneuver: {maneuver}")
+
+        path_rows.append(f"{x:.6f} {y:.6f} {psi:.6f} {t_s:.6f}")
+        profile_rows.append(f"{v_d:.6f} 0.000000 {r_d:.6f} {t_s:.6f}")
+        psi_mid = psi + 0.5 * r_d * dt
+        x += v_d * math.cos(psi_mid) * dt
+        y += v_d * math.sin(psi_mid) * dt
+        psi = math.atan2(math.sin(psi + r_d * dt), math.cos(psi + r_d * dt))
+
+    return path_rows, profile_rows
 
 # 场景：停止条件 / 故障 / 刺激 / 必须出现的证据。required 词表由检查器解释。
 def as_int(value):
@@ -456,6 +549,19 @@ def build_parser() -> argparse.ArgumentParser:
     # 取证开关：默认关闭时保持原行为（含原 run_id 选项字典）。
     p.add_argument("--clock-diagnostics", action="store_true")
     p.add_argument("--candidate-root", default=None)
+    p.add_argument("--maneuver", default=None, choices=MANEUVER_TYPES)
+    p.add_argument("--maneuver-seed", type=int, default=0)
+    p.add_argument("--cruise-speed", type=float, default=None)
+    p.add_argument("--plant-model-file", default=None)
+    p.add_argument("--dataset-source", default=None)
+    p.add_argument("--gp-snapshot", default=None)
+    p.add_argument("--gp-snapshot-sha256", default="")
+    p.add_argument("--gp-schedule", default=None)
+    p.add_argument("--gp-schedule-sha256", default="")
+    p.add_argument("--ppo-proposal", action="store_true")
+    p.add_argument("--ppo-model", default="/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx")
+    p.add_argument("--ppo-manifest", default="/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.manifest.json")
+    p.add_argument("--lambda-pi", type=float, default=0.0)
     return p
 
 
@@ -468,6 +574,7 @@ class Runner:
                                      self.scenario.get("nodes") == "plant_only")
                       else NODE_ORDER)
         self.procs: dict[str, subprocess.Popen] = {}
+        self.ppo_proc: subprocess.Popen | None = None
         self.nodes: dict[str, dict] = {}
         self.failure: str | None = None
         self.stimuli: list[dict] = []
@@ -827,20 +934,93 @@ class Runner:
                 raise SystemExit(f"missing executable for {name}: {exe}")
 
         scenario_path = self.out / "scenario_path.txt"
-        rows = []
+        scenario_profile = self.out / "scenario_profile.txt"
         seconds = float(args.stop_after_s or 0) + 8.0
         if args.stop_after_decisions:
             seconds = args.stop_after_decisions * 0.2 + 8.0
-        for i in range(0, int(seconds * 5) + 2):
-            t_s = i * 0.2
-            rows.append(f"{t_s * 0.5:.6f} 0.000000 0.000000 {t_s:.6f}")
-        scenario_path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+        if args.maneuver:
+            path_rows, profile_rows = generate_maneuver_path_and_profile(
+                args.maneuver, seconds + 2.0, seed=args.maneuver_seed,
+                cruise_speed=args.cruise_speed)
+            scenario_path.write_text("\n".join(path_rows) + "\n", encoding="utf-8")
+            scenario_profile.write_text("\n".join(profile_rows) + "\n", encoding="utf-8")
+        else:
+            rows = []
+            for i in range(0, int(seconds * 5) + 2):
+                t_s = i * 0.2
+                rows.append(f"{t_s * 0.5:.6f} 0.000000 0.000000 {t_s:.6f}")
+            scenario_path.write_text("\n".join(rows) + "\n", encoding="utf-8")
 
         base = self.scenario_params()
         plant_params = {**base, "source_file": str(self.out / "plant.source.jsonl"),
                         "scenario_path_file": str(scenario_path)}
+        if args.maneuver:
+            plant_params["scenario_profile_file"] = str(scenario_profile)
+        if args.plant_model_file:
+            plant_params["plant_model_file"] = str(Path(args.plant_model_file).resolve())
         worker_params_extra = {}
         regulator_params_extra = {}
+        if args.gp_snapshot:
+            gp_path = str(Path(args.gp_snapshot).resolve())
+            gp_sha = args.gp_snapshot_sha256 or sha256(Path(gp_path))
+            worker_params_extra["gp_snapshot_file"] = gp_path
+            worker_params_extra["gp_snapshot_sha256"] = gp_sha
+            regulator_params_extra["gp_snapshot_file"] = gp_path
+            regulator_params_extra["gp_snapshot_sha256"] = gp_sha
+        if args.gp_schedule:
+            sched_path = str(Path(args.gp_schedule).resolve())
+            sched_sha = args.gp_schedule_sha256 or sha256(Path(sched_path))
+            worker_params_extra["gp_schedule_file"] = sched_path
+            worker_params_extra["gp_schedule_sha256"] = sched_sha
+            regulator_params_extra["gp_schedule_file"] = sched_path
+            regulator_params_extra["gp_schedule_sha256"] = sched_sha
+        if args.ppo_proposal:
+            ppo_man = json.loads(Path(args.ppo_manifest).read_text(encoding="utf-8"))
+            regulator_params_extra["ppo_enabled"] = True
+            regulator_params_extra["ppo_lambda_pi"] = float(args.lambda_pi)
+            regulator_params_extra["ppo_expected_policy_sha256"] = str(ppo_man["onnx_sha256"])
+            ppo_script = Path(__file__).resolve().parents[3] / "learning" / "ppo_proposal_node.py"
+            if not ppo_script.is_file():
+                ppo_script = Path("/home/trevor/usv_scheme_a_wt/research/scheme_a/learning/ppo_proposal_node.py")
+            if not ppo_script.is_file():
+                raise SystemExit(f"missing ppo_proposal_node.py: {ppo_script}")
+            ppo_log = self.out / "ppo_proposal.stdout.txt"
+            ppo_jsonl = self.out / "ppo_proposal.jsonl"
+            ppo_env = dict(os.environ)
+            ppo_env["ROS_DOMAIN_ID"] = str(args.ros_domain_id)
+            ppo_env.setdefault("ROS_LOCALHOST_ONLY", "1")
+            ppo_env.setdefault("OMP_NUM_THREADS", "1")
+            ppo_env.setdefault("OPENBLAS_NUM_THREADS", "1")
+            ppo_env.setdefault("ORT_INTRA_OP_NUM_THREADS", "1")
+            self.ppo_proc = subprocess.Popen(
+                [
+                    "/usr/bin/python3",
+                    "-u",
+                    str(ppo_script),
+                    "--run-id", args.run_id,
+                    "--boot-id", args.boot_id,
+                    "--model", str(Path(args.ppo_model).resolve()),
+                    "--manifest", str(Path(args.ppo_manifest).resolve()),
+                    "--rate-hz", "20.0",
+                    "--log-file", str(ppo_jsonl),
+                ],
+                env=ppo_env,
+                stdin=subprocess.DEVNULL,
+                stdout=open(ppo_log, "w"),
+                stderr=subprocess.STDOUT,
+                start_new_session=True,
+            )
+            ppo_deadline = time.monotonic() + min(12.0, float(args.startup_timeout_s))
+            while time.monotonic() < ppo_deadline:
+                if self.ppo_proc.poll() is not None:
+                    self.fail(f"startup_gate:ppo_proposal_exited_{self.ppo_proc.returncode}")
+                    return False
+                if ppo_jsonl.is_file() and ppo_jsonl.stat().st_size > 0:
+                    break
+                time.sleep(0.05)
+            else:
+                self.fail("startup_gate:ppo_proposal_timeout")
+                return False
         if self.diag:
             plant_params["clock_diagnostics_file"] = str(
                 self.out / "plant.clock-diagnostics.jsonl")
@@ -949,6 +1129,21 @@ class Runner:
                 self.nodes[name]["rc"] = proc.returncode
             elif proc.returncode is not None:
                 self.nodes[name]["rc"] = proc.returncode
+
+        if self.ppo_proc is not None:
+            if self.ppo_proc.poll() is None:
+                try:
+                    os.killpg(os.getpgid(self.ppo_proc.pid), signal.SIGTERM)
+                except ProcessLookupError:
+                    pass
+                try:
+                    self.ppo_proc.wait(timeout=4)
+                except subprocess.TimeoutExpired:
+                    try:
+                        os.killpg(os.getpgid(self.ppo_proc.pid), signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    self.ppo_proc.wait(timeout=2)
 
     def identity_matches(self, name: str, proc: subprocess.Popen) -> bool:
         """发信号前核对 PID 仍是该 Popen、starttime/PGID 一致、exe 仍在候选内。"""
@@ -1432,9 +1627,18 @@ def main() -> int:
         "worker_block_ms": args.worker_block_ms, "stop_mode": args.stop_mode,
         "faults": args.faults,
     }
-    # 只有开启诊断时才加入新键：默认路径的 run_id 输入保持不变。
+    # 只有开启诊断/机动/植物覆盖时才加入新键：默认路径的 run_id 输入保持不变。
     if args.clock_diagnostics:
         options["clock_diagnostics"] = True
+    if args.maneuver:
+        options["maneuver"] = args.maneuver
+        options["maneuver_seed"] = args.maneuver_seed
+        if args.cruise_speed is not None:
+            options["cruise_speed"] = float(args.cruise_speed)
+    if args.plant_model_file:
+        options["plant_model_file_sha256"] = sha256(Path(args.plant_model_file))
+    if args.dataset_source:
+        options["dataset_source"] = args.dataset_source
     run_id = args.run_id or hashlib.sha256(json.dumps(
         [args.scenario, plan_sha, contract_sha, manifest_sha, options],
         sort_keys=True).encode()).hexdigest()[:24]
@@ -1612,6 +1816,26 @@ def main() -> int:
     }
     if runner.diag:
         document["diagnostics"] = runner.collect_diagnostics()
+    if args.dataset_source:
+        document["dataset_source"] = args.dataset_source
+    if args.maneuver:
+        document["maneuver"] = {
+            "name": args.maneuver,
+            "seed": args.maneuver_seed,
+            "cruise_speed": args.cruise_speed,
+        }
+    if args.plant_model_file:
+        document["plant_model_file"] = str(Path(args.plant_model_file).resolve())
+    if args.gp_snapshot:
+        document["gp_snapshot"] = str(Path(args.gp_snapshot).resolve())
+    if args.gp_schedule:
+        document["gp_schedule"] = str(Path(args.gp_schedule).resolve())
+    if args.ppo_proposal:
+        document["ppo_proposal"] = {
+            "enabled": True,
+            "lambda_pi": float(args.lambda_pi),
+            "model": str(Path(args.ppo_model).resolve()),
+        }
     (out / "run.json").write_text(
         json.dumps(document, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8")
