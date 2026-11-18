@@ -6,7 +6,7 @@
   "Rd": [0.2, 0.2],
   "T_ns": 200000000,
   "backend_rate_n_s": 80,
-  "candidate_cdr_max_bytes": 8204,
+  "candidate_cdr_max_bytes": 9708,
   "clock": "CLOCK_MONOTONIC",
   "command_max_n": 25,
   "command_min_n": -25,
@@ -50,7 +50,7 @@
     "profile": "/path/reference_profile",
     "state": "/mavros/state"
   },
-  "job_cdr_max_bytes": 6460,
+  "job_cdr_max_bytes": 7361,
   "log_capacity": 512,
   "map_scale": 1,
   "max_candidate_bytes": 16384,

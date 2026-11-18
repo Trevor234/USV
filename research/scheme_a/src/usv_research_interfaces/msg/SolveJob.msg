@@ -44,3 +44,15 @@ string<=128 anchor_run_id
 int64[<=256] history_sim_ns
 uint8[<=256] history_channel
 float64[<=256] history_n
+# WP6/WP7 GP residual snapshot & PPO proposal binding
+string<=64 gp_snapshot_id
+string<=64 gp_snapshot_sha256
+uint64 gp_generation
+float64[63] stage_residuals
+string<=64 stage_residuals_digest
+bool ppo_proposal_used
+string<=64 ppo_policy_sha256
+uint64 ppo_obs_seq
+float64[2] ppo_q_pi
+float64 ppo_lambda_pi
+string<=64 ppo_reject_reason

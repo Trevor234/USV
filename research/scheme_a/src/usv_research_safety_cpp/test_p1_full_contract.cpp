@@ -38,8 +38,8 @@ EXPECT_THROW(p1::validate_contract_fields(c),std::runtime_error);c=pre();c["faul
 EXPECT_THROW(p1::validate_contract_fields(c),std::runtime_error);c=frozen();c["freeze_evidence_sha256"]="pending";
 EXPECT_THROW(p1::validate_contract_fields(c),std::runtime_error);c=frozen();c["pending_final_calibration"].push_back("rho");
 EXPECT_THROW(p1::validate_contract_fields(c),std::runtime_error);}
-TEST(P1FullContract,ResourceDomainPreservedWithoutClaimingCoverage){auto c=pre();c["history_capacity"]=1;c["log_capacity"]=1;c["max_job_bytes"]=6460;c["max_candidate_bytes"]=8204;
-EXPECT_NO_THROW(p1::validate_contract_fields(c));c["max_job_bytes"]=6459;
+TEST(P1FullContract,ResourceDomainPreservedWithoutClaimingCoverage){auto c=pre();c["history_capacity"]=1;c["log_capacity"]=1;c["max_job_bytes"]=7361;c["max_candidate_bytes"]=9708;
+EXPECT_NO_THROW(p1::validate_contract_fields(c));c["max_job_bytes"]=7360;
 EXPECT_THROW(p1::validate_contract_fields(c),std::runtime_error);}
 TEST(P1FullContract,DuplicateKeysRejectAtAllObjectDepths){
 EXPECT_THROW(p1::parse_unique_contract("{\"schema\":1,\"schema\":2}"),std::runtime_error);

@@ -44,6 +44,18 @@ int64 clock_age_ns
 bool normal_contract_complete
 bool rho_available
 bool plant_acceptance_observed
+# WP6/WP7 decision telemetry
+string<=64 gp_snapshot_id
+string<=64 gp_snapshot_sha256
+uint64 gp_generation
+bool ppo_proposal_used
+string<=64 ppo_policy_sha256
+float64[2] ppo_q_pi
+float64 ppo_lambda_pi
+string<=64 ppo_reject_reason
+float64 gp_local_approx_max_diff
+bool gp_ood_detected
+uint32 gp_ood_stage_count
 
 bool[2] previous_anchor_known
 int64[2] publish_sim_ns

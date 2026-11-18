@@ -29,7 +29,7 @@
   "active_watchdog_ns": 1000000000,
   "backend_rate_n_s": 80,
   "baseline_input": "F5_20261005_atomic_freeze_01",
-  "candidate_cdr_max_bytes": 8204,
+  "candidate_cdr_max_bytes": 9708,
   "clock": "CLOCK_MONOTONIC",
   "clock_age_ns": 100000000,
   "clock_pause_confirm_ns": 400000000,
@@ -77,7 +77,7 @@
     "path": "/path/reference",
     "profile": "/path/reference_profile"
   },
-  "job_cdr_max_bytes": 6460,
+  "job_cdr_max_bytes": 7361,
   "kill_postcheck_ns": 1000000000,
   "log_capacity": 512,
   "map_scale": 1,

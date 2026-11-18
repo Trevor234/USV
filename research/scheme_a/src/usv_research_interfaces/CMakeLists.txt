@@ -5,7 +5,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/StateSnapshot.msg" "msg/AppliedControl.msg" "msg/CycleTiming.msg" "msg/ReferencePrediction.msg"
   "msg/SolveJob.msg" "msg/SolveCandidate.msg" "msg/WorkerCapability.msg" "msg/ExecutionDecision.msg"
-  "msg/PlantCommand.msg" "msg/PlantReceipt.msg" "msg/PlantHoldClose.msg")
+  "msg/PlantCommand.msg" "msg/PlantReceipt.msg" "msg/PlantHoldClose.msg" "msg/ControlProposal.msg")
 # P0_REFERENCE_PREDICTION_V1
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()

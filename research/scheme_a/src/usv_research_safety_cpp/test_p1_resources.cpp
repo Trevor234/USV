@@ -16,24 +16,24 @@ TEST(Resources, FixedNativeErrorBufferRequiresTerminatorWithinCapacity){char goo
   EXPECT_EQ(result.size(),255u);char bad[256];std::fill(bad,bad+256,'x');result="unchanged";
   EXPECT_FALSE(p1::copy_native_reason(bad,result));
   EXPECT_EQ(result,"unchanged");}
-static Json contract(){return {{"diagnostic_contract_revision",5},{"resource_policy",p1::resource_policy_v1},{"resource_budget_scope",p1::resource_cdr_encoding_v1},{"job_cdr_max_bytes",6460},{"candidate_cdr_max_bytes",8204},{"max_job_bytes",8192},{"max_candidate_bytes",16384},{"history_capacity",256},{"max_path_points",2048},{"max_profile_rows",2048},{"log_capacity",512},{"dds_depth",1},{"max_profile_dims",4},{"max_profile_label_bytes",64},{"max_path_frame_bytes",128}};}
-static Job maximum(){Job j;j.schema_version=std::string(64,'a');j.run_id=std::string(128,'a');j.boot_id=j.contract_hash=j.nominal_hash=j.worker_instance=std::string(64,'a');j.anchor_source=std::string(32,'a');j.anchor_producer=std::string(64,'a');j.anchor_run_id=std::string(128,'a');j.history_sim_ns.resize(256);j.history_channel.resize(256);j.history_n.resize(256);return j;}
+static Json contract(){return {{"diagnostic_contract_revision",5},{"resource_policy",p1::resource_policy_v1},{"resource_budget_scope",p1::resource_cdr_encoding_v1},{"job_cdr_max_bytes",7361},{"candidate_cdr_max_bytes",9708},{"max_job_bytes",8192},{"max_candidate_bytes",16384},{"history_capacity",256},{"max_path_points",2048},{"max_profile_rows",2048},{"log_capacity",512},{"dds_depth",1},{"max_profile_dims",4},{"max_profile_label_bytes",64},{"max_path_frame_bytes",128}};}
+static Job maximum(){Job j;j.schema_version=std::string(64,'a');j.run_id=std::string(128,'a');j.boot_id=j.contract_hash=j.nominal_hash=j.worker_instance=std::string(64,'a');j.anchor_source=std::string(32,'a');j.anchor_producer=std::string(64,'a');j.anchor_run_id=std::string(128,'a');j.gp_snapshot_id=j.gp_snapshot_sha256=j.stage_residuals_digest=j.ppo_policy_sha256=j.ppo_reject_reason=std::string(64,'g');j.history_sim_ns.resize(256);j.history_channel.resize(256);j.history_n.resize(256);return j;}
 template<class M>static size_t serialized(const M & m){rclcpp::Serialization<M> serializer;rclcpp::SerializedMessage raw;serializer.serialize_message(&m,&raw);return raw.get_rcl_serialized_message().buffer_length;}
 TEST(Resources, InstalledSerializationAtFullJobAndCandidateBoundary){auto j=maximum();
   EXPECT_EQ(serialized(j),p1::max_job_cdr_bytes());
-  EXPECT_EQ(serialized(j),6460u);Candidate c;c.job=j;c.worker_instance=std::string(64,'w');c.reason=std::string(256,'r');c.backend=std::string(16,'b');
+  EXPECT_EQ(serialized(j),7361u);Candidate c;c.job=j;c.worker_instance=std::string(64,'w');c.reason=std::string(256,'r');c.backend=std::string(16,'b');c.applied_gp_snapshot_sha256=std::string(64,'s');
   EXPECT_EQ(serialized(c),p1::max_candidate_cdr_bytes());
-  EXPECT_EQ(serialized(c),8204u);
+  EXPECT_EQ(serialized(c),9708u);
   EXPECT_TRUE(p1::check_candidate_resources(c,p1::ResourceLimits{}));}
-TEST(Resources, ActualSizeMatchesSerializationAcrossPaddingAndHistory){for(size_t n:{0,1,2,255,256}){auto j=maximum();j.run_id.resize(n%129);j.anchor_source.resize(n%33);j.history_sim_ns.resize(n);j.history_channel.resize(n);j.history_n.resize(n);
-  EXPECT_EQ(serialized(j),p1::job_cdr_bytes(j));Candidate c;c.job=j;c.reason=std::string(n%257,'r');
+TEST(Resources, ActualSizeMatchesSerializationAcrossPaddingAndHistory){for(size_t n:{0,1,2,255,256}){auto j=maximum();j.run_id=std::string(n%129,'a');j.anchor_source=std::string(n%33,'a');j.gp_snapshot_id=std::string(n%65,'g');j.history_sim_ns.resize(n);j.history_channel.resize(n);j.history_n.resize(n);
+  EXPECT_EQ(serialized(j),p1::job_cdr_bytes(j));Candidate c;c.job=j;c.reason=std::string(n%257,'r');c.applied_gp_snapshot_sha256=std::string(n%65,'s');
   EXPECT_EQ(serialized(c),p1::candidate_cdr_bytes(c));}}
-TEST(Resources, EveryJobStringAllowsBoundaryAndRejectsOneByteOver){std::array<std::pair<std::string Job::*,size_t>,9> fields{{{&Job::schema_version,64},{&Job::run_id,128},{&Job::boot_id,64},{&Job::contract_hash,64},{&Job::nominal_hash,64},{&Job::worker_instance,64},{&Job::anchor_source,32},{&Job::anchor_producer,64},{&Job::anchor_run_id,128}}};for(auto field:fields){Job j;j.*field.first=std::string(field.second,'a');
+TEST(Resources, EveryJobStringAllowsBoundaryAndRejectsOneByteOver){std::array<std::pair<std::string Job::*,size_t>,14> fields{{{&Job::schema_version,64},{&Job::run_id,128},{&Job::boot_id,64},{&Job::contract_hash,64},{&Job::nominal_hash,64},{&Job::worker_instance,64},{&Job::anchor_source,32},{&Job::anchor_producer,64},{&Job::anchor_run_id,128},{&Job::gp_snapshot_id,64},{&Job::gp_snapshot_sha256,64},{&Job::stage_residuals_digest,64},{&Job::ppo_policy_sha256,64},{&Job::ppo_reject_reason,64}}};for(auto field:fields){Job j;j.*field.first=std::string(field.second,'a');
   EXPECT_TRUE(p1::check_job_resources(j,{}));j.*field.first+='a';auto c=p1::check_job_resources(j,{});
   EXPECT_FALSE(c);
   EXPECT_EQ(c.observed,field.second+1);
   EXPECT_EQ(c.limit,field.second);}}
-TEST(Resources, EveryCandidateStringRejectsOverLimitBeforeCopy){for(auto field:std::array<std::pair<std::string Candidate::*,size_t>,3>{{{&Candidate::worker_instance,64},{&Candidate::reason,256},{&Candidate::backend,16}}}){Candidate c;c.*field.first=std::string(field.second,'a');
+TEST(Resources, EveryCandidateStringRejectsOverLimitBeforeCopy){for(auto field:std::array<std::pair<std::string Candidate::*,size_t>,4>{{{&Candidate::worker_instance,64},{&Candidate::reason,256},{&Candidate::backend,16},{&Candidate::applied_gp_snapshot_sha256,64}}}){Candidate c;c.*field.first=std::string(field.second,'a');
   EXPECT_TRUE(p1::check_candidate_resources(c,{}));c.*field.first+='a';
   EXPECT_FALSE(p1::check_candidate_resources(c,{}));}Candidate c;c.job.run_id=std::string(129,'x');
   EXPECT_FALSE(p1::check_candidate_resources(c,{}));}
@@ -53,15 +53,15 @@ TEST(Resources, ContractMustBeIntegralAndWithinHardCaps){for(auto key:{"history_
   EXPECT_THROW(p1::resource_limits_from_contract(c),std::runtime_error);for(auto bad:std::vector<Json>{true,1.0,"1",nullptr,0,-1,18446744073709551615ULL}){c=contract();c[key]=bad;
   EXPECT_THROW(p1::resource_limits_from_contract(c),std::runtime_error);}c=contract();c[key]=c[key].get<int>()+1;
   EXPECT_THROW(p1::resource_limits_from_contract(c),std::runtime_error);}}
-TEST(Resources, ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected){auto c=contract();c["max_job_bytes"]=6460;c["max_candidate_bytes"]=8204;
-  EXPECT_NO_THROW(p1::resource_limits_from_contract(c));c["max_job_bytes"]=6459;
-  EXPECT_THROW(p1::resource_limits_from_contract(c),std::runtime_error);c=contract();c["max_candidate_bytes"]=8203;
+TEST(Resources, ByteBudgetExactTypeMaximumIsAllowedButOneLessRejected){auto c=contract();c["max_job_bytes"]=7361;c["max_candidate_bytes"]=9708;
+  EXPECT_NO_THROW(p1::resource_limits_from_contract(c));c["max_job_bytes"]=7360;
+  EXPECT_THROW(p1::resource_limits_from_contract(c),std::runtime_error);c=contract();c["max_candidate_bytes"]=9707;
   EXPECT_THROW(p1::resource_limits_from_contract(c),std::runtime_error);}
 TEST(Resources, ContractPoliciesAreExact){for(auto key:{"resource_policy","resource_budget_scope"}){auto c=contract();c[key]="undeclared";
   EXPECT_THROW(p1::resource_limits_from_contract(c),std::runtime_error);}}
-TEST(Resources, SmallerCacheDoesNotShrinkWireSchemaBudget){auto c=contract();c["history_capacity"]=1;c["max_job_bytes"]=6460;auto r=p1::resource_limits_from_contract(c);
+TEST(Resources, SmallerCacheDoesNotShrinkWireSchemaBudget){auto c=contract();c["history_capacity"]=1;c["max_job_bytes"]=7361;auto r=p1::resource_limits_from_contract(c);
   EXPECT_EQ(r.history_capacity,1u);
-  EXPECT_EQ(r.max_job_bytes,6460u);}
+  EXPECT_EQ(r.max_job_bytes,7361u);}
 TEST(Resources, PathMetadataBoundaryAndCountRejection){nav_msgs::msg::Path p;p.header.frame_id=std::string(128,'x');p.poses.resize(2048);
   EXPECT_TRUE(p1::check_path_resources(p,{}));p.header.frame_id+='x';
   EXPECT_FALSE(p1::check_path_resources(p,{}));p.header.frame_id="map";p.poses.resize(2049);

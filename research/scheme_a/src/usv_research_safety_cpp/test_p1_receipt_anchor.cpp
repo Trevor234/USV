@@ -14,7 +14,7 @@ constexpr std::int64_t kOrigin = 5'000'000'000LL;
 p1_receipt::ReceiptFacts bootstrap()
 {
   p1_receipt::ReceiptFacts f;
-  f.schema_version = "p1-plant-receipt-v2";
+  f.schema_version = "p1-plant-receipt-v3";
   f.run_id = "run";
   f.contract_hash = "contract";
   f.producer_instance_id = "plant-1";
@@ -27,6 +27,10 @@ p1_receipt::ReceiptFacts bootstrap()
   f.executed_end_steady_ns = kOrigin;
   f.hold_end_steady_ns = kOrigin;
   f.sim_ns = 0;
+  f.state_sample_sim_ns = 0;
+  f.planned_window_end_sim_ns = 0;
+  f.clock_identity = p1_plant::kClockIdentity;
+  f.clock_epoch = 0;
   return f;
 }
 
@@ -34,7 +38,7 @@ p1_receipt::ReceiptFacts ok(std::uint64_t sequence, std::uint64_t index,
                            std::int64_t begin, std::array<double, 2> thrust)
 {
   p1_receipt::ReceiptFacts f;
-  f.schema_version = "p1-plant-receipt-v2";
+  f.schema_version = "p1-plant-receipt-v3";
   f.run_id = "run";
   f.contract_hash = "contract";
   f.producer_instance_id = "plant-1";
@@ -48,12 +52,16 @@ p1_receipt::ReceiptFacts ok(std::uint64_t sequence, std::uint64_t index,
   f.hold_end_steady_ns = begin + p1_plant::kTickNs;
   f.plant_steady_origin_ns = kOrigin;
   f.sim_ns = begin + p1_plant::kTickNs - kOrigin;
+  f.state_sample_sim_ns = begin - kOrigin;
+  f.planned_window_end_sim_ns = begin + p1_plant::kTickNs - kOrigin;
+  f.clock_identity = p1_plant::kClockIdentity;
+  f.clock_epoch = 0;
   return f;
 }
 
 p1_receipt::ReceiptAnchor started()
 {
-  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v2", "run", "contract");
+  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v3", "run", "contract");
   const auto result = anchor.accept(bootstrap());
   EXPECT_TRUE(result.accepted);
   return anchor;
@@ -64,7 +72,7 @@ p1_receipt::ReceiptAnchor started()
 // 没有回执时 anchor 必须是 unknown：空人口不能"通过"。
 TEST(ReceiptAnchor, UnknownUntilFirstReceipt)
 {
-  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v2", "run", "contract");
+  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v3", "run", "contract");
   EXPECT_FALSE(anchor.known());
   EXPECT_FALSE(anchor.normal_complete());
   EXPECT_TRUE(anchor.holds().empty());
@@ -74,7 +82,7 @@ TEST(ReceiptAnchor, UnknownUntilFirstReceipt)
 // 首条必须是 bootstrap：ok 先行说明没有可证明的零执行起点。
 TEST(ReceiptAnchor, FirstReceiptMustBeBootstrap)
 {
-  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v2", "run", "contract");
+  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v3", "run", "contract");
   const auto result = anchor.accept(ok(1, 1, kOrigin, {6.0, -3.0}));
   EXPECT_FALSE(result.accepted);
   EXPECT_EQ(result.reason, "bootstrap_required");
@@ -83,9 +91,9 @@ TEST(ReceiptAnchor, FirstReceiptMustBeBootstrap)
 
 TEST(ReceiptAnchor, SchemaAndForeignRunFailExplicitly)
 {
-  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v2", "run", "contract");
+  p1_receipt::ReceiptAnchor anchor("p1-plant-receipt-v3", "run", "contract");
   auto wrong_schema = bootstrap();
-  wrong_schema.schema_version = "p1-plant-receipt-v1";
+  wrong_schema.schema_version = "p1-plant-receipt-v2";
   EXPECT_EQ(anchor.accept(wrong_schema).reason, "schema");
 
   auto foreign = bootstrap();
@@ -212,6 +220,21 @@ TEST(ReceiptAnchor, StructuralMismatchInvalidates)
   auto empty_window = ok(1, 1, kOrigin, {8.0, 12.0});
   empty_window.executed_end_steady_ns = empty_window.executed_begin_steady_ns;
   EXPECT_EQ(anchor.accept(empty_window).reason, "execution_window_invalid");
+
+  anchor = started();
+  auto wrong_sample = ok(1, 1, kOrigin, {8.0, 12.0});
+  wrong_sample.state_sample_sim_ns += 1000;
+  EXPECT_EQ(anchor.accept(wrong_sample).reason, "state_sample_sim_mismatch");
+
+  anchor = started();
+  auto wrong_planned = ok(1, 1, kOrigin, {8.0, 12.0});
+  wrong_planned.planned_window_end_sim_ns += 1000;
+  EXPECT_EQ(anchor.accept(wrong_planned).reason, "planned_end_sim_mismatch");
+
+  anchor = started();
+  auto changed_clock = ok(1, 1, kOrigin, {8.0, 12.0});
+  changed_clock.clock_identity = "foreign_clock";
+  EXPECT_EQ(anchor.accept(changed_clock).reason, "clock_identity_changed");
 }
 
 // producer 变化 = 新的 plant 实例：清空并置 unknown。

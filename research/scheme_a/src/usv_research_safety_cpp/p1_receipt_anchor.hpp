@@ -39,6 +39,10 @@ struct ReceiptFacts
   std::int64_t hold_end_steady_ns = 0;
   std::int64_t plant_steady_origin_ns = 0;
   std::int64_t sim_ns = 0;
+  std::int64_t state_sample_sim_ns = 0;
+  std::int64_t planned_window_end_sim_ns = 0;
+  std::string clock_identity;
+  std::uint64_t clock_epoch = 0;
   std::array<double, 6> state{};
 };
 
@@ -85,7 +89,7 @@ public:
   static constexpr std::size_t kHistoryCapacity = 256;
   static constexpr std::int64_t kTickNs = p1_plant::kTickNs;
 
-  explicit ReceiptAnchor(std::string schema_version = "p1-plant-receipt-v2",
+  explicit ReceiptAnchor(std::string schema_version = "p1-plant-receipt-v3",
                          std::string expected_run_id = "",
                          std::string expected_contract_hash = "")
       : schema_version_(std::move(schema_version)),
@@ -116,6 +120,11 @@ public:
     if (facts.schema_version != schema_version_)
     {
       result.reason = "schema";
+      return result;
+    }
+    if (facts.clock_identity.empty())
+    {
+      result.reason = "clock_identity_missing";
       return result;
     }
     if (!expected_run_id_.empty() && facts.run_id != expected_run_id_)
@@ -155,6 +164,19 @@ public:
         result.reason = "bootstrap_origin_missing";
         return result;
       }
+      if (facts.state_sample_sim_ns != 0)
+      {
+        normal_complete_ = false;
+        result.reason = "bootstrap_state_sample_sim_invalid";
+        return result;
+      }
+      if (facts.planned_window_end_sim_ns != 0)
+      {
+        normal_complete_ = false;
+        result.reason = "bootstrap_planned_end_invalid";
+        return result;
+      }
+      bootstrap_clock_identity_ = facts.clock_identity;
       // bootstrap 本身就是"零执行起点"：双通道 anchor 一次性置到原点。
       anchor_thrust_ = {0.0, 0.0};
       anchor_steady_ns_ = facts.executed_begin_steady_ns > 0
@@ -235,11 +257,32 @@ public:
       result.reason = "steady_origin_changed";
       return result;
     }
+    if (facts.clock_identity != bootstrap_clock_identity_)
+    {
+      reset();
+      normal_complete_ = false;
+      result.reason = "clock_identity_changed";
+      return result;
+    }
     if (facts.sim_ns != facts.executed_end_steady_ns - bootstrap_origin_ns_)
     {
       reset();
       normal_complete_ = false;
       result.reason = "sim_not_derived_from_origin";
+      return result;
+    }
+    if (facts.state_sample_sim_ns != facts.executed_begin_steady_ns - bootstrap_origin_ns_)
+    {
+      reset();
+      normal_complete_ = false;
+      result.reason = "state_sample_sim_mismatch";
+      return result;
+    }
+    if (facts.planned_window_end_sim_ns != facts.hold_end_steady_ns - bootstrap_origin_ns_)
+    {
+      reset();
+      normal_complete_ = false;
+      result.reason = "planned_end_sim_mismatch";
       return result;
     }
 
@@ -301,6 +344,7 @@ public:
     sim_ns_ = 0;
     last_sequence_ = 0;
     bootstrap_origin_ns_ = 0;
+    bootstrap_clock_identity_.clear();
     holds_.clear();
     publications_.clear();
     job_history_.clear();
@@ -348,6 +392,7 @@ private:
   std::int64_t sim_ns_ = 0;
   std::uint64_t last_sequence_ = 0;
   std::int64_t bootstrap_origin_ns_ = 0;
+  std::string bootstrap_clock_identity_;
   std::size_t duplicate_count_ = 0;
   std::size_t reordered_count_ = 0;
   std::deque<HoldRecord> holds_;

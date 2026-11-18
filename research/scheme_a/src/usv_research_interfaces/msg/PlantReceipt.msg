@@ -1,6 +1,6 @@
-# plant 对一条 PlantCommand 的回执（v2）。
+# plant 对一条 PlantCommand 的回执（v3）。
 # 每种处置互斥，且必须能分别对账：
-#   ok        —— 在 deadline 前接收并在申请窗口内实际施加；
+#   ok        —— 在 deadline 前接收并在申请窗口内实际施加（窗口开始时发布）；
 #   rejected  —— 被本地准入拒绝（schema/身份/窗口/推力/重复/待执行/重叠）；
 #   late      —— 接收晚于 deadline 或窗口已关闭（零执行）；
 #   duplicate —— 同一 sequence 的重复回执，不重复执行；
@@ -8,6 +8,12 @@
 #
 # 执行区间只描述**实际**发生的事：executed_begin/end_steady_ns 是 plant 的
 # 真实推进区间；非 ok 时两者为 0，且 thrust_n 必须为零向量。
+#
+# v3 显式区分三种仿真时刻，消除"窗口起点 state 与窗口终点时刻混用"：
+#   * state_sample_sim_ns        —— 本消息 state[6] 采样时对应的仿真单调时刻；
+#   * planned_window_end_sim_ns  —— ok 时声明的计划保持窗口终点时刻（非 ok/bootstrap 为 0）；
+#   * sim_ns                     —— 对齐既有锚点契约的仿真时刻（ok 为 planned_window_end，bootstrap=0）。
+#   * clock_identity             —— 唯一标识上述单调仿真时间域来源的时钟身份。
 string<=64 schema_version
 string<=128 run_id
 string<=64 boot_id
@@ -36,9 +42,12 @@ int64 receive_steady_ns
 int64 executed_steady_ns
 # 实际施加的推力（N）。非 ok 时为零并仍须报告，便于对账。
 float64[2] thrust_n
-# 执行后的物理状态 [x,y,psi,u,v,r] 与该状态的仿真时刻。
+# state[6] 对应的物理状态 [x,y,psi,u,v,r] 与显式时间域绑定（v3）。
 float64[6] state
 int64 sim_ns
+int64 state_sample_sim_ns
+int64 planned_window_end_sim_ns
+string<=64 clock_identity
 # 该拍实际使用的五轴版本（来自命令，回执不得自报其它值）。
 uint64 task_generation
 uint64 model_generation

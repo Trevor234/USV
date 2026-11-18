@@ -12,3 +12,10 @@ float64 backend_ms
 float64[2] first_control
 float64[126] x_prediction
 float64[40] u_prediction
+# WP6 post-solve GP verification telemetry
+uint64 applied_gp_generation
+string<=64 applied_gp_snapshot_sha256
+float64[63] gp_post_solve_residuals
+float64 gp_local_approx_max_diff
+bool gp_ood_detected
+uint32 gp_ood_stage_count

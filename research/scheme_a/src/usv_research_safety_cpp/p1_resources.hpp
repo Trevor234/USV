@@ -68,6 +68,7 @@ struct CdrSize {
 // CDR1 body alignment starts at zero after the four-byte encapsulation. Keep
 // this order tied to SolveJob.msg; tests compare independently to ROS serialization.
 constexpr void append_job(CdrSize & s, const std::array<size_t, 9> & strings,
+                          const std::array<size_t, 5> & gp_ppo_strings,
                           const std::array<size_t, 3> & histories) {
   for (size_t i = 0; i < 6; ++i) s.string(strings[i]);
   s.scalar(8, 7);   // job_id, target_tick, five generation/epoch fields.
@@ -89,10 +90,22 @@ constexpr void append_job(CdrSize & s, const std::array<size_t, 9> & strings,
   s.sequence(8, histories[0]);
   s.sequence(1, histories[1]);
   s.sequence(8, histories[2]);
+  // WP6/WP7 GP snapshot + PPO preference bindings
+  s.string(gp_ppo_strings[0]);  // gp_snapshot_id
+  s.string(gp_ppo_strings[1]);  // gp_snapshot_sha256
+  s.scalar(8);                  // gp_generation
+  s.scalar(8, 63);              // stage_residuals
+  s.string(gp_ppo_strings[2]);  // stage_residuals_digest
+  s.scalar(1);                  // ppo_proposal_used
+  s.string(gp_ppo_strings[3]);  // ppo_policy_sha256
+  s.scalar(8);                  // ppo_obs_seq
+  s.scalar(8, 2);               // ppo_q_pi
+  s.scalar(8);                  // ppo_lambda_pi
+  s.string(gp_ppo_strings[4]);  // ppo_reject_reason
 }
 
 constexpr void append_candidate(CdrSize & s, size_t worker, size_t reason,
-                                size_t backend) {
+                                size_t backend, size_t gp_sha) {
   s.string(worker);
   s.scalar(8, 3);  // worker_receive, solve_start, solve_end.
   s.scalar(1, 3);  // solver_invoked, success, prediction_available.
@@ -102,6 +115,13 @@ constexpr void append_candidate(CdrSize & s, size_t worker, size_t reason,
   s.scalar(8, 2);  // first_control.
   s.scalar(8, 126);
   s.scalar(8, 40);
+  // WP6 post-solve GP telemetry
+  s.scalar(8);     // applied_gp_generation
+  s.string(gp_sha); // applied_gp_snapshot_sha256
+  s.scalar(8, 63); // gp_post_solve_residuals
+  s.scalar(8);     // gp_local_approx_max_diff
+  s.scalar(1);     // gp_ood_detected
+  s.scalar(4);     // gp_ood_stage_count
 }
 
 inline ResourceCheck byte_bound(size_t observed, size_t limit, const char * field) {
@@ -137,6 +157,7 @@ constexpr size_t max_job_cdr_bytes(size_t history_capacity = resource_history_ha
     throw std::out_of_range("unsupported CDR history capacity");
   resource_detail::CdrSize s;
   resource_detail::append_job(s, {64, 128, 64, 64, 64, 64, 32, 64, 128},
+    {64, 64, 64, 64, 64},
     {history_capacity, history_capacity, history_capacity});
   return s.body + 4;
 }
@@ -145,12 +166,13 @@ constexpr size_t max_candidate_cdr_bytes(size_t history_capacity = resource_hist
     throw std::out_of_range("unsupported CDR history capacity");
   resource_detail::CdrSize s;
   resource_detail::append_job(s, {64, 128, 64, 64, 64, 64, 32, 64, 128},
+    {64, 64, 64, 64, 64},
     {history_capacity, history_capacity, history_capacity});
-  resource_detail::append_candidate(s, 64, 256, 16);
+  resource_detail::append_candidate(s, 64, 256, 16, 64);
   return s.body + 4;
 }
-static_assert(max_job_cdr_bytes() == 6460, "SolveJob CDR layout changed");
-static_assert(max_candidate_cdr_bytes() == 8204, "SolveCandidate CDR layout changed");
+static_assert(max_job_cdr_bytes() == 7361, "SolveJob CDR layout changed");
+static_assert(max_candidate_cdr_bytes() == 9708, "SolveCandidate CDR layout changed");
 
 // Validate the full IDL type budget, even if this contract uses a smaller
 // history cache. This prevents an implicit wire-schema change per run.
@@ -190,19 +212,25 @@ inline size_t job_cdr_bytes(const Job & j) {
   resource_detail::append_job(s, {j.schema_version.size(), j.run_id.size(), j.boot_id.size(),
     j.contract_hash.size(), j.nominal_hash.size(), j.worker_instance.size(),
     j.anchor_source.size(), j.anchor_producer.size(), j.anchor_run_id.size()},
+    {j.gp_snapshot_id.size(), j.gp_snapshot_sha256.size(), j.stage_residuals_digest.size(),
+     j.ppo_policy_sha256.size(), j.ppo_reject_reason.size()},
     {j.history_sim_ns.size(), j.history_channel.size(), j.history_n.size()});
   return s.body + 4;
 }
 
 template<class Job>
 inline ResourceCheck check_job_resources(const Job & j, const ResourceLimits & r) {
-  const std::array<std::pair<const std::string *, size_t>, 9> strings{{
+  const std::array<std::pair<const std::string *, size_t>, 14> strings{{
     {&j.schema_version, 64}, {&j.run_id, 128}, {&j.boot_id, 64},
     {&j.contract_hash, 64}, {&j.nominal_hash, 64}, {&j.worker_instance, 64},
-    {&j.anchor_source, 32}, {&j.anchor_producer, 64}, {&j.anchor_run_id, 128}}};
-  const std::array<const char *, 9> fields{{"job.schema_version", "job.run_id", "job.boot_id",
+    {&j.anchor_source, 32}, {&j.anchor_producer, 64}, {&j.anchor_run_id, 128},
+    {&j.gp_snapshot_id, 64}, {&j.gp_snapshot_sha256, 64}, {&j.stage_residuals_digest, 64},
+    {&j.ppo_policy_sha256, 64}, {&j.ppo_reject_reason, 64}}};
+  const std::array<const char *, 14> fields{{"job.schema_version", "job.run_id", "job.boot_id",
     "job.contract_hash", "job.nominal_hash", "job.worker_instance", "job.anchor_source",
-    "job.anchor_producer", "job.anchor_run_id"}};
+    "job.anchor_producer", "job.anchor_run_id",
+    "job.gp_snapshot_id", "job.gp_snapshot_sha256", "job.stage_residuals_digest",
+    "job.ppo_policy_sha256", "job.ppo_reject_reason"}};
   for (size_t i = 0; i < strings.size(); ++i) {
     const auto check = resource_detail::byte_bound(strings[i].first->size(), strings[i].second, fields[i]);
     if (!check) return check;
@@ -228,8 +256,11 @@ inline size_t candidate_cdr_bytes(const Candidate & m) {
   resource_detail::append_job(s, {m.job.schema_version.size(), m.job.run_id.size(), m.job.boot_id.size(),
     m.job.contract_hash.size(), m.job.nominal_hash.size(), m.job.worker_instance.size(),
     m.job.anchor_source.size(), m.job.anchor_producer.size(), m.job.anchor_run_id.size()},
+    {m.job.gp_snapshot_id.size(), m.job.gp_snapshot_sha256.size(), m.job.stage_residuals_digest.size(),
+     m.job.ppo_policy_sha256.size(), m.job.ppo_reject_reason.size()},
     {m.job.history_sim_ns.size(), m.job.history_channel.size(), m.job.history_n.size()});
-  resource_detail::append_candidate(s, m.worker_instance.size(), m.reason.size(), m.backend.size());
+  resource_detail::append_candidate(s, m.worker_instance.size(), m.reason.size(), m.backend.size(),
+    m.applied_gp_snapshot_sha256.size());
   return s.body + 4;
 }
 
@@ -242,6 +273,8 @@ inline ResourceCheck check_candidate_resources(const Candidate & m, const Resour
   check = resource_detail::byte_bound(m.reason.size(), 256, "candidate.reason");
   if (!check) return check;
   check = resource_detail::byte_bound(m.backend.size(), 16, "candidate.backend");
+  if (!check) return check;
+  check = resource_detail::byte_bound(m.applied_gp_snapshot_sha256.size(), 64, "candidate.applied_gp_snapshot_sha256");
   if (!check) return check;
   const auto bytes = candidate_cdr_bytes(m);
   if (bytes > r.max_candidate_bytes)
