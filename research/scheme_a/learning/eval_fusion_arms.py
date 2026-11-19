@@ -54,6 +54,9 @@ def _run_episode(
     domain_queue: queue.Queue[int],
     gp_models: dict[str, MultiChannelSparseGP],
     gp_snapshot: Path | None = None,
+    oracle_plant_file: Path | None = None,
+    align_tick_phase: bool = False,
+    source_hashes: Path = SOURCE_HASHES,
     ppo_proposal: bool = False,
     ppo_model: Path = PPO_MODEL,
     ppo_manifest: Path = PPO_MANIFEST,
@@ -62,10 +65,14 @@ def _run_episode(
     max_attempts: int = 4,
 ) -> dict[str, Any]:
     if resume and (run_dir / "run.json").is_file():
-        m = evaluate_closed_loop_run(run_dir, source_hashes=SOURCE_HASHES, gp_models_by_sha=gp_models)
+        m = evaluate_closed_loop_run(run_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models)
         run_doc = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
         want_gp = str(gp_snapshot.resolve()) if gp_snapshot else None
         got_gp = run_doc.get("gp_snapshot")
+        want_oracle = str(oracle_plant_file.resolve()) if oracle_plant_file else None
+        got_oracle = run_doc.get("oracle_plant_file")
+        want_align = bool(align_tick_phase)
+        got_align = bool(run_doc.get("align_tick_phase", False))
         want_ppo = bool(ppo_proposal)
         got_ppo = bool((run_doc.get("ppo_proposal") or {}).get("enabled", False))
         got_lpi = float((run_doc.get("ppo_proposal") or {}).get("lambda_pi", 0.0))
@@ -73,6 +80,8 @@ def _run_episode(
             m["checker_passed"]
             and m["decisions_total"] >= stop_decisions
             and want_gp == got_gp
+            and want_oracle == got_oracle
+            and want_align == got_align
             and want_ppo == got_ppo
             and (not want_ppo or abs(got_lpi - float(lambda_pi)) < 1e-12)
         ):
@@ -98,7 +107,7 @@ def _run_episode(
                 "--contract-hash", contract_sha,
                 "--plan", str(PLAN),
                 "--plan-sha256", plan_sha,
-                "--source-hashes", str(SOURCE_HASHES),
+                "--source-hashes", str(source_hashes),
                 "--stop-after-decisions", str(stop_decisions),
                 "--maneuver", str(ep["maneuver"]),
                 "--maneuver-seed", str(ep["seed"]),
@@ -107,6 +116,10 @@ def _run_episode(
             ]
             if ep.get("cruise_speed") is not None:
                 cmd.extend(["--cruise-speed", str(ep["cruise_speed"])])
+            if oracle_plant_file is not None:
+                cmd.extend(["--oracle-plant-file", str(oracle_plant_file)])
+            if align_tick_phase:
+                cmd.append("--align-tick-phase")
             if gp_snapshot is not None:
                 cmd.extend(["--gp-snapshot", str(gp_snapshot), "--gp-snapshot-sha256", sha256_file(gp_snapshot)])
             if ppo_proposal:
@@ -125,7 +138,7 @@ def _run_episode(
             if proc.returncode != 0:
                 last_err = f"attempt={attempt+1} rc={proc.returncode} err={proc.stderr[-500:]}"
                 continue
-            m = evaluate_closed_loop_run(run_dir, source_hashes=SOURCE_HASHES, gp_models_by_sha=gp_models)
+            m = evaluate_closed_loop_run(run_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models)
             m["attempts"] = attempt + 1
             m["reused"] = False
             if m["checker_passed"]:
@@ -183,6 +196,9 @@ def run_conflict_priority_probe(
     domain_queue: queue.Queue[int],
     gp_models: dict[str, MultiChannelSparseGP],
     resume: bool,
+    gp_snapshot: Path = GP_POOLED,
+    source_hashes: Path = SOURCE_HASHES,
+    align_tick_phase: bool = False,
 ) -> dict[str, Any]:
     """Verify NMPC enforces thrust bounds and slew limits when PPO requests extreme thrust."""
     probe_dir = out_root / "conflict_probe"
@@ -203,7 +219,9 @@ def run_conflict_priority_probe(
             stop_decisions=40,
             domain_queue=domain_queue,
             gp_models=gp_models,
-            gp_snapshot=GP_POOLED,
+            gp_snapshot=gp_snapshot,
+            align_tick_phase=align_tick_phase,
+            source_hashes=source_hashes,
             ppo_proposal=True,
             ppo_model=onnx_p,
             ppo_manifest=man_p,

@@ -165,3 +165,34 @@ def test_snapshot_roundtrip_casadi_parity_and_ood_guard(tmp_path: Path) -> None:
     ood_pred = loaded.predict(z_ood)
     assert bool(ood_pred["ood"][0]) is True
     np.testing.assert_allclose(ood_pred["mean"][0], [0.0, 0.0, 0.0], atol=1e-12)
+
+
+def test_z2_symmetry_augmentation_preserves_port_starboard_parity() -> None:
+    from train_residual_gp import augment_z2_symmetry
+
+    rng = np.random.default_rng(11)
+    Z = rng.uniform([0.1, -0.25, -0.3, -2.0, -2.0], [1.0, 0.25, 0.3, 14.0, 14.0], size=(240, 5))
+    # Symmetric physical model: du even, dv/dr odd under (v,r,tl,tr)->(-v,-r,tr,tl).
+    Y = _synthetic_residual_fn(Z)
+    Z_aug, Y_aug = augment_z2_symmetry(Z, Y)
+    assert len(Z_aug) == 2 * len(Z)
+    model = train_sparse_gp_bundle(
+        Z_aug,
+        Y_aug,
+        nominal_model_hash=HydroParams().canonical_sha256(),
+        snapshot_id="z2_sym_test",
+        M=32,
+        seed=42,
+    )
+    q = rng.uniform([0.2, -0.2, -0.25, 0.0, 0.0], [0.9, 0.2, 0.25, 12.0, 12.0], size=(30, 5))
+    q_flip = q.copy()
+    q_flip[:, 1] = -q[:, 1]
+    q_flip[:, 2] = -q[:, 2]
+    q_flip[:, 3] = q[:, 4]
+    q_flip[:, 4] = q[:, 3]
+    p = model.predict(q, apply_clip=False, ood_fallback_zero=False)["mean"]
+    p_flip = model.predict(q_flip, apply_clip=False, ood_fallback_zero=False)["mean"]
+    assert float(np.max(np.abs(p[:, 0] - p_flip[:, 0]))) < 5e-4
+    assert float(np.max(np.abs(p[:, 1] + p_flip[:, 1]))) < 5e-4
+    assert float(np.max(np.abs(p[:, 2] + p_flip[:, 2]))) < 5e-4
+

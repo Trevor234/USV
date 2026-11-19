@@ -96,6 +96,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--split-manifest", required=True)
     parser.add_argument("--nominal-dataset", default=None)
     parser.add_argument("--out", required=True)
+    parser.add_argument(
+        "--skip-per-profile-fit",
+        action="store_true",
+        help="Do not fit/save per-profile GPs into --models-dir; load sibling <prof>/gp_snapshot.json read-only if present.",
+    )
     args = parser.parse_args(argv)
 
     ds_dir = Path(args.dataset).resolve()
@@ -189,14 +194,20 @@ def main(argv: list[str] | None = None) -> int:
         tr_p = p_mask & train_mask
         te_p = p_mask & (cal_mask | test_mask)
         if np.any(tr_p) and np.any(te_p):
-            single_gp = train_sparse_gp_bundle(
-                Z[tr_p], Y[tr_p],
-                nominal_model_hash=contract["controller_nominal_hydro_sha256"],
-                snapshot_id=f"{prof}_m64",
-                M=64,
-                seed=7,
-            )
-            single_gp.save(models_dir / f"{prof}_sparse_m64.json")
+            sibling_snap = models_dir.parent / prof / "gp_snapshot.json"
+            if args.skip_per_profile_fit:
+                if not sibling_snap.is_file():
+                    continue
+                single_gp = MultiChannelSparseGP.load(sibling_snap)
+            else:
+                single_gp = train_sparse_gp_bundle(
+                    Z[tr_p], Y[tr_p],
+                    nominal_model_hash=contract["controller_nominal_hydro_sha256"],
+                    snapshot_id=f"{prof}_m64",
+                    M=64,
+                    seed=7,
+                )
+                single_gp.save(models_dir / f"{prof}_sparse_m64.json")
             pred_te = single_gp.predict(Z[te_p], apply_clip=False, ood_fallback_zero=False)
             zero_te = compute_regression_metrics(Y[te_p], np.zeros_like(Y[te_p]), np.tile(np.maximum(np.std(Y[tr_p], axis=0), 1e-6), (int(np.sum(te_p)), 1)))
             gp_te = compute_regression_metrics(Y[te_p], pred_te["mean"], pred_te["std"])

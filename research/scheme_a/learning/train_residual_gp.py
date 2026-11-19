@@ -37,6 +37,19 @@ def compute_regression_metrics(y_true: np.ndarray, mu: np.ndarray, std: np.ndarr
     }
 
 
+def augment_z2_symmetry(Z: np.ndarray, Y: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Mirror port-starboard state/control/residual pairs via Fossen Z2 reflection symmetry."""
+    Z_flip = np.asarray(Z, dtype=np.float64).copy()
+    Z_flip[:, 1] = -Z[:, 1]
+    Z_flip[:, 2] = -Z[:, 2]
+    Z_flip[:, 3] = Z[:, 4]
+    Z_flip[:, 4] = Z[:, 3]
+    Y_flip = np.asarray(Y, dtype=np.float64).copy()
+    Y_flip[:, 1] = -Y[:, 1]
+    Y_flip[:, 2] = -Y[:, 2]
+    return np.vstack([Z, Z_flip]), np.vstack([Y, Y_flip])
+
+
 def _train_and_compare_one_dataset(
     Z_train: np.ndarray,
     Y_train: np.ndarray,
@@ -47,6 +60,7 @@ def _train_and_compare_one_dataset(
     prefix: str,
     out_dir: Path,
     seed: int = 0,
+    force_m: int = 0,
 ) -> dict[str, Any]:
     out_dir.mkdir(parents=True, exist_ok=True)
     x_mean = np.mean(Z_train, axis=0)
@@ -88,11 +102,14 @@ def _train_and_compare_one_dataset(
         bundle.save(out_dir / f"{prefix}_sparse_m{M}.json")
         sparse_models[M] = bundle
 
-    # Select M=64 if strictly better or close on NLPD/RMSE, else M=32.
-    selected_M = 64
-    if len(Z_cal):
-        if sparse_cal_metrics["M32"]["nlpd_mean"] + 1e-3 < sparse_cal_metrics["M64"]["nlpd_mean"]:
-            selected_M = 32
+    # Select M=64 if strictly better or close on NLPD/RMSE, else M=32 (unless forced).
+    if force_m in sparse_models:
+        selected_M = force_m
+    else:
+        selected_M = 64
+        if len(Z_cal):
+            if sparse_cal_metrics["M32"]["nlpd_mean"] + 1e-3 < sparse_cal_metrics["M64"]["nlpd_mean"]:
+                selected_M = 32
     selected = sparse_models[selected_M]
     selected.snapshot_id = f"{prefix}_selected_m{selected_M}"
     sha = selected.save(out_dir / "gp_snapshot.json")
@@ -114,6 +131,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dataset", required=True, help="Directory containing dataset.npz and dataset_contract.json")
     parser.add_argument("--out", required=True, help="Output directory for trained GP models & gp_snapshot.json")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--symmetrize-z2", action="store_true", help="Augment training split with Fossen Z2 port-starboard reflection")
+    parser.add_argument("--force-m", type=int, default=0, help="Force inducing count (e.g. 64) instead of NLPD auto-select")
+    parser.add_argument("--profile", default="", help="Optional single-profile filter via split_manifest")
+    parser.add_argument("--split-manifest", default="", help="Path to split_manifest.json when --profile is set")
     args = parser.parse_args(argv)
 
     ds_dir = Path(args.dataset).resolve()
@@ -129,11 +150,23 @@ def main(argv: list[str] | None = None) -> int:
 
     train_mask = splits == "train"
     cal_mask = splits == "calibration"
+    if args.profile:
+        if not args.split_manifest:
+            raise SystemExit("--split-manifest is required when --profile is set")
+        manifest = json.loads(Path(args.split_manifest).read_text(encoding="utf-8"))
+        ep_to_prof = {e["run_id"]: e.get("profile", "") for e in manifest["episodes"]}
+        ep_ids = npz["episode_ids"]
+        prof_mask = np.array([ep_to_prof.get(str(eid), "") == args.profile for eid in ep_ids], dtype=bool)
+        train_mask = train_mask & prof_mask
+        cal_mask = cal_mask & prof_mask
     if not np.any(train_mask):
         raise SystemExit("No training samples with split=='train' found in dataset.npz")
 
     Z_train, Y_train = Z[train_mask], Y[train_mask]
+    if args.symmetrize_z2:
+        Z_train, Y_train = augment_z2_symmetry(Z_train, Y_train)
     Z_cal, Y_cal = Z[cal_mask], Y[cal_mask]
+    prefix = args.profile if args.profile else "pooled_gp"
 
     summary = _train_and_compare_one_dataset(
         Z_train,
@@ -141,9 +174,10 @@ def main(argv: list[str] | None = None) -> int:
         Z_cal,
         Y_cal,
         nominal_hash=nominal_hash,
-        prefix="pooled_gp",
+        prefix=prefix,
         out_dir=out_dir,
         seed=args.seed,
+        force_m=int(args.force_m),
     )
     (out_dir / "train_summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n", encoding="utf-8"
