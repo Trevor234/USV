@@ -16,7 +16,11 @@ THIS_DIR = Path(__file__).resolve().parent
 if str(THIS_DIR) not in sys.path:
     sys.path.insert(0, str(THIS_DIR))
 
-from diagnose_gp_regression import _aggregate_telemetry, _extract_run_telemetry
+from diagnose_gp_regression import (
+    _aggregate_telemetry,
+    _extract_run_telemetry,
+    paired_wilcoxon_and_bootstrap,
+)
 from eval_fusion_arms import (
     CONTRACT,
     GP_DIR as R1_GP_DIR,
@@ -24,6 +28,7 @@ from eval_fusion_arms import (
     PROFILE_TO_GP as R1_PROFILE_TO_GP,
     SPLIT_MANIFEST,
     _aggregate_arm,
+    _calibration_score,
     _run_episode,
     _strip_traj,
     run_conflict_priority_probe,
@@ -229,30 +234,59 @@ def main(argv: list[str] | None = None) -> int:
             resume=not args.no_resume,
         )
         base_nom = runs_r4[f"ppo_l{str(lambdas[0]).replace('.', 'p')}"]
-        r4_summary = {
-            arm: {
-                **_aggregate_arm(runs_r4[arm], nominal_runs=base_nom),
-                "telemetry": _aggregate_telemetry(runs_r4[arm], tel_r4[arm]),
-            }
-            for arm in arms_r4
+        base_gp0 = runs_r4[f"gp_ppo_l{str(lambdas[0]).replace('.', 'p')}"]
+        nom_cte = [r["geometric_tracking"]["cross_track_rmse_m"] for r in base_nom]
+        gp0_cte = [r["geometric_tracking"]["cross_track_rmse_m"] for r in base_gp0]
+        r4_summary: dict[str, Any] = {}
+        for arm in arms_r4:
+            agg = _aggregate_arm(runs_r4[arm], nominal_runs=base_nom)
+            arm_cte = [r["geometric_tracking"]["cross_track_rmse_m"] for r in runs_r4[arm]]
+            agg["calibration_score"] = _calibration_score(agg)
+            agg["stats_vs_nominal"] = paired_wilcoxon_and_bootstrap(arm_cte, nom_cte)
+            agg["stats_vs_gp_l0"] = paired_wilcoxon_and_bootstrap(arm_cte, gp0_cte)
+            agg["telemetry"] = _aggregate_telemetry(runs_r4[arm], tel_r4[arm])
+            r4_summary[arm] = agg
+        pos_lams = [l for l in lambdas if l > 0.0]
+        overall_best_lam = min(lambdas, key=lambda l: r4_summary[f"gp_ppo_l{str(l).replace('.', 'p')}"]["calibration_score"])
+        best_pos_lam = min(pos_lams, key=lambda l: r4_summary[f"gp_ppo_l{str(l).replace('.', 'p')}"]["calibration_score"]) if pos_lams else 0.0
+        report["r4"] = {
+            "lambdas": lambdas,
+            "seeds": seed_offsets,
+            "gp": str(gp_snap),
+            "overall_best_lambda_pi": overall_best_lam,
+            "selected_positive_lambda_pi": best_pos_lam,
+            "summary": r4_summary,
+            "runs": runs_r4,
         }
-        report["r4"] = {"lambdas": lambdas, "seeds": seed_offsets, "gp": str(gp_snap), "summary": r4_summary, "runs": runs_r4}
 
+        overall_key = f"gp_ppo_l{str(overall_best_lam).replace('.', 'p')}"
+        best_pos_key = f"gp_ppo_l{str(best_pos_lam).replace('.', 'p')}"
         md4 = [
             f"# R4 Calibration Lambda_pi Sweep ({len(seed_offsets)} seeds x {len(calib_eps)} eps = {len(seed_offsets)*len(calib_eps)} eps/arm)",
             "",
-            "| Arm | Eps | CTE RMSE (m) | Std | Heading RMSE | Speed RMSE | Override >0.5N % | Post NonAcc |",
-            "|---|---:|---:|---:|---:|---:|---:|---:|",
+            f"- GP Snapshot: `{gp_snap}`",
+            f"- Overall lowest `gp_ppo` calibration score: `lambda_pi={overall_best_lam}` (`score={r4_summary[overall_key]['calibration_score']:.4f}`)",
+            f"- Selected positive `lambda_pi`: `{best_pos_lam}` (`score={r4_summary[best_pos_key]['calibration_score']:.4f}`)",
+            "",
+            "| Arm | Eps | CTE (m) | Active CTE | Δ vs Nom [95% CI] | W/T/L vs Nom | Δ vs GP0 [95% CI] | Head | Speed | TV | Ovr >0.5N | Score | E2E P95 |",
+            "|---|---:|---:|---:|---:|:---:|---:|---:|---:|---:|---:|---:|---:|",
         ]
         for arm in arms_r4:
             s = r4_summary[arm]
-            t = s["telemetry"]
-            ovr = s.get("ppo_override_gt_0p5n_fraction", {}).get("mean")
+            sn = s["stats_vs_nominal"]
+            sg = s["stats_vs_gp_l0"]
+            ovr = s.get("ppo_override_gt_0p5n_fraction")
             ovr_s = f"{100.0 * ovr:.1f}%" if ovr is not None else "0.0%"
+            act_m = (s.get("active_cross_track_rmse_m") or {}).get("mean")
+            act_s = f"{act_m:.4f}" if act_m is not None else "-"
+            wtl = f"{sn['wins']}/{sn['ties']}/{sn['losses']}"
+            ci_n = f"{sn['mean_diff']:+.4f} [{sn['bootstrap_ci95_low']:+.4f},{sn['bootstrap_ci95_high']:+.4f}]"
+            ci_g = f"{sg['mean_diff']:+.4f} [{sg['bootstrap_ci95_low']:+.4f},{sg['bootstrap_ci95_high']:+.4f}]"
             md4.append(
-                f"| `{arm}` | {s['episodes']} | {s['cross_track_rmse_m']['mean']:.4f} | "
-                f"{s['cross_track_rmse_m']['std']:.4f} | {s['heading_rmse_rad']['mean']:.4f} | "
-                f"{s['speed_rmse_mps']['mean']:.4f} | {ovr_s} | {t['post_warmup_nonacc_gt12']} |"
+                f"| `{arm}` | {s['episodes']} | {s['cross_track_rmse_m']['mean']:.4f} | {act_s} | {ci_n} | {wtl} | {ci_g} | "
+                f"{s['heading_rmse_rad']['mean']:.4f} | {s['speed_rmse_mps']['mean']:.4f} | "
+                f"{s['control_tv_per_step']['mean']:.3f} | {ovr_s} | {s['calibration_score']:.4f} | "
+                f"{s['latency_ms']['e2e_p95_mean']:.2f} |"
             )
         (out_dir / "r4_calibration_report.md").write_text("\n".join(md4) + "\n", encoding="utf-8")
 

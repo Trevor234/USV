@@ -21,7 +21,7 @@ if str(THIS_DIR) not in sys.path:
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
-from closed_loop_metrics import path_polyline_metrics
+from closed_loop_metrics import path_polyline_metrics, sha256_file
 from eval_fusion_arms import (
     CONTRACT,
     GP_DIR,
@@ -59,6 +59,16 @@ def _pct_summary(vals: list[float]) -> dict[str, float | None]:
 
 def _extract_run_telemetry(run_dir: Path) -> dict[str, Any]:
     """Extract per-stage latencies, freeze-vs-post diffs, OOD counts, and non-accepted counts."""
+    run_json_path = run_dir / "run.json"
+    cache_path = run_dir / "telemetry_cache_v1.json"
+    run_sha = sha256_file(run_json_path) if run_json_path.is_file() else None
+    if run_sha is not None and cache_path.is_file():
+        try:
+            cached = json.loads(cache_path.read_text(encoding="utf-8"))
+            if cached.get("run_json_sha256") == run_sha and isinstance(cached.get("telemetry"), dict):
+                return cached["telemetry"]
+        except Exception:
+            pass
     reg_file = run_dir / "regulator.source.jsonl"
     wrk_file = run_dir / "worker.source.jsonl"
     reg_rows = [json.loads(l) for l in reg_file.read_text(encoding="utf-8").splitlines() if l.strip()] if reg_file.is_file() else []
@@ -115,7 +125,7 @@ def _extract_run_telemetry(run_dir: Path) -> dict[str, Any]:
             if int(r.get("tick") or 0) > 12:
                 post_warmup_nonacc += 1
 
-    return {
+    tel = {
         "reg_prep_wall_ms": _pct_summary(reg_prep_wall),
         "w_solve_wall_ms": _pct_summary(w_solve_wall),
         "w_post_wall_ms": _pct_summary(w_post_wall),
@@ -127,21 +137,80 @@ def _extract_run_telemetry(run_dir: Path) -> dict[str, Any]:
         "nonacc_pre_shutdown": nonacc_reasons,
         "post_warmup_nonacc_gt12": post_warmup_nonacc,
     }
+    if run_sha is not None:
+        try:
+            cache_path.write_text(
+                json.dumps({"run_json_sha256": run_sha, "telemetry": tel}, sort_keys=True) + "\n",
+                encoding="utf-8",
+            )
+        except Exception:
+            pass
+    return tel
+
+
+def paired_wilcoxon_and_bootstrap(
+    vals: list[float],
+    ref_vals: list[float],
+    *,
+    n_boot: int = 10000,
+    seed: int = 42,
+    tie_eps: float = 1e-4,
+) -> dict[str, Any]:
+    """Compute paired mean diff, 10k bootstrap 95% CI, Wilcoxon signed-rank p-value, and W/T/L."""
+    from scipy.stats import wilcoxon
+
+    a = np.asarray(vals, dtype=np.float64)
+    b = np.asarray(ref_vals, dtype=np.float64)
+    if len(a) != len(b) or len(a) == 0:
+        raise ValueError(f"Paired comparison length mismatch: {len(a)} vs {len(b)}")
+    diff = a - b
+    n = len(diff)
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, n, size=(int(n_boot), n))
+    boot_means = diff[idx].mean(axis=1)
+    ci_lo, ci_hi = np.percentile(boot_means, [2.5, 97.5])
+    if float(np.max(np.abs(diff))) == 0.0:
+        w_stat, p_val = 0.0, 1.0
+    else:
+        w_res = wilcoxon(diff, zero_method="wilcox", alternative="two-sided")
+        w_stat, p_val = float(w_res.statistic), float(w_res.pvalue)
+    wins = int(np.sum(diff < -tie_eps))
+    losses = int(np.sum(diff > tie_eps))
+    ties = int(n - wins - losses)
+    return {
+        "n": int(n),
+        "mean_diff": float(np.mean(diff)),
+        "std_diff": float(np.std(diff)),
+        "median_diff": float(np.median(diff)),
+        "bootstrap_ci95_low": float(ci_lo),
+        "bootstrap_ci95_high": float(ci_hi),
+        "wilcoxon_statistic": w_stat,
+        "wilcoxon_p": p_val,
+        "wins": wins,
+        "ties": ties,
+        "losses": losses,
+    }
 
 
 def _aggregate_telemetry(runs: list[dict[str, Any]], tel_by_ep: dict[str, dict[str, Any]]) -> dict[str, Any]:
-    reg_p50 = [tel_by_ep[r["episode_name"]]["reg_prep_wall_ms"]["p50"] for r in runs]
-    reg_p95 = [tel_by_ep[r["episode_name"]]["reg_prep_wall_ms"]["p95"] for r in runs]
-    wpost_p50 = [tel_by_ep[r["episode_name"]]["w_post_wall_ms"]["p50"] for r in runs]
-    wpost_p95 = [tel_by_ep[r["episode_name"]]["w_post_wall_ms"]["p95"] for r in runs]
-    fdiff_mean = [tel_by_ep[r["episode_name"]]["gp_local_approx_max_diff"]["mean"] for r in runs if tel_by_ep[r["episode_name"]]["gp_local_approx_max_diff"]["count"] > 0]
-    fdiff_max = [tel_by_ep[r["episode_name"]]["gp_local_approx_max_diff"]["max"] for r in runs if tel_by_ep[r["episode_name"]]["gp_local_approx_max_diff"]["count"] > 0]
-    post_nonacc = sum(tel_by_ep[r["episode_name"]]["post_warmup_nonacc_gt12"] for r in runs)
-    total_ood = sum(tel_by_ep[r["episode_name"]]["gp_ood_candidate_count"] for r in runs)
-    total_cand = sum(tel_by_ep[r["episode_name"]]["candidate_count"] for r in runs)
+    def _tel(r: dict[str, Any]) -> dict[str, Any]:
+        key = r.get("ep_tag")
+        if key and key in tel_by_ep:
+            return tel_by_ep[key]
+        return tel_by_ep[r["episode_name"]]
+
+    reg_p50 = [_tel(r)["reg_prep_wall_ms"]["p50"] for r in runs]
+    reg_p95 = [_tel(r)["reg_prep_wall_ms"]["p95"] for r in runs]
+    wpost_p50 = [_tel(r)["w_post_wall_ms"]["p50"] for r in runs]
+    wpost_p95 = [_tel(r)["w_post_wall_ms"]["p95"] for r in runs]
+    fdiff_mean = [_tel(r)["gp_local_approx_max_diff"]["mean"] for r in runs if _tel(r)["gp_local_approx_max_diff"]["count"] > 0]
+    fdiff_max = [_tel(r)["gp_local_approx_max_diff"]["max"] for r in runs if _tel(r)["gp_local_approx_max_diff"]["count"] > 0]
+    post_nonacc = sum(_tel(r)["post_warmup_nonacc_gt12"] for r in runs)
+    total_ood = sum(_tel(r)["gp_ood_candidate_count"] for r in runs)
+    total_cand = sum(_tel(r)["candidate_count"] for r in runs)
     reasons: dict[str, int] = {}
     for r in runs:
-        for k, v in tel_by_ep[r["episode_name"]]["nonacc_pre_shutdown"].items():
+        for k, v in _tel(r)["nonacc_pre_shutdown"].items():
             reasons[k] = reasons.get(k, 0) + int(v)
     return {
         "reg_prep_p50_mean_ms": float(np.mean([x for x in reg_p50 if x is not None])) if any(x is not None for x in reg_p50) else None,

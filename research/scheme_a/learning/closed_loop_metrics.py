@@ -200,17 +200,35 @@ def evaluate_closed_loop_run(
     *,
     source_hashes: Path | None = None,
     gp_models_by_sha: dict[str, MultiChannelSparseGP] | None = None,
+    reuse_verified_check_json: bool = False,
 ) -> dict[str, Any]:
     """Extract comprehensive tracking, control, GP, PPO, and latency metrics."""
     run_doc = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
-    if source_hashes is not None:
-        checker_passed, check_doc = run_checker(run_dir, source_hashes)
-    elif (run_dir / "check.json").is_file():
-        check_doc = json.loads((run_dir / "check.json").read_text(encoding="utf-8"))
-        checker_passed = check_doc.get("verdict") == "PASS"
-    else:
-        check_doc = {}
-        checker_passed = False
+    check_path = run_dir / "check.json"
+    reused_check = False
+    if reuse_verified_check_json and check_path.is_file():
+        try:
+            check_doc = json.loads(check_path.read_text(encoding="utf-8"))
+            want_sh = sha256_file(source_hashes) if source_hashes is not None else None
+            got_sh = (run_doc.get("binding") or {}).get("source_hashes_sha256")
+            if (
+                check_doc.get("verdict") == "PASS"
+                and check_doc.get("run_id") == run_doc.get("run_id")
+                and (want_sh is None or got_sh == want_sh)
+            ):
+                checker_passed = True
+                reused_check = True
+        except Exception:
+            reused_check = False
+    if not reused_check:
+        if source_hashes is not None:
+            checker_passed, check_doc = run_checker(run_dir, source_hashes)
+        elif check_path.is_file():
+            check_doc = json.loads(check_path.read_text(encoding="utf-8"))
+            checker_passed = check_doc.get("verdict") == "PASS"
+        else:
+            check_doc = {}
+            checker_passed = False
 
     reg_rows = load_jsonl(run_dir / "regulator.source.jsonl")
     worker_rows = load_jsonl(run_dir / "worker.source.jsonl")
@@ -236,6 +254,17 @@ def evaluate_closed_loop_run(
         else np.zeros((0, 6), dtype=np.float64)
     )
     geom = path_polyline_metrics(states_end, path_arr, profile_arr)
+    shutdown_ticks = {
+        int(d["tick"])
+        for d in decisions
+        if str(d.get("reason") or "") == "shutdown" and d.get("tick") is not None
+    }
+    active_states_end = (
+        np.asarray([a["x_end"] for a in admitted if int(a["tick"]) not in shutdown_ticks], dtype=np.float64)
+        if admitted
+        else np.zeros((0, 6), dtype=np.float64)
+    )
+    active_geom = path_polyline_metrics(active_states_end, path_arr, profile_arr)
 
     # Time-indexed tracking vs solver's stage-0/stage-1 reference.
     ref_pos_sq: list[float] = []
@@ -406,6 +435,7 @@ def evaluate_closed_loop_run(
         "post_warmup_unaccepted": post_warmup_unaccepted,
         "skipped_ticks_total": skipped_ticks_total,
         "geometric_tracking": geom,
+        "active_geometric_tracking": active_geom,
         "reference_tracking": {
             "count": len(ref_pos_sq),
             "pos_rmse_m": float(math.sqrt(np.mean(ref_pos_sq))) if ref_pos_sq else float("nan"),

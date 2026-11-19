@@ -196,3 +196,22 @@ def test_z2_symmetry_augmentation_preserves_port_starboard_parity() -> None:
     assert float(np.max(np.abs(p[:, 1] + p_flip[:, 1]))) < 5e-4
     assert float(np.max(np.abs(p[:, 2] + p_flip[:, 2]))) < 5e-4
 
+
+def test_paired_wilcoxon_and_bootstrap_edge_and_signal_cases() -> None:
+    from diagnose_gp_regression import paired_wilcoxon_and_bootstrap
+
+    same = [0.1, 0.2, 0.15, 0.12]
+    z = paired_wilcoxon_and_bootstrap(same, same, n_boot=500, seed=0)
+    assert z["mean_diff"] == 0.0
+    assert z["wilcoxon_p"] == 1.0
+    assert z["wins"] == 0 and z["ties"] == 4 and z["losses"] == 0
+
+    ref = [0.12, 0.15, 0.20, 0.18, 0.25, 0.14, 0.16, 0.22]
+    better = [v - 0.03 for v in ref]
+    s = paired_wilcoxon_and_bootstrap(better, ref, n_boot=2000, seed=42)
+    assert abs(s["mean_diff"] - (-0.03)) < 1e-12
+    assert s["bootstrap_ci95_high"] < 0.0
+    assert s["wilcoxon_p"] < 0.02
+    assert s["wins"] == 8 and s["losses"] == 0
+
+

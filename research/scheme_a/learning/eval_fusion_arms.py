@@ -42,6 +42,16 @@ PPO_MANIFEST = Path("/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physic
 USV_RL_PYTHON = Path("/home/trevor/USV/usv_rl/.venv/bin/python")
 
 
+_SHA_MEMO: dict[str, str] = {}
+
+
+def _cached_sha256(path: Path) -> str:
+    key = str(path)
+    if key not in _SHA_MEMO:
+        _SHA_MEMO[key] = sha256_file(path)
+    return _SHA_MEMO[key]
+
+
 def _strip_traj(metrics: dict[str, Any]) -> dict[str, Any]:
     return {k: v for k, v in metrics.items() if k not in ("u_exec", "states_end", "decision_ticks")}
 
@@ -64,8 +74,8 @@ def _run_episode(
     resume: bool = True,
     max_attempts: int = 4,
 ) -> dict[str, Any]:
+    cache_path = run_dir / "eval_cache_v2.json"
     if resume and (run_dir / "run.json").is_file():
-        m = evaluate_closed_loop_run(run_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models)
         run_doc = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
         want_gp = str(gp_snapshot.resolve()) if gp_snapshot else None
         got_gp = run_doc.get("gp_snapshot")
@@ -76,17 +86,54 @@ def _run_episode(
         want_ppo = bool(ppo_proposal)
         got_ppo = bool((run_doc.get("ppo_proposal") or {}).get("enabled", False))
         got_lpi = float((run_doc.get("ppo_proposal") or {}).get("lambda_pi", 0.0))
-        if (
-            m["checker_passed"]
-            and m["decisions_total"] >= stop_decisions
-            and want_gp == got_gp
+        cfg_ok = (
+            want_gp == got_gp
             and want_oracle == got_oracle
             and want_align == got_align
             and want_ppo == got_ppo
             and (not want_ppo or abs(got_lpi - float(lambda_pi)) < 1e-12)
-        ):
-            m["reused"] = True
-            return m
+        )
+        src_sha = _cached_sha256(source_hashes)
+        run_sha = sha256_file(run_dir / "run.json")
+        gp_keys = sorted(gp_models.keys())
+        if cfg_ok and cache_path.is_file() and (run_dir / "check.json").is_file():
+            try:
+                cdoc = json.loads(cache_path.read_text(encoding="utf-8"))
+                if (
+                    cdoc.get("source_hashes_sha256") == src_sha
+                    and cdoc.get("run_json_sha256") == run_sha
+                    and cdoc.get("gp_keys") == gp_keys
+                    and isinstance(cdoc.get("metrics"), dict)
+                    and cdoc["metrics"].get("checker_passed")
+                    and cdoc["metrics"].get("decisions_total", 0) >= stop_decisions
+                ):
+                    m = dict(cdoc["metrics"])
+                    m["reused"] = True
+                    return m
+            except Exception:
+                pass
+        if cfg_ok:
+            m = evaluate_closed_loop_run(
+                run_dir,
+                source_hashes=source_hashes,
+                gp_models_by_sha=gp_models,
+                reuse_verified_check_json=True,
+            )
+            if m["checker_passed"] and m["decisions_total"] >= stop_decisions:
+                try:
+                    cache_path.write_text(
+                        json.dumps({
+                            "source_hashes_sha256": src_sha,
+                            "run_json_sha256": run_sha,
+                            "gp_keys": gp_keys,
+                            "metrics": _strip_traj(m),
+                        }, sort_keys=True) + "\n",
+                        encoding="utf-8",
+                    )
+                except Exception:
+                    pass
+                m["reused"] = True
+                return m
 
     dom = domain_queue.get()
     try:
@@ -142,6 +189,18 @@ def _run_episode(
             m["attempts"] = attempt + 1
             m["reused"] = False
             if m["checker_passed"]:
+                try:
+                    cache_path.write_text(
+                        json.dumps({
+                            "source_hashes_sha256": _cached_sha256(source_hashes),
+                            "run_json_sha256": sha256_file(run_dir / "run.json"),
+                            "gp_keys": sorted(gp_models.keys()),
+                            "metrics": _strip_traj(m),
+                        }, sort_keys=True) + "\n",
+                        encoding="utf-8",
+                    )
+                except Exception:
+                    pass
                 return m
             last_err = f"attempt={attempt+1} checker_problems={m['checker_problems']}"
         raise RuntimeError(f"Failed episode {ep['episode_name']} -> {run_dir}: {last_err}")
@@ -264,6 +323,11 @@ def _aggregate_arm(runs: list[dict[str, Any]], nominal_runs: list[dict[str, Any]
         return float(np.std(clean)) if clean else None
 
     cte = [r["geometric_tracking"]["cross_track_rmse_m"] for r in runs]
+    act_cte = [
+        r["active_geometric_tracking"]["cross_track_rmse_m"]
+        for r in runs
+        if isinstance(r.get("active_geometric_tracking"), dict)
+    ]
     cte_max = [r["geometric_tracking"]["cross_track_max_m"] for r in runs]
     herr = [r["geometric_tracking"]["heading_rmse_rad"] for r in runs]
     u_err = [r["geometric_tracking"]["speed_rmse_mps"] for r in runs]
@@ -292,6 +356,7 @@ def _aggregate_arm(runs: list[dict[str, Any]], nominal_runs: list[dict[str, Any]
         "success_rate": float(np.mean([1.0 if r["success"] else 0.0 for r in runs])),
         "skipped_ticks_total": sum(int(r["skipped_ticks_total"]) for r in runs),
         "cross_track_rmse_m": {"mean": _mean(cte), "std": _std(cte)},
+        "active_cross_track_rmse_m": {"mean": _mean(act_cte), "std": _std(act_cte)},
         "cross_track_max_m": {"mean": _mean(cte_max), "max": float(np.max(cte_max)) if cte_max else None},
         "heading_rmse_rad": {"mean": _mean(herr), "std": _std(herr)},
         "speed_rmse_mps": {"mean": _mean(u_err), "std": _std(u_err)},
@@ -329,6 +394,13 @@ def _aggregate_arm(runs: list[dict[str, Any]], nominal_runs: list[dict[str, Any]
             "cte_ties": ties,
             "cte_losses": losses,
         }
+        if len(act_cte) == len(runs) and all(isinstance(nr.get("active_geometric_tracking"), dict) for nr in nominal_runs):
+            act_deltas = [
+                r["active_geometric_tracking"]["cross_track_rmse_m"]
+                - nr["active_geometric_tracking"]["cross_track_rmse_m"]
+                for r, nr in zip(runs, nominal_runs)
+            ]
+            out["vs_nominal"]["active_cte_delta_mean_m"] = float(np.mean(act_deltas))
     return out
 
 

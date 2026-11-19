@@ -122,7 +122,11 @@ def _isolated_env(work_dir: Path) -> dict[str, str]:
     return env
 
 
-def run_b2_dry_run_gp_regression(out_dir: Path) -> dict[str, Any]:
+def run_b2_dry_run_gp_regression(
+    out_dir: Path,
+    *,
+    gp_snapshot_path: Path | None = None,
+) -> dict[str, Any]:
     """Run pytest test_shipboard_commissioning.py + live GP-enabled shipboard_dry_run + dataset rejection."""
     # 1. Existing B2 suite.
     pytest_env = _isolated_env(out_dir)
@@ -138,7 +142,7 @@ def run_b2_dry_run_gp_regression(out_dir: Path) -> dict[str, Any]:
     if dry_dir.exists():
         shutil.rmtree(dry_dir)
     dry_dir.mkdir(parents=True, exist_ok=True)
-    gp_snap = GP_MODELS_DIR / "gp_snapshot.json"
+    gp_snap = gp_snapshot_path or (GP_MODELS_DIR / "gp_snapshot.json")
     gp_sha = sha256_file(gp_snap)
     gp_internal_sha = json.loads(gp_snap.read_text(encoding="utf-8"))["snapshot_sha256"]
 
@@ -383,49 +387,75 @@ def build_delivery_bundle(
     arm64_info: dict[str, Any],
     b2_info: dict[str, Any],
     suites_info: dict[str, Any],
+    *,
+    work_root: Path = WORK_ROOT,
+    baseline_dir: Path = BASELINE_DIR,
+    gp_models_dir: Path = GP_MODELS_DIR,
+    gp_eval_dir: Path = GP_EVAL_DIR,
+    wp6_meta_dir: Path = WP6_META_DIR,
+    wp6_reg_dir: Path = WP6_REG_DIR,
+    wp7_eval_dir: Path = WP7_EVAL_DIR,
+    wp8_work_dir: Path | None = None,
+    r2_work_root: Path | None = None,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     if bundle_root.exists():
         shutil.rmtree(bundle_root)
     bundle_root.mkdir(parents=True, exist_ok=True)
 
+    wp8_work = wp8_work_dir or (work_root / "wp8_dry_run_regression")
     records: list[dict[str, Any]] = []
 
     # WP1 baseline.
     for fname in ("baseline.json", "asset_manifest.json", "source_hashes.json"):
-        records.append(_copy_with_record(BASELINE_DIR / fname, bundle_root / "wp1_baseline" / fname, bundle_root, "wp1_baseline"))
+        records.append(_copy_with_record(baseline_dir / fname, bundle_root / "wp1_baseline" / fname, bundle_root, "wp1_baseline"))
 
     # WP3 dataset metadata + quality report.
     for fname in ("data_quality_report.md", "split_manifest.json", "episode_manifest.json"):
-        records.append(_copy_with_record(WORK_ROOT / "full" / fname, bundle_root / "wp3_dataset" / fname, bundle_root, "wp3_dataset_meta"))
+        records.append(_copy_with_record(work_root / "full" / fname, bundle_root / "wp3_dataset" / fname, bundle_root, "wp3_dataset_meta"))
     for sub in ("dataset_mismatch", "dataset_nominal"):
         for fname in ("dataset_contract.json", "data_quality.json"):
-            records.append(_copy_with_record(WORK_ROOT / "full" / sub / fname, bundle_root / "wp3_dataset" / sub / fname, bundle_root, f"wp3_{sub}"))
+            records.append(_copy_with_record(work_root / "full" / sub / fname, bundle_root / "wp3_dataset" / sub / fname, bundle_root, f"wp3_{sub}"))
 
-    # WP4 GP models + holdout evaluation.
-    for p in sorted(GP_MODELS_DIR.glob("*.json")):
-        records.append(_copy_with_record(p, bundle_root / "wp4_gp/gp_models" / p.name, bundle_root, "wp4_gp_model"))
-    for p in sorted(GP_EVAL_DIR.iterdir()):
+    # WP4 GP models + holdout evaluation (supports both flat and per-profile subdirectories).
+    for p in sorted(gp_models_dir.rglob("*.json")):
+        rel = p.relative_to(gp_models_dir)
+        records.append(_copy_with_record(p, bundle_root / "wp4_gp/gp_models" / rel, bundle_root, "wp4_gp_model"))
+    for p in sorted(gp_eval_dir.iterdir()):
         if p.is_file():
             records.append(_copy_with_record(p, bundle_root / "wp4_gp/gp_eval" / p.name, bundle_root, "wp4_gp_eval"))
 
     # WP5 PPO shadow + frozen manifest copy.
-    for p in sorted(PPO_SHADOW_DIR.iterdir()):
+    ppo_shadow_dir = work_root / "ppo_shadow"
+    for p in sorted(ppo_shadow_dir.iterdir()):
         if p.is_file():
             records.append(_copy_with_record(p, bundle_root / "wp5_ppo_shadow" / p.name, bundle_root, "wp5_ppo_shadow"))
     records.append(_copy_with_record(PPO_MANIFEST, bundle_root / "wp5_ppo_shadow" / PPO_MANIFEST.name, bundle_root, "wp5_frozen_ppo_manifest"))
 
     # WP6 codegen + contracts + refreshed baseline + closed-loop regression.
     for fname in ("baseline.json", "asset_manifest.json", "source_hashes.json"):
-        records.append(_copy_with_record(WP6_META_DIR / fname, bundle_root / "wp6_gp_nmpc/wp6_baseline_meta" / fname, bundle_root, "wp6_meta"))
-    records.append(_copy_with_record(WORK_ROOT / "gp_nmpc_codegen_manifest.json", bundle_root / "wp6_gp_nmpc/gp_nmpc_codegen_manifest.json", bundle_root, "wp6_codegen_manifest"))
+        records.append(_copy_with_record(wp6_meta_dir / fname, bundle_root / "wp6_gp_nmpc/wp6_baseline_meta" / fname, bundle_root, "wp6_meta"))
+    records.append(_copy_with_record(work_root / "gp_nmpc_codegen_manifest.json", bundle_root / "wp6_gp_nmpc/gp_nmpc_codegen_manifest.json", bundle_root, "wp6_codegen_manifest"))
     for fname in ("wp6_regression_report.json", "schedule_explicit_zero.json", "schedule_hotswap.json"):
-        records.append(_copy_with_record(WP6_REG_DIR / fname, bundle_root / "wp6_gp_nmpc" / fname, bundle_root, "wp6_regression"))
+        records.append(_copy_with_record(wp6_reg_dir / fname, bundle_root / "wp6_gp_nmpc" / fname, bundle_root, "wp6_regression"))
     for fname in ("contract_controlled_sim.json", "contract_shipboard_dry_run.json", "research_model_plan.json", "arm64_calibration_evidence.json"):
         records.append(_copy_with_record(SAFETY_CPP_DIR / "model" / fname, bundle_root / "wp6_gp_nmpc/contracts" / fname, bundle_root, "wp6_contract"))
 
     # WP7 fusion evaluation reports/configs.
     for fname in ("selected_configuration.json", "calibration_summary.json", "conflict_probe_summary.json", "four_arm_evaluation.json", "fusion_report.md"):
-        records.append(_copy_with_record(WP7_EVAL_DIR / fname, bundle_root / "wp7_fusion" / fname, bundle_root, "wp7_fusion"))
+        records.append(_copy_with_record(wp7_eval_dir / fname, bundle_root / "wp7_fusion" / fname, bundle_root, "wp7_fusion"))
+
+    # Optional r2 diagnosis/calibration reports.
+    if r2_work_root is not None:
+        for rel in (
+            "diagnosis/gp_regression_diagnosis.md",
+            "diagnosis/gp_regression_diagnosis.json",
+            "calib_eval/r2_calibration_report.md",
+            "calib_eval/r4_calibration_report.md",
+            "calib_eval/conflict_probe_report.json",
+        ):
+            src_r2 = r2_work_root / rel
+            if src_r2.is_file():
+                records.append(_copy_with_record(src_r2, bundle_root / "r2_research" / rel, bundle_root, "r2_research"))
 
     # WP8 reports.
     wp8_dir = bundle_root / "wp8_delivery"
@@ -446,7 +476,7 @@ def build_delivery_bundle(
         })
 
     # Copy compact dry_run_gp_probe logs into wp8_delivery.
-    for p in sorted((WORK_ROOT / "wp8_dry_run_regression/dry_run_gp_probe").iterdir()):
+    for p in sorted((wp8_work / "dry_run_gp_probe").iterdir()):
         if p.is_file():
             records.append(_copy_with_record(p, wp8_dir / "dry_run_gp_probe" / p.name, bundle_root, "wp8_dry_run_probe"))
 
@@ -454,39 +484,52 @@ def build_delivery_bundle(
     external_assets = []
     for label, path in (
         ("ppo_onnx_v5_s4_dr", PPO_MODEL),
-        ("dataset_mismatch_npz", WORK_ROOT / "full/dataset_mismatch/dataset.npz"),
-        ("dataset_nominal_npz", WORK_ROOT / "full/dataset_nominal/dataset.npz"),
+        ("dataset_mismatch_npz", work_root / "full/dataset_mismatch/dataset.npz"),
+        ("dataset_nominal_npz", work_root / "full/dataset_nominal/dataset.npz"),
         ("bin_p1_x86_plant", SAFETY_BIN_DIR / "p1_x86_plant"),
         ("bin_p1_solver_worker", SAFETY_BIN_DIR / "p1_solver_worker"),
         ("bin_p1_regulator", SAFETY_BIN_DIR / "p1_regulator"),
         ("bin_p1_gp_eval_cli", SAFETY_BIN_DIR / "p1_gp_eval_cli"),
         ("bin_p1_contract_validate", SAFETY_BIN_DIR / "p1_contract_validate"),
         ("lib_usv_acados_backend", INSTALL_BASE / "usv_acados/lib/libusv_acados_backend.so.0.1.0"),
-        ("raw_full_dataset_root", WORK_ROOT / "full"),
-        ("raw_wp7_eval_root", WORK_ROOT / "fusion_eval"),
+        ("raw_full_dataset_root", work_root / "full"),
+        ("raw_wp7_eval_root", wp7_eval_dir),
     ):
         if path.is_file():
             external_assets.append({"label": label, "path": str(path), "kind": "file", "bytes": path.stat().st_size, "sha256": sha256_file(path)})
         elif path.is_dir():
             external_assets.append({"label": label, "path": str(path), "kind": "directory"})
 
-    sel_cfg = json.loads((WP7_EVAL_DIR / "selected_configuration.json").read_text(encoding="utf-8"))
-    eval_doc = json.loads((WP7_EVAL_DIR / "four_arm_evaluation.json").read_text(encoding="utf-8"))
-    wp6_rep = json.loads((WP6_REG_DIR / "wp6_regression_report.json").read_text(encoding="utf-8"))
-    gp_par = json.loads((GP_EVAL_DIR / "gp_numeric_parity.json").read_text(encoding="utf-8"))
+    sel_cfg = json.loads((wp7_eval_dir / "selected_configuration.json").read_text(encoding="utf-8"))
+    eval_doc = json.loads((wp7_eval_dir / "four_arm_evaluation.json").read_text(encoding="utf-8"))
+    wp6_rep = json.loads((wp6_reg_dir / "wp6_regression_report.json").read_text(encoding="utf-8"))
+    gp_par = json.loads((gp_eval_dir / "gp_numeric_parity.json").read_text(encoding="utf-8"))
 
     replay_commands = {
-        "build_scheme_a": "cd /home/trevor/usv_scheme_a_wt && PATH=/usr/local/bin:/usr/bin:/bin colcon --log-base log/scheme_a build --base-paths research/scheme_a/src src/usv_bringup --build-base build/scheme_a --install-base install/scheme_a --cmake-args -DPython3_EXECUTABLE=/usr/bin/python3 -DUSV_RESEARCH_TEST_SEAMS=OFF -DBUILD_TESTING=ON",
-        "wp6_closed_loop_regression": "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/verify_wp6_gp_nmpc.py --reuse-existing --base-domain-id 31",
-        "wp7_fusion_evaluation": "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/eval_fusion_arms.py --stage all --workers 1 --base-domain-id 30",
-        "wp8_delivery_and_b2_dry_run": "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/verify_wp8_delivery.py",
+        "build_scheme_a": "cd /home/trevor/usv_scheme_a_wt && PATH=/usr/local/bin:/usr/bin:/bin colcon --log-base log/scheme_a build --base-paths research/scheme_a/src src/usv_bringup --build-base build/scheme_a --install-base install/scheme_a --cmake-args -DPython3_EXECUTABLE=/usr/bin/python3 -DCMAKE_BUILD_TYPE=Release -DUSV_RESEARCH_TEST_SEAMS=OFF -DBUILD_TESTING=ON",
+        "wp6_closed_loop_regression": f"cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/verify_wp6_gp_nmpc.py --out {wp6_reg_dir} --source-hashes {wp6_meta_dir / 'source_hashes.json'} --align-tick-phase --base-domain-id 31",
+        "wp7_fusion_evaluation": (
+            f"cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/eval_r5_fusion.py --out {wp7_eval_dir} --source-hashes {wp6_meta_dir / 'source_hashes.json'}"
+            if r2_work_root is not None
+            else "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/eval_fusion_arms.py --stage all --workers 1 --base-domain-id 30"
+        ),
+        "wp8_delivery_and_b2_dry_run": "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/verify_wp8_delivery.py" + (" --skip-arm64-probe" if arm64_info.get("skipped_by_policy") else ""),
     }
 
     # Write CURRENT.md first so its digest is also included in delivery_manifest.json + readback.json.
     all12 = eval_doc["final_test_aggregates_all12"]
     held6 = eval_doc["final_test_aggregates_heldout6"]
+    arm_order = [
+        a for a in ("nominal_nmpc", "oracle_nmpc", "gp_nmpc_r2b", "gp_nmpc", "ppo_guided_nmpc", "gp_ppo_nmpc_r2b", "gp_ppo_nmpc")
+        if a in all12
+        and not (a == "gp_nmpc" and "gp_nmpc_r2b" in all12)
+        and not (a == "gp_ppo_nmpc" and "gp_ppo_nmpc_r2b" in all12)
+    ]
+    linter_fails = sum(r["failures"] + r["errors"] for r in suites_info["linter_test_suites"])
+    linter_skips = sum(r["skipped"] for r in suites_info["linter_test_suites"])
+    eps_label = eval_doc.get("episodes_per_full_arm", 12)
     current_md = "\n".join([
-        "# Scheme A GP-NMPC + PPO Delivery Bundle (`scheme_A_gp_ppo_20261117_r1`)",
+        f"# Scheme A GP-NMPC + PPO Delivery Bundle (`{bundle_root.name}`)",
         "",
         f"- Created UTC: `{datetime.datetime.now(datetime.timezone.utc).isoformat()}`",
         f"- Worktree: `{WORKTREE}` (`USV_RESEARCH_TEST_SEAMS=OFF`)",
@@ -496,7 +539,7 @@ def build_delivery_bundle(
         f"- GP Python vs C++ Parity (`gp_numeric_parity.json`): `sha256_match={gp_par['sha256_match']}`, `max_abs_mean_diff={gp_par['max_abs_mean_diff']:.3e}`, `ood_flags_exact_match={gp_par['ood_flags_exact_match']}`",
         f"- WP6 Closed-Loop Regression (`wp6_regression_report.json`): `all_passed={wp6_rep['all_passed']}` ({list(wp6_rep['results'].keys())})",
         "",
-        "## Held-Out `final_test` Summary (12 Episodes x 301 Ticks)",
+        f"## Held-Out `final_test` Summary ({eps_label} Episodes/Arm x 301 Ticks)",
         "| Arm | Pass/Succ | CTE RMSE (m) | Heading RMSE | Speed RMSE | TV/step | Vel Res RMSE | E2E P95 (ms) | E2E Max (ms) |",
         "|---|:---:|---:|---:|---:|---:|---:|---:|---:|",
         *[
@@ -505,19 +548,18 @@ def build_delivery_bundle(
             f"{all12[arm]['speed_rmse_mps']['mean']:.4f} | {all12[arm]['control_tv_per_step']['mean']:.3f} | "
             f"{(all12[arm]['gp_model_vel_rmse']['mean'] if all12[arm]['gp_model_vel_rmse']['mean'] is not None else all12[arm]['zero_model_vel_rmse']['mean']):.5f} | "
             f"{all12[arm]['latency_ms']['e2e_p95_mean']:.3f} | {all12[arm]['latency_ms']['e2e_max']:.3f} |"
-            for arm in ("nominal_nmpc", "gp_nmpc", "ppo_guided_nmpc", "gp_ppo_nmpc")
+            for arm in arm_order
         ],
         "",
-        f"- Unseen `heldout_combination` (6 eps) mean CTE RMSE: `nominal={held6['nominal_nmpc']['cross_track_rmse_m']['mean']:.4f}m`, "
-        f"`gp_nmpc={held6['gp_nmpc']['cross_track_rmse_m']['mean']:.4f}m`, "
-        f"`ppo_guided_nmpc={held6['ppo_guided_nmpc']['cross_track_rmse_m']['mean']:.4f}m`, "
-        f"`gp_ppo_nmpc={held6['gp_ppo_nmpc']['cross_track_rmse_m']['mean']:.4f}m`.",
+        f"- Unseen `heldout_combination` mean CTE RMSE: " + ", ".join(
+            f"`{arm}={held6[arm]['cross_track_rmse_m']['mean']:.4f}m`" for arm in arm_order if arm in held6
+        ) + ".",
         "",
         "## WP8 Verification & Target Hardware Status",
         f"- x86 Learning Pytest (`5` files): rc=`{suites_info['learning_pytest_rc']}`; B2 `test_shipboard_commissioning.py` rc=`{b2_info['pytest_shipboard_commissioning_rc']}`",
-        f"- x86 Functional C++/ROS Suites (`usv_acados`, `usv_nmpc`, `usv_research_safety_cpp`): `{suites_info['functional_tests_total']}` functional tests, `{len(suites_info['functional_failures'])}` failures",
+        f"- x86 Functional C++/ROS Suites (`usv_acados`, `usv_nmpc`, `usv_research_safety_cpp`): `{suites_info['functional_tests_total']}` functional tests, `{len(suites_info['functional_failures'])}` failures; Linter suites: `{linter_fails}` failures, `{linter_skips}` skipped",
         f"- Live GP `shipboard_dry_run` Safety & Data Guard: `passed={b2_info['live_gp_dry_run']['passed']}`, `anchor_known={b2_info['live_gp_dry_run']['anchor_known']}`, `closed_loop_verified={b2_info['live_gp_dry_run']['closed_loop_verified']}`, `physical_output_enabled={b2_info['live_gp_dry_run']['physical_output_enabled']}`, `dataset_builder={b2_info['live_gp_dry_run']['dataset_builder_rejection']['run_rejected_reason']}`",
-        f"- ARM64 Target (`{arm64_info['target_host']}`): ICMP ping OK=`{arm64_info['icmp_ping_ok']}`, SSH BatchMode=`{arm64_info['ssh_batchmode_reachable']}` (`{arm64_info['arm64_wp8_live_execution_status']}`; stderr: `{arm64_info['ssh_stderr']}`). Production `SCHEME=B` untouched.",
+        f"- ARM64 Target (`{arm64_info['target_host']}`): status=`{arm64_info['arm64_wp8_live_execution_status']}`, ping=`{arm64_info['icmp_ping_ok']}`, ssh=`{arm64_info['ssh_batchmode_reachable']}`. Production `SCHEME=B` untouched.",
         "",
     ])
     current_path = bundle_root / "CURRENT.md"
@@ -597,17 +639,63 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bundle-out", default=str(DEFAULT_ARCHIVE_DIR))
     parser.add_argument("--arm64-host", default="trevor@10.0.0.3")
+    parser.add_argument("--skip-arm64-probe", action="store_true", help="Skip ARM64 ping/ssh probe (x86-only research runs).")
+    parser.add_argument("--work-root", default=str(WORK_ROOT))
+    parser.add_argument("--baseline-dir", default=str(BASELINE_DIR))
+    parser.add_argument("--gp-models-dir", default=None)
+    parser.add_argument("--gp-eval-dir", default=None)
+    parser.add_argument("--wp6-meta-dir", default=None)
+    parser.add_argument("--wp6-reg-dir", default=None)
+    parser.add_argument("--wp7-eval-dir", default=None)
+    parser.add_argument("--r2-work-root", default=None, help="Optional r2 work root to also bundle r2 diagnosis/calibration reports.")
+    parser.add_argument("--dry-run-gp-snapshot", default=None)
     args = parser.parse_args(argv)
 
-    wp8_work = WORK_ROOT / "wp8_dry_run_regression"
+    work_root = Path(args.work_root)
+    r2_root = Path(args.r2_work_root) if args.r2_work_root else None
+    baseline_dir = Path(args.baseline_dir)
+    gp_models_dir = Path(args.gp_models_dir) if args.gp_models_dir else ((r2_root / "gp_models") if r2_root else work_root / "gp_models")
+    gp_eval_dir = Path(args.gp_eval_dir) if args.gp_eval_dir else ((r2_root / "gp_eval") if r2_root else work_root / "gp_eval")
+    wp6_meta_dir = Path(args.wp6_meta_dir) if args.wp6_meta_dir else ((r2_root / "meta") if r2_root else work_root / "wp6_baseline_meta")
+    wp6_reg_dir = Path(args.wp6_reg_dir) if args.wp6_reg_dir else ((r2_root / "gp_nmpc_regression_r6") if r2_root else work_root / "gp_nmpc_regression")
+    wp7_eval_dir = Path(args.wp7_eval_dir) if args.wp7_eval_dir else ((r2_root / "fusion_eval") if r2_root else work_root / "fusion_eval")
+    wp8_work = (r2_root or work_root) / "wp8_dry_run_regression"
     wp8_work.mkdir(parents=True, exist_ok=True)
+    dry_gp = Path(args.dry_run_gp_snapshot) if args.dry_run_gp_snapshot else (
+        gp_models_dir / "pooled/gp_snapshot.json"
+        if (gp_models_dir / "pooled/gp_snapshot.json").is_file()
+        else gp_models_dir / "gp_snapshot.json"
+    )
 
-    print("[WP8] Probing ARM64 target reachability...", flush=True)
-    arm64_info = probe_arm64_target(args.arm64_host)
-    print(f"[WP8] ARM64 probe: ping={arm64_info['icmp_ping_ok']} ssh={arm64_info['ssh_batchmode_reachable']} status={arm64_info['arm64_wp8_live_execution_status']}", flush=True)
+    if args.skip_arm64_probe:
+        hist_bench = BATCH_ROOT / "scheme-a-bench-20261117T030458Z-results/RESULTS.json"
+        hist_dry = BATCH_ROOT / "scheme-a-b2-dryrun-20261117T1010Z-results/RESULTS.json"
+        arm64_info = {
+            "schema": "scheme-a-wp8-arm64-reachability-v1",
+            "captured_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "target_host": args.arm64_host,
+            "icmp_ping_rc": None,
+            "icmp_ping_ok": None,
+            "ssh_batchmode_rc": None,
+            "ssh_batchmode_reachable": False,
+            "ssh_stdout": "",
+            "ssh_stderr": "",
+            "skipped_by_policy": "x86-only-r2",
+            "arm64_wp8_live_execution_status": "skipped_x86_only_policy",
+            "historical_arm64_pre_wp6_receipts": {
+                "scheme_a_bench_results": str(hist_bench) if hist_bench.is_file() else None,
+                "scheme_a_b2_dryrun_results": str(hist_dry) if hist_dry.is_file() else None,
+            },
+            "production_scheme_b_touched": False,
+        }
+        print(f"[WP8] ARM64 probe skipped ({arm64_info['arm64_wp8_live_execution_status']})", flush=True)
+    else:
+        print("[WP8] Probing ARM64 target reachability...", flush=True)
+        arm64_info = probe_arm64_target(args.arm64_host)
+        print(f"[WP8] ARM64 probe: ping={arm64_info['icmp_ping_ok']} ssh={arm64_info['ssh_batchmode_reachable']} status={arm64_info['arm64_wp8_live_execution_status']}", flush=True)
 
     print("[WP8] Running B2 shipboard_dry_run + GP + dataset_builder rejection regression...", flush=True)
-    b2_info = run_b2_dry_run_gp_regression(wp8_work)
+    b2_info = run_b2_dry_run_gp_regression(wp8_work, gp_snapshot_path=dry_gp)
     print(f"[WP8] B2 dry-run regression passed={b2_info['live_gp_dry_run']['passed']}", flush=True)
 
     print("[WP8] Running full pytest and colcon test verification suites...", flush=True)
@@ -616,7 +704,21 @@ def main(argv: list[str] | None = None) -> int:
 
     bundle_root = Path(args.bundle_out)
     print(f"[WP8] Packaging final delivery bundle -> {bundle_root}...", flush=True)
-    manifest, readback = build_delivery_bundle(bundle_root, arm64_info, b2_info, suites_info)
+    manifest, readback = build_delivery_bundle(
+        bundle_root,
+        arm64_info,
+        b2_info,
+        suites_info,
+        work_root=work_root,
+        baseline_dir=baseline_dir,
+        gp_models_dir=gp_models_dir,
+        gp_eval_dir=gp_eval_dir,
+        wp6_meta_dir=wp6_meta_dir,
+        wp6_reg_dir=wp6_reg_dir,
+        wp7_eval_dir=wp7_eval_dir,
+        wp8_work_dir=wp8_work,
+        r2_work_root=r2_root,
+    )
     print(json.dumps({
         "bundle_root": str(bundle_root),
         "all_verified": readback["all_verified"],
