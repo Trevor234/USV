@@ -123,7 +123,9 @@ public:
 #endif
 
   void set_applied_control(const Eigen::Vector2d & applied);
+  void accept_candidate();
   void reset_warmstart();
+  bool has_warmstart() const;
 
   /// 入口处过期：纯值拒绝，零 native，不占 pending。Worker 在取出 pending、
   /// 可选阻塞之后、solve 之前调用它，消费合法 Job 的身份并记录原始期限。

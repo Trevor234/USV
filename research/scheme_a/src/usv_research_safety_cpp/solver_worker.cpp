@@ -827,6 +827,8 @@ private:
                  {"limit", output_resource.limit}});
           throw std::runtime_error("native_result_resource_oversize");
         }
+        // Advance SQP_RTI shifted warmstart only after passing CandidateReady + resource checks.
+        if (result.prediction_available) engine.accept_candidate();
         if (delay_ > 0) std::this_thread::sleep_for(std::chrono::milliseconds(delay_));
 
         ++generated_;

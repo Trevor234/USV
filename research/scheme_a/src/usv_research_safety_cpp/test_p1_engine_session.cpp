@@ -362,3 +362,69 @@ TEST(P1EngineSession, GpResidualAndPpoPreferenceSurviveWithNonZeroAnchor)
     EXPECT_LE(std::abs(clamped_ans.first(i) - anchor(i)), max_step);
   }
 }
+
+TEST(P1EngineSession, AcceptCandidateAdvancesWarmstartAndRefusalPreservesIt)
+{
+  const auto params = make_params();
+  const auto grid = make_grid();
+  auto registry = model_reference::default_registry();
+  p1::WorkerEngine engine(params, registry, grid, 1);
+  EXPECT_FALSE(engine.has_warmstart());
+
+  const Eigen::Vector2d anchor(3.0, 3.0);
+  p1::EngineOutcome first_out;
+  const auto first = engine.solve(
+      axes_of_generation(1), grid, 1, 1, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, identity(), [] { return false; },
+      [] { return false; }, &first_out);
+  ASSERT_EQ(first_out.execution, p1::EngineDisposition::CandidateReady);
+  // solve() alone must not advance warmstart until accept_candidate() is called.
+  EXPECT_FALSE(engine.has_warmstart());
+
+  engine.accept_candidate();
+  EXPECT_TRUE(engine.has_warmstart());
+
+  // Refused job must leave shifted warmstart intact.
+  const std::int64_t expired_deadline = now_ns() - 1'000'000;
+  p1::EngineOutcome refused_out;
+  engine.solve(
+      axes_of_generation(1), grid, 2, 2, expired_deadline, state(),
+      reference(), anchor, identity(), [] { return false; },
+      [] { return false; }, &refused_out);
+  EXPECT_EQ(refused_out.execution, p1::EngineDisposition::JobRefused);
+  EXPECT_TRUE(engine.has_warmstart());
+
+  // Warm-started second solve produces a refined trajectory (and converges further on SQP_RTI).
+  p1::EngineOutcome warm_out;
+  const auto warm = engine.solve(
+      axes_of_generation(1), grid, 3, 2, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, identity(), [] { return false; },
+      [] { return false; }, &warm_out);
+  ASSERT_EQ(warm_out.execution, p1::EngineDisposition::CandidateReady);
+  EXPECT_GT((warm.first - first.first).norm(), 1e-4);
+
+  // reset_warmstart clears warm state and invalidates pending candidate.
+  engine.reset_warmstart();
+  EXPECT_FALSE(engine.has_warmstart());
+  EXPECT_THROW(engine.accept_candidate(), std::logic_error);
+
+  // Switching model generation clears warmstart via sync_cpp_state().
+  p1::EngineOutcome reseed_out;
+  engine.solve(
+      axes_of_generation(1), grid, 4, 3, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, identity(), [] { return false; },
+      [] { return false; }, &reseed_out);
+  ASSERT_EQ(reseed_out.execution, p1::EngineDisposition::CandidateReady);
+  engine.accept_candidate();
+  EXPECT_TRUE(engine.has_warmstart());
+
+  p1::EngineOutcome switch_out;
+  engine.solve(
+      axes_of_generation(2), grid, 5, 6, now_ns() + 1'000'000'000, state(),
+      reference(), anchor, identity(), [] { return false; },
+      [] { return false; }, &switch_out);
+  ASSERT_EQ(switch_out.execution, p1::EngineDisposition::CandidateReady);
+  EXPECT_TRUE(switch_out.model_switched);
+  // Pre-solve sync_cpp_state cleared prior warmstart; post-solve accept_candidate not yet called.
+  EXPECT_FALSE(engine.has_warmstart());
+}

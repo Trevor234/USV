@@ -439,6 +439,10 @@ void WorkerEngine::set_applied_control(const Eigen::Vector2d & applied)
   session_->backend().set_anchor(applied);
 }
 
+void WorkerEngine::accept_candidate() { session_->backend().accept_candidate(); }
+
 void WorkerEngine::reset_warmstart() { session_->backend().reset_warmstart(); }
+
+bool WorkerEngine::has_warmstart() const { return session_->backend().has_warmstart(); }
 
 }  // namespace p1
