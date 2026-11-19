@@ -32,12 +32,12 @@
 
 #pragma once
 
+#include <Eigen/Dense>
+
 #include <array>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <Eigen/Dense>
 
 namespace usv_mpc
 {

@@ -37,9 +37,9 @@
 
 #pragma once
 
-#include <array>
-
 #include <Eigen/Dense>
+
+#include <array>
 
 namespace usv_mpc
 {

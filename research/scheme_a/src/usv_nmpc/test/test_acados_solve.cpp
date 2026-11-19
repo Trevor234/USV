@@ -29,11 +29,11 @@
  *   - K2 回归:运行时 dT_max 覆盖烘焙值 (80 N/s) 后首步推力增量受限。
  */
 
+#include <gtest/gtest.h>
+
 #include <cmath>
 #include <stdexcept>
 #include <utility>
-
-#include <gtest/gtest.h>
 
 #include "usv_nmpc/acados_backend.hpp"
 #include "usv_nmpc/utils.hpp"

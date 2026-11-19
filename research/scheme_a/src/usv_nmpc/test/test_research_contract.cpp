@@ -20,6 +20,8 @@
 
 // Exercise the node's real observation/publication paths with test-only topics.
 
+#include <gtest/gtest.h>
+#include <rcl/publisher.h>
 #include <sys/resource.h>
 
 #include <chrono>
@@ -35,8 +37,6 @@
 #include <thread>
 #include <vector>
 
-#include <rcl/publisher.h>
-#include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
 #include "usv_nmpc/mpc_node.hpp"

@@ -31,14 +31,14 @@
 
 #include "usv_acados/acados_backend.hpp"
 
+#include <acados_c/ocp_nlp_interface.h>
+
 #include <chrono>
 #include <cmath>
 #include <cstring>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-#include <acados_c/ocp_nlp_interface.h>
 
 #include "model_api.hpp"
 
@@ -355,7 +355,8 @@ const Candidate & AcadosBackend::solve(
       std::string(desc.symbol) + ": state/reference 含非有限值");
   }
   if (stage_residuals.rows() != 3 || stage_residuals.cols() != desc.N + 1 ||
-      !stage_residuals.allFinite()) {
+    !stage_residuals.allFinite())
+  {
     throw std::invalid_argument(
       std::string(desc.symbol) + ": stage_residuals 必须为有限 3x(N+1)");
   }
@@ -413,9 +414,9 @@ const Candidate & AcadosBackend::solve(
 
   // 3. 逐阶段参考解卷绕 (第 2 行为 psi), 填齐 GP 残差与 PPO 首拍偏好后再写入阶段参数。
   double ref_psi_prev = physical_state(2);
-  const double beta_pi_stage0 = (lambda_pi > 0.0)
-    ? std::sqrt(2.0 * lambda_pi / d.problem_dt)
-    : 0.0;
+  const double beta_pi_stage0 = (lambda_pi > 0.0) ?
+    std::sqrt(2.0 * lambda_pi / d.problem_dt) :
+    0.0;
   for (int k = 0; k <= N; ++k) {
     std::fill(d.reference_buffer.begin(), d.reference_buffer.end(), 0.0);
     for (int i = 0; i < desc.n_ref; ++i) {

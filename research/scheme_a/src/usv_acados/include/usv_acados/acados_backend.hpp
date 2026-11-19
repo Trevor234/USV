@@ -44,12 +44,12 @@
 #pragma once
 
 // 标头只依赖 Eigen 与 C++ 标准库; acados 的 C API 是私有实现细节 (见 model_api.hpp)。
+#include <Eigen/Dense>
+
 #include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <string>
-
-#include <Eigen/Dense>
 
 namespace usv_acados
 {

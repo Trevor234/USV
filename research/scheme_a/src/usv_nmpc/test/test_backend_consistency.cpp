@@ -23,10 +23,10 @@
  * @brief acados 与 CasADi 动力学 NMPC 后端一致性回归。
  */
 
+#include <gtest/gtest.h>
+
 #include <memory>
 #include <stdexcept>
-
-#include <gtest/gtest.h>
 
 #include "usv_nmpc/acados_backend.hpp"
 #include "usv_nmpc/mpc_solver.hpp"

@@ -31,11 +31,11 @@
  */
 
 // 手写测试头按 ament_cpplint 顺序: 对应头 -> C system -> C++ system -> other。
+#include <gtest/gtest.h>
+
 #include <cmath>
 #include <stdexcept>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include "usv_acados/acados_backend.hpp"
 
@@ -277,7 +277,7 @@ TEST(AcadosInstanceIsolation, StageResidualAndFirstStepPreferenceSemantics)
   ASSERT_TRUE(c_gp.finite);
   EXPECT_LT(c_gp.U(0, 0), c_nom.U(0, 0) - 0.1);
 
-  // lambda_pi == 0 ignores arbitrary q_pi; lambda_pi > 0 pulls U(:,0) toward q_pi while preserving bounds.
+  // lambda_pi == 0 ignores q_pi; lambda_pi > 0 pulls U(:,0) toward q_pi within bounds.
   const Eigen::Vector2d q_target(12.0, -4.0);
   const auto c_l0 = zero_lam.solve(state6, ref6, res_zero, q_target, 0.0);
   EXPECT_LT((c_l0.U - c_nom.U).cwiseAbs().maxCoeff(), 1e-12);

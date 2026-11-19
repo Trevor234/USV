@@ -26,6 +26,8 @@
  * is cancelled and every output is redirected to a unique test-only topic.
  */
 
+#include <gtest/gtest.h>
+
 #include <chrono>
 #include <cmath>
 #include <condition_variable>
@@ -38,7 +40,6 @@
 #include <utility>
 #include <vector>
 
-#include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
 #include "usv_nmpc/mpc_node.hpp"

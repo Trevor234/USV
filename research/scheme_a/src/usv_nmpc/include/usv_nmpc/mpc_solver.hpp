@@ -37,11 +37,11 @@
 
 #pragma once
 
+#include <Eigen/Dense>
+
 #include <memory>
 #include <string>
 #include <utility>
-
-#include <Eigen/Dense>
 
 #include "usv_nmpc/usv_model_dynamic.hpp"
 

@@ -23,10 +23,10 @@
  * @brief MPC 纯逻辑层 gtest 单测 (对拍 Python test_utils_and_sync.py + model sanity)。
  */
 
+#include <gtest/gtest.h>
+
 #include <cmath>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include "usv_nmpc/usv_model_dynamic.hpp"
 #include "usv_nmpc/utils.hpp"

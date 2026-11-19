@@ -36,12 +36,12 @@
  */
 
 // 手写测试头按 ament_cpplint 顺序: 对应头 -> C system -> C++ system -> other。
+#include <gtest/gtest.h>
+
 #include <cmath>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include "usv_acados/acados_backend.hpp"
 
