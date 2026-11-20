@@ -73,16 +73,18 @@ class PathPlannerNode : public rclcpp::Node {
   double y_   = 0.0;
   double psi_ = 0.0;
   double u_   = 0.0;  // 当前纵向速度
+  bool   odom_received_ = false;
 
   // ── 配置参数 ────────────────────────────────────────
   double      update_rate_       = 1.0;
   double      path_resolution_   = 0.5;
-  double      turn_radius_       = 5.0;
+  double      turn_radius_       = 4.0;
   std::string odom_topic_;
   std::string path_topic_;
   std::string profile_topic_;
   std::string dynamic_wp_topic_;
   double      default_wp_radius_ = 2.0;
+  bool        prepend_current_pose_ = true;
 
   // TOPP 速度剖面约束
   double u_max_         = 2.0;
@@ -92,6 +94,7 @@ class PathPlannerNode : public rclcpp::Node {
   double decel_max_     = 0.5;
   double v_end_         = 0.0;
   double v_min_         = 0.2;
+  double v_start_min_   = 0.4;
 
   // 可选最小曲率精修
   bool   enable_curv_opt_       = false;

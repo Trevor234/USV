@@ -60,12 +60,9 @@ class MissionBridgeNode : public rclcpp::Node {
       rclcpp::Client<mavros_msgs::srv::WaypointPull>::SharedFuture future);
   void republish_();
 
-  /// 航点签名（用于去重）。
-  using WaypointSignature = std::vector<std::tuple<
-      uint8_t, uint16_t, bool, bool,
-      float, float, float, float,
-      double, double, double>>;
-  std::pair<uint16_t, WaypointSignature> waypoint_signature_(
+  /// 航点几何签名（用于去重：仅关注导航航点的 command 与经纬度，忽略 current_seq / is_current）。
+  using WaypointSignature = std::vector<std::tuple<uint16_t, double, double>>;
+  WaypointSignature waypoint_signature_(
       const mavros_msgs::msg::WaypointList& msg) const;
 
   // ── 参数 ────────────────────────────────────────────
@@ -81,7 +78,7 @@ class MissionBridgeNode : public rclcpp::Node {
   // ── 内部状态 ────────────────────────────────────────
   std::optional<std::pair<double, double>> origin_;
   mavros_msgs::msg::WaypointList::SharedPtr last_waypoints_;
-  std::optional<std::pair<uint16_t, WaypointSignature>> last_signature_;
+  std::optional<WaypointSignature> last_signature_;
   bool pull_in_progress_ = false;
   std::optional<int> last_pull_count_;
 
