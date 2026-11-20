@@ -170,8 +170,22 @@
       "status": "calibrated_sim_verified_not_applicable_to_dry_run"
     },
     "activation_tolerance": {
-      "sim_contract_value": [0.25, 0.25, 0.15, 0.3, 0.2, 0.15],
-      "observed_max_abs_error": [0.007293, 0.000417, 0.005439, 0.052398, 0.004472, 0.038701],
+      "sim_contract_value": [
+        0.25,
+        0.25,
+        0.15,
+        0.3,
+        0.2,
+        0.15
+      ],
+      "observed_max_abs_error": [
+        0.007293,
+        0.000417,
+        0.005439,
+        0.052398,
+        0.004472,
+        0.038701
+      ],
       "status": "calibrated_sim_verified_hardware_pending_c"
     },
     "source ages": {
@@ -186,8 +200,14 @@
       "status": "calibrated_for_shipboard_dry_run_with_stage1_mavros_margin"
     },
     "RTF and pause": {
-      "sim_contract_bounds": [0.95, 1.05],
-      "observed_rtf_range": [0.9885, 1.0225],
+      "sim_contract_bounds": [
+        0.95,
+        1.05
+      ],
+      "observed_rtf_range": [
+        0.9885,
+        1.0225
+      ],
       "clock_pause_confirm_ns": 400000000,
       "status": "calibrated_sim_verified_monotonic_wallclock_for_dry_run"
     },
@@ -223,6 +243,134 @@
       "observed_renewal_max_ms": 202.946,
       "shipboard_dry_run_timeout_ns": 1000000000,
       "status": "calibrated_raised_to_1000ms_after_574ms_arm64_cold_start"
+    }
+  },
+  "phase_c_shipboard_execute_evidence": {
+    "release_id": "scheme-a-execute-20261120T063557Z",
+    "host": "trevor@10.0.0.3 (Raspberry Pi 5)",
+    "profile": "defueled_powered_bench",
+    "attestation_operator": "Trevor",
+    "f0_differential_steering_sign": {
+      "verdict": "PASS",
+      "steering_sign": -1.0,
+      "fcu_pwm_channel_ranges": {
+        "RC1": [
+          987,
+          1500,
+          2011
+        ],
+        "RC3": [
+          997,
+          1500,
+          2002
+        ],
+        "SERVO1": [
+          1100,
+          1500,
+          1900
+        ],
+        "SERVO3": [
+          1100,
+          1500,
+          1900
+        ]
+      },
+      "closed_loop_straight": {
+        "heading_error_deg": 0.0,
+        "ch1_pwm_range": [
+          1498,
+          1506
+        ],
+        "ch3_pwm_range": [
+          1623,
+          1684
+        ]
+      },
+      "closed_loop_left_turn": {
+        "boat_yaw_deg": 90.02,
+        "target_yaw_deg": -174.98,
+        "diff_yaw_deg": 95.0,
+        "commanded_left_n": -11.48,
+        "commanded_right_n": 8.07,
+        "fcu_servo1_out_us": 1473,
+        "fcu_servo3_out_us": 1527,
+        "differential_pwm_us": -54
+      },
+      "closed_loop_right_turn": {
+        "boat_yaw_deg": 89.99,
+        "target_yaw_deg": -5.01,
+        "diff_yaw_deg": -95.0,
+        "commanded_left_n": 7.9,
+        "commanded_right_n": -11.31,
+        "fcu_servo1_out_us": 1527,
+        "fcu_servo3_out_us": 1473,
+        "differential_pwm_us": 54
+      }
+    },
+    "f1_regulator_kill9_watchdog": {
+      "verdict": "PASS",
+      "fault_type": "kill -9 p1_regulator",
+      "pid": 365094,
+      "t_fault_steady_ns": 21677463000000,
+      "supervisor_detection_latency_ms": 683.9,
+      "full_service_teardown_latency_ms": 966.3,
+      "gate_limit_ms": 1500.0,
+      "exit_reason": "commissioning_child_exit:regulator:rc=-9"
+    },
+    "f2_human_preemption": {
+      "verdict": "PASS",
+      "sample_count": 13,
+      "preemption_latency_min_ms": 0.152,
+      "preemption_latency_p50_ms": 0.178,
+      "preemption_latency_max_ms": 0.208,
+      "gate_limit_ms": 200.0,
+      "rc_override_zero_release_verified": true
+    },
+    "f3_worker_kill9": {
+      "verdict": "PASS",
+      "fault_type": "kill -9 p1_solver_worker",
+      "pid": 272853,
+      "t_fault_steady_ns": 20726766000000,
+      "regulator_detection_latency_ms": 154.0,
+      "neutral_pwm_latency_ms": 154.0,
+      "fcu_hold_switch_latency_ms": 242.0,
+      "gate_limit_ms": 1000.0,
+      "terminal_exit_code": 2
+    },
+    "f4_sensor_stream_loss": {
+      "verdict": "PASS",
+      "drop_stream": "MAVLink #32 LOCAL_POSITION_NED",
+      "odom_loss_detection_latency_ms": 995.0,
+      "gate_limit_ms": 1000.0,
+      "neutral_pwm_issue_duration_ms": 0.203,
+      "fcu_hold_switch_latency_ms": 1046.0,
+      "hold_confirmed_release_duration_ms": 0.208,
+      "stream_recovery_nav_ready": true
+    },
+    "f5_rollback_and_link": {
+      "verdict": "PASS",
+      "rollback_legs_executed": 2,
+      "restored_scheme": "SCHEME=B",
+      "restored_restart_policy": "always",
+      "restarts_observed": 0,
+      "controller_identity_verified": "mpc_node"
+    },
+    "thermal_soak_60min": {
+      "verdict": "PASS",
+      "continuous_run_seconds": 4626,
+      "core_temp_max_c": 55.4,
+      "core_temp_limit_c": 65.0,
+      "throttled_code": "0x0",
+      "mcap_bag_bytes": 160432128,
+      "restarts_observed": 0
+    },
+    "hydrodynamics_honesty_statement": {
+      "bollard_pull_tested": false,
+      "thrust_coefficient_kt": 25.0,
+      "hydrodynamics_status": "nominal_model_from_scheme_b_id_20260903",
+      "water_release_locked": true,
+      "physical_execute_release_enabled": false,
+      "shipboard_water_execute_release_enabled": false
     }
   }
 }
