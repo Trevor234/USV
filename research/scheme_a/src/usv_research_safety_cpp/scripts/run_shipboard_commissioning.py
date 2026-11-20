@@ -43,8 +43,8 @@ ALLOWED_PROFILES = {
 }
 
 STARTUP_DEADLINE_NS = 30 * 1_000_000_000
-STATUS_STALE_NS = 2_500_000_000          # ready 之后 status 无新 seq
-EVIDENCE_LIMIT_BYTES = 64 * 1024 * 1024
+STATUS_STALE_NS = 5_000_000_000          # ready 之后 status 无新 seq (留足 1 Hz + SD 抖动余量)
+EVIDENCE_LIMIT_BYTES = 512 * 1024 * 1024  # 允许连续 60 分钟以上活跃测试 JSONL 证据落盘
 FREE_SPACE_FLOOR_BYTES = 512 * 1024 * 1024
 FREE_SPACE_START_BYTES = 1 * 1024 * 1024 * 1024
 TERM_GRACE_S = 3.0
@@ -767,9 +767,23 @@ class Supervisor:
                     processes={name: proc_identity(proc.pid, True)
                                for name, proc in self.children})
         while not self.failure:
-            self.executor.spin_once(timeout_sec=0.2)
+            spin_deadline = now_ns() + 800_000_000
+            fast_spins = 0
+            while not self.failure:
+                remaining_s = (spin_deadline - now_ns()) / 1e9
+                if remaining_s <= 0.0:
+                    break
+                before_ns = now_ns()
+                self.executor.spin_once(timeout_sec=min(0.05, remaining_s))
+                # 若连续瞬时返回（回调洪峰或测试 stub），排空后让出 CPU；平时由 waitset 阻塞等待
+                if now_ns() - before_ns < 1_000_000:
+                    fast_spins += 1
+                    if fast_spins >= 8:
+                        time.sleep(0.01)
+                        fast_spins = 0
+                else:
+                    fast_spins = 0
             self.sample()
-            time.sleep(0.8)
         self.record("failure", reason=self.failure, phase=self.latest_status.get("phase")
                     if self.latest_status else "starting",
                     ready=self.ready, seq=self.last_seq)

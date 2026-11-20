@@ -743,3 +743,44 @@ finally:
     finally:
         competing.terminate()
         competing.wait(timeout=5)
+
+
+def test_supervisor_run_drains_callbacks_and_supports_soak_limits(tmp_path):
+    """回归：run() 必须在采样窗内持续排空多条回调，避免被高频 worker_capability 饿死 status。"""
+    sup = _load_supervisor()
+    assert sup.STATUS_STALE_NS >= 5_000_000_000
+    assert sup.EVIDENCE_LIMIT_BYTES >= 512 * 1024 * 1024
+
+    s = sup.Supervisor.__new__(sup.Supervisor)
+    s.failure = ""
+    spin_calls = 0
+    sample_calls = 0
+
+    class _FakeExecutor:
+        def spin_once(self, timeout_sec=0.0):
+            nonlocal spin_calls
+            spin_calls += 1
+
+    s.executor = _FakeExecutor()
+    s.prepare = lambda: None
+    s.preflight_graph = lambda: None
+    s.make_node = lambda: None
+    s.spawn = lambda: None
+    s.children = []
+    s.record = lambda *a, **kw: None
+    s.latest_status = {"phase": "ready"}
+    s.ready = True
+    s.last_seq = 1
+
+    def _fake_sample():
+        nonlocal sample_calls
+        sample_calls += 1
+        if sample_calls >= 1:
+            s.failure = "done_for_test"
+
+    s.sample = _fake_sample
+    rc = s.run()
+    assert rc == sup.EXIT_FAIL
+    assert sample_calls == 1
+    assert spin_calls > 5, f"expected continuous draining across 0.8s window, got spin_calls={spin_calls}"
+
