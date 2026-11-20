@@ -26,6 +26,8 @@ KNOWN_MSG_NAMES: Dict[int, str] = {
     30: "ATTITUDE",
     32: "LOCAL_POSITION_NED",
     33: "GLOBAL_POSITION_INT",
+    36: "SERVO_OUTPUT_RAW",
+    65: "RC_CHANNELS",
     102: "SCALED_IMU",
     105: "HIGHRES_IMU",
     147: "BATTERY_STATUS",
@@ -39,8 +41,8 @@ class MavrosRateConfigurator(Node):
         super().__init__("mavros_rate_configurator")
 
         # 声明参数
-        self.declare_parameter("message_ids", [30, 27, 105, 32, 33])
-        self.declare_parameter("message_rates", [20.0, 20.0, 20.0, 10.0, 10.0])
+        self.declare_parameter("message_ids", [30, 27, 105, 32, 33, 36, 65])
+        self.declare_parameter("message_rates", [20.0, 20.0, 20.0, 10.0, 10.0, 20.0, 10.0])
         self.declare_parameter("max_retries", 5)
         self.declare_parameter("retry_interval_sec", 1.0)
         self.declare_parameter("service_timeout_sec", 3.0)
