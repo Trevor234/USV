@@ -63,6 +63,14 @@ bool status_extractable(int status)
 
 }  // namespace
 
+NativePreparationError::NativePreparationError(
+  std::string operation_in, int stage_in, int status_in)
+: std::runtime_error("native 准备失败: " + operation_in +
+    " (stage " + std::to_string(stage_in) + ", status " +
+    std::to_string(status_in) + ")"),
+  operation(std::move(operation_in)), stage(stage_in), status(status_in)
+{}
+
 struct AcadosBackend::Impl
 {
   Impl(Model model_in, const Problem & problem)
@@ -71,6 +79,9 @@ struct AcadosBackend::Impl
   {
     validate_problem(problem);
     init_capsule_();
+
+    // p_global 运行期事务暂存: 只为满足生成码非 const 形参。
+    p_global_txn_buffer.resize(descriptor.np_global);
 
     X_warm.setZero(descriptor.n_aug, descriptor.N + 1);
     U_warm.setZero(descriptor.nu, descriptor.N);
@@ -149,9 +160,9 @@ struct AcadosBackend::Impl
       }
     }
 
-    // p_global 全量覆盖 (生成占位值不可用于生产)。
-    int pglobal_status = ops.set_p_global(capsule, p_global_scratch.data(),
-        static_cast<int>(p_global_scratch.size()));
+    // p_global 全量覆盖 (含事务已提交的最新模型参数，防止重建退回初始参数)。
+    int pglobal_status = ops.set_p_global(capsule, active_p_global.data(),
+        static_cast<int>(active_p_global.size()));
     if (pglobal_status != 0) {
       release_capsule();
       throw std::runtime_error(
@@ -204,7 +215,7 @@ struct AcadosBackend::Impl
     if ((problem.max_delta.array() <= 0.0).any()) {
       throw std::invalid_argument("acados problem max_delta must be strictly positive");
     }
-    p_global_scratch = problem.p_global;
+    active_p_global = problem.p_global;
     problem_N = problem.N;
     problem_dt = problem.dt;
     lower = problem.lower;
@@ -222,6 +233,26 @@ struct AcadosBackend::Impl
     candidate.U.setZero();
   }
 
+  /// 记账并检查一次 constraints setter 的真实 int 返回。
+  void count_constraint_set(const char * operation, int stage, int status)
+  {
+    ledger.constraint_set_calls += 1;
+    if (status != 0) {
+      ledger.constraint_set_failed += 1;
+      throw NativePreparationError(operation, stage, status);
+    }
+  }
+
+  /// 记账并检查一次 update_params 的真实 int 返回。
+  void count_update_params(int stage, int status)
+  {
+    ledger.update_params_calls += 1;
+    if (status != 0) {
+      ledger.update_params_failed += 1;
+      throw NativePreparationError("update_params", stage, status);
+    }
+  }
+
   Model model;
   const detail::ModelDescriptor & descriptor;
   const detail::CapsuleOps & ops;
@@ -236,7 +267,7 @@ struct AcadosBackend::Impl
   // 构造参数副本 (不再引用调用方的 Problem)
   int problem_N = 0;
   double problem_dt = 0.0;
-  Eigen::VectorXd p_global_scratch;
+  Eigen::VectorXd active_p_global;
   Eigen::Vector2d lower = Eigen::Vector2d::Zero();
   Eigen::Vector2d upper = Eigen::Vector2d::Zero();
   Eigen::Vector2d max_delta = Eigen::Vector2d::Zero();
@@ -246,17 +277,24 @@ struct AcadosBackend::Impl
   Eigen::MatrixXd X_warm;   // n_aug x (N+1)
   Eigen::MatrixXd U_warm;   // nu x N
   Eigen::Vector2d anchor_ = Eigen::Vector2d::Zero();
-
   // 候选解 (有效至下一次 solve 或 reset)
   Candidate candidate;
   bool candidate_valid = false;
+
+  // 研究路径记账: 每 solve 清零的准备账 + 累计 native 进入数。
+  PreparationLedger ledger;
+  uint64_t native_solves = 0;
 
   // 求解 scratch (构造时按 N/模型一次分配, 循环内不建临时容器)
   Eigen::VectorXd x0_aug;
   std::vector<double> state_buffer;
   std::vector<double> control_buffer;
   std::vector<double> reference_buffer;
+
+  // 运行期参数事务暂存 (见构造函数)。
+  Eigen::VectorXd p_global_txn_buffer;
 };
+
 
 AcadosBackend::AcadosBackend(Model model, const Problem & problem)
 : impl_(new Impl(model, problem))
@@ -275,8 +313,20 @@ const Candidate & AcadosBackend::solve(
   const Eigen::Ref<const Eigen::VectorXd> & physical_state,
   const Eigen::Ref<const Eigen::MatrixXd> & reference)
 {
+  return solve(physical_state, reference, SolveHooks{});
+}
+
+const Candidate & AcadosBackend::solve(
+  const Eigen::Ref<const Eigen::VectorXd> & physical_state,
+  const Eigen::Ref<const Eigen::MatrixXd> & reference,
+  const SolveHooks & hooks)
+{
   Impl & d = *impl_;
   const detail::ModelDescriptor & desc = d.descriptor;
+
+  // 每 solve 开始清零: 本轮准备失败不得借用上一轮的 complete。
+  d.ledger = PreparationLedger{};
+  d.ledger.ordinals = 1;
 
   if (physical_state.size() != desc.n_phys) {
     throw std::invalid_argument(
@@ -315,11 +365,13 @@ const Candidate & AcadosBackend::solve(
     }
   }
 
-  // 2. 钉住初始状态 (stage 0 lbx/ubx)
-  ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
-                                0, "lbx", d.x0_aug.data());
-  ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
-                                0, "ubx", d.x0_aug.data());
+  // 2. 钉住初始状态 (stage 0 lbx/ubx), 真实 int 返回逐次记账。
+  d.count_constraint_set("lbx", 0,
+    ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
+                                  0, "lbx", d.x0_aug.data()));
+  d.count_constraint_set("ubx", 0,
+    ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
+                                  0, "ubx", d.x0_aug.data()));
 
   // 2b. 幅值与变化率边界逐阶段下发 (消除 codegen 烘焙值与 YAML 的漂移)。
   double lbu_v[2] = {d.lower(0), d.lower(1)};
@@ -327,14 +379,18 @@ const Candidate & AcadosBackend::solve(
   double lh_v[2] = {-d.max_delta(0), -d.max_delta(1)};
   double uh_v[2] = {d.max_delta(0), d.max_delta(1)};
   for (int k = 0; k < N; ++k) {
-    ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
-                                  k, "lbu", lbu_v);
-    ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
-                                  k, "ubu", ubu_v);
-    ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
-                                  k, "lh", lh_v);
-    ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
-                                  k, "uh", uh_v);
+    d.count_constraint_set("lbu", k,
+      ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
+                                    k, "lbu", lbu_v));
+    d.count_constraint_set("ubu", k,
+      ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
+                                    k, "ubu", ubu_v));
+    d.count_constraint_set("lh", k,
+      ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
+                                    k, "lh", lh_v));
+    d.count_constraint_set("uh", k,
+      ocp_nlp_constraints_model_set(d.config, d.dims, d.nlp_in, d.nlp_out,
+                                    k, "uh", uh_v));
   }
 
   // 3. 逐阶段参考解卷绕 (第 2 行为 psi), 再写入阶段参数。
@@ -347,29 +403,28 @@ const Candidate & AcadosBackend::solve(
       wrap_to_pi(d.reference_buffer[2] - ref_psi_prev);
     d.reference_buffer[2] = solved;
     ref_psi_prev = solved;
-    const int status = d.ops.update_params(
-      d.capsule, k, d.reference_buffer.data(), desc.np);
-    if (status != 0) {
-      throw std::runtime_error(
-        std::string(desc.symbol) + ": update_params(stage " +
-        std::to_string(k) + ") 失败 status=" + std::to_string(status));
-    }
+    d.count_update_params(k, d.ops.update_params(
+      d.capsule, k, d.reference_buffer.data(), desc.np));
   }
 
-  // 4. 初猜: 有热启动则整条轨迹, 否则 [x0 增广; anchor] 的速率可行初猜。
+  // 4. 初猜: 有热启动则整条轨迹, 否则 [x0 物理; 0] 的零控制猜测。
+  // ocp_nlp_out_set 是 void, 只计进入数, 不编造返回状态。
   if (d.has_warm) {
     for (int k = 0; k <= N; ++k) {
       ocp_nlp_out_set(d.config, d.dims, d.nlp_out, d.nlp_in, k, "x",
                       d.X_warm.col(k).data());
+      d.ledger.out_set_calls += 1;
     }
     for (int k = 0; k < N; ++k) {
       ocp_nlp_out_set(d.config, d.dims, d.nlp_out, d.nlp_in, k, "u",
                       d.U_warm.col(k).data());
+      d.ledger.out_set_calls += 1;
     }
   } else {
     for (int k = 0; k <= N; ++k) {
       ocp_nlp_out_set(d.config, d.dims, d.nlp_out, d.nlp_in, k, "x",
                       d.x0_aug.data());
+      d.ledger.out_set_calls += 1;
     }
     double u_init[2] = {
       std::clamp(d.anchor_(0), d.lower(0), d.upper(0)),
@@ -377,10 +432,21 @@ const Candidate & AcadosBackend::solve(
     };
     for (int k = 0; k < N; ++k) {
       ocp_nlp_out_set(d.config, d.dims, d.nlp_out, d.nlp_in, k, "u", u_init);
+      d.ledger.out_set_calls += 1;
     }
   }
 
-  // 5. 求解 (+ 计时仅覆盖 generated solve 调用)
+  // 准备全部完成: 任一非零 int 状态都在上面抛出, 不会走到这里。
+  d.ledger.complete = true;
+
+  // 5. 最后一道 native guard: hook 在真实 solve 紧前调用, 抛出的类型化
+  //    拒绝原样上抛 (本轮零 C solve, 不触碰 accept/fallback/capsule)。
+  if (hooks.before_native != nullptr) {
+    hooks.before_native(hooks.context, d.ledger);
+  }
+
+  // 紧邻真实 ops.solve() 才增加累计计数; guard 拒绝不计入。
+  d.native_solves += 1;
   const auto t0 = std::chrono::steady_clock::now();
   const int status = d.ops.solve(d.capsule);
   const auto t1 = std::chrono::steady_clock::now();
@@ -389,7 +455,7 @@ const Candidate & AcadosBackend::solve(
   d.candidate.status = status;
 
   if (!status_extractable(status)) {
-    // 非可提取状态 (尤其 QP NaN / status=4): 生成的 reset() 不清理 QP 内部内存，
+    // 非可提取状态 (尤其 QP NaN / status=4): 生成的 reset() 不清理 QP 内部内存,
     // 重建 capsule 防止历史 NaN 残留毒化后续求解 (保留 X_warm/U_warm 供 fallback)。
     d.release_capsule();
     d.init_capsule_();
@@ -432,13 +498,13 @@ void AcadosBackend::set_anchor(const Eigen::Vector2d & anchor)
     const bool large_external_jump =
       ((warm_anchor0 - anchor).cwiseAbs().array() > 0.25 * d.max_delta.array()).any();
     if (large_external_jump) {
-      // 外部前向辅助或饱和限幅大幅改写了实发控制量，旧 X_warm/U_warm 对应完全不同的轨迹；
-      // 清除过时热启动但保留新 anchor_，下一拍从 u_init=anchor 速率可行地冷启动。
+      // 外部辅助或饱和限幅大幅改写了实发控制量, 旧 X_warm/U_warm 对应不同轨迹;
+      // 清除过时热启动但保留新 anchor_, 下一拍从 u_init=anchor 速率可行地冷启动。
       d.has_warm = false;
       return;
     }
     d.X_warm.block(d.descriptor.anchor_offset, 0, d.descriptor.nu, 1) = anchor;
-    // 若外部执行映射/前向辅助修改了实发锚点，链式投影 U_warm 与增广状态使初猜保持速率可行。
+    // 若外部执行映射微调了实发锚点, 链式投影 U_warm 与增广状态使初猜保持速率可行。
     Eigen::Vector2d prev = anchor;
     for (int k = 0; k < d.descriptor.N; ++k) {
       Eigen::Vector2d uk = d.U_warm.col(k);
@@ -489,14 +555,66 @@ Eigen::Vector2d AcadosBackend::shift_fallback()
 void AcadosBackend::reset_warmstart()
 {
   Impl & d = *impl_;
+  // 先受检原生重置; 非零必须显式失败, 不清 warm, 不静默忽略。
+  const int status = reset_native(1);
+  if (status != 0) {
+    throw std::runtime_error(
+      std::string(d.descriptor.symbol) + ": acados_reset 失败 status=" +
+      std::to_string(status) + "; warm 未清除");
+  }
+  clear_cpp_state();
+}
+
+int AcadosBackend::update_p_global(
+  const Eigen::Ref<const Eigen::VectorXd> & values)
+{
+  Impl & d = *impl_;
+  if (values.size() != d.descriptor.np_global) {
+    throw std::invalid_argument(
+      std::string(d.descriptor.symbol) + ": update_p_global 长度 " +
+      std::to_string(values.size()) + " != " +
+      std::to_string(d.descriptor.np_global));
+  }
+  if (!values.allFinite()) {
+    throw std::invalid_argument(
+      std::string(d.descriptor.symbol) + ": update_p_global 含非有限值");
+  }
+  // 任何参数修改前使旧候选失效; 不清 warm, 不改 C++ 参数镜像。
+  d.invalidate_candidate();
+  d.p_global_txn_buffer = values;
+  const int pglobal_status = d.ops.set_p_global(
+    d.capsule, d.p_global_txn_buffer.data(), d.descriptor.np_global);
+  if (pglobal_status == 0) {
+    d.active_p_global = values;
+  }
+  return pglobal_status;
+}
+
+int AcadosBackend::reset_native(int reset_qp_memory)
+{
+  Impl & d = *impl_;
+  d.invalidate_candidate();
+  return d.ops.reset(d.capsule, reset_qp_memory);
+}
+
+void AcadosBackend::clear_cpp_state()
+{
+  Impl & d = *impl_;
   d.has_warm = false;
   d.X_warm.setZero();
   d.U_warm.setZero();
   d.anchor_.setZero();
   d.invalidate_candidate();
-  if (d.capsule != nullptr) {
-    d.ops.reset(d.capsule, 1);
-  }
+}
+
+const PreparationLedger & AcadosBackend::preparation() const
+{
+  return impl_->ledger;
+}
+
+uint64_t AcadosBackend::native_solve_entries() const
+{
+  return impl_->native_solves;
 }
 
 bool AcadosBackend::has_warmstart() const

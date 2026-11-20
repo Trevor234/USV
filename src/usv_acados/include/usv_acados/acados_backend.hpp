@@ -46,7 +46,10 @@
 // Eigen 与 acados 的 C 头按 cpplint 的 "C system" 分类排在 C++ 标准库之前。
 #include <Eigen/Dense>
 
+#include <cstdint>
 #include <memory>
+#include <stdexcept>
+#include <string>
 
 namespace usv_acados
 {
@@ -83,6 +86,47 @@ struct Candidate
   Eigen::MatrixXd U;
 };
 
+/// 单次 solve() 准备过程的 native 调用记账 (研究路径检查用, 每 solve 清零)。
+/// N=20 的 dynamic 一轮完整准备必须是: constraints 82 次 (2 次 stage0 lbx/ubx
+/// + 20 stage x 4 次 lbu/ubu/lh/uh), update_params 21 次, out_set 41 次。
+struct PreparationLedger
+{
+  /// 进入本轮准备记 1 (每 solve 清零后置 1)。
+  unsigned ordinals = 0;
+  /// ocp_nlp_constraints_model_set 实际进入次数。
+  unsigned constraint_set_calls = 0;
+  /// 其中返回非零的次数。
+  unsigned constraint_set_failed = 0;
+  /// update_params 实际进入次数。
+  unsigned update_params_calls = 0;
+  /// 其中返回非零的次数。
+  unsigned update_params_failed = 0;
+  /// ocp_nlp_out_set 进入次数 (void 返回, 只计进入数)。
+  unsigned out_set_calls = 0;
+  /// 本轮准备是否全部完成 (任一 int 状态非零即 false)。
+  bool complete = false;
+};
+
+/// 研究路径最后一道 native guard: 准备全部完成后、真实 solve 紧前回调。
+/// 固定函数指针, 不逐拍分配 std::function; 回调抛出的类型化拒绝原样上抛。
+struct SolveHooks
+{
+  void * context = nullptr;
+  void (* before_native)(void * context, const PreparationLedger & ledger) = nullptr;
+};
+
+/// native 准备失败: constraints setter / update_params 返回非零。
+/// 抛出时本轮零 C solve, 候选已失效, 未触碰 warm/anchor。
+class NativePreparationError : public std::runtime_error
+{
+public:
+  NativePreparationError(std::string operation, int stage, int status);
+  const std::string operation;
+  const int stage;
+  const int status;
+};
+
+
 /**
  * @brief 单个 acados OCP 实例的求解引擎。
  *
@@ -105,6 +149,32 @@ public:
     const Eigen::Ref<const Eigen::VectorXd> & physical_state,
     const Eigen::Ref<const Eigen::MatrixXd> & reference);
 
+  /// 求解一拍 (研究路径): 准备全部完成后、真实 native solve 紧前调用 hook。
+  /// hook 抛出的类型化拒绝原样上抛; 抛出时本轮零 C solve, 候选已失效,
+  /// 不调用 accept_candidate()/shift_fallback(), 不重启 capsule。
+  const Candidate & solve(
+    const Eigen::Ref<const Eigen::VectorXd> & physical_state,
+    const Eigen::Ref<const Eigen::MatrixXd> & reference,
+    const SolveHooks & hooks);
+
+  /// 运行期全局参数事务: 维度/有限性检查通过后调用 set_p_global,
+  /// 返回真实状态码。进入前使旧候选失效; 不清 warm 与 C++ 参数镜像。
+  /// 非零状态必须由调用方 (事务层终端) 隔离, 不得继续求解。
+  int update_p_global(const Eigen::Ref<const Eigen::VectorXd> & values);
+
+  /// 受检原生重置: 先使当前候选失效, 再调用生成码 reset, 返回真实状态码。
+  /// 不清 warm 与 C++ 参数镜像。
+  int reset_native(int reset_qp_memory);
+
+  /// 只清 C++ 侧 warm/anchor/candidate, 零 native 调用。
+  void clear_cpp_state();
+
+  /// 最近一次 solve() 的准备记账 (每 solve 开始清零)。
+  const PreparationLedger & preparation() const;
+
+  /// 真实 native solve 进入次数 (累计, 不随 solve 清零)。
+  uint64_t native_solve_entries() const;
+
   /// 设定上一拍实际下发控制 (调用方负责 clamp/校验), 同时更新 warm 首列尾部。
   void set_anchor(const Eigen::Vector2d & anchor);
   const Eigen::Vector2d & anchor() const;
@@ -116,7 +186,8 @@ public:
   /// 无 warm 时返回零向量 (不改变 anchor)。
   Eigen::Vector2d shift_fallback();
 
-  /// 清空热启动缓存/anchor 并重置 acados (含 QP 内存)。
+  /// 受检整体重置: 先 reset_native(1), 非零抛 std::runtime_error 且不清 warm;
+  /// 成功后才 clear_cpp_state()。旧调用方不得静默忽略失败状态。
   void reset_warmstart();
 
   bool has_warmstart() const;

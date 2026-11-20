@@ -35,13 +35,13 @@
  * 属于受控 adapter 报告注入, 不在本测试中冒充 SDK 失败。
  */
 
-// 手写测试头按 ament_cpplint 顺序: 对应头 -> C system -> C++ system -> other。
+// gtest 头按 cpplint 的 "C system" 分类排在 C++ 标准库之前。
+#include <gtest/gtest.h>
+
 #include <cmath>
 #include <stdexcept>
 #include <string>
 #include <vector>
-
-#include <gtest/gtest.h>
 
 #include "usv_acados/acados_backend.hpp"
 

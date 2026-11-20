@@ -112,7 +112,9 @@ target_include_directories(usv_acados_backend PUBLIC
 # 公开依赖只有 Eigen; 生成码与 acados 库是私有实现细节。
 target_link_libraries(usv_acados_backend PUBLIC Eigen3::Eigen)
 target_link_libraries(usv_acados_backend PRIVATE ${_generated_targets})
-target_link_directories(usv_acados_backend PRIVATE "${ACADOS_LIB_DIR}")
+# 间接依赖 (libacados.so -> libhpipm.so/libblasfeo.so) 需通过 rpath-link 导出给下游链接器。
+target_link_directories(usv_acados_backend PUBLIC "${ACADOS_LIB_DIR}")
+target_link_options(usv_acados_backend INTERFACE "LINKER:-rpath-link,${ACADOS_LIB_DIR}")
 target_link_libraries(usv_acados_backend PRIVATE acados hpipm blasfeo)
 
 # 公共库自身的 RUNPATH 指向 acados lib (间接依赖 libacados -> libhpipm 需要)。
@@ -171,6 +173,17 @@ if(BUILD_TESTING)
   # 用 ENVIRONMENT_MODIFICATION 前置而不覆盖: 覆盖会丢掉 source setup.bash
   # 带来的 ROS 库路径, 测试在加载 ROS 消息库时直接 127。
   set_tests_properties(test_instance_isolation PROPERTIES ENVIRONMENT_MODIFICATION
+    "LD_LIBRARY_PATH=path_list_prepend:${CMAKE_CURRENT_BINARY_DIR};LD_LIBRARY_PATH=path_list_prepend:${ACADOS_LIB_DIR}"
+  )
+
+  ament_add_gtest(test_model_lifecycle test/test_model_lifecycle.cpp)
+  target_include_directories(test_model_lifecycle PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+  target_link_libraries(test_model_lifecycle usv_acados::backend)
+  set_target_properties(test_model_lifecycle PROPERTIES
+    BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${ACADOS_LIB_DIR}")
+  set_tests_properties(test_model_lifecycle PROPERTIES ENVIRONMENT_MODIFICATION
     "LD_LIBRARY_PATH=path_list_prepend:${CMAKE_CURRENT_BINARY_DIR};LD_LIBRARY_PATH=path_list_prepend:${ACADOS_LIB_DIR}"
   )
 endif()
