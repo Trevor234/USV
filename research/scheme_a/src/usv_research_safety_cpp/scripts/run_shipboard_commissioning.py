@@ -243,17 +243,20 @@ def verify_contract(path: str, expected_sha: str, expected_mode: str | None = No
     return contract, runtime_mode
 
 
-OVERRIDDEN_OR_RESEARCH_PACKAGES = frozenset({
-    "usv_acados",
-    "usv_nmpc",
+RESEARCH_ONLY_PACKAGES = frozenset({
     "usv_research_interfaces",
     "usv_research_safety_cpp",
-    "usv_bringup",
 })
 
 
 def _underlay_editable_python_paths(underlay: str) -> set[str]:
-    """返回宿主 underlay 非研究包 .egg-link 指向的合法 <ws>/build/<pkg>/... 路径集合。"""
+    """返回宿主 underlay 非纯研究包 .egg-link 指向的合法 <ws>/build/<pkg>/... 路径集合。
+
+    当宿主工作空间以 --symlink-install 构建时，install/local_setup.bash 会先将
+    <ws>/build/<pkg> 追加到 PYTHONPATH（即使发布层覆盖了 usv_bringup 等同名包）。
+    clean_environment() 随后会剥离此集合中的路径，保证研究子进程只从发布层和受控
+    install 读取代码；纯研究包仍禁止以任何形式出现在宿主 underlay 中。
+    """
     underlay_real = os.path.realpath(underlay)
     ws_build_root = os.path.realpath(os.path.join(os.path.dirname(underlay_real), "build"))
     verified: set[str] = set()
@@ -264,7 +267,7 @@ def _underlay_editable_python_paths(underlay: str) -> set[str]:
     except OSError:
         return verified
     for pkg in pkg_names:
-        if pkg in OVERRIDDEN_OR_RESEARCH_PACKAGES:
+        if pkg in RESEARCH_ONLY_PACKAGES:
             continue
         pkg_dir = os.path.join(underlay_real, pkg)
         if not os.path.isdir(pkg_dir):

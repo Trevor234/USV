@@ -401,17 +401,29 @@ def test_clean_environment_still_rejects_unverified_build_or_overridden_pkg(tmp_
     with pytest.raises(SystemExit):
         sup.clean_environment(str(release), str(underlay), identity)
 
-    # 2. 已被覆盖的研究/bringup 包不允许通过 egg-link 绕过
-    bringup_src = ws / "build" / "usv_bringup" / "src"
-    bringup_sp = underlay / "usv_bringup" / "lib" / "python3.12" / "site-packages"
-    bringup_src.mkdir(parents=True)
-    bringup_sp.mkdir(parents=True)
-    (bringup_sp / "usv-bringup.egg-link").write_text(f"{bringup_src}\n", encoding="utf-8")
-    monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{bringup_src}")
+    # 2. 纯研究包不允许通过 underlay egg-link 注入
+    research_src = ws / "build" / "usv_research_safety_cpp" / "src"
+    research_sp = underlay / "usv_research_safety_cpp" / "lib" / "python3.12" / "site-packages"
+    research_src.mkdir(parents=True)
+    research_sp.mkdir(parents=True)
+    (research_sp / "usv-research-safety-cpp.egg-link").write_text(f"{research_src}\n", encoding="utf-8")
+    monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{research_src}")
     with pytest.raises(SystemExit):
         sup.clean_environment(str(release), str(underlay), identity)
 
-    # 3. 合法 ntrip_client build 路径若出现在非 PYTHONPATH 变量中仍必须拒绝
+    # 3. 宿主工作空间 --symlink-install 产生的 usv_bringup egg-link 必须被安全剥离，不得泄漏进子进程或阻塞启动
+    bringup_build = ws / "build" / "usv_bringup"
+    bringup_sp = underlay / "usv_bringup" / "lib" / "python3.12" / "site-packages"
+    bringup_build.mkdir(parents=True)
+    bringup_sp.mkdir(parents=True)
+    (bringup_sp / "usv-bringup.egg-link").write_text(f"{bringup_build}\n.\n", encoding="utf-8")
+    monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{bringup_build}/.:{underlay}")
+    cleaned_bringup = sup.clean_environment(str(release), str(underlay), identity)
+    cleaned_py = [os.path.realpath(p) for p in cleaned_bringup["PYTHONPATH"].split(":") if p]
+    assert os.path.realpath(str(bringup_build)) not in cleaned_py
+    assert os.path.realpath(str(rel_sp)) in cleaned_py
+
+    # 4. 合法 ntrip_client build 路径若出现在非 PYTHONPATH 变量中仍必须拒绝
     monkeypatch.setenv("PYTHONPATH", f"{rel_sp}:{ntrip_src}")
     monkeypatch.setenv("LD_LIBRARY_PATH", str(ntrip_src))
     with pytest.raises(SystemExit):
