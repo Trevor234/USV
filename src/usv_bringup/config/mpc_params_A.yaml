@@ -12,19 +12,25 @@
     horizon: 20                  # 预测时域步数
     publish_predicted: true      # 是否发布 MPC 预测轨迹
     max_solve_time_ms: 200.0    # 最大可接受求解时间 (ms)
+    progress_window_forward_m: 6.0   # 单调沿程索引前向搜索窗口 (m)
+    progress_window_back_m: 1.0      # 单调沿程索引后向搜索窗口 (m)
+    progress_end_guard_m: 5.0        # 新路径首拍跳入末端的防护缓冲距离 (m)
+    goal_tolerance_m: 2.0            # 终点到达判定距离，满足后切入 STANDBY (m)
+    max_initial_heading_step_rad: 0.7854 # 大航向差单拍参考角上限 (rad, ~45 deg)
+    align_turn_rate_rad_s: 0.5       # 大航向差渐进参考角推进速率 (rad/s)
 
     # --- 运动学 MPC ---
     kinematic:
       backend: "acados"            # 方案 A 仅实现 acados 后端 (非该值启动失败)
       dt: 0.2                     # 求解器步长 (s); 须与生成码烘焙值一致
-      Q: [10.0, 10.0, 50.0]       # 状态权重 [x, y, psi]
-      R: [1.0, 1.0]                # 控制量权重 [u_surge, r_yaw]
+      Q: [10.0, 10.0, 25.0]       # 状态权重 [x, y, psi]
+      R: [2.0, 4.0]                # 控制量权重 [u_surge, r_yaw]
       Qf_scale: 10.0               # 终端代价倍率 (Qf = scale * Q)
       u_max: 3.3                   # 最大纵荡速度 (m/s) — 实测标定 P99.5=3.24
       u_min: 0.0                   # 最小纵荡速度 (m/s)
       r_max: 1.25                  # 最大艏摇角速度 (rad/s) — 实测 P99=1.22 (STER TurnRate)
-      du_max: 1.3                  # 最大纵荡加速度 (m/s²) — 实测 P99=1.23
-      dr_max: 1.25                 # 最大艏摇角加速度 (rad/s²) — 实测 P99=1.22
+      du_max: 0.8                  # 最大纵荡加速度 (m/s²) — 保守平稳加减速
+      dr_max: 0.8                  # 最大艏摇角加速度 (rad/s²) — 抑制 S 形摆动
       tau_u: 0.8                   # 纵向速度一阶滞后时间常数 (s)
       tau_r: 1.78                  # 艏摇角速度一阶滞后时间常数 (s, Iz_eff/Nr)
       # acados 求解预算烘焙在生成码里 (SQP 50 次迭代 / 0.12 s 超时 / tol 1e-4),

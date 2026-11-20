@@ -45,13 +45,15 @@ class WaypointManager {
   /// 清空所有航点并重置进度。
   void clear();
 
+  /// 设置圆弧倒角参考转弯半径 (m)，用于计算中间航点外切允许的横向通过窗口。
+  void set_turn_radius(double turn_radius) { turn_radius_ = turn_radius; }
+
   /// 检查是否到达当前航点，若已到达则推进到下一个。返回是否刚刚到达了一个航点。
   ///
-  /// 到达判定为"圆内"或"已越过"二者之一。倒角(圆弧过渡)会让参考路径在
-  /// 拐角处外切, 路径到航点的最近距离随转弯角急剧增大(90 度约 5m,
-  /// 150 度约 34m), 远超 radius。若只用到航点的欧氏距离作判定, 密集或
-  /// 大角度航点的到达事件永远不会触发, 任务永远无法完成。
-  /// 因此同时接受"沿上一航段方向已越过该航点"。
+  /// 到达判定按航点类型区分:
+  ///   - 首航点 (idx==0): 圆内或沿首段方向已出发 (along > 0 且横向偏差合理);
+  ///   - 中间拐点: 圆内或沿角平分线方向已越过拐角且横向偏差在倒角外切包络内;
+  ///   - 终点航点 (idx==size-1): 仅限严格进入到达半径 dist < wp.radius 内完成。
   bool update_progress(double x, double y);
 
   /// 返回包含当前航点在内的后续航点（最多 lookahead 个）。
@@ -65,8 +67,9 @@ class WaypointManager {
 
  private:
   std::vector<Waypoint> waypoints_;
-  int  current_idx_      = 0;
-  bool mission_complete_ = false;
+  int    current_idx_      = 0;
+  bool   mission_complete_ = false;
+  double turn_radius_      = 4.0;
 };
 
 }  // 命名空间 usv_planning

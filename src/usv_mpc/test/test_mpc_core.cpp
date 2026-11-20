@@ -103,6 +103,81 @@ TEST(Utils, SampleAtTimeInterpolation) {
   EXPECT_EQ(s.j, 0);
 }
 
+// 复现 11.18 Episode #4 起点防终点倒吸 + U 型折返横漂 3.5m 不跨航段跳变
+TEST(Utils, MonotonicProgressPreventsEndpointCollapse) {
+  // 1) 构造 11.18 Episode #4 实测路径 (~92点, 0.5m 分辨率)
+  const std::vector<std::array<double, 2>> wps = {
+    {127.66, -92.95}, {126.64, -76.43}, {136.63, -77.08},
+    {144.07, -83.99}, {150.35, -94.49}
+  };
+  std::vector<std::array<double, 3>> ep4_path;
+  for (size_t seg = 0; seg + 1 < wps.size(); ++seg) {
+    const double dx = wps[seg + 1][0] - wps[seg][0];
+    const double dy = wps[seg + 1][1] - wps[seg][1];
+    const double len = std::hypot(dx, dy);
+    const double psi = std::atan2(dy, dx);
+    const int steps = std::max(1, static_cast<int>(std::round(len / 0.5)));
+    for (int k = 0; k < steps; ++k) {
+      const double t = static_cast<double>(k) / steps;
+      ep4_path.push_back({wps[seg][0] + t * dx, wps[seg][1] + t * dy, psi});
+    }
+  }
+  ep4_path.push_back({wps.back()[0], wps.back()[1], -1.0});
+  ASSERT_GE(ep4_path.size(), 90u);
+
+  // 船停在上一航段终点 (153.0, -95.1), 距终点仅 2.7m, 距起点 25.4m
+  usv_mpc::MonotonicProgressConfig cfg;
+  cfg.is_initial = true;
+  const auto res_ep4 = usv_mpc::select_monotonic_nearest_index(
+    ep4_path, 153.0, -95.1, 0, cfg);
+  EXPECT_LT(res_ep4.nearest_index, 15);
+  EXPECT_LT(res_ep4.progress_index, 15);
+  EXPECT_FALSE(usv_mpc::is_goal_reached(ep4_path, 153.0, -95.1, res_ep4.progress_index, 1, 2.0));
+
+  // 2) U 型折返航道 (Leg1: y=0, 0..30m; 半圆弯 R=3m; Leg2: y=6, 30..0m)
+  std::vector<std::array<double, 3>> uturn_path;
+  for (int i = 0; i <= 60; ++i) {
+    uturn_path.push_back({0.5 * i, 0.0, 0.0});
+  }
+  for (int i = 1; i <= 18; ++i) {
+    const double th = -M_PI / 2.0 + M_PI * i / 19.0;
+    uturn_path.push_back({30.0 + 3.0 * std::cos(th), 3.0 + 3.0 * std::sin(th), th + M_PI / 2.0});
+  }
+  for (int i = 0; i <= 60; ++i) {
+    uturn_path.push_back({30.0 - 0.5 * i, 6.0, M_PI});
+  }
+
+  // 在 Leg1 中段 (idx=30, x=15) 横漂到 y=3.5 (距 Leg2 y=6 仅 2.5m, 比距 Leg1 3.5m 更近)
+  usv_mpc::MonotonicProgressConfig track_cfg;
+  track_cfg.is_initial = false;
+  const auto res_uturn = usv_mpc::select_monotonic_nearest_index(
+    uturn_path, 15.0, 3.5, 30, track_cfg);
+  EXPECT_LE(res_uturn.nearest_index, 45);
+  EXPECT_GE(res_uturn.progress_index, 30);
+  EXPECT_LE(res_uturn.progress_index, 45);
+}
+
+// 终点到达门禁与大航向偏差参考平滑验证
+TEST(Utils, GoalReachedAndSmoothHeadingReference) {
+  std::vector<std::array<double, 3>> path;
+  for (int i = 0; i < 10; ++i) {
+    path.push_back({static_cast<double>(i), 0.0, 0.0});
+  }
+  // 进度未到末端时不完成
+  EXPECT_FALSE(usv_mpc::is_goal_reached(path, 9.0, 0.0, 2, 1, 2.0));
+  // 进度到达末端且在容差圈内完成
+  EXPECT_TRUE(usv_mpc::is_goal_reached(path, 8.2, 0.0, 8, 1, 2.0));
+  // 距终点 >= tolerance 不完成
+  EXPECT_FALSE(usv_mpc::is_goal_reached(path, 7.0, 0.0, 8, 1, 2.0));
+
+  Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(3, 5);
+  ref.row(2).setConstant(1.8);  // ~103 deg
+  const double raw_e = usv_mpc::smooth_reference_heading(ref, 0.0, 0.2, 0.7854, 0.5, 0.0);
+  EXPECT_NEAR(raw_e, 1.8, 1e-9);
+  EXPECT_NEAR(ref(2, 0), 0.1, 1e-9);
+  EXPECT_NEAR(ref(2, 4), 0.5, 1e-9);
+}
+
 // ===========================================================================
 // 运动学模型 sanity (替换 B 的 FossenModel 测试, 测 3 维 ODE)
 // ===========================================================================

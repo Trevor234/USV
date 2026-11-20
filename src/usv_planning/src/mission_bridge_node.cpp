@@ -140,17 +140,21 @@ void MissionBridgeNode::waypoints_callback_(
 }
 
 // ── 航点签名 ─────────────────────────────────────────────
-std::pair<uint16_t, MissionBridgeNode::WaypointSignature>
+MissionBridgeNode::WaypointSignature
 MissionBridgeNode::waypoint_signature_(
     const mavros_msgs::msg::WaypointList& msg) const {
   WaypointSignature sig;
-  for (const auto& wp : msg.waypoints) {
-    sig.emplace_back(
-        wp.frame, wp.command, wp.is_current, wp.autocontinue,
-        wp.param1, wp.param2, wp.param3, wp.param4,
-        wp.x_lat, wp.y_long, wp.z_alt);
+  for (size_t i = 0; i < msg.waypoints.size(); ++i) {
+    if (skip_home_ && i == 0) {
+      continue;
+    }
+    const auto& wp = msg.waypoints[i];
+    if (NAV_WAYPOINT_COMMANDS.find(wp.command) == NAV_WAYPOINT_COMMANDS.end()) {
+      continue;
+    }
+    sig.emplace_back(wp.command, wp.x_lat, wp.y_long);
   }
-  return {msg.current_seq, std::move(sig)};
+  return sig;
 }
 
 // ── 主动拉取任务 ─────────────────────────────────────────

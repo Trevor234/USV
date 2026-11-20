@@ -30,12 +30,12 @@
 
 #pragma once
 
+#include <Eigen/Dense>
+
 #include <array>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <Eigen/Dense>
 
 namespace usv_mpc
 {
@@ -92,5 +92,53 @@ RefSample sample_path_profile_at_time(
   const std::vector<double> & vs,
   const std::vector<double> & rs,
   double tk, int j_hint);
+
+/// 单调沿程最近点搜索配置。
+struct MonotonicProgressConfig
+{
+  double forward_window_m = 6.0;  ///< 前向允许搜索的最大弧长窗口 (m)
+  double back_window_m = 1.0;     ///< 后向允许搜索的最大弧长窗口 (m, 抗定位抖动)
+  double end_guard_m = 5.0;       ///< 起步首拍防终点倒吸保护区长度 (m)
+  bool is_initial = false;        ///< 是否处于任务起步首次搜索 (progress_index == 0)
+};
+
+/// 单调沿程最近点搜索结果。
+struct MonotonicProgressResult
+{
+  int nearest_index = 0;   ///< 局部窗口内欧氏最近点索引
+  int progress_index = 0;  ///< 单调推进后的最新沿程进度索引
+};
+
+/// 带局部前向搜索窗口与起步防终点倒吸保护的单调最近点搜索。
+MonotonicProgressResult select_monotonic_nearest_index(
+  const std::vector<std::array<double, 3>> & path,
+  double x, double y,
+  int prev_progress_index,
+  const MonotonicProgressConfig & config = MonotonicProgressConfig{});
+
+/// 判断两条参考路径是否发生实质几何变化 (首尾位移 > tol_m 或点数变化)。
+bool is_substantive_path_change(
+  const std::vector<std::array<double, 3>> & old_path,
+  const std::vector<std::array<double, 3>> & new_path,
+  double tol_m = 0.5);
+
+/// 判定船体是否沿路径推进至末端且进入终点容差圈内。
+bool is_goal_reached(
+  const std::vector<std::array<double, 3>> & path,
+  double x, double y,
+  int progress_index,
+  int start_offset,
+  double goal_tolerance_m);
+
+/// 对参考轨迹航向做连续展开, 当初始航向偏差超过 max_initial_step_rad 时,
+/// 按 align_turn_rate_rad_s 渐进过渡参考航向 (并可选抬升参考航速至 align_min_speed_mps)。
+/// 返回展开后的初始原始航向误差 (rad)。
+double smooth_reference_heading(
+  Eigen::MatrixXd & ref,
+  double current_psi,
+  double dt,
+  double max_initial_step_rad,
+  double align_turn_rate_rad_s,
+  double align_min_speed_mps = 0.0);
 
 }  // namespace usv_mpc

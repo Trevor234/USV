@@ -6,25 +6,27 @@
 /**:
   ros__parameters:
     path_resolution: 0.5        # 采样路径点间距 (m)
-    turn_radius: 12.0           # 最小转弯半径 / 圆弧倒角半径 (m)；36点圆需 <15·cos5°=14.94 才不裁剪
+    turn_radius: 4.0            # 最小转弯半径 / 圆弧倒角半径 (m)；缩短拐角倒角避免短直线裁剪
     update_rate: 1.0            # 路径更新频率 (Hz)
     waypoints_file: ""          # 默认不加载本地 YAML 航点，等待 Mission Planner 航点
     path_topic: "/path/reference"                            # 参考路径 (nav_msgs/Path: x,y,psi)
     profile_topic: "/path/reference_profile"                 # 速度剖面 (Float64MultiArray[M,4]=v,kappa,r,t)
     dynamic_waypoints_topic: "/usv/mission/waypoints_local"  # 来自 mission_bridge_node 的动态航点
     default_waypoint_radius: 2.0     # 动态航点的到达判定半径 (m)
+    prepend_current_pose: true       # 在路径起点锚定当前船体位置，避免过弯前段丢失
 
     # --- 速度剖面 (TOPP) 约束 ---
     # 重要：规划可行域应 ⊆ 控制可行域。本工作目录 MPC 为动力学 NMPC (推力域约束
-    # dynamic.T_max=25N)，规划侧 u_max 是 TOPP 自身巡航速度上限，需保证该速度下
+    # dynamic.T_max=30N)，规划侧 u_max 是 TOPP 自身巡航速度上限，需保证该速度下
     # 所需推力不超过 T_max（直航阻力 + 过弯侧向加速度均在推力包络内）。
     u_max: 0.8              # TOPP 巡航速度上限 (m/s)，实船保守限速
-    r_max: 0.18             # 最大转艏角速度 (rad/s)，避免命令过急转弯
-    lat_accel_max: 0.12     # 最大侧向加速度 (m/s^2)，限制过弯速度
-    accel_max: 0.18         # 最大纵向加速 (m/s^2)
+    r_max: 0.35             # 最大转艏角速度 (rad/s)，提升起航对准与过弯角速度上限
+    lat_accel_max: 0.35     # 最大侧向加速度 (m/s^2)，匹配 R=4m @ ~0.8m/s 弯道
+    accel_max: 0.35         # 最大纵向加速 (m/s^2)
     decel_max: 0.25         # 最大纵向减速 (m/s^2)
     v_end: 0.0              # 末端目标速度 (m/s)，靠近终点减速
     v_min: 0.2              # 最小速度下限，保证时间参数推进 (m/s)
+    v_start_min: 0.4        # 起点最小参考速度下限 (m/s)，打破 v0=0 时 1 Hz 重规划零速死锁
 
     # --- 可选：最小曲率精修 NLP（默认关闭，开启会增加规划耗时）---
     enable_curvature_opt: false

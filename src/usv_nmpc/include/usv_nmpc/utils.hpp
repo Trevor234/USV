@@ -30,12 +30,12 @@
 
 #pragma once
 
+#include <Eigen/Dense>
+
 #include <array>
 #include <string>
 #include <utility>
 #include <vector>
-
-#include <Eigen/Dense>
 
 namespace usv_mpc {
 
@@ -52,7 +52,7 @@ std::pair<double, double> body_to_ned(double u, double v, double psi);
 /// 旋转局部 map 帧速度到 body 帧 (legacy 名)。
 std::pair<double, double> ned_to_body(double vn, double ve, double psi);
 
-/// 物理推力到 ArduRover RC override 的本地线性映射参数。
+/// 物理推力到 ArduRover RC override 的本地线性/标定死区映射参数。
 struct RcActuationConfig {
   double thrust_max = 25.0;
   double thrust_min = -25.0;
@@ -63,7 +63,33 @@ struct RcActuationConfig {
   double throttle_sign = 1.0;
   double steering_gain = 0.4;
   double throttle_gain = 0.75;
+  // 死区补偿与二次多项式推力标定参数 (默认关闭以保持向后兼容线性模式)
+  bool deadband_compensation = false;
+  int pwm_deadband_forward = 1600;
+  int pwm_deadband_reverse = 1400;
+  double deadband_min_thrust_n = 0.5;
+  bool use_quadratic_model = false;
+  double quad_coeff_a = 6.378451e-5;
+  double quad_coeff_b = 0.1280703;
 };
+
+/// 起步大航向偏差执行层前向推力辅助配置。
+struct LargeHeadingAssistConfig {
+  bool enabled = true;
+  double heading_threshold_rad = 1.0471975512;  // 60 deg
+  double speed_threshold_mps = 0.3;
+  double min_net_thrust_n = 8.0;
+  double reverse_thrust_floor_n = -5.0;
+  double thrust_min = -30.0;
+  double thrust_max = 30.0;
+};
+
+/// 起步大航向偏差且低速时限制反推底限并确保最小净正推力，破除原地倒车打转。
+Eigen::Vector2d apply_large_heading_forward_assist(
+    const Eigen::Vector2d& thrust,
+    double abs_heading_error_rad,
+    double surge_speed_mps,
+    const LargeHeadingAssistConfig& config);
 
 /// RC 映射结果。effective_thrust 是 PWM 量化、增益和本地线性混控后，
 /// 在 MPC [T_L,T_R] 坐标中的等效已下发推力，用于下一拍 delta_T 锚点。
@@ -115,5 +141,51 @@ RefSample sample_path_profile_at_time(
     const std::vector<double>& vs,
     const std::vector<double>& rs,
     double tk, int j_hint);
+
+/// 单调沿程最近点搜索配置。
+struct MonotonicProgressConfig {
+  double forward_window_m = 6.0;
+  double back_window_m = 1.0;
+  double end_guard_m = 5.0;
+  bool is_initial = false;
+};
+
+/// 单调沿程最近点搜索结果。
+struct MonotonicProgressResult {
+  int nearest_index = 0;
+  int progress_index = 0;
+};
+
+/// 带局部前向搜索窗口与起步防终点倒吸保护的单调最近点搜索。
+MonotonicProgressResult select_monotonic_nearest_index(
+    const std::vector<std::array<double, 3>>& path,
+    double x, double y,
+    int prev_progress_index,
+    const MonotonicProgressConfig& config = MonotonicProgressConfig{});
+
+/// 判断两条参考路径是否发生实质几何变化 (首尾位移 > tol_m 或点数变化)。
+bool is_substantive_path_change(
+    const std::vector<std::array<double, 3>>& old_path,
+    const std::vector<std::array<double, 3>>& new_path,
+    double tol_m = 0.5);
+
+/// 判定船体是否沿路径推进至末端且进入终点容差圈内。
+bool is_goal_reached(
+    const std::vector<std::array<double, 3>>& path,
+    double x, double y,
+    int progress_index,
+    int start_offset,
+    double goal_tolerance_m);
+
+/// 对参考轨迹航向做连续展开, 当初始航向偏差超过 max_initial_step_rad 时,
+/// 按 align_turn_rate_rad_s 渐进过渡参考航向, 并抬升参考速度至 align_min_speed_mps。
+/// 返回展开后的初始原始航向误差 (rad)。
+double smooth_reference_heading(
+    Eigen::MatrixXd& ref,
+    double current_psi,
+    double dt,
+    double max_initial_step_rad,
+    double align_turn_rate_rad_s,
+    double align_min_speed_mps = 0.0);
 
 }  // namespace usv_mpc

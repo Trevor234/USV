@@ -120,6 +120,12 @@ void MpcControllerNode::declare_parameters_()
   this->declare_parameter("odom_timeout_s", 1.0);
   this->declare_parameter("reference_start_offset", 1);  // A 用 1 (B 用 8)
   this->declare_parameter("cruise_speed", 1.0);
+  this->declare_parameter("progress_window_forward_m", 6.0);
+  this->declare_parameter("progress_window_back_m", 1.0);
+  this->declare_parameter("progress_end_guard_m", 5.0);
+  this->declare_parameter("goal_tolerance_m", 2.0);
+  this->declare_parameter("max_initial_heading_step_rad", 0.7854);
+  this->declare_parameter("align_turn_rate_rad_s", 0.5);
 
   // 运动学 MPC 参数 (kinematic.*)
   this->declare_parameter("kinematic.Q", std::vector<double>{10.0, 10.0, 50.0});
@@ -171,6 +177,12 @@ void MpcControllerNode::load_config_()
   odom_timeout_s_ = this->get_parameter("odom_timeout_s").as_double();
   reference_start_offset_ = this->get_parameter("reference_start_offset").as_int();
   cruise_speed_ = this->get_parameter("cruise_speed").as_double();
+  progress_window_forward_m_ = this->get_parameter("progress_window_forward_m").as_double();
+  progress_window_back_m_ = this->get_parameter("progress_window_back_m").as_double();
+  progress_end_guard_m_ = this->get_parameter("progress_end_guard_m").as_double();
+  goal_tolerance_m_ = this->get_parameter("goal_tolerance_m").as_double();
+  max_initial_heading_step_rad_ = this->get_parameter("max_initial_heading_step_rad").as_double();
+  align_turn_rate_rad_s_ = this->get_parameter("align_turn_rate_rad_s").as_double();
   backend_param_ = this->get_parameter("kinematic.backend").as_string();
 
   // 方案 A 只有 acados 后端。配置成别的值必须启动失败:
@@ -231,6 +243,9 @@ void MpcControllerNode::init_state_()
   control_count_ = 0;
   last_state_time_ = 0.0;
   last_odom_time_ = 0.0;
+  progress_index_ = 0;
+  mission_completed_ = false;
+  last_raw_heading_error_rad_ = 0.0;
 }
 
 void MpcControllerNode::init_pubsub_()
@@ -322,16 +337,25 @@ void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg
 
 void MpcControllerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr msg)
 {
-  std::lock_guard<std::mutex> lk(state_lock_);
-  reference_path_.clear();
+  std::vector<std::array<double, 3>> new_path;
+  new_path.reserve(msg->poses.size());
   for (const auto & pose : msg->poses) {
     auto & q = pose.pose.orientation;
-    reference_path_.push_back({pose.pose.position.x, pose.pose.position.y,
+    new_path.push_back({pose.pose.position.x, pose.pose.position.y,
         quaternion_to_yaw(q.x, q.y, q.z, q.w)});
   }
+
+  std::lock_guard<std::mutex> lk(state_lock_);
+  const bool changed = !path_received_ ||
+    is_substantive_path_change(reference_path_, new_path, 0.5);
+  reference_path_ = std::move(new_path);
   reference_path_stamp_ = {static_cast<int>(msg->header.stamp.sec),
     static_cast<int>(msg->header.stamp.nanosec)};
   path_received_ = !reference_path_.empty();
+  if (!path_received_ || reference_path_.size() < 2 || changed) {
+    progress_index_ = 0;
+    mission_completed_ = false;
+  }
 }
 
 void MpcControllerNode::profile_callback_(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
@@ -378,6 +402,7 @@ std::pair<bool, std::string> MpcControllerNode::can_solve_() const
     return {false, "odom_timeout"};
   }
   if (!path_received_ || reference_path_.size() < 2) {return {false, "no_path"};}
+  if (mission_completed_) {return {false, "mission_complete"};}
   if (require_fcu_state_) {
     if (last_state_time_ == 0.0) {return {false, "no_state"};}
     if (state_timeout_s_ > 0.0 && (now - last_state_time_) > state_timeout_s_) {
@@ -447,6 +472,19 @@ void MpcControllerNode::control_loop_()
     {
       std::lock_guard<std::mutex> lk(state_lock_);
       measured << u_, r_;
+      if (progress_index_ > 0 && reference_path_.size() >= 2) {
+        const double d_prog = std::hypot(
+          x_ - reference_path_[progress_index_][0],
+          y_ - reference_path_[progress_index_][1]);
+        const double d_start = std::hypot(
+          x_ - reference_path_.front()[0],
+          y_ - reference_path_.front()[1]);
+        if (d_prog > std::max(progress_window_forward_m_, 8.0) &&
+          d_start < 0.5 * d_prog)
+        {
+          progress_index_ = 0;
+        }
+      }
     }
     mpc_->set_applied_command(measured);
   }
@@ -500,7 +538,24 @@ void MpcControllerNode::run_kinematic_mpc_()
     }
     current_pose << x_, y_, normalize_angle(psi_);
     current_state_5d << x_, y_, normalize_angle(psi_), u_, r_;
-    reference = build_reference_(current_pose);
+    MonotonicProgressConfig pcfg;
+    pcfg.forward_window_m = progress_window_forward_m_;
+    pcfg.back_window_m = progress_window_back_m_;
+    pcfg.end_guard_m = progress_end_guard_m_;
+    pcfg.is_initial = (progress_index_ == 0);
+    const auto prog = select_monotonic_nearest_index(
+      reference_path_, x_, y_, progress_index_, pcfg);
+    progress_index_ = prog.progress_index;
+    if (is_goal_reached(
+        reference_path_, x_, y_, progress_index_,
+        reference_start_offset_, goal_tolerance_m_))
+    {
+      mission_completed_ = true;
+      lk.unlock();
+      enter_standby_("mission_complete");
+      return;
+    }
+    reference = build_reference_(current_pose, prog.nearest_index);
   }
 
   const auto solve_start = std::chrono::steady_clock::now();
@@ -612,6 +667,8 @@ void MpcControllerNode::publish_status_(
     j["armed"] = armed_;
     j["path_received"] = path_received_;
     j["path_len"] = reference_path_.size();
+    j["progress_index"] = progress_index_;
+    j["mission_completed"] = mission_completed_;
     j["profile_synced"] = profile_synced_;
     j["profile_sync_reason"] = profile_sync_reason_;
     j["x"] = x_;
@@ -660,6 +717,8 @@ void MpcControllerNode::publish_standby_status_(const std::string & reason)
     j["armed"] = armed_;
     j["path_received"] = path_received_;
     j["path_len"] = reference_path_.size();
+    j["progress_index"] = progress_index_;
+    j["mission_completed"] = mission_completed_;
     j["profile_synced"] = profile_synced_;
     j["profile_sync_reason"] = profile_sync_reason_;
   }
@@ -689,7 +748,8 @@ void MpcControllerNode::publish_predicted_trajectory_(const Eigen::MatrixXd & X_
 }
 
 // ── 参考构建 (★ 3 维, start_offset=1) ──
-Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d & current_state)
+Eigen::MatrixXd MpcControllerNode::build_reference_(
+  const Eigen::Vector3d & current_state, int nearest)
 {
   const int N = mpc_->N();
   double dt = mpc_->dt();
@@ -697,17 +757,8 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d & curr
   const auto & path = reference_path_;
   if (path.empty()) {return ref;}
 
-  // 最近点 + start_offset
-  double best_d = 1e18;
-  int nearest = 0;
-  for (size_t i = 0; i < path.size(); ++i) {
-    double d = std::hypot(path[i][0] - current_state(0), path[i][1] - current_state(1));
-    if (d < best_d) {
-      best_d = d;
-      nearest = static_cast<int>(i);
-    }
-  }
-  int idx = std::min(nearest + std::max(1, reference_start_offset_),
+  const int clamped_nearest = std::clamp(nearest, 0, static_cast<int>(path.size()) - 1);
+  int idx = std::min(clamped_nearest + std::max(1, reference_start_offset_),
                      static_cast<int>(path.size()) - 1);
 
   // profile 同步判定
@@ -776,6 +827,9 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Eigen::Vector3d & curr
       // ★ 不填 ref(3..5) (B 填 ref(3,k)=cruise_speed 等)
     }
   }
+  last_raw_heading_error_rad_ = smooth_reference_heading(
+    ref, current_state(2), dt,
+    max_initial_heading_step_rad_, align_turn_rate_rad_s_, 0.0);
   return ref;
 }
 

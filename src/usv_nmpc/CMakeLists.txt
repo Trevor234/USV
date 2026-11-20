@@ -173,6 +173,31 @@ if(BUILD_TESTING)
   set_tests_properties(test_acados_solve PROPERTIES ENVIRONMENT_MODIFICATION
     "LD_LIBRARY_PATH=path_list_prepend:${USV_ACADOS_BACKEND_DIR};LD_LIBRARY_PATH=path_list_prepend:${ACADOS_LIB_DIR}"
   )
+
+  # gtest: 方案 B 节点级控制逻辑回归 (终点 STANDBY / 防倒吸 / 大偏角前向辅助)
+  ament_add_gtest(test_nmpc_control
+    test/test_nmpc_control.cpp
+    src/mpc_node.cpp
+  )
+  target_include_directories(test_nmpc_control PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  )
+  target_link_libraries(test_nmpc_control mpc_solver_lib)
+  ament_target_dependencies(test_nmpc_control
+    rclcpp
+    geometry_msgs
+    nav_msgs
+    sensor_msgs
+    mavros_msgs
+    std_msgs
+    nlohmann_json
+  )
+  set_target_properties(test_nmpc_control PROPERTIES
+    BUILD_RPATH "${USV_ACADOS_BACKEND_DIR};${ACADOS_LIB_DIR}"
+  )
+  set_tests_properties(test_nmpc_control PROPERTIES ENVIRONMENT_MODIFICATION
+    "LD_LIBRARY_PATH=path_list_prepend:${USV_ACADOS_BACKEND_DIR};LD_LIBRARY_PATH=path_list_prepend:${ACADOS_LIB_DIR}"
+  )
 endif()
 
 ament_package()

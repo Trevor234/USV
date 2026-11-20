@@ -17,9 +17,21 @@
     odom_timeout_s: 3.0         # EKF/GPS 更新期间 MAVROS 局部里程计可能短暂暂停
     state_timeout_s: 5.0        # 允许短暂的 MAVLink 心跳抖动，避免直接掉入 STANDBY
     reference_start_offset: 8   # 从最近路径点前方若干个点开始截取 MPC 参考轨迹
+    progress_window_forward_m: 6.0   # 单调沿程索引前向搜索窗口 (m)
+    progress_window_back_m: 1.0      # 单调沿程索引后向搜索窗口 (m)
+    progress_end_guard_m: 5.0        # 新路径首拍跳入末端的防护缓冲距离 (m)
+    goal_tolerance_m: 2.0            # 终点到达判定距离，满足后切入 STANDBY (m)
+    max_initial_heading_step_rad: 0.7854 # 大航向差单拍参考角上限 (rad, ~45 deg)
+    align_turn_rate_rad_s: 0.5       # 大航向差渐进参考角推进速率 (rad/s)
+    align_min_speed_mps: 0.4         # 航向对准阶段保持最低前进速度参考 (m/s)
+    enable_large_heading_forward_assist: true # 大航向差零速起航前向净推力辅助
+    align_heading_threshold_deg: 60.0 # 触发净前向推力辅助的航向误差阈值 (deg)
+    align_speed_threshold_mps: 0.3    # 触发辅助的低速阈值 (m/s)
+    align_min_net_thrust_n: 8.0       # 保证 TL+TR >= 8 N 以驱动前向流场与舵效
+    align_reverse_thrust_floor_n: -5.0 # 限制反向桨空泡/效率损失 (N)
 
-    # --- 动力学 NMPC（针对 14.2 kg / 25 N 实船重新整定）---
-    # 选取 Q/R 使临界推力 sqrt(Q_x/R)≈20 N = 80% * T_max(25 N)，即控制器愿意动用接近满推力来消除 1 m 误差。
+    # --- 动力学 NMPC（针对 14.2 kg / 30 N 实船重新整定）---
+    # 选取 Q/R 使临界推力 sqrt(Q_x/R)≈20 N，即控制器愿意动用较大推力消除 1 m 误差。
     # dt=0.2（原为 0.1）使 dyn_N=round(horizon*mpc_dt/dt)=20，从而将求解时间控制在树莓派 5 机载计算机的 200 ms 预算内。
     # Q/R/Rd 为运行代价密度权重：acados 与 CasADi 均会将完整阶段代价乘以 dt；Qf_scale 作用于未缩放的终端代价。
     # Rd 惩罚单步推力增量，已按该固定 dt 整定。
@@ -29,9 +41,9 @@
       Rd: [0.2, 0.2]               # 控制变化率权重（保持 Rd/R=4）
       Qf_scale: 8.0                # 终端代价倍率（针对 N=20 调低）
       dt: 0.2                      # 动力学 MPC 离散步长 (s) — 保持 N=20
-      T_max: 25.0                  # 单侧推进器最大正向推力 (N) — K_T
-      T_min: -25.0                 # 单侧推进器最大反向推力 (N) — 正反推力对称
-      dT_max: 80.0                 # 最大推力变化率 (N/s) — 约 0.3 s 内从 0 升至 25 N
+      T_max: 30.0                  # 单侧推进器正向有效推力上限 (N) — 系泊二次拟合整定
+      T_min: -30.0                 # 单侧推进器反向推力下限 (N)
+      dT_max: 80.0                 # 最大推力变化率 (N/s)
 
     # --- NMPC RC 覆写映射（ArduRover 输入通道）---
     rc_steering_channel: 0         # CH1 转向输入通道
@@ -41,8 +53,14 @@
     rc_pwm_max: 1900
     steering_sign: -1.0            # 转向取反：ArduRover RC1 偏航符号与 NMPC (TR-TL) 相反
     throttle_sign: 1.0             # 正向 MPC 油门在 rover-skid 模式下对应高 RC3 / 前进
-    steering_gain: 0.4             # 修正转向符号后适度限制偏航控制增益
-    throttle_gain: 0.75            # 针对轨迹跟踪整定后的油门增益
-    # 节点会把最终整数 PWM 按当前线性混控反算为等效 [TL,TR]，写回下一拍
-    # delta_T 锚点。该近似包含 gain/sign/PWM 量化；死区、非线性和电压影响
-    # 仍需实船标定后纳入。
+    steering_gain: 0.75            # 提升转向增益，确保差动转向指令在死区补偿下充足
+    throttle_gain: 0.85            # 提升油门增益以匹配二次推力标定曲线
+    deadband_compensation: true    # 启用 1500-1600 us / 1400-1500 us 死区跳跃补偿
+    pwm_deadband_forward: 1600     # 系泊标定正向起转 PWM 阈值 (us)
+    pwm_deadband_reverse: 1400     # 反向死区对称阈值 (us)
+    deadband_min_thrust_n: 0.5     # 触发死区跳跃补偿的最小推力绝对值 (N)
+    use_quadratic_model: true      # 启用系泊试验二次逆映射 u_pwm -> PWM
+    quad_coeff_a: 6.378451e-5      # 二次项系数 F = a*(PWM-1600)^2 + b*(PWM-1600)
+    quad_coeff_b: 0.1280703        # 一次项系数
+    # 节点会把最终整数 PWM 按完全一致的死区/二次曲线反算为等效 [TL,TR]，写回下一拍
+    # delta_T 锚点，保证执行器反馈与控制器推力域闭环自洽。

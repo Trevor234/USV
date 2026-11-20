@@ -19,6 +19,7 @@
 
 #include "usv_planning/path_planner_node.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <functional>
 #include <optional>
@@ -69,7 +70,7 @@ void PathPlannerNode::declare_parameters_() {
   this->declare_parameter("update_rate", 1.0);
   this->declare_parameter("waypoints_file", std::string(""));
   this->declare_parameter("path_resolution", 0.5);
-  this->declare_parameter("turn_radius", 5.0);
+  this->declare_parameter("turn_radius", 4.0);
   this->declare_parameter("odom_topic",
                           std::string("/mavros/local_position/odom"));
   this->declare_parameter("path_topic", std::string("/path/reference"));
@@ -78,6 +79,7 @@ void PathPlannerNode::declare_parameters_() {
   this->declare_parameter("dynamic_waypoints_topic",
                           std::string("/usv/mission/waypoints_local"));
   this->declare_parameter("default_waypoint_radius", 2.0);
+  this->declare_parameter("prepend_current_pose", true);
 
   // TOPP 速度剖面约束
   this->declare_parameter("u_max", 2.0);
@@ -87,6 +89,7 @@ void PathPlannerNode::declare_parameters_() {
   this->declare_parameter("decel_max", 0.5);
   this->declare_parameter("v_end", 0.0);
   this->declare_parameter("v_min", 0.2);
+  this->declare_parameter("v_start_min", 0.4);
 
   // 可选最小曲率精修
   this->declare_parameter("enable_curvature_opt", false);
@@ -101,8 +104,9 @@ void PathPlannerNode::load_config_() {
   odom_topic_        = this->get_parameter("odom_topic").as_string();
   path_topic_        = this->get_parameter("path_topic").as_string();
   profile_topic_     = this->get_parameter("profile_topic").as_string();
-  dynamic_wp_topic_  = this->get_parameter("dynamic_waypoints_topic").as_string();
-  default_wp_radius_ = this->get_parameter("default_waypoint_radius").as_double();
+  dynamic_wp_topic_     = this->get_parameter("dynamic_waypoints_topic").as_string();
+  default_wp_radius_    = this->get_parameter("default_waypoint_radius").as_double();
+  prepend_current_pose_ = this->get_parameter("prepend_current_pose").as_bool();
 
   u_max_         = this->get_parameter("u_max").as_double();
   r_max_         = this->get_parameter("r_max").as_double();
@@ -111,9 +115,20 @@ void PathPlannerNode::load_config_() {
   decel_max_     = this->get_parameter("decel_max").as_double();
   v_end_         = this->get_parameter("v_end").as_double();
   v_min_         = this->get_parameter("v_min").as_double();
+  v_start_min_   = this->get_parameter("v_start_min").as_double();
+  if (u_max_ >= v_min_) {
+    const double clamped = std::clamp(v_start_min_, v_min_, u_max_);
+    if (clamped != v_start_min_) {
+      RCLCPP_WARN(this->get_logger(),
+                  "v_start_min=%.2f 超出 [v_min=%.2f, u_max=%.2f], 已钳位为 %.2f",
+                  v_start_min_, v_min_, u_max_, clamped);
+      v_start_min_ = clamped;
+    }
+  }
   enable_curv_opt_   = this->get_parameter("enable_curvature_opt").as_bool();
   curv_opt_max_iter_ = this->get_parameter("curvature_opt_max_iter").as_int();
   curv_opt_corridor_ = this->get_parameter("curvature_opt_corridor").as_double();
+  wp_manager_.set_turn_radius(turn_radius_);
 }
 
 // ── 里程计回调 ───────────────────────────────────────────
@@ -135,6 +150,7 @@ void PathPlannerNode::odom_callback_(
   double cosy = 1.0 - 2.0 * (q.y * q.y + q.z * q.z);
   psi_ = std::atan2(siny, cosy);
   u_ = t.linear.x;
+  odom_received_ = true;
 }
 
 // ── 动态航点回调 ─────────────────────────────────────────
@@ -149,7 +165,9 @@ void PathPlannerNode::dynamic_waypoints_callback_(
   }
 
   // NaN/Inf 门禁: 一个污染点会让 fillet/采样产生垃圾路径或 UB
-  size_t added = 0, skipped = 0;
+  std::vector<Waypoint> valid_wps;
+  valid_wps.reserve(msg->poses.size());
+  size_t skipped = 0;
   for (const auto& pose : msg->poses) {
     const double x = pose.pose.position.x;
     const double y = pose.pose.position.y;
@@ -162,17 +180,38 @@ void PathPlannerNode::dynamic_waypoints_callback_(
     wp.y = y;
     wp.radius = default_wp_radius_;
     wp.heading = 0.0;
-    wp_manager_.add_waypoint(wp);
-    added++;
+    valid_wps.push_back(wp);
   }
   if (skipped > 0) {
     RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 5000,
                          "动态航点含 %zu 个 NaN/Inf 点，已丢弃", skipped);
   }
+  if (valid_wps.empty()) {
+    publish_empty_path_();
+    return;
+  }
+
+  bool prepended = false;
+  if (prepend_current_pose_ && odom_received_) {
+    const double dist_to_first = std::hypot(valid_wps.front().x - x_,
+                                            valid_wps.front().y - y_);
+    if (dist_to_first > default_wp_radius_) {
+      Waypoint anchor;
+      anchor.x = x_;
+      anchor.y = y_;
+      anchor.radius = default_wp_radius_;
+      anchor.heading = psi_;
+      wp_manager_.add_waypoint(anchor);
+      prepended = true;
+    }
+  }
+  for (const auto& wp : valid_wps) {
+    wp_manager_.add_waypoint(wp);
+  }
 
   RCLCPP_INFO(this->get_logger(),
-              "Loaded %zu waypoints from mission bridge",
-              added);
+              "Loaded %zu waypoints from mission bridge%s",
+              valid_wps.size(), prepended ? " (已插入当前船位起始引导点)" : "");
 }
 
 // ── 发布空路径 ───────────────────────────────────────────
@@ -298,11 +337,13 @@ PathPlannerNode::generate_smooth_path_() {
                          "最小曲率精修尚未实现，回退 fillet 结果");
   }
 
-  // 速度层：TOPP 时间最优速度剖面
+  // 速度层：TOPP 时间最优速度剖面 (v_start_min 破除零初速与死区之间的 1Hz 重规划死锁)
+  const double v_start_eff = std::min(
+      u_max_, std::max({v_start_min_, v_min_, std::max(0.0, u_)}));
   auto profile = compute_profile(
       kappas, s, u_max_, r_max_, lat_accel_max_,
       accel_max_, decel_max_,
-      std::max(0.0, u_), v_end_, v_min_);
+      v_start_eff, v_end_, v_min_);
 
   return SmoothPathResult{
       std::move(xs), std::move(ys), std::move(psis), std::move(kappas),
