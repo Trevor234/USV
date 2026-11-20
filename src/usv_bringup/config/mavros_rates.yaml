@@ -10,8 +10,10 @@ mavros_rate_configurator:
     #   105 : HIGHRES_IMU (高分辨率校准惯导)
     #   32  : LOCAL_POSITION_NED (EKF 局部坐标与速度 -> /mavros/local_position/odom)
     #   33  : GLOBAL_POSITION_INT (GPS 经纬度航向融合定位 -> /mavros/global_position/global)
-    message_ids: [30, 27, 105, 32, 33]
-    message_rates: [20.0, 20.0, 20.0, 10.0, 10.0]
+    #   36  : SERVO_OUTPUT_RAW (飞控实际 PWM 输出 -> /uas1/mavlink_source & /mavros/rc/out)
+    #   65  : RC_CHANNELS (飞控遥控输入通道脉宽 -> /uas1/mavlink_source & /mavros/rc/in)
+    message_ids: [30, 27, 105, 32, 33, 36, 65]
+    message_rates: [20.0, 20.0, 20.0, 10.0, 10.0, 20.0, 10.0]
 
     # 容错重试配置
     max_retries: 5

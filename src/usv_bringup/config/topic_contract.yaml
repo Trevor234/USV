@@ -15,30 +15,36 @@ mpc_controller_node:
       type: nav_msgs/msg/Odometry
       frame: map          # 位姿在 local map;twist 在 base_link
       qos: sensor_data
+      record: true
       purpose: EKF 融合位姿与速度 (x, y, psi, u, v, r)
     - topic: /mavros/imu/data
       type: sensor_msgs/msg/Imu
       frame: base_link
       qos: sensor_data
+      record: true
       purpose: 直接陀螺仪角速度,提供比 odom 更灵敏的 r 测量
     - topic: /path/reference
       type: nav_msgs/msg/Path
       frame: map
       qos: depth=10
+      record: true
       purpose: 规划器参考路径 (位置 + 航向);header.stamp 用于与 profile 配对
     - topic: /path/reference_profile
       type: std_msgs/msg/Float64MultiArray
       qos: depth=10
+      record: true
       purpose: 逐点速度剖面 [M,4]=(v, kappa, r, t),与 /path/reference 逐点对应
       # stamp 同步契约见下方 path_profile_sync
     - topic: /mavros/state
       type: mavros_msgs/msg/State
       qos: depth=10
+      record: true
       purpose: FCU 连接/解锁/模式 (armed, mode),驱动 STANDBY/ACTIVE 状态机
   publishes:
     - topic: /mavros/rc/override
       type: mavros_msgs/msg/OverrideRCIn
       qos: depth=10
+      record: true
       purpose: NMPC 控制输出 (RC 通道覆写);MPC 推力 → throttle/steering PWM
       rc_channels:
         steering: { channel: 1, default_index: 0 }   # CH1, rc_steering_channel=0
@@ -50,6 +56,7 @@ mpc_controller_node:
       type: geometry_msgs/msg/TwistStamped
       frame: base_link      # twist 在机体坐标系 (u_surge, r_yaw)
       qos: reliable depth=10
+      record: true
       purpose: 运动学 MPC 控制输出 (方案 A);MAVROS setpoint_velocity → FCU GUIDED
       fields:
         linear.x:  u_surge (m/s)
@@ -60,6 +67,7 @@ mpc_controller_node:
     - topic: /mpc/status
       type: std_msgs/msg/String
       qos: depth=10
+      record: true
       payload: JSON
       purpose: 求解器诊断 (mode_manager_node 消费 + GCS 显示)
       # 关键字段: state(ACTIVE/HOLD/STANDBY), success, fail_count,
@@ -77,6 +85,7 @@ mpc_controller_node:
       type: nav_msgs/msg/Path
       frame: map
       qos: depth=10
+      record: true
       purpose: MPC 预测轨迹可视化 (每 5 个控制周期发布一次)
 
 path_planner_node:
@@ -103,6 +112,7 @@ mission_bridge_node:
   publishes:
     - topic: /usv/mission/waypoints_local
       type: nav_msgs/msg/Path
+      record: true
       purpose: 经纬度航点 → 局部 map 坐标
 
 mode_manager_node:
@@ -127,10 +137,12 @@ gps_status_topics:
   - topic: /mavros/gpsstatus/gps1/raw
     type: mavros_msgs/msg/GPSRAW
     qos: sensor_data
+    record: true
     purpose: fix_type (3=单点, 5=RTK Float, 6=RTK Fixed), eph, 卫星数
   - topic: /mavros/global_position/raw/fix
     type: sensor_msgs/msg/NavSatFix
     qos: sensor_data
+    record: true
     purpose: GPS 经纬度原值; 亦为 NTRIP 客户端 GGA 上报来源 (ntrip_client 原生直连)
 
 
@@ -146,6 +158,7 @@ power_monitor_node:
     - topic: /usv/battery
       type: sensor_msgs/msg/BatteryState
       qos: sensor_data
+      record: true
       purpose: 电池电压/电流/荷电状态
       fields:
         voltage: 功率计实测电压 (V)
@@ -177,6 +190,7 @@ mavlink_frames:
     publisher: mavros_node       # MAVROS UAS 端点
     frame_source: header.frame_id = "ep:<id>"   # 结合端点配置确认 FCU 串口来源
     qos: best_effort / volatile / keep_last depth=1000
+    record: true
     timestamp: ROS 时间, 路由器解析后发布时刻; 不是 UART 首字节到达时间
     integrity: 保留 framing_status, magic, len, flags, seq, sysid, compid,
                msgid, checksum, payload64, signature; 含可路由的坏 CRC 帧,
@@ -187,6 +201,7 @@ mavlink_frames:
     publisher: mavros_node
     frame_source: 由 MAVROS 发出, 含控制/请求等; 无外部来源端点标识
     qos: best_effort / volatile / keep_last depth=1000
+    record: true
     timestamp: ROS 时间, UAS 发布前时刻; 不是实际线路发送时间
     integrity: 同上; 发送意图, 不等于串口已发出或飞控已执行
   # 时间轴: bag 接收时间、帧 ROS header 时间、载荷内 FCU boot/usec 时间是

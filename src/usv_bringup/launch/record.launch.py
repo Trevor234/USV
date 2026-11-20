@@ -20,6 +20,8 @@ from launch.events import Shutdown
 from launch.substitutions import LaunchConfiguration
 import yaml
 
+from usv_bringup.topic_contract import get_record_topics, write_derived_qos_file
+
 
 _PREFIX_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
@@ -41,7 +43,15 @@ def _load_topics(path):
     except (OSError, yaml.YAMLError) as exc:
         raise RuntimeError(f"Failed to read rosbag topics file {path}: {exc}") from exc
 
-    topics = config.get("topics") if isinstance(config, dict) else None
+    if not isinstance(config, dict):
+        raise RuntimeError(f"Rosbag topics file must be a YAML mapping: {path}")
+
+    if "topics" in config:
+        topics = config["topics"]
+    else:
+        # 兼容直接传入 topic_contract.yaml (SSOT)
+        topics = get_record_topics(path)
+
     if not isinstance(topics, list) or not topics:
         raise RuntimeError(f"Rosbag topics file must contain a non-empty 'topics' list: {path}")
     if any(not isinstance(topic, str) or not topic.startswith("/") for topic in topics):
@@ -55,7 +65,8 @@ def _start_recorder(context):
     bag_output_dir = Path(LaunchConfiguration("bag_output_dir").perform(context)).expanduser()
     bag_prefix = LaunchConfiguration("bag_prefix").perform(context)
     topics_file = Path(LaunchConfiguration("topics_file").perform(context)).expanduser()
-    qos_path = Path(LaunchConfiguration("qos_overrides_path").perform(context)).expanduser()
+    qos_raw = LaunchConfiguration("qos_overrides_path").perform(context).strip()
+    contract_file = Path(LaunchConfiguration("contract_file").perform(context)).expanduser()
 
     if not _PREFIX_PATTERN.fullmatch(bag_prefix):
         raise RuntimeError(
@@ -91,8 +102,6 @@ def _start_recorder(context):
               f"(min {min_free / 1e9:.1f} GB)", flush=True)
     if not topics_file.is_file() or not os.access(topics_file, os.R_OK):
         raise RuntimeError(f"Rosbag topics file is missing or unreadable: {topics_file}")
-    if not qos_path.is_file() or not os.access(qos_path, os.R_OK):
-        raise RuntimeError(f"Rosbag QoS override file is missing or unreadable: {qos_path}")
 
     topics = _load_topics(topics_file)
     max_bag_size = _parse_nonnegative_int(
@@ -106,6 +115,29 @@ def _start_recorder(context):
     )
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_uri = bag_output_dir / f"{bag_prefix}_{timestamp}"
+    if output_uri.exists():
+        raise RuntimeError(f"Rosbag output already exists: {output_uri}")
+
+    # QoS 覆盖配置: 显式传入有效路径则使用; 否则从 topic_contract.yaml 动态派生
+    if qos_raw and qos_raw.lower() != "auto":
+        qos_path = Path(qos_raw).expanduser()
+        if not qos_path.is_file() or not os.access(qos_path, os.R_OK):
+            raise RuntimeError(f"Rosbag QoS override file is missing or unreadable: {qos_path}")
+    else:
+        if not contract_file.is_file() or not os.access(contract_file, os.R_OK):
+            raise RuntimeError(
+                f"Topic contract file for QoS derivation is missing or unreadable: {contract_file}"
+            )
+        derived_qos_path = bag_output_dir / f"{bag_prefix}_{timestamp}_qos.yaml"
+        try:
+            write_derived_qos_file(contract_file, derived_qos_path, target_topics=topics)
+            qos_path = derived_qos_path
+        except Exception:
+            fallback_path = Path(f"/tmp/usv_qos_{bag_prefix}_{timestamp}.yaml")
+            write_derived_qos_file(contract_file, fallback_path, target_topics=topics)
+            qos_path = fallback_path
+        print(f"[record] dynamically derived QoS overrides from {contract_file} -> {qos_path}", flush=True)
     output_uri = bag_output_dir / f"{bag_prefix}_{timestamp}"
     if output_uri.exists():
         raise RuntimeError(f"Rosbag output already exists: {output_uri}")
@@ -162,8 +194,9 @@ def _start_recorder(context):
 
 def generate_launch_description():
     bringup_dir = get_package_share_directory("usv_bringup")
-    default_topics = os.path.join(bringup_dir, "config", "bag_topics.yaml")
-    default_qos = os.path.join(bringup_dir, "config", "rosbag_qos_overrides.yaml")
+    default_contract = os.path.join(bringup_dir, "config", "topic_contract.yaml")
+    # 默认直接以 topic_contract.yaml 为录制清单与 QoS 的单一事实来源 (SSOT)
+    default_topics = default_contract
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -177,14 +210,22 @@ def generate_launch_description():
             description="Prefix for the timestamped rosbag directory",
         ),
         DeclareLaunchArgument(
+            "contract_file",
+            default_value=default_contract,
+            description="Topic contract YAML (SSOT) used for dynamic QoS derivation",
+        ),
+        DeclareLaunchArgument(
             "topics_file",
             default_value=default_topics,
-            description="YAML file containing the explicit rosbag topic list",
+            description="YAML file containing topics list or topic contract YAML (SSOT)",
         ),
         DeclareLaunchArgument(
             "qos_overrides_path",
-            default_value=default_qos,
-            description="rosbag2 QoS override YAML for sensor-data topics",
+            default_value="",
+            description=(
+                "Optional explicit rosbag2 QoS override YAML. When empty (default), "
+                "QoS overrides are dynamically derived from contract_file."
+            ),
         ),
         DeclareLaunchArgument(
             "max_bag_size",

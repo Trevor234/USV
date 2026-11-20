@@ -1,3 +1,8 @@
+# ---------------------------------------------------------------------------
+# 注意：本文件已升级为通过 topic_contract.yaml 动态派生。
+# 录制运行时（record.launch.py）默认由 topic_contract.yaml 自动生成此 QoS 覆盖表。
+# 保留本文件仅供向下兼容与静态审计参考。增删话题或修改 QoS 请直接编辑 topic_contract.yaml。
+# ---------------------------------------------------------------------------
 # 针对 MAVROS sensor-data 发布端的 rosbag2 订阅 QoS 覆盖配置。
 /mavros/local_position/odom:
   reliability: best_effort

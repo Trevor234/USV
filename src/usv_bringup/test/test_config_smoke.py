@@ -42,19 +42,32 @@ def test_bag_topics_are_valid_and_documented_in_topic_contract():
 
 
 def test_rosbag_qos_overrides_cover_recorded_topics_only():
+    from usv_bringup.topic_contract import generate_qos_overrides
+
     config_dir = _config_dir()
     topics = set(_load_yaml(config_dir / "bag_topics.yaml")["topics"])
-    overrides = _load_yaml(config_dir / "rosbag_qos_overrides.yaml")
 
-    # 只校验覆盖表自身合法且不引用未录制的话题;
-    # 具体话题集合与 depth 由实测入包结果决定, 不在此钉死。
-    assert overrides
-    assert set(overrides).issubset(topics)
-    for topic, profile in overrides.items():
+    # 1. 验证动态派生的 QoS 覆盖表合法且属于录制话题子集
+    derived_overrides = generate_qos_overrides(config_dir / "topic_contract.yaml")
+    assert derived_overrides
+    assert set(derived_overrides).issubset(topics)
+    for topic, profile in derived_overrides.items():
         assert profile["reliability"] in {"best_effort", "reliable"}, topic
         assert profile["durability"] in {"volatile", "transient_local"}, topic
         assert profile["history"] in {"keep_last", "keep_all"}, topic
         assert profile["depth"] > 0, topic
+
+    # 2. 验证静态兼容文件依然合法
+    legacy_file = config_dir / "rosbag_qos_overrides.yaml"
+    if legacy_file.is_file():
+        overrides = _load_yaml(legacy_file)
+        assert overrides
+        assert set(overrides).issubset(topics)
+        for topic, profile in overrides.items():
+            assert profile["reliability"] in {"best_effort", "reliable"}, topic
+            assert profile["durability"] in {"volatile", "transient_local"}, topic
+            assert profile["history"] in {"keep_last", "keep_all"}, topic
+            assert profile["depth"] > 0, topic
 
 
 def test_scheme_mode_contract_matches_output_backend():
