@@ -31,6 +31,7 @@
 
 #include "usv_acados/acados_backend.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <cstring>
@@ -77,7 +78,23 @@ struct AcadosBackend::Impl
     ops(detail::ops_for(model_in))
   {
     validate_problem(problem);
+    init_capsule_();
 
+    // p_global 运行期事务暂存: 只为满足生成码非 const 形参。
+    p_global_txn_buffer.resize(descriptor.np_global);
+
+    X_warm.setZero(descriptor.n_aug, descriptor.N + 1);
+    U_warm.setZero(descriptor.nu, descriptor.N);
+    candidate.X_aug.resize(descriptor.n_aug, descriptor.N + 1);
+    candidate.U.resize(descriptor.nu, descriptor.N);
+    candidate.X_aug.setZero();
+    candidate.U.setZero();
+  }
+
+  ~Impl() {release_capsule();}
+
+  void init_capsule_()
+  {
     // capsule 的 RAII 守卫: create 失败时释放半初始化对象, 绝不泄漏。
     capsule = ops.create_capsule();
     if (capsule == nullptr) {
@@ -108,12 +125,12 @@ struct AcadosBackend::Impl
 
     // 烘焙尺寸核对必须发生在任何逐阶段写入之前: 生成码对越界 stage 写入
     // 没有边界检查 (update_params / out_set 会直接写坏内存)。
-    if (dims->N != descriptor.N || dims->N != problem.N) {
+    if (dims->N != descriptor.N || dims->N != problem_N) {
       const int baked = dims->N;
       release_capsule();
       throw std::runtime_error(
         std::string(descriptor.symbol) + ": codegen N=" +
-        std::to_string(baked) + " 与配置 N=" + std::to_string(problem.N) +
+        std::to_string(baked) + " 与配置 N=" + std::to_string(problem_N) +
         " 不一致, 需重新生成 codegen");
     }
     // nx/nu/np 在 ocp_nlp_dims 里是逐阶段数组 (首元即 stage 0 维度)。
@@ -133,19 +150,19 @@ struct AcadosBackend::Impl
     // nlp_in->Ts 只有 N 个元素 (阶段 0..N-1); 终端阶段没有时间步。
     for (int k = 0; k < descriptor.N; ++k) {
       const double baked_ts = nlp_in->Ts[k];
-      if (!(std::isfinite(baked_ts) && std::fabs(baked_ts - problem.dt) < 1e-9)) {
+      if (!(std::isfinite(baked_ts) && std::fabs(baked_ts - problem_dt) < 1e-9)) {
         release_capsule();
         throw std::runtime_error(
           std::string(descriptor.symbol) + ": codegen dt=" +
           std::to_string(baked_ts) + " (stage " + std::to_string(k) +
-          ") 与配置 dt=" + std::to_string(problem.dt) +
+          ") 与配置 dt=" + std::to_string(problem_dt) +
           " 不一致, 需重新生成 codegen");
       }
     }
 
-    // p_global 全量覆盖 (生成占位值不可用于生产)。
-    int pglobal_status = ops.set_p_global(capsule, p_global_scratch.data(),
-        static_cast<int>(p_global_scratch.size()));
+    // p_global 全量覆盖 (含事务已提交的最新模型参数，防止重建退回初始参数)。
+    int pglobal_status = ops.set_p_global(capsule, active_p_global.data(),
+        static_cast<int>(active_p_global.size()));
     if (pglobal_status != 0) {
       release_capsule();
       throw std::runtime_error(
@@ -153,20 +170,7 @@ struct AcadosBackend::Impl
         ": set_p_global_and_precompute_dependencies 失败 status=" +
         std::to_string(pglobal_status));
     }
-
-    // p_global 运行期事务暂存: 只为满足生成码非 const 形参;
-    // p_global_scratch 镜像不由 update_p_global 改写。
-    p_global_txn_buffer.resize(descriptor.np_global);
-
-    X_warm.setZero(descriptor.n_aug, descriptor.N + 1);
-    U_warm.setZero(descriptor.nu, descriptor.N);
-    candidate.X_aug.resize(descriptor.n_aug, descriptor.N + 1);
-    candidate.U.resize(descriptor.nu, descriptor.N);
-    candidate.X_aug.setZero();
-    candidate.U.setZero();
   }
-
-  ~Impl() {release_capsule();}
 
   void release_capsule()
   {
@@ -211,7 +215,7 @@ struct AcadosBackend::Impl
     if ((problem.max_delta.array() <= 0.0).any()) {
       throw std::invalid_argument("acados problem max_delta must be strictly positive");
     }
-    p_global_scratch = problem.p_global;
+    active_p_global = problem.p_global;
     problem_N = problem.N;
     problem_dt = problem.dt;
     lower = problem.lower;
@@ -263,7 +267,7 @@ struct AcadosBackend::Impl
   // 构造参数副本 (不再引用调用方的 Problem)
   int problem_N = 0;
   double problem_dt = 0.0;
-  Eigen::VectorXd p_global_scratch;
+  Eigen::VectorXd active_p_global;
   Eigen::Vector2d lower = Eigen::Vector2d::Zero();
   Eigen::Vector2d upper = Eigen::Vector2d::Zero();
   Eigen::Vector2d max_delta = Eigen::Vector2d::Zero();
@@ -422,9 +426,12 @@ const Candidate & AcadosBackend::solve(
                       d.x0_aug.data());
       d.ledger.out_set_calls += 1;
     }
-    double u_zero[2] = {0.0, 0.0};
+    double u_init[2] = {
+      std::clamp(d.anchor_(0), d.lower(0), d.upper(0)),
+      std::clamp(d.anchor_(1), d.lower(1), d.upper(1))
+    };
     for (int k = 0; k < N; ++k) {
-      ocp_nlp_out_set(d.config, d.dims, d.nlp_out, d.nlp_in, k, "u", u_zero);
+      ocp_nlp_out_set(d.config, d.dims, d.nlp_out, d.nlp_in, k, "u", u_init);
       d.ledger.out_set_calls += 1;
     }
   }
@@ -448,7 +455,10 @@ const Candidate & AcadosBackend::solve(
   d.candidate.status = status;
 
   if (!status_extractable(status)) {
-    // 其他状态直接保留状态码, 不提取可能陈旧的 nlp_out。
+    // 非可提取状态 (尤其 QP NaN / status=4): 生成的 reset() 不清理 QP 内部内存,
+    // 重建 capsule 防止历史 NaN 残留毒化后续求解 (保留 X_warm/U_warm 供 fallback)。
+    d.release_capsule();
+    d.init_capsule_();
     d.candidate.finite = false;
     return d.candidate;
   }
@@ -483,7 +493,27 @@ void AcadosBackend::set_anchor(const Eigen::Vector2d & anchor)
   }
   d.anchor_ = anchor;
   if (d.has_warm) {
+    const Eigen::Vector2d warm_anchor0 =
+      d.X_warm.block(d.descriptor.anchor_offset, 0, d.descriptor.nu, 1);
+    const bool large_external_jump =
+      ((warm_anchor0 - anchor).cwiseAbs().array() > 0.25 * d.max_delta.array()).any();
+    if (large_external_jump) {
+      // 外部辅助或饱和限幅大幅改写了实发控制量, 旧 X_warm/U_warm 对应不同轨迹;
+      // 清除过时热启动但保留新 anchor_, 下一拍从 u_init=anchor 速率可行地冷启动。
+      d.has_warm = false;
+      return;
+    }
     d.X_warm.block(d.descriptor.anchor_offset, 0, d.descriptor.nu, 1) = anchor;
+    // 若外部执行映射微调了实发锚点, 链式投影 U_warm 与增广状态使初猜保持速率可行。
+    Eigen::Vector2d prev = anchor;
+    for (int k = 0; k < d.descriptor.N; ++k) {
+      Eigen::Vector2d uk = d.U_warm.col(k);
+      uk = uk.cwiseMax(prev - d.max_delta).cwiseMin(prev + d.max_delta);
+      uk = uk.cwiseMax(d.lower).cwiseMin(d.upper);
+      d.U_warm.col(k) = uk;
+      d.X_warm.block(d.descriptor.anchor_offset, k + 1, d.descriptor.nu, 1) = uk;
+      prev = uk;
+    }
   }
 }
 
@@ -552,8 +582,12 @@ int AcadosBackend::update_p_global(
   // 任何参数修改前使旧候选失效; 不清 warm, 不改 C++ 参数镜像。
   d.invalidate_candidate();
   d.p_global_txn_buffer = values;
-  return d.ops.set_p_global(d.capsule, d.p_global_txn_buffer.data(),
-    d.descriptor.np_global);
+  const int pglobal_status = d.ops.set_p_global(
+    d.capsule, d.p_global_txn_buffer.data(), d.descriptor.np_global);
+  if (pglobal_status == 0) {
+    d.active_p_global = values;
+  }
+  return pglobal_status;
 }
 
 int AcadosBackend::reset_native(int reset_qp_memory)

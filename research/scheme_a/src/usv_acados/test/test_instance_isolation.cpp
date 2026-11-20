@@ -250,3 +250,47 @@ TEST(AcadosInstanceIsolation, CandidateCostRequiresFiniteCandidate)
   EXPECT_THROW(kinematic.candidate_cost(), std::logic_error);
   EXPECT_THROW(kinematic.accept_candidate(), std::logic_error);
 }
+
+// set_anchor 小幅外部微调保留热启动并更新锚点; 大幅跳变清除过时热启动并支持从新锚点冷启动。
+TEST(AcadosInstanceIsolation, SetAnchorSmallDeltaProjectsWarmAndLargeJumpDropsWarm)
+{
+  usv_acados::AcadosBackend dynamic(
+    usv_acados::Model::Dynamic, DynamicProblem());
+  const Eigen::MatrixXd ref = StraightReference(6, 20, 0.2, 0.6);
+  Eigen::VectorXd state(6);
+  state << 0.0, 0.0, 0.0, 0.2, 0.0, 0.0;
+
+  const auto & first = dynamic.solve(state, ref);
+  ASSERT_TRUE(first.finite);
+  ASSERT_EQ(first.status, 0);
+  dynamic.accept_candidate();
+  ASSERT_TRUE(dynamic.has_warmstart());
+
+  // 小幅跳变 (<= 0.25 * 16 = 4.0 N): 保持热启动并写回新锚点。
+  const Eigen::Vector2d small_anchor =
+    (dynamic.anchor() + Eigen::Vector2d(1.0, -1.0)).cwiseMax(-25.0).cwiseMin(25.0);
+  dynamic.set_anchor(small_anchor);
+  EXPECT_TRUE(dynamic.has_warmstart());
+  EXPECT_TRUE(dynamic.anchor().isApprox(small_anchor, 1e-12));
+  EXPECT_LE((dynamic.warm_states().col(0).tail(2) - small_anchor).cwiseAbs().maxCoeff(),
+            1e-12);
+
+  const auto & second = dynamic.solve(state, ref);
+  ASSERT_TRUE(second.finite);
+  ASSERT_EQ(second.status, 0);
+  dynamic.accept_candidate();
+
+  // 大幅外部跳变 (> 4.0 N): 清除过时热启动, 但保留新 anchor 以便速率可行冷启动。
+  const Eigen::Vector2d jump_anchor =
+    (dynamic.anchor()(0) > 0.0) ? Eigen::Vector2d(-10.0, -10.0) :
+    Eigen::Vector2d(10.0, 10.0);
+  dynamic.set_anchor(jump_anchor);
+  EXPECT_FALSE(dynamic.has_warmstart());
+  EXPECT_TRUE(dynamic.anchor().isApprox(jump_anchor, 1e-12));
+
+  const auto & recovered = dynamic.solve(state, ref);
+  ASSERT_TRUE(recovered.finite);
+  ASSERT_EQ(recovered.status, 0);
+  EXPECT_LE((recovered.U.col(0) - jump_anchor).cwiseAbs().maxCoeff(),
+            16.0 + 1e-6);
+}
