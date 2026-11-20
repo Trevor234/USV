@@ -32,6 +32,8 @@
  * 无仿真器/FCU/生产延迟参数。控制定时器被取消, 输出重定向到独立测试话题。
  */
 
+#include <gtest/gtest.h>
+
 #include <chrono>
 #include <cmath>
 #include <condition_variable>
@@ -44,7 +46,6 @@
 #include <utility>
 #include <vector>
 
-#include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
 #include "usv_mpc/mpc_node.hpp"
@@ -127,6 +128,22 @@ public:
     odom->pose.pose.position.x = px;
     node.odom_callback_(odom);
   }
+
+  static void feed_path(MpcControllerNode & node, int count, double step = 1.0)
+  {
+    auto path = std::make_shared<nav_msgs::msg::Path>();
+    path->header.frame_id = "map";
+    for (int i = 0; i < count; ++i) {
+      geometry_msgs::msg::PoseStamped pose;
+      pose.pose.position.x = static_cast<double>(i) * step;
+      pose.pose.orientation.w = 1.0;
+      path->poses.push_back(pose);
+    }
+    node.path_callback_(path);
+  }
+
+  static int progress_index(const MpcControllerNode & node) {return node.progress_index_;}
+  static bool mission_completed(const MpcControllerNode & node) {return node.mission_completed_;}
 
   static bool has_history(MpcControllerNode & node) {return node.has_last_command_;}
 
@@ -398,6 +415,34 @@ TEST_F(KinematicDeadlineControl, StandbyDuringShutdownDoesNotRepublish)
   const size_t before = status_.size();
   MpcControllerNodeTestAccess::standby(*controller_);
   EXPECT_EQ(status_.size(), before);
+}
+
+TEST_F(KinematicDeadlineControl, TransitionsToStandbyOnMissionComplete)
+{
+  // 构造 10 点路径 (0..9 m) 并沿途推进至终点容差圈 (< 2.0 m)
+  MpcControllerNodeTestAccess::feed_path(*controller_, 10, 1.0);
+  MpcControllerNodeTestAccess::feed_odom(*controller_, 1.0, 2.0);
+  run();
+  EXPECT_FALSE(MpcControllerNodeTestAccess::mission_completed(*controller_));
+  EXPECT_GT(MpcControllerNodeTestAccess::progress_index(*controller_), 0);
+
+  // 同几何路径 1 Hz 周期重发不应清零 progress_index_
+  const int saved_prog = MpcControllerNodeTestAccess::progress_index(*controller_);
+  MpcControllerNodeTestAccess::feed_path(*controller_, 10, 1.0);
+  EXPECT_EQ(MpcControllerNodeTestAccess::progress_index(*controller_), saved_prog);
+
+  // 推进至接近终点处 (x=7.5 -> nearest=7, progress_index=7 >= 10-3, d_goal=1.5 < 2.0)
+  MpcControllerNodeTestAccess::feed_odom(*controller_, 1.0, 7.5);
+  const int solves_before = fake_->solve_count;
+  run();
+  EXPECT_EQ(fake_->solve_count, solves_before);
+  EXPECT_TRUE(MpcControllerNodeTestAccess::mission_completed(*controller_));
+  ASSERT_EQ(status_.size(), 1u);
+  EXPECT_EQ(status_.at(0).at("state").get<std::string>(), "STANDBY");
+  EXPECT_EQ(status_.at(0).at("standby_reason").get<std::string>(), "mission_complete");
+  ASSERT_EQ(cmdvels_.size(), 1u);
+  EXPECT_DOUBLE_EQ(cmdvels_.at(0).first, 0.0);
+  EXPECT_DOUBLE_EQ(cmdvels_.at(0).second, 0.0);
 }
 
 }  // namespace

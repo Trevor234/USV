@@ -14,7 +14,7 @@
     max_solver_failures: 5
     odom_timeout_s: 1.0
     max_path_timeout_s: 5.0
-    max_speed_mps: 3.0
+    max_speed_mps: 4.8
     # /mpc/status 新鲜度看门狗: MPC 在 ACTIVE/HOLD 期间 status 停发超过该
     # 时长即触发 failsafe RTL (MPC 节点死亡时 FCU 会锁存最后一条速度指令)。
     # mpc_node 以 5Hz 发布 status, 1.0s ≈ 容忍丢 4 帧。

@@ -107,7 +107,7 @@ private:
   void publish_predicted_trajectory_(const Eigen::MatrixXd & X_pred);
 
   // ── 参考构建 (对齐 B: 作为 node 私有方法, 无独立类) ───
-  Eigen::MatrixXd build_reference_(const Eigen::Vector3d & current_state);
+  Eigen::MatrixXd build_reference_(const Eigen::Vector3d & current_state, int nearest);
 
   // ── 状态锁 (传感器回调与控制循环并发) ────────────────
   std::mutex state_lock_;
@@ -143,6 +143,9 @@ private:
   std::pair<int, int> ref_profile_stamp_{-1, -1};
   bool profile_synced_ = false;
   std::string profile_sync_reason_ = "no_profile";
+  int progress_index_ = 0;
+  bool mission_completed_ = false;
+  double last_raw_heading_error_rad_ = 0.0;
 
   // ── 配置 ────────────────────────────────────────────
   // 控制模式: "kinematic" 正常解算; "idle" 只发零速度不解算。
@@ -162,6 +165,12 @@ private:
   double odom_timeout_s_ = 1.0;
   int reference_start_offset_ = 1;          // ★ A 用 1 (B 用 3)
   double cruise_speed_ = 1.0;
+  double progress_window_forward_m_ = 6.0;
+  double progress_window_back_m_ = 1.0;
+  double progress_end_guard_m_ = 5.0;
+  double goal_tolerance_m_ = 2.0;
+  double max_initial_heading_step_rad_ = 0.7854;
+  double align_turn_rate_rad_s_ = 0.5;
   std::string backend_param_ = "acados";    // kinematic.backend 参数 (仅支持 acados)
 
   // ★ 无 RC 映射字段 (B 有 rc_steering_channel_ 等 8 个, A 不需要)

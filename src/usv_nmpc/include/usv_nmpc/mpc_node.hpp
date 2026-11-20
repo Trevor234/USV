@@ -34,6 +34,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -60,6 +61,9 @@ class MpcControllerNode : public rclcpp::Node {
   void safe_shutdown();
 
  private:
+  friend class DynamicMpcNodeTestAccess;
+  explicit MpcControllerNode(std::unique_ptr<DynamicMpc> solver);
+
   // ── 初始化 ──────────────────────────────────────────
   void declare_parameters_();
   void load_config_();
@@ -94,7 +98,7 @@ class MpcControllerNode : public rclcpp::Node {
   void publish_predicted_trajectory_(const Eigen::MatrixXd& X_pred);
 
   // ── 参考构建 ────────────────────────────────────────
-  Eigen::MatrixXd build_reference_(const Vector6d& current_state);
+  Eigen::MatrixXd build_reference_(const Vector6d& current_state, int nearest);
 
   // ── 状态锁 (传感器回调与控制循环并发) ────────────────
   std::mutex state_lock_;
@@ -130,6 +134,9 @@ class MpcControllerNode : public rclcpp::Node {
   std::pair<int, int> ref_profile_stamp_{-1, -1};
   bool profile_synced_ = false;
   std::string profile_sync_reason_ = "no_profile";
+  int progress_index_ = 0;
+  bool mission_completed_ = false;
+  double last_raw_heading_error_rad_ = 0.0;
 
   // ── 配置 ────────────────────────────────────────────
   double mpc_dt_ = 0.2;
@@ -144,13 +151,32 @@ class MpcControllerNode : public rclcpp::Node {
   double odom_timeout_s_ = 3.0;     // 与 mpc_params_B.yaml 一致 (EKF 停流容忍)
   int reference_start_offset_ = 8;  // 与 mpc_params_B.yaml 一致
   double cruise_speed_ = 1.0;
+  double progress_window_forward_m_ = 6.0;
+  double progress_window_back_m_ = 1.0;
+  double progress_end_guard_m_ = 5.0;
+  double goal_tolerance_m_ = 2.0;
+  double max_initial_heading_step_rad_ = 0.7854;
+  double align_turn_rate_rad_s_ = 0.5;
+  double align_min_speed_mps_ = 0.4;
+  bool enable_large_heading_forward_assist_ = true;
+  double align_heading_threshold_deg_ = 60.0;
+  double align_speed_threshold_mps_ = 0.3;
+  double align_min_net_thrust_n_ = 8.0;
+  double align_reverse_thrust_floor_n_ = -5.0;
 
-  // RC 映射
+  // RC 映射与标定死区补偿
   int rc_steering_channel_ = 0;
   int rc_throttle_channel_ = 2;
   int rc_pwm_min_ = 1100, rc_pwm_center_ = 1500, rc_pwm_max_ = 1900;
   double steering_sign_ = 1.0, throttle_sign_ = 1.0;
   double steering_gain_ = 0.4, throttle_gain_ = 0.75;  // 与 mpc_params_B.yaml 一致
+  bool deadband_compensation_ = true;
+  int pwm_deadband_forward_ = 1600;
+  int pwm_deadband_reverse_ = 1400;
+  double deadband_min_thrust_n_ = 0.5;
+  bool use_quadratic_model_ = true;
+  double quad_coeff_a_ = 6.378451e-5;
+  double quad_coeff_b_ = 0.1280703;
 
   // ── ROS 接口 ────────────────────────────────────────
   rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;

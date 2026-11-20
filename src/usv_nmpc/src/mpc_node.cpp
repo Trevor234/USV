@@ -26,6 +26,7 @@
 
 #include "usv_nmpc/mpc_node.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <functional>
@@ -59,6 +60,19 @@ MpcControllerNode::MpcControllerNode()
       std::chrono::duration<double>(mpc_dt_),
       std::bind(&MpcControllerNode::control_loop_, this),
       control_cb_group_);
+}
+
+MpcControllerNode::MpcControllerNode(std::unique_ptr<DynamicMpc> solver)
+    : Node("mpc_controller_node"), mpc_(std::move(solver)) {
+  declare_parameters_();
+  load_config_();
+  init_state_();
+  init_pubsub_();
+  timer_ = this->create_wall_timer(
+      std::chrono::duration<double>(mpc_dt_),
+      std::bind(&MpcControllerNode::control_loop_, this),
+      control_cb_group_);
+  timer_->cancel();
 }
 
 MpcControllerNode::~MpcControllerNode() {
@@ -96,6 +110,18 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("odom_timeout_s", 3.0);
   this->declare_parameter("reference_start_offset", 8);
   this->declare_parameter("cruise_speed", 1.0);
+  this->declare_parameter("progress_window_forward_m", 6.0);
+  this->declare_parameter("progress_window_back_m", 1.0);
+  this->declare_parameter("progress_end_guard_m", 5.0);
+  this->declare_parameter("goal_tolerance_m", 2.0);
+  this->declare_parameter("max_initial_heading_step_rad", 0.7854);
+  this->declare_parameter("align_turn_rate_rad_s", 0.5);
+  this->declare_parameter("align_min_speed_mps", 0.4);
+  this->declare_parameter("enable_large_heading_forward_assist", true);
+  this->declare_parameter("align_heading_threshold_deg", 60.0);
+  this->declare_parameter("align_speed_threshold_mps", 0.3);
+  this->declare_parameter("align_min_net_thrust_n", 8.0);
+  this->declare_parameter("align_reverse_thrust_floor_n", -5.0);
 
   // NMPC参数 (mpc_params_B.yaml: sqrt(Qx/R)≈20N=80%T_max 调参)
   this->declare_parameter("dynamic.Q", std::vector<double>{20.0, 20.0, 50.0, 8.0, 1.0, 8.0});
@@ -107,7 +133,7 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("dynamic.dT_max", 80.0);
   this->declare_parameter("dynamic.dt", 0.2);
 
-  // RC 映射
+  // RC 映射与标定死区补偿
   this->declare_parameter("rc_steering_channel", 0);
   this->declare_parameter("rc_throttle_channel", 2);
   this->declare_parameter("rc_pwm_min", 1100);
@@ -117,8 +143,15 @@ void MpcControllerNode::declare_parameters_() {
   // 与 mpc_params_B.yaml 一致)。默认必须为 -1, 避免配置缺失时闭环正反馈画圈。
   this->declare_parameter("steering_sign", -1.0);
   this->declare_parameter("throttle_sign", 1.0);
-  this->declare_parameter("steering_gain", 0.4);
-  this->declare_parameter("throttle_gain", 0.75);
+  this->declare_parameter("steering_gain", 0.75);
+  this->declare_parameter("throttle_gain", 0.85);
+  this->declare_parameter("deadband_compensation", true);
+  this->declare_parameter("pwm_deadband_forward", 1600);
+  this->declare_parameter("pwm_deadband_reverse", 1400);
+  this->declare_parameter("deadband_min_thrust_n", 0.5);
+  this->declare_parameter("use_quadratic_model", true);
+  this->declare_parameter("quad_coeff_a", 6.378451e-5);
+  this->declare_parameter("quad_coeff_b", 0.1280703);
 
   // 船体参数 (vehicle.* = usv_params_B.yaml 实船 14.2kg / 2026-09-03 阶段3)
   this->declare_parameter("vehicle.mass", 14.2);
@@ -162,6 +195,23 @@ void MpcControllerNode::load_config_() {
   odom_timeout_s_ = this->get_parameter("odom_timeout_s").as_double();
   reference_start_offset_ = this->get_parameter("reference_start_offset").as_int();
   cruise_speed_ = this->get_parameter("cruise_speed").as_double();
+  progress_window_forward_m_ = this->get_parameter("progress_window_forward_m").as_double();
+  progress_window_back_m_ = this->get_parameter("progress_window_back_m").as_double();
+  progress_end_guard_m_ = this->get_parameter("progress_end_guard_m").as_double();
+  goal_tolerance_m_ = this->get_parameter("goal_tolerance_m").as_double();
+  max_initial_heading_step_rad_ = this->get_parameter("max_initial_heading_step_rad").as_double();
+  align_turn_rate_rad_s_ = this->get_parameter("align_turn_rate_rad_s").as_double();
+  align_min_speed_mps_ = this->get_parameter("align_min_speed_mps").as_double();
+  enable_large_heading_forward_assist_ =
+      this->get_parameter("enable_large_heading_forward_assist").as_bool();
+  align_heading_threshold_deg_ =
+      this->get_parameter("align_heading_threshold_deg").as_double();
+  align_speed_threshold_mps_ =
+      this->get_parameter("align_speed_threshold_mps").as_double();
+  align_min_net_thrust_n_ =
+      this->get_parameter("align_min_net_thrust_n").as_double();
+  align_reverse_thrust_floor_n_ =
+      this->get_parameter("align_reverse_thrust_floor_n").as_double();
 
   // 输出后端 × FCU 模式契约自检: rc_override 只在 ArduRover MANUAL 模式下
   // 经 pilot 输入链 (channel_steer/channel_throttle) 成为舵/油主控制。
@@ -200,6 +250,13 @@ void MpcControllerNode::load_config_() {
   throttle_sign_ = this->get_parameter("throttle_sign").as_double();
   steering_gain_ = this->get_parameter("steering_gain").as_double();
   throttle_gain_ = this->get_parameter("throttle_gain").as_double();
+  deadband_compensation_ = this->get_parameter("deadband_compensation").as_bool();
+  pwm_deadband_forward_ = this->get_parameter("pwm_deadband_forward").as_int();
+  pwm_deadband_reverse_ = this->get_parameter("pwm_deadband_reverse").as_int();
+  deadband_min_thrust_n_ = this->get_parameter("deadband_min_thrust_n").as_double();
+  use_quadratic_model_ = this->get_parameter("use_quadratic_model").as_bool();
+  quad_coeff_a_ = this->get_parameter("quad_coeff_a").as_double();
+  quad_coeff_b_ = this->get_parameter("quad_coeff_b").as_double();
 
   const std::size_t rc_channel_count =
       mavros_msgs::msg::OverrideRCIn().channels.size();
@@ -208,14 +265,21 @@ void MpcControllerNode::load_config_() {
       static_cast<std::size_t>(rc_throttle_channel_) >= rc_channel_count ||
       rc_steering_channel_ == rc_throttle_channel_ ||
       rc_pwm_min_ >= rc_pwm_center_ || rc_pwm_center_ >= rc_pwm_max_ ||
+      pwm_deadband_reverse_ < rc_pwm_min_ ||
+      pwm_deadband_reverse_ > rc_pwm_center_ ||
+      pwm_deadband_forward_ < rc_pwm_center_ ||
+      pwm_deadband_forward_ >= rc_pwm_max_ ||
+      !std::isfinite(deadband_min_thrust_n_) || deadband_min_thrust_n_ < 0.0 ||
+      !std::isfinite(quad_coeff_a_) || quad_coeff_a_ < 0.0 ||
+      !std::isfinite(quad_coeff_b_) || quad_coeff_b_ <= 0.0 ||
       !std::isfinite(steering_sign_) || !std::isfinite(throttle_sign_) ||
       !std::isfinite(steering_gain_) || !std::isfinite(throttle_gain_) ||
       std::abs(std::abs(steering_sign_) - 1.0) > 1e-9 ||
       std::abs(std::abs(throttle_sign_) - 1.0) > 1e-9 ||
       steering_gain_ < 0.0 || throttle_gain_ < 0.0) {
     throw std::runtime_error(
-        "RC 映射参数非法: 通道须有效且不同，并满足 pwm_min < pwm_center < "
-        "pwm_max、sign=+-1、gain>=0");
+        "RC 映射参数非法: 通道须有效且不同，并满足 pwm_min < pwm_deadband_reverse "
+        "<= pwm_center <= pwm_deadband_forward < pwm_max、sign=+-1、gain>=0");
   }
 }
 
@@ -283,6 +347,9 @@ void MpcControllerNode::init_state_() {
   last_state_time_ = 0.0;
   last_odom_time_ = 0.0;
   standby_holding_neutral_ = false;
+  progress_index_ = 0;
+  mission_completed_ = false;
+  last_raw_heading_error_rad_ = 0.0;
 }
 
 void MpcControllerNode::init_pubsub_() {
@@ -364,16 +431,25 @@ void MpcControllerNode::imu_callback_(const sensor_msgs::msg::Imu::SharedPtr msg
 }
 
 void MpcControllerNode::path_callback_(const nav_msgs::msg::Path::SharedPtr msg) {
-  std::lock_guard<std::mutex> lk(state_lock_);
-  reference_path_.clear();
+  std::vector<std::array<double, 3>> new_path;
+  new_path.reserve(msg->poses.size());
   for (const auto& pose : msg->poses) {
     auto& q = pose.pose.orientation;
-    reference_path_.push_back({pose.pose.position.x, pose.pose.position.y,
-                               quaternion_to_yaw(q.x, q.y, q.z, q.w)});
+    new_path.push_back({pose.pose.position.x, pose.pose.position.y,
+                        quaternion_to_yaw(q.x, q.y, q.z, q.w)});
   }
+
+  std::lock_guard<std::mutex> lk(state_lock_);
+  const bool changed = !path_received_ ||
+      is_substantive_path_change(reference_path_, new_path, 0.5);
+  reference_path_ = std::move(new_path);
   reference_path_stamp_ = {static_cast<int>(msg->header.stamp.sec),
                            static_cast<int>(msg->header.stamp.nanosec)};
   path_received_ = !reference_path_.empty();
+  if (!path_received_ || reference_path_.size() < 2 || changed) {
+    progress_index_ = 0;
+    mission_completed_ = false;
+  }
 }
 
 void MpcControllerNode::profile_callback_(const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
@@ -422,6 +498,7 @@ std::pair<bool, std::string> MpcControllerNode::can_solve_() const {
   if (odom_timeout_s_ > 0.0 && (now - last_odom_time_) > odom_timeout_s_)
     return {false, "odom_timeout"};
   if (!path_received_ || reference_path_.size() < 2) return {false, "no_path"};
+  if (mission_completed_) return {false, "mission_complete"};
   if (require_fcu_state_) {
     if (last_state_time_ == 0.0) return {false, "no_state"};
     if (state_timeout_s_ > 0.0 && (now - last_state_time_) > state_timeout_s_)
@@ -486,6 +563,19 @@ void MpcControllerNode::control_loop_() {
     RCLCPP_INFO(this->get_logger(), "MPC → ACTIVE: armed=%d, mode=%s", armed, mode.c_str());
     solver_fail_count_ = 0;
     standby_holding_neutral_ = false;
+    std::lock_guard<std::mutex> lk(state_lock_);
+    if (progress_index_ > 0 && reference_path_.size() >= 2) {
+      const double d_prog = std::hypot(
+          x_ - reference_path_[progress_index_][0],
+          y_ - reference_path_[progress_index_][1]);
+      const double d_start = std::hypot(
+          x_ - reference_path_.front()[0],
+          y_ - reference_path_.front()[1]);
+      if (d_prog > std::max(progress_window_forward_m_, 8.0) &&
+          d_start < 0.5 * d_prog) {
+        progress_index_ = 0;
+      }
+    }
   }
   prev_state_ = "ACTIVE";
   run_dynamic_mpc_();
@@ -504,6 +594,7 @@ bool MpcControllerNode::enforce_solve_deadline_(SolveInfo& info) {
 void MpcControllerNode::run_dynamic_mpc_() {
   Vector6d current_state;
   Eigen::MatrixXd reference;
+  double raw_heading_error_rad = 0.0;
   {
     // C1 修复 (对齐方案 A): can_solve_ 在锁释放后可能被 path_callback_ 抢先清空路径,
     // 不重查会让 build_reference_ 返回全零参考 → 船被命令驶向地图原点。
@@ -516,10 +607,26 @@ void MpcControllerNode::run_dynamic_mpc_() {
       return;
     }
     current_state << x_, y_, normalize_angle(psi_), u_, v_, r_;
-    reference = build_reference_(current_state);
+    MonotonicProgressConfig pcfg;
+    pcfg.forward_window_m = progress_window_forward_m_;
+    pcfg.back_window_m = progress_window_back_m_;
+    pcfg.end_guard_m = progress_end_guard_m_;
+    pcfg.is_initial = (progress_index_ == 0);
+    const auto prog = select_monotonic_nearest_index(
+        reference_path_, x_, y_, progress_index_, pcfg);
+    progress_index_ = prog.progress_index;
+    if (is_goal_reached(reference_path_, x_, y_, progress_index_,
+                        reference_start_offset_, goal_tolerance_m_)) {
+      mission_completed_ = true;
+      lk.unlock();
+      enter_standby_("mission_complete");
+      return;
+    }
+    reference = build_reference_(current_state, prog.nearest_index);
+    raw_heading_error_rad = last_raw_heading_error_rad_;
     // 航向偏差若超过 135 度 (例如遭遇强扰动反向): 重置热启动初值, 破坏倒车局部解记忆
     if (reference.cols() > 0 &&
-        std::abs(normalize_angle(current_state(2) - reference(2, 0))) > (M_PI * 0.75)) {
+        std::abs(raw_heading_error_rad) > (M_PI * 0.75)) {
       mpc_->reset_warmstart();
     }
   }
@@ -551,6 +658,18 @@ void MpcControllerNode::run_dynamic_mpc_() {
   bool in_hold = false;
   if (info.success) {
     solver_fail_count_ = 0;
+    if (!time_rejected && enable_large_heading_forward_assist_) {
+      LargeHeadingAssistConfig acfg;
+      acfg.enabled = enable_large_heading_forward_assist_;
+      acfg.heading_threshold_rad = align_heading_threshold_deg_ * M_PI / 180.0;
+      acfg.speed_threshold_mps = align_speed_threshold_mps_;
+      acfg.min_net_thrust_n = align_min_net_thrust_n_;
+      acfg.reverse_thrust_floor_n = align_reverse_thrust_floor_n_;
+      acfg.thrust_min = dyn_T_min_;
+      acfg.thrust_max = dyn_T_max_;
+      u_opt = apply_large_heading_forward_assist(
+          u_opt, std::abs(raw_heading_error_rad), current_state(3), acfg);
+    }
     if (control_count_ % 5 == 0) publish_predicted_trajectory_(info.X_pred);
   } else {
     solver_fail_count_++;
@@ -604,6 +723,13 @@ Eigen::Vector2d MpcControllerNode::thrust_to_rc_pwm_(
   config.throttle_sign = throttle_sign_;
   config.steering_gain = steering_gain_;
   config.throttle_gain = throttle_gain_;
+  config.deadband_compensation = deadband_compensation_;
+  config.pwm_deadband_forward = pwm_deadband_forward_;
+  config.pwm_deadband_reverse = pwm_deadband_reverse_;
+  config.deadband_min_thrust_n = deadband_min_thrust_n_;
+  config.use_quadratic_model = use_quadratic_model_;
+  config.quad_coeff_a = quad_coeff_a_;
+  config.quad_coeff_b = quad_coeff_b_;
   const RcActuationResult result = thrust_to_rc_actuation(thrust, config);
   steering_pwm = result.steering_pwm;
   throttle_pwm = result.throttle_pwm;
@@ -650,6 +776,8 @@ void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
     j["armed"] = armed_;
     j["path_received"] = path_received_;
     j["path_len"] = reference_path_.size();
+    j["progress_index"] = progress_index_;
+    j["mission_completed"] = mission_completed_;
     j["profile_synced"] = profile_synced_;
     j["profile_sync_reason"] = profile_sync_reason_;
     j["x"] = x_; j["y"] = y_; j["psi"] = normalize_angle(psi_);
@@ -663,7 +791,9 @@ void MpcControllerNode::publish_status_(const SolveInfo& info, bool in_hold,
   j["tr_n"] = applied_thrust(1);
   j["tl_cmd_n"] = commanded_thrust(0);
   j["tr_cmd_n"] = commanded_thrust(1);
-  j["actuation_anchor_source"] = "rc_linearized";
+  j["actuation_anchor_source"] = deadband_compensation_
+      ? (use_quadratic_model_ ? "rc_calibrated_quadratic" : "rc_deadband_linear")
+      : "rc_linearized";
   j["actuation_mapping_error_n"] =
       (commanded_thrust - applied_thrust).cwiseAbs().maxCoeff();
   // 对应 RC PWM 诊断字段。
@@ -694,6 +824,8 @@ void MpcControllerNode::publish_standby_status_(const std::string& reason) {
     std::lock_guard<std::mutex> lk(state_lock_);
     j["path_received"] = path_received_;
     j["path_len"] = reference_path_.size();
+    j["progress_index"] = progress_index_;
+    j["mission_completed"] = mission_completed_;
     j["profile_synced"] = profile_synced_;
     j["profile_sync_reason"] = profile_sync_reason_;
   }
@@ -730,20 +862,15 @@ void MpcControllerNode::publish_predicted_trajectory_(const Eigen::MatrixXd& X_p
 }
 
 // ── 参考构建 ───────────────────────────────────────────
-Eigen::MatrixXd MpcControllerNode::build_reference_(const Vector6d& current_state) {
+Eigen::MatrixXd MpcControllerNode::build_reference_(const Vector6d& current_state, int nearest) {
   const int N = mpc_->N();
   double dt = mpc_->dt();
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(6, N + 1);
   const auto& path = reference_path_;
   if (path.empty()) return ref;
 
-  // 最近点 + start_offset
-  double best_d = 1e18; int nearest = 0;
-  for (size_t i = 0; i < path.size(); ++i) {
-    double d = std::hypot(path[i][0] - current_state(0), path[i][1] - current_state(1));
-    if (d < best_d) { best_d = d; nearest = static_cast<int>(i); }
-  }
-  int idx = std::min(nearest + std::max(1, reference_start_offset_),
+  const int clamped_nearest = std::clamp(nearest, 0, static_cast<int>(path.size()) - 1);
+  int idx = std::min(clamped_nearest + std::max(1, reference_start_offset_),
                      static_cast<int>(path.size()) - 1);
 
   // profile 同步判定
@@ -801,13 +928,12 @@ Eigen::MatrixXd MpcControllerNode::build_reference_(const Vector6d& current_stat
     }
   }
 
-  // 航向角连续化展开 (Phase Unwrapping):
-  // 保证 ref(2, 0) 与 current_state(2) 无 ±2pi 阶跃,
-  // 且 ref(2, k) 在时域内连续, 消除 ±pi 边界处的 360° 虚假跳跃
-  ref(2, 0) = current_state(2) + normalize_angle(ref(2, 0) - current_state(2));
-  for (int k = 1; k <= N; ++k) {
-    ref(2, k) = ref(2, k - 1) + normalize_angle(ref(2, k) - ref(2, k - 1));
-  }
+  // 航向角连续化展开 (Phase Unwrapping) + 起步大航向偏差渐进引导:
+  // 保证 ref(2, 0) 与 current_state(2) 无 ±2pi 阶跃, 且偏差 > max_initial_heading_step_rad 时
+  // 渐进引导 ref(2, k) 并保持最小前向参考速度 align_min_speed_mps_。
+  last_raw_heading_error_rad_ = smooth_reference_heading(
+      ref, current_state(2), dt,
+      max_initial_heading_step_rad_, align_turn_rate_rad_s_, align_min_speed_mps_);
 
   return ref;
 }

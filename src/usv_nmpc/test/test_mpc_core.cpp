@@ -73,6 +73,117 @@ TEST(Utils, RcActuationReportsEquivalentAppliedThrust) {
   EXPECT_NEAR(yaw.effective_thrust(1), 8.0, 1e-9);
 }
 
+// 死区跳过与二次标定反解自洽性测试
+TEST(Utils, RcActuationDeadbandCompensationAndInverseConsistency) {
+  usv_mpc::RcActuationConfig config;
+  config.thrust_max = 30.0;
+  config.thrust_min = -30.0;
+  config.steering_gain = 0.75;
+  config.throttle_gain = 0.85;
+  config.deadband_compensation = true;
+  config.use_quadratic_model = true;
+
+  // 1) 微小正推力 (2.0 N > 0.5 N): throttle_pwm 必须越过 1500~1600 us 死区
+  const auto micro_fwd = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(2.0, 2.0), config);
+  EXPECT_GE(micro_fwd.throttle_pwm, 1600);
+  EXPECT_EQ(micro_fwd.steering_pwm, 1500);
+  EXPECT_GT(micro_fwd.effective_thrust(0), 1.0);
+  EXPECT_NEAR(micro_fwd.effective_thrust(0), micro_fwd.effective_thrust(1), 1e-9);
+
+  // 2) 再将反算出的 effective_thrust 喂回前向映射, PWM 应与首次下发基本一致 (自洽无漂移)
+  const auto recheck = usv_mpc::thrust_to_rc_actuation(
+      Eigen::Vector2d(micro_fwd.effective_thrust(0) / config.throttle_gain,
+                      micro_fwd.effective_thrust(1) / config.throttle_gain),
+      config);
+  EXPECT_NEAR(recheck.throttle_pwm, micro_fwd.throttle_pwm, 2);
+
+  // 3) 极小抖动 (0.3 N <= 0.5 N) 回中 1500 us 防抖
+  const auto jitter = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(0.3, 0.3), config);
+  EXPECT_EQ(jitter.throttle_pwm, 1500);
+  EXPECT_EQ(jitter.steering_pwm, 1500);
+  EXPECT_DOUBLE_EQ(jitter.effective_thrust(0), 0.0);
+
+  // 4) 微小负推力 (-2.0 N): throttle_pwm 跳过反向死区 <= 1400 us
+  const auto micro_rev = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(-2.0, -2.0), config);
+  EXPECT_LE(micro_rev.throttle_pwm, 1400);
+  EXPECT_LT(micro_rev.effective_thrust(0), -1.0);
+}
+
+// 复现 11.18 Episode #4 起点防终点倒吸 + U 型折返横漂不跨航段跳变
+TEST(Utils, MonotonicProgressPreventsEndpointCollapse) {
+  const std::vector<std::array<double, 2>> wps = {
+    {127.66, -92.95}, {126.64, -76.43}, {136.63, -77.08},
+    {144.07, -83.99}, {150.35, -94.49}
+  };
+  std::vector<std::array<double, 3>> ep4_path;
+  for (size_t seg = 0; seg + 1 < wps.size(); ++seg) {
+    const double dx = wps[seg + 1][0] - wps[seg][0];
+    const double dy = wps[seg + 1][1] - wps[seg][1];
+    const double len = std::hypot(dx, dy);
+    const double psi = std::atan2(dy, dx);
+    const int steps = std::max(1, static_cast<int>(std::round(len / 0.5)));
+    for (int k = 0; k < steps; ++k) {
+      const double t = static_cast<double>(k) / steps;
+      ep4_path.push_back({wps[seg][0] + t * dx, wps[seg][1] + t * dy, psi});
+    }
+  }
+  ep4_path.push_back({wps.back()[0], wps.back()[1], -1.0});
+  ASSERT_GE(ep4_path.size(), 90u);
+
+  usv_mpc::MonotonicProgressConfig cfg;
+  cfg.is_initial = true;
+  const auto res_ep4 = usv_mpc::select_monotonic_nearest_index(
+      ep4_path, 153.0, -95.1, 0, cfg);
+  EXPECT_LT(res_ep4.nearest_index, 15);
+  EXPECT_LT(res_ep4.progress_index, 15);
+  EXPECT_FALSE(usv_mpc::is_goal_reached(ep4_path, 153.0, -95.1, res_ep4.progress_index, 8, 2.0));
+
+  std::vector<std::array<double, 3>> uturn_path;
+  for (int i = 0; i <= 60; ++i) {
+    uturn_path.push_back({0.5 * i, 0.0, 0.0});
+  }
+  for (int i = 1; i <= 18; ++i) {
+    const double th = -M_PI / 2.0 + M_PI * i / 19.0;
+    uturn_path.push_back({30.0 + 3.0 * std::cos(th), 3.0 + 3.0 * std::sin(th), th + M_PI / 2.0});
+  }
+  for (int i = 0; i <= 60; ++i) {
+    uturn_path.push_back({30.0 - 0.5 * i, 6.0, M_PI});
+  }
+
+  usv_mpc::MonotonicProgressConfig track_cfg;
+  track_cfg.is_initial = false;
+  const auto res_uturn = usv_mpc::select_monotonic_nearest_index(
+      uturn_path, 15.0, 3.5, 30, track_cfg);
+  EXPECT_LE(res_uturn.nearest_index, 45);
+  EXPECT_GE(res_uturn.progress_index, 30);
+  EXPECT_LE(res_uturn.progress_index, 45);
+}
+
+// 大航向偏差起步前向推力辅助验证 (根治 Episode #3 原地反推打转)
+TEST(Utils, LargeHeadingForwardAssistPreventsReverseSpin) {
+  usv_mpc::LargeHeadingAssistConfig cfg;
+  cfg.enabled = true;
+  cfg.heading_threshold_rad = M_PI / 3.0;
+  cfg.speed_threshold_mps = 0.3;
+  cfg.min_net_thrust_n = 8.0;
+  cfg.reverse_thrust_floor_n = -5.0;
+  cfg.thrust_min = -30.0;
+  cfg.thrust_max = 30.0;
+
+  // 100° 航向误差且低速: (22, -25) 应被钳位至 (22, -5), 保持转向差动且净推力为正
+  const auto assisted = usv_mpc::apply_large_heading_forward_assist(
+      Eigen::Vector2d(22.0, -25.0), 1.75, 0.0, cfg);
+  EXPECT_GE(assisted(0), -5.0);
+  EXPECT_GE(assisted(1), -5.0);
+  EXPECT_GE(assisted(0) + assisted(1), 8.0 - 1e-9);
+  EXPECT_GT(assisted(0), assisted(1));
+
+  // 小偏角或高速时不干预
+  const Eigen::Vector2d raw(10.0, -15.0);
+  EXPECT_TRUE(usv_mpc::apply_large_heading_forward_assist(raw, 0.2, 0.0, cfg).isApprox(raw));
+  EXPECT_TRUE(usv_mpc::apply_large_heading_forward_assist(raw, 1.75, 0.8, cfg).isApprox(raw));
+}
+
 // profile 时间戳解析与同步状态判定
 TEST(Utils, ProfileStampParsingAndSyncState) {
   std::vector<std::string> labels = {"points", "v_kappa_r_t", "stamp_sec:12", "stamp_nanosec:34"};

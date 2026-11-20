@@ -139,4 +139,140 @@ RefSample sample_path_profile_at_time(
   return {x, y, psi, v, r, j};
 }
 
+MonotonicProgressResult select_monotonic_nearest_index(
+  const std::vector<std::array<double, 3>> & path,
+  double x, double y,
+  int prev_progress_index,
+  const MonotonicProgressConfig & config)
+{
+  const int m = static_cast<int>(path.size());
+  if (m <= 1 || !std::isfinite(x) || !std::isfinite(y)) {
+    return {0, 0};
+  }
+
+  const int prev_idx = std::clamp(prev_progress_index, 0, m - 1);
+  std::vector<double> arc(m, 0.0);
+  for (int i = 1; i < m; ++i) {
+    arc[i] = arc[i - 1] +
+      std::hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]);
+  }
+
+  const double fwd_window = std::max(0.0, config.forward_window_m);
+  const double back_window = std::max(0.0, config.back_window_m);
+  const bool initial_search = config.is_initial || (prev_idx == 0);
+
+  int lo = prev_idx;
+  if (initial_search) {
+    lo = 0;
+  } else {
+    while (lo > 0 && (arc[prev_idx] - arc[lo - 1]) <= back_window) {
+      --lo;
+    }
+  }
+
+  int hi = prev_idx;
+  while (hi + 1 < m && (arc[hi + 1] - arc[prev_idx]) <= fwd_window) {
+    ++hi;
+  }
+
+  if (initial_search && config.end_guard_m > 0.0 && arc.back() > config.end_guard_m && m >= 3) {
+    int guard_limit = m - 2;
+    while (guard_limit > 0 && (arc.back() - arc[guard_limit]) < config.end_guard_m) {
+      --guard_limit;
+    }
+    hi = std::max(lo, std::min(hi, guard_limit));
+  }
+
+  double best_d = 1e18;
+  int best_i = lo;
+  for (int i = lo; i <= hi; ++i) {
+    const double d = std::hypot(path[i][0] - x, path[i][1] - y);
+    if (d < best_d) {
+      best_d = d;
+      best_i = i;
+    }
+  }
+
+  const int next_progress = initial_search ? best_i : std::max(prev_idx, best_i);
+  return {best_i, next_progress};
+}
+
+bool is_substantive_path_change(
+  const std::vector<std::array<double, 3>> & old_path,
+  const std::vector<std::array<double, 3>> & new_path,
+  double tol_m)
+{
+  if (old_path.size() != new_path.size()) {
+    return true;
+  }
+  if (new_path.empty()) {
+    return false;
+  }
+  const double d_start = std::hypot(
+    new_path.front()[0] - old_path.front()[0],
+    new_path.front()[1] - old_path.front()[1]);
+  const double d_end = std::hypot(
+    new_path.back()[0] - old_path.back()[0],
+    new_path.back()[1] - old_path.back()[1]);
+  return (d_start > tol_m) || (d_end > tol_m);
+}
+
+bool is_goal_reached(
+  const std::vector<std::array<double, 3>> & path,
+  double x, double y,
+  int progress_index,
+  int start_offset,
+  double goal_tolerance_m)
+{
+  if (path.size() < 2 || !std::isfinite(x) || !std::isfinite(y) ||
+    !std::isfinite(goal_tolerance_m) || goal_tolerance_m <= 0.0)
+  {
+    return false;
+  }
+  const int m = static_cast<int>(path.size());
+  const int end_margin = std::max(3, start_offset);
+  const int min_progress = std::max(0, m - end_margin);
+  if (progress_index < min_progress) {
+    return false;
+  }
+  const double d_goal = std::hypot(x - path.back()[0], y - path.back()[1]);
+  return d_goal < goal_tolerance_m;
+}
+
+double smooth_reference_heading(
+  Eigen::MatrixXd & ref,
+  double current_psi,
+  double dt,
+  double max_initial_step_rad,
+  double align_turn_rate_rad_s,
+  double align_min_speed_mps)
+{
+  if (ref.rows() < 3 || ref.cols() < 1 || !std::isfinite(current_psi)) {
+    return 0.0;
+  }
+  ref(2, 0) = current_psi + normalize_angle(ref(2, 0) - current_psi);
+  for (int k = 1; k < ref.cols(); ++k) {
+    ref(2, k) = ref(2, k - 1) + normalize_angle(ref(2, k) - ref(2, k - 1));
+  }
+
+  const double raw_e0 = ref(2, 0) - current_psi;
+  if (dt <= 0.0 || max_initial_step_rad <= 0.0 || align_turn_rate_rad_s <= 0.0 ||
+    std::abs(raw_e0) <= max_initial_step_rad)
+  {
+    return raw_e0;
+  }
+
+  for (int k = 0; k < ref.cols(); ++k) {
+    const double max_delta_k = align_turn_rate_rad_s * static_cast<double>(k + 1) * dt;
+    const double desired_delta = ref(2, k) - current_psi;
+    if (std::abs(desired_delta) > max_delta_k) {
+      ref(2, k) = current_psi + std::copysign(max_delta_k, desired_delta);
+    }
+    if (ref.rows() >= 4 && align_min_speed_mps > 0.0) {
+      ref(3, k) = std::max(ref(3, k), align_min_speed_mps);
+    }
+  }
+  return raw_e0;
+}
+
 }  // namespace usv_mpc
