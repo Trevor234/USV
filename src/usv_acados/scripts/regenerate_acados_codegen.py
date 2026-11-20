@@ -8,7 +8,8 @@ acados_generated/{kinematic,dynamic}/ 下已 vendored 的 C 源码, 不需要本
 p_global / lbu-ubu-lh-uh 下发, 改这些不需要重新 codegen。
 
 用法:
-    # 需先装 acados_template + casadi (见 docs/pi5_deploy.md)
+    # 需先装 acados_template + casadi (或把 acados 源码树的 interfaces/acados_template
+    # 加入 PYTHONPATH, 并把 $ACADOS_SOURCE_DIR 指向该源码树)
     python3 regenerate_acados_codegen.py --model kinematic
     python3 regenerate_acados_codegen.py --model dynamic
     python3 regenerate_acados_codegen.py --model kinematic --horizon 20 --dt 0.2 \
@@ -637,7 +638,8 @@ def main():
         from acados_template import AcadosOcpSolver  # noqa: F401
     except Exception as e:  # pragma: no cover - 环境问题
         sys.exit(f"[错误] 需要 acados_template ({type(e).__name__}: {e})。"
-                 " 见 docs/pi5_deploy.md 安装 acados。")
+                 " 设置 ACADOS_SOURCE_DIR 并把 $ACADOS_SOURCE_DIR/interfaces/"
+                 "acados_template 加入 PYTHONPATH。")
 
     os.makedirs(out_dir, exist_ok=True)
     print(f"[codegen] model={model_key} 生成到 {out_dir} "
