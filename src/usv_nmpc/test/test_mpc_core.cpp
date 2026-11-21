@@ -79,7 +79,7 @@ TEST(Utils, RcActuationDeadbandCompensationAndInverseConsistency) {
   config.thrust_max = 30.0;
   config.thrust_min = -30.0;
   config.steering_gain = 0.75;
-  config.throttle_gain = 0.85;
+  config.throttle_gain = 1.0;
   config.deadband_compensation = true;
   config.use_quadratic_model = true;
 
@@ -90,12 +90,10 @@ TEST(Utils, RcActuationDeadbandCompensationAndInverseConsistency) {
   EXPECT_GT(micro_fwd.effective_thrust(0), 1.0);
   EXPECT_NEAR(micro_fwd.effective_thrust(0), micro_fwd.effective_thrust(1), 1e-9);
 
-  // 2) 再将反算出的 effective_thrust 喂回前向映射, PWM 应与首次下发基本一致 (自洽无漂移)
+  // 2) 再将反算出的 effective_thrust 喂回前向映射, PWM 应与首次下发严格一致 (自洽无漂移)
   const auto recheck = usv_mpc::thrust_to_rc_actuation(
-      Eigen::Vector2d(micro_fwd.effective_thrust(0) / config.throttle_gain,
-                      micro_fwd.effective_thrust(1) / config.throttle_gain),
-      config);
-  EXPECT_NEAR(recheck.throttle_pwm, micro_fwd.throttle_pwm, 2);
+      micro_fwd.effective_thrust, config);
+  EXPECT_EQ(recheck.throttle_pwm, micro_fwd.throttle_pwm);
 
   // 3) 极小抖动 (0.3 N <= 0.5 N) 回中 1500 us 防抖
   const auto jitter = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(0.3, 0.3), config);
@@ -107,6 +105,21 @@ TEST(Utils, RcActuationDeadbandCompensationAndInverseConsistency) {
   const auto micro_rev = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(-2.0, -2.0), config);
   EXPECT_LE(micro_rev.throttle_pwm, 1400);
   EXPECT_LT(micro_rev.effective_thrust(0), -1.0);
+
+  // 5) 典型工况与边界定量核验 (throttle_gain=1.0, 1100~1900 us 安全区间)
+  const auto t15 = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(15.0, 15.0), config);
+  EXPECT_EQ(t15.throttle_pwm, 1711);
+  EXPECT_NEAR(t15.effective_thrust(0), 15.0, 0.15);
+
+  const auto t30 = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(30.0, 30.0), config);
+  EXPECT_EQ(t30.throttle_pwm, 1812);
+  EXPECT_LE(t30.throttle_pwm, 1900);
+  EXPECT_NEAR(t30.effective_thrust(0), 30.0, 0.15);
+
+  const auto t_rev30 = usv_mpc::thrust_to_rc_actuation(Eigen::Vector2d(-30.0, -30.0), config);
+  EXPECT_EQ(t_rev30.throttle_pwm, 1188);
+  EXPECT_GE(t_rev30.throttle_pwm, 1100);
+  EXPECT_NEAR(t_rev30.effective_thrust(0), -30.0, 0.15);
 }
 
 // 复现 11.18 Episode #4 起点防终点倒吸 + U 型折返横漂不跨航段跳变

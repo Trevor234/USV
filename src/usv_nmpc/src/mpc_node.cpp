@@ -123,13 +123,13 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("align_min_net_thrust_n", 8.0);
   this->declare_parameter("align_reverse_thrust_floor_n", -5.0);
 
-  // NMPC参数 (mpc_params_B.yaml: sqrt(Qx/R)≈20N=80%T_max 调参)
+  // NMPC参数 (mpc_params_B.yaml: 针对 14.2 kg / 30 N 实船整定)
   this->declare_parameter("dynamic.Q", std::vector<double>{20.0, 20.0, 50.0, 8.0, 1.0, 8.0});
   this->declare_parameter("dynamic.R", std::vector<double>{0.05, 0.05});
   this->declare_parameter("dynamic.Rd", std::vector<double>{0.2, 0.2});
   this->declare_parameter("dynamic.Qf_scale", 8.0);
-  this->declare_parameter("dynamic.T_max", 25.0);
-  this->declare_parameter("dynamic.T_min", -25.0);
+  this->declare_parameter("dynamic.T_max", 30.0);
+  this->declare_parameter("dynamic.T_min", -30.0);
   this->declare_parameter("dynamic.dT_max", 80.0);
   this->declare_parameter("dynamic.dt", 0.2);
 
@@ -144,7 +144,7 @@ void MpcControllerNode::declare_parameters_() {
   this->declare_parameter("steering_sign", -1.0);
   this->declare_parameter("throttle_sign", 1.0);
   this->declare_parameter("steering_gain", 0.75);
-  this->declare_parameter("throttle_gain", 0.85);
+  this->declare_parameter("throttle_gain", 1.0);
   this->declare_parameter("deadband_compensation", true);
   this->declare_parameter("pwm_deadband_forward", 1600);
   this->declare_parameter("pwm_deadband_reverse", 1400);

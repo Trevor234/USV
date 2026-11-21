@@ -99,9 +99,9 @@ struct RcActuationResult {
   Eigen::Vector2d effective_thrust = Eigen::Vector2d::Zero();
 };
 
-/// 将左右推力映射为 RC PWM，并反算本地线性混控对应的等效推力。
-/// 不包含推进器死区、PWM 非线性、电压影响或 ArduRover 内部动态；这些项需要
-/// 实船标定后才能替换此近似模型。
+/// 将左右推力映射为 RC PWM，并反算本地线性/二次混控对应的等效推力。
+/// 支持推进器死区跳跃补偿与系柱拉力试验二次解析反解 (RcActuationConfig)；
+/// 反向推力特性、螺旋桨不对称性及电池电压动态补偿需在后续水面测试中持续完善。
 RcActuationResult thrust_to_rc_actuation(
     const Eigen::Vector2d& thrust, const RcActuationConfig& config);
 

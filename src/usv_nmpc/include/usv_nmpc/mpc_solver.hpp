@@ -74,8 +74,8 @@ struct MpcParams {
   Eigen::Vector2d Rd_diag = {0.2, 0.2};
   double Qf_scale = 8.0;
   // 推力约束
-  double T_max  = 25.0;
-  double T_min  = -25.0;
+  double T_max  = 30.0;
+  double T_min  = -30.0;
   double dT_max = 80.0;
   // 模型
   HydroParams hydro;

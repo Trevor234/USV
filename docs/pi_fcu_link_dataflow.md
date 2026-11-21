@@ -372,9 +372,9 @@ data = [v₀, κ₀, r₀, t₀,  v₁, κ₁, r₁, t₁, ..., v_{m-1}, κ_{m-1
 | `rc_pwm_min/center/max` | 1100/1500/1900 | 线性映射三锚点 |
 | `steering_sign` | **-1** | ArduRover RC1 艏向正方向与 NMPC 的 (TR−TL) 相反 |
 | `throttle_sign` | +1 | 正推力 → 高 RC3 → 前进 |
-| `steering_gain` / `throttle_gain` | 0.4 / 0.75 | 映射斜率 |
+| `steering_gain` / `throttle_gain` | 0.75 / 1.0 | 映射增益（转向 0.75；油门 1.0 直连二次标定） |
 
-混控关系：NMPC 输出 `[T_L, T_R]`（单推进器 ±25 N）→ 舵 = steering_sign·gain·(TR−TL)/2 类的线性组合 → PWM = center + 值·(max−min)/2，整型量化。**全零消息 = 释放通道**（交还手动控制）。节点把最终整数 PWM 按当前线性混控反算为等效 `[TL,TR]` 写回下一拍 `delta_T` 锚点（含 gain/sign/量化近似；死区、非线性、电压影响需实船标定）。
+混控关系：NMPC 输出 `[T_L, T_R]`（单推进器 ±30 N 限幅）→ 舵 = steering_sign·gain·(TR−TL)/2 类的线性组合 → PWM = center + 值·(max−min)/2，整型量化。**全零消息 = 释放通道**（交还手动控制）。节点把最终整数 PWM 按二次推力标定曲线与死区补偿反算为等效 `[TL,TR]` 写回下一拍 `delta_T` 锚点（含 gain/sign/量化自洽）。
 
 > 当前方案 A 运行态下该话题**无发布者**（0 publisher），录包里此话题为空——属预期行为，排查时不要误判为故障。
 
