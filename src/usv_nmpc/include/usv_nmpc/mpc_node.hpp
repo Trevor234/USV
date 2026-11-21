@@ -108,8 +108,8 @@ class MpcControllerNode : public rclcpp::Node {
   double dyn_dt_ = 0.0;
   int dyn_N_ = 0;
   double dyn_prediction_time_ = 0.0;
-  double dyn_T_max_ = 25.0;   // 缓存,热路径用
-  double dyn_T_min_ = -25.0;
+  double dyn_T_max_ = 30.0;   // 缓存,热路径用
+  double dyn_T_min_ = -30.0;
 
   // ── 当前状态 ────────────────────────────────────────
   double x_ = 0, y_ = 0, psi_ = 0, u_ = 0, v_ = 0, r_ = 0;
@@ -168,8 +168,8 @@ class MpcControllerNode : public rclcpp::Node {
   int rc_steering_channel_ = 0;
   int rc_throttle_channel_ = 2;
   int rc_pwm_min_ = 1100, rc_pwm_center_ = 1500, rc_pwm_max_ = 1900;
-  double steering_sign_ = 1.0, throttle_sign_ = 1.0;
-  double steering_gain_ = 0.4, throttle_gain_ = 0.75;  // 与 mpc_params_B.yaml 一致
+  double steering_sign_ = -1.0, throttle_sign_ = 1.0;
+  double steering_gain_ = 0.75, throttle_gain_ = 1.0;  // 与 mpc_params_B.yaml 一致
   bool deadband_compensation_ = true;
   int pwm_deadband_forward_ = 1600;
   int pwm_deadband_reverse_ = 1400;

@@ -41,8 +41,8 @@
       Rd: [0.2, 0.2]               # 控制变化率权重（保持 Rd/R=4）
       Qf_scale: 8.0                # 终端代价倍率（针对 N=20 调低）
       dt: 0.2                      # 动力学 MPC 离散步长 (s) — 保持 N=20
-      T_max: 30.0                  # 单侧推进器正向有效推力上限 (N) — 系泊二次拟合整定
-      T_min: -30.0                 # 单侧推进器反向推力下限 (N)
+      T_max: 30.0                  # 单侧推进器正向有效推力上限 (N) — 对应 RC3≈1812 µs (<1900 µs), 匹配巡航阻力并防电压跌落
+      T_min: -30.0                 # 单侧推进器反向推力下限 (N) — 对应 RC3≈1188 µs (>1100 µs), 反向尚未实测标定
       dT_max: 80.0                 # 最大推力变化率 (N/s)
 
     # --- NMPC RC 覆写映射（ArduRover 输入通道）---
@@ -54,7 +54,7 @@
     steering_sign: -1.0            # 转向取反：ArduRover RC1 偏航符号与 NMPC (TR-TL) 相反
     throttle_sign: 1.0             # 正向 MPC 油门在 rover-skid 模式下对应高 RC3 / 前进
     steering_gain: 0.75            # 提升转向增益，确保差动转向指令在死区补偿下充足
-    throttle_gain: 0.85            # 提升油门增益以匹配二次推力标定曲线
+    throttle_gain: 1.0             # 系泊二次标定模型已直接解析对应真实推力 (N)，设为 1.0 消除双重衰减
     deadband_compensation: true    # 启用 1500-1600 us / 1400-1500 us 死区跳跃补偿
     pwm_deadband_forward: 1600     # 系泊标定正向起转 PWM 阈值 (us)
     pwm_deadband_reverse: 1400     # 反向死区对称阈值 (us)

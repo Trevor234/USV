@@ -141,7 +141,7 @@ TEST(AcadosSolve, AppliedControlAnchorsNextRateConstraint) {
 
   const Eigen::Vector2d applied_control(5.0, -5.0);
   backend.set_applied_control(applied_control);
-  EXPECT_THROW(backend.set_applied_control(Eigen::Vector2d(26.0, 0.0)),
+  EXPECT_THROW(backend.set_applied_control(Eigen::Vector2d(p.T_max + 1.0, 0.0)),
                std::out_of_range);
 
   const Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(6, p.N + 1);
