@@ -10,7 +10,9 @@ TEST(TickBarrier, DisabledInEveryMode) {
 TEST(TickBarrier, DiagnosticModeAndFaultPermissionRequired) {
   EXPECT_THROW(p1::TickBarrier(610,"shadow",true),std::runtime_error);
   EXPECT_THROW(p1::TickBarrier(610,"execute",true),std::runtime_error);
-  EXPECT_THROW(p1::TickBarrier(610,"no_output",false),std::runtime_error);
+  // 新矩阵：no_output 是诊断模式，不需要故障开关；受控仿真则必须带。
+  EXPECT_NO_THROW(p1::TickBarrier(610,"no_output",false));
+  EXPECT_THROW(p1::TickBarrier(610,"controlled_sim",false),std::runtime_error);
 }
 TEST(TickBarrier, FiniteInclusiveBounds) {
   EXPECT_THROW(p1::TickBarrier(-1,"no_output",true),std::runtime_error);
@@ -37,4 +39,18 @@ TEST(SchedulerBoundary, ExactAndAdjacentDueTicks) {
     EXPECT_EQ(p1::due_tick(origin,due),i);
     EXPECT_EQ(p1::due_tick(origin,due+1),i);
   }
+}
+
+// 受控仿真 + 合同故障开关：允许；缺任一：拒绝。
+TEST(TickBarrier, ControlledSimAdmissionMatrix) {
+  EXPECT_THROW(p1::TickBarrier(610,"controlled_sim",false),std::runtime_error);
+  EXPECT_THROW(p1::TickBarrier(610,"shadow",true),std::runtime_error);
+  EXPECT_THROW(p1::TickBarrier(610,"execute",true),std::runtime_error);
+  EXPECT_NO_THROW(p1::TickBarrier(610,"controlled_sim",true));
+}
+TEST(TickBarrier, OrdinalIsAConstructorParameter) {
+  p1::TickBarrier b(610,"no_output",true,2);
+  EXPECT_FALSE(b.take());
+  EXPECT_TRUE(b.take());
+  EXPECT_FALSE(b.take());
 }

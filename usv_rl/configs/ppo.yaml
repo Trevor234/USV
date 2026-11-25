@@ -47,21 +47,21 @@ eval:
 # 每阶段结束保存 ../artifacts/rl_models/<run>/<stage>/ 下快照（见 usv_rl/paths.py）。
 curriculum:
   - name: s1_straight
-    total_steps: 1000000
+    total_steps: 500000
     env_overrides:
       path_type: straight
-  - name: s2_zigzag
-    total_steps: 2000000
-    env_overrides:
-      path_type: zigzag
-  - name: s3_random
-    total_steps: 3000000
+  - name: s2_turns
+    total_steps: 1000000
     env_overrides:
       path_type: random
+  - name: s3_mix
+    total_steps: 3500000
+    env_overrides:
+      path_type: scheme_a_mix
   - name: s4_dr
-    total_steps: 4000000
+    total_steps: 5000000
     env_overrides:
-      path_type: random
+      path_type: scheme_a_mix
       hydro_dr_frac: 0.2
       thrust_delay_max_steps: 1
       obs_noise_vel: 0.02

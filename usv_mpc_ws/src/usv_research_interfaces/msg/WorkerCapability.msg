@@ -17,3 +17,10 @@ uint32 pending_count
 bool fault_injection_enabled
 bool fatal
 string<=256 reason
+# v2: 模型运行时就绪事实。三者都是实测值，不是声明值：
+#   model_runtime_ready —— 事务已采用构造事实且模型一致；
+#   model_plan_sha256   —— 实际加载的计划文件字节摘要（未加载为空）；
+#   applied_generation  —— 事务当前已应用的代（0 = 未应用）。
+bool model_runtime_ready
+string<=64 model_plan_sha256
+uint64 applied_generation

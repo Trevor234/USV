@@ -20,3 +20,18 @@
   durability: volatile
   history: keep_last
   depth: 5
+
+# MAVLink 原始帧: 发布端为 BEST_EFFORT/VOLATILE/KEEP_LAST depth=1000,
+# 录制器显式匹配同维度。不要求 RELIABLE, 不承诺零丢失。
+# 此处只声明订阅请求, 不代表已收到帧或已覆盖飞控全部物理通道。
+/uas1/mavlink_source:
+  reliability: best_effort
+  durability: volatile
+  history: keep_last
+  depth: 1000
+
+/uas1/mavlink_sink:
+  reliability: best_effort
+  durability: volatile
+  history: keep_last
+  depth: 1000

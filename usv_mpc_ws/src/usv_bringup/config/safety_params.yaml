@@ -19,14 +19,14 @@
     # FCU 指令/RC 覆盖超时取决于固件、参数及实际指令类型, 需独立核验。
     # 此阈值与模式请求均不构成物理停船保证。
     mpc_status_timeout_s: 1.0
-    # FAILSAFE 模式请求重发上限: 达到上限仍未进入所请求模式时保持告警。
-    # 此计数适用于所配置的 failsafe 模式, 不仅是 RTL。
+    # RTL 自动返航的重发上限: 达到上限仍未进入 RTL 时保持告警。
+    # 仅在显式配置 failsafe_mode: "RTL" 时生效。
     max_rtl_retries: 10
     # FAILSAFE 触发时的动作:
     #   "report" — 报告故障, 不主动切换 FCU 模式; 需按受控流程人工处理。
-    #   "HOLD"   — 请求 FCU 进入 HOLD; 切换成功及船体停止需独立确认。
     #   "RTL"    — 请求 FCU 返航; 需核对 home、传感器、链路和剩余能量。
+    # 不存在自动 HOLD 动作; 需要 HOLD 时由人工显式切换。
+    # 当前默认 report: 故障只告警, 不会自动改飞控模式; RTL 仅显式配置时启用。
     # report 模式下本节点自动恢复 (auto_switch) 同样被抑制。
-    # 当前默认 HOLD; 不依赖“GUIDED 无超时”假设。
     # 实机验收需检查固件、指令类型、持续重发来源、模式确认与停止效果。
-    failsafe_mode: "HOLD"
+    failsafe_mode: "report"

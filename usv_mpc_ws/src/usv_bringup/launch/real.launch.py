@@ -44,8 +44,8 @@ def generate_launch_description():
 
     # scheme: 控制方案选择。A=运动学 MPC(kinematic), B=动力学 NMPC(dynamic)。
     # 切换时自动选择对应的 MPC 包和参数配置文件:
-    #   A: usv_mpc_kinematic_cpp + mpc_params_A.yaml + usv_params_A.yaml
-    #   B: usv_mpc_cpp          + mpc_params_B.yaml + usv_params_B.yaml
+    #   A: usv_mpc + mpc_params_A.yaml + usv_params_A.yaml
+    #   B: usv_nmpc             + mpc_params_B.yaml + usv_params_B.yaml
     # 注意: use_cpp=false 时 MPC 用 Python 包(usv_mpc),方案 A 才有 Python MPC。
     scheme_arg = DeclareLaunchArgument(
         "scheme", default_value="B",
@@ -204,7 +204,7 @@ def generate_launch_description():
 
     # use_cpp 现仅控制 planning 的实现选择。
     safety_node = Node(
-        package="usv_safety_cpp",
+        package="usv_safety",
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",
@@ -226,10 +226,10 @@ def generate_launch_description():
         ],
     )
 
-    # 规划节点恒为 C++ (usv_planning_cpp)。Python usv_planning 包已删除;
+    # 规划节点恒为 C++ (usv_planning)。Python 规划包已删除;
     # use_cpp 现仅控制 MPC 后端选择 (如有)。
     planner_node = Node(
-        package="usv_planning_cpp",
+        package="usv_planning",
         executable="path_planner_node",
         name="path_planner_node",
         output="screen",
@@ -244,7 +244,7 @@ def generate_launch_description():
     )
 
     mission_bridge_node = Node(
-        package="usv_planning_cpp",
+        package="usv_planning",
         executable="mission_bridge_node",
         name="mission_bridge_node",
         output="screen",
@@ -260,13 +260,16 @@ def generate_launch_description():
     )
 
     # MPC 控制器: 根据 scheme 切换包和配置文件。
-    #   scheme=A: usv_mpc_kinematic_cpp (运动学, CasADi) + mpc_params_A.yaml + usv_params_A.yaml
-    #   scheme=B: usv_mpc_cpp (动力学 NMPC, acados+CasADi) + mpc_params_B.yaml + usv_params_B.yaml
+    #   scheme=A: usv_mpc (运动学, acados) + mpc_params_A.yaml + usv_params_A.yaml
+    #   scheme=B: usv_nmpc (动力学 NMPC, acados+CasADi fallback) + mpc_params_B.yaml + usv_params_B.yaml
     # 2026-09-06: Python 方案 A 包 (usv_mpc) 已删除, 方案 A 恒为 C++
-    # (usv_mpc_kinematic_cpp, CasADi/IPOPT); scheme=B 为 usv_mpc_cpp (acados)。
+    # (usv_mpc, 共用 usv_acados 后端); scheme=B 为 usv_nmpc (acados+CasADi)。
 
     # acados/CasADi 运行时库路径: 非交互式启动(如 SSH、systemd)不 source .bashrc,
-    # 故在此显式设置 LD_LIBRARY_PATH, 确保 scheme=B 的 mpc_node 能找到 libhpipm.so 等。
+    # 故在此显式设置 LD_LIBRARY_PATH。acados 目录对 A/B 都需要 (共用 usv_acados
+    # 后端 -> libacados/libhpipm), casadi 目录仅 scheme=B 的 fallback 后端使用。
+    # 顺序上 acados 在 casadi 之前: casadi wheel 自带 libhpipm.so, 不能用它替换
+    # acados 编译时链接的 hpipm。
     _acados_lib = os.path.expanduser("~/acados/lib")
     _casadi_lib = os.path.expanduser("~/.local/lib/python3.12/site-packages/casadi")
     _mpc_ld_path = ":".join(p for p in [
@@ -276,7 +279,7 @@ def generate_launch_description():
     ] if p)
 
     mpc_pkg = PythonExpression(
-        expression=["'usv_mpc_kinematic_cpp' if '", scheme, "' == 'A' else 'usv_mpc_cpp'"]
+        expression=["'usv_mpc' if '", scheme, "' == 'A' else 'usv_nmpc'"]
     )
     mpc_params_file = PythonExpression(
         expression=["'", bringup_dir, "/config/mpc_params_A.yaml' if '", scheme, "' == 'A' else '", bringup_dir, "/config/mpc_params_B.yaml'"]

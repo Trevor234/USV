@@ -1,115 +1,791 @@
 // Copyright 2026 USV Developer
 // SPDX-License-Identifier: MIT
+//
+// p1_solver_worker —— 唯一的求解进程。
+//
+// 线程归属（这是本文件的全部难点）：
+//   * 事务与唯一 capsule 属于**求解线程**，构造、调用、销毁都在该线程内；
+//     ROS 线程从不持有它们的引用；
+//   * ROS 线程只读一个互斥保护的 POD 快照（EngineSnapshot），心跳/能力发布
+//     只用快照，不访问任何 backend/txn getter，也不把心跳锁带进 solve；
+//   * 初始化失败必须写 worker_engine_init_failed 并确定退出 2，不能 std::terminate。
+//
+// 结局分类：一个 Job 要么产生候选（CandidateReady），要么被**类型化拒绝**
+// （JobRefused/Closing，零本 Job native，不进入数值故障隔离），要么终端故障。
 #include <atomic>
+#include <chrono>
 #include <condition_variable>
+#include <csignal>
+#include <fstream>
 #include <mutex>
 #include <optional>
+#include <regex>
 #include <thread>
-#include <csignal>
-#include <rclcpp/rclcpp.hpp>
-#include "protocol.hpp"
-#include "usv_mpc_cpp/acados_backend.hpp"
-namespace {std::atomic<bool> stopping{false};void stop_signal(int){stopping=true;}}
-class Worker final:public rclcpp::Node {
- public:
-  Worker():Node("p1_solver_worker") {
-    run_=declare_parameter<std::string>("run_id","");hash_=declare_parameter<std::string>("contract_hash","");
-    auto file=declare_parameter<std::string>("contract_file","");c_=p1::load_contract(file,hash_);resources_=p1::resource_limits_from_contract(c_);
-    boot_=p1::boot_id();nominal_=c_.at("nominal_hash");instance_=p1::digest(run_+boot_+std::to_string(getpid())+std::to_string(p1::monotonic_ns()));
-    if(run_.empty()||run_.size()>128)throw std::runtime_error("run identity invalid");
-    delay_=declare_parameter<int>("test_delay_ms",0);block_=declare_parameter<int>("test_native_block_ms",0);
-    if(delay_<0||block_<0||delay_>10000||block_>60000||((delay_||block_)&&!c_.at("fault_injection_enabled").get<bool>()))throw std::runtime_error("unqualified fault injection");
-    if(c_.value("worker_failure_policy",std::string{})!="terminal_on_failed_or_invalid_native_result")throw std::runtime_error("undeclared worker failure policy");
-    auto log=declare_parameter<std::string>("source_file","");file_.open(log,std::ios::out|std::ios::app);if(!file_)throw std::runtime_error("worker source log unavailable");
-    if(c_.at("recording_ready_timeout_ns").get<int64_t>()<=0||c_.at("recording_ready_timeout_ns").get<int64_t>()>60000000000LL)throw std::runtime_error("invalid finite recording timeout");
-    solver_=std::make_unique<usv_mpc::AcadosBackend>(p1::solver_params(c_));
-    out_=create_publisher<p1::Candidate>("/p1/solve_candidate",rclcpp::QoS(1).reliable());
-    caps_=create_publisher<p1::Capability>("/p1/worker_capability",rclcpp::QoS(1).reliable().transient_local());
-    sub_=create_subscription<p1::Job>("/p1/solve_job",rclcpp::QoS(1).reliable(),[this](p1::Job::SharedPtr j){receive(*j);});
-    startup_=p1::monotonic_ns();publish_capability();timer_=create_wall_timer(std::chrono::milliseconds(200),[this]{publish_capability();});
-    thread_=std::thread([this]{work();});
-  }
-  ~Worker(){close_source();}
-  bool close_source(){if(closed_)return !fatal_;closed_=true;stopping=true;cv_.notify_all();if(thread_.joinable())thread_.join();{std::lock_guard<std::mutex> l(mutex_);if(pending_){event({{"type","pending_discarded"},{"job_id",pending_->job.job_id},{"reason","worker_close"}});pending_.reset();}}event({{"type","worker_summary"},{"generated_candidates",generated_candidates_.load()},{"published_candidates",published_candidates_.load()},{"completed_jobs",completed_.load()},{"fatal",fatal_.load()},{"terminal_numerical_failure",terminal_numerical_.load()},{"normal_source_complete",!fatal_.load()&&generated_candidates_==published_candidates_},{"finished_ns",p1::monotonic_ns()}});file_.flush();const bool flush_ok=bool(file_);if(!flush_ok)fatal_=true;fprintf(stdout,"WORKER_CLOSE_FLUSH_SUCCESS=%s\n",flush_ok?"true":"false");return !fatal_;}
- private:
-  void event(const p1::Json & d,bool flush=false){std::lock_guard<std::mutex> l(log_mutex_);file_<<d.dump()<<'\n';if(flush)file_.flush();if(!file_)fatal_=true;}
+#include <unistd.h>
 
-  // Initial capability is published immediately. Only this work thread arms.
-  bool wait_recording_ready(){
-    try{
-      const int64_t start=p1::monotonic_ns(),timeout=c_.at("recording_ready_timeout_ns").get<int64_t>();
-      while(rclcpp::ok()&&!stopping&&!fatal_&&p1::monotonic_ns()-start<=timeout){
-        bool recorder=false,regulator=false;
-        for(const auto & endpoint:get_subscriptions_info_by_topic("/p1/solve_candidate")){
-          recorder=recorder||endpoint.node_name().find("recorder")!=std::string::npos;
-          regulator=regulator||endpoint.node_name()=="p1_regulator";
+#include <rclcpp/rclcpp.hpp>
+
+#include "p1_contract.hpp"
+#include "p1_job_wire.hpp"
+#include "p1_plan_bridge.hpp"
+#include "p1_sys_utils.hpp"
+#include "p1_worker_engine.hpp"
+#include "p1_engine_session.hpp"
+
+namespace
+{
+
+std::atomic<bool> g_stop{false};
+void on_signal(int) { g_stop = true; }
+
+/// ROS 线程唯一可见的运行事实。纯 POD，无指针，无 backend 访问。
+struct EngineSnapshot
+{
+  bool ready = false;
+  bool fatal = false;
+  bool model_consistent = false;
+  std::uint64_t applied_generation = 0;
+  std::uint32_t horizon_steps = 0;
+  double prediction_dt = 0.0;
+  const char * failure_reason = "";
+};
+
+}  // namespace
+
+class Worker final : public rclcpp::Node
+{
+public:
+  Worker() : Node("p1_solver_worker")
+  {
+    run_ = declare_parameter<std::string>("run_id", "");
+    mode_ = declare_parameter<std::string>("mode", "production");
+    hash_ = declare_parameter<std::string>("contract_hash", "");
+    const auto contract_file = declare_parameter<std::string>("contract_file", "");
+    auto contract = mode_ == "controlled_sim"
+      ? p1::load_verified_contract(contract_file, hash_, mode_)
+      : p1::load_verified_contract(contract_file, hash_);
+    spec_ = std::move(contract.spec);
+    faults_enabled_ = spec_.faults.faults_enabled(contract.profile);
+    boot_ = declare_parameter<std::string>("boot_id", "");
+    if (boot_.empty()) boot_ = p1::boot_id();
+    instance_ = p1::digest(run_ + boot_ + std::to_string(getpid()) +
+                           std::to_string(p1::monotonic_ns()));
+    if (run_.empty() || run_.size() > 128) throw std::runtime_error("run identity invalid");
+
+    // 进程内测试接缝只在 USV_RESEARCH_TEST_SEAMS 构建中存在；普通构建不声明参数。
+#ifdef USV_RESEARCH_TEST_SEAMS
+    block_ = declare_parameter<int>("test_native_block_ms", 0);
+    delay_ = declare_parameter<int>("test_delay_ms", 0);
+    if (block_ < 0 || delay_ < 0 || block_ > 60000 || delay_ > 10000)
+      throw std::runtime_error("unqualified fault injection");
+    // 受控仿真里故障许可的唯一来源是合同开关；用工程级的
+    // fault_injection_enabled 会让"没有许可"的合同也能注入。
+    if ((block_ || delay_) && !faults_enabled_)
+      throw std::runtime_error("unqualified fault injection");
+#endif
+
+    const auto log = declare_parameter<std::string>("source_file", "");
+    file_.open(log, std::ios::out | std::ios::app);
+    if (!file_) throw std::runtime_error("worker source log unavailable");
+
+    plan_file_ = declare_parameter<std::string>("model_plan_file", "");
+    plan_sha_ = declare_parameter<std::string>("model_plan_sha256", "");
+    if (plan_file_.empty() || !std::regex_match(plan_sha_, std::regex("[0-9a-f]{64}")))
+      throw std::runtime_error("model plan identity required");
+    const auto plan_text = p1::read_text(plan_file_);
+    if (p1::digest(plan_text) != plan_sha_) throw std::runtime_error("model plan hash mismatch");
+    grid_ = p1::grid_of_plan(plan_text, spec_);
+    params_ = p1::solver_params(spec_);
+    registry_ = p1::registry_from_plan(plan_text, grid_);
+
+    out_ = create_publisher<p1::Candidate>("/p1/solve_candidate",
+                                           rclcpp::QoS(1).reliable());
+    caps_ = create_publisher<p1::Capability>(
+        "/p1/worker_capability", rclcpp::QoS(1).reliable().transient_local());
+    sub_ = create_subscription<p1::Job>(
+        "/p1/solve_job", rclcpp::QoS(1).reliable(),
+        [this](p1::Job::SharedPtr job) { receive(*job); });
+
+    startup_ = p1::monotonic_ns();
+    publish_capability();  // 初始化未完成时 ready=false，但身份/时域常量已可读
+    timer_ = create_wall_timer(std::chrono::milliseconds(200),
+                               [this] { publish_capability(); });
+
+    thread_ = std::thread([this] { solve_thread(); });
+  }
+
+  ~Worker() override { close_source(); }
+
+  /// 终局判定：一旦本进程不可用（初始化失败、终端数值故障、就绪超时），
+  /// main 循环必须**自行**退出，而不是等外部信号 —— 否则排空门会等到超时。
+  bool failed() const { return fatal_.load(); }
+
+  bool close_source()
+  {
+    if (closed_) return !fatal_;
+    closed_ = true;
+    stopping_ = true;
+    cv_.notify_all();
+    if (thread_.joinable()) thread_.join();
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      if (pending_)
+      {
+        event({{"type", "job_refused"}, {"job_id", pending_->job.job_id},
+               {"reason", "worker_close"}, {"terminal", false},
+               {"origin", "shutdown"}, {"native_solve_entries_this_job", 0}});
+        pending_.reset();
+      }
+    }
+    event({{"type", "worker_summary"},
+           {"generated_candidates", generated_.load()},
+           {"published_candidates", published_.load()},
+           {"completed_jobs", completed_.load()},
+           {"refused_jobs", refused_.load()},
+           {"cancelled_jobs", cancelled_.load()},
+           {"terminal_numerical_failure", terminal_numerical_.load()},
+           {"fatal", fatal_.load()},
+           {"normal_source_complete", !fatal_.load() &&
+                                       generated_.load() == published_.load()},
+           {"finished_ns", p1::monotonic_ns()}});
+    file_.flush();
+    if (!file_) fatal_ = true;
+    fprintf(stdout, "WORKER_CLOSE_FLUSH_SUCCESS=%s\n", fatal_ ? "false" : "true");
+    return !fatal_;
+  }
+
+private:
+  struct Pending
+  {
+    p1::Job job;
+    std::int64_t receive_ns = 0;
+  };
+
+  void event(const p1::Json & doc, bool flush = false)
+  {
+    std::lock_guard<std::mutex> lock(log_mutex_);
+    file_ << doc.dump() << '\n';
+    if (flush) file_.flush();
+    if (!file_) fatal_ = true;
+  }
+
+  void set_snapshot(const EngineSnapshot & value)
+  {
+    std::lock_guard<std::mutex> lock(snapshot_mutex_);
+    snapshot_ = value;
+  }
+
+  EngineSnapshot snapshot() const
+  {
+    std::lock_guard<std::mutex> lock(snapshot_mutex_);
+    return snapshot_;
+  }
+
+  void publish_capability()
+  {
+    const EngineSnapshot snap = snapshot();
+    p1::Capability message;
+    message.schema_version = "p1-worker-capability-v2";
+    message.run_id = run_;
+    message.boot_id = boot_;
+    message.contract_hash = hash_;
+    message.nominal_hash = spec_.identity.nominal_hash;
+    message.worker_instance = instance_;
+    message.clock_name = "CLOCK_MONOTONIC";
+    message.backend = "acados";
+    message.matrix_layout = "column_major";
+    // 时域/步长是**合同常量**：初始化未完成也能正确报告，但 ready 仍为 false。
+    message.horizon_steps = static_cast<std::uint32_t>(params_.N);
+    message.prediction_dt = params_.dt;
+    message.pid = getpid();
+    message.startup_ns = startup_;
+    message.completed_jobs = completed_.load();
+    message.active_job = active_.load();
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      message.pending_count = pending_ ? 1 : 0;
+    }
+    message.fatal = fatal_.load();
+    // 受控仿真：对外通告的故障能力以**合同开关**为准。基础合同的
+    // fault_injection_enabled 是工程级开关，不是这次运行被授予的许可。
+    message.fault_injection_enabled = faults_enabled_;
+    message.reason = snap.fatal ? std::string(snap.failure_reason) : std::string{};
+    // 三者都是实测值：就绪状态只来自求解线程的快照，不由接收方自报推导。
+    message.model_runtime_ready = snap.ready && !snap.fatal && snap.model_consistent;
+    message.model_plan_sha256 = plan_sha_;
+    message.applied_generation = snap.applied_generation;
+    // 契约证据：能力心跳必须落在 worker source 里，检查器只认原文。
+    event({{"type", "worker_capability"},
+           {"schema", message.schema_version},
+           {"run_id", message.run_id},
+           {"boot_id", message.boot_id},
+           {"contract_hash", message.contract_hash},
+           {"nominal_hash", message.nominal_hash},
+           {"worker_instance", message.worker_instance},
+           {"clock_name", message.clock_name},
+           {"backend", message.backend},
+           {"matrix_layout", message.matrix_layout},
+           {"horizon_steps", message.horizon_steps},
+           {"prediction_dt", message.prediction_dt},
+           {"pid", message.pid},
+           {"startup_ns", message.startup_ns},
+           {"completed_jobs", message.completed_jobs},
+           {"active_job", message.active_job},
+           {"pending_count", message.pending_count},
+           {"fault_injection_enabled", message.fault_injection_enabled},
+           {"fatal", message.fatal},
+           {"reason", message.reason},
+           {"model_runtime_ready", message.model_runtime_ready},
+           {"model_plan_sha256", message.model_plan_sha256},
+           {"applied_generation", message.applied_generation},
+           {"publish_ns", p1::monotonic_ns()}});
+    caps_->publish(message);
+  }
+
+  bool wait_recording_ready()
+  {
+    try
+    {
+      const std::int64_t start = p1::monotonic_ns();
+      while (rclcpp::ok() && !stopping_ && !fatal_ &&
+             p1::monotonic_ns() - start <= spec_.timing.recording_ready_timeout_ns)
+      {
+        bool recorder = false;
+        bool regulator = false;
+        for (const auto & endpoint : get_subscriptions_info_by_topic("/p1/solve_candidate"))
+        {
+          recorder = recorder ||
+                     endpoint.node_name().find("recorder") != std::string::npos;
+          regulator = regulator || endpoint.node_name() == "p1_regulator";
         }
-        if(out_->get_subscription_count()>=2&&recorder&&regulator){
-          event({{"type","worker_recording_ready"},{"worker_instance",instance_},{"ready_ns",p1::monotonic_ns()},
-            {"candidate_matched",out_->get_subscription_count()},{"active_job",0}},true);
-          if(!fatal_)return true;
+        // 受控仿真的启动门在 runner 那边：plant → worker → regulator。也就是说
+        // worker 必须先就绪，regulator 之后才启动 —— 因此这里**不能**等
+        // regulator 的订阅出现，否则两边互等直到超时。
+        // 生产采集仍要求 recorder 与 regulator 都在位。
+        const bool sim_ready = mode_ == "controlled_sim";
+        const bool production_ready = out_->get_subscription_count() >= 2 && recorder &&
+                                      regulator;
+        if (mode_ == "controlled_sim" ? sim_ready : production_ready)
+        {
+          event({{"type", "worker_recording_ready"},
+                 {"worker_instance", instance_},
+                 {"ready_ns", p1::monotonic_ns()},
+                 {"candidate_matched", out_->get_subscription_count()},
+                 {"active_job", 0}}, true);
+          if (!fatal_) return true;
           break;
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
       }
-      fatal_=true;event({{"type","worker_recording_ready_failed"},{"worker_instance",instance_},{"finished_ns",p1::monotonic_ns()}},true);
-    }catch(const std::exception & e){
-      fatal_=true;event({{"type","worker_recording_ready_failed"},{"reason",std::string(e.what()).substr(0,256)}},true);
+      fatal_ = true;
+      event({{"type", "worker_recording_ready_failed"},
+             {"worker_instance", instance_},
+             {"finished_ns", p1::monotonic_ns()}}, true);
     }
-    {std::lock_guard<std::mutex> l(mutex_);pending_.reset();}active_=0;return false;
+    catch (const std::exception & error)
+    {
+      fatal_ = true;
+      event({{"type", "worker_recording_ready_failed"},
+             {"reason", std::string(error.what()).substr(0, 256)}}, true);
+    }
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      pending_.reset();
+    }
+    active_ = 0;
+    return false;
   }
 
-  void publish_capability(){p1::Capability m;m.schema_version="p1-worker-capability-v1";m.run_id=run_;m.boot_id=boot_;m.contract_hash=hash_;m.nominal_hash=nominal_;m.worker_instance=instance_;m.clock_name="CLOCK_MONOTONIC";m.backend=solver_->backend();m.matrix_layout="column_major";m.horizon_steps=solver_->N();m.prediction_dt=solver_->dt();m.pid=getpid();m.startup_ns=startup_;m.completed_jobs=completed_;m.active_job=active_;{std::lock_guard<std::mutex> l(mutex_);m.pending_count=pending_?1:0;}m.fatal=fatal_;m.fault_injection_enabled=c_.at("fault_injection_enabled");m.reason=fatal_?"worker_unusable":"";caps_->publish(m);}
-  void receive(const p1::Job & j){auto now=p1::monotonic_ns();auto resource=p1::check_job_resources(j,resources_);if(!resource){event({{"type","resource_rejected"},{"interface","job"},{"job_id",j.job_id},{"reason",resource.reason},{"field",resource.field},{"observed",resource.observed},{"limit",resource.limit},{"receive_ns",now}});return;}if(fatal_||stopping){event({{"type","job_rejected"},{"job_id",j.job_id},{"reason","worker_terminal"}});return;}auto reason=p1::valid_job(j,run_,boot_,hash_,nominal_,instance_);if(reason.empty()&&now>j.deadline_steady_ns)reason="late_before_native";
-    if(!reason.empty()){event({{"type","job_rejected"},{"job_id",j.job_id},{"reason",reason},{"receive_ns",now}});return;}
-    std::lock_guard<std::mutex> l(mutex_);
-    if(fatal_||stopping){event({{"type","job_rejected"},{"job_id",j.job_id},{"reason","worker_terminal"},{"receive_ns",now}});return;}
-    if(j.job_id<=last_received_){event({{"type","job_rejected"},{"job_id",j.job_id},{"reason","duplicate_or_reordered"}});return;}
-    last_received_=j.job_id;
-    event({{"type","job_received"},{"job",p1::job_json(j)},{"worker_instance",instance_},{"receive_ns",now},{"commit_ns",p1::monotonic_ns()}});
-    if(fatal_)return;
-    if(pending_)event({{"type","pending_replaced"},{"job_id",pending_->job.job_id},{"replacement_job_id",j.job_id}});
-    pending_=Pending{j,now};cv_.notify_one();
-  }
-  struct Pending{p1::Job job;int64_t receive;};
-  void work(){if(!wait_recording_ready())return;while(!stopping&&!fatal_){Pending p;{std::unique_lock<std::mutex> l(mutex_);cv_.wait_for(l,std::chrono::milliseconds(100),[this]{return stopping||pending_.has_value();});if(stopping||fatal_){if(pending_)event({{"type","pending_discarded"},{"job_id",pending_->job.job_id},{"reason","worker_stopping_before_native"}});pending_.reset();break;}if(!pending_)continue;p=*pending_;pending_.reset();active_=p.job.job_id;}
-    if(p1::monotonic_ns()>p.job.deadline_steady_ns){event({{"type","pending_expired_before_native"},{"job_id",p.job.job_id},{"solver_invoked",false},{"now_ns",p1::monotonic_ns()}});active_=0;continue;}
-    p1::Candidate result;result.job=p.job;result.worker_instance=instance_;result.backend="acados";result.worker_receive_ns=p.receive;
-    try {
-      if(p.job.reset_warmstart)solver_->reset_warmstart();
-      solver_->set_applied_control({p.job.anchor_n[0],p.job.anchor_n[1]});
-      usv_mpc::Vector6d x;std::copy(p.job.target_state.begin(),p.job.target_state.end(),x.data());
-      Eigen::MatrixXd ref(6,21);std::copy(p.job.reference.begin(),p.job.reference.end(),ref.data());
-      result.solve_start_ns=p1::monotonic_ns();if(result.solve_start_ns>p.job.deadline_steady_ns){event({{"type","pending_expired_before_native"},{"job_id",p.job.job_id},{"solver_invoked",false},{"now_ns",result.solve_start_ns}});active_=0;continue;}
-      // Controlled barrier is deliberately in the native-owned path; an owned
-      // supervisor must TERM/KILL this process if its active watchdog expires.
-      if(block_){event({{"type","controlled_pre_native_barrier"},{"job_id",p.job.job_id},{"start_ns",p1::monotonic_ns()},{"duration_ms",block_},{"actual_native_invoked",false},{"flush_requested",true}},true);if(fatal_){active_=0;{std::lock_guard<std::mutex> l(mutex_);pending_.reset();}break;}std::this_thread::sleep_for(std::chrono::milliseconds(block_));}
-      result.solve_start_ns=p1::monotonic_ns();if(stopping||fatal_||result.solve_start_ns>p.job.deadline_steady_ns){event({{"type","pending_expired_before_native"},{"job_id",p.job.job_id},{"solver_invoked",false},{"now_ns",result.solve_start_ns}});active_=0;continue;}result.solver_invoked=true;
-      auto answer=solver_->solve(x,ref);result.solve_end_ns=p1::monotonic_ns();
-      result.success=answer.second.success;result.backend_ms=answer.second.solve_time_ms;
-      const auto native_reason=p1::copy_native_reason(answer.second.error,result.reason);if(!native_reason){event({{"type","native_result_resource_oversize"},{"job_id",p.job.job_id},{"field",native_reason.field},{"reason",native_reason.reason},{"observed",native_reason.observed},{"limit",native_reason.limit}});result.reason="native_result_resource_oversize";result.success=false;}
-      result.prediction_available=result.success&&answer.second.X_pred.rows()==6&&answer.second.X_pred.cols()==21&&answer.second.U_pred.rows()==2&&answer.second.U_pred.cols()==20&&answer.second.X_pred.allFinite()&&answer.second.U_pred.allFinite()&&answer.first.allFinite();
-      if(result.prediction_available){std::copy(answer.first.data(),answer.first.data()+2,result.first_control.begin());std::copy(answer.second.X_pred.data(),answer.second.X_pred.data()+126,result.x_prediction.begin());std::copy(answer.second.U_pred.data(),answer.second.U_pred.data()+40,result.u_prediction.begin());}
-      if(delay_)std::this_thread::sleep_for(std::chrono::milliseconds(delay_));
-      auto output_resource=p1::check_candidate_resources(result,resources_);if(!output_resource){event({{"type","native_result_resource_oversize"},{"job_id",p.job.job_id},{"field",output_resource.field},{"observed",output_resource.observed},{"limit",output_resource.limit}});throw std::runtime_error("native_result_resource_oversize");}
-      generated_candidates_++;event({{"type","candidate"},{"job",p1::job_json(p.job)},{"worker_instance",instance_},{"receive_ns",p.receive},{"solver_invoked",result.solver_invoked},{"backend",result.backend},{"backend_ms",result.backend_ms},{"solve_start_ns",result.solve_start_ns},{"solve_end_ns",result.solve_end_ns},{"success",result.success},{"prediction_available",result.prediction_available},{"first_control",result.first_control},{"X",result.x_prediction},{"U",result.u_prediction},{"reason",result.reason},{"publish_start_ns",p1::monotonic_ns()}});
-      if(fatal_)break;
-      const auto publish_start=p1::monotonic_ns();
-      try{out_->publish(result);published_candidates_++;event({{"type","candidate_publish_result"},{"job_id",p.job.job_id},{"worker_instance",instance_},{"solve_start_ns",result.solve_start_ns},{"solve_end_ns",result.solve_end_ns},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",true}});}catch(...){event({{"type","candidate_publish_result"},{"job_id",p.job.job_id},{"worker_instance",instance_},{"solve_start_ns",result.solve_start_ns},{"solve_end_ns",result.solve_end_ns},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",false}});throw;}
-    }catch(const std::exception & e){fatal_=true;result.reason=std::string(e.what()).substr(0,256);result.success=false;result.prediction_available=false;event({{"type","terminal_exception"},{"job_id",p.job.job_id},{"reason",result.reason}});{std::lock_guard<std::mutex> l(mutex_);if(pending_)event({{"type","pending_discarded"},{"job_id",pending_->job.job_id},{"reason","worker_terminal_exception"}});pending_.reset();}break;}
-    completed_++;active_=0;
-    if(!result.success||!result.prediction_available){
-      std::optional<uint64_t> discarded;
-      {std::lock_guard<std::mutex> l(mutex_);fatal_=true;terminal_numerical_=true;if(pending_){discarded=pending_->job.job_id;pending_.reset();}}
-      event({{"type","terminal_numerical_failure"},{"job_id",p.job.job_id},{"solver_invoked",result.solver_invoked},{"success",result.success},{"prediction_available",result.prediction_available},{"result_published",true},{"reason",result.reason},{"policy","quarantine_this_run_no_restart"},{"terminal_ns",p1::monotonic_ns()}},true);
-      if(discarded)event({{"type","terminal_pending_discarded"},{"job_id",*discarded},{"reason","native_failure_quarantine"}},true);
-      break;
+  void receive(const p1::Job & job)
+  {
+    const auto now = p1::monotonic_ns();
+    const auto resource = p1::check_job_resources(job, spec_.resources);
+    if (!resource)
+    {
+      event({{"type", "resource_rejected"}, {"interface", "job"},
+             {"job_id", job.job_id}, {"reason", resource.reason},
+             {"field", resource.field}, {"observed", resource.observed},
+             {"limit", resource.limit}, {"receive_ns", now}});
+      return;
     }
-  }}
-  p1::Json c_;p1::ResourceLimits resources_;std::string run_,hash_,boot_,nominal_,instance_;int delay_=0,block_=0;int64_t startup_=0;bool closed_=false;
-  std::atomic<uint64_t> active_{0},completed_{0},generated_candidates_{0},published_candidates_{0};std::atomic<bool> fatal_{false},terminal_numerical_{false};uint64_t last_received_=0;
-  std::unique_ptr<usv_mpc::AcadosBackend> solver_;std::optional<Pending> pending_;std::mutex mutex_,log_mutex_;std::condition_variable cv_;std::thread thread_;std::ofstream file_;
-  rclcpp::Publisher<p1::Candidate>::SharedPtr out_;rclcpp::Publisher<p1::Capability>::SharedPtr caps_;rclcpp::Subscription<p1::Job>::SharedPtr sub_;rclcpp::TimerBase::SharedPtr timer_;
+    if (fatal_ || stopping_)
+    {
+      event({{"type", "job_refused"}, {"job_id", job.job_id},
+             {"reason", "worker_terminal"}, {"terminal", true},
+             {"origin", "worker_terminal"}, {"native_solve_entries_this_job", 0}});
+      return;
+    }
+    auto reason = p1::valid_job(job, p1::make_job_context(spec_, run_, boot_, hash_, instance_));
+    if (reason.empty() && now > job.deadline_steady_ns) reason = "late_before_native";
+    if (!reason.empty())
+    {
+      event({{"type", "job_refused"}, {"job_id", job.job_id}, {"reason", reason},
+             {"terminal", false}, {"origin", "receive"},
+             {"check_ns", now}, {"native_solve_entries_this_job", 0}});
+      return;
+    }
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (fatal_ || stopping_)
+    {
+      event({{"type", "job_refused"}, {"job_id", job.job_id},
+             {"reason", "worker_terminal"}, {"terminal", true},
+             {"origin", "worker_terminal"}, {"receive_ns", now}});
+      return;
+    }
+    if (job.job_id <= last_received_)
+    {
+      event({{"type", "job_refused"}, {"job_id", job.job_id},
+             {"reason", "duplicate_or_reordered"}, {"terminal", false},
+             {"origin", "receive"}, {"receive_ns", now}});
+      return;
+    }
+    last_received_ = job.job_id;
+    event({{"type", "job_received"}, {"job", p1::job_json(job)},
+           {"worker_instance", instance_}, {"receive_ns", now},
+           {"commit_ns", p1::monotonic_ns()}});
+    if (pending_)
+      event({{"type", "pending_replaced"}, {"job_id", pending_->job.job_id},
+             {"replacement_job_id", job.job_id}});
+    pending_ = Pending{job, now};
+    cv_.notify_one();
+  }
+
+  /// 求解线程入口：本线程内构造、调用、销毁引擎。构造失败必须确定退出。
+  void solve_thread()
+  {
+    try
+    {
+      engine_ = std::make_unique<p1::WorkerEngine>(params_, registry_, grid_, 1);
+    }
+    catch (const std::exception & error)
+    {
+      const std::string reason = std::string("worker_engine_init_failed:") +
+                                 std::string(error.what()).substr(0, 200);
+      EngineSnapshot snap;
+      snap.ready = false;
+      snap.fatal = true;
+      snap.failure_reason = "worker_engine_init_failed";
+      set_snapshot(snap);
+      fatal_ = true;
+      event({{"type", "worker_engine_init_failed"}, {"reason", reason},
+             {"worker_instance", instance_}, {"finished_ns", p1::monotonic_ns()}}, true);
+      return;
+    }
+    {
+      EngineSnapshot snap;
+      snap.ready = true;
+      snap.fatal = false;
+      snap.model_consistent = engine_->model_consistent();
+      snap.applied_generation = engine_->applied_generation();
+      snap.horizon_steps = static_cast<std::uint32_t>(engine_->N());
+      snap.prediction_dt = engine_->dt();
+      snap.failure_reason = "";
+      set_snapshot(snap);
+    }
+    try
+    {
+      work(*engine_);
+    }
+    catch (const std::exception & error)
+    {
+      const std::string reason = std::string("worker_work_exception:") +
+                                 std::string(error.what()).substr(0, 200);
+      EngineSnapshot snap = snapshot();
+      snap.ready = false;
+      snap.fatal = true;
+      snap.failure_reason = "worker_unusable";
+      set_snapshot(snap);
+      fatal_ = true;
+      event({{"type", "worker_engine_init_failed"}, {"reason", reason},
+             {"worker_instance", instance_}, {"finished_ns", p1::monotonic_ns()}}, true);
+    }
+    engine_.reset();  // 只在本线程销毁
+  }
+
+  void work(p1::WorkerEngine & engine)
+  {
+    if (!wait_recording_ready()) return;
+    while (!stopping_ && !fatal_)
+    {
+      Pending item;
+      {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cv_.wait_for(lock, std::chrono::milliseconds(100),
+                     [this] { return stopping_ || fatal_ || pending_.has_value(); });
+        if (stopping_ || fatal_)
+        {
+          if (pending_)
+          {
+            event({{"type", "job_refused"},
+                   {"job_id", pending_->job.job_id},
+                   {"reason", "worker_stopping_before_native"},
+                   {"terminal", false}, {"origin", "shutdown"},
+                   {"native_solve_entries_this_job", 0}});
+            ++cancelled_;
+            pending_.reset();
+          }
+          break;
+        }
+        if (!pending_) continue;
+        item = *pending_;
+        pending_.reset();
+        active_ = item.job.job_id;
+      }
+
+      // 入口到期：消费 Job 身份、记录 OwnedInitialDeadline、零 native，
+      // 且**不**进入数值故障隔离 —— 后继合法 Job 必须能继续求解。
+      p1::EngineOutcome entry;
+      const auto use_entry_refusal = [&]() -> bool {
+        const std::int64_t now = p1::monotonic_ns();
+        if (now <= item.job.deadline_steady_ns) return false;
+        const auto refusal = engine.entry_refusal(
+            p1::identity_of(item.job), p1::axes_of(item.job), grid_,
+            item.job.job_id, item.job.target_tick, now,
+            item.job.deadline_steady_ns);
+        event({{"type", "job_refused"}, {"job_id", item.job.job_id},
+               {"origin", model_txn::to_string(refusal.refusal.origin)},
+               {"fault", model_txn::to_string(refusal.refusal.fault)},
+               {"reason", refusal.reason.empty() ? "entry_expired" : refusal.reason},
+               {"terminal", false}, {"closing", refusal.closing},
+               {"original_deadline_ns", item.job.deadline_steady_ns},
+               {"check_ns", now},
+               {"applied_generation", refusal.applied_generation},
+               {"native_solve_entries_this_job", 0}});
+        ++refused_;
+        active_ = 0;
+        return true;
+      };
+      if (use_entry_refusal()) continue;
+
+      p1::Candidate result;
+      result.job = item.job;
+      result.worker_instance = instance_;
+      result.backend = "acados";
+      result.worker_receive_ns = item.receive_ns;
+      try
+      {
+        if (item.job.reset_warmstart) engine.reset_warmstart();
+        engine.set_applied_control({item.job.anchor_n[0], item.job.anchor_n[1]});
+        usv_mpc::Vector6d x;
+        std::copy(item.job.target_state.begin(), item.job.target_state.end(), x.data());
+        Eigen::MatrixXd reference(6, 21);
+        std::copy(item.job.reference.begin(), item.job.reference.end(), reference.data());
+
+#ifdef USV_RESEARCH_TEST_SEAMS
+        // 阻塞只施加**一次**：反证要证明"这一拍超时被拒、下一拍仍能正常求解"，
+        // 每拍都阻塞会让整条链永远没有候选，什么也证明不了。
+        if (block_ && !block_used_)
+        {
+          event({{"type", "controlled_pre_native_barrier"},
+                 {"job_id", item.job.job_id},
+                 {"start_ns", p1::monotonic_ns()},
+                 {"duration_ms", block_},
+                 {"actual_native_invoked", false},
+                 {"flush_requested", true}}, true);
+          block_used_ = true;
+          std::this_thread::sleep_for(std::chrono::milliseconds(block_));
+        }
+#endif
+        result.solve_start_ns = p1::monotonic_ns();
+        if (stopping_ || fatal_ || result.solve_start_ns > item.job.deadline_steady_ns)
+        {
+          if (use_entry_refusal()) continue;
+          ++refused_;
+          active_ = 0;
+          continue;
+        }
+        result.solver_invoked = true;
+        p1::EngineOutcome outcome;
+        const auto answer = engine.solve(
+            p1::axes_of(item.job), grid_, item.job.job_id, item.job.target_tick,
+            item.job.deadline_steady_ns, x, reference,
+            {item.job.anchor_n[0], item.job.anchor_n[1]}, p1::identity_of(item.job),
+            [this] { return stopping_.load() || fatal_.load(); },
+            [this, &item] { return p1::monotonic_ns() > item.job.deadline_steady_ns; },
+            &outcome);
+        result.solve_end_ns = p1::monotonic_ns();
+        result.success = answer.second.success;
+        result.backend_ms = answer.second.solve_time_ms;
+        // 原生原因必须按消息字段上界截断，不能让一个过长的字符串把 CDR 撑爆。
+        result.reason = std::string(answer.second.error).substr(0, 256);
+
+        const auto ledger = outcome.preparation;
+        const p1::Json preparation = {
+            {"ordinals", ledger.ordinals},
+            {"complete", ledger.complete},
+            {"constraint_set_calls", ledger.constraint_set_calls},
+            {"constraint_set_failed", ledger.constraint_set_failed},
+            {"update_params_calls", ledger.update_params_calls},
+            {"update_params_failed", ledger.update_params_failed},
+            {"out_set_calls", ledger.out_set_calls}};
+        const p1::Json refusal = {
+            {"origin", model_txn::to_string(outcome.refusal.origin)},
+            {"fault", model_txn::to_string(outcome.refusal.fault)},
+            {"job_id", outcome.refusal.job_id},
+            {"original_deadline_ns", outcome.refusal.original_deadline_ns},
+            {"checked_ns", outcome.refusal.checked_ns},
+            {"applied_generation", outcome.refusal.applied_generation},
+            {"model_consistent", outcome.refusal.model_consistent},
+            {"closing", outcome.refusal.closing},
+            {"model_terminal", outcome.refusal.model_terminal},
+            {"c_solve_entries_this_job", outcome.refusal.c_solve_entries_this_job}};
+
+        if (outcome.execution != p1::EngineDisposition::CandidateReady)
+        {
+          event({{"type", "job_refused"}, {"job_id", item.job.job_id},
+                 {"origin", model_txn::to_string(outcome.refusal.origin)},
+                 {"fault", model_txn::to_string(outcome.refusal.fault)},
+                 {"reason", outcome.reason},
+                 {"terminal", outcome.terminal},
+                 {"closing", outcome.execution == p1::EngineDisposition::Closing},
+                 {"execution", p1::to_string(outcome.execution)},
+                 {"original_deadline_ns", item.job.deadline_steady_ns},
+                 {"guard_checked_ns", outcome.guard_checked_ns},
+                 {"native_solve_entries_before", outcome.native_solve_entries_before},
+                 {"native_solve_entries_after", outcome.native_solve_entries_after},
+                 {"native_solve_entries_this_job",
+                  outcome.native_solve_entries_this_job},
+                 {"applied_generation", outcome.applied_generation},
+                 {"model_generation_applied", outcome.applied_generation},
+                 {"preparation", preparation}, {"refusal_facts", refusal}}, true);
+          active_ = 0;
+          if (outcome.execution == p1::EngineDisposition::TerminalFault)
+          {
+            ++terminal_numerical_;
+            mark_terminal(outcome.reason, item.job.job_id, "terminal_engine_fault");
+            break;
+          }
+          if (outcome.execution == p1::EngineDisposition::Closing)
+          {
+            // stop 关闭：逐条取消 pending，不当数值故障。
+            std::optional<std::uint64_t> discarded;
+            {
+              std::lock_guard<std::mutex> lock(mutex_);
+              if (pending_)
+              {
+                discarded = pending_->job.job_id;
+                pending_.reset();
+              }
+            }
+            if (discarded)
+            {
+              event({{"type", "job_refused"}, {"job_id", *discarded},
+                     {"reason", "worker_closing"}, {"terminal", false},
+                     {"origin", "stop"}, {"native_solve_entries_this_job", 0}});
+              ++cancelled_;
+            }
+            ++refused_;
+            break;
+          }
+          ++refused_;
+          continue;
+        }
+
+        result.prediction_available =
+            result.success && answer.second.X_pred.rows() == 6 &&
+            answer.second.X_pred.cols() == 21 && answer.second.U_pred.rows() == 2 &&
+            answer.second.U_pred.cols() == 20 && answer.second.X_pred.allFinite() &&
+            answer.second.U_pred.allFinite() && answer.first.allFinite();
+        if (result.prediction_available)
+        {
+          std::copy(answer.first.data(), answer.first.data() + 2,
+                    result.first_control.begin());
+          std::copy(answer.second.X_pred.data(), answer.second.X_pred.data() + 126,
+                    result.x_prediction.begin());
+          std::copy(answer.second.U_pred.data(), answer.second.U_pred.data() + 40,
+                    result.u_prediction.begin());
+        }
+        const auto output_resource = p1::check_candidate_resources(result, spec_.resources);
+        if (!output_resource)
+        {
+          event({{"type", "native_result_resource_oversize"},
+                 {"job_id", item.job.job_id},
+                 {"field", output_resource.field},
+                 {"observed", output_resource.observed},
+                 {"limit", output_resource.limit}});
+          throw std::runtime_error("native_result_resource_oversize");
+        }
+        if (delay_ > 0) std::this_thread::sleep_for(std::chrono::milliseconds(delay_));
+
+        ++generated_;
+        event({{"type", "candidate"}, {"job", p1::job_json(item.job)},
+               {"worker_instance", instance_},
+               {"receive_ns", item.receive_ns},
+               {"solver_invoked", result.solver_invoked},
+               {"backend", result.backend},
+               {"backend_ms", result.backend_ms},
+               {"solve_start_ns", result.solve_start_ns},
+               {"solve_end_ns", result.solve_end_ns},
+               {"success", result.success},
+               {"prediction_available", result.prediction_available},
+               {"first_control", result.first_control},
+               {"X", result.x_prediction}, {"U", result.u_prediction},
+               {"reason", result.reason},
+               {"txn_disposition", outcome.disposition},
+               {"txn_reason", outcome.reason},
+               {"execution", p1::to_string(outcome.execution)},
+               {"model_generation_applied", outcome.applied_generation},
+               {"applied_generation", outcome.applied_generation},
+               {"model_consistent", outcome.model_consistent},
+               {"native_solve_entries", outcome.native_solve_entries},
+               {"native_solve_entries_before", outcome.native_solve_entries_before},
+               {"native_solve_entries_after", outcome.native_solve_entries_after},
+               {"native_solve_entries_this_job", outcome.native_solve_entries_this_job},
+               {"guard_checked_ns", outcome.guard_checked_ns},
+               {"original_deadline_ns", item.job.deadline_steady_ns},
+               {"preparation", preparation}, {"refusal_facts", refusal},
+               {"publish_start_ns", p1::monotonic_ns()}}, true);
+        if (fatal_) break;
+
+        const auto publish_start = p1::monotonic_ns();
+        try
+        {
+          out_->publish(result);
+          ++published_;
+          event({{"type", "candidate_publish_result"},
+                 {"job_id", item.job.job_id},
+                 {"worker_instance", instance_},
+                 {"solve_start_ns", result.solve_start_ns},
+                 {"solve_end_ns", result.solve_end_ns},
+                 {"publish_start_ns", publish_start},
+                 {"publish_end_ns", p1::monotonic_ns()},
+                 {"success", true}});
+        }
+        catch (...)
+        {
+          event({{"type", "candidate_publish_result"},
+                 {"job_id", item.job.job_id},
+                 {"worker_instance", instance_},
+                 {"solve_start_ns", result.solve_start_ns},
+                 {"solve_end_ns", result.solve_end_ns},
+                 {"publish_start_ns", publish_start},
+                 {"publish_end_ns", p1::monotonic_ns()},
+                 {"success", false}});
+          throw;
+        }
+      }
+      catch (const std::exception & error)
+      {
+        fatal_ = true;
+        ++terminal_numerical_;
+        event({{"type", "terminal_exception"}, {"job_id", item.job.job_id},
+               {"reason", std::string(error.what()).substr(0, 256)}}, true);
+        mark_terminal(error.what(), item.job.job_id, "terminal_exception");
+        break;
+      }
+
+      ++completed_;
+      active_ = 0;
+      if (!result.success || !result.prediction_available)
+      {
+        ++terminal_numerical_;
+        event({{"type", "terminal_numerical_failure"},
+               {"job_id", item.job.job_id},
+               {"solver_invoked", result.solver_invoked},
+               {"success", result.success},
+               {"prediction_available", result.prediction_available},
+               {"result_published", true},
+               {"reason", result.reason},
+               {"policy", "quarantine_this_run_no_restart"},
+               {"terminal_ns", p1::monotonic_ns()}}, true);
+        mark_terminal(result.reason, item.job.job_id, "native_failure_quarantine");
+        break;
+      }
+      EngineSnapshot snap = snapshot();
+      snap.applied_generation =
+          engine.applied_generation();  // 只在本线程调用后写入快照
+      snap.model_consistent = engine.model_consistent();
+      set_snapshot(snap);
+    }
+  }
+
+  void mark_terminal(const std::string & reason, std::uint64_t job_id,
+                     const char * policy)
+  {
+    fatal_ = true;
+    std::optional<std::uint64_t> discarded;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      if (pending_)
+      {
+        discarded = pending_->job.job_id;
+        pending_.reset();
+      }
+    }
+    if (discarded)
+      event({{"type", "job_refused"}, {"job_id", *discarded},
+             {"reason", "terminal_pending_discarded"}, {"terminal", true},
+             {"origin", policy}, {"native_solve_entries_this_job", 0}});
+    EngineSnapshot snap = snapshot();
+    snap.fatal = true;
+    snap.ready = false;
+    snap.failure_reason = "worker_unusable";
+    set_snapshot(snap);
+  }
+
+  p1::ContractSpec spec_;
+  bool faults_enabled_ = false;
+  std::string run_, hash_, boot_, instance_, mode_;
+  std::string plan_file_, plan_sha_;
+  model_reference::Grid grid_;
+  model_reference::Registry registry_{};
+  usv_mpc::MpcParams params_{};
+  std::int64_t startup_ = 0;
+  bool closed_ = false;
+#ifdef USV_RESEARCH_TEST_SEAMS
+  int delay_ = 0;
+  int block_ = 0;
+  bool block_used_ = false;
+#else
+  static constexpr int delay_ = 0;
+#endif
+
+  std::atomic<std::uint64_t> active_{0}, completed_{0}, generated_{0}, published_{0},
+      refused_{0}, cancelled_{0}, terminal_numerical_{0};
+  std::atomic<bool> fatal_{false}, stopping_{false};
+  std::uint64_t last_received_ = 0;
+
+  std::optional<Pending> pending_;
+  std::mutex mutex_, log_mutex_;
+  mutable std::mutex snapshot_mutex_;
+  std::condition_variable cv_;
+  EngineSnapshot snapshot_{};
+  std::thread thread_;
+  std::ofstream file_;
+  std::unique_ptr<p1::WorkerEngine> engine_;  // 仅求解线程访问
+
+  rclcpp::Publisher<p1::Candidate>::SharedPtr out_;
+  rclcpp::Publisher<p1::Capability>::SharedPtr caps_;
+  rclcpp::Subscription<p1::Job>::SharedPtr sub_;
+  rclcpp::TimerBase::SharedPtr timer_;
 };
-int main(int argc,char **argv){rclcpp::init(argc,argv,rclcpp::InitOptions(),rclcpp::SignalHandlerOptions::None);std::signal(SIGINT,stop_signal);std::signal(SIGTERM,stop_signal);
-try{auto node=std::make_shared<Worker>();rclcpp::executors::SingleThreadedExecutor exec;exec.add_node(node);while(!stopping&&rclcpp::ok()){exec.spin_some(std::chrono::milliseconds(10));std::this_thread::sleep_for(std::chrono::milliseconds(1));}exec.remove_node(node);bool closed=node->close_source();node.reset();rclcpp::shutdown();return closed?0:2;}catch(const std::exception & e){fprintf(stderr,"worker fatal: %s\n",e.what());rclcpp::shutdown();return 1;}}
+
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv, rclcpp::InitOptions(),
+               rclcpp::SignalHandlerOptions::None);
+  std::signal(SIGINT, on_signal);
+  std::signal(SIGTERM, on_signal);
+  try
+  {
+    auto node = std::make_shared<Worker>();
+    rclcpp::executors::SingleThreadedExecutor exec;
+    exec.add_node(node);
+    while (!g_stop && rclcpp::ok() && !node->failed())
+    {
+      exec.spin_some(std::chrono::milliseconds(10));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    exec.remove_node(node);
+    const bool closed = node->close_source();
+    node.reset();
+    rclcpp::shutdown();
+    return closed ? 0 : 2;
+  }
+  catch (const std::exception & error)
+  {
+    fprintf(stderr, "worker fatal: %s\n", error.what());
+    rclcpp::shutdown();
+    return 1;
+  }
+}

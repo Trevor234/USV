@@ -43,8 +43,8 @@ class LosController:
         d = p.d_thruster
         t_max = env.t_max_thrust
 
-        i_t = env._ref_point_at_time()
-        v_ref_t = ref.v_ref[i_t]
+        # 参考速度取进度索引（与观测契约一致；时间索引会让落后时基线的目标速度虚高）
+        v_ref_t = ref.v_ref[env.prog_idx]
 
         # LOS 目标点：当前投影弧长 + 固定前瞻距离
         s_los = ref.s[env.prog_idx] + self.lookahead_m

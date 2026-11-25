@@ -12,10 +12,16 @@
 namespace p1 {
 constexpr int64_t T=200000000, DEADLINE=150000000;
 using State=std::array<double,6>;using Command=std::array<double,2>;
-struct Version {uint64_t task=0,model=1,config=1,schedule=1,epoch=0;
-  bool operator==(const Version & v)const{return task==v.task&&model==v.model&&config==v.config&&schedule==v.schedule&&epoch==v.epoch;}};
+// 五轴**不是**一个坐标系：model 是计划的目标代，schedule/epoch 是计划网格身份，
+// task/config 是运行身份。把两组合并成一个 Version 会让"候选用自己覆盖
+// admission_version"成为可能（3.3 的旁路）。
+struct PlanIdentity {uint64_t model=1,schedule=1,epoch=0;
+  bool operator==(const PlanIdentity & v)const{return model==v.model&&schedule==v.schedule&&epoch==v.epoch;}};
+struct RunAxes {uint64_t task=0,config=1,schedule=1,epoch=0;
+  bool operator==(const RunAxes & v)const{return task==v.task&&config==v.config&&schedule==v.schedule&&epoch==v.epoch;}};
 struct Anchor {Command n{0,0};std::array<uint64_t,2> seq{0,0};std::array<int64_t,2> time{0,0};std::array<bool,2> known{false,false};};
-struct Ticket {uint64_t id=0,target=0;int64_t origin=0,deadline=0,target_ns=0,ready_ns=0;Version version;Anchor anchor;State prediction{};};
+struct Ticket {uint64_t id=0,target=0;int64_t origin=0,deadline=0,target_ns=0,ready_ns=0;
+  PlanIdentity plan;RunAxes run;Anchor anchor;State prediction{};};
 
 // P1_SOURCE_SIM_AGE_GATE_V2: receipt and physical sim-origin ages are independent.
 struct SourceTime {int64_t stamp_ns=0,receive_ns=0;};
@@ -95,6 +101,37 @@ inline std::string publication_history_check(const Anchor & expected,const Ancho
 inline std::string state_check(const State & predicted,const State & actual,const Limits & l,State * errors=nullptr) {
   for(int i=0;i<6;++i){double e=i==2?wrap(actual[i]-predicted[i]):actual[i]-predicted[i];if(errors)(*errors)[i]=e;if(!std::isfinite(e))return "nonfinite";if(std::abs(e)>l.tolerance[i])return "activation_state_mismatch";}return "";
 }
+/// 幅值/有限性只有一种判据；速率与时基无关的部分单独放到 command_check_held，
+/// 因为"命令何时生效"必须由调用方按真实窗口声明。
+// 受控仿真里锚点每拍都会被"刚执行的那条已声明命令"推进，因此不能要求
+// 值不变；要证明的是**链条连续**：从票据锚点逐号走到当前锚点，序号严格 +1、
+// 时间严格递增，且每一步都能在回执历史里找到对应的执行记录。
+inline std::string receipt_chain_check(const Anchor & expected,const Anchor & actual,
+                                       const std::deque<PublicationEvent> & history){
+  for(int channel=0;channel<2;++channel){
+    if(!expected.known[channel]||!actual.known[channel])return "unknown_anchor";
+    if(!std::isfinite(expected.n[channel])||!std::isfinite(actual.n[channel]))return "unknown_anchor";
+    if(actual.seq[channel]<expected.seq[channel]||actual.time[channel]<expected.time[channel])
+      return "anchor_history_incomplete";
+    if(actual.seq[channel]==expected.seq[channel])
+      return actual.time[channel]==expected.time[channel]?"": "anchor_history_incomplete";
+    std::uint64_t sequence=expected.seq[channel];int64_t time=expected.time[channel];
+    bool found=false;
+    for(const auto & e:history){
+      if(e.channel!=channel||e.sequence<=expected.seq[channel]||e.sequence>actual.seq[channel])continue;
+      if(!e.known||!std::isfinite(e.n))return "unknown_anchor";
+      if(!found){if(e.sequence!=sequence+1||e.publish_ns<time)return "anchor_history_incomplete";found=true;}
+      else if(e.sequence!=sequence+1||e.publish_ns<=time)return "anchor_history_incomplete";
+      sequence=e.sequence;time=e.publish_ns;
+    }
+    if(!found||sequence!=actual.seq[channel])return "anchor_history_incomplete";
+  }
+  return "";
+}
+inline std::string command_bounds(const Command & u,const Limits & l) {
+  for(int i=0;i<2;++i){if(!std::isfinite(u[i]))return "nonfinite";if(u[i]<l.low||u[i]>l.high)return "command_limit";}
+  return "";
+}
 inline std::string command_check(const Command & u,const Anchor & a,int64_t now,const Limits & l) {
   for(int i=0;i<2;++i){if(!std::isfinite(u[i]))return "nonfinite";if(u[i]<l.low||u[i]>l.high)return "command_limit";if(!a.known[i])return "unknown_anchor";if(now<=a.time[i]||std::abs(u[i]-a.n[i])>l.rho*(now-a.time[i])/1e9+1e-9)return "command_rate";}return "";
 }
@@ -102,9 +139,18 @@ inline std::string command_check(const Command & u,const Anchor & a,int64_t now,
 // activation have different linearization points; closing at equality is forbidden.
 class Admission {
  public:
-  std::string register_ready(Ticket t,uint64_t current_tick,int64_t now,const Version & v) {
+  // 顺序固定，且每一步只比较**同一坐标系**里的量：
+  //   wrong_tick → plan_axes_do_not_match_plan → model_is_not_plan_target →
+  //   run_task_config_changed → run_schedule_epoch_changed → 既有时间/迟到/重复。
+  std::string register_ready(Ticket t,uint64_t current_tick,int64_t now,
+                             const PlanIdentity & plan,const RunAxes & run) {
     if(t.target!=current_tick+1)return "wrong_tick";
-    if(!(t.version==v))return "version_mismatch";
+    if(t.plan.schedule!=plan.schedule||t.plan.epoch!=plan.epoch)
+      return "plan_axes_do_not_match_plan";
+    if(t.plan.model!=plan.model)return "model_is_not_plan_target";
+    if(t.run.task!=run.task||t.run.config!=run.config)return "run_task_config_changed";
+    if(t.run.schedule!=run.schedule||t.run.epoch!=run.epoch)
+      return "run_schedule_epoch_changed";
     if(t.deadline!=t.origin+DEADLINE || t.target_ns!=t.origin+T)return "time_contract";
     if(now>t.deadline)return "late";
     if(std::find(seen_.begin(),seen_.end(),t.id)!=seen_.end())return "duplicate";
@@ -128,9 +174,26 @@ class Admission {
   size_t slots()const{return bool(ready_)+bool(committed_);}
  private:std::optional<Ticket> ready_,committed_;std::deque<uint64_t> seen_;int64_t cutoff_ns_=0;
 };
+// hold 只在**有效窗口**内成立：超过 validity_ns 后基准推力归零，
+// rho 预算也用真实的零推力时长计算，而不是假装一直在保持旧值。
+inline std::string command_check_held(const Command & u,const Anchor & a,int64_t apply_begin,
+                                      int64_t /*now*/,const Limits & l,int64_t validity_ns) {
+  for(int i=0;i<2;++i){
+    if(!std::isfinite(u[i]))return "nonfinite";
+    if(u[i]<l.low||u[i]>l.high)return "command_limit";
+    if(!a.known[i])return "unknown_anchor";
+    const int64_t since=apply_begin-a.time[i];
+    const bool baseline=a.known[i] && since>=0 && since<=validity_ns;
+    if(!baseline)continue;                      // 基准已失效：从零起算，无速率约束
+    if(apply_begin<=a.time[i])return "command_rate";
+    if(std::abs(u[i]-a.n[i])>l.rho*(apply_begin-a.time[i])/1e9+1e-9)return "command_rate";
+  }
+  return "";
+}
 inline Command fallback(const Anchor & a,int64_t now,int64_t last_accepted,const Limits & l,bool invalid) {
   Command out{};
-  const bool hold=!invalid && last_accepted>0 && now-last_accepted<=l.hold_ns;
+  const int64_t hold_limit=std::min<int64_t>(l.hold_ns,T);
+  const bool hold=!invalid && last_accepted>0 && now-last_accepted<=hold_limit;
   for(int i=0;i<2;++i){if(!a.known[i]){out[i]=0;continue;}if(hold){out[i]=a.n[i];continue;}double step=l.rho*std::max<int64_t>(0,now-a.time[i])/1e9;out[i]=std::copysign(std::max(0.0,std::abs(a.n[i])-step),a.n[i]);}
   return out;
 }

@@ -110,7 +110,7 @@ link[1000..1002] opened successfully
 
 ### 2.4 GCS 链路（frp 穿透）
 
-frpc 配置（`/usr/local/frp/frpc.toml`）定义了四条 TCP 隧道：`raspberry-ssh`(6022→22)、`raspberry-rdp`(6033→3389)、`mavlink-tcp`(**14550→14550**)、`usv-telemetry`(7865→8765)。
+frpc 配置（`/usr/local/frp/frpc.toml`）当前只有三条 TCP 隧道：`raspberry-ssh`(6022→22)、`raspberry-rdp`(6033→3389)、`usv-telemetry`(7865→8765)。`mavlink-tcp`(14550) 隧道已随 `gcs_url` 置空一并移除（2026-11-11 复核：未监听 14550，frpc 配置中亦无该条目）。
 
 Mission Planner 端配置 TCP 连接 `124.220.218.43:14550` 即可接入。**这条链路是任务下发的唯一入口**：MP 把航点写入飞控任务（MAVLink mission 协议），飞控存任务，MAVROS `waypoint` 插件再把任务镜像到 ROS 侧供 mission_bridge 消费。
 
@@ -151,7 +151,7 @@ flowchart LR
 
     subgraph 旁路
         TB[telemetry_bridge<br/>5 Hz JSON, TCP:8765] -.->|"订阅 odom/status/paths/<br/>fix/gpsraw/rtcm"| MPC
-        REC[rosbag2 录包<br/>9 话题 → SSD] -.->|"订阅全部核心话题"| MPC
+        REC[rosbag2 录包<br/>14 话题 → SSD<br/>含 MAVLink 双向帧] -.->|"订阅全部核心话题"| MPC
     end
 ```
 
@@ -176,7 +176,7 @@ dN = Δlat · (π/180) · R                ← 北向偏移
 输出两个**配对发布**的话题：`/path/reference`（几何）+ `/path/reference_profile`（速度剖面），每 1 秒重发一次（保证 late-joiner 也能拿到当前任务）。航点数 <2 或任务完成时发布**空路径**，主动触发 MPC 进 STANDBY。
 
 **控制层（参考 → 指令）**
-`mpc_controller_node`（方案 A，`usv_mpc_kinematic_cpp`，CasADi/IPOPT 后端）以 5 Hz（`mpc_dt=0.2s`）运行：取最新 odom 状态 `[x,y,ψ,u,r]`（5 状态，一阶滞后模型），从参考路径上找最近点构建 N=20 步参考序列，解二次规划得到首步控制 `[u_surge, r_yaw]`。**先过 8 项就绪门禁**（odom/path/state 收到且新鲜、armed、模式 ∈ allowed_fcu_modes=`["GUIDED"]`），任一不满足即 STANDBY 并**持续发布零速度指令**（防 FCU 锁存旧指令）。连续求解失败 ≥5 次进 HOLD（零速度+重置热启动）。
+`mpc_controller_node`（方案 A，`usv_mpc`，CasADi/IPOPT 后端）以 5 Hz（`mpc_dt=0.2s`）运行：取最新 odom 状态 `[x,y,ψ,u,r]`（5 状态，一阶滞后模型），从参考路径上找最近点构建 N=20 步参考序列，解二次规划得到首步控制 `[u_surge, r_yaw]`。**先过 8 项就绪门禁**（odom/path/state 收到且新鲜、armed、模式 ∈ allowed_fcu_modes=`["GUIDED"]`），任一不满足即 STANDBY 并**持续发布零速度指令**（防 FCU 锁存旧指令）。连续求解失败 ≥5 次进 HOLD（零速度+重置热启动）。
 
 **执行层（指令 → 船）**
 - **方案 A**（当前）：速度指令 `TwistStamped` → `/mavros/setpoint_velocity/cmd_vel` → MAVROS `setpoint_velocity` 插件转成 `SET_POSITION_TARGET_LOCAL_NED`（type_mask 只留速度字段）→ 飞控 GUIDED 模式内部的速度控制器 → 舵/油输出。**推力分配由飞控完成**，ROS 侧不做混控。
@@ -186,7 +186,7 @@ dN = Δlat · (π/180) · R                ← 北向偏移
 0.5 s 周期监控：odom 新鲜度（1 s）、MPC status 新鲜度（1 s，防 MPC 崩溃后 FCU 锁存最后速度指令）、路径新鲜度（5 s）、地理围栏（半径 200 m）、超速（3 m/s）、低电量（10.5 V）+ MPC 求解失败计数。触发 failsafe 时按 `failsafe_mode` 行动——实船当前为 `"report"`（只告警不切模式，控制权留人工；9-03 实测教训：测试期自动切模式弊大于利）。`auto_arm`/`auto_mode_switch` 在 real.launch 中强制 false，即**实船永不自动解锁/切模式**，只监视报告。另有人工接管后自动恢复 GUIDED 的冷却逻辑（report 模式下被抑制）。
 
 **遥测/录包旁路**
-`telemetry_bridge`（Python）聚合 odom/status/三类路径/fix/gpsraw/rtcm 统计 + journalctl 日志尾巴，5 Hz 打成 JSON 帧推给 TCP 客户端（当前 0 个连接）。rosbag2 以 MCAP+zstd_fast、100 MiB 缓存、3 GiB/900 s 分片录 9 个核心话题到 SSD。
+`telemetry_bridge`（Python）聚合 odom/status/三类路径/fix/gpsraw/rtcm 统计 + journalctl 日志尾巴，5 Hz 打成 JSON 帧推给 TCP 客户端（当前 0 个连接）。rosbag2 以 MCAP+实时写（`mcap_realtime.yaml`，不分卷、`cache=0`）录 14 个核心话题到 SSD，其中包含 `/uas1/mavlink_source` 与 `/uas1/mavlink_sink` 两个 MAVLink 双向帧话题（详见 [bag_recording.md](bag_recording.md) §3.1 与 §10）。
 
 ---
 
@@ -215,6 +215,10 @@ dN = Δlat · (π/180) · R                ← 北向偏移
 | `/mpc/predicted_trajectory` | `nav_msgs/Path` | MPC → telem、recorder | RELIABLE, depth 10 | 1 Hz（每 5 拍） |
 | `/mavros/battery` | `sensor_msgs/BatteryState` | MAVROS → mode_mgr | SensorDataQoS | ~1 Hz |
 | `/mavros/gps_rtk/send_rtcm` | `mavros_msgs/RTCM` | ntrip_client → MAVROS | RELIABLE | 1 Hz（NTRIP 数据流） |
+| `/uas1/mavlink_source` | `mavros_msgs/Mavlink` | MAVROS router → recorder | BEST_EFFORT/Volatile, depth 1000 | 实测 24.67 Hz（飞控 `1.1`）+ 1.64 Hz（`255.190` 回环） |
+| `/uas1/mavlink_sink` | `mavros_msgs/Mavlink` | MAVROS UAS → recorder | BEST_EFFORT/Volatile, depth 1000 | 实测 11.49 Hz（发送速率，非采样率） |
+
+> **MAVLink 双向帧**（2026-11-11 起入包）。`source` 是路由器交给 UAS 的**入站**帧（`header.frame_id=ep:1000` 指向 `/dev/ttyAMA10`），`sink` 是 UAS 封装后发出的**报文**，只表示发送意图，不代表串口已发出或飞控已执行。两个话题都是 `mavros_msgs/msg/Mavlink`，保留全部消息 ID 与 `framing_status`，不按插件过滤。**这不是串口线抓包**：解析器丢弃的噪声/残帧不会出现，`FRAMING_OK` 也不等于签名已认证（实测 `signature` 恒为空）。MAVROS 发出的 `GPS_RTCM_DATA` 会出现在 `sink` 内，因此不能再笼统声称“RTCM 完全不在 bag 中”。三条时间轴（bag 接收、帧 `header`、载荷内 FCU boot/usec）不可混用。
 
 > **STANDBY 期间**（当前状态）：`/path/reference` 发空 Path（`poses: []`），`/mpc/predicted_trajectory` 与方案 A 的 `cmd_vel` 零发布/零速度，`/mavros/rc/override` 无发布者。
 
@@ -339,7 +343,7 @@ data = [v₀, κ₀, r₀, t₀,  v₁, κ₁, r₁, t₁, ..., v_{m-1}, κ_{m-1
 | r | 期望艏摇角速度 = v·κ | rad/s | 运动学关系 |
 | t | 距起点的**累积时间** | s | TOPP 积分 |
 
-**配对同步规则**（`topic_contract.yaml` §104-134）：`/path/reference` 的 `header.stamp` 与 profile 的 dim 标签时间戳**必须相等**才算配对成功；不等则 MPC 标记 `profile_synced=false` 并在 `profile_sync_reason` 给出原因（当前实测：`empty_or_malformed_profile`，因为无任务）。解析代码见 `usv_mpc_kinematic_cpp/src/mpc_node.cpp:313-338`，构造见 `usv_planning_cpp/src/path_planner_node.cpp:276-304`。
+**配对同步规则**（`topic_contract.yaml` §104-134）：`/path/reference` 的 `header.stamp` 与 profile 的 dim 标签时间戳**必须相等**才算配对成功；不等则 MPC 标记 `profile_synced=false` 并在 `profile_sync_reason` 给出原因（当前实测：`empty_or_malformed_profile`，因为无任务）。解析代码见 `usv_mpc/src/mpc_node.cpp:313-338`，构造见 `usv_planning/src/path_planner_node.cpp:276-304`。
 
 > 设计动机：Path 消息没有放浮点数组的字段，velocity profile 若用单独 PoseStamped/CollisionObject 都不合适；借用 MultiArray 的 dim 标签塞时间戳，让两条话题能无锁配对，是务实的工程折中。
 
@@ -397,7 +401,7 @@ NTRIP 客户端下发的差分数据容器。`data` 字段为**原始 RTCM3 二�
 
 | 字段 | 含义 |
 |---|---|
-| `scheme` / `control_mode` / `backend` | `"A"` / `"kinematic"` / `"ipopt"` |
+| `scheme` / `control_mode` / `backend` | `"A"` / `"kinematic"` / `"acados"` |
 | `require_fcu_state` / `fcu_mode` / `allowed_fcu_modes` / `armed` | 门禁快照 |
 
 **路径同步与状态回显：**
@@ -480,7 +484,9 @@ JSON 帧 kind 分两类：
 4. **IMU/state 1 Hz**——远低于 5 Hz 控制周期（§7.2）
 5. **方案 A 不发 rc/override**——录包/排查时该话题为空是预期（§5.8）
 6. **telemetry 端口**：本地监听 8765，frp 公网映射 7865，两者不是一个口（易混淆）
-7. **PreArm 未解除**：遥控 failsafe + 罗盘异常，下水前必须解决（罗盘或需重新校准/排查磁干扰）
+7. **DDS 白名单不能含 `lo`**——`~/.ros/fastdds_lan.xml` 若把 `lo` 与物理网卡同时列入，FastDDS 新建 reader 会报 `No unicast locators to create unique flows` 并拿不到数据；且网卡地址变化后旧进程会绑定在已消失的地址上。2026-11-11 改为 `eth0,enx889e96164bd0` 并重启 `usv-system`/`usv-rtk`/`usv-record` 才恢复发现。判断方法是 `ss -uanp | grep <旧地址>`。
+8. **飞控 SYSTEM_TIME 越界会打死 MAVROS**——飞控重启后发出 `time_unix_usec≈3.16e15`（≈2070 年），MAVROS 2.14.0 转成负 `int32` 后 `rclcpp::Time` 抛异常并 abort，启动约 5 s 即死，`/uas1/mavlink_*` 没有发布端。`timesync_mode` 无法规避（该 handler 无条件注册），当前以 `plugin_denylist: sys_time` 规避，根治需修正飞控时间来源。详见 [bag_recording.md](bag_recording.md) §10.4。
+9. **PreArm 未解除**：遥控 failsafe + 罗盘异常，下水前必须解决（罗盘或需重新校准/排查磁干扰）
 
 ---
 

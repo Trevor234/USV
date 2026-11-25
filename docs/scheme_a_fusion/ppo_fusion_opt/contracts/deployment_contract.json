@@ -1,0 +1,83 @@
+{
+  "artifacts": {
+    "manifest": {
+      "path": "p6/selected/policy_physical_n.manifest.json",
+      "sha256": "da7b2893a56298508a52cd26a0672f77fff13766e8ed16911cf14721c948aa8c"
+    },
+    "model_zip": {
+      "path": "p6/selected/model.zip",
+      "sha256": "85c6c573fa880695de1c6173c5e7e75c1702c5f1306415d91b39d2a9512c7220"
+    },
+    "onnx": {
+      "path": "p6/selected/policy_physical_n.onnx",
+      "sha256": "ff60e0f70a142dc0c76ac0e1b8e1d113bcff892d7999fad9ef41cf5a83147278"
+    },
+    "vecnormalize": {
+      "path": "p6/selected/vecnormalize.pkl",
+      "sha256": "2be84c0fcaf992a52f1d9a2a3d4b997d8586951c1b9c9caba1d67badce2d769e"
+    }
+  },
+  "deployment_observation_contract": {
+    "input_dim": 43,
+    "lookahead_m": [
+      0.4,
+      0.8,
+      1.4,
+      2.2,
+      3.2,
+      4.4,
+      5.8,
+      7.5
+    ],
+    "prev_thrust_timing": "post_update",
+    "reference_index": "monotone_progress_window8_gate1.0",
+    "version": "ppo-obs-v2"
+  },
+  "evidence": {
+    "authority_gate_passed": false,
+    "calibration_36_pairs": {
+      "ci95": [
+        -0.00555,
+        -0.00373
+      ],
+      "delta_cte_mean": -0.00468,
+      "wtl": [
+        34,
+        0,
+        2
+      ]
+    },
+    "final_test_36_pairs": {
+      "ci95": [
+        -0.0053,
+        -0.00315
+      ],
+      "delta_cte_mean": -0.00419,
+      "wilcoxon_p": 5.06e-08,
+      "wtl": [
+        33,
+        0,
+        3
+      ]
+    },
+    "lambda_pi": 0.0005
+  },
+  "known_provenance_gap": "ONNX manifest 生成于 P2.5 之前，因此不含 observation_contract 段；部署节点因 manifest 无绑定值而回退到自身 DEFAULT_LOOKAHEAD（= 7.5 m 元组，与 deployment_observation_contract 一致），门禁只校验 obs_contract_version 字符串（ppo-obs-v2）。该权重是在 legacy 契约下训练的，其闭环增益（final_test ΔCTE −4.19 mm）是在 v2 契约下**复用**测得。",
+  "schema": "scheme-a-selected-deployment-contract-v1",
+  "selected": "v5_s4_dr",
+  "training_observation_contract": {
+    "lookahead_m": [
+      0.4,
+      0.8,
+      1.2,
+      1.6,
+      2.0,
+      2.5,
+      3.0,
+      4.0
+    ],
+    "prev_thrust_timing": "pre_update",
+    "reference_index": "time_index",
+    "version": "legacy-scheme-a-ppo-obs-post-update-v1 (时间索引参考 + 4.0 m 前瞻)"
+  }
+}

@@ -83,6 +83,22 @@ def generate_launch_description():
     mavros_rc_override_topic = LaunchConfiguration("mavros_rc_override_topic")
     profile_topic = LaunchConfiguration("profile_topic")
 
+    # ament_python does not source arbitrary files installed under
+    # share/<package>/environment. Make the acados runtime path explicit for the
+    # Scheme A process (kinematic MPC usv_mpc -> shared usv_acados
+    # backend -> libacados/libhpipm) so sitl.launch.py works from a clean shell.
+    acados_source = os.environ.get(
+        "ACADOS_SOURCE_DIR", os.path.join(os.path.expanduser("~"), "acados")
+    )
+    current_library_path = os.environ.get("LD_LIBRARY_PATH", "")
+    acados_library_path = os.path.join(acados_source, "lib")
+    if current_library_path:
+        acados_library_path += os.pathsep + current_library_path
+    solver_environment = {
+        "ACADOS_SOURCE_DIR": acados_source,
+        "LD_LIBRARY_PATH": acados_library_path,
+    }
+
     mavros_node = Node(
         package="mavros",
         executable="mavros_node",
@@ -94,16 +110,17 @@ def generate_launch_description():
         ],
     )
 
-    # 方案 A: C++ 运动学 MPC (usv_mpc_kinematic_cpp, mpc_params_A.yaml);
-    # 方案 B: C++ 动力学 NMPC (usv_mpc_cpp, mpc_params_B.yaml + 仿真船参数)。
+    # 方案 A: C++ 运动学 MPC (usv_mpc, mpc_params_A.yaml);
+    # 方案 B: C++ 动力学 NMPC (usv_nmpc, mpc_params_B.yaml + 仿真船参数)。
     # 与 real.launch.py 的 scheme 映射保持一致, 便于 SITL 预演实机行为。
     # (Python 方案 A 包 usv_mpc 已于 2026-09-06 删除, 方案 A 恒为 C++。)
     mpc_node_a = Node(
-        package="usv_mpc_kinematic_cpp",
+        package="usv_mpc",
         executable="mpc_node",
         name="mpc_controller_node",
         output="screen",
         condition=IfCondition(PythonExpression(["'", scheme, "' == 'A'"])),
+        additional_env=solver_environment,
         parameters=[
             os.path.join(bringup_dir, "config", "mpc_params_A.yaml"),
             {
@@ -121,7 +138,7 @@ def generate_launch_description():
     )
 
     mpc_node_b = Node(
-        package="usv_mpc_cpp",
+        package="usv_nmpc",
         executable="mpc_node",
         name="mpc_controller_node",
         output="screen",
@@ -143,7 +160,7 @@ def generate_launch_description():
     )
 
     planner_node = Node(
-        package="usv_planning_cpp",
+        package="usv_planning",
         executable="path_planner_node",
         name="path_planner_node",
         output="screen",
@@ -158,7 +175,7 @@ def generate_launch_description():
     )
 
     safety_node = Node(
-        package="usv_safety_cpp",
+        package="usv_safety",
         executable="mode_manager_node",
         name="mode_manager_node",
         output="screen",

@@ -28,10 +28,11 @@ VRX 船模与水动力配置见 [VRX 船模与水动力配置说明](docs/vrx_mo
 
 | 包 | 语言 | 说明 |
 |:---|:---|:---|
-| `usv_mpc_cpp` | C++ | **动力学 NMPC(方案 B)**:Fossen 3-DOF + acados SQP_RTI(vendored codegen)+ CasADi fallback;输出后端 `rc_override`(实机)/`vrx_thrust`(VRX 仿真) |
-| `usv_mpc_kinematic_cpp` | C++ | 运动学 MPC 的 C++ 版(方案 A 实机用) |
-| `usv_planning` / `usv_planning_cpp` | Py/C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
-| `usv_safety` / `usv_safety_cpp` | Py/C++ | 模式管理 + 安全监控(围栏/电池/求解器/看门狗 failsafe → RTL) |
+| `usv_acados` | C++ | **方案 A/B 共用 acados 运行时库**(`usv_acados::backend`):两套 vendored 生成码(kinematic/dynamic)+ 求解循环/热启动/候选管理,无 ROS 依赖 |
+| `usv_nmpc` | C++ | **动力学 NMPC(方案 B)**:Fossen 3-DOF + `usv_acados` 共用引擎 + CasADi fallback;输出后端 `rc_override`(实机)/`vrx_thrust`(VRX 仿真) |
+| `usv_mpc` | C++ | 运动学 MPC 的 C++ 版(方案 A 实机用):acados 后端(无 CasADi/IPOPT 回退) |
+| `usv_planning` | C++ | 任务桥接(GPS→ENU)、圆弧倒角 + TOPP 速度剖面 |
+| `usv_safety` | C++ | 模式管理 + 安全监控(围栏/电池/求解器/看门狗 failsafe → RTL) |
 | `usv_simulation` | Python | 原生 VRX 船模生成、推力转换、matplotlib 可视化和 telemetry bridge |
 | `usv_bringup` | — | launch(`real/mavros/ntrip/record/sim/sitl/vrx`)+ 全部 YAML 配置 |
 
@@ -41,7 +42,7 @@ VRX 船模与水动力配置见 [VRX 船模与水动力配置说明](docs/vrx_mo
 |:---|:---|:---|
 | 状态 | `[x, y, ψ]` | `[x, y, ψ, u, v, r]` |
 | 控制量 | `[u_surge, r_yaw]` | `[T_L, T_R]`(推力) |
-| 实现 | C++ `usv_mpc_kinematic_cpp`(CasADi/IPOPT;2026-09-06 起 Python 版已删除, 方案 A 恒为 C++) | **C++ `usv_mpc_cpp`**(Python 动力学实现已删除) |
+| 实现 | C++ `usv_mpc`(acados;2026-09-06 起 Python 版已删除, 方案 A 恒为 C++) | **C++ `usv_nmpc`**(Python 动力学实现已删除) |
 | 输出 | `cmd_vel`(GUIDED) | RC override(MANUAL)/ vrx_thrust(仿真) |
 | 参数 | `mpc_params_A.yaml` | `mpc_params_B.yaml` + `usv_params.yaml`(真船) |
 
@@ -53,7 +54,7 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
-C++ 包(`usv_mpc_cpp` 等)依赖:
+C++ 包(`usv_nmpc` 等)依赖:
 - `sudo apt install libeigen3-dev nlohmann-json3-dev`
 - **acados(x86)**:源码编译到 `~/acados`(与 Pi5 同为 v0.5.4)。国内网络可走代理:
   ```bash
@@ -111,7 +112,7 @@ colcon test && colcon test-result --verbose           # pytest + gtest(C++ 包�
 ```
 
 > 注: Python 方案 A 包 `usv_mpc` 已删除(2026-09-06), 其独立 CasADi 脚本随之移除;
-> C++ 运动学测试见 `src/usv_mpc_kinematic_cpp/test/`。
+> C++ 运动学测试见 `src/usv_mpc/test/`。
 
 ## 配置
 
@@ -143,4 +144,4 @@ colcon test && colcon test-result --verbose           # pytest + gtest(C++ 包�
 - [docs/bag_recording.md](docs/bag_recording.md) —— 实机 MCAP 录包(SSD 挂载、话题、回放)
 - [docs/runbook.md](docs/runbook.md) —— 运维手册
 - [docs/topic_contract.md](docs/topic_contract.md) —— 话题契约说明
-- [docs/usv_planning_cpp_tutorial.html](docs/usv_planning_cpp_tutorial.html) —— planning C++ 移植讲解
+- [docs/usv_planning_tutorial.html](docs/usv_planning_tutorial.html) —— planning C++ 移植讲解

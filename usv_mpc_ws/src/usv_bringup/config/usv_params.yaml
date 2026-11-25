@@ -11,7 +11,7 @@
 # across all tested working points (u up to 1.5, |v| up to 0.5, |r| up to 0.4).
 #
 # Used by:
-#   - usv_mpc_cpp/src/mpc_node.cpp (C++ NMPC, declares `vehicle.*`/`dynamic.*`)
+#   - usv_nmpc/src/mpc_node.cpp (C++ NMPC, declares `vehicle.*`/`dynamic.*`)
 #   - usv_mpc_dynamic.m (kept in sync manually)
 #
 # IMPORTANT: parameter names must match `_declare_parameter` calls in mpc_node.py

@@ -33,6 +33,9 @@ int64[2] publish_start_ns
 int64[2] publish_end_ns
 bool[2] anchor_known
 uint64[2] anchor_sequence
+# 锚点对应的 plant 执行窗口起点（steady）。检查器要求它逐位等于回执的
+# executed_begin_steady_ns —— 这是"锚点 = 实际执行事实"的唯一可核对形式。
+int64[2] anchor_publish_ns
 float64[2] previous_n
 int64[2] previous_publish_ns
 int64 odom_age_ns

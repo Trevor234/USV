@@ -14,7 +14,7 @@
 cd /home/trevor/USV/usv_mpc_ws
 source /opt/ros/jazzy/setup.bash
 colcon build --symlink-install --packages-select \
-  usv_bringup usv_mpc_cpp usv_mpc_kinematic_cpp usv_planning_cpp usv_safety_cpp usv_simulation
+  usv_bringup usv_acados usv_nmpc usv_mpc usv_planning usv_safety usv_simulation
 source install/setup.bash
 ```
 

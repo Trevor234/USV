@@ -9,10 +9,10 @@
 |---|---|---|
 | 决策频率 | 5 Hz（dt=0.2 s） | mpc_params.yaml `mpc_dt` |
 | 动作空间 | [-1,1] 归一化 → [T_L,T_R] ∈ ±25N + 80 N/s 限率 | mpc_params.yaml 推力约束 |
-| 奖励 | −MPC 代价（Q=[20,20,50,8,1,8], R=[0.05,0.05], Rd=[0.2,0.2]）+ 空间项(q=100) + 进度项(w=15) | mpc_params.yaml `dynamic.*` |
+| 奖励 | −MPC 代价（q_ct=100, q_ψ=50, q_u=8, q_v=1, q_r=8, R=[0.05,0.05], Rd=[0.2,0.2]）+ 进度项(w=15)；位置项用**路径折线横向误差 e_ct**（平方-线性过渡，`usv_rl/envs/reward.py`） | mpc_params.yaml `dynamic.*` |
 | 动力学 | Fossen 3-DOF RK4×4（与 C++ 200 步对拍 <1e-8） | usv_model_dynamic.cpp |
 | 水动力参数 | usv_params_sim.yaml 快照（2026-09-03 辨识） | usv_bringup/config |
-| 观测 | 43 维（相对量，无绝对 x/y） | usv_rl/observation.py 单一真源 |
+| 观测 | 43 维（相对量，无绝对 x/y）；契约 `ppo-obs-v2`：e_ψ/v_ref/r_ref 取**进度索引**，前瞻 [0.4,0.8,1.4,2.2,3.2,4.4,5.8,7.5] m，进度窗口 8 点 + 1.0 m 距离门 | usv_rl/observation.py 单一真源（部署节点同值副本，`tests/test_obs_contract_parity.py` 逐位锁定） |
 
 ## 训练成果（v5，随机路径 50 episode，DR 关闭；2026-09-30 初测，2026-10-06 同命令复现逐项一致）
 
@@ -108,3 +108,29 @@ python3 -m pip install --user --break-system-packages onnxruntime
 - **ament_python 脚本目录**：需要 setup.cfg 指定 `install_scripts=$base/lib/<pkg>`。
 - torch≥2.9 的 ONNX 导出用 `dynamo=False`；`action_net` 是单层 Linear，
   `.children()` 为空，要整层加入 Sequential。
+
+## 观测契约 `ppo-obs-v2`（2026-11-22）
+
+- `LOOKAHEAD_M = (0.4, 0.8, 1.4, 2.2, 3.2, 4.4, 5.8, 7.5)`：由方案 A 三臂闭环消融定值
+  （42 eps/arm：la40 Δ=−0.00031、la75 Δ=+0.00120、判据 `adopt_training=False`；
+  一致性优先，训练与部署取同一元组）。
+- `e_psi / v_ref / r_ref` 一律取 `prog_idx`（单调推进最近点），**不再取时间索引**：
+  时间索引在落后/超前时给出与船实际状态错位的参考，且 rebase 平移量是未进入观测的隐藏状态。
+- 进度搜索 = 窗口 8 点（≤4 m/步）+ 距离门 1.0 m；两者缺一都会让"抄近道"记满进度。
+- 成功判据 = 到末段 ∧ 终点 1.0 m 内 ∧ 全程 max|e_ct| ≤ 0.75 m；只判"到终点"会奖励
+  沿直线蒙到目标、全程离航线 5 m+ 的策略（`tests/test_env_api.py::test_beeline_policy_scores_zero_success`）。
+- 导出必须带 `--train-meta <run>/train_meta.json`：manifest 写入 `observation_contract`
+  （version/lookahead_m/prev_thrust_timing/reference_index），部署节点按 manifest 做绑定校验。
+
+闭环效果（方案 A 受控仿真，calibration 12 eps × 3 seeds 配对）：冻结 v5 权重在 `ppo-obs-v2`
+下 ΔCTE = **−0.0047 m**（95% CI [−0.0056,−0.0037]，W/T/L 34/0/2）；旧契约下同一权重为 +0.0012。
+即 R5 的"融合无增益"主要来自观测语义错位，而不是网络容量或训练步数。
+
+## 方案 A Phase 2 受控仿真默认策略
+
+Phase 2 选定的 Option A 平衡配置为 `gp_v6_fusion_direct_best_001`，使用
+`v6_fusion_direct/best` 的 PPO 策略、`ppo-obs-v2` 观测契约及融合权重 `λ_π=0.001`。
+方案 A 工作区的 `scheme_a_active_energy_policy.json` 固定了能耗执行契约、pooled GP 快照、
+ONNX 和 manifest 的路径及 SHA-256。闭环运行器默认选择该 ONNX 和 manifest。运行此配置时，
+显式传入能耗契约 `--contract`、pooled GP 快照 `--gp-snapshot` 和
+`--ppo-proposal --lambda-pi 0.001`。

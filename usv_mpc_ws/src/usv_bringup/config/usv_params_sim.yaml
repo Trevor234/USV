@@ -15,7 +15,7 @@
 #     仿真专用假设见 usv_simulation/config/vrx_model.yaml。
 #
 # IMPORTANT: parameter names must match declare_parameter calls in
-# usv_mpc_cpp/src/mpc_node.cpp (flat dotted names in code, nested in YAML).
+# usv_nmpc/src/mpc_node.cpp (flat dotted names in code, nested in YAML).
 
 /**:
   ros__parameters:

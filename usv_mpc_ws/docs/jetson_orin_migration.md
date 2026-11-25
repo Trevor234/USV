@@ -7,10 +7,10 @@
 目标是在 Jetson Orin 上部署真实艇运行所需的 ROS 2 工作空间。运行时只需要以下 6 个包：
 
 - `usv_bringup`
-- `usv_mpc_cpp`
-- `usv_mpc_kinematic_cpp`
-- `usv_planning_cpp`
-- `usv_safety_cpp`
+- `usv_nmpc`
+- `usv_mpc`
+- `usv_planning`
+- `usv_safety`
 - `usv_simulation`（当前同时包含遥测桥和 VRX 辅助代码）
 
 VRX/Gazebo、ArduPilot SITL、参数辨识数据和 rosbag 保留在开发机，不作为 Orin 运行时输入。

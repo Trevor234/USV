@@ -45,6 +45,18 @@ mpc_controller_node:
         throttle: { channel: 3, default_index: 2 }   # CH3, rc_throttle_channel=2
       pwm_range: { min: 1100, center: 1500, max: 1900 }
       # 释放: 全零 OverrideRCIn 表示释放所有通道 (FCU 回到正常 RC 输入)
+      # 适用方案: B (动力学 NMPC, MANUAL 模式)
+    - topic: /mavros/setpoint_velocity/cmd_vel
+      type: geometry_msgs/msg/TwistStamped
+      frame: base_link      # twist 在机体坐标系 (u_surge, r_yaw)
+      qos: reliable depth=10
+      purpose: 运动学 MPC 控制输出 (方案 A);MAVROS setpoint_velocity → FCU GUIDED
+      fields:
+        linear.x:  u_surge (m/s)
+        angular.z: r_yaw (rad/s)
+      # 适用方案: A (运动学 MPC, GUIDED 模式)
+      # 2026-10-21: 此前契约只记录 rc/override, 与实机部署的方案 A 不符,
+      # 导致 bag 录制清单也漏掉真正的控制输出。2026-11-11 补齐开发树。
     - topic: /mpc/status
       type: std_msgs/msg/String
       qos: depth=10
@@ -121,6 +133,46 @@ gps_status_topics:
              QoS 中继, 见 ntrip.launch.py)
 
 # ---------------------------------------------------------------------------
+# MAVLink 双向原始帧 (MAVROS 2.14 原生接口; 2026-11-11 加入 bag_topics.yaml)
+# ---------------------------------------------------------------------------
+# 用途: 参数辨识的离线重解与输入—输出对齐。保留全部消息 ID 与 framing_status,
+# 不按已知插件/消息 ID 过滤, 不另建桥接节点。
+#
+# 记录边界 (必须逐条保留, 不得简化成"录到了飞控全部数据"):
+#   - 只覆盖树莓派 UAS 端点实际收发的帧, 不是全飞控物理通道的旁路抓包。
+#   - 独立数传/地面站之间不经过本 UAS 的交换无法记录; GCS↔FCU 端点直连
+#     转发也不保证出现在这两个话题中。本任务不恢复 GCS/TCP 转发。
+#   - 解析器丢弃的串口噪声、残帧、不支持的 incompat_flags 不会出现;
+#     签名未被验证。FRAMING_OK 不等于签名认证通过。
+#   - 帧封装不能补齐未下传的飞控内部高频量; 只有原始帧不保证够辨识,
+#     未下传的内部量只能取自其他真实数据源 (例如飞控 BIN 日志)。
+#   - /uas1/mavlink_sink 只表示 MAVROS 的发送意图, 不证明串口已发出,
+#     也不证明飞控已执行。不得把它记作实际执行量。
+mavlink_frames:
+  - topic: /uas1/mavlink_source
+    type: mavros_msgs/msg/Mavlink
+    direction: from_fcu          # 路由器交给 UAS 的入站帧
+    publisher: mavros_node       # MAVROS UAS 端点
+    frame_source: header.frame_id = "ep:<id>"   # 结合端点配置确认 FCU 串口来源
+    qos: best_effort / volatile / keep_last depth=1000
+    timestamp: ROS 时间, 路由器解析后发布时刻; 不是 UART 首字节到达时间
+    integrity: 保留 framing_status, magic, len, flags, seq, sysid, compid,
+               msgid, checksum, payload64, signature; 含可路由的坏 CRC 帧,
+               不含解析器丢弃的噪声/残帧/不支持的 incompat_flags
+  - topic: /uas1/mavlink_sink
+    type: mavros_msgs/msg/Mavlink
+    direction: to_fcu            # UAS 封装后发出的报文
+    publisher: mavros_node
+    frame_source: 由 MAVROS 发出, 含控制/请求等; 无外部来源端点标识
+    qos: best_effort / volatile / keep_last depth=1000
+    timestamp: ROS 时间, UAS 发布前时刻; 不是实际线路发送时间
+    integrity: 同上; 发送意图, 不等于串口已发出或飞控已执行
+  # 时间轴: bag 接收时间、帧 ROS header 时间、载荷内 FCU boot/usec 时间是
+  # 三条不同时间轴。不要把收/发两个话题强行合成为单一有序线流, 也不要用
+  # ROS 时间差声称测出串口延迟。序号连续性必须按 方向+来源+sysid/compid
+  # 跨全部 msgid 检查, 不能按 msgid 分组后把正常序号跳跃误报为丢包。
+
+# ---------------------------------------------------------------------------
 # path / profile 时间同步契约 (核心)
 # ---------------------------------------------------------------------------
 # /path/reference (NavPath) 与 /path/reference_profile (Float64MultiArray) 必须由
@@ -135,8 +187,8 @@ gps_status_topics:
 #   - dim.label = "stamp_nanosec:<nanosec>"  # 纳秒
 # 两个 dim 的 size=0, stride=0, 仅作元数据载体。
 #
-# 解析方: usv_mpc_cpp utils.hpp usv_mpc::parse_profile_stamp(layout) -> (sec, nanosec)
-# 同步判据: usv_mpc_cpp utils.hpp usv_mpc::profile_sync_state(path_len, profile_len, path_stamp, profile_stamp)
+# 解析方: usv_nmpc utils.hpp usv_mpc::parse_profile_stamp(layout) -> (sec, nanosec)
+# 同步判据: usv_nmpc utils.hpp usv_mpc::profile_sync_state(path_len, profile_len, path_stamp, profile_stamp)
 #   - 长度相等 且 stamp 相等 -> "stamp_match" (优先按时间重采样)
 #   - stamp 缺失 -> "legacy_no_profile_stamp" (兼容旧规划器,仍按长度对齐)
 #   - 长度/stamp 不一致 -> 回退匀速弧长采样, profile_synced=False
@@ -148,6 +200,6 @@ path_profile_sync:
   profile_topic: /path/reference_profile
   stamp_encoding:
     layout_dim_labels: ["stamp_sec", "stamp_nanosec"]
-  parser: usv_mpc_cpp::usv_mpc::parse_profile_stamp
-  sync_check: usv_mpc_cpp::usv_mpc::profile_sync_state
+  parser: usv_nmpc::usv_mpc::parse_profile_stamp
+  sync_check: usv_nmpc::usv_mpc::profile_sync_state
   consumer: mpc_node.MpcControllerNode._build_reference

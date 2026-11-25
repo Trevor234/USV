@@ -3,24 +3,30 @@
 #include <gtest/gtest.h>
 #include "p1_admission.hpp"
 #include "p1_clock_window.hpp"
-#include "usv_mpc_cpp/p1_input_core.hpp"
-namespace {p1::Ticket ticket(){p1::Ticket t;t.id=1;t.target=2;t.origin=1000000000;t.deadline=t.origin+p1::DEADLINE;t.target_ns=t.origin+p1::T;t.version={1,1,1,1,0};return t;}}
-TEST(Deadline, EqualityRegistrationSurvivesEitherCutoffOrder){for(bool close_first:{true,false}){p1::Admission a;auto t=ticket();if(close_first)EXPECT_FALSE(a.cutoff(t.deadline));EXPECT_EQ(a.register_ready(t,1,t.deadline,t.version),"");EXPECT_TRUE(a.finalize_ready(t.id,t.deadline));EXPECT_FALSE(a.cutoff(t.deadline));EXPECT_TRUE(a.cutoff(t.deadline+1));EXPECT_FALSE(a.take(2,t.target_ns-1));EXPECT_TRUE(a.take(2,t.target_ns));EXPECT_FALSE(a.take(2,t.target_ns));}}
-TEST(Deadline, BeforeAndAfterHaveDifferentResults){for(int64_t d:{-1,0,1}){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,1,t.deadline+d,t.version),d<=0?"":"late");}}
-TEST(Admission, WrongTargetDuplicateAndVersion){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,2,t.deadline,t.version),"wrong_tick");auto old=t.version;old.task++;EXPECT_EQ(a.register_ready(t,1,t.deadline,old),"version_mismatch");EXPECT_EQ(a.register_ready(t,1,t.deadline,t.version),"");EXPECT_EQ(a.register_ready(t,1,t.deadline,t.version),"duplicate");}
-TEST(Admission, ClearBetweenCutoffAndActivationInvalidates){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,1,t.deadline,t.version),"");a.cutoff(t.deadline+1);a.invalidate();EXPECT_FALSE(a.take(2,t.target_ns));}
-TEST(Admission, FixedCapacityAndMissedTickNeverRollsForward){p1::Admission a;auto t=ticket();a.register_ready(t,1,t.deadline,t.version);EXPECT_LE(a.slots(),2u);EXPECT_FALSE(a.take(3,t.target_ns+p1::T));EXPECT_FALSE(a.take(3,t.target_ns+2*p1::T));EXPECT_EQ(p1::due_tick(1000000000,1820000000),4u);}
+#include "usv_nmpc/p1_input_core.hpp"
+namespace {
+p1::Ticket ticket(){p1::Ticket t;t.id=1;t.target=2;t.origin=1000000000;
+  t.deadline=t.origin+p1::DEADLINE;t.target_ns=t.origin+p1::T;
+  t.plan={1,1,0};t.run={1,1,1,0};return t;}
+p1::PlanIdentity plan(){return {1,1,0};}
+p1::RunAxes run(){return {1,1,1,0};}
+}
+TEST(Deadline, EqualityRegistrationSurvivesEitherCutoffOrder){for(bool close_first:{true,false}){p1::Admission a;auto t=ticket();if(close_first)EXPECT_FALSE(a.cutoff(t.deadline));EXPECT_EQ(a.register_ready(t,1,t.deadline,plan(),run()),"");EXPECT_TRUE(a.finalize_ready(t.id,t.deadline));EXPECT_FALSE(a.cutoff(t.deadline));EXPECT_TRUE(a.cutoff(t.deadline+1));EXPECT_FALSE(a.take(2,t.target_ns-1));EXPECT_TRUE(a.take(2,t.target_ns));EXPECT_FALSE(a.take(2,t.target_ns));}}
+TEST(Deadline, BeforeAndAfterHaveDifferentResults){for(int64_t d:{-1,0,1}){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,1,t.deadline+d,plan(),run()),d<=0?"":"late");}}
+TEST(Admission, WrongTargetDuplicateAndVersion){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,2,t.deadline,plan(),run()),"wrong_tick");auto wrong_plan=plan();wrong_plan.model=2;EXPECT_EQ(a.register_ready(t,1,t.deadline,wrong_plan,run()),"model_is_not_plan_target");EXPECT_EQ(a.register_ready(t,1,t.deadline,plan(),run()),"");EXPECT_EQ(a.register_ready(t,1,t.deadline,plan(),run()),"duplicate");}
+TEST(Admission, ClearBetweenCutoffAndActivationInvalidates){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,1,t.deadline,plan(),run()),"");a.cutoff(t.deadline+1);a.invalidate();EXPECT_FALSE(a.take(2,t.target_ns));}
+TEST(Admission, FixedCapacityAndMissedTickNeverRollsForward){p1::Admission a;auto t=ticket();a.register_ready(t,1,t.deadline,plan(),run());EXPECT_LE(a.slots(),2u);EXPECT_FALSE(a.take(3,t.target_ns+p1::T));EXPECT_FALSE(a.take(3,t.target_ns+2*p1::T));EXPECT_EQ(p1::due_tick(1000000000,1820000000),4u);}
 TEST(Activation, SourceSequenceDoesNotReplaceStateAndVersionGate){p1::Limits l;p1::State predicted{},actual{};actual[0]=.1;EXPECT_EQ(p1::state_check(predicted,actual,l),"");actual[0]=.251;EXPECT_EQ(p1::state_check(predicted,actual,l),"activation_state_mismatch");actual[0]=0;predicted[2]=3.14;actual[2]=-3.14;EXPECT_EQ(p1::state_check(predicted,actual,l),"");actual[1]=NAN;EXPECT_EQ(p1::state_check(predicted,actual,l),"nonfinite");}
 TEST(Anchor, PartialFailureIsUnknownAndRealPublishUpdatesCannotBeRolledBack){p1::Anchor a;a.known={true,true};a.n={10,10};a.seq={3,3};a.time={1000000000,1000000000};auto b=a;b.known[1]=false;EXPECT_EQ(p1::anchor_check(a,b),"unknown_anchor");b=a;b.seq[0]++;EXPECT_EQ(p1::anchor_check(a,b),"anchor_mismatch");}
 TEST(Command, AmplitudeAndActualSteadySpacing){p1::Limits l;p1::Anchor a;a.known={true,true};a.time={1000000000,1000000000};EXPECT_EQ(p1::command_check({16,16},a,1200000000,l),"");EXPECT_EQ(p1::command_check({16.01,16},a,1200000000,l),"command_rate");EXPECT_EQ(p1::command_check({26,16},a,1400000000,l),"command_limit");}
-TEST(Fallback, FifthMissRampsAndNeverInstantlyDropsLargeThrust){p1::Limits l;l.rho=10;l.hold_ns=600000000;p1::Anchor a;a.known={true,true};a.n={25,-25};a.time={1800000000,1800000000};auto out=p1::fallback(a,2000000000,1000000000,l,false);EXPECT_DOUBLE_EQ(out[0],23);EXPECT_DOUBLE_EQ(out[1],-23);EXPECT_EQ(p1::command_check(out,a,2000000000,l),"");a.time={1400000000,1400000000};EXPECT_EQ(p1::fallback(a,1500000000,1000000000,l,false),a.n);}
+TEST(Fallback, FifthMissRampsAndNeverInstantlyDropsLargeThrust){p1::Limits l;l.rho=10;l.hold_ns=600000000;p1::Anchor a;a.known={true,true};a.n={25,-25};a.time={1800000000,1800000000};auto out=p1::fallback(a,2000000000,1000000000,l,false);EXPECT_DOUBLE_EQ(out[0],23);EXPECT_DOUBLE_EQ(out[1],-23);EXPECT_EQ(p1::command_check(out,a,2000000000,l),"");a.time={1400000000,1400000000};EXPECT_DOUBLE_EQ(p1::fallback(a,1500000000,1000000000,l,false)[0],24);}
 TEST(InputCore, EligibilityPreservesF5ReasonPriority){usv_mpc::InputEligibility c;EXPECT_EQ(usv_mpc::input_eligibility(c).second,"no_odom");c.odom_received=true;c.last_odom_s=1;c.now_s=3.001;c.odom_timeout_s=2;EXPECT_EQ(usv_mpc::input_eligibility(c).second,"odom_timeout");c.now_s=3;EXPECT_EQ(usv_mpc::input_eligibility(c).second,"no_path");c.path_received=true;c.path_size=2;c.require_fcu=true;EXPECT_EQ(usv_mpc::input_eligibility(c).second,"no_state");c.last_state_s=3;c.armed=true;c.mode="GUIDED";c.allowed_modes={"GUIDED"};EXPECT_TRUE(usv_mpc::input_eligibility(c).first);}
 TEST(InputCore, NumericAndMixedRate){EXPECT_TRUE(usv_mpc::admit_odom({1,2,3,4,5},{0,0,0,1}));EXPECT_FALSE(usv_mpc::admit_odom({1,2,3,4,NAN},{0,0,0,1}));EXPECT_FALSE(usv_mpc::admit_odom({1,2,3,4,5},{0,0,0,0}));auto s=usv_mpc::compose_odom({1,2,3,4,5},{0,0,0,1});usv_mpc::compose_imu(s,.2);EXPECT_DOUBLE_EQ(s[3],3);EXPECT_DOUBLE_EQ(s[5],.2);EXPECT_FALSE(usv_mpc::admit_imu(INFINITY));}
 TEST(InputCore, MappingMatchesDeclaredPhysicalClamp){auto u=usv_mpc::map_vrx({50,-50},1,-25,25,100);EXPECT_DOUBLE_EQ(u[0],25);EXPECT_DOUBLE_EQ(u[1],-25);u=usv_mpc::map_vrx({2,-3},2,-25,25,100);EXPECT_DOUBLE_EQ(u[0],4);EXPECT_DOUBLE_EQ(u[1],-6);}
 TEST(InputCore, TargetReferenceIsRebuiltFromPredictedNearestPoint){usv_mpc::ReferenceInput r;for(int i=0;i<10;++i){r.path.push_back({double(i),0,0});r.profile.push_back({1,0,0,double(i)});}r.path_stamp={1,0};r.profile_stamp={1,0};usv_mpc::Vector6d s=usv_mpc::Vector6d::Zero();s[0]=3;usv_mpc::ReferenceMetadata m;auto ref=usv_mpc::build_frozen_reference(s,r,20,.2,2,.6,&m);EXPECT_EQ(m.nearest_index,3);EXPECT_EQ(m.start_index,5);EXPECT_DOUBLE_EQ(m.profile_t0,5);EXPECT_NEAR(ref(0,0),5,1e-12);EXPECT_NEAR(ref(0,1),5.2,1e-12);EXPECT_NEAR(ref(3,0),1,1e-12);}
 TEST(InputCore, PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture){usv_mpc::HydroParams h;h.Xu=h.Xuu=0;h.Yv=h.Yr=h.Nv=h.Nr=h.Yvv=h.Yrr=h.Nvv=h.Nrr=0;h.xg=0;usv_mpc::Vector6d s=usv_mpc::Vector6d::Zero();s[3]=1;EXPECT_TRUE(usv_mpc::propagate_publisher_nominal(s,0,200000000,{0,0},{},h));EXPECT_NEAR(s[0],.2,1e-12);EXPECT_NEAR(s[3],1,1e-12);EXPECT_FALSE(usv_mpc::propagate_publisher_nominal(s,200000000,0,{0,0},{},h));}
 
-TEST(Deadline, RegistrationCompletionAfterDeadlineRetractsSlot){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,1,t.deadline-1,t.version),"");EXPECT_FALSE(a.finalize_ready(t.id,t.deadline+1));EXPECT_FALSE(a.take(t.target,t.target_ns));}
+TEST(Deadline, RegistrationCompletionAfterDeadlineRetractsSlot){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,1,t.deadline-1,plan(),run()),"");EXPECT_FALSE(a.finalize_ready(t.id,t.deadline+1));EXPECT_FALSE(a.take(t.target,t.target_ns));}
 
 // P1_SOURCE_SIM_AGE_GATE_V2: independent integer fixtures, no ROS-time assumption.
 TEST(SourceTime, ReceiveAgeAndPhysicalLagAreIndependent){
@@ -153,4 +159,83 @@ TEST(PublicationHistory, WrongTimeAndOutOfOrderRecordsAreRejected){
 TEST(PublicationHistory, EvictedFreezeAnchorDoesNotAuthorizeCurrentValue){
   auto h=repeated_history();h.pop_front();h.pop_front();
   EXPECT_EQ(p1::publication_history_check(history_anchor(3),history_anchor(5),h),"anchor_history_incomplete");
+}
+
+// ---- 五轴分离：计划轴、目标代、运行轴各自独立失败 --------------------
+TEST(PlanAxes, ScheduleAndEpochMismatchFailBeforeModel)
+{
+  p1::Admission a;
+  auto t = ticket();
+  auto wrong_schedule = plan(); wrong_schedule.schedule = 9;
+  EXPECT_EQ(a.register_ready(t, 1, t.deadline, wrong_schedule, run()),
+            "plan_axes_do_not_match_plan");
+  auto wrong_epoch = plan(); wrong_epoch.epoch = 7;
+  EXPECT_EQ(a.register_ready(t, 1, t.deadline, wrong_epoch, run()),
+            "plan_axes_do_not_match_plan");
+}
+
+// 目标代只来自计划：候选不能用自己的 model 覆盖它。
+TEST(PlanAxes, ModelMustEqualPlanTargetGeneration)
+{
+  p1::Admission a;
+  auto t = ticket();
+  t.plan.model = 2;                       // 候选自称第 2 代
+  auto plan_target = plan();              // 但计划在该 tick 的目标是第 1 代
+  EXPECT_EQ(a.register_ready(t, 1, t.deadline, plan_target, run()),
+            "model_is_not_plan_target");
+  plan_target.model = 2;
+  EXPECT_EQ(a.register_ready(t, 1, t.deadline, plan_target, run()), "");
+}
+
+TEST(PlanAxes, RunTaskConfigAndScheduleEpochAreIndependent)
+{
+  p1::Admission a;
+  auto t = ticket();
+  auto changed_task = run(); changed_task.task = 5;
+  EXPECT_EQ(a.register_ready(t, 1, t.deadline, plan(), changed_task),
+            "run_task_config_changed");
+  auto changed_config = run(); changed_config.config = 4;
+  EXPECT_EQ(a.register_ready(t, 1, t.deadline, plan(), changed_config),
+            "run_task_config_changed");
+  auto changed_epoch = run(); changed_epoch.epoch = 3;
+  EXPECT_EQ(a.register_ready(t, 1, t.deadline, plan(), changed_epoch),
+            "run_schedule_epoch_changed");
+}
+
+// ---- hold 到期语义：基准只在有效期内成立 ------------------------------
+TEST(CommandHeld, BaselineOnlyInsideValidityWindow)
+{
+  p1::Limits l; l.rho = 80;
+  p1::Anchor a; a.known = {true, true}; a.n = {20.0, 20.0};
+  a.time = {1'000'000'000, 1'000'000'000};
+  const int64_t validity = p1::T;   // 一个周期
+
+  // 有效期内：速率约束生效（1s 内 +80 N/s → 20 N 起算允许 25 N 之外的值）
+  EXPECT_EQ(p1::command_check_held({25.0, 25.0}, a, 1'000'000'000 + validity / 2,
+                                   0, l, validity), "");
+  // 有效期外：基准不再成立，因此同样的推力不再受限（从零起算）
+  EXPECT_EQ(p1::command_check_held({25.0, 25.0}, a, 1'000'000'000 + 3 * validity,
+                                   0, l, validity), "");
+  // 未知锚点仍然直接失败（不能因为"基准失效"就放过）
+  p1::Anchor unknown;
+  EXPECT_EQ(p1::command_check_held({1.0, 1.0}, unknown, 1'000'000'000, 0, l, validity),
+            "unknown_anchor");
+  // 幅值超限始终失败
+  EXPECT_EQ(p1::command_check_held({26.0, 0.0}, a, 1'000'000'000, 0, l, validity),
+            "command_limit");
+}
+
+// fallback 的 hold 只允许 min(hold_ns, T)，不得无限期保持非零推力。
+TEST(CommandHeld, FallbackHoldIsBoundedByOneTick)
+{
+  p1::Limits l; l.rho = 10; l.hold_ns = 5 * p1::T;   // 合同 hold 远大于一周期
+  p1::Anchor a; a.known = {true, true}; a.n = {25.0, -25.0};
+  a.time = {1'000'000'000, 1'000'000'000};
+  const int64_t t0 = 1'100'000'000;
+  // 一个周期内：保持
+  EXPECT_DOUBLE_EQ(p1::fallback(a, t0 + p1::T / 2, t0, l, false)[0], 25.0);
+  // 超过一个周期：开始按 rho 斜坡归零，而不是继续保持
+  const auto later = p1::fallback(a, t0 + p1::T + 100'000'000, t0, l, false);
+  EXPECT_LT(later[0], 25.0);
+  EXPECT_LT(later[1], 0.0);
 }

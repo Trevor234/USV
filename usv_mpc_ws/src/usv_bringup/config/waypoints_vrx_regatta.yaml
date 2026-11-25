@@ -2,7 +2,7 @@
 #
 # 出生点约 (-532, 162)、初始航向约 1 rad(57°)（见 usv_simulation/vrx_spawn.py），
 # 航点沿初始航向前出，先直航 ~55m 验证跟踪，再两个缓弯回来，全程约 130m。
-# 格式见 usv_planning_cpp/src/waypoint_manager.cpp load_from_yaml_file：
+# 格式见 usv_planning/src/waypoint_manager.cpp load_from_yaml_file：
 #   x/y 必填（map 系，米）；heading_deg/radius/stay_time 可选。
 #
 # 用法:

@@ -10,8 +10,9 @@
 
     # --- Kinematic MPC ---
     kinematic:
-      backend: "ipopt"              # C++ 运动学节点仅实现 CasADi/IPOPT 后端;
-                                    # (Python 版的 acados 后端随 usv_mpc 包删除, 2026-09-06)
+      backend: "acados"             # 方案 A 唯一后端 (SQP + MERIT_BACKTRACKING,
+                                    # 生成码在 usv_acados/acados_generated/kinematic/)
+      dt: 0.2                       # 求解步长 (s); 须与生成码 N*dt 一致
       Q: [10.0, 10.0, 50.0]       # State weights [x, y, psi]
       R: [1.0, 1.0]                # Control weights [u_surge, r_yaw]
       Qf_scale: 10.0               # Terminal cost multiplier (Qf = scale * Q)
@@ -22,6 +23,4 @@
       dr_max: 1.25                 # Max yaw accel (rad/s²) — 实测 P99=1.22
       tau_u: 0.8                   # 纵向速度一阶滞后时间常数 (s)
       tau_r: 1.78                  # 艏摇角速度一阶滞后时间常数 (s, Iz_eff/Nr)
-      ipopt_max_iter: 50           # IPOPT 迭代上限 (早停时回收当前迭代点, 不丢拍)
-      ipopt_max_cpu_time_ms: 120.0 # IPOPT CPU 时间上限 (ms), 须 < max_solve_time_ms
       solution_constraint_tol: 0.005 # 候选轨迹最大约束残差;早停解也必须满足

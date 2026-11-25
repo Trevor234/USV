@@ -8,11 +8,13 @@
 #
 # acados 不在此处: 它是 C 库, 需源码编译 (见 docs/pi5_deploy.md)。
 # acados_template 是其 Python 接口, 从 acados 源码树 pip install -e 安装,
-# 不在 PyPI, 故不列入此文件。若 acados 不可用, usv_mpc 自动回退 CasADi+IPOPT。
+# 不在 PyPI, 故不列入此文件。方案 B (usv_mpc_cpp) 在 acados 不可用时回退
+# CasADi+IPOPT; 方案 A (usv_mpc_kinematic_cpp) 只用 acados, 无回退路径。
 #
 # Tested with: casadi 3.7.2, Python 3.12 (x86_64) / aarch64 (Pi5)。
 
-casadi>=3.6      # NMPC/QP solver backend — usv_mpc 运动学后端 + C++ fallback 的来源 wheel
+casadi>=3.6      # usv_mpc_cpp 的 CasADi fallback 后端 + usv_acados 离线 codegen
+                 # (方案 A 运行时已改为 acados, 不再加载 libcasadi)
 numpy>=1.24      # used across usv_mpc and usv_planning
 pyyaml>=6.0      # waypoint YAML loading in usv_planning
 matplotlib       # usv_simulation 实时可视化

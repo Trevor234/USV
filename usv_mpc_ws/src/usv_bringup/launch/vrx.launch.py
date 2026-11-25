@@ -1,6 +1,6 @@
 """VRX Gazebo Sim + MPC Scheme B (C++ 动力学 NMPC) validation launch.
 
-MPC 节点为 usv_mpc_cpp (C++ NMPC, output_mode=vrx_thrust 直接发布推力),
+MPC 节点为 usv_nmpc (C++ NMPC, output_mode=vrx_thrust 直接发布推力),
 船体和 MPC 共用 vehicle_config。生成的 SDF 使用 DART 原生附加质量；
 非对称辨识交叉项的仿真处理记录在 effective_vehicle.yaml 中。
 """
@@ -120,8 +120,9 @@ def generate_launch_description():
     path_params = os.path.join(bringup_share, "config", "path_config.yaml")
 
     # ament_python does not automatically source arbitrary files installed in
-    # share/<package>/environment. Make the acados runtime path explicit for
-    # the Scheme B process so vrx.launch.py works in a clean sourced shell.
+    # share/<package>/environment. Make the acados runtime path explicit for the
+    # Scheme A and B processes (both use the shared usv_acados backend) so
+    # vrx.launch.py works in a clean sourced shell.
     acados_source = os.environ.get(
         "ACADOS_SOURCE_DIR", os.path.join(os.path.expanduser("~"), "acados")
     )
@@ -137,7 +138,7 @@ def generate_launch_description():
     planner_node = TimerAction(
         period=8.0,
         actions=[Node(
-            package="usv_planning_cpp",
+            package="usv_planning",
             executable="path_planner_node",
             name="path_planner_node",
             output="screen",
@@ -170,7 +171,7 @@ def generate_launch_description():
     mpc_node_b = TimerAction(
         period=9.0,
         actions=[Node(
-            package="usv_mpc_cpp",
+            package="usv_nmpc",
             executable="mpc_node",
             name="mpc_controller_node",
             output="screen",
@@ -198,11 +199,12 @@ def generate_launch_description():
     kin_node = TimerAction(
         period=9.0,
         actions=[Node(
-            package="usv_mpc_kinematic_cpp",
+            package="usv_mpc",
             executable="mpc_node",
             name="mpc_controller_node",
             output="screen",
             condition=IfCondition(is_scheme_a),
+            additional_env=solver_environment,
             parameters=[mpc_params_a, {
                 "use_sim_time": True,
                 "scheme": "A",

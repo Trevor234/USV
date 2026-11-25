@@ -23,6 +23,10 @@ train = [
 deploy = [
     "onnxruntime",
 ]
+# 方案 A 融合闭环（P5）：GP 快照加载与回放校验需要 scipy
+fusion = [
+    "scipy>=1.11",
+]
 
 [tool.setuptools.packages.find]
 include = ["usv_rl*"]

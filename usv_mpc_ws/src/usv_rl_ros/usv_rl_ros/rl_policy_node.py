@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""方案C: RL 策略推理节点（与 usv_mpc_cpp mpc_node 接口对齐）。
+"""方案C: RL 策略推理节点（与 usv_nmpc mpc_node 接口对齐）。
 
 订阅（与 mpc_node 相同契约）:
     odom_topic     nav_msgs/Odometry        [x,y,psi,u,v,r]

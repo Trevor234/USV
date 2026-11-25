@@ -1,31 +1,19 @@
 <?xml version="1.0"?>
-<?xml-model href="../../package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>usv_mpc_cpp</name>
   <version>0.1.0</version>
-  <description>Dynamic NMPC controller for dual-thruster USV (C++ implementation, scheme B)</description>
-  <maintainer email="user@example.com">USV Developer</maintainer>
+  <description>
+    Compatibility package for the frozen research batches. The original usv_mpc_cpp was
+    renamed into usv_mpc/usv_nmpc on 2026-11-12; the frozen W2 wiring suites still build
+    `find_package(usv_mpc_cpp)`. This package installs exactly the headers restored from
+    R40 (SHA-256 verified) and exports them as an INTERFACE target. It contains no
+    implementation: every symbol resolves in usv_mpc / usv_nmpc at link time.
+  </description>
+  <maintainer email="trevor@example.com">trevor</maintainer>
   <license>MIT</license>
-
   <buildtool_depend>ament_cmake</buildtool_depend>
-
-  <depend>rclcpp</depend>
-  <depend>geometry_msgs</depend>
-  <depend>nav_msgs</depend>
-  <depend>sensor_msgs</depend>
-  <depend>mavros_msgs</depend>
-  <depend>std_msgs</depend>
-  <depend>rosgraph_msgs</depend>
-  <depend>usv_research_interfaces</depend>
-  <depend>nlohmann_json_schema_validator_vendor</depend>
-  <!-- Eigen3: Fossen 模型数值运算 (替代 numpy) -->
-  <build_depend>eigen</build_depend>
-
-  <test_depend>ament_lint_auto</test_depend>
-  <test_depend>ament_lint_common</test_depend>
-  <test_depend>ament_cmake_gtest</test_depend>
-
-  <export>
-    <build_type>ament_cmake</build_type>
-  </export>
+  <depend>usv_mpc</depend>
+  <depend>usv_nmpc</depend>
+  <export><build_type>ament_cmake</build_type></export>
 </package>

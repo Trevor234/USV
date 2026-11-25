@@ -2,9 +2,15 @@
 build/
 install/
 log/
+testlog/
+build-remediation/
+install-remediation/
 **/build/
 **/install/
 **/log/
+**/testlog/
+**/build-remediation/
+**/install-remediation/
 
 # Runtime logs and telemetry
 logs/
@@ -82,8 +88,9 @@ tools/params_id/results/
 # Local agent plans
 .zcode/
 
-# Local migration backups (never commit)
-.local-backups/
+# Local migration backups and scratch files (never commit)
+.local-backups
+:memory:.ses
 
 # ArduPilot local build/work tree (not part of USV release)
 # Note: ardurover-argus is now managed as a git submodule

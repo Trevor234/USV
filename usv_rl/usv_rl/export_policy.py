@@ -27,6 +27,8 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+from usv_rl.observation import LOOKAHEAD_M, OBS_CONTRACT_VERSION, PROGRESS_GATE_M, PROGRESS_WINDOW
+
 
 OBS_DIM = 43
 ACTION_DIM = 2
@@ -89,6 +91,11 @@ class DeterministicActor(nn.Module):
         super().__init__()
         layers = list(policy.mlp_extractor.policy_net.children()) + [policy.action_net]
         self.net = nn.Sequential(*layers)
+        self._equivariant = all(hasattr(policy, name) for name in ("se2_mask", "z2_perm_mat", "action_swap_mat"))
+        if self._equivariant:
+            self.register_buffer("se2_mask", policy.se2_mask.detach().float())
+            self.register_buffer("z2_perm_mat", policy.z2_perm_mat.detach().float())
+            self.register_buffer("action_swap_mat", policy.action_swap_mat.detach().float())
         self.register_buffer("obs_mean", torch.as_tensor(obs_mean, dtype=torch.float32))
         self.register_buffer("obs_var", torch.as_tensor(obs_var, dtype=torch.float32))
         self.thrust_scale_n = _positive_finite(thrust_scale_n, "thrust_scale_n")
@@ -98,8 +105,57 @@ class DeterministicActor(nn.Module):
     def forward(self, obs: torch.Tensor) -> torch.Tensor:
         norm = (obs - self.obs_mean) / torch.sqrt(self.obs_var + self.eps)
         norm = torch.clamp(norm, -self.clip_obs, self.clip_obs)
-        mean = self.net(norm)
+        if self._equivariant:
+            norm_c = norm * self.se2_mask
+            norm_m = norm_c @ self.z2_perm_mat
+            mean = 0.5 * (self.net(norm_c) + self.net(norm_m) @ self.action_swap_mat)
+        else:
+            mean = self.net(norm)
         return torch.clamp(mean, -1.0, 1.0) * self.thrust_scale_n
+
+
+def _load_observation_contract(train_meta_path: str | Path | None) -> dict:
+    """从 train_meta.json 读出本次训练的观测契约；缺参数一律报错。
+
+    没有契约的清单等于没有 provenance：部署侧的 43 维通道含义只能靠猜，
+    而 lookahead / prev_thrust 时序每变一次，同一份权重就是另一套语义。
+    """
+    if not train_meta_path:
+        raise ValueError(
+            "train_meta.json is required: 用 --train-meta <run>/train_meta.json 绑定观测契约"
+        )
+    path = Path(train_meta_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"train_meta.json 不存在: {path}")
+    doc = json.loads(path.read_text(encoding="utf-8"))
+    env = doc.get("env")
+    if not isinstance(env, dict):
+        raise ValueError(f"{path} 缺少 env 段，无法确定观测契约")
+    lookahead = env.get("lookahead")
+    if not isinstance(lookahead, (list, tuple)) or len(lookahead) != len(LOOKAHEAD_M):
+        raise ValueError(
+            f"{path} 的 env.lookahead 必须是 {len(LOOKAHEAD_M)} 项，实际 {lookahead!r}"
+        )
+    try:
+        lookahead_f = [float(v) for v in lookahead]
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{path} 的 env.lookahead 含非数值项: {lookahead!r}") from exc
+    if not all(np.isfinite(v) for v in lookahead_f):
+        raise ValueError(f"{path} 的 env.lookahead 含非有限值: {lookahead_f!r}")
+    timing = env.get("obs_prev_thrust_timing")
+    if timing not in ("pre_update", "post_update"):
+        raise ValueError(
+            f"{path} 的 env.obs_prev_thrust_timing 必须是 pre_update/post_update，实际 {timing!r}"
+        )
+    return {
+        "version": OBS_CONTRACT_VERSION,
+        "lookahead_m": lookahead_f,
+        "prev_thrust_timing": timing,
+        "reference_index": f"monotone_progress_window{PROGRESS_WINDOW}_gate{PROGRESS_GATE_M}",
+        "input_dim": OBS_DIM,
+        "_train_meta_path": str(path),
+        "_train_meta_sha256": _sha256(path),
+    }
 
 
 def _sha256(path: Path) -> str:
@@ -155,6 +211,7 @@ def _temporary_path(directory: Path, suffix: str) -> Path:
 
 def export(model_path: str, vecnorm_path: str, out_path: str | None = None,
            opset: int = 13, *, thrust_scale_n: float,
+           train_meta_path: str | None = None,
            verification_obs_path: str | None = None) -> Path:
     """Publish a new graph plus manifest after independent verification.
 
@@ -162,6 +219,7 @@ def export(model_path: str, vecnorm_path: str, out_path: str | None = None,
     Failure removes this call's temporary files and any partial publication.
     """
     scale = _positive_finite(thrust_scale_n, "thrust_scale_n")
+    obs_contract = _load_observation_contract(train_meta_path)
     if scale != 25.0:
         raise ValueError("this v5 deployment contract requires thrust_scale_n=25.0")
     model_source, vn_source = Path(model_path), Path(vecnorm_path)
@@ -212,7 +270,8 @@ def export(model_path: str, vecnorm_path: str, out_path: str | None = None,
         if observations_path and _sha256(observations_path) != observations_hash:
             raise ValueError("verification observations changed during export")
         command = ["python", "-m", "usv_rl.export_policy", "--model", str(model_source),
-                   "--vecnorm", str(vn_source), "--thrust-scale-n", str(scale), "--out", str(out)]
+                   "--vecnorm", str(vn_source), "--thrust-scale-n", str(scale), "--out", str(out),
+                   "--train-meta", obs_contract["_train_meta_path"]]
         if observations_path:
             command += ["--verification-obs", str(observations_path)]
         manifest = {
@@ -225,11 +284,16 @@ def export(model_path: str, vecnorm_path: str, out_path: str | None = None,
             "source_vecnormalize_path": str(vn_source), "source_vecnormalize_sha256": vn_source_hash,
             "normalization": {"norm_obs": True, "epsilon": eps, "clip_obs": clip_obs,
                               "reference_training": False},
+            "observation_contract": {k: v for k, v in obs_contract.items() if not k.startswith("_")},
+            "train_meta_path": obs_contract["_train_meta_path"],
+            "train_meta_sha256": obs_contract["_train_meta_sha256"],
             "verification": verification, "export_command": shlex.join(command),
             "opset": opset, "versions": {"python": platform.python_version(), **{
                 name: importlib.metadata.version(name) for name in
                 ("numpy", "torch", "stable-baselines3", "onnx", "onnxruntime")}},
         }
+        if actor._equivariant:
+            manifest["equivariant_z2_se2"] = True
         if observations_path:
             manifest["verification_observations_sha256"] = observations_hash
         temporary_manifest = _temporary_path(out.parent, ".manifest.json")
@@ -261,10 +325,13 @@ def main() -> None:
                         help="explicit physical thrust scale in N (this contract: 25.0)")
     parser.add_argument("--out", help="new output path, defaults to policy_physical_n.onnx")
     parser.add_argument("--verification-obs", help="fixed real raw observations, NumPy (N, 43)")
+    parser.add_argument("--train-meta", required=True,
+                        help="<run>/train_meta.json：导出必须绑定观测契约（lookahead / prev_thrust 时序）")
     args = parser.parse_args()
     model_path = Path(args.model)
     vecnorm = args.vecnorm or str(model_path.parent / "vecnormalize.pkl")
     export(str(model_path), vecnorm, args.out, thrust_scale_n=args.thrust_scale_n,
+           train_meta_path=args.train_meta,
            verification_obs_path=args.verification_obs)
 
 

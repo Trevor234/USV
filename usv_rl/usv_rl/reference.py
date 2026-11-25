@@ -10,8 +10,44 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import importlib.util
+import os
+from pathlib import Path
 
 import numpy as np
+
+# 方案 A 机动生成器所在目录（训练侧按路径加载，避免跨仓库打包依赖）
+SCHEME_A_LEARNING_DIR_ENV = "USV_SCHEME_A_LEARNING_DIR"
+DEFAULT_SCHEME_A_LEARNING_DIR = "/home/trevor/usv_scheme_a_wt/research/scheme_a/learning"
+MANEUVER_TYPES = (
+    "straight",
+    "left_turn",
+    "right_turn",
+    "s_turn",
+    "rate_limited_thrust_step",
+    "speed_transition",
+)
+
+_MANEUVER_MODULE = None
+
+
+def _maneuver_module():
+    """按路径加载 `maneuver_reference.py`（受控仿真的场景权威副本）。"""
+    global _MANEUVER_MODULE
+    if _MANEUVER_MODULE is None:
+        base = os.environ.get(SCHEME_A_LEARNING_DIR_ENV, DEFAULT_SCHEME_A_LEARNING_DIR)
+        path = Path(base) / "maneuver_reference.py"
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"找不到方案 A 机动生成器: {path}；请设置环境变量 {SCHEME_A_LEARNING_DIR_ENV}"
+            )
+        spec = importlib.util.spec_from_file_location("usv_scheme_a_maneuver_reference", path)
+        if spec is None or spec.loader is None:
+            raise ImportError(f"无法加载 {path}")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        _MANEUVER_MODULE = module
+    return _MANEUVER_MODULE
 
 
 @dataclass
@@ -178,3 +214,33 @@ def sample_kappa_segments(
     kappas.append(0.0)
     lengths.append(6.0)
     return kappas, lengths
+
+
+def make_maneuver_reference(
+    maneuver: str,
+    seconds: float,
+    seed: int = 0,
+    cruise_speed: float | None = None,
+) -> ReferenceTrajectory:
+    """用方案 A 的机动生成器构建参考轨迹（与受控仿真场景同一分布）。
+
+    生成器输出 (path_rows, profile_rows) 文本行：
+      path:    "x y psi t"
+      profile: "v kappa r t"
+    这里解析成 ReferenceTrajectory：kappa := r / v，s := 累积弧长。
+    """
+    module = _maneuver_module()
+    path_rows, profile_rows = module.generate_maneuver_path_and_profile(
+        maneuver, seconds, seed=seed, cruise_speed=cruise_speed
+    )
+    p = np.asarray([[float(v) for v in row.split()] for row in path_rows], dtype=np.float64)
+    pr = np.asarray([[float(v) for v in row.split()] for row in profile_rows], dtype=np.float64)
+    xs, ys, psis = p[:, 0], p[:, 1], p[:, 2]
+    vs = pr[:, 0]
+    rs = pr[:, 2]
+    ts = pr[:, 3]
+    ss = np.concatenate([[0.0], np.cumsum(np.hypot(np.diff(xs), np.diff(ys)))])
+    kappas = np.divide(rs, np.maximum(np.abs(vs), 0.1))
+    return ReferenceTrajectory(
+        xs=xs, ys=ys, psis=psis, kappas=kappas, s=ss, v_ref=vs, r_ref=rs, t=ts
+    )
