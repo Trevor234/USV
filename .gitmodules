@@ -1,0 +1,4 @@
+[submodule "ardurover-argus"]
+	path = ardurover-argus
+	url = https://github.com/ArduPilot/ardupilot.git
+	branch = master

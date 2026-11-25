@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "usv-rl"
+version = "0.1.0"
+description = "USV 轨迹跟踪强化学习（方案C）：Gymnasium 环境 + PPO 训练 + ONNX 导出"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+    "pyyaml>=6.0",
+    "gymnasium>=0.29",
+]
+
+[project.optional-dependencies]
+train = [
+    "stable-baselines3>=2.3",
+    "tensorboard",
+    "matplotlib",
+    "pytest",
+]
+deploy = [
+    "onnxruntime",
+]
+# 方案 A 融合闭环（P5）：GP 快照加载与回放校验需要 scipy
+fusion = [
+    "scipy>=1.11",
+]
+
+[tool.setuptools.packages.find]
+include = ["usv_rl*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

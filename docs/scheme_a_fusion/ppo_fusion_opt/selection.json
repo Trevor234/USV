@@ -1,0 +1,38 @@
+{
+  "decisions": 301,
+  "gates": {
+    "ci95_upper_max": 0.0,
+    "delta_cte_mean_max": -0.0005
+  },
+  "gp_snapshot": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261118_work/gp_models/pooled/gp_snapshot.json",
+  "ranking": [
+    {
+      "arm": "gp_v5_s4_dr",
+      "checker_pass": 36,
+      "ci95": [
+        -0.005297521627843679,
+        -0.003146033329801465
+      ],
+      "ci95_upper": -0.003146033329801465,
+      "cte_mean": 0.06368735109754732,
+      "delta_cte_mean": -0.004192916841347114,
+      "episodes": 36,
+      "losses": 3,
+      "name": "v5_s4_dr",
+      "ties": 0,
+      "tv_per_step": 0.8510138200048369,
+      "wilcoxon_p": 5.061156116425991e-08,
+      "wins": 33
+    }
+  ],
+  "reason": "v5_s4_dr 在 36 个 final_test episode 上配对 ΔCTE=-0.00419 m（95% CI 上界 -0.00315 < 0），W/T/L=33/0/3",
+  "reference_arm": "gp_only",
+  "schema": "scheme-a-ppo-candidate-selection-v1",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "selected": "v5_s4_dr",
+  "split": "final_test"
+}

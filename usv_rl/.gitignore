@@ -1,0 +1,11 @@
+# 训练产物不入库（产物已集中到仓库顶层 artifacts/，见根 .gitignore）
+.venv/
+*.pkl
+*.zip
+*.onnx
+*.pt
+__pycache__/
+.pytest_cache/
+*.egg-info/
+tests/cpp_golden/dump_golden_trajectory
+

@@ -1,0 +1,26 @@
+/**:
+  ros__parameters:
+    # --- General MPC Settings (Flat) ---
+    scheme: "A"                 # 实机精简版仅支持方案 A（运动学 MPC）
+    control_mode: "kinematic"    # "kinematic" or "idle"
+    mpc_dt: 0.2                 # MPC time step (s) — 5 Hz for kinematic
+    horizon: 20                  # Prediction horizon steps
+    publish_predicted: true      # Publish MPC predicted trajectory
+    max_solve_time_ms: 200.0    # Maximum acceptable solve time (ms)
+
+    # --- Kinematic MPC ---
+    kinematic:
+      backend: "acados"             # 方案 A 唯一后端 (SQP + MERIT_BACKTRACKING,
+                                    # 生成码在 usv_acados/acados_generated/kinematic/)
+      dt: 0.2                       # 求解步长 (s); 须与生成码 N*dt 一致
+      Q: [10.0, 10.0, 50.0]       # State weights [x, y, psi]
+      R: [1.0, 1.0]                # Control weights [u_surge, r_yaw]
+      Qf_scale: 10.0               # Terminal cost multiplier (Qf = scale * Q)
+      u_max: 3.3                   # Max surge speed (m/s) — 实测标定 P99.5=3.24
+      u_min: 0.0                   # Minimum surge speed (m/s)
+      r_max: 1.25                  # Max yaw rate (rad/s) — 实测 P99=1.22 (STER TurnRate)
+      du_max: 1.3                  # Max surge accel (m/s²) — 实测 P99=1.23
+      dr_max: 1.25                 # Max yaw accel (rad/s²) — 实测 P99=1.22
+      tau_u: 0.8                   # 纵向速度一阶滞后时间常数 (s)
+      tau_r: 1.78                  # 艏摇角速度一阶滞后时间常数 (s, Iz_eff/Nr)
+      solution_constraint_tol: 0.005 # 候选轨迹最大约束残差;早停解也必须满足

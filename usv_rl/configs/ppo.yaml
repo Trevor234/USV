@@ -1,0 +1,68 @@
+# PPO 训练配置（Stable-Baselines3）
+algorithm: PPO
+seed: 42
+n_envs: 16
+
+# 训练设备：cpu | cuda | auto（auto = 有可用 GPU 就用，否则 cpu）
+# 默认 cpu 是**有意选择**，不是历史遗留：
+#   1. collect_rollouts 占 ~94% 墙钟，瓶颈是 NumPy 环境仿真（单步 ~245 us 纯 RK4），
+#      GPU 不参与这部分；
+#   2. MlpPolicy 的 batch=1/16 前向在 GPU 上比 CPU 更慢（kernel launch + H2D 主导）；
+#   3. 已有 5 种子复现与 docs/report_assets/ 的基线全部在 cpu 上生产，
+#      换默认值会让新旧产物不可比（单次更新数值等价，但 10M 步后轨迹漂移）。
+# 实测 RTX 2060 SUPER / i7-10700 / n_envs=16：cpu 34.7 min，cuda 27.2 min（1.28x）。
+# 要试 GPU 请显式覆盖：python -m usv_rl.train --device cuda
+device: cpu
+
+policy_kwargs:
+  net_arch: [256, 256]
+  activation_fn: tanh      # nn.Tanh
+
+ppo:
+  learning_rate: 3.0e-4
+  lr_schedule: linear      # linear | const
+  n_steps: 2048            # 每环境每轮 rollout 步数
+  batch_size: 4096
+  n_epochs: 10
+  gamma: 0.99
+  gae_lambda: 0.95
+  clip_range: 0.2
+  ent_coef: 0.005
+  vf_coef: 0.5
+  max_grad_norm: 0.5
+
+vecnormalize:
+  norm_obs: true
+  norm_reward: true
+  clip_obs: 10.0
+  gamma: 0.99
+
+eval:
+  n_episodes: 8
+  freq_steps: 50000        # EvalCallback 间隔
+  path_type: random        # 评估用随机路径（DR 关闭）
+  deterministic: true
+
+# 课程阶段：顺序训练，模型权重与 VecNormalize 统计全程延续。
+# 每阶段结束保存 ../artifacts/rl_models/<run>/<stage>/ 下快照（见 usv_rl/paths.py）。
+curriculum:
+  - name: s1_straight
+    total_steps: 500000
+    env_overrides:
+      path_type: straight
+  - name: s2_turns
+    total_steps: 1000000
+    env_overrides:
+      path_type: random
+  - name: s3_mix
+    total_steps: 3500000
+    env_overrides:
+      path_type: scheme_a_mix
+  - name: s4_dr
+    total_steps: 5000000
+    env_overrides:
+      path_type: scheme_a_mix
+      hydro_dr_frac: 0.2
+      thrust_delay_max_steps: 1
+      obs_noise_vel: 0.02
+      obs_noise_pos: 0.05

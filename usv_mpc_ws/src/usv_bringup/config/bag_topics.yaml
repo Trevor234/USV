@@ -1,0 +1,33 @@
+# Core closed-loop topics recorded during real USV runs.
+# Message types, QoS, and semantics remain defined in topic_contract.yaml.
+# GPS 状态用于实机定位质量分析 (单点/RTK Float/RTK Fixed)。
+# gpsstatus/gps1/raw 提供 fix_type/eph/卫星数; raw/fix 提供经纬度原值。
+# 发布频率由固件、消息流和配置决定, 需从实际录制数据测量。
+# 本清单不录 RTCM 原始流; RTCM 回放不能替代实时差分连接。
+#   MAVROS 若通过 UAS 发出 GPS_RTCM_DATA 帧, 该帧会自然出现在下面两个
+#   MAVLink 帧话题里; 单独 RTCM ROS 话题仍不录。
+# 仿真研究入口使用独立话题清单; 此处保留实机记录配置。
+topics:
+  - /mavros/local_position/odom
+  - /mavros/imu/data
+  - /mavros/state
+  # 方案 B 的控制输出 (OverrideRCIn)。方案 A 下该话题无 publisher,
+  # 录不到数据但保留兼容。
+  - /mavros/rc/override
+  # 方案 A 的控制输出 (TwistStamped, u_surge + r_yaw), 5 Hz RELIABLE。
+  # 2026-10-21: 此前只录 rc/override, 实机跑方案 A 时真正的执行指令
+  # 完全没有落盘, 事故复盘无法重放控制输出。
+  - /mavros/setpoint_velocity/cmd_vel
+  - /mpc/status
+  - /path/reference
+  - /path/reference_profile
+  - /usv/mission/waypoints_local
+  - /mpc/predicted_trajectory
+  - /mavros/gpsstatus/gps1/raw
+  - /mavros/global_position/raw/fix
+  # MAVLink 双向帧 (mavros_msgs/msg/Mavlink, MAVROS 2.14 原生接口)。
+  # source = 路由器交给 UAS 的入站帧 (飞控下传),
+  # sink   = UAS 封装后发出的报文 (仅表示发送意图, 不代表串口已发出)。
+  # 全消息 ID 保留, 不按插件/msgid 过滤。BEST_EFFORT depth 1000。
+  - /uas1/mavlink_source
+  - /uas1/mavlink_sink
