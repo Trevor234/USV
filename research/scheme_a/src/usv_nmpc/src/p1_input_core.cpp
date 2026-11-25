@@ -18,12 +18,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 #include "usv_nmpc/p1_input_core.hpp"
+
+#include <limits>
+#include <stdexcept>
+
 namespace usv_mpc
 {
 Eigen::MatrixXd build_frozen_reference(
   const Vector6d & current_state, const ReferenceInput & input,
   int N, double dt, int offset, double cruise, ReferenceMetadata * evidence)
 {
+  return build_frozen_reference(current_state, input, N, dt, offset, cruise,
+           ReferenceOptions{}, evidence);
+}
+
+Eigen::MatrixXd build_frozen_reference(
+  const Vector6d & current_state, const ReferenceInput & input,
+  int N, double dt, int offset, double cruise, const ReferenceOptions & options,
+  ReferenceMetadata * evidence)
+{
+  const bool request_projection = options.projection_mode == "polyline_time";
+  if (!request_projection && options.projection_mode != "discrete_offset") {
+    throw std::invalid_argument("unknown reference projection mode");
+  }
+  if (!std::isfinite(options.lead_s) || (options.lead_s < 0.0 && options.lead_s != -1.0)) {
+    throw std::invalid_argument("reference lead must be nonnegative or -1");
+  }
+
   Eigen::MatrixXd ref = Eigen::MatrixXd::Zero(6, N + 1);
   const auto & path = input.path;
   if (evidence) {
@@ -44,19 +65,11 @@ Eigen::MatrixXd build_frozen_reference(
     evidence->effective_start_offset = std::max(1, offset);
     evidence->reference_mode = "empty_path";
     evidence->profile_sync_reason = "empty_path";
+    evidence->projection_mode = "discrete_offset";
+    evidence->lead_s = -1.0;
   }
 
   if (path.empty()) {return ref;}
-
-  // 最近点 + start_offset
-  double best_d = 1e18; int nearest = 0;
-  for (size_t i = 0; i < path.size(); ++i) {
-    double d = std::hypot(path[i][0] - current_state(0), path[i][1] - current_state(1));
-    if (d < best_d) {best_d = d; nearest = static_cast<int>(i);}
-  }
-  int idx = std::min(nearest + std::max(1, offset),
-                     static_cast<int>(path.size()) - 1);
-  if (evidence) {evidence->nearest_index = nearest; evidence->start_index = idx;}
 
   // profile 同步判定
   int profile_len = input.profile.empty() ? -1 : static_cast<int>(input.profile.size());
@@ -67,7 +80,47 @@ Eigen::MatrixXd build_frozen_reference(
   auto [synced, sync_reason] = profile_sync_state(
       static_cast<int>(path.size()), profile_len, path_stamp, p_stamp);
 
+  const bool project = request_projection && synced;
+  const int last = static_cast<int>(path.size()) - 1;
+  const double px = current_state(0), py = current_state(1);
+  double best_d = project ? std::numeric_limits<double>::infinity() : 1e18;
+  int nearest = 0;
+  for (size_t i = 0; i < path.size(); ++i) {
+    const double dx = path[i][0] - px, dy = path[i][1] - py;
+    const double d = project ? dx * dx + dy * dy : std::hypot(dx, dy);
+    if (d < best_d) {best_d = d; nearest = static_cast<int>(i);}
+  }
+  int idx = std::min(nearest + std::max(1, offset), last);
+  double alpha = 0.0;
+  double lead = -1.0;
+  if (project) {
+    const int first_segment = std::max(0, nearest - 1);
+    double best_segment_d2 = std::numeric_limits<double>::infinity();
+    for (int i = first_segment; i <= std::min(nearest, last - 1); ++i) {
+      const auto & a = path[i];
+      const auto & b = path[i + 1];
+      const double dx = b[0] - a[0], dy = b[1] - a[1];
+      const double length2 = dx * dx + dy * dy;
+      const double fraction = length2 <= 1e-12 ? 0.0 :
+        std::clamp(((px - a[0]) * dx + (py - a[1]) * dy) / length2, 0.0, 1.0);
+      const double ex = length2 <= 1e-12 ? px - a[0] : px - (a[0] + fraction * dx);
+      const double ey = length2 <= 1e-12 ? py - a[1] : py - (a[1] + fraction * dy);
+      const double d2 = ex * ex + ey * ey;
+      if (i == first_segment || d2 < best_segment_d2) {
+        best_segment_d2 = d2;
+        idx = i;
+        alpha = fraction;
+      }
+    }
+    lead = options.lead_s >= 0.0 ? options.lead_s : static_cast<double>(std::max(1, offset)) * dt;
+  }
+
   if (evidence) {
+    evidence->nearest_index = nearest; evidence->start_index = idx;
+    if (project) {
+      evidence->projection_mode = "polyline_time";
+      evidence->lead_s = lead;
+    }
     evidence->profile_synced = synced; evidence->profile_sync_reason = sync_reason;
     evidence->reference_mode = synced ? "profile_time" : "cruise_arc_fallback";
   }
@@ -78,6 +131,10 @@ Eigen::MatrixXd build_frozen_reference(
       times[i] = input.profile[i][3]; vs[i] = input.profile[i][0]; rs[i] = input.profile[i][2];
     }
     double t0 = times[idx];
+    if (project) {
+      const double t_proj = t0 + alpha * (times[idx + 1] - t0);
+      t0 = t_proj + lead;
+    }
     if (evidence) {evidence->profile_t0_known = true; evidence->profile_t0 = t0;}
     int j = idx;
     for (int k = 0; k <= N; ++k) {

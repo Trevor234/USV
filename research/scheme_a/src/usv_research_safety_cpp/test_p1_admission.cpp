@@ -1,6 +1,7 @@
 // Copyright 2026 USV Developer
 // SPDX-License-Identifier: MIT
 #include <gtest/gtest.h>
+#include <limits>
 #include "p1_admission.hpp"
 #include "p1_clock_window.hpp"
 #include "usv_nmpc/p1_input_core.hpp"
@@ -24,6 +25,96 @@ TEST(InputCore, EligibilityPreservesF5ReasonPriority){usv_mpc::InputEligibility 
 TEST(InputCore, NumericAndMixedRate){EXPECT_TRUE(usv_mpc::admit_odom({1,2,3,4,5},{0,0,0,1}));EXPECT_FALSE(usv_mpc::admit_odom({1,2,3,4,NAN},{0,0,0,1}));EXPECT_FALSE(usv_mpc::admit_odom({1,2,3,4,5},{0,0,0,0}));auto s=usv_mpc::compose_odom({1,2,3,4,5},{0,0,0,1});usv_mpc::compose_imu(s,.2);EXPECT_DOUBLE_EQ(s[3],3);EXPECT_DOUBLE_EQ(s[5],.2);EXPECT_FALSE(usv_mpc::admit_imu(INFINITY));}
 TEST(InputCore, MappingMatchesDeclaredPhysicalClamp){auto u=usv_mpc::map_vrx({50,-50},1,-25,25,100);EXPECT_DOUBLE_EQ(u[0],25);EXPECT_DOUBLE_EQ(u[1],-25);u=usv_mpc::map_vrx({2,-3},2,-25,25,100);EXPECT_DOUBLE_EQ(u[0],4);EXPECT_DOUBLE_EQ(u[1],-6);}
 TEST(InputCore, TargetReferenceIsRebuiltFromPredictedNearestPoint){usv_mpc::ReferenceInput r;for(int i=0;i<10;++i){r.path.push_back({double(i),0,0});r.profile.push_back({1,0,0,double(i)});}r.path_stamp={1,0};r.profile_stamp={1,0};usv_mpc::Vector6d s=usv_mpc::Vector6d::Zero();s[0]=3;usv_mpc::ReferenceMetadata m;auto ref=usv_mpc::build_frozen_reference(s,r,20,.2,2,.6,&m);EXPECT_EQ(m.nearest_index,3);EXPECT_EQ(m.start_index,5);EXPECT_DOUBLE_EQ(m.profile_t0,5);EXPECT_NEAR(ref(0,0),5,1e-12);EXPECT_NEAR(ref(0,1),5.2,1e-12);EXPECT_NEAR(ref(3,0),1,1e-12);}
+
+TEST(InputCore, PolylineTimeProjectsAdjacentSegmentsAndAppliesTimeLead)
+{
+  usv_mpc::ReferenceInput input;
+  input.path = {{0, 0, 0}, {2, 0, 0}, {2, 2, 0}};
+  input.profile = {{1, 0, 0, 0}, {2, 0, 0, 2}, {4, 0, 2, 3}};
+  usv_mpc::Vector6d state = usv_mpc::Vector6d::Zero();
+  state[0] = 2.25;
+  state[1] = 0.5;
+  usv_mpc::ReferenceMetadata meta;
+  for (const double lead : {0.0, 0.1, -1.0}) {
+    const double effective_lead = lead < 0.0 ? 0.4 : lead;
+    const auto ref = usv_mpc::build_frozen_reference(
+      state, input, 1, 0.2, 2, 0.6, {"polyline_time", lead}, &meta);
+    EXPECT_EQ(meta.projection_mode, "polyline_time");
+    EXPECT_TRUE(meta.profile_synced);
+    EXPECT_EQ(meta.nearest_index, 1);
+    EXPECT_EQ(meta.start_index, 1);
+    EXPECT_DOUBLE_EQ(meta.lead_s, effective_lead);
+    EXPECT_DOUBLE_EQ(meta.profile_t0, 2.25 + effective_lead);
+    EXPECT_DOUBLE_EQ(ref(0, 0), 2.0);
+    EXPECT_NEAR(ref(1, 0), 0.5 + 2.0 * effective_lead, 1e-12);
+    EXPECT_NEAR(ref(1, 1), 0.9 + 2.0 * effective_lead, 1e-12);
+    EXPECT_NEAR(ref(3, 0), 2.5 + 2.0 * effective_lead, 1e-12);
+    EXPECT_NEAR(ref(5, 0), 0.5 + 2.0 * effective_lead, 1e-12);
+  }
+  const auto legacy = usv_mpc::build_frozen_reference(state, input, 1, 0.2, 2, 0.6, &meta);
+  EXPECT_EQ(meta.projection_mode, "discrete_offset");
+  EXPECT_DOUBLE_EQ(meta.lead_s, -1.0);
+  EXPECT_EQ(meta.start_index, 2);
+  EXPECT_DOUBLE_EQ(legacy(1, 0), 2.0);
+}
+
+TEST(InputCore, PolylineTimeClampsEndpointsAndKeepsEarlierTies)
+{
+  usv_mpc::ReferenceInput input;
+  input.path = {{0, 0, 0}, {0, 0, 0}, {2, 0, 0}};
+  input.profile = {{1, 0, 0, 0}, {2, 0, 0, 1}, {3, 0, 0, 3}};
+  usv_mpc::Vector6d state = usv_mpc::Vector6d::Zero();
+  usv_mpc::ReferenceMetadata meta;
+  const usv_mpc::ReferenceOptions options{"polyline_time", 0.0};
+  state[0] = -1.0;
+  const auto start = usv_mpc::build_frozen_reference(state, input, 0, .2, 2, .6, options, &meta);
+  EXPECT_EQ(meta.nearest_index, 0);
+  EXPECT_EQ(meta.start_index, 0);
+  EXPECT_DOUBLE_EQ(meta.profile_t0, 0.0);
+  EXPECT_DOUBLE_EQ(start(3, 0), 1.0);
+
+  state[0] = 4.0;
+  const auto end = usv_mpc::build_frozen_reference(
+    state, input, 1, .2, 2, .6, {"polyline_time", 0.1}, &meta);
+  EXPECT_EQ(meta.start_index, 1);
+  EXPECT_DOUBLE_EQ(meta.profile_t0, 3.1);
+  EXPECT_DOUBLE_EQ(end(0, 0), 2.0);
+  EXPECT_DOUBLE_EQ(end(0, 1), 2.0);
+
+  input.path[1][0] = 1.0;
+  state[0] = 1.0;
+  usv_mpc::build_frozen_reference(state, input, 0, .2, 2, .6, options, &meta);
+  EXPECT_EQ(meta.nearest_index, 1);
+  EXPECT_EQ(meta.start_index, 0);
+  EXPECT_DOUBLE_EQ(meta.profile_t0, 1.0);
+}
+
+TEST(InputCore, PolylineTimeFallsBackForUnsyncedProfilesAndRejectsInvalidOptions)
+{
+  usv_mpc::ReferenceInput input;
+  input.path = {{0, 0, 0}, {2, 0, 0}, {3, 0, 0}};
+  input.profile = {{1, 0, 0, 0}, {1, 0, 0, 1}, {1, 0, 0, 2}};
+  input.path_stamp = {1, 0};
+  input.profile_stamp = {2, 0};
+  const usv_mpc::Vector6d state = usv_mpc::Vector6d::Zero();
+  usv_mpc::ReferenceMetadata meta;
+  const auto legacy = usv_mpc::build_frozen_reference(state, input, 2, .2, 1, .6);
+  const auto fallback = usv_mpc::build_frozen_reference(
+    state, input, 2, .2, 1, .6, {"polyline_time", 0.1}, &meta);
+  EXPECT_EQ(fallback, legacy);
+  EXPECT_EQ(meta.projection_mode, "discrete_offset");
+  EXPECT_DOUBLE_EQ(meta.lead_s, -1.0);
+  EXPECT_FALSE(meta.profile_synced);
+  EXPECT_EQ(meta.profile_sync_reason, "stamp_mismatch");
+  for (const auto & opts : {
+      usv_mpc::ReferenceOptions{"unknown", 0.0},
+      usv_mpc::ReferenceOptions{"polyline_time", -0.1},
+      usv_mpc::ReferenceOptions{"polyline_time", std::numeric_limits<double>::quiet_NaN()},
+      usv_mpc::ReferenceOptions{"discrete_offset", std::numeric_limits<double>::infinity()}}) {
+    EXPECT_THROW(usv_mpc::build_frozen_reference(state, input, 2, .2, 1, .6, opts),
+      std::invalid_argument);
+  }
+}
 TEST(InputCore, PublisherHistoryAndTargetTimeHaveIndependentAnalyticFixture){usv_mpc::HydroParams h;h.Xu=h.Xuu=0;h.Yv=h.Yr=h.Nv=h.Nr=h.Yvv=h.Yrr=h.Nvv=h.Nrr=0;h.xg=0;usv_mpc::Vector6d s=usv_mpc::Vector6d::Zero();s[3]=1;EXPECT_TRUE(usv_mpc::propagate_publisher_nominal(s,0,200000000,{0,0},{},h));EXPECT_NEAR(s[0],.2,1e-12);EXPECT_NEAR(s[3],1,1e-12);EXPECT_FALSE(usv_mpc::propagate_publisher_nominal(s,200000000,0,{0,0},{},h));}
 
 TEST(Deadline, RegistrationCompletionAfterDeadlineRetractsSlot){p1::Admission a;auto t=ticket();EXPECT_EQ(a.register_ready(t,1,t.deadline-1,plan(),run()),"");EXPECT_FALSE(a.finalize_ready(t.id,t.deadline+1));EXPECT_FALSE(a.take(t.target,t.target_ns));}

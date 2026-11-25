@@ -200,14 +200,11 @@ WorkerEngine::WorkerEngine(const usv_mpc::MpcParams & params,
                                              bootstrap_generation);
   frozen_anchor_ = Eigen::Vector2d::Zero();
 
-  // 构造事实里的内容必须就是本合同的参数：EngineSession 采用的是 m0_content()，
-  // 若合同与 M0 不一致，这里的比较会立即失败而不是留到第一拍才发现。
+  // The constructor fact must match the exact parameters given to the capsule.
   const auto & boot = session_->bootstrap_facts();
-  for (std::size_t i = 0; i < content.size(); ++i)
-  {
-    if (boot.content[i] != content[i])
-      throw std::runtime_error("contract parameters differ from the registered M0");
-  }
+  if (model_reference::Registry::content_digest(boot.content) !=
+      model_reference::Registry::content_digest(content))
+    throw std::runtime_error("contract parameters differ from the registered M0");
 }
 
 std::pair<Eigen::Vector2d, usv_mpc::SolveInfo> WorkerEngine::solve(

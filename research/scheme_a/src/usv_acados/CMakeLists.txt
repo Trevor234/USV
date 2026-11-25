@@ -100,6 +100,8 @@ endforeach()
 add_library(usv_acados_backend SHARED
   src/acados_backend.cpp
   src/model_api.cpp
+  # 融合求解器 C ABI（P5 训练环境/回放校验的唯一求解入口）
+  src/fusion_capi.cpp
 )
 add_library(usv_acados::backend ALIAS usv_acados_backend)
 # 导出的 IMPORTED target 名字固定为 usv_acados::usv_acados_backend; 下游统一
@@ -136,6 +138,10 @@ install(TARGETS usv_acados_backend
 )
 install(DIRECTORY include/
   DESTINATION include
+)
+# 融合求解器 C ABI 头文件显式安装（下游 ctypes 使用者按 include/usv_acados/ 定位）
+install(FILES include/usv_acados/fusion_capi.h
+  DESTINATION include/usv_acados
 )
 
 ament_export_targets(export_usv_acados HAS_LIBRARY_TARGET)

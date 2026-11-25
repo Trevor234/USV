@@ -32,6 +32,7 @@ namespace model_reference {
 // 19 hydro + 6 Q + 2 R + 2 Rd + 1 Qf_scale
 inline constexpr std::size_t kContentSize = 30;
 using Content = std::array<double, kContentSize>;
+Content m0_content();
 
 // ---- 五轴版本 ----------------------------------------------------------
 // 与 p1::Version 的字段顺序和含义相同，但本头自带一份，避免 include 130 头。
@@ -217,12 +218,15 @@ class Registry {
 
   // 供测试直接取某个 content 标签的期望摘要（M0/M1），用于标签绑定断言。
   static Digest content_digest_of_label(const std::string &label, bool *known = nullptr);
+  bool registered_content_digest_of_label(const std::string &label, Digest *out) const;
 
   // 保留原名，但**不再是唯一保障**：真正的约束是 frozen()。
   // 测试必须断言 freeze() 后的拒绝，而不是断言这个常量。
   static constexpr bool mutable_after_startup() { return false; }
 
  private:
+  friend Registry registry_from_m0(const Content &m0_base);
+  friend Registry default_registry();
   bool content_equal(const Content &a, const Content &b) const;
   static bool all_finite(const Content &c);
   bool ranges_overlap(std::uint64_t a_first, std::uint64_t a_last,
@@ -230,6 +234,7 @@ class Registry {
   void sorted_indices(std::size_t *order) const;
 
   Entry entries_[kMaxEntries]{};
+  Content m0_content_ = m0_content();
   std::size_t count_ = 0;
   bool frozen_ = false;          // E06：实例级冻结状态
 };
@@ -237,8 +242,9 @@ class Registry {
 // ---- 默认构造的登记表（与第131批 D02 的固定表一致） -------------------
 // g1 -> M0 (target 1..5), g2 -> M1 (target 6..11), g3 -> M0 (target 12..)
 // 内容相同的 g1 与 g3 保持**不同**的激活身份。
-Content m0_content();
+Content derive_m1_content(const Content &m0_base);
 Content m1_content();
+Registry registry_from_m0(const Content &m0_base);
 Registry default_registry();
 
 }  // namespace model_reference

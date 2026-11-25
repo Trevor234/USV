@@ -117,6 +117,18 @@ inline ContractProfile validate_contract_fields(const nlohmann::json & c) {
     contract_require(c.contains("controlled_sim_faults_enabled") &&
                      c.at("controlled_sim_faults_enabled").is_boolean(),
                      "sim schema requires the controlled_sim faults flag");
+    if(c.contains("reference_projection_mode")) {
+      const auto & mode=c.at("reference_projection_mode");
+      contract_require(mode.is_string() && (mode=="discrete_offset" || mode=="polyline_time"),
+                       "invalid reference_projection_mode");
+    }
+    if(c.contains("reference_lead_s")) {
+      const auto & lead=c.at("reference_lead_s");
+      contract_require(lead.is_number(),"reference_lead_s must be a number");
+      const double seconds=lead.get<double>();
+      contract_require(std::isfinite(seconds) && seconds>=0.0 && seconds<=2.0,
+                       "reference_lead_s must be in [0, 2]");
+    }
     resource_limits_from_contract(c);
     return ContractProfile::ControlledSim;
   }

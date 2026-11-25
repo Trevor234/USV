@@ -1,0 +1,542 @@
+{
+  "all_verified": true,
+  "bundled_checks": [
+    {
+      "actual_sha256": "2d50609c9b2b2ec3133c85dce8887035f3df128ebd63a1926e8d42f9eff4f135",
+      "bundle_relpath": "wp1_baseline/baseline.json",
+      "exists": true,
+      "expected_sha256": "2d50609c9b2b2ec3133c85dce8887035f3df128ebd63a1926e8d42f9eff4f135",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "c6237d1402c84436c5a45623bfe76552a1044ca5925f85cfca3af9c0c5ba711b",
+      "bundle_relpath": "wp1_baseline/asset_manifest.json",
+      "exists": true,
+      "expected_sha256": "c6237d1402c84436c5a45623bfe76552a1044ca5925f85cfca3af9c0c5ba711b",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "b83e1d9810d28da92e4d24c4c1a1f676eb0e869e000c4b411a9af7a88db27a75",
+      "bundle_relpath": "wp1_baseline/source_hashes.json",
+      "exists": true,
+      "expected_sha256": "b83e1d9810d28da92e4d24c4c1a1f676eb0e869e000c4b411a9af7a88db27a75",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "f9fdff1fa8d1a7ee2fd0e6519303e388f34d48765d7ef3be8694436229a9f8b6",
+      "bundle_relpath": "wp3_dataset/data_quality_report.md",
+      "exists": true,
+      "expected_sha256": "f9fdff1fa8d1a7ee2fd0e6519303e388f34d48765d7ef3be8694436229a9f8b6",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "dd02b70a9990bf1b700940af893990fc4b442a9d91f6470a83ee7d83b017f5aa",
+      "bundle_relpath": "wp3_dataset/split_manifest.json",
+      "exists": true,
+      "expected_sha256": "dd02b70a9990bf1b700940af893990fc4b442a9d91f6470a83ee7d83b017f5aa",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "375179be4cb46ffede3ead479c767bc72b55dbd4a4a5420cbd58886333407d64",
+      "bundle_relpath": "wp3_dataset/episode_manifest.json",
+      "exists": true,
+      "expected_sha256": "375179be4cb46ffede3ead479c767bc72b55dbd4a4a5420cbd58886333407d64",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "97b534f3262d61bb34a6b824626cd68ba91a34de7639d665333e18e84fa9a19b",
+      "bundle_relpath": "wp3_dataset/dataset_mismatch/dataset_contract.json",
+      "exists": true,
+      "expected_sha256": "97b534f3262d61bb34a6b824626cd68ba91a34de7639d665333e18e84fa9a19b",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "4447f6409c68e362b5aece356c655e7f09d76d5b9f7e8ed21dad57333b18d632",
+      "bundle_relpath": "wp3_dataset/dataset_mismatch/data_quality.json",
+      "exists": true,
+      "expected_sha256": "4447f6409c68e362b5aece356c655e7f09d76d5b9f7e8ed21dad57333b18d632",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "97b534f3262d61bb34a6b824626cd68ba91a34de7639d665333e18e84fa9a19b",
+      "bundle_relpath": "wp3_dataset/dataset_nominal/dataset_contract.json",
+      "exists": true,
+      "expected_sha256": "97b534f3262d61bb34a6b824626cd68ba91a34de7639d665333e18e84fa9a19b",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "5facca8869f1a5d6ee9edd0ee6b332640c269097e6e1709f18a862bf17a392df",
+      "bundle_relpath": "wp3_dataset/dataset_nominal/data_quality.json",
+      "exists": true,
+      "expected_sha256": "5facca8869f1a5d6ee9edd0ee6b332640c269097e6e1709f18a862bf17a392df",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "a520de8cc84130f95bae5f6ee982abee8a1a3dc509200676433ad6d9652563c6",
+      "bundle_relpath": "wp4_gp/gp_models/mass_plus_10pct/gp_snapshot.json",
+      "exists": true,
+      "expected_sha256": "a520de8cc84130f95bae5f6ee982abee8a1a3dc509200676433ad6d9652563c6",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "7a1c54dcc486c74d4fb76c8bcf5a05203eea9afea6e039ef198befab2a9ede96",
+      "bundle_relpath": "wp4_gp/gp_models/mass_plus_10pct/mass_plus_10pct_sparse_m32.json",
+      "exists": true,
+      "expected_sha256": "7a1c54dcc486c74d4fb76c8bcf5a05203eea9afea6e039ef198befab2a9ede96",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "e2e71beeb526542e2b5d21cd3865cd8b27df27b08ed56182ca5985af3e412194",
+      "bundle_relpath": "wp4_gp/gp_models/mass_plus_10pct/mass_plus_10pct_sparse_m64.json",
+      "exists": true,
+      "expected_sha256": "e2e71beeb526542e2b5d21cd3865cd8b27df27b08ed56182ca5985af3e412194",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "23eaaad29667d24753aaf5459c311228412d08a0c461325db5cebd143a42a09d",
+      "bundle_relpath": "wp4_gp/gp_models/mass_plus_10pct/train_summary.json",
+      "exists": true,
+      "expected_sha256": "23eaaad29667d24753aaf5459c311228412d08a0c461325db5cebd143a42a09d",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "0458ff42752f45838b2c5c1f866533027d450a13ee7da087ea26378ea8f7578e",
+      "bundle_relpath": "wp4_gp/gp_models/pooled/gp_snapshot.json",
+      "exists": true,
+      "expected_sha256": "0458ff42752f45838b2c5c1f866533027d450a13ee7da087ea26378ea8f7578e",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "e61da617515ee1a90a6386b0e00a357667a23fada3d769d68a6fde315809bf02",
+      "bundle_relpath": "wp4_gp/gp_models/pooled/pooled_gp_sparse_m32.json",
+      "exists": true,
+      "expected_sha256": "e61da617515ee1a90a6386b0e00a357667a23fada3d769d68a6fde315809bf02",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "ecdd0804943a30405316dc2516d7b24500d88edda44c22151008af3a3a24ae8b",
+      "bundle_relpath": "wp4_gp/gp_models/pooled/pooled_gp_sparse_m64.json",
+      "exists": true,
+      "expected_sha256": "ecdd0804943a30405316dc2516d7b24500d88edda44c22151008af3a3a24ae8b",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "f5307a58f6f1b24c519b2354566788417e47d1e76a870048f6bcf09a52834076",
+      "bundle_relpath": "wp4_gp/gp_models/pooled/train_summary.json",
+      "exists": true,
+      "expected_sha256": "f5307a58f6f1b24c519b2354566788417e47d1e76a870048f6bcf09a52834076",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "98992ad97f48d9a4a7b620474bf1b449752b6a285901dbe7560d95049c166079",
+      "bundle_relpath": "wp4_gp/gp_models/surge_damping_plus_15pct/gp_snapshot.json",
+      "exists": true,
+      "expected_sha256": "98992ad97f48d9a4a7b620474bf1b449752b6a285901dbe7560d95049c166079",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "e55355037c984589c141846106a661392e7e8927258f848da256658e4c63344f",
+      "bundle_relpath": "wp4_gp/gp_models/surge_damping_plus_15pct/surge_damping_plus_15pct_sparse_m32.json",
+      "exists": true,
+      "expected_sha256": "e55355037c984589c141846106a661392e7e8927258f848da256658e4c63344f",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "27d0b12e27550029760ff65c042e6041e6ceac3f27c24e3629f9d0c1ecfe80c0",
+      "bundle_relpath": "wp4_gp/gp_models/surge_damping_plus_15pct/surge_damping_plus_15pct_sparse_m64.json",
+      "exists": true,
+      "expected_sha256": "27d0b12e27550029760ff65c042e6041e6ceac3f27c24e3629f9d0c1ecfe80c0",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "f78497ad9e281fc3882c83b6875895dceaee8d0c8740e1cd44c7f052f62d6773",
+      "bundle_relpath": "wp4_gp/gp_models/surge_damping_plus_15pct/train_summary.json",
+      "exists": true,
+      "expected_sha256": "f78497ad9e281fc3882c83b6875895dceaee8d0c8740e1cd44c7f052f62d6773",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "6599a0c37e882ff07c73511b0e498aa398faa19ee973e5b73e12bda5af281edb",
+      "bundle_relpath": "wp4_gp/gp_models/yaw_damping_plus_15pct/gp_snapshot.json",
+      "exists": true,
+      "expected_sha256": "6599a0c37e882ff07c73511b0e498aa398faa19ee973e5b73e12bda5af281edb",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "a3d8267a2f4328826353fed967596fa2104811eb724fa3bb3cc6bd61be70b0ec",
+      "bundle_relpath": "wp4_gp/gp_models/yaw_damping_plus_15pct/train_summary.json",
+      "exists": true,
+      "expected_sha256": "a3d8267a2f4328826353fed967596fa2104811eb724fa3bb3cc6bd61be70b0ec",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "96cc9dd56fc8f7690af36069490fce93ff3fbd5f61ea9e1c704ccfd3890ccf2f",
+      "bundle_relpath": "wp4_gp/gp_models/yaw_damping_plus_15pct/yaw_damping_plus_15pct_sparse_m32.json",
+      "exists": true,
+      "expected_sha256": "96cc9dd56fc8f7690af36069490fce93ff3fbd5f61ea9e1c704ccfd3890ccf2f",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "d8ae8001cea2e55c3e04c29092e704f8a11d12e8f424036fcef91d2b5ef1a82d",
+      "bundle_relpath": "wp4_gp/gp_models/yaw_damping_plus_15pct/yaw_damping_plus_15pct_sparse_m64.json",
+      "exists": true,
+      "expected_sha256": "d8ae8001cea2e55c3e04c29092e704f8a11d12e8f424036fcef91d2b5ef1a82d",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "71f9b0d31ffca3f564cd7159227fbc9a6ca7d9c420e79446841ece4203378cb1",
+      "bundle_relpath": "wp4_gp/gp_eval/gp_holdout_metrics.json",
+      "exists": true,
+      "expected_sha256": "71f9b0d31ffca3f564cd7159227fbc9a6ca7d9c420e79446841ece4203378cb1",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "a89b146b209d32b1c7ef32d6634a1b5db5f94d83b3190bf82b0d41bab4bc73c4",
+      "bundle_relpath": "wp4_gp/gp_eval/gp_holdout_report.md",
+      "exists": true,
+      "expected_sha256": "a89b146b209d32b1c7ef32d6634a1b5db5f94d83b3190bf82b0d41bab4bc73c4",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "7e6a82b234495beae425e709cc4ca2eb50ef5b499afd46962987c3b19d76103a",
+      "bundle_relpath": "wp4_gp/gp_eval/gp_numeric_parity.json",
+      "exists": true,
+      "expected_sha256": "7e6a82b234495beae425e709cc4ca2eb50ef5b499afd46962987c3b19d76103a",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "354453b098819b347b127d41126baae61b10370150539f928469c22f9f7c5f82",
+      "bundle_relpath": "wp5_ppo_shadow/observation_contract.json",
+      "exists": true,
+      "expected_sha256": "354453b098819b347b127d41126baae61b10370150539f928469c22f9f7c5f82",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "b66246bdebceccbd384809f136b27cb97ac7f80dce2a657bf243ee51862803c3",
+      "bundle_relpath": "wp5_ppo_shadow/policy_selection.json",
+      "exists": true,
+      "expected_sha256": "b66246bdebceccbd384809f136b27cb97ac7f80dce2a657bf243ee51862803c3",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "bec37b3ff1d639bea324570684327667a2d0737a0696455aaa55fb6cb2daa063",
+      "bundle_relpath": "wp5_ppo_shadow/ppo_shadow_report.md",
+      "exists": true,
+      "expected_sha256": "bec37b3ff1d639bea324570684327667a2d0737a0696455aaa55fb6cb2daa063",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "da7b2893a56298508a52cd26a0672f77fff13766e8ed16911cf14721c948aa8c",
+      "bundle_relpath": "wp5_ppo_shadow/policy_physical_n.manifest.json",
+      "exists": true,
+      "expected_sha256": "da7b2893a56298508a52cd26a0672f77fff13766e8ed16911cf14721c948aa8c",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "10f7b1157050d2a9d987bdc13d38e4f5f80ee6b8ed51556f40f8fbc3664a05d3",
+      "bundle_relpath": "wp6_gp_nmpc/wp6_baseline_meta/baseline.json",
+      "exists": true,
+      "expected_sha256": "10f7b1157050d2a9d987bdc13d38e4f5f80ee6b8ed51556f40f8fbc3664a05d3",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "bdba705c1af86b2cb5371346e26c0b4375c47852ff1a151d50b308ab019886fa",
+      "bundle_relpath": "wp6_gp_nmpc/wp6_baseline_meta/asset_manifest.json",
+      "exists": true,
+      "expected_sha256": "bdba705c1af86b2cb5371346e26c0b4375c47852ff1a151d50b308ab019886fa",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "b1cde99dd1268bb330241f44f4edca0fcd7eb9a642f608ff19ae351d050e1bf8",
+      "bundle_relpath": "wp6_gp_nmpc/wp6_baseline_meta/source_hashes.json",
+      "exists": true,
+      "expected_sha256": "b1cde99dd1268bb330241f44f4edca0fcd7eb9a642f608ff19ae351d050e1bf8",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "2a86d34163d265c1428ed12fea31a93b56ed05637304de8956bf37349f450b1c",
+      "bundle_relpath": "wp6_gp_nmpc/gp_nmpc_codegen_manifest.json",
+      "exists": true,
+      "expected_sha256": "2a86d34163d265c1428ed12fea31a93b56ed05637304de8956bf37349f450b1c",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "baf7bcc6351a972d03bff544e29e208bb850ee931b0dc00cc786f68646744e37",
+      "bundle_relpath": "wp6_gp_nmpc/wp6_regression_report.json",
+      "exists": true,
+      "expected_sha256": "baf7bcc6351a972d03bff544e29e208bb850ee931b0dc00cc786f68646744e37",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "869338b4cb1193c77993c3b5c861f5586b8704d716ef27fc0af9ac64f9c6f5cb",
+      "bundle_relpath": "wp6_gp_nmpc/schedule_explicit_zero.json",
+      "exists": true,
+      "expected_sha256": "869338b4cb1193c77993c3b5c861f5586b8704d716ef27fc0af9ac64f9c6f5cb",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "a219bdeb181f05af25c51271adbd41d8f92e26b74bcf105f607ec2c4a73d3c60",
+      "bundle_relpath": "wp6_gp_nmpc/schedule_hotswap.json",
+      "exists": true,
+      "expected_sha256": "a219bdeb181f05af25c51271adbd41d8f92e26b74bcf105f607ec2c4a73d3c60",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "18d3e698843c29d96a48cee1b1f632a43fac1948127a589823f6282528d4a836",
+      "bundle_relpath": "wp6_gp_nmpc/contracts/contract_controlled_sim.json",
+      "exists": true,
+      "expected_sha256": "18d3e698843c29d96a48cee1b1f632a43fac1948127a589823f6282528d4a836",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "84dd01509d17d91599fe75c14e66ff351582eaab75c0b946076f8610e8712e9d",
+      "bundle_relpath": "wp6_gp_nmpc/contracts/contract_shipboard_dry_run.json",
+      "exists": true,
+      "expected_sha256": "84dd01509d17d91599fe75c14e66ff351582eaab75c0b946076f8610e8712e9d",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "63a1696dd7f597670642b67ea4f143910af5111effddb3ce923e56a5dd9e52f9",
+      "bundle_relpath": "wp6_gp_nmpc/contracts/research_model_plan.json",
+      "exists": true,
+      "expected_sha256": "63a1696dd7f597670642b67ea4f143910af5111effddb3ce923e56a5dd9e52f9",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "f46fa7cd37ecc31fdbc16a9b21eb58cf95601d8761e010a53327e10264dfd1b2",
+      "bundle_relpath": "wp6_gp_nmpc/contracts/arm64_calibration_evidence.json",
+      "exists": true,
+      "expected_sha256": "f46fa7cd37ecc31fdbc16a9b21eb58cf95601d8761e010a53327e10264dfd1b2",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "93ddfff72cfdaadfe67d3eb6d7a6842e4a92734d42f8f8bc03177fb3e49eae94",
+      "bundle_relpath": "wp7_fusion/selected_configuration.json",
+      "exists": true,
+      "expected_sha256": "93ddfff72cfdaadfe67d3eb6d7a6842e4a92734d42f8f8bc03177fb3e49eae94",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "c067450c287051c03be45423b39742919a366e62da7602fe45b5e25b1b9210b3",
+      "bundle_relpath": "wp7_fusion/calibration_summary.json",
+      "exists": true,
+      "expected_sha256": "c067450c287051c03be45423b39742919a366e62da7602fe45b5e25b1b9210b3",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "f430cefe20a5ad7f3b6a66bb13ce3a3cf6c386103e696c8bd237445f87275cda",
+      "bundle_relpath": "wp7_fusion/conflict_probe_summary.json",
+      "exists": true,
+      "expected_sha256": "f430cefe20a5ad7f3b6a66bb13ce3a3cf6c386103e696c8bd237445f87275cda",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "3ff9f6c746484be18fc76dc4a94823749de56ab54bcfa955f0f618075eb81427",
+      "bundle_relpath": "wp7_fusion/four_arm_evaluation.json",
+      "exists": true,
+      "expected_sha256": "3ff9f6c746484be18fc76dc4a94823749de56ab54bcfa955f0f618075eb81427",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "222fac9a03574c97b2d9c7a9cfb04580dd74c9d92b0f824251cb754164cceeda",
+      "bundle_relpath": "wp7_fusion/fusion_report.md",
+      "exists": true,
+      "expected_sha256": "222fac9a03574c97b2d9c7a9cfb04580dd74c9d92b0f824251cb754164cceeda",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "ff27a86c950d5c05c13fd9b7a75663656a5210d3aa86de829cd023c7adad6950",
+      "bundle_relpath": "r2_research/diagnosis/gp_regression_diagnosis.md",
+      "exists": true,
+      "expected_sha256": "ff27a86c950d5c05c13fd9b7a75663656a5210d3aa86de829cd023c7adad6950",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "b841534c273f3cea91271400c8a78138c26e80c77a0a8f0a3086271d86c44771",
+      "bundle_relpath": "r2_research/diagnosis/gp_regression_diagnosis.json",
+      "exists": true,
+      "expected_sha256": "b841534c273f3cea91271400c8a78138c26e80c77a0a8f0a3086271d86c44771",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "a52e2c2bc719e11b93455c09a9cf2f5762a6510558b871ae74577758ec72ff8b",
+      "bundle_relpath": "r2_research/calib_eval/r2_calibration_report.md",
+      "exists": true,
+      "expected_sha256": "a52e2c2bc719e11b93455c09a9cf2f5762a6510558b871ae74577758ec72ff8b",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "82688093e4de7f3d927733acdf93f1acf2e5ff4b1a9d7fd05a3b889824a16548",
+      "bundle_relpath": "r2_research/calib_eval/r4_calibration_report.md",
+      "exists": true,
+      "expected_sha256": "82688093e4de7f3d927733acdf93f1acf2e5ff4b1a9d7fd05a3b889824a16548",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "f430cefe20a5ad7f3b6a66bb13ce3a3cf6c386103e696c8bd237445f87275cda",
+      "bundle_relpath": "r2_research/calib_eval/conflict_probe_report.json",
+      "exists": true,
+      "expected_sha256": "f430cefe20a5ad7f3b6a66bb13ce3a3cf6c386103e696c8bd237445f87275cda",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "5a903885494f4df6304c72f74e85a8fb044877bb2cb6e4498752a67b51ceddc2",
+      "bundle_relpath": "wp8_delivery/arm64_reachability.json",
+      "exists": true,
+      "expected_sha256": "5a903885494f4df6304c72f74e85a8fb044877bb2cb6e4498752a67b51ceddc2",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "5d61f0f9becb8676f0c7305bee130a015535ab8f9b1da8090c6737c315c5355c",
+      "bundle_relpath": "wp8_delivery/b2_dry_run_regression.json",
+      "exists": true,
+      "expected_sha256": "5d61f0f9becb8676f0c7305bee130a015535ab8f9b1da8090c6737c315c5355c",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "aadd17d54a13b16805e4f1650b8c6e78098e49771efbbeb8a00c5d1f54d775a9",
+      "bundle_relpath": "wp8_delivery/colcon_and_pytest_verification.json",
+      "exists": true,
+      "expected_sha256": "aadd17d54a13b16805e4f1650b8c6e78098e49771efbbeb8a00c5d1f54d775a9",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "84dd01509d17d91599fe75c14e66ff351582eaab75c0b946076f8610e8712e9d",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/contract.json",
+      "exists": true,
+      "expected_sha256": "84dd01509d17d91599fe75c14e66ff351582eaab75c0b946076f8610e8712e9d",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "63a1696dd7f597670642b67ea4f143910af5111effddb3ce923e56a5dd9e52f9",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/plan.json",
+      "exists": true,
+      "expected_sha256": "63a1696dd7f597670642b67ea4f143910af5111effddb3ce923e56a5dd9e52f9",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/plant.source.jsonl",
+      "exists": true,
+      "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "0837e83268674cf801016cf953f781249ff5c77e7371954cf9534bb3f8d838b6",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/regulator.source.jsonl",
+      "exists": true,
+      "expected_sha256": "0837e83268674cf801016cf953f781249ff5c77e7371954cf9534bb3f8d838b6",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "fe7344e23abd181e3729da5097d112ea539391d7c82247866a05f66ed2ed2923",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/regulator.stdout.txt",
+      "exists": true,
+      "expected_sha256": "fe7344e23abd181e3729da5097d112ea539391d7c82247866a05f66ed2ed2923",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "6a5744d97af02e91f8b15917a63b6dd28d010a620ffc42a499fcb0ec879b32eb",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/run.json",
+      "exists": true,
+      "expected_sha256": "6a5744d97af02e91f8b15917a63b6dd28d010a620ffc42a499fcb0ec879b32eb",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "68ef0dd3c7a3cd512b0daaf64ca1379f1ca459502d4a5ac1dc97cd9d13d47b35",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/worker.source.jsonl",
+      "exists": true,
+      "expected_sha256": "68ef0dd3c7a3cd512b0daaf64ca1379f1ca459502d4a5ac1dc97cd9d13d47b35",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "56746c5b35d5f509574e99fdf0f8d6d8862025298bc72dd24dd6d5f9e291aa82",
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/worker.stdout.txt",
+      "exists": true,
+      "expected_sha256": "56746c5b35d5f509574e99fdf0f8d6d8862025298bc72dd24dd6d5f9e291aa82",
+      "sha256_match": true
+    },
+    {
+      "actual_sha256": "084eda54f270bcb43bfea70da5c05a3c015097ec2d6bce7388daf44d70e68ccb",
+      "bundle_relpath": "CURRENT.md",
+      "exists": true,
+      "expected_sha256": "084eda54f270bcb43bfea70da5c05a3c015097ec2d6bce7388daf44d70e68ccb",
+      "sha256_match": true
+    }
+  ],
+  "bundled_count": 66,
+  "delivery_manifest_sha256": "3bffed814a35e91b82a19d8b1fe3a0ab71b0d9b5ec5bb8b0451fb82f662f3e2b",
+  "external_checks": [
+    {
+      "exists": true,
+      "label": "ppo_onnx_v5_s4_dr",
+      "match": true,
+      "path": "/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx"
+    },
+    {
+      "exists": true,
+      "label": "dataset_mismatch_npz",
+      "match": true,
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_mismatch/dataset.npz"
+    },
+    {
+      "exists": true,
+      "label": "dataset_nominal_npz",
+      "match": true,
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_nominal/dataset.npz"
+    },
+    {
+      "exists": true,
+      "label": "bin_p1_x86_plant",
+      "match": true,
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_x86_plant"
+    },
+    {
+      "exists": true,
+      "label": "bin_p1_solver_worker",
+      "match": true,
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_solver_worker"
+    },
+    {
+      "exists": true,
+      "label": "bin_p1_regulator",
+      "match": true,
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_regulator"
+    },
+    {
+      "exists": true,
+      "label": "bin_p1_gp_eval_cli",
+      "match": true,
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_gp_eval_cli"
+    },
+    {
+      "exists": true,
+      "label": "bin_p1_contract_validate",
+      "match": true,
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_contract_validate"
+    },
+    {
+      "exists": true,
+      "label": "lib_usv_acados_backend",
+      "match": true,
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_acados/lib/libusv_acados_backend.so.0.1.0"
+    },
+    {
+      "exists": true,
+      "label": "raw_full_dataset_root",
+      "match": true,
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full"
+    },
+    {
+      "exists": true,
+      "label": "raw_wp7_eval_root",
+      "match": true,
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261118_work/fusion_eval"
+    }
+  ],
+  "external_count": 11,
+  "mismatched_count": 0,
+  "missing_count": 0,
+  "schema": "scheme-a-gp-ppo-readback-v1",
+  "verified_utc": "2026-11-19T07:12:41.141917+00:00"
+}

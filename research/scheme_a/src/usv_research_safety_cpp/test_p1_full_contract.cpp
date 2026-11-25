@@ -1,4 +1,6 @@
 #include <gtest/gtest.h>
+#include <filesystem>
+#include <fstream>
 #include "p1_full_contract.hpp"
 using Json=nlohmann::json;
 namespace {
@@ -66,4 +68,56 @@ TEST(P1FullContract, ControlledSimRequiresTheFaultsFlag) {
   // 声明为布尔：通过。
   sim["controlled_sim_faults_enabled"] = true;
   EXPECT_NO_THROW(p1::validate_contract_fields(sim));
+}
+
+TEST(P1FullContract, ControlledSimValidatesOptionalReferenceSettings) {
+  auto sim = p1::candidate_baseline();
+  sim["schema"] = "p1-execution-contract-v2-sim";
+  sim["qualification"] = "controlled_sim";
+  sim["controlled_sim_faults_enabled"] = false;
+  sim["reference_projection_mode"] = "polyline_time";
+  sim["reference_lead_s"] = 0.1;
+  sim["Q"] = {35, 35, 60, 25, 1, 8};
+  sim["Rd"] = {0.6, 0.6};
+  EXPECT_EQ(p1::validate_contract_fields(sim), p1::ContractProfile::ControlledSim);
+  for (const Json & bad : {Json("unknown"), Json(0), Json(nullptr)}) {
+    auto contract = sim;
+    contract["reference_projection_mode"] = bad;
+    EXPECT_THROW(p1::validate_contract_fields(contract), std::runtime_error);
+  }
+  for (const double seconds : {0.0, 2.0}) {
+    auto contract = sim;
+    contract["reference_lead_s"] = seconds;
+    EXPECT_EQ(p1::validate_contract_fields(contract), p1::ContractProfile::ControlledSim);
+  }
+  for (const Json & bad : {Json(-1.0), Json(2.01), Json("0.1"), Json(true),
+      Json(std::numeric_limits<double>::quiet_NaN()),
+      Json(std::numeric_limits<double>::infinity())}) {
+    auto contract = sim;
+    contract["reference_lead_s"] = bad;
+    EXPECT_THROW(p1::validate_contract_fields(contract), std::runtime_error);
+  }
+}
+
+TEST(P1FullContract, FixedProfilesRejectProjectionAndWeightOverrides) {
+  const auto fixtures = std::filesystem::path(__FILE__).parent_path() / "model";
+  std::ifstream dry_run_file(fixtures / "contract_shipboard_dry_run.json");
+  std::ifstream commissioning_file(fixtures / "contract_shipboard_commissioning.json");
+  ASSERT_TRUE(dry_run_file.good());
+  ASSERT_TRUE(commissioning_file.good());
+  const auto dry_run = Json::parse(dry_run_file);
+  const auto commissioning = Json::parse(commissioning_file);
+  for (const auto & baseline : {p1::candidate_baseline(), pre(), frozen(), dry_run, commissioning}) {
+    SCOPED_TRACE(baseline.at("qualification").dump());
+    ASSERT_NE(p1::validate_contract_fields(baseline), p1::ContractProfile::ControlledSim);
+    auto contract = baseline;
+    contract["reference_projection_mode"] = "polyline_time";
+    EXPECT_THROW(p1::validate_contract_fields(contract), std::runtime_error);
+    contract = baseline;
+    contract["reference_lead_s"] = 0.1;
+    EXPECT_THROW(p1::validate_contract_fields(contract), std::runtime_error);
+    contract = baseline;
+    contract["Q"][0] = 35;
+    EXPECT_THROW(p1::validate_contract_fields(contract), std::runtime_error);
+  }
 }

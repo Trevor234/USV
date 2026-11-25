@@ -258,6 +258,7 @@ Registry Registry::snapshot() const {
   Registry out;
   out.count_ = count_;
   out.frozen_ = frozen_;
+  out.m0_content_ = m0_content_;
   for (std::size_t i = 0; i < count_; ++i) out.entries_[i] = entries_[i];
   return out;
 }
@@ -377,29 +378,39 @@ Content m0_content() {
   return c;
 }
 
-Content m1_content() {
+Content derive_m1_content(const Content &m0_base) {
   // M1 相对 M0 只改 mass=15.0、Xu=-2.4、Nr=-4.4
-  Content c = m0_content();
+  Content c = m0_base;
   c[0] = 15.0;    // mass
   c[9] = -2.4;    // Xu
   c[13] = -4.4;   // Nr
   return c;
 }
 
-Registry default_registry() {
+Content m1_content() {
+  return derive_m1_content(m0_content());
+}
+
+Registry registry_from_m0(const Content &m0_base) {
   Registry r;
-  const Content m0 = m0_content();
-  const Content m1 = m1_content();
+  r.m0_content_ = m0_base;
   // g1 -> M0 : target 1..5
-  if (!r.register_generation(1, m0, 1, 5)) return Registry{};
+  if (!r.register_generation(1, m0_base, 1, 5)) return Registry{};
   // g2 -> M1 : target 6..11
-  if (!r.register_generation(2, m1, 6, 11)) return Registry{};
+  if (!r.register_generation(2, derive_m1_content(m0_base), 6, 11)) return Registry{};
   // g3 -> M0 : target 12..（开放式）。内容与 g1 相同，但 generation 不同，
   // 因此保持**不同**的激活身份。
-  if (!r.register_generation(3, m0, 12, 0)) return Registry{};
+  if (!r.register_generation(3, m0_base, 12, 0)) return Registry{};
+  r.freeze();
   return r;
 }
 
+Registry default_registry() {
+  auto r = registry_from_m0(m0_content());
+  // Legacy callers freeze the default table when they take their own snapshot.
+  r.frozen_ = false;
+  return r;
+}
 
 // ---- R01：132 语义 -> 运行结构的受检转换 -----------------------------
 Digest Registry::content_digest_of_label(const std::string &label, bool *known) {
@@ -408,6 +419,17 @@ Digest Registry::content_digest_of_label(const std::string &label, bool *known) 
   if (label == "M1") return content_digest(m1_content());
   if (known) *known = false;
   return Digest{};
+}
+
+bool Registry::registered_content_digest_of_label(const std::string &label, Digest *out) const {
+  if (label == "M0") {
+    *out = content_digest(m0_content_);
+  } else if (label == "M1") {
+    *out = content_digest(derive_m1_content(m0_content_));
+  } else {
+    return false;
+  }
+  return true;
 }
 
 Registry::ConversionResult Registry::verify_plan_132_conversion(
@@ -450,9 +472,9 @@ Registry::ConversionResult Registry::verify_plan_132_conversion(
     if (!e) return fail("generation_not_in_runtime_table");
 
     // content 标签必须映射到该代的实际内容
-    bool known = false;
-    const Digest label_digest = content_digest_of_label(row.content_label, &known);
-    if (!known) return fail("unknown_content_label");
+    Digest label_digest;
+    if (!registered_content_digest_of_label(row.content_label, &label_digest))
+      return fail("unknown_content_label");
     if (content_digest(e->content) != label_digest) return fail("content_label_digest_mismatch");
 
     // 区间

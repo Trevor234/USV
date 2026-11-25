@@ -1,0 +1,470 @@
+{
+  "arm64_status": {
+    "arm64_wp8_live_execution_status": "blocked_ssh_auth_required_no_key_or_noninteractive_auth",
+    "captured_utc": "2026-11-18T04:43:34.320593+00:00",
+    "historical_arm64_pre_wp6_receipts": {
+      "scheme_a_b2_dryrun_results": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme-a-b2-dryrun-20261117T1010Z-results/RESULTS.json",
+      "scheme_a_bench_results": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme-a-bench-20261117T030458Z-results/RESULTS.json"
+    },
+    "icmp_ping_ok": false,
+    "icmp_ping_rc": 1,
+    "production_scheme_b_touched": false,
+    "schema": "scheme-a-wp8-arm64-reachability-v1",
+    "ssh_batchmode_rc": 255,
+    "ssh_batchmode_reachable": false,
+    "ssh_stderr": "ssh: connect to host 10.0.0.3 port 22: Connection timed out",
+    "ssh_stdout": "",
+    "target_host": "trevor@10.0.0.3"
+  },
+  "bundle_id": "scheme_A_gp_ppo_20261117_r1",
+  "bundled_files": [
+    {
+      "bundle_relpath": "wp1_baseline/baseline.json",
+      "bytes": 10019,
+      "role": "wp1_baseline",
+      "sha256": "2d50609c9b2b2ec3133c85dce8887035f3df128ebd63a1926e8d42f9eff4f135",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_baseline/baseline.json"
+    },
+    {
+      "bundle_relpath": "wp1_baseline/asset_manifest.json",
+      "bytes": 31828,
+      "role": "wp1_baseline",
+      "sha256": "c6237d1402c84436c5a45623bfe76552a1044ca5925f85cfca3af9c0c5ba711b",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_baseline/asset_manifest.json"
+    },
+    {
+      "bundle_relpath": "wp1_baseline/source_hashes.json",
+      "bytes": 71681,
+      "role": "wp1_baseline",
+      "sha256": "b83e1d9810d28da92e4d24c4c1a1f676eb0e869e000c4b411a9af7a88db27a75",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_baseline/source_hashes.json"
+    },
+    {
+      "bundle_relpath": "wp3_dataset/data_quality_report.md",
+      "bytes": 1009,
+      "role": "wp3_dataset_meta",
+      "sha256": "f9fdff1fa8d1a7ee2fd0e6519303e388f34d48765d7ef3be8694436229a9f8b6",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/data_quality_report.md"
+    },
+    {
+      "bundle_relpath": "wp3_dataset/split_manifest.json",
+      "bytes": 47904,
+      "role": "wp3_dataset_meta",
+      "sha256": "dd02b70a9990bf1b700940af893990fc4b442a9d91f6470a83ee7d83b017f5aa",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/split_manifest.json"
+    },
+    {
+      "bundle_relpath": "wp3_dataset/episode_manifest.json",
+      "bytes": 51330,
+      "role": "wp3_dataset_meta",
+      "sha256": "375179be4cb46ffede3ead479c767bc72b55dbd4a4a5420cbd58886333407d64",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/episode_manifest.json"
+    },
+    {
+      "bundle_relpath": "wp3_dataset/dataset_mismatch/dataset_contract.json",
+      "bytes": 1046,
+      "role": "wp3_dataset_mismatch",
+      "sha256": "97b534f3262d61bb34a6b824626cd68ba91a34de7639d665333e18e84fa9a19b",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_mismatch/dataset_contract.json"
+    },
+    {
+      "bundle_relpath": "wp3_dataset/dataset_mismatch/data_quality.json",
+      "bytes": 48782,
+      "role": "wp3_dataset_mismatch",
+      "sha256": "4447f6409c68e362b5aece356c655e7f09d76d5b9f7e8ed21dad57333b18d632",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_mismatch/data_quality.json"
+    },
+    {
+      "bundle_relpath": "wp3_dataset/dataset_nominal/dataset_contract.json",
+      "bytes": 1046,
+      "role": "wp3_dataset_nominal",
+      "sha256": "97b534f3262d61bb34a6b824626cd68ba91a34de7639d665333e18e84fa9a19b",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_nominal/dataset_contract.json"
+    },
+    {
+      "bundle_relpath": "wp3_dataset/dataset_nominal/data_quality.json",
+      "bytes": 6871,
+      "role": "wp3_dataset_nominal",
+      "sha256": "5facca8869f1a5d6ee9edd0ee6b332640c269097e6e1709f18a862bf17a392df",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_nominal/data_quality.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_models/gp_snapshot.json",
+      "bytes": 172607,
+      "role": "wp4_gp_model",
+      "sha256": "c1391cfd9b1c93b226e0f13ff6a907430ce880906e8bde930a407746bcea0eb9",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_models/gp_snapshot.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_models/mass_plus_10pct_sparse_m64.json",
+      "bytes": 620473,
+      "role": "wp4_gp_model",
+      "sha256": "c63817a5c9e8e6950d593841791b022ab3edf556addd894bd1d0d3938e3dd049",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_models/mass_plus_10pct_sparse_m64.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_models/pooled_gp_sparse_m32.json",
+      "bytes": 172605,
+      "role": "wp4_gp_model",
+      "sha256": "ec554ffeaac91db6240424a52ce04ef68e70bf677a3f4e9638db15d18ab4ad99",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_models/pooled_gp_sparse_m32.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_models/pooled_gp_sparse_m64.json",
+      "bytes": 628349,
+      "role": "wp4_gp_model",
+      "sha256": "3ff9584c5e4e4ff90b8b418dc35704013ccad70b01f65210826b15a3af81eb01",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_models/pooled_gp_sparse_m64.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_models/surge_damping_plus_15pct_sparse_m64.json",
+      "bytes": 620088,
+      "role": "wp4_gp_model",
+      "sha256": "675b6e97abe15a8b3bbe0b1f7b4baf0cdcd6cdaba3323e48b5563b0dba914cfe",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_models/surge_damping_plus_15pct_sparse_m64.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_models/train_summary.json",
+      "bytes": 2335,
+      "role": "wp4_gp_model",
+      "sha256": "b00f37f3a4685c4ac83ccc308303504dbc48e0ca7ffe04a53d9c808ee92bd9c2",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_models/train_summary.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_models/yaw_damping_plus_15pct_sparse_m64.json",
+      "bytes": 621301,
+      "role": "wp4_gp_model",
+      "sha256": "61db4e5570ca9bc523c11d7cef2117fc80bc4c92959a7f4b508e9a262ae4da28",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_models/yaw_damping_plus_15pct_sparse_m64.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_eval/gp_holdout_metrics.json",
+      "bytes": 16915,
+      "role": "wp4_gp_eval",
+      "sha256": "cd5b629a0eeba0958191f22a89de33140a80b4a04a4104095ae780a745c7b2a6",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_eval/gp_holdout_metrics.json"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_eval/gp_holdout_report.md",
+      "bytes": 1651,
+      "role": "wp4_gp_eval",
+      "sha256": "06e5fdb3218cf2ba5b3fa4cf425aa6cf573e1e259411b5f1f85cfc0f4b1d3863",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_eval/gp_holdout_report.md"
+    },
+    {
+      "bundle_relpath": "wp4_gp/gp_eval/gp_numeric_parity.json",
+      "bytes": 633,
+      "role": "wp4_gp_eval",
+      "sha256": "3e292354e76ee2d894e83fe40f1342ded29e7392057ab16d8094857600da19a3",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_eval/gp_numeric_parity.json"
+    },
+    {
+      "bundle_relpath": "wp5_ppo_shadow/observation_contract.json",
+      "bytes": 5870,
+      "role": "wp5_ppo_shadow",
+      "sha256": "354453b098819b347b127d41126baae61b10370150539f928469c22f9f7c5f82",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/ppo_shadow/observation_contract.json"
+    },
+    {
+      "bundle_relpath": "wp5_ppo_shadow/policy_selection.json",
+      "bytes": 952,
+      "role": "wp5_ppo_shadow",
+      "sha256": "b66246bdebceccbd384809f136b27cb97ac7f80dce2a657bf243ee51862803c3",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/ppo_shadow/policy_selection.json"
+    },
+    {
+      "bundle_relpath": "wp5_ppo_shadow/ppo_shadow_report.md",
+      "bytes": 1599,
+      "role": "wp5_ppo_shadow",
+      "sha256": "bec37b3ff1d639bea324570684327667a2d0737a0696455aaa55fb6cb2daa063",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/ppo_shadow/ppo_shadow_report.md"
+    },
+    {
+      "bundle_relpath": "wp5_ppo_shadow/policy_physical_n.manifest.json",
+      "bytes": 1814,
+      "role": "wp5_frozen_ppo_manifest",
+      "sha256": "da7b2893a56298508a52cd26a0672f77fff13766e8ed16911cf14721c948aa8c",
+      "source_path": "/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.manifest.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/wp6_baseline_meta/baseline.json",
+      "bytes": 15331,
+      "role": "wp6_meta",
+      "sha256": "ff9d80cced60497091a1a70a506f90dc3ed9b9980b4fead6f8a2b6da4a955e80",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp6_baseline_meta/baseline.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/wp6_baseline_meta/asset_manifest.json",
+      "bytes": 29987,
+      "role": "wp6_meta",
+      "sha256": "51d372c902171b4c521baf4546ec484ec8f50110bba06ccde91f19758db28087",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp6_baseline_meta/asset_manifest.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/wp6_baseline_meta/source_hashes.json",
+      "bytes": 79984,
+      "role": "wp6_meta",
+      "sha256": "7e663fbcf79d9a5ce363d0bdad349e57b988587243c89061c1a55d22b200a0f3",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp6_baseline_meta/source_hashes.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/gp_nmpc_codegen_manifest.json",
+      "bytes": 6482,
+      "role": "wp6_codegen_manifest",
+      "sha256": "2a86d34163d265c1428ed12fea31a93b56ed05637304de8956bf37349f450b1c",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_nmpc_codegen_manifest.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/wp6_regression_report.json",
+      "bytes": 36518,
+      "role": "wp6_regression",
+      "sha256": "a10088d483c182b6d0bac1f06f71c76ca322a7c41424d57ff443fc10f88e31bc",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_nmpc_regression/wp6_regression_report.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/schedule_explicit_zero.json",
+      "bytes": 180,
+      "role": "wp6_regression",
+      "sha256": "869338b4cb1193c77993c3b5c861f5586b8704d716ef27fc0af9ac64f9c6f5cb",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_nmpc_regression/schedule_explicit_zero.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/schedule_hotswap.json",
+      "bytes": 1183,
+      "role": "wp6_regression",
+      "sha256": "a219bdeb181f05af25c51271adbd41d8f92e26b74bcf105f607ec2c4a73d3c60",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/gp_nmpc_regression/schedule_hotswap.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/contracts/contract_controlled_sim.json",
+      "bytes": 3214,
+      "role": "wp6_contract",
+      "sha256": "18d3e698843c29d96a48cee1b1f632a43fac1948127a589823f6282528d4a836",
+      "source_path": "/home/trevor/usv_scheme_a_wt/research/scheme_a/src/usv_research_safety_cpp/model/contract_controlled_sim.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/contracts/contract_shipboard_dry_run.json",
+      "bytes": 2111,
+      "role": "wp6_contract",
+      "sha256": "84dd01509d17d91599fe75c14e66ff351582eaab75c0b946076f8610e8712e9d",
+      "source_path": "/home/trevor/usv_scheme_a_wt/research/scheme_a/src/usv_research_safety_cpp/model/contract_shipboard_dry_run.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/contracts/research_model_plan.json",
+      "bytes": 448,
+      "role": "wp6_contract",
+      "sha256": "63a1696dd7f597670642b67ea4f143910af5111effddb3ce923e56a5dd9e52f9",
+      "source_path": "/home/trevor/usv_scheme_a_wt/research/scheme_a/src/usv_research_safety_cpp/model/research_model_plan.json"
+    },
+    {
+      "bundle_relpath": "wp6_gp_nmpc/contracts/arm64_calibration_evidence.json",
+      "bytes": 6300,
+      "role": "wp6_contract",
+      "sha256": "f46fa7cd37ecc31fdbc16a9b21eb58cf95601d8761e010a53327e10264dfd1b2",
+      "source_path": "/home/trevor/usv_scheme_a_wt/research/scheme_a/src/usv_research_safety_cpp/model/arm64_calibration_evidence.json"
+    },
+    {
+      "bundle_relpath": "wp7_fusion/selected_configuration.json",
+      "bytes": 1885,
+      "role": "wp7_fusion",
+      "sha256": "65c29af89c66358044d541a6de9d414b3abae017847345b39bf8f5300573186d",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/fusion_eval/selected_configuration.json"
+    },
+    {
+      "bundle_relpath": "wp7_fusion/calibration_summary.json",
+      "bytes": 242521,
+      "role": "wp7_fusion",
+      "sha256": "0f8e8fb14971710f44881c2684fac0ee6a0ac4457182c26e81113c7628e2a205",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/fusion_eval/calibration_summary.json"
+    },
+    {
+      "bundle_relpath": "wp7_fusion/conflict_probe_summary.json",
+      "bytes": 7780,
+      "role": "wp7_fusion",
+      "sha256": "a7658a38cacb72897fc6b4b97991c2021d4ac69dc75f7b6aa62e4f295f582d80",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/fusion_eval/conflict_probe_summary.json"
+    },
+    {
+      "bundle_relpath": "wp7_fusion/four_arm_evaluation.json",
+      "bytes": 243180,
+      "role": "wp7_fusion",
+      "sha256": "f9477106d7094f526f202ecd21dfef5555bc6d68ffedaee45a1a23f4a6734c60",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/fusion_eval/four_arm_evaluation.json"
+    },
+    {
+      "bundle_relpath": "wp7_fusion/fusion_report.md",
+      "bytes": 4232,
+      "role": "wp7_fusion",
+      "sha256": "54c5d0015689df2df6e7c4f3cc88529393740a93eb7501547a63f605ae4afe7a",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/fusion_eval/fusion_report.md"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/arm64_reachability.json",
+      "bytes": 884,
+      "role": "wp8_verification",
+      "sha256": "469d7e92d5dbd2ec35202f14a8778ac8559c081abd5564f1a0d51c79c2e66498",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_r1/wp8_delivery/arm64_reachability.json"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/b2_dry_run_regression.json",
+      "bytes": 1034,
+      "role": "wp8_verification",
+      "sha256": "18f741a11a0be185ef5f7212b06a602a4604fc516a32970998dc2744a2deedc4",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_r1/wp8_delivery/b2_dry_run_regression.json"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/colcon_and_pytest_verification.json",
+      "bytes": 12808,
+      "role": "wp8_verification",
+      "sha256": "6661916d323c437a723925b469bf716ac2bb4bb114501258fe83643653364023",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_r1/wp8_delivery/colcon_and_pytest_verification.json"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/contract.json",
+      "bytes": 2111,
+      "role": "wp8_dry_run_probe",
+      "sha256": "84dd01509d17d91599fe75c14e66ff351582eaab75c0b946076f8610e8712e9d",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/contract.json"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/plan.json",
+      "bytes": 448,
+      "role": "wp8_dry_run_probe",
+      "sha256": "63a1696dd7f597670642b67ea4f143910af5111effddb3ce923e56a5dd9e52f9",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/plan.json"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/plant.source.jsonl",
+      "bytes": 0,
+      "role": "wp8_dry_run_probe",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/plant.source.jsonl"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/regulator.source.jsonl",
+      "bytes": 29526,
+      "role": "wp8_dry_run_probe",
+      "sha256": "947933d66b34dcce0fddc228c1f46b405886c9deb1c02123bc16f4c124d91eb5",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/regulator.source.jsonl"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/regulator.stdout.txt",
+      "bytes": 335,
+      "role": "wp8_dry_run_probe",
+      "sha256": "5fc6bd9796f055661062c1e4d1fbdc272654f56614a51b37f3b3f1cedca50a36",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/regulator.stdout.txt"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/run.json",
+      "bytes": 129,
+      "role": "wp8_dry_run_probe",
+      "sha256": "0e86725a2842630ba9d67b5a254c3fa3f86d53bfd61d0c9ff0d440a27d8add4e",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/run.json"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/worker.source.jsonl",
+      "bytes": 101039,
+      "role": "wp8_dry_run_probe",
+      "sha256": "5f9ba534350c32950a109171c243270f9f5f1f1032d898eb5bdebc1e51821bbc",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/worker.source.jsonl"
+    },
+    {
+      "bundle_relpath": "wp8_delivery/dry_run_gp_probe/worker.stdout.txt",
+      "bytes": 332,
+      "role": "wp8_dry_run_probe",
+      "sha256": "d242edb5448d2a64d30f9e71508243dc4443f194ecf88e246917b357c881b9e5",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/wp8_dry_run_regression/dry_run_gp_probe/worker.stdout.txt"
+    },
+    {
+      "bundle_relpath": "CURRENT.md",
+      "bytes": 2549,
+      "role": "bundle_index_markdown",
+      "sha256": "c5c2c2efabf483168a2790633f5c71234cd3d97ce64aa4b36abebe40eadce311",
+      "source_path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_r1/CURRENT.md"
+    }
+  ],
+  "captured_utc": "2026-11-18T04:45:56.453820+00:00",
+  "external_artifacts": [
+    {
+      "bytes": 312361,
+      "kind": "file",
+      "label": "ppo_onnx_v5_s4_dr",
+      "path": "/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.onnx",
+      "sha256": "ff60e0f70a142dc0c76ac0e1b8e1d113bcff892d7999fad9ef41cf5a83147278"
+    },
+    {
+      "bytes": 6322452,
+      "kind": "file",
+      "label": "dataset_mismatch_npz",
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_mismatch/dataset.npz",
+      "sha256": "d9828219c7f7668a35e5dd130dd0dcc08ca3712d2544b0c1230d9db8866d5501"
+    },
+    {
+      "bytes": 640960,
+      "kind": "file",
+      "label": "dataset_nominal_npz",
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full/dataset_nominal/dataset.npz",
+      "sha256": "9e83c316413dd93c2cb05b570568e8911acb170682635ffe6ac86223aad31a66"
+    },
+    {
+      "bytes": 12224320,
+      "kind": "file",
+      "label": "bin_p1_x86_plant",
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_x86_plant",
+      "sha256": "935703a1aa1607d20e2042f762d0fb7fd99fecfd93fa7d043bc530fe4ede9ab7"
+    },
+    {
+      "bytes": 11005096,
+      "kind": "file",
+      "label": "bin_p1_solver_worker",
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_solver_worker",
+      "sha256": "60744a3e0a255e4af71deac2a8a8af36112098c45f1372e015c4e732a42073f4"
+    },
+    {
+      "bytes": 48294000,
+      "kind": "file",
+      "label": "bin_p1_regulator",
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_regulator",
+      "sha256": "d0f01dec6876e0ab93f435247fd312ebda21b76e5e5af0dd615d9e0ff28ea8d3"
+    },
+    {
+      "bytes": 1004192,
+      "kind": "file",
+      "label": "bin_p1_gp_eval_cli",
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_gp_eval_cli",
+      "sha256": "f3d02385136b4f3778226a831e716055c73518c658906bf6bdbf331c8f56c460"
+    },
+    {
+      "bytes": 1490416,
+      "kind": "file",
+      "label": "bin_p1_contract_validate",
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_research_safety_cpp/lib/usv_research_safety_cpp/p1_contract_validate",
+      "sha256": "ba7e56e65c65dcba1769a25d0d7dfcec040ff8308f633113494496c59cb8e68b"
+    },
+    {
+      "bytes": 376624,
+      "kind": "file",
+      "label": "lib_usv_acados_backend",
+      "path": "/home/trevor/usv_scheme_a_wt/install/scheme_a/usv_acados/lib/libusv_acados_backend.so.0.1.0",
+      "sha256": "38f1b2f459b9760b8cc27461c437bd98b2dbefddc24add133655c6c7b93f51e7"
+    },
+    {
+      "kind": "directory",
+      "label": "raw_full_dataset_root",
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/full"
+    },
+    {
+      "kind": "directory",
+      "label": "raw_wp7_eval_root",
+      "path": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261117_work/fusion_eval"
+    }
+  ],
+  "replay_commands": {
+    "build_scheme_a": "cd /home/trevor/usv_scheme_a_wt && PATH=/usr/local/bin:/usr/bin:/bin colcon --log-base log/scheme_a build --base-paths research/scheme_a/src src/usv_bringup --build-base build/scheme_a --install-base install/scheme_a --cmake-args -DPython3_EXECUTABLE=/usr/bin/python3 -DUSV_RESEARCH_TEST_SEAMS=OFF -DBUILD_TESTING=ON",
+    "wp6_closed_loop_regression": "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/verify_wp6_gp_nmpc.py --reuse-existing --base-domain-id 31",
+    "wp7_fusion_evaluation": "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/eval_fusion_arms.py --stage all --workers 1 --base-domain-id 30",
+    "wp8_delivery_and_b2_dry_run": "cd /home/trevor/usv_scheme_a_wt && source install/scheme_a/setup.bash && PYTHONPATH=research/scheme_a/learning:$PYTHONPATH /usr/bin/python3 research/scheme_a/learning/verify_wp8_delivery.py"
+  },
+  "schema": "scheme-a-gp-ppo-delivery-manifest-v1",
+  "worktree": "/home/trevor/usv_scheme_a_wt"
+}

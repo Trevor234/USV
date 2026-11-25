@@ -19,12 +19,15 @@
 #include <chrono>
 #include <limits>
 #include <cmath>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <thread>
 
 #include "usv_nmpc/model_constants.hpp"
 #include "p1_engine_session.hpp"
+#include "p1_full_contract.hpp"
 #include "p1_worker_engine.hpp"
 
 namespace {
@@ -138,6 +141,93 @@ TEST(P1EngineSession, RejectsContractThatIsNotTheRegisteredM0)
   const auto grid = make_grid();
   auto registry = model_reference::default_registry();
   EXPECT_THROW(p1::WorkerEngine(params, registry, grid, 1), std::runtime_error);
+}
+
+TEST(P1EngineSession, ControlledSimKeepsContractWeightsAcrossModelTransactions)
+{
+  const auto fixtures = std::filesystem::path(__FILE__).parent_path() / "model";
+  std::ifstream plan_file(fixtures / "research_model_plan.json");
+  ASSERT_TRUE(plan_file.good());
+  const std::string plan{std::istreambuf_iterator<char>(plan_file), {}};
+  auto contract = p1::candidate_baseline();
+  contract["schema"] = "p1-execution-contract-v2-sim";
+  contract["qualification"] = "controlled_sim";
+  contract["controlled_sim_faults_enabled"] = false;
+  contract["reference_projection_mode"] = "polyline_time";
+  contract["reference_lead_s"] = 0.1;
+  contract["hydro"]["Iz"] = 2.5;
+  contract["Q"] = {35, 35, 60, 25, 1, 8};
+  contract["R"] = {0.07, 0.08};
+  contract["Rd"] = {0.6, 0.6};
+  contract["Qf_scale"] = 9;
+
+  const auto grid = make_grid();
+  model_reference::Registry registry;
+  model_reference::Content content;
+  std::string error;
+  ASSERT_TRUE(p1::content_from_controlled_sim_contract(contract, &content, &error)) << error;
+  ASSERT_TRUE(p1::registry_from_plan_and_contract(plan, grid, contract.dump(), &registry, &error))
+    << error;
+  ASSERT_TRUE(registry.frozen());
+  EXPECT_TRUE(registry.snapshot().verify_plan_132_json(plan, grid).ok);
+  ASSERT_NE(registry.find(1), nullptr);
+  ASSERT_NE(registry.find(2), nullptr);
+  ASSERT_NE(registry.find(3), nullptr);
+  EXPECT_EQ(registry.find(1)->content, content);
+  EXPECT_EQ(registry.find(3)->content, content);
+  auto m1 = content;
+  m1[0] = 15.0;
+  m1[9] = -2.4;
+  m1[13] = -4.4;
+  EXPECT_EQ(registry.find(2)->content, m1);
+  EXPECT_EQ((std::array<double, 11>{35, 35, 60, 25, 1, 8, 0.07, 0.08, 0.6, 0.6, 9}),
+    (std::array<double, 11>{content[19], content[20], content[21], content[22],
+      content[23], content[24], content[25], content[26], content[27], content[28], content[29]}));
+
+  auto params = make_params();
+  params.hydro.Iz = 2.5;
+  params.Q_diag << 35, 35, 60, 25, 1, 8;
+  params.R_diag << 0.07, 0.08;
+  params.Rd_diag << 0.6, 0.6;
+  params.Qf_scale = 9;
+  p1::WorkerEngine engine(params, registry, grid, 1);
+  auto m1_params = params;
+  m1_params.hydro.mass = 15.0;
+  m1_params.hydro.Xu = -2.4;
+  m1_params.hydro.Nr = -4.4;
+  p1::WorkerEngine fresh_m1(m1_params, model_reference::registry_from_m0(m1), grid, 1);
+  const Eigen::Vector2d anchor(8.0, 12.0);
+  const auto solve = [&](p1::WorkerEngine & owner, std::uint64_t gen, std::uint64_t tick) {
+    p1::EngineOutcome outcome;
+    const auto answer = owner.solve(axes_of_generation(gen), grid, tick, tick,
+      now_ns() + 1'000'000'000, state(), reference(), anchor, identity(),
+      [] { return false; }, [] { return false; }, &outcome);
+    EXPECT_EQ(outcome.execution, p1::EngineDisposition::CandidateReady) << outcome.reason;
+    EXPECT_EQ(outcome.native_solve_entries_this_job, 1u);
+    EXPECT_EQ(owner.applied_generation(), gen);
+    return answer.first;
+  };
+  const Eigen::Vector2d first = solve(engine, 1, 1);
+  const Eigen::Vector2d second = solve(engine, 2, 6);
+  const Eigen::Vector2d third = solve(engine, 3, 12);
+  EXPECT_EQ(engine.touch_facts().setter_entries, 2u);
+  EXPECT_LT((second - solve(fresh_m1, 1, 1)).norm(), 1e-8);
+  EXPECT_LT((third - first).norm(), 1e-8);
+
+  auto invalid = contract;
+  invalid["Rd"][0] = true;
+  EXPECT_FALSE(p1::registry_from_plan_and_contract(plan, grid, invalid.dump(), &registry, &error));
+  EXPECT_EQ(registry.find(1)->content, content);
+  contract.erase("hydro");
+  ASSERT_TRUE(p1::content_from_controlled_sim_contract(contract, &content, &error)) << error;
+  EXPECT_DOUBLE_EQ(content[1], model_reference::m0_content()[1]);
+
+  auto diagnostic = p1::candidate_baseline();
+  ASSERT_TRUE(p1::registry_from_plan_and_contract(plan, grid, diagnostic.dump(), &registry, &error))
+    << error;
+  EXPECT_EQ(registry.find(1)->content, model_reference::m0_content());
+  diagnostic["Q"][0] = 35;
+  EXPECT_FALSE(p1::registry_from_plan_and_contract(plan, grid, diagnostic.dump(), &registry, &error));
 }
 
 // 引擎在构造后即处于"模型一致、代 1、零 solve"的状态。

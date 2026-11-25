@@ -205,17 +205,16 @@ bool RegisteredModelTransaction::adopt_constructor_fact(
   if (runtime_applications_ > 0) return fail("constructor_fact_after_runtime_apply");
   // E03d：构造采用的代必须覆盖首个 Job 的 target，否则它永远服务不了第一拍
   if (generation == 0) return fail("zero_generation");
-
-  const model_reference::Entry *reg = registry_.find(generation);
-  if (!reg) return fail("generation_not_in_registry");
+  const auto *g1 = registry_.find(generation);
+  if (!g1) return fail("generation_not_in_registry");
   if (generation != 1) return fail("constructor_generation_not_g1");
-  if (model_reference::Registry::content_digest(reg->content) !=
-      model_reference::Registry::content_digest(model_reference::m0_content()))
+  const auto g1_digest = model_reference::Registry::content_digest(g1->content);
+  model_reference::Digest m0_digest;
+  if (!registry_.registered_content_digest_of_label("M0", &m0_digest) || g1_digest != m0_digest)
     return fail("constructor_registered_g1_not_M0");
 
   // 内容必须与登记表那一代逐位一致
-  if (model_reference::Registry::content_digest(reg->content) !=
-      model_reference::Registry::content_digest(source.content_))
+  if (g1_digest != model_reference::Registry::content_digest(source.content_))
     return fail("constructor_content_differs_from_registry");
 
   // E03e：被采用的代必须能覆盖首个 Job 的 target（默认 1）。
@@ -223,9 +222,9 @@ bool RegisteredModelTransaction::adopt_constructor_fact(
   //   * target 早于该代的 first_target_tick（例如 g2 从 6 开始、首个 Job 是 1）；
   //   * target 晚于该代的 last_target_tick（有界代）。
   // 开放式代只受"不早于 first"约束。
-  if (first_job_target_tick < reg->first_target_tick)
+  if (first_job_target_tick < g1->first_target_tick)
     return fail("constructor_generation_does_not_cover_first_job");
-  if (!reg->open_ended() && first_job_target_tick > reg->last_target_tick)
+  if (!g1->open_ended() && first_job_target_tick > g1->last_target_tick)
     return fail("constructor_generation_does_not_cover_first_job");
 
   // 摘要外字段必须与冻结基线逐位一致

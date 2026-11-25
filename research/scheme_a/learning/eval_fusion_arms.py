@@ -19,6 +19,7 @@ import numpy as np
 
 from closed_loop_metrics import evaluate_closed_loop_run, sha256_file
 from gp_model import MultiChannelSparseGP
+from ppo_proposal_node import GATE_DEFAULTS, gate_cli_args
 
 
 WORKTREE = Path("/home/trevor/usv_scheme_a_wt")
@@ -42,14 +43,18 @@ PPO_MANIFEST = Path("/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physic
 USV_RL_PYTHON = Path("/home/trevor/USV/usv_rl/.venv/bin/python")
 
 
-_SHA_MEMO: dict[str, str] = {}
+_SHA_MEMO: dict[Path, tuple[tuple[int, ...], str]] = {}
 
 
 def _cached_sha256(path: Path) -> str:
-    key = str(path)
-    if key not in _SHA_MEMO:
-        _SHA_MEMO[key] = sha256_file(path)
-    return _SHA_MEMO[key]
+    stat = path.stat()
+    file_version = (stat.st_dev, stat.st_ino, stat.st_size, stat.st_mtime_ns, stat.st_ctime_ns)
+    cached = _SHA_MEMO.get(path)
+    if cached is not None and cached[0] == file_version:
+        return cached[1]
+    digest = sha256_file(path)
+    _SHA_MEMO[path] = (file_version, digest)
+    return digest
 
 
 def _strip_traj(metrics: dict[str, Any]) -> dict[str, Any]:
@@ -71,10 +76,31 @@ def _run_episode(
     ppo_model: Path = PPO_MODEL,
     ppo_manifest: Path = PPO_MANIFEST,
     lambda_pi: float = 0.0,
+    ppo_lookahead: str = "",
+    gate_mode: str = GATE_DEFAULTS["gate_mode"],
+    gate_min_kappa: float = GATE_DEFAULTS["gate_min_kappa"],
+    gate_min_cte: float = GATE_DEFAULTS["gate_min_cte"],
+    gate_min_psi: float = GATE_DEFAULTS["gate_min_psi"],
+    gate_near_points: int = GATE_DEFAULTS["gate_near_points"],
+    gate_cm_cap_margin: float = GATE_DEFAULTS["gate_cm_cap_margin"],
+    gate_u_lag_allow: float = GATE_DEFAULTS["gate_u_lag_allow"],
     resume: bool = True,
     max_attempts: int = 4,
+    contract_path: Path = CONTRACT,
 ) -> dict[str, Any]:
+    use_contract = Path(contract_path)
+    want_contract_sha = _cached_sha256(use_contract)
+    run_contract = run_dir / "contract.json"
     cache_path = run_dir / "eval_cache_v2.json"
+    want_gate = {
+        "gate_mode": gate_mode,
+        "gate_min_kappa": gate_min_kappa,
+        "gate_min_cte": gate_min_cte,
+        "gate_min_psi": gate_min_psi,
+        "gate_near_points": gate_near_points,
+        "gate_cm_cap_margin": gate_cm_cap_margin,
+        "gate_u_lag_allow": gate_u_lag_allow,
+    } if ppo_proposal and gate_mode != "none" else {}
     if resume and (run_dir / "run.json").is_file():
         run_doc = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
         want_gp = str(gp_snapshot.resolve()) if gp_snapshot else None
@@ -84,14 +110,23 @@ def _run_episode(
         want_align = bool(align_tick_phase)
         got_align = bool(run_doc.get("align_tick_phase", False))
         want_ppo = bool(ppo_proposal)
-        got_ppo = bool((run_doc.get("ppo_proposal") or {}).get("enabled", False))
-        got_lpi = float((run_doc.get("ppo_proposal") or {}).get("lambda_pi", 0.0))
+        ppo_doc = run_doc.get("ppo_proposal") or {}
+        got_ppo = bool(ppo_doc.get("enabled", False))
+        got_lpi = float(ppo_doc.get("lambda_pi", 0.0))
+        # 前瞻元组必须进缓存键：否则同 episode 的旧 run.json 会被当成命中，
+        # 新工况直接复用旧轨迹（观测语义已变，指标无意义）。
+        want_la = tuple(float(v) for v in ppo_lookahead.split(",")) if ppo_lookahead else ()
+        got_la = tuple(float(v) for v in ppo_doc.get("lookahead", []))
         cfg_ok = (
             want_gp == got_gp
             and want_oracle == got_oracle
             and want_align == got_align
             and want_ppo == got_ppo
+            and want_la == got_la
+            and want_gate == (ppo_doc.get("gate") or {})
             and (not want_ppo or abs(got_lpi - float(lambda_pi)) < 1e-12)
+            and run_contract.is_file()
+            and sha256_file(run_contract) == want_contract_sha
         )
         src_sha = _cached_sha256(source_hashes)
         run_sha = sha256_file(run_dir / "run.json")
@@ -102,8 +137,10 @@ def _run_episode(
                 if (
                     cdoc.get("source_hashes_sha256") == src_sha
                     and cdoc.get("run_json_sha256") == run_sha
+                    and cdoc.get("contract_sha256") == want_contract_sha
                     and cdoc.get("gp_keys") == gp_keys
                     and isinstance(cdoc.get("metrics"), dict)
+                    and "energy_per_meter" in ((cdoc.get("metrics") or {}).get("control_effort") or {})
                     and cdoc["metrics"].get("checker_passed")
                     and cdoc["metrics"].get("decisions_total", 0) >= stop_decisions
                 ):
@@ -118,6 +155,7 @@ def _run_episode(
                 source_hashes=source_hashes,
                 gp_models_by_sha=gp_models,
                 reuse_verified_check_json=True,
+                contract_path=use_contract,
             )
             if m["checker_passed"] and m["decisions_total"] >= stop_decisions:
                 try:
@@ -125,6 +163,7 @@ def _run_episode(
                         json.dumps({
                             "source_hashes_sha256": src_sha,
                             "run_json_sha256": run_sha,
+                            "contract_sha256": want_contract_sha,
                             "gp_keys": gp_keys,
                             "metrics": _strip_traj(m),
                         }, sort_keys=True) + "\n",
@@ -138,7 +177,6 @@ def _run_episode(
     dom = domain_queue.get()
     try:
         last_err = ""
-        contract_sha = sha256_file(CONTRACT)
         plan_sha = sha256_file(PLAN)
         for attempt in range(max_attempts):
             use_dom = dom if attempt == 0 else (dom + attempt * 10)
@@ -150,8 +188,8 @@ def _run_episode(
                 "--scenario", "pre_switch",
                 "--out", str(run_dir),
                 "--install-root", str(INSTALL_ROOT),
-                "--contract", str(CONTRACT),
-                "--contract-hash", contract_sha,
+                "--contract", str(use_contract),
+                "--contract-hash", want_contract_sha,
                 "--plan", str(PLAN),
                 "--plan-sha256", plan_sha,
                 "--source-hashes", str(source_hashes),
@@ -176,6 +214,9 @@ def _run_episode(
                     "--ppo-manifest", str(ppo_manifest),
                     "--lambda-pi", str(lambda_pi),
                 ])
+                if ppo_lookahead:
+                    cmd.extend(["--ppo-lookahead", str(ppo_lookahead)])
+                cmd.extend(gate_cli_args(want_gate, prefix="ppo-"))
             env = dict(os.environ)
             env["ROS_DOMAIN_ID"] = str(use_dom)
             env.setdefault("OMP_NUM_THREADS", "1")
@@ -185,7 +226,16 @@ def _run_episode(
             if proc.returncode != 0:
                 last_err = f"attempt={attempt+1} rc={proc.returncode} err={proc.stderr[-500:]}"
                 continue
-            m = evaluate_closed_loop_run(run_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models)
+            # 运行目录可能因为子进程被截断而留下半截 run.json：这是"这次尝试失败"，
+            # 不是"整个实验失败"。旧实现会让一个坏目录把整批评估打崩。
+            try:
+                m = evaluate_closed_loop_run(
+                    run_dir, source_hashes=source_hashes, gp_models_by_sha=gp_models,
+                    contract_path=use_contract,
+                )
+            except (json.JSONDecodeError, OSError, KeyError, ValueError) as exc:
+                last_err = f"attempt={attempt + 1} evaluate_failed={type(exc).__name__}: {exc}"
+                continue
             m["attempts"] = attempt + 1
             m["reused"] = False
             if m["checker_passed"]:
@@ -194,6 +244,7 @@ def _run_episode(
                         json.dumps({
                             "source_hashes_sha256": _cached_sha256(source_hashes),
                             "run_json_sha256": sha256_file(run_dir / "run.json"),
+                            "contract_sha256": want_contract_sha,
                             "gp_keys": sorted(gp_models.keys()),
                             "metrics": _strip_traj(m),
                         }, sort_keys=True) + "\n",
@@ -314,7 +365,7 @@ def run_conflict_priority_probe(
 
 
 def _aggregate_arm(runs: list[dict[str, Any]], nominal_runs: list[dict[str, Any]] | None = None) -> dict[str, Any]:
-    def _mean(vals: list[float]) -> float | None:
+    def _mean(vals: list[float | None]) -> float | None:
         clean = [float(v) for v in vals if v is not None and not math.isnan(float(v))]
         return float(np.mean(clean)) if clean else None
 
@@ -380,6 +431,8 @@ def _aggregate_arm(runs: list[dict[str, Any]], nominal_runs: list[dict[str, Any]
             "deadline_200ms_misses": d200,
         },
     }
+    for key in ("energy_per_meter", "common_mode_l2_dt", "diff_mode_l2_dt", "diff_mode_fraction"):
+        out[key] = {"mean": _mean([(r.get("control_effort") or {}).get(key) for r in runs])}
     if nominal_runs is not None and len(nominal_runs) == len(runs):
         deltas = [
             r["geometric_tracking"]["cross_track_rmse_m"] - nr["geometric_tracking"]["cross_track_rmse_m"]

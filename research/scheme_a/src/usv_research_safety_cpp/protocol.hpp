@@ -34,15 +34,19 @@ inline void sleep_until_monotonic(int64_t ns){timespec t{ns/1000000000,ns%100000
 inline std::string read_text(const std::string & p){std::ifstream f(p);if(!f)throw std::runtime_error("read failed: "+p);return {std::istreambuf_iterator<char>(f),{}};}
 inline std::string digest(const std::string & s){unsigned char d[SHA256_DIGEST_LENGTH];SHA256(reinterpret_cast<const unsigned char*>(s.data()),s.size(),d);std::ostringstream o;for(auto c:d)o<<std::hex<<std::setw(2)<<std::setfill('0')<<int(c);return o.str();}
 inline std::string boot_id(){auto s=read_text("/proc/sys/kernel/random/boot_id");while(!s.empty()&&isspace(s.back()))s.pop_back();return s;}
-inline Json load_contract(const std::string & file,const std::string & hash){
+inline Json load_contract(const std::string & file,const std::string & hash,std::string * verified_text=nullptr){
   contract_require(std::regex_match(hash,std::regex("[0-9a-f]{64}")),"SHA256 identity required");
   std::ifstream input(file,std::ios::binary);if(!input)throw std::runtime_error("contract read failed");
   std::string text(65537,'\0');input.read(text.data(),text.size());text.resize(static_cast<size_t>(input.gcount()));
   contract_require(!text.empty()&&text.size()<=65536,"bounded contract file required");
   if(digest(text)!=hash)throw std::runtime_error("contract hash mismatch");
-  auto c=parse_unique_contract(text);validate_contract_fields(c);return c;
+  auto c=parse_unique_contract(text);validate_contract_fields(c);
+  if(verified_text)*verified_text=std::move(text);
+  return c;
 }
-inline usv_mpc::MpcParams solver_params(const Json & c){usv_mpc::MpcParams p;p.N=c.at("N");p.dt=c.at("dt");auto q=c.at("Q").get<std::array<double,6>>();for(int i=0;i<6;++i)p.Q_diag[i]=q[i];p.R_diag=Eigen::Vector2d(c.at("R")[0],c.at("R")[1]);p.Rd_diag=Eigen::Vector2d(c.at("Rd")[0],c.at("Rd")[1]);p.Qf_scale=c.at("Qf_scale");p.T_min=c.at("command_min_n");p.T_max=c.at("command_max_n");p.dT_max=c.at("backend_rate_n_s");auto h=c.at("hydro");
+inline usv_mpc::MpcParams solver_params(const Json & c){usv_mpc::MpcParams p;p.N=c.at("N");p.dt=c.at("dt");auto q=c.at("Q").get<std::array<double,6>>();for(int i=0;i<6;++i)p.Q_diag[i]=q[i];p.R_diag=Eigen::Vector2d(c.at("R")[0],c.at("R")[1]);p.Rd_diag=Eigen::Vector2d(c.at("Rd")[0],c.at("Rd")[1]);p.Qf_scale=c.at("Qf_scale");p.T_min=c.at("command_min_n");p.T_max=c.at("command_max_n");p.dT_max=c.at("backend_rate_n_s");
+const auto & h=!c.contains("hydro") && c.at("schema")=="p1-execution-contract-v2-sim" &&
+  c.at("qualification")=="controlled_sim" ? candidate_baseline().at("hydro") : c.at("hydro");
 #define P1_H(x) p.hydro.x=h.at(#x).get<double>()
 P1_H(mass);P1_H(Iz);P1_H(xg);P1_H(d_thruster);P1_H(Xu_dot);P1_H(Yv_dot);P1_H(Yr_dot);P1_H(Nv_dot);P1_H(Nr_dot);P1_H(Xu);P1_H(Yv);P1_H(Yr);P1_H(Nv);P1_H(Nr);P1_H(Xuu);P1_H(Yvv);P1_H(Yrr);P1_H(Nvv);P1_H(Nrr);
 #undef P1_H

@@ -1,7 +1,9 @@
 // Copyright 2026 USV Developer
 // SPDX-License-Identifier: MIT
 #include "p1_engine_session.hpp"
+#include "../p1_full_contract.hpp"
 
+#include <algorithm>
 #include <cstring>
 #include <stdexcept>
 #include <string>
@@ -14,6 +16,35 @@ namespace p1
 {
 namespace
 {
+
+model_reference::Content controlled_sim_content(const nlohmann::json & contract)
+{
+  const auto & baseline = candidate_baseline();
+  for (const auto * key : {"Q", "R", "Rd", "Qf_scale"}) {
+    contract_value_type(contract.at(key), baseline.at(key), key);
+  }
+
+  auto content = model_reference::m0_content();
+  if (const auto hydro = contract.find("hydro"); hydro != contract.end()) {
+    contract_value_type(*hydro, baseline.at("hydro"), "hydro");
+    constexpr std::array<const char *, usv_nmpc::kPGN_Hydro> keys = {
+      "mass", "Iz", "xg", "d_thruster", "Xu_dot", "Yv_dot", "Yr_dot",
+      "Nv_dot", "Nr_dot", "Xu", "Yv", "Yr", "Nv", "Nr", "Xuu", "Yvv",
+      "Yrr", "Nvv", "Nrr"
+    };
+    for (std::size_t i = 0; i < keys.size(); ++i) {
+      content[i] = hydro->at(keys[i]).get<double>();
+    }
+  }
+  const auto q = contract.at("Q").get<std::array<double, usv_nmpc::kPGN_Q>>();
+  const auto r = contract.at("R").get<std::array<double, usv_nmpc::kPGN_R>>();
+  const auto rd = contract.at("Rd").get<std::array<double, usv_nmpc::kPGN_Rd>>();
+  std::copy(q.begin(), q.end(), content.begin() + usv_nmpc::kPGOFF_Q);
+  std::copy(r.begin(), r.end(), content.begin() + usv_nmpc::kPGOFF_R);
+  std::copy(rd.begin(), rd.end(), content.begin() + usv_nmpc::kPGOFF_Rd);
+  content[usv_nmpc::kPGOFF_Qf] = contract.at("Qf_scale").get<double>();
+  return content;
+}
 
 model_txn::FrozenBaseline frozen_baseline_from_backend()
 {
@@ -136,7 +167,9 @@ EngineSession::EngineSession(std::unique_ptr<usv_acados::AcadosBackend> backend,
   if (backend_->model() != usv_acados::Model::Dynamic)
     throw std::runtime_error("engine session requires the dynamic model");
 
-  boot_.content = model_reference::m0_content();
+  const auto * g1 = registry.find(1);
+  if (!g1) throw std::runtime_error("engine session requires registered generation 1");
+  boot_.content = g1->content;
   boot_.baseline = frozen_baseline_from_backend();
 
   // 唯一的 capsule 生命周期令牌：构造源与事务共享它，源在会话销毁后立即过期。
@@ -243,6 +276,49 @@ model_reference::Registry registry_from_plan(const std::string & preimage,
     throw std::runtime_error("plan rejected: " + checked.reason);
   }
   return registry;
+}
+
+bool content_from_controlled_sim_contract(const nlohmann::json & contract,
+    model_reference::Content * out, std::string * err)
+{
+  try {
+    contract_require(out != nullptr, "missing M0 output");
+    contract_require(validate_contract_fields(contract) == ContractProfile::ControlledSim,
+                     "M0 overrides require ControlledSim");
+    *out = controlled_sim_content(contract);
+    if (err) err->clear();
+    return true;
+  } catch (const std::exception & e) {
+    if (err) *err = e.what();
+    return false;
+  }
+}
+
+bool registry_from_plan_and_contract(const std::string & preimage,
+    const model_reference::Grid & grid, const std::string & contract_json_text,
+    model_reference::Registry * out, std::string * err)
+{
+  try {
+    const auto contract = parse_unique_contract(contract_json_text);
+    const auto profile = validate_contract_fields(contract);
+    contract_require(out != nullptr, "missing model registry output");
+    contract_require(contract.at("T_ns") == grid.tick_period_ns &&
+                     contract.at("deadline_ns") == grid.deadline_ns,
+                     "plan grid timing differs from the contract");
+    if (profile == ContractProfile::ControlledSim) {
+      auto registry = model_reference::registry_from_m0(controlled_sim_content(contract));
+      const auto checked = registry.verify_plan_132_json(preimage, grid);
+      if (!checked.ok) throw std::runtime_error("plan rejected: " + checked.reason);
+      *out = registry;
+    } else {
+      *out = registry_from_plan(preimage, grid);
+    }
+    if (err) err->clear();
+    return true;
+  } catch (const std::exception & e) {
+    if (err) *err = e.what();
+    return false;
+  }
 }
 
 model_reference::Registry default_registry(const model_reference::Grid &)

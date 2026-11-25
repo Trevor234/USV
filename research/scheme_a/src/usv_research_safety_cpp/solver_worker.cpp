@@ -58,7 +58,8 @@ public:
     mode_ = declare_parameter<std::string>("mode", "production");
     hash_ = declare_parameter<std::string>("contract_hash", "");
     const auto contract_file = declare_parameter<std::string>("contract_file", "");
-    contract_ = p1::load_contract(contract_file, hash_);
+    std::string contract_json_text;
+    contract_ = p1::load_contract(contract_file, hash_, &contract_json_text);
     resources_ = p1::resource_limits_from_contract(contract_);
     boot_ = declare_parameter<std::string>("boot_id", "");
     if (boot_.empty()) boot_ = p1::boot_id();
@@ -95,7 +96,9 @@ public:
     dry_run_ = mode_ == p1::shipboard_dry_run_mode ||
                contract_.value("schema", std::string{}) ==
                    p1::shipboard_dry_run_schema;
-    if (commissioning_ || dry_run_) p1::require_runtime_contract_mode(contract_, mode_);
+    if (commissioning_ || dry_run_ || mode_ == "controlled_sim" ||
+        contract_.at("schema") == "p1-execution-contract-v2-sim")
+      p1::require_runtime_contract_mode(contract_, mode_);
 
     const auto log = declare_parameter<std::string>("source_file", "");
     file_.open(log, std::ios::out | std::ios::app);
@@ -112,8 +115,11 @@ public:
     const auto plan_text = p1::read_text(plan_file_);
     if (p1::digest(plan_text) != plan_sha_) throw std::runtime_error("model plan hash mismatch");
     grid_ = p1::grid_of_plan(plan_text, contract_);
+    std::string registry_error;
+    if (!p1::registry_from_plan_and_contract(
+          plan_text, grid_, contract_json_text, &registry_, &registry_error))
+      throw std::runtime_error(registry_error);
     params_ = p1::solver_params(contract_);
-    registry_ = p1::registry_from_plan(plan_text, grid_);
 
     gp_snapshot_file_ = declare_parameter<std::string>("gp_snapshot_file", "");
     gp_snapshot_sha_ = declare_parameter<std::string>("gp_snapshot_sha256", "");

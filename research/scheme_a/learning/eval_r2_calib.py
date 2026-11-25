@@ -25,6 +25,8 @@ from eval_fusion_arms import (
     CONTRACT,
     GP_DIR as R1_GP_DIR,
     GP_POOLED as R1_GP_POOLED,
+    PPO_MANIFEST,
+    PPO_MODEL,
     PROFILE_TO_GP as R1_PROFILE_TO_GP,
     SPLIT_MANIFEST,
     _aggregate_arm,
@@ -34,6 +36,7 @@ from eval_fusion_arms import (
     run_conflict_priority_probe,
 )
 from gp_model import MultiChannelSparseGP
+from ppo_proposal_node import GATE_DEFAULTS
 
 R2_WORK_ROOT = Path("/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261118_work")
 DEFAULT_SOURCE_HASHES = R2_WORK_ROOT / "meta/source_hashes.json"
@@ -51,6 +54,7 @@ def _run_batch(
     base_domain_id: int,
     stop_decisions: int,
     resume: bool,
+    contract_path: Path = CONTRACT,
 ) -> tuple[dict[str, list[dict[str, Any]]], dict[str, dict[str, dict[str, Any]]]]:
     domain_q: queue.Queue[int] = queue.Queue()
     for i in range(max(1, workers)):
@@ -74,7 +78,12 @@ def _run_batch(
             source_hashes=source_hashes,
             ppo_proposal=bool(spec.get("ppo")),
             lambda_pi=float(spec.get("lambda_pi", 0.0)),
+            ppo_lookahead=str(spec.get("lookahead", "") or ""),
+            ppo_model=Path(spec["onnx"]) if spec.get("onnx") else PPO_MODEL,
+            ppo_manifest=Path(spec["manifest"]) if spec.get("manifest") else PPO_MANIFEST,
+            contract_path=Path(spec.get("contract") or contract_path),
             resume=resume,
+            **{name: spec[name] for name in GATE_DEFAULTS if name in spec},
         ))
         m["episode_name"] = ep["episode_name"]
         m["ep_tag"] = ep_tag

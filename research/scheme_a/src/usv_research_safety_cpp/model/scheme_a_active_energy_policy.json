@@ -1,0 +1,29 @@
+{
+  "schema": "scheme-a-active-energy-policy-v1",
+  "selected_arm": "gp_v7_v6_s4dr_l005_curv",
+  "contract_file": "contract_controlled_sim_energy.json",
+  "contract_sha256": "e619f2dbd070a23e212f7980cdb61ac00df48d59165f1de7832213fdc130e5e1",
+  "gp_snapshot": "/home/trevor/MPC/03_方案A_研发全周期产物库/08_后续研发与新批次产物/scheme_A_gp_ppo_20261118_work/gp_models/pooled/gp_snapshot.json",
+  "gp_snapshot_sha256": "0458ff42752f45838b2c5c1f866533027d450a13ee7da087ea26378ea8f7578e",
+  "ppo_model": "/home/trevor/USV/artifacts/rl_models/v7_fusion_v6/s4_dr/policy_physical_n.onnx",
+  "ppo_model_sha256": "82cc81a24e4e543cd7e7b2281a39aba2480e3629716f5a8b515cd712731c2dae",
+  "ppo_manifest": "/home/trevor/USV/artifacts/rl_models/v7_fusion_v6/s4_dr/policy_physical_n.manifest.json",
+  "ppo_manifest_sha256": "e3c084461108e80574e8d428b93d6944b30adb2af6421b19711a3679b2a8c515",
+  "obs_contract_version": "ppo-obs-v2",
+  "lambda_pi": 0.005,
+  "equivariant_z2_se2": true,
+  "gate": {
+    "gate_mode": "curv_err",
+    "gate_min_kappa": 0.05,
+    "gate_min_cte": 0.02,
+    "gate_min_psi": 0.04,
+    "gate_near_points": 4
+  },
+  "lookahead_m": [0.4, 0.8, 1.4, 2.2, 3.2, 4.4, 5.8, 7.5],
+  "reference_projection_mode": "polyline_time",
+  "reference_lead_s": 0.1,
+  "Q": [35, 35, 60, 25, 1, 8],
+  "Qf_scale": 8,
+  "R": [0.05, 0.05],
+  "Rd": [0.6, 0.6]
+}

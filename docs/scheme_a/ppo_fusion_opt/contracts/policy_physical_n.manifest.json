@@ -1,0 +1,51 @@
+{
+  "contract_version": 1,
+  "output_unit": "N",
+  "action_order": [
+    "T_L",
+    "T_R"
+  ],
+  "input_name": "obs",
+  "input_dim": 43,
+  "output_name": "thrust",
+  "output_dim": 2,
+  "thrust_scale_n": 25.0,
+  "physical_low_n": [
+    -25.0,
+    -25.0
+  ],
+  "physical_high_n": [
+    25.0,
+    25.0
+  ],
+  "normalization_embedded": true,
+  "onnx_sha256": "ff60e0f70a142dc0c76ac0e1b8e1d113bcff892d7999fad9ef41cf5a83147278",
+  "source_model_path": "/home/trevor/USV/usv_rl/models/v5/s4_dr/model.zip",
+  "source_model_sha256": "85c6c573fa880695de1c6173c5e7e75c1702c5f1306415d91b39d2a9512c7220",
+  "source_vecnormalize_path": "/home/trevor/USV/usv_rl/models/v5/s4_dr/vecnormalize.pkl",
+  "source_vecnormalize_sha256": "2be84c0fcaf992a52f1d9a2a3d4b997d8586951c1b9c9caba1d67badce2d769e",
+  "normalization": {
+    "norm_obs": true,
+    "epsilon": 1e-08,
+    "clip_obs": 10.0,
+    "reference_training": false
+  },
+  "verification": {
+    "reference": "VecNormalize.normalize_obs + SB3.predict(deterministic=True)",
+    "synthetic_input_rows": 64,
+    "observed_input_rows": 72,
+    "max_abs_error_n": 1.9073486328125e-05,
+    "tolerance_n": 0.001
+  },
+  "export_command": "python -m usv_rl.export_policy --model /home/trevor/USV/usv_rl/models/v5/s4_dr/model.zip --vecnorm /home/trevor/USV/usv_rl/models/v5/s4_dr/vecnormalize.pkl --thrust-scale-n 25.0 --out /home/trevor/USV/usv_rl/models/v5/s4_dr/policy_physical_n.onnx --verification-obs /home/trevor/USV/.sgh-research/experiments/v5_scaling_fix_20261003/raw_obs_cases.npy",
+  "opset": 13,
+  "versions": {
+    "python": "3.12.3",
+    "numpy": "2.5.3",
+    "torch": "2.14.0",
+    "stable-baselines3": "2.9.0",
+    "onnx": "1.23.1",
+    "onnxruntime": "1.30.0"
+  },
+  "verification_observations_sha256": "54a7367222a63678833684c0db6cb9c40ed734de4543d63e8577dd9f8be215a7"
+}

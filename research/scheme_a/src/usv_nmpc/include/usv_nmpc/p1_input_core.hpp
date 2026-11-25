@@ -97,6 +97,13 @@ struct ReferenceMetadata
   size_t path_size = 0, profile_size = 0;
   int nearest_index = -1, start_index = -1, configured_start_offset = 2, effective_start_offset = 2;
   std::string reference_mode, profile_sync_reason;double profile_t0 = 0;
+  std::string projection_mode = "discrete_offset";
+  double lead_s = -1.0;
+};
+struct ReferenceOptions
+{
+  std::string projection_mode = "discrete_offset";
+  double lead_s = -1.0;
 };
 struct ReferenceInput
 {
@@ -108,7 +115,10 @@ struct ReferenceInput
 // Extracted on host from the verified F5 builder; legacy calls this same function.
 Eigen::MatrixXd build_frozen_reference(
   const Vector6d &, const ReferenceInput &, int N, double dt,
-  int offset, double cruise, ReferenceMetadata *);
+  int offset, double cruise, ReferenceMetadata * = nullptr);
+Eigen::MatrixXd build_frozen_reference(
+  const Vector6d &, const ReferenceInput &, int N, double dt,
+  int offset, double cruise, const ReferenceOptions &, ReferenceMetadata * = nullptr);
 struct HeldInputEvent {int64_t sim_ns = 0;int channel = 0;double value = 0;};
 // Publisher-side nominal propagation. A mixed IMU rate is retained and tagged by caller.
 // This is a point prediction, never a measured plant input or reachable-set bound.

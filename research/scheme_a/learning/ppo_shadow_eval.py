@@ -19,6 +19,10 @@ from usv_rl.dynamics import HydroParams
 from usv_rl.envs.usv_tracking_env import DEFAULT_LOOKAHEAD, UsvTrackingEnv
 from usv_rl.observation import advance_progress, compose_observation
 
+# 8 点前瞻元组（与 ppo_proposal_node.py 保持一致；节点跑在 /usr/bin/python3，不能互通 import）
+SCHEME_A_LOOKAHEAD = (0.4, 0.8, 1.4, 2.2, 3.2, 4.4, 5.8, 7.5)
+TRAINING_LOOKAHEAD = (0.4, 0.8, 1.2, 1.6, 2.0, 2.5, 3.0, 4.0)
+
 OBS_DIM = 43
 
 
@@ -142,11 +146,103 @@ def run_env_comparison(
     return {"timing_eval": results, "single_step_action_shift": shift_stats}
 
 
-def replay_scheme_a_runs(session: ort.InferenceSession, runs_dir: Path | None) -> dict[str, Any]:
+def _load_run_reference(rdir: Path) -> tuple[np.ndarray, ...] | None:
+    """Return (xs, ys, psis, kappas, vs, rs, ss, ts) for a run dir, or None if unusable."""
+    plant_path = rdir / "plant.source.jsonl"
+    path_txt = rdir / "scenario_path.txt"
+    prof_txt = rdir / "scenario_profile.txt"
+    if not (plant_path.is_file() and path_txt.is_file()):
+        return None
+    p_rows = np.loadtxt(path_txt, dtype=np.float64)
+    pr_rows = np.loadtxt(prof_txt, dtype=np.float64) if prof_txt.is_file() else p_rows
+    if p_rows.ndim != 2 or len(p_rows) < 5:
+        return None
+    xs, ys, psis = p_rows[:, 0], p_rows[:, 1], p_rows[:, 2]
+    vs = pr_rows[:, 0] if prof_txt.is_file() else np.full(len(xs), 0.7)
+    rs = pr_rows[:, 2] if prof_txt.is_file() else np.zeros(len(xs))
+    ts = p_rows[:, 3]
+    ds = np.hypot(np.diff(xs), np.diff(ys))
+    ss = np.concatenate([[0.0], np.cumsum(ds)])
+    kappas = np.divide(rs, np.maximum(np.abs(vs), 0.1))
+    return xs, ys, psis, kappas, vs, rs, ss, ts
+
+
+def _ok_receipts(plant_path: Path) -> list[dict[str, Any]]:
+    return [
+        json.loads(line)
+        for line in plant_path.read_text(encoding="utf-8").splitlines()
+        if line.strip() and '"type":"plant_receipt"' in line.replace(" ", "")
+        and '"disposition":"ok"' in line.replace(" ", "")
+    ]
+
+
+def lookahead_shift(
+    session: ort.InferenceSession,
+    runs_dir: Path | None,
+    lookahead_a: tuple[float, ...] = SCHEME_A_LOOKAHEAD,
+    lookahead_b: tuple[float, ...] = TRAINING_LOOKAHEAD,
+) -> dict[str, Any]:
+    """前瞻距离反事实：固定 state6/prog_idx/prev_thrust，只换前瞻元组，比较 ONNX 输出。
+
+    逐窗口取两通道最大绝对差，再统计 median/p95/max —— 单通道差会被另一通道的
+    同向抵消掩盖，取 max 才是"这条观测窗口能改变的最大动作量"。
+    """
+    if runs_dir is None or not runs_dir.is_dir():
+        return {"runs": 0, "windows": 0}
+    la_a = tuple(float(v) for v in lookahead_a)
+    la_b = tuple(float(v) for v in lookahead_b)
+    if la_a == la_b:
+        raise ValueError("lookahead_a 与 lookahead_b 相同，反事实无意义")
+    per_window: list[float] = []
+    runs_used = 0
+    for rdir in sorted(runs_dir.iterdir()):
+        ref = _load_run_reference(rdir)
+        if ref is None:
+            continue
+        xs, ys, psis, kappas, vs, rs, ss, ts = ref
+        recs = _ok_receipts(rdir / "plant.source.jsonl")
+        if len(recs) < 4:
+            continue
+        runs_used += 1
+        prog_idx = 0
+        for k in range(1, len(recs)):
+            st = np.asarray(recs[k]["state"], dtype=np.float64)
+            t_now = float(recs[k]["state_sample_sim_ns"]) / 1e9
+            prog_idx = advance_progress(xs, ys, st[0], st[1], prog_idx)
+            prev_q = np.asarray(recs[k - 1]["thrust_n"], dtype=np.float64)
+            obs_a = compose_observation(
+                st, xs, ys, psis, kappas, vs, rs, ss, ts,
+                t_now=t_now, prog_idx=prog_idx, prev_thrust=prev_q, lookahead=la_a,
+            )
+            obs_b = compose_observation(
+                st, xs, ys, psis, kappas, vs, rs, ss, ts,
+                t_now=t_now, prog_idx=prog_idx, prev_thrust=prev_q, lookahead=la_b,
+            )
+            q_a = session.run(["thrust"], {"obs": obs_a[None, :].astype(np.float32)})[0][0]
+            q_b = session.run(["thrust"], {"obs": obs_b[None, :].astype(np.float32)})[0][0]
+            per_window.append(float(np.max(np.abs(np.asarray(q_a) - np.asarray(q_b)))))
+
+    arr = np.asarray(per_window, dtype=np.float64) if per_window else np.zeros(1)
+    return {
+        "runs": runs_used,
+        "windows": int(len(per_window)),
+        "lookahead_a": list(la_a),
+        "lookahead_b": list(la_b),
+        "median_abs_diff_n": float(np.median(arr)),
+        "p95_abs_diff_n": float(np.percentile(arr, 95)),
+        "max_abs_diff_n": float(np.max(arr)),
+    }
+
+
+def replay_scheme_a_runs(
+    session: ort.InferenceSession,
+    runs_dir: Path | None,
+    lookahead: tuple[float, ...] = DEFAULT_LOOKAHEAD,
+) -> dict[str, Any]:
     """Compare aligned vs 1-step-lagged prev_thrust on real Scheme A controlled_sim runs."""
     if runs_dir is None or not runs_dir.is_dir():
         return {"runs_evaluated": 0}
-    lookahead = tuple(float(v) for v in DEFAULT_LOOKAHEAD)
+    lookahead = tuple(float(v) for v in lookahead)
     diffs: list[np.ndarray] = []
     infer_ms: list[float] = []
     runs_used = 0
@@ -271,6 +367,8 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model-dir", default=str(DEFAULT_MODEL_DIR))
     parser.add_argument("--scheme-a-runs", default=None, help="Optional controlled_sim runs dir (e.g. pilot/runs)")
+    parser.add_argument("--lookahead-a", default=",".join(str(v) for v in SCHEME_A_LOOKAHEAD))
+    parser.add_argument("--lookahead-b", default=",".join(str(v) for v in TRAINING_LOOKAHEAD))
     parser.add_argument("--out", required=True)
     args = parser.parse_args(argv)
 
@@ -285,7 +383,11 @@ def main(argv: list[str] | None = None) -> int:
     session = ort.InferenceSession(str(onnx_path), providers=["CPUExecutionProvider"])
     nom_eval = run_env_comparison(session, hydro_dr_frac=0.0)
     dr_eval = run_env_comparison(session, hydro_dr_frac=0.15)
-    replay_stats = replay_scheme_a_runs(session, Path(args.scheme_a_runs) if args.scheme_a_runs else None)
+    runs_dir = Path(args.scheme_a_runs) if args.scheme_a_runs else None
+    replay_stats = replay_scheme_a_runs(session, runs_dir)
+    lookahead_a = tuple(float(x) for x in str(args.lookahead_a).split(",") if x.strip())
+    lookahead_b = tuple(float(x) for x in str(args.lookahead_b).split(",") if x.strip())
+    counterfactual = lookahead_shift(session, runs_dir, lookahead_a, lookahead_b)
     decision = make_policy_selection_decision(nom_eval, dr_eval, replay_stats)
 
     out_dir = Path(args.out).resolve()
@@ -315,6 +417,9 @@ def main(argv: list[str] | None = None) -> int:
     (out_dir / "observation_contract.json").write_text(
         json.dumps(obs_contract, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8"
     )
+    (out_dir / "lookahead_counterfactual.json").write_text(
+        json.dumps(counterfactual, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8"
+    )
     (out_dir / "policy_selection.json").write_text(
         json.dumps(decision, indent=2, ensure_ascii=False, sort_keys=True) + "\n", encoding="utf-8"
     )
@@ -343,6 +448,12 @@ def main(argv: list[str] | None = None) -> int:
         f"- Env trajectory mean |p95| max diff [L, R] (N): `{nom_eval['single_step_action_shift']['mean_abs_diff_n']}` / `{nom_eval['single_step_action_shift']['p95_abs_diff_n']}` / `{nom_eval['single_step_action_shift']['max_abs_diff_n']}`",
         f"- Scheme A controlled_sim replay ({replay_stats.get('runs_evaluated', 0)} runs, {replay_stats.get('samples', 0)} steps): mean=`{replay_stats.get('mean_abs_diff_n')}`, max=`{replay_stats.get('max_abs_diff_n')}`",
         f"- ONNX Runtime CPU latency mean / p99: `{replay_stats.get('ort_latency_mean_ms')}` ms / `{replay_stats.get('ort_latency_p99_ms')}` ms",
+        "",
+        "## Lookahead Counterfactual (`lookahead_counterfactual.json`)",
+        f"- `{counterfactual.get('lookahead_a')}` vs `{counterfactual.get('lookahead_b')}` over "
+        f"{counterfactual.get('runs')} runs / {counterfactual.get('windows')} windows",
+        f"- |Δu| median / p95 / max: `{counterfactual.get('median_abs_diff_n')}` / "
+        f"`{counterfactual.get('p95_abs_diff_n')}` / `{counterfactual.get('max_abs_diff_n')}` N",
     ]
     (out_dir / "ppo_shadow_report.md").write_text("\n".join(md) + "\n", encoding="utf-8")
     print(json.dumps({"decision": decision["decision"], "out": str(out_dir)}, ensure_ascii=False))

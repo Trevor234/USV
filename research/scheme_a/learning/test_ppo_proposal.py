@@ -2,19 +2,38 @@
 """Tests for Scheme A PPO proposal engine & observation contract (WP5)."""
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import subprocess
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
 
 from ppo_proposal_node import (
     DEFAULT_LOOKAHEAD,
+    DEFAULT_MANIFEST_PATH,
+    DEFAULT_MODEL_PATH,
     OBS_CONTRACT_VERSION,
     ProposalEngine,
     compose_observation_scheme_a,
 )
+
+
+def test_default_policy_is_selected_v7_fusion_v6_s4_dr() -> None:
+    selected = Path("/home/trevor/USV/artifacts/rl_models/v7_fusion_v6/s4_dr")
+    assert DEFAULT_MODEL_PATH == selected / "policy_physical_n.onnx"
+    assert DEFAULT_MANIFEST_PATH == selected / "policy_physical_n.manifest.json"
+
+    with DEFAULT_MODEL_PATH.open("rb") as model:
+        model_sha = hashlib.file_digest(model, "sha256").hexdigest()
+    assert model_sha == "82cc81a24e4e543cd7e7b2281a39aba2480e3629716f5a8b515cd712731c2dae"
+    manifest = json.loads(DEFAULT_MANIFEST_PATH.read_text(encoding="utf-8"))
+    assert manifest["onnx_sha256"] == model_sha
+    assert manifest["equivariant_z2_se2"] is True
+    assert manifest["observation_contract"]["version"] == OBS_CONTRACT_VERSION == "ppo-obs-v2"
+    assert tuple(manifest["observation_contract"]["lookahead_m"]) == DEFAULT_LOOKAHEAD
 
 
 def test_compose_observation_scheme_a_matches_usv_rl_source_exact() -> None:
@@ -31,13 +50,13 @@ def test_compose_observation_scheme_a_matches_usv_rl_source_exact() -> None:
     kappas = rs / vs
     st = np.array([1.5, 0.05, 0.1, 0.68, -0.02, 0.05], dtype=np.float64)
     prev_q = np.array([6.5, -2.1], dtype=np.float64)
-    local_obs = compose_observation_scheme_a(st, xs, ys, psis, kappas, vs, rs, ss, t, 2.2, 5, prev_q)
+    local_obs = compose_observation_scheme_a(st, xs, ys, psis, kappas, vs, rs, ss, 5, prev_q)
 
     # Cross-check against usv_rl/.venv's usv_rl.observation.compose_observation.
     payload = {
         "st": st.tolist(), "xs": xs.tolist(), "ys": ys.tolist(), "psis": psis.tolist(),
         "kappas": kappas.tolist(), "vs": vs.tolist(), "rs": rs.tolist(), "ss": ss.tolist(),
-        "t": t.tolist(), "t_now": 2.2, "prog_idx": 5, "prev_q": prev_q.tolist(),
+        "prog_idx": 5, "prev_q": prev_q.tolist(),
         "lookahead": list(DEFAULT_LOOKAHEAD),
     }
     script = (
@@ -46,7 +65,7 @@ def test_compose_observation_scheme_a_matches_usv_rl_source_exact() -> None:
         "d = json.loads(sys.stdin.read()); "
         "out = compose_observation(np.array(d['st']), np.array(d['xs']), np.array(d['ys']), "
         "np.array(d['psis']), np.array(d['kappas']), np.array(d['vs']), np.array(d['rs']), "
-        "np.array(d['ss']), np.array(d['t']), d['t_now'], d['prog_idx'], np.array(d['prev_q']), tuple(d['lookahead'])); "
+        "np.array(d['ss']), d['prog_idx'], np.array(d['prev_q']), tuple(d['lookahead'])); "
         "print(json.dumps(out.tolist()))"
     )
     proc = subprocess.run(
@@ -130,12 +149,93 @@ def test_proposal_engine_freshness_confirmed_feedback_and_bounds() -> None:
 
 
 def test_proposal_engine_rejects_tampered_manifest(tmp_path: Path) -> None:
-    manifest = json.loads(Path("/home/trevor/USV/artifacts/rl_models/v5/s4_dr/policy_physical_n.manifest.json").read_text())
+    manifest = json.loads(DEFAULT_MANIFEST_PATH.read_text(encoding="utf-8"))
     manifest["onnx_sha256"] = "0" * 64
     bad_man = tmp_path / "bad.manifest.json"
     bad_man.write_text(json.dumps(manifest), encoding="utf-8")
     with pytest.raises(ValueError, match="sha256 mismatch"):
         ProposalEngine(manifest_path=bad_man)
+
+
+@pytest.mark.parametrize(("kappa", "cte", "psi", "valid"), [
+    (0.0, 0.0, 0.0, False),
+    (0.05, 0.0, 0.0, True),
+    (0.0, 0.02, 0.0, True),
+    (0.0, 0.0, 0.05, True),
+])
+def test_curvature_or_tracking_error_activates_gate(kappa, cte, psi, valid) -> None:
+    eng = ProposalEngine(gate_mode="curv_err")
+    path = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [2.0, 0.0, 0.0]])
+    # Curvature is at a near lookahead index. The boat is between samples.
+    profile = np.array([[1.0, 0.0, 0.0, 0.0], [1.0, 0.0, kappa, 1.0], [1.0, 0.0, 0.0, 2.0]])
+    eng.on_reference(path, profile)
+    eng.on_clock(1_000_000_000)
+    eng.on_odom(1_000_000_000, [0.25, cte, psi, 1.0, 0.0, 0.0])
+    eng._session = Mock(wraps=eng._session)
+
+    proposal = eng.evaluate()
+
+    assert proposal.valid is valid
+    if valid:
+        eng._session.run.assert_called_once()
+    else:
+        assert proposal.reason == "gate_low_demand"
+        assert proposal.q_pi == (0.0, 0.0)
+        eng._session.run.assert_not_called()
+
+
+def test_on_reference_republish_preserves_prog_idx_and_enables_gating() -> None:
+    eng = ProposalEngine(gate_mode="curv_err")
+    t = np.arange(50, dtype=np.float64) * 0.2
+    path = np.column_stack([t * 0.7, np.zeros_like(t), np.zeros_like(t)])
+    prof = np.column_stack([np.full_like(t, 0.7), np.zeros_like(t), np.zeros_like(t), t])
+    eng.on_reference(path, prof)
+
+    for tick, x in enumerate(path[:40, 0]):
+        sim_ns = tick * 200_000_000
+        eng.on_clock(sim_ns)
+        eng.on_odom(sim_ns, [x, 0.0, 0.0, 0.7, 0.0, 0.0])
+        eng.evaluate()
+    prog_idx = eng._prog_idx
+    assert path[prog_idx, 0] > 5.0
+
+    ref_ss = eng._ref_ss
+    eng.on_reference(path.copy(), prof.copy())
+    assert eng._prog_idx == prog_idx
+    assert eng._ref_ss is ref_ss
+    proposal = eng.evaluate()
+    assert not proposal.valid and proposal.reason == "gate_low_demand"
+
+    updated_prof = prof.copy()
+    updated_prof[:, 0] = 0.8
+    eng.on_reference(path.copy(), updated_prof)
+    assert eng._prog_idx == prog_idx
+    assert eng._ref_vs[prog_idx] == 0.8
+
+    updated_path = path.copy()
+    updated_path[:, 1] = 1.0
+    eng.on_reference(updated_path, updated_prof.copy())
+    assert eng._prog_idx == 0
+
+
+@pytest.mark.parametrize("u_cur", [0.55, 0.57, 0.61])
+def test_common_mode_cap_preserves_differential_when_surge_is_on_target(u_cur) -> None:
+    eng = ProposalEngine(gate_mode="curv_err_cmcap")
+    path = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0]])
+    profile = np.array([[0.6, 0.0, 0.0, 0.0], [0.6, 0.0, 0.0, 1.0]])
+    eng.on_reference(path, profile)
+    eng.on_clock(1_000_000_000)
+    eng.on_odom(1_000_000_000, [0.25, 0.03, 0.0, u_cur, 0.0, 0.0])
+    eng._session = Mock()
+    eng._session.run.return_value = [np.array([[9.0, 13.0]])]
+
+    proposal = eng.evaluate()
+
+    assert proposal.valid
+    q0, q1 = proposal.q_pi
+    assert (q1 - q0) / 2 == pytest.approx(2.0)
+    expected_cm = 0.5 * (2.272063 * 0.6 + 11.571784 * 0.6 ** 2) + 0.5
+    assert (q0 + q1) / 2 == pytest.approx(expected_cm if u_cur >= 0.57 else 11.0)
 
 
 def test_ppo_proposal_node_live_ros2_pubsub(tmp_path: Path) -> None:

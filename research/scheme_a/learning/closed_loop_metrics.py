@@ -201,6 +201,7 @@ def evaluate_closed_loop_run(
     source_hashes: Path | None = None,
     gp_models_by_sha: dict[str, MultiChannelSparseGP] | None = None,
     reuse_verified_check_json: bool = False,
+    contract_path: Path | None = None,
 ) -> dict[str, Any]:
     """Extract comprehensive tracking, control, GP, PPO, and latency metrics."""
     run_doc = json.loads((run_dir / "run.json").read_text(encoding="utf-8"))
@@ -222,7 +223,7 @@ def evaluate_closed_loop_run(
             reused_check = False
     if not reused_check:
         if source_hashes is not None:
-            checker_passed, check_doc = run_checker(run_dir, source_hashes)
+            checker_passed, check_doc = run_checker(run_dir, source_hashes, contract_path=contract_path)
         elif check_path.is_file():
             check_doc = json.loads(check_path.read_text(encoding="utf-8"))
             checker_passed = check_doc.get("verdict") == "PASS"
@@ -323,6 +324,14 @@ def evaluate_closed_loop_run(
         tv_per_step = 0.0
         tv_total = 0.0
     effort_int = float(np.sum(np.sum(u_exec ** 2, axis=1)) * DT_S) if len(u_exec) else 0.0
+    progress_m = geom["along_track_progress_m"]
+    progress_denominator = max(progress_m, 1e-6) if math.isfinite(progress_m) else 1e-6
+    common_mode_l2_dt = diff_mode_l2_dt = opposing_thrust_fraction = 0.0
+    if len(u_exec):
+        left, right = u_exec.T
+        common_mode_l2_dt = float(np.sum(2.0 * (0.5 * (left + right)) ** 2) * DT_S)
+        diff_mode_l2_dt = float(np.sum(2.0 * (0.5 * (right - left)) ** 2) * DT_S)
+        opposing_thrust_fraction = float(np.mean((left * right) < 0.0))
 
     # Decision telemetry: control source, GP schedule, PPO usage/modification, skipped ticks.
     ctrl_counts: dict[str, int] = {}
@@ -453,6 +462,11 @@ def evaluate_closed_loop_run(
             "tv_per_step": tv_per_step,
             "tv_total": tv_total,
             "thrust_l2_dt": effort_int,
+            "energy_per_meter": effort_int / progress_denominator,
+            "common_mode_l2_dt": common_mode_l2_dt,
+            "diff_mode_l2_dt": diff_mode_l2_dt,
+            "diff_mode_fraction": diff_mode_l2_dt / effort_int if effort_int > 1e-12 else 0.0,
+            "opposing_thrust_fraction": opposing_thrust_fraction,
         },
         "gp_telemetry": {
             "generation_timeline": gp_gen_runs,

@@ -27,6 +27,7 @@
 #include "plant/p1_plant_model_loader.hpp"
 #include "usv_nmpc/p1_input_core.hpp"
 #include "protocol.hpp"
+#include "p1_engine_session.hpp"
 #include "p1_model_reference.hpp"
 #include "p1_admission.hpp"
 #include "p1_clock_window.hpp"
@@ -78,7 +79,12 @@ class Regulator final:public rclcpp::Node {
     diag_file_=declare_parameter<std::string>("clock_diagnostics_file","");
     // require 版而不是 validate 版：Frozen 合同 + execute 必须在这里就被 B5/M4 拒绝，
     // 而不是靠一个 false 常量"看起来被锁住"。此处早于任何 publisher 创建。
-    c_=p1::load_contract(declare_parameter<std::string>("contract_file",""),hash_);p1::require_runtime_contract_mode(c_,mode_);resources_=p1::resource_limits_from_contract(c_);boot_=declare_parameter<std::string>("boot_id","");if(boot_.empty())boot_=p1::boot_id();nominal_=c_.at("nominal_hash");
+    std::string contract_json_text;
+    c_=p1::load_contract(declare_parameter<std::string>("contract_file",""),hash_,&contract_json_text);p1::require_runtime_contract_mode(c_,mode_);resources_=p1::resource_limits_from_contract(c_);boot_=declare_parameter<std::string>("boot_id","");if(boot_.empty())boot_=p1::boot_id();nominal_=c_.at("nominal_hash");
+    if(mode_=="controlled_sim"){
+      reference_options_.projection_mode=c_.value("reference_projection_mode",std::string("discrete_offset"));
+      reference_options_.lead_s=c_.value("reference_lead_s",-1.0);
+    }
     legacy_run_=declare_parameter<std::string>("legacy_run_id","");
     // 方案 A：模型代由计划决定，不是由 regulator 自增。计划字节摘要必须与声明一致，
     // 且计划自身的 grid 必须与合同时基逐位一致（grid_of_plan 内已断言）。
@@ -90,7 +96,9 @@ class Regulator final:public rclcpp::Node {
      p1::contract_require(p1::digest(plan_text)==plan_sha,"model plan hash mismatch");
      plan_sha_=plan_sha;plan_file_text_=plan_file;
      grid_=p1::grid_of_plan(plan_text,c_);
-     registry_=model_reference::default_registry();{const auto chk=registry_.verify_plan_132_json(plan_text,grid_);p1::contract_require(chk.ok,"plan rejected: "+chk.reason);}
+     std::string registry_error;
+     if(!p1::registry_from_plan_and_contract(plan_text,grid_,contract_json_text,&registry_,&registry_error))
+       throw std::runtime_error(registry_error);
      // 计划已通过校验，切换必须开启；默认值是 false，"忘了打开"会让整条链路
      // 静默地只用单代而不报错。
      model_options_.model_switch_enabled=true;}
@@ -128,7 +136,7 @@ class Regulator final:public rclcpp::Node {
      if(!std::isfinite(ppo_lambda_pi_)||ppo_lambda_pi_<0.0)
        throw std::runtime_error("ppo_lambda_pi must be finite and >= 0");
      ppo_expected_policy_sha_=declare_parameter<std::string>("ppo_expected_policy_sha256","");
-     ppo_expected_obs_contract_=declare_parameter<std::string>("ppo_expected_obs_contract","scheme-a-ppo-obs-post-update-v1");
+     ppo_expected_obs_contract_=declare_parameter<std::string>("ppo_expected_obs_contract","ppo-obs-v2");
      ppo_max_age_ns_=declare_parameter<int64_t>("ppo_max_age_ns",450000000LL);
      if(ppo_max_age_ns_<=0)throw std::runtime_error("ppo_max_age_ns must be > 0");}
 expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
@@ -652,7 +660,10 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     const int64_t prep_t0=p1::monotonic_ns();
     auto & s=p.s;int64_t target_sim=s.sim+(p.origin+p1::T-s.clock_receive);auto x=s.state;if(!predict(s,target_sim)){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason","history_or_propagation"}});continue;}
     const int64_t prep_t1=p1::monotonic_ns();
-    usv_mpc::ReferenceMetadata meta;auto ref=usv_mpc::build_frozen_reference(s.state,*s.ref,20,.2,c_.at("reference_start_offset"),c_.at("cruise_speed"),&meta);if(!ref.allFinite())continue;
+    usv_mpc::ReferenceMetadata meta;
+    auto ref=usv_mpc::build_frozen_reference(s.state,*s.ref,20,.2,c_.at("reference_start_offset"),
+      c_.at("cruise_speed"),reference_options_,&meta);
+    if(!ref.allFinite())continue;
     const int64_t prep_t2=p1::monotonic_ns();
     p1::Job j;j.schema_version="p1-solve-job-v1";j.run_id=run_;j.boot_id=boot_;j.contract_hash=hash_;j.nominal_hash=nominal_;const auto selection=registry_.resolve(grid_,grid_,p.tick+1,model_options_);
     if(!selection){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason","model_plan_resolve:"+selection.reason},{"processed_ns",p1::monotonic_ns()}});continue;}
@@ -678,7 +689,10 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
       if(!rejected.empty()){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"preparation_tick",p.tick},{"current_tick",current_tick_},{"deadline_ns",j.deadline_steady_ns},{"processed_ns",submit_commit_ns},{"reason",rejected}});continue;}j.worker_instance=worker_instance_;auto resource=p1::check_job_resources(j,resources_);if(!resource){sink_->add({{"type","job_not_submitted"},{"target_tick",p.tick+1},{"reason",resource.reason},{"field",resource.field},{"observed",resource.observed},{"limit",resource.limit}});continue;}j.job_id=++job_id_;jobs_.push_back(j);while(jobs_.size()>8)jobs_.pop_front();}
     // Submission commits share the invalidation mutex; DDS remains outside it.
     // A previously committed publication may finish after a terminal observation.
-    if(!sink_->add({{"type","job"},{"job",p1::job_json(j)},{"reference_mode",meta.reference_mode},{"profile_t0",meta.profile_t0},{"nearest_index",meta.nearest_index},{"start_index",meta.start_index},{"submit_commit_ns",submit_commit_ns},{"publish_start_ns",p1::monotonic_ns()},{"prep_timing_ms",{{"predict_ms",(prep_t1-prep_t0)/1e6},{"reference_ms",(prep_t2-prep_t1)/1e6},{"gp_rollout_ms",prep_timing.rollout_ms},{"gp_eval_ms",prep_timing.eval_ms},{"bind_total_ms",(prep_t3-prep_t2)/1e6},{"prepare_to_submit_ms",(submit_commit_ns-prep_t0)/1e6}}}}))continue;
+    auto logged_job=p1::job_json(j);
+    logged_job["reference_projection_mode"]=meta.projection_mode;
+    logged_job["reference_lead_s"]=meta.lead_s;
+    if(!sink_->add({{"type","job"},{"job",std::move(logged_job)},{"reference_mode",meta.reference_mode},{"profile_t0",meta.profile_t0},{"nearest_index",meta.nearest_index},{"start_index",meta.start_index},{"submit_commit_ns",submit_commit_ns},{"publish_start_ns",p1::monotonic_ns()},{"prep_timing_ms",{{"predict_ms",(prep_t1-prep_t0)/1e6},{"reference_ms",(prep_t2-prep_t1)/1e6},{"gp_rollout_ms",prep_timing.rollout_ms},{"gp_eval_ms",prep_timing.eval_ms},{"bind_total_ms",(prep_t3-prep_t2)/1e6},{"prepare_to_submit_ms",(submit_commit_ns-prep_t0)/1e6}}}}))continue;
     const auto publish_start=p1::monotonic_ns();try{job_pub_->publish(j);sink_->add({{"type","job_publish_result"},{"job_id",j.job_id},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",true}});}catch(...){sink_->add({{"type","job_publish_result"},{"job_id",j.job_id},{"publish_start_ns",publish_start},{"publish_end_ns",p1::monotonic_ns()},{"success",false}});std::lock_guard<std::mutex> l(mutex_);unusable_locked("job_publication_failed",p1::monotonic_ns());}
   }}
   // 受控仿真：一拍一条类型化命令。sequence 严格递增，tick 与决策拍一致；
@@ -1214,7 +1228,8 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
         usv_mpc::Vector6d x;for(int i=0;i<6;++i)x[i]=x_arr[static_cast<size_t>(i)];
         const auto ref=dry_run_ref_;
         auto ref_mat=usv_mpc::build_frozen_reference(x,*ref,20,0.2,
-          c_.at("reference_start_offset").get<int>(),c_.at("cruise_speed").get<double>(),&meta);
+          c_.at("reference_start_offset").get<int>(),c_.at("cruise_speed").get<double>(),
+          reference_options_,&meta);
         if(!ref_mat.allFinite()){
           block_reason="reference_nonfinite";
         }else{
@@ -1369,6 +1384,7 @@ expected_worker_pid_=declare_parameter<int64_t>("worker_pid",0);
     if(commission_rc_==0)finished_=true;
   }
 
+  usv_mpc::ReferenceOptions reference_options_;
   std::unique_ptr<p1_shipboard::Monitor> monitor_;std::unique_ptr<p1_dry_run::DryRunCoordinator> dry_run_nav_;std::shared_ptr<usv_mpc::ReferenceInput> dry_run_ref_;std::deque<p1::Job> dry_run_jobs_;std::uint64_t dry_run_tick_=1,dry_run_model_gen_=0;std::string last_dry_run_block_;std::int64_t last_dry_run_block_log_ns_=0;std::thread commission_thread_;std::mutex c_mutex_;std::atomic<bool> commission_stop_{false},commission_active_{false},dry_run_active_{false};std::atomic<int> commission_rc_{0};std::string commission_failure_,plan_sha_,plan_file_text_;rclcpp::Publisher<std_msgs::msg::String>::SharedPtr status_pub_;rclcpp::Subscription<mavros_msgs::msg::State>::SharedPtr c_state_;rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr c_odom_;rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr c_imu_;rclcpp::Subscription<nav_msgs::msg::Path>::SharedPtr c_path_;rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr c_profile_;rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr c_stop_;
   p1::Json c_;usv_mpc::MpcParams params_;p1::Limits limits_;std::string run_,hash_,mode_,boot_,nominal_,legacy_run_,legacy_producer_,worker_instance_,path_fingerprint_,profile_fingerprint_,recording_observer_;int64_t expected_worker_pid_=0;
   std::unique_ptr<p1::WorkerLiveness> worker_liveness_;

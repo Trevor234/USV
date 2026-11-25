@@ -18,6 +18,7 @@
 #include <string>
 
 #include <Eigen/Dense>
+#include <nlohmann/json_fwd.hpp>
 
 #include "usv_acados/acados_backend.hpp"
 #include "p1_model_reference.hpp"
@@ -128,6 +129,13 @@ private:
 /// 这是 Regulator 与 Worker 共用的唯一计划入口。
 model_reference::Registry registry_from_plan(const std::string & preimage,
                                              const model_reference::Grid & grid);
+
+bool content_from_controlled_sim_contract(const nlohmann::json & contract,
+    model_reference::Content * out, std::string * err);
+
+bool registry_from_plan_and_contract(const std::string & preimage,
+    const model_reference::Grid & grid, const std::string & contract_json_text,
+    model_reference::Registry * out, std::string * err);
 
 /// 默认登记表（g1=M0 1..5, g2=M1 6..11, g3=M0 12..）。
 model_reference::Registry default_registry(const model_reference::Grid & grid);
